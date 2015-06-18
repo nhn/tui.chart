@@ -89,6 +89,10 @@
   * http://wiki.nhnent.com/display/org/Chart
   * https://msdn.microsoft.com/en-us/library/vstudio/dd456696(v=vs.100).aspx
   * https://developers.google.com/chart/interactive/docs/
+  * http://www.highcharts.com/
+  * http://echarts.baidu.com/
+  * http://raphaeljs.com/
+  * http://d3js.org/
 * 2015.06.29 ~ 2015.07.03 : 설계 및 base 코딩
 * 2015.07.06 ~ 2015.07.17 : raphealjs를 이용하여 bar chart 구현
   * 플러그인 구성 방법 결정
