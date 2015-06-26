@@ -7,9 +7,9 @@ var Backbone = require('backbone'),
 
 AxisView = Backbone.View.extend({
     className: 'axis-area',
-    initialize: function(options) {
-        this.options = options;
-        this.model = options.model;
+    initialize: function(data) {
+        this.data = data;
+        this.model = data.model;
     },
 
     render: function() {

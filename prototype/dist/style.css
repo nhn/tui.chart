@@ -6,7 +6,7 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
-.ne-chart-component .shape-area {
+.ne-chart-component .series-area {
   position: absolute;
   right: 0;
   top: 0;

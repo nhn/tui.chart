@@ -10,8 +10,11 @@ var $ = require('jquery'),
     options = {
         size: {
             width: 500,
-            height: 450
-        }
+            height: 400
+        },
+        hAxis: {title: ''}
     };
+
+require('./plugins/plugin-raphael.js');
 
 chart.barChart($('body'), mock, options);

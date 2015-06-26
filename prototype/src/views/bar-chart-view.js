@@ -1,6 +1,5 @@
 var _ = require('underscore'),
-    Raphael = require('raphael'),
-    chartFactory = require('../chartFactory.js'),
+    chartFactory = require('../chart-factory.js'),
     ChartView = require('./chart-view.js'),
     BarChartModel = require('../models/bar-chart-model.js'),
     AxisView = require('./axis-view.js'),
@@ -11,9 +10,11 @@ BarChartView = ChartView.extend({
         return this.constructor.__super__.className + ' ne-bar-chart';
     },
 
+    chartType: 'Bar',
+
     initialize: function(options) {
-        var model = this.model = new BarChartModel(_.pick(options, 'data'));
-        this.constructor.__super__.initialize.call(this, options);
+        var model = new BarChartModel(_.pick(options, 'data'));
+        this.constructor.__super__.initialize.call(this, model, options);
 
         this.vAxisView = new AxisView({
             model: model.getVAxis(),
@@ -27,21 +28,7 @@ BarChartView = ChartView.extend({
     },
 
     renderSeries: function() {
-        //var shapeWidth = this.options.size.width - 90,
-        //    shapeHeight = this.options.size.height - 50,
-        //    paper, $shapeArea;
-        //
-        //this.$el.html('<div class="shape-area"></div>');
-        //$shapeArea = this.$el.find('.shape-area');
-        //paper = Raphael($shapeArea[0], shapeWidth, shapeHeight);
-        //var rect = paper.rect(0,0,50,100);
-        //rect.attr({
-        //    fill:'red'
-        //})
-        //$shapeArea.css({
-        //    width: shapeWidth,
-        //    height: shapeHeight
-        //});
+        this.constructor.__super__.renderSeries.call(this);
     },
 
     render: function() {

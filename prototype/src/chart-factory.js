@@ -1,8 +1,8 @@
 var _ = require('underscore'),
-    charts = {}, Chart;
+    charts = {};
 
 module.exports = {
-    create: function(type, data, options) {
+    get: function(type, data, options) {
         if (charts[type]) {
             var chart = new charts[type](_.extend({data: data}, options));
             return chart;

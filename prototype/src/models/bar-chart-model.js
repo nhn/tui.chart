@@ -34,7 +34,7 @@ BarChartModel = ChartModel.extend({
 
         this.set('labels', labels);
         this.set('values', values);
-        this.setSeries(labels, values, vAxis.getMinMaxTick(), hAxis.getMinMaxTick());
+        this.setSeries(labels, values, vAxis.getMinMaxTick());
         this.set('vAxis', vAxis);
         this.set('hAxis', hAxis);
         this.set('plot', plot);
@@ -66,14 +66,17 @@ BarChartModel = ChartModel.extend({
         return values;
     },
 
-    setSeries: function(labels, values, vMinMaxTick, hMinMaxTick) {
+    setSeries: function(labels, values, minMaxTick) {
         var data = {
             labels: labels,
             values: values,
-            vMinMaxTick: vMinMaxTick,
-            hMinMaxTick: hMinMaxTick
+            minMaxTick: minMaxTick,
         };
         this.set('series', new SeriesModel(data))
+    },
+
+    getSeries: function() {
+        return this.get('series');
     },
 
     getVAxis: function() {

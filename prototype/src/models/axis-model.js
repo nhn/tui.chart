@@ -25,7 +25,6 @@ AxisModel = Backbone.Model.extend({
         } else if (data.values) {
             this.setValueAxis(data.values);
         }
-        console.log('axis', this.toJSON());
     },
 
     setLabelAxis: function(labels) {
@@ -34,8 +33,8 @@ AxisModel = Backbone.Model.extend({
     },
 
     setValueAxis: function(values) {
-        var min = _.min(values),
-            max = _.max(values),
+        var min = _.min(_.flatten(values)),
+            max = _.max(_.flatten(values)),
             scale = this.getCalculateScale(min, max),
             tickCount = this.get('tickCount'),
             apart = (scale.max - scale.min) / (tickCount - 1),
