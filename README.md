@@ -2,7 +2,7 @@
 
 ## Spec
 
-* native javascript 지양
+* native javascript 지향
 * 확장 가능하도록 개발
 * IE8 이상 지원
 * 애니메이션
