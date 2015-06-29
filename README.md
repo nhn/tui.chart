@@ -63,6 +63,7 @@
 * ~~익숙한 사용방법 제공~~
   * ~~기존 ne component와 사용방법 유사~~
 ```html
+<!--
   <script type="text/javascript" src="./js/raphael-min.js"></script>
   <script type="text/javascript" src="./js/component-chart.js"></script>
   <script>
@@ -74,6 +75,7 @@
     });
     chart.render();
   </script>
+-->
 ```
 * ~~입력 data가 간단하다.~~
   * ~~google방식의 data입력 차용~~
@@ -81,6 +83,7 @@
     * ~~https://developers.google.com/chart/interactive/docs/gallery/barchart~~
     * ~~https://developers.google.com/chart/interactive/docs/datatables_dataviews#arraytodatatable~~
 ```javascript
+/*
   ...
   chart.setData([
      ['Element', 'Density', { role: 'style' }],
@@ -89,10 +92,12 @@
      ['Gold', 19.30, 'gold'],
      ['Platinum', 21.45, 'color: #e5e4e2' ]
   ]);
+*/
 ```
 * ~~디자인 적용이 쉽고 유연하다.~~
   * ~~Color, Font, Grid line, Number format, Background Color~~
 ```javascript
+/*
   ...
   chart.setStyles({
     font:'애플고딕',
@@ -107,12 +112,14 @@
      ...
   ]);
   ...
+*/
 ```
 
 * ~~도형은 외부라리브러리를 사용하고 그 외 부분은 직접 개발 (기존 프로젝트 동일)~~
 * ~~도형 라이브러리 교체가 쉽다.~~
   * ~~추후 D3라이브러리로 교체하거나 자체 개발 플러그인으로 변경 용이~~
 ```html
+<!--
   <script type="text/javascript" src="./js/d3-min.js"></script>
   <script type="text/javascript" src="./js/component-chart.js"></script>
   <script type="text/javascript" src="./js/ne-chart-plugin-d3.js"></script>
@@ -121,6 +128,7 @@
     chart.changeChart('D3');
     ...
   </script>
+-->
 ```
 
 ## Plan
