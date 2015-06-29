@@ -3,13 +3,49 @@
 ## Spec
 
 * native javascript 지향
+  
+  --> 외부 library 사용 배제
+
+  --> code-snippet 사용
 * 확장 가능하도록 개발
+
+  --> chart Factory에 추가하는 방식으로 개발
 * IE8 이상 지원
+
+  --> raphael lib 사용 (플러그인 방식으로 개발하여 향후 교체 가능하도록)
 * 애니메이션
   * 최신브라우저 : 적당한 애니메이션 필요
   * 구형브라우저(IE8) : 최소화
+  
+  --> 애니메이션 타입을 몇가지로 제한하여 사용자가 선택할 수 있도록 함
+
+  --> 애니메이션의 상세 커스터마이징은 배제
+* 디자인 적용
+
+  --> 다음의 항목으로 디자인 변경 제한
+  
+  * axis title 색상 폰트
+  * axis label 색상 폰트
+  * axis tick mark 색상 폰트
+  * series 배경색, 테두리색
+  * legend 폰트
+  * plot 라인색, 배경색
+* Data 입력
+
+  --> 초기에는 구글방식응로 진행
+
+  --> 진행하면서 결정
+* 공개 API 설계
+
+  --> 기존 fe프로젝트를 따라가되 진행하면서 결정
+
+  --> 외부 차트 api 추가 검토 필요
 * 글로벌화 고려
+
+  --> 주석 및 커밋메시지 영문화
 * 오픈소스 고려
+
+  --> 읽기 쉬운 코드 개발;;
 * 지원 차트
   * 기본 차트
     * bar
@@ -17,10 +53,10 @@
     * pie
   * 추가 차트
 
-## Concept
+## ~~Concept~~
 
-* 익숙한 사용방법 제공
-  * 기존 ne component와 사용방법 유사
+* ~~익숙한 사용방법 제공~~
+  * ~~기존 ne component와 사용방법 유사~~
 ```html
   <script type="text/javascript" src="./js/raphael-min.js"></script>
   <script type="text/javascript" src="./js/component-chart.js"></script>
@@ -34,11 +70,11 @@
     chart.render();
   </script>
 ```
-* 입력 data가 간단하다.
-  * google방식의 data입력 차용
-    * https://developers.google.com/chart/interactive/docs/reference#arraytodatatable
-    * https://developers.google.com/chart/interactive/docs/gallery/barchart
-    * https://developers.google.com/chart/interactive/docs/datatables_dataviews#arraytodatatable
+* ~~입력 data가 간단하다.~~
+  * ~~google방식의 data입력 차용~~
+    * ~~https://developers.google.com/chart/interactive/docs/reference#arraytodatatable~~
+    * ~~https://developers.google.com/chart/interactive/docs/gallery/barchart~~
+    * ~~https://developers.google.com/chart/interactive/docs/datatables_dataviews#arraytodatatable~~
 ```javascript
   ...
   chart.setData([
@@ -49,8 +85,8 @@
      ['Platinum', 21.45, 'color: #e5e4e2' ]
   ]);
 ```
-* 디자인 적용이 쉽고 유연하다.
-  * Color, Font, Grid line, Number format, Background Color
+* ~~디자인 적용이 쉽고 유연하다.~~
+  * ~~Color, Font, Grid line, Number format, Background Color~~
 ```javascript
   ...
   chart.setStyles({
@@ -68,9 +104,9 @@
   ...
 ```
 
-* 도형은 외부라리브러리를 사용하고 그 외 부분은 직접 개발 (기존 프로젝트 동일)
-* 도형 라이브러리 교체가 쉽다.
-  * 추후 D3라이브러리로 교체하거나 자체 개발 플러그인으로 변경 용이
+* ~~도형은 외부라리브러리를 사용하고 그 외 부분은 직접 개발 (기존 프로젝트 동일)~~
+* ~~도형 라이브러리 교체가 쉽다.~~
+  * ~~추후 D3라이브러리로 교체하거나 자체 개발 플러그인으로 변경 용이~~
 ```html
   <script type="text/javascript" src="./js/d3-min.js"></script>
   <script type="text/javascript" src="./js/component-chart.js"></script>
