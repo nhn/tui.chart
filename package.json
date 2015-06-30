@@ -1,0 +1,39 @@
+{
+  "name": "component-chart",
+  "version": "0.0.1",
+  "description": "ne chart component",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.nhnent.com/fe/component-chart.git"
+  },
+  "keywords": [
+    "chart"
+  ],
+  "author": "extremeFE",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.7.12",
+    "browserify": "^10.2.4",
+    "browserify-istanbul": "^0.2.1",
+    "gulp": "^3.9.0",
+    "gulp-less": "^3.0.3",
+    "gulp-util": "^3.0.5",
+    "karma": "^0.12.36",
+    "karma-browserify": "^4.2.1",
+    "karma-chrome-launcher": "^0.1.12",
+    "karma-jasmine": "^0.3.5",
+    "karma-junit-reporter": "^0.2.2",
+    "karma-mocha-reporter": "^1.0.2",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "karma-story-reporter": "^0.3.1",
+    "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
+    "stringify": "^3.1.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.2.2",
+    "code-snippet": "git+https://github.com/nhnent/fe.code-snippet.git"
+  }
+}
