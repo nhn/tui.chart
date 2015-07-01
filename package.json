@@ -19,6 +19,7 @@
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
+    "code-snippet": "git+https://github.com/nhnent/fe.code-snippet.git",
     "gulp": "^3.9.0",
     "gulp-less": "^3.0.3",
     "gulp-util": "^3.0.5",
@@ -29,11 +30,9 @@
     "karma-junit-reporter": "^0.2.2",
     "karma-mocha-reporter": "^1.0.2",
     "karma-phantomjs-launcher": "^0.2.0",
-    "karma-story-reporter": "^0.3.1",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "stringify": "^3.1.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.2.2",
-    "code-snippet": "git+https://github.com/nhnent/fe.code-snippet.git"
+    "watchify": "^3.2.2"
   }
 }

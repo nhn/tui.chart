@@ -12,8 +12,8 @@ BarChartModel = ne.util.defineClass(ChartModel, {
     /**
      * picked series data from user initial data
      * series data is pairs of label and value​
-     * @param {Object} data user initial data
-     * @return {Object} series data;
+     * @param {object} data user initial data
+     * @return {object} series data;
      */
     pickSeriesData: function(data) {
         var aps = Array.prototype.slice,
@@ -36,8 +36,8 @@ BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * picked labels from seriesData
-     * @param {Object} seriesData
-     * @returns {Array}
+     * @param {object} seriesData
+     * @returns {array}
      */
     pickLabels: function(seriesData) {
         var labels = ne.util.map(seriesData, function(items) {
