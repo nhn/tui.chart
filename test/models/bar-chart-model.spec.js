@@ -3,7 +3,7 @@
  * @author jiung.kang@nhnent.com
  */
 
-'user strict';
+'use strict';
 
 var BarChartModel = require('../../src/js/models/bar-chart-model.js');
 

@@ -1,9 +1,10 @@
 /**
  * @fileoverview axis model
- * @author jiung.kang@nhnent.com
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
  */
 
-'user strict';
+'use strict';
 
 var AxisModel,
     AXIS_TYPE_VALUE = 'value',
@@ -15,6 +16,11 @@ AxisModel = ne.util.defineClass({
     min: 0,
     max: 0,
     axisType: null,
+
+    /**
+     * constructor
+     * @param {object} options
+     */
     init: function(options) {
         if (options && options.data) {
             this.setData(options.data);
@@ -22,21 +28,42 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * setting label type axis
-     * @param {array} labels
+     * set axis data
+     * @param data
      */
-    setLabelAxis: function(labels) {
-        this.axisType = AXIS_TYPE_LABEL;
-        this.setLabels(labels);
-        this.setTickCount(labels.length);
+    setData: function(data) {
+        if (data.labels) {
+            this.setLabelAxisData(data.labels);
+        } else if (data.min && data.max) {
+            this.setValueAxisData(data.min, data.max);
+        }
     },
 
     /**
-     * set labels
+     * set label type axis data
      * @param {array} labels
      */
-    setLabels: function(labels) {
+    setLabelAxisData: function(labels) {
+        this.axisType = AXIS_TYPE_LABEL;
         this.labels = labels;
+        this.tickCount = labels.length;
+    },
+
+    /**
+     * set value type axis data
+     * @param {number} min
+     * @param {number} max
+     */
+    setValueAxisData: function(min, max) {
+        var scale = this.getCalculateScale(min, max),
+            tickCount = this.getTickCount(),
+            step = this.getScaleStep(scale, tickCount),
+            labels = this.range(scale.min, scale.max + 1, step);
+
+        this.axisType = AXIS_TYPE_VALUE;
+        this.labels = labels;
+        this.min = scale.min;
+        this.max = scale.max;
     },
 
     /**
@@ -48,14 +75,6 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * get tickCount;
-     * @param {number} tickCount
-     */
-    setTickCount: function(tickCount) {
-        this.tickCount = tickCount;
-    },
-
-    /**
      * get tick count
      * @returns {number}
      */
@@ -64,28 +83,11 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * set tick min value
-     * @param {number} min
-     */
-    setMin: function(min) {
-        this.min = min;
-    },
-
-    /**
      * get tick min value
      * @returns {number}
      */
     getMin: function() {
         return this.min;
-    },
-
-
-    /**
-     * set tick max value
-     * @param {number} max;
-     */
-    setMax: function(max) {
-        this.max = max;
     },
 
     /**
@@ -167,24 +169,6 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * setting value type axis
-     * @param {number} min
-     * @param {number} max
-     */
-    setValueAxis: function(min, max) {
-        var scale = this.getCalculateScale(min, max),
-            tickCount = this.getTickCount(),
-            step = this.getScaleStep(scale, tickCount),
-            labels = this.range(scale.min, scale.max + 1, step);
-
-        this.axisType = AXIS_TYPE_VALUE;
-        this.setLabels(labels);
-        this.setMin(scale.min);
-        this.setMax(scale.max);
-
-    },
-
-    /**
      * check label type axis
      * @returns {boolean}
      */
@@ -198,18 +182,6 @@ AxisModel = ne.util.defineClass({
      */
     isValueAxis: function() {
         return this.axisType === AXIS_TYPE_VALUE;
-    },
-
-    /**
-     * setting axis
-     * @param data
-     */
-    setData: function(data) {
-        if (data.labels) {
-            this.setLabelAxis(data.labels);
-        } else if (data.min && data.max) {
-            this.setValueAxis(data.min, data.max);
-        }
     }
 });
 

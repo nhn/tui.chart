@@ -1,9 +1,10 @@
 /**
- * @fileoverview test bar chart model
- * @author jiung.kang@nhnent.com
+ * @fileoverview test axis model
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
  */
 
-'user strict';
+'use strict';
 
 var AxisModel = require('../../src/js/models/axis-model.js');
 
@@ -29,8 +30,8 @@ describe('test axis model', function() {
             axisModel = new AxisModel();
         });
 
-        it('setLabelAxis', function() {
-            axisModel.setLabelAxis(labels);
+        it('setLabelAxisData', function() {
+            axisModel.setLabelAxisData(labels);
             expect(axisModel.getLabels().join(',')).toEqual(labels.join(','));
             expect(axisModel.getTickCount()).toEqual(labels.length);
             expect(axisModel.getMin()).toEqual(0);
@@ -63,12 +64,12 @@ describe('test axis model', function() {
             expect(labels.join(',')).toEqual('20,40,60,80,100');
         });
 
-        it('setValueAxis', function() {
+        it('setValueAxisData', function() {
             var min = 20,
                 max = 180,
                 scale = axisModel.getCalculateScale(min, max);
 
-            axisModel.setValueAxis(min, max);
+            axisModel.setValueAxisData(min, max);
             expect(axisModel.getLabels().join(',')).toEqual('0,47,94,141,188');
             expect(axisModel.getMin()).toEqual(scale.min);
             expect(axisModel.getMax()).toEqual(scale.max);

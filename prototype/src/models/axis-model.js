@@ -21,18 +21,18 @@ AxisModel = Backbone.Model.extend({
 
     setData: function(data) {
         if (data.labels) {
-            this.setLabelAxis(data.labels);
+            this.setLabelAxisData(data.labels);
         } else if (data.values) {
-            this.setValueAxis(data.values);
+            this.setValueAxisData(data.values);
         }
     },
 
-    setLabelAxis: function(labels) {
+    setLabelAxisData: function(labels) {
         this.set('labels', labels);
         this.set('tickCount', labels.length);
     },
 
-    setValueAxis: function(values) {
+    setValueAxisData: function(values) {
         var min = _.min(_.flatten(values)),
             max = _.max(_.flatten(values)),
             scale = this.getCalculateScale(min, max),
