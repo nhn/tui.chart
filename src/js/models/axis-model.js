@@ -9,8 +9,6 @@ var AxisModel,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label';
 
-require('code-snippet/code-snippet');
-
 AxisModel = ne.util.defineClass({
     labels: [],
     tickCount: 5,

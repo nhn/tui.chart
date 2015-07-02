@@ -16,7 +16,7 @@ module.exports = function(config) {
       'jasmine'
     ],
     reporters: [
-      'dots',
+      'mocha',
       'coverage',
       'junit'
     ],
@@ -31,7 +31,8 @@ module.exports = function(config) {
     singleRun: false,
     autoWatch: true,
     files: [
-      'lib/raphael-min.js',
+      'lib/ne-code-snippet/code-snippet.min.js',
+      'lib/raphael/raphael-min.js',
       'src/js/**/*.js',
       { pattern: 'test/fixtures/**/*', included: false },
       'test/**/*.spec.js'

@@ -1,0 +1,12 @@
+{
+  "name": "component-chart",
+  "version": "0.0.0",
+  "authors": [
+    "jiung"
+  ],
+  "devDependencies": {
+    "ne-code-snippet": "~1.0.3",
+    "raphael": "~2.1.4"
+  },
+  "license": "MIT"
+}

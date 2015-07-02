@@ -7,8 +7,6 @@
 
 var ChartModel;
 
-require('code-snippet/code-snippet');
-
 ChartModel = ne.util.defineClass({
 });
 
