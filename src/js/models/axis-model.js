@@ -6,15 +6,15 @@
 
 'use strict';
 
-var AxisModel,
+var aps = Array.prototype.slice,
     AXIS_TYPE_VALUE = 'value',
-    AXIS_TYPE_LABEL = 'label';
+    AXIS_TYPE_LABEL = 'label',
+    AxisModel;
 
 AxisModel = ne.util.defineClass({
     labels: [],
     tickCount: 5,
-    min: 0,
-    max: 0,
+    scale: null,
     axisType: null,
 
     /**
@@ -34,8 +34,8 @@ AxisModel = ne.util.defineClass({
     setData: function(data) {
         if (data.labels) {
             this.setLabelAxisData(data.labels);
-        } else if (data.min && data.max) {
-            this.setValueAxisData(data.min, data.max);
+        } else if (data.values) {
+            this.setValueAxisData(data.values);
         }
     },
 
@@ -54,16 +54,16 @@ AxisModel = ne.util.defineClass({
      * @param {number} min
      * @param {number} max
      */
-    setValueAxisData: function(min, max) {
-        var scale = this.getCalculateScale(min, max),
+    setValueAxisData: function(values) {
+        var minMax = this.pickMinMax(values),
+            scale = this.getCalculateScale(minMax.min, minMax.max),
             tickCount = this.getTickCount(),
             step = this.getScaleStep(scale, tickCount),
             labels = this.range(scale.min, scale.max + 1, step);
 
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
-        this.min = scale.min;
-        this.max = scale.max;
+        this.scale = scale;
     },
 
     /**
@@ -83,19 +83,24 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * get tick min value
-     * @returns {number}
+     * get tick scale
+     * @returns {object}
      */
-    getMin: function() {
-        return this.min;
+    getScale: function() {
+        return this.scale;
     },
 
-    /**
-     * get tick max value
-     * @returns {number}
-     */
-    getMax: function() {
-        return this.max;
+    pickMinMax: function(orgArr2d) {
+        var resultArr = ne.util.reduce(orgArr2d, function(concatArr, arr) {
+            concatArr = concatArr.concat(aps.call(arr));
+            return concatArr;
+        }, []);
+
+        resultArr.sort(function(a, b) {
+            return a - b;
+        });
+
+        return {min: resultArr[0], max: resultArr[resultArr.length-1]};
     },
 
     /**
@@ -106,17 +111,17 @@ AxisModel = ne.util.defineClass({
      * @returns {object}
      */
     getCalculateScale: function(min, max) {
-        var result = {},
+        var scale = {},
             iodValue = (max - min) / 20; // increase or decrease the value;
-        result.max = max + iodValue;
+        scale.max = max + iodValue;
 
         if (max / 6 > min) {
-            result.min  = 0;
+            scale.min  = 0;
         } else {
-            result.min = min - iodValue;
+            scale.min = min - iodValue;
         }
 
-        return result;
+        return scale;
     },
 
     /**

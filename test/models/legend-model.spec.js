@@ -10,11 +10,11 @@ var LegendModel = require('../../src/js/models/legend-model.js');
 
 describe('test legend model', function() {
     var labels = [
-            'Element',
-            'Copper',
-            'Silver',
-            'Gold',
-            'Platinum'
+            'Density',
+            'Density2',
+            'Density3',
+            'Density4',
+            'Density5'
         ],
         colors = [
             'red',

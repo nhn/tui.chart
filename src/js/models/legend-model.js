@@ -33,6 +33,10 @@ LegendModel = ne.util.defineClass({
 
     data: [],
 
+    /**
+     * set legend data
+     * @param {object} data
+     */
     init: function(options) {
         if (options && options.data) {
             this.setData(options.data);

@@ -17,10 +17,11 @@ describe('test axis model', function() {
             'Platinum'
         ],
         values = [
-            8.94,
-            10.49,
-            19.30,
-            21.45
+            [70],
+            [20],
+            [180],
+            [150],
+            [120]
         ];
 
     describe('test method', function() {
@@ -31,11 +32,12 @@ describe('test axis model', function() {
         });
 
         it('setLabelAxisData', function() {
+            var scale;
+
             axisModel.setLabelAxisData(labels);
             expect(axisModel.getLabels().join(',')).toEqual(labels.join(','));
             expect(axisModel.getTickCount()).toEqual(labels.length);
-            expect(axisModel.getMin()).toEqual(0);
-            expect(axisModel.getMax()).toEqual(0);
+            expect(axisModel.getScale()).toBeNull();
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
@@ -64,15 +66,20 @@ describe('test axis model', function() {
             expect(labels.join(',')).toEqual('20,40,60,80,100');
         });
 
-        it('setValueAxisData', function() {
-            var min = 20,
-                max = 180,
-                scale = axisModel.getCalculateScale(min, max);
+        it('pickMinMax', function() {
+            var minMax = axisModel.pickMinMax(values);
+            expect(minMax.min).toEqual(20);
+            expect(minMax.max).toEqual(180);
+        });
 
-            axisModel.setValueAxisData(min, max);
+        it('setValueAxisData', function() {
+            var scale;
+
+            axisModel.setValueAxisData(values);
+            scale = axisModel.getScale();
             expect(axisModel.getLabels().join(',')).toEqual('0,47,94,141,188');
-            expect(axisModel.getMin()).toEqual(scale.min);
-            expect(axisModel.getMax()).toEqual(scale.max);
+            expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(188);
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
 
@@ -80,7 +87,7 @@ describe('test axis model', function() {
             axisModel.setData({labels: labels});
             expect(axisModel.isLabelAxis()).toBeTruthy();
 
-            axisModel.setData({min: 20, max: 180});
+            axisModel.setData({values: values});
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
     });

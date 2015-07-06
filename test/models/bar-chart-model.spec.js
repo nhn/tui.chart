@@ -22,6 +22,9 @@ describe('bar chart model', function() {
             ['Gold', 19.30, 'color:red'],
             ['Platinum', 21.45, 'color:red']
         ],
+        userData3 = [
+            ['Element', 'Density', 'Density2', 'Density3', {role: 'style'}]
+        ],
         barChartModel = new BarChartModel();
 
     it('pickSeriesData', function() {
@@ -54,6 +57,26 @@ describe('bar chart model', function() {
             values = barChartModel.pickValues(seriesData);
 
         expect(values.length).toEqual(seriesData.length);
-        expect(values[0]).toEqual(seriesData[0][1]);
+        expect(values[0][0]).toEqual(seriesData[0][1]);
     });
+
+    it('pickLegendLabels', function() {
+        var labels = barChartModel.pickLegendLabels(userData[0]);
+        expect(labels).toEqual(['Density']);
+
+        labels = barChartModel.pickLegendLabels(userData2[0]);
+        expect(labels).toEqual(['Density']);
+
+        labels = barChartModel.pickLegendLabels(userData3[0]);
+        expect(labels).toEqual(['Density', 'Density2', 'Density3']);
+    });
+
+    it('setData', function() {
+        barChartModel.setData(userData);
+        expect(barChartModel.vAxis.axisType).toEqual('value');
+        expect(barChartModel.hAxis.axisType).toEqual('label');
+        expect(barChartModel.plot.hTickCount).toEqual(4);
+        expect(barChartModel.legend.data[0]).toEqual(['Density', 'red']);
+        expect(barChartModel.series.colorArr).toEqual(['red']);
+    })
 });
