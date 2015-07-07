@@ -11,6 +11,11 @@ var chartConst = require('../const.js'),
     ChartModel;
 
 ChartModel = ne.util.defineClass({
+    /**
+     * constructor
+     * @param {object} data
+     * @param {object} options
+     */
     init: function(data, options) {
         this.options = options || {};
         if (data) {
@@ -22,6 +27,11 @@ ChartModel = ne.util.defineClass({
       throw new Error('Please implement the setData.');
     },
 
+    /**
+     * pick colors
+     * @param {number} count
+     * @returns {array}
+     */
     pickColors: function(count) {
         var colors;
         if (this.options && this.options.colors) {

@@ -20,6 +20,7 @@ AxisModel = ne.util.defineClass({
 
     /**
      * constructor
+     * @param {object} data
      * @param {object} options
      */
     init: function(data, options) {

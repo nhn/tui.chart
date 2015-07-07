@@ -11,7 +11,6 @@ var ChartModel = require('./chart-model.js'),
     PlotModel = require('./plot-model.js'),
     LegendModel = require('./legend-model.js'),
     SeriesModel = require('./series-model.js'),
-    aps = Array.prototype.slice,
     BarChartModel;
 
 BarChartModel = ne.util.defineClass(ChartModel, {
@@ -26,6 +25,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * constructor
+     * @param {object} data
      * @param {object} options
      */
     init: function(data, options) {

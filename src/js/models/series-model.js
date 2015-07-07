@@ -17,7 +17,7 @@ SeriesModel = ne.util.defineClass({
 
     /**
      * constructor
-     * @param {object} options
+     * @param {data} data
      */
     init: function(data) {
         if (data) {
@@ -31,7 +31,7 @@ SeriesModel = ne.util.defineClass({
      */
     setData: function(data) {
         if (!data || ne.util.isEmpty(data.values) || !data.scale || !data.colors) {
-            throw new Error('... 없습니다.');
+            throw new Error('...');
         }
 
         this.markers = data.values;

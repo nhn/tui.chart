@@ -14,7 +14,7 @@ PlotModel = ne.util.defineClass({
 
     /**
      * constructor
-     * @param {object} options
+     * @param {data} data
      */
     init: function(data) {
         if (data) {
