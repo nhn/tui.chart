@@ -6,7 +6,8 @@
 
 'use strict';
 
-var LegendModel = require('../../src/js/models/legend-model.js');
+var LegendModel = require('../../src/js/models/legend-model.js'),
+    chartConst = require('../../src/js/const.js');
 
 describe('test legend model', function() {
     var labels = [
@@ -16,13 +17,8 @@ describe('test legend model', function() {
             'Density4',
             'Density5'
         ],
-        colors = [
-            'red',
-            'orange',
-            'yellow',
-            'green',
-            'blue'
-        ];
+        colors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS);
+    colors.length = labels.length;
 
     describe('test method', function() {
         it('setData', function() {
@@ -36,12 +32,10 @@ describe('test legend model', function() {
         });
     });
 
-    describe('test initialize', function() {
+    describe('test construct', function() {
         it('init', function() {
-            var options = {
-                    data: {labels: labels, colors: colors}
-                },
-                legendModel = new LegendModel(options),
+            var data = {labels: labels, colors: colors},
+                legendModel = new LegendModel(data),
                 data = legendModel.getData();
 
             expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));

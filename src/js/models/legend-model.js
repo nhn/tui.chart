@@ -9,12 +9,24 @@
 var LegendModel;
 
 LegendModel = ne.util.defineClass({
+    /**
+     * * ne.util에 pluck이 추가되기 전까지 임시로 사용
+     * @param {array} arr
+     * @param {string} property
+     * @returns {Array}
+     */
     pluck: function(arr, property) {
         var result = ne.util.map(arr, function(item) {
             return item[property];
         });
         return result;
     },
+
+    /**
+     * * ne.util에 zip이 추가되기 전까지 임시로 사용
+     * @params {...array}
+     * @returns {array}
+     */
     zip: function() {
         var arr2 = Array.prototype.slice.call(arguments),
             result = [];
@@ -37,9 +49,9 @@ LegendModel = ne.util.defineClass({
      * set legend data
      * @param {object} data
      */
-    init: function(options) {
-        if (options && options.data) {
-            this.setData(options.data);
+    init: function(data) {
+        if (data) {
+            this.setData(data);
         }
     },
 
@@ -53,7 +65,7 @@ LegendModel = ne.util.defineClass({
 
     /**
      * get legend data
-     * @returns {Array}
+     * @returns {array}
      */
     getData: function() {
         return this.data;

@@ -9,19 +9,19 @@
 var SeriesModel;
 
 SeriesModel = ne.util.defineClass({
-    markerArr2d: [],
-    percentValueArr2d: [],
+    markers: [],
+    percentValues: [],
     tickScale: {},
-    colorArr: [],
-    lastColorArr: [],
+    colors: [],
+    lastColors: [],
 
     /**
      * constructor
      * @param {object} options
      */
-    init: function(options) {
-        if (options && options.data) {
-            this.setData(options.data);
+    init: function(data) {
+        if (data) {
+            this.setData(data);
         }
     },
 
@@ -34,12 +34,12 @@ SeriesModel = ne.util.defineClass({
             throw new Error('... 없습니다.');
         }
 
-        this.makerArr2d = data.values;
-        this.percentValueArr2d = this.makePercentValues(data.values, data.scale);
-        this.colorArr = data.colors;
+        this.markers = data.values;
+        this.percentValues = this.makePercentValues(data.values, data.scale);
+        this.colors = data.colors;
 
         if (ne.util.isNotEmpty(data.lastColors)) {
-            this.lastColorArr = data.lastColors;
+            this.lastColors = data.lastColors;
         }
     },
 

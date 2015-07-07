@@ -15,6 +15,8 @@ var ChartModel = require('./chart-model.js'),
     BarChartModel;
 
 BarChartModel = ne.util.defineClass(ChartModel, {
+    title: '',
+    chartArea: '50%',
     hAxis: null,
     vAxis: null,
     legend: null,
@@ -22,106 +24,56 @@ BarChartModel = ne.util.defineClass(ChartModel, {
     series: null,
     bars: 'vertical',
 
-    init: function(options) {
-
+    /**
+     * constructor
+     * @param {object} options
+     */
+    init: function(data, options) {
+        ChartModel.prototype.init.call(this, data, options);
     },
 
+    /**
+     * set bar chart data
+     * @param {object} data
+     */
     setData: function(data) {
-        var seriesData = this.pickSeriesData(data),
-            labels = this.pickLabels(seriesData),
-            values = this.pickValues(seriesData),
+        var options = this.options || {},
+            axisData = this.pickAxisData(data),
+            labels = this.pickLabels(axisData),
+            values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(data[0]),
-            labelAxis = new AxisModel({data: {labels: labels}}),
-            valueAxis = new AxisModel({data: {values: values}}),
+            hAxis = new AxisModel({labels: labels}, options.hAxis),
+            vAxis = new AxisModel({values: values}, options.vAxis),
+            axisScale = vAxis.scale,
             colors = this.pickColors(legendLabels.length);
 
+        this.title = options.title || this.title;
+        this.chartArea = options.chartArea || this.chartArea;
+        this.bars = options.bars || this.bars;
+
         if (this.bars === 'vertical') {
-            this.hAxis = labelAxis;
-            this.vAxis = valueAxis;
+            this.hAxis = hAxis;
+            this.vAxis = vAxis;
         } else {
-            this.hAxis = valueAxis;
-            this.vAxis = labelAxis;
+            this.hAxis = vAxis;
+            this.vAxis = hAxis;
         }
 
         this.plot = new PlotModel({
-            data:{
-                vTickCount: this.vAxis.getTickCount(),
-                hTickCount: this.hAxis.getTickCount()
-            }
+            vTickCount: this.vAxis.tickCount,
+            hTickCount: this.hAxis.tickCount
         });
 
         this.legend = new LegendModel({
-            data: {
-                labels: legendLabels,
-                colors: colors
-            }
+            labels: legendLabels,
+            colors: colors
         });
 
         this.series = new SeriesModel({
-            data: {
-                values: values,
-                scale: valueAxis.getScale(),
-                colors: colors
-            }
+            values: values,
+            scale: axisScale,
+            colors: colors
         });
-    },
-
-    /**
-     * picked series data from user initial data
-     * series data is pairs of label and value​
-     * @param {object} data user initial data
-     * @return {object} series data;
-     */
-    pickSeriesData: function(data) {
-        var titleArr = data[0],
-            seriesData = aps.call(data);
-
-        seriesData.shift();
-
-        if (this.hasStyleOption(titleArr)) {
-            seriesData = ne.util.map(seriesData, function(items) {
-                items = aps.call(items);
-                items.length = items.length - 1;
-                return items;
-            });
-        }
-
-        return seriesData;
-    },
-
-    /**
-     * picked labels from seriesData
-     * @param {object} seriesData
-     * @returns {array}
-     */
-    pickLabels: function(seriesData) {
-        var arr = ne.util.map(seriesData, function(items) {
-            return items[0];
-        });
-        return arr;
-    },
-
-    pickValues: function(seriesData) {
-        var arr2d = ne.util.map(seriesData, function(items) {
-            var values = aps.call(items);
-            values.shift();
-            return values;
-        });
-        return arr2d;
-    },
-
-    hasStyleOption: function(arr) {
-        var lastItem = arr[arr.length-1];
-        return typeof lastItem === 'object';
-    },
-
-    pickLegendLabels: function(titleArr) {
-        var hasOption = this.hasStyleOption(titleArr),
-            last = hasOption ? titleArr.length - 1 : -1,
-            arr = ne.util.filter(titleArr, function(label, index) {
-                return index !== 0 && index !== last;
-            });
-        return arr;
     }
 });
 

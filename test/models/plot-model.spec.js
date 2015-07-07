@@ -30,12 +30,10 @@ describe('test plot model', function() {
         });
     });
 
-    describe('test initialize', function() {
+    describe('test construct', function() {
         it('init', function() {
-            var options = {
-                    data: {vTickCount: vTickCount, hTickCount: hTickCount}
-                },
-                plotModel = new PlotModel(options);
+            var data = {vTickCount: vTickCount, hTickCount: hTickCount},
+                plotModel = new PlotModel(data);
 
             expect(plotModel.getVTickCount()).toEqual(vTickCount);
             expect(plotModel.getHTickCount()).toEqual(hTickCount);

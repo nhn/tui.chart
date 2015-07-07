@@ -44,10 +44,10 @@ describe('test series model', function() {
                 scale: scale
             });
 
-            expect(seriesModel.makerArr2d).toEqual(values);
-            expect(seriesModel.colorArr).toEqual(colors);
-            expect(seriesModel.percentValueArr2d).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-            expect(seriesModel.lastColorArr).toEqual([]);
+            expect(seriesModel.markers).toEqual(values);
+            expect(seriesModel.colors).toEqual(colors);
+            expect(seriesModel.percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+            expect(seriesModel.lastColors).toEqual([]);
 
             seriesModel.setData({
                 values: values,
@@ -55,24 +55,23 @@ describe('test series model', function() {
                 scale: scale,
                 lastColors: lastColors
             });
-            expect(seriesModel.lastColorArr).toEqual(lastColors);
+            expect(seriesModel.lastColors).toEqual(lastColors);
         });
     });
 
-    describe('test initialize', function() {
+    describe('test construct', function() {
         it('init', function() {
-            var seriesModel = new SeriesModel({
-                data: {
+            var data = {
                     values: values,
                     colors: colors,
                     scale: scale,
                     lastColors: lastColors
-                }
-            });
+                },
+                seriesModel = new SeriesModel(data);
 
-            expect(seriesModel.makerArr2d).toEqual(values);
-            expect(seriesModel.percentValueArr2d).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-            expect(seriesModel.colorArr).toEqual(colors);
+            expect(seriesModel.markers).toEqual(values);
+            expect(seriesModel.percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+            expect(seriesModel.colors).toEqual(colors);
         });
     });
 });
