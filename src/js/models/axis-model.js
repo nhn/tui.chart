@@ -1,5 +1,6 @@
 /**
- * @fileoverview axis model
+ * @fileoverview This model is axis model for management of axis data.
+ *               Axis data used to draw the axis area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -19,9 +20,9 @@ AxisModel = ne.util.defineClass({
     axisType: null,
 
     /**
-     * constructor
-     * @param {object} data
-     * @param {object} options
+     * Constructor
+     * @param {{label:array, values: [array, ...]} data labels or values
+     * @param {object} options chart options
      */
     init: function(data, options) {
         this.options = options || {};
@@ -32,8 +33,8 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * set axis data
-     * @param {object} data
+     * Set axis data.
+     * @param {{label:array, values: [array, ...]} data labels or values
      */
     setData: function(data) {
         if (data.labels) {
@@ -44,8 +45,8 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * set label type axis data
-     * @param {array} labels
+     * Set label type axis data.
+     * @param {array} labels labels
      */
     setLabelAxisData: function(labels) {
         var options = this.options;
@@ -57,15 +58,14 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * set value type axis data
-     * @param {number} min
-     * @param {number} max
+     * Set value type axis data.
+     * @param {[array, ...]} arr2d chart values
      */
     setValueAxisData: function(arr2d) {
         var options = this.options,
-            arr = this.flatten2dArray(arr2d),
+            arr = this.flattenArray(arr2d),
             minMax = this.pickMinMax(arr),
-            scale = this.getCalculateScale(minMax.min, minMax.max, options.minValue),
+            scale = this.calculateScale(minMax.min, minMax.max, options.minValue),
             step = this.getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : arr,
             lenUnderPoint = this.pickMaxLenUnderPoint(formats),
@@ -79,11 +79,11 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * flatten 2d array
-     * @param {[array, ...]} arr2d
+     * Flatten array
+     * @param {[array, ...]} arr2d 2d array
      * @returns {array}
      */
-    flatten2dArray: function(arr2d) {
+    flattenArray: function(arr2d) {
         var result = ne.util.reduce(arr2d, function(concatArr, arr) {
             concatArr = concatArr.concat(aps.call(arr));
             return concatArr;
@@ -92,8 +92,8 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * pick min, max from user data
-     * @param {[array, ...]} arr2d user data
+     * Pick min and max from chart values
+     * @param {[array, ...]} arr2d chart values
      * @returns {{min: number, max: number}}
      */
     pickMinMax: function(arr) {
@@ -105,13 +105,13 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * calculate scale of axis value
+     * Calculate scale from chart min, max data.
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
-     * @param {number} min min value
-     * @param {number} max max value
+     * @param {number} min min chart min value
+     * @param {number} max max cahrt max value
      * @returns {{min: number, max: number}}
      */
-    getCalculateScale: function(min, max, optionMin) {
+    calculateScale: function(min, max, optionMin) {
         var scale = {},
             iodValue = (max - min) / 20; // increase or decrease the value;
         scale.max = max + iodValue;
@@ -128,7 +128,7 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * get scale step
+     * Get scale step.
      * @param {object} scale axis scale
      * @param {number} count value count
      * @returns {number}
@@ -166,8 +166,8 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * pick max length under point
-     * @param {[array, ...]}arr2d
+     * Pick max length under point.
+     * @param {array} arr chart values
      * @returns {number}
      */
     pickMaxLenUnderPoint: function(arr) {
@@ -184,10 +184,10 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * format labels
+     * Format labels.
      * @param {array} arr labels
      * @param {number} len length under point
-     * @returns {Array|*}
+     * @returns {Array}
      */
     formatLabels: function(arr, len) {
         var format, result;
@@ -205,7 +205,7 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * make labels from scale
+     * Make labels from scale.
      * @param {object} scale axis scale
      * @param {number} step step between max and min
      * @returns {array}
@@ -216,7 +216,7 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * check label type axis
+     * Is label axis?
      * @returns {boolean}
      */
     isLabelAxis: function() {
@@ -224,7 +224,7 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * check value type axis
+     * Is value axis?
      * @returns {boolean}
      */
     isValueAxis: function() {

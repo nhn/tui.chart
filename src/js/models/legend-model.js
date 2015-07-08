@@ -1,5 +1,6 @@
 /**
- * @fileoverview legend model
+ * @fileoverview This model is legend model for management of legend data.
+ *               Legend data used to draw the legend area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -46,8 +47,8 @@ LegendModel = ne.util.defineClass({
     data: [],
 
     /**
-     * set legend data
-     * @param {object} data
+     * Constructor
+     * @param {{labels: array, colors: array} data legend data
      */
     init: function(data) {
         if (data) {
@@ -56,15 +57,15 @@ LegendModel = ne.util.defineClass({
     },
 
     /**
-     * set legend data
-     * @param {object} data
+     * Get legend data.
+     * @param {{labels: array, colors: array} data legend data
      */
     setData: function(data) {
         this.data = this.zip(data.labels, data.colors);
     },
 
     /**
-     * get legend data
+     * Get legend data.
      * @returns {array}
      */
     getData: function() {

@@ -1,5 +1,6 @@
 /**
- * @fileoverview plot model
+ * @fileoverview This model is plot model for management of plot data.
+ *               Plot data used to draw the plot area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -13,7 +14,7 @@ PlotModel = ne.util.defineClass({
     hTickCount: 0,
 
     /**
-     * constructor
+     * Constructor
      * @param {data} data
      */
     init: function(data) {
@@ -23,8 +24,8 @@ PlotModel = ne.util.defineClass({
     },
 
     /**
-     * set plot data
-     * @param {object} data
+     * Set plot data.
+     * @param {vTickCount: number, hTickCount: number} data plot data
      */
     setData: function(data) {
         this.vTickCount = data.vTickCount || 0;
@@ -32,7 +33,7 @@ PlotModel = ne.util.defineClass({
     },
 
     /**
-     * get vertical tick count
+     * Get vertical tick count.
      * @returns {number}
      */
     getVTickCount: function() {
@@ -40,7 +41,7 @@ PlotModel = ne.util.defineClass({
     },
 
     /**
-     * get horizontal tick count
+     * Get horizontal tick count.
      * @returns {number}
      */
     getHTickCount: function() {

@@ -41,8 +41,8 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
-        it('flatten2dArray', function() {
-            var values = axisModel.flatten2dArray([[1, 2], [3, 4]]);
+        it('flattenArray', function() {
+            var values = axisModel.flattenArray([[1, 2], [3, 4]]);
             expect(values.length).toEqual(4);
         });
 
@@ -52,16 +52,16 @@ describe('test axis model', function() {
             expect(minMax.max).toEqual(80);
         });
 
-        it('getCalculateScale', function() {
-            var scale = axisModel.getCalculateScale(10, 100);
+        it('calculateScale', function() {
+            var scale = axisModel.calculateScale(10, 100);
             expect(scale.max).toEqual(104.5);
             expect(scale.min).toEqual(0);
 
-            scale = axisModel.getCalculateScale(20, 100);
+            scale = axisModel.calculateScale(20, 100);
             expect(scale.max).toEqual(104);
             expect(scale.min).toEqual(16);
 
-            scale = axisModel.getCalculateScale(20, 100, 0);
+            scale = axisModel.calculateScale(20, 100, 0);
             expect(scale.max).toEqual(104);
             expect(scale.min).toEqual(0);
         });

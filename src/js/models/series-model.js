@@ -1,5 +1,6 @@
 /**
- * @fileoverview series model
+ * @fileoverview This model is series model for management of series data.
+ *               Series data used to draw the series area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -16,7 +17,7 @@ SeriesModel = ne.util.defineClass({
     lastColors: [],
 
     /**
-     * constructor
+     * Constructor
      * @param {data} data
      */
     init: function(data) {
@@ -26,8 +27,8 @@ SeriesModel = ne.util.defineClass({
     },
 
     /**
-     * set series data
-     * @param data
+     * Set series data.
+     * @param {{values: array, scale: object, colors: array}} data series data
      */
     setData: function(data) {
         if (!data || ne.util.isEmpty(data.values) || !data.scale || !data.colors) {
@@ -44,10 +45,10 @@ SeriesModel = ne.util.defineClass({
     },
 
     /**
-     * convert two dimensional(2d) array
-     * @param {Array} arr2d target 2d array
-     * @param {Function} callback convert function
-     * @returns {Array}
+     * Convert two dimensional(2d) array.
+     * @param {[array, ...]} arr2d target 2d array
+     * @param {function} callback convert callback function
+     * @returns {array}
      */
     convertValues: function(arr2d, callback) {
         var result = ne.util.map(arr2d, function(arr) {
@@ -57,10 +58,10 @@ SeriesModel = ne.util.defineClass({
     },
 
     /**
-     * make to percent value
-     * @param {Array} arr2d maker data
-     * @param {Object} scale min, max scale
-     * @returns {Array}
+     * Make to percent value.
+     * @param {[array, ...]} arr2d maker data
+     * @param {{min:number, max:number}} scale min, max scale
+     * @returns {array}
      */
     makePercentValues: function(arr2d, scale) {
         var min = scale.min,
@@ -72,10 +73,10 @@ SeriesModel = ne.util.defineClass({
     },
 
     /**
-     * make to pixel value
-     * @param arr2d percent data
-     * @param size width or height
-     * @returns {Array}
+     * Make to pixel value.
+     * @param {[array, ...]}arr2d percent data
+     * @param {number} size width or height
+     * @returns {array}
      */
     makePixelValues: function(arr2d, size) {
         var result = this.convertValues(arr2d, function(value) {

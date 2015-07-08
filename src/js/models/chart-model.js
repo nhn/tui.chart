@@ -1,5 +1,6 @@
 /**
- * @fileoverview chart model
+ * @fileoverview This model is parent chart model.
+ *               This model provides a method to convert the data.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -12,9 +13,9 @@ var chartConst = require('../const.js'),
 
 ChartModel = ne.util.defineClass({
     /**
-     * constructor
-     * @param {object} data
-     * @param {object} options
+     * Constructor
+     * @param {object} data user chart data
+     * @param {object} options user options
      */
     init: function(data, options) {
         this.options = options || {};
@@ -23,13 +24,16 @@ ChartModel = ne.util.defineClass({
         }
     },
 
+    /**
+     * Please implement the setData.
+     */
     setData: function() {
       throw new Error('Please implement the setData.');
     },
 
     /**
-     * pick colors
-     * @param {number} count
+     * Pick colors.
+     * @param {number} count color count
      * @returns {array}
      */
     pickColors: function(count) {
@@ -47,31 +51,31 @@ ChartModel = ne.util.defineClass({
     },
 
     /**
-     * picked axis data from user initial data
-     * axis data is pairs of label and value​
-     * @param {object} data user initial data
-     * @return {object} series data;
+     * Pick axis data from user data.
+     * Axis data is pairs of label and value​.
+     * @param {object} data user data
+     * @return {object} axis data;
      */
     pickAxisData: function(data) {
         var titleArr = data[0],
-            seriesData = aps.call(data);
+            axisData = aps.call(data);
 
-        seriesData.shift();
+        axisData.shift();
 
         if (this.hasStyleOption(titleArr)) {
-            seriesData = ne.util.map(seriesData, function(items) {
+            axisData = ne.util.map(axisData, function(items) {
                 items = aps.call(items);
                 items.length = items.length - 1;
                 return items;
             });
         }
 
-        return seriesData;
+        return axisData;
     },
 
     /**
-     * pick labels from axis data
-     * @param {object} axisData
+     * Pick labels from axis data.
+     * @param {object} axisData axis data
      * @returns {array}
      */
     pickLabels: function(axisData) {
@@ -82,8 +86,8 @@ ChartModel = ne.util.defineClass({
     },
 
     /**
-     * pick values from axis data
-     * @param {object} axisData
+     * Pick values from axis data.
+     * @param {object} axisData axis data
      * @returns {array}
      */
     pickValues: function(axisData) {
@@ -96,24 +100,24 @@ ChartModel = ne.util.defineClass({
     },
 
     /**
-     * has style option
-     * @param {array} arr
+     * Has style option?
+     * @param {array} arr labels
      * @returns {boolean}
      */
     hasStyleOption: function(arr) {
-        var lastItem = arr[arr.length-1];
-        return ne.util.isObject(lastItem);
+        var last = arr[arr.length-1];
+        return ne.util.isObject(last);
     },
 
     /**
-     * pick legend labels
-     * @param {array} titleArr
+     * Pick legend labels.
+     * @param {array} arr labels
      * @returns {Object}
      */
-    pickLegendLabels: function(titleArr) {
-        var hasOption = this.hasStyleOption(titleArr),
-            last = hasOption ? titleArr.length - 1 : -1,
-            arr = ne.util.filter(titleArr, function(label, index) {
+    pickLegendLabels: function(arr) {
+        var hasOption = this.hasStyleOption(arr),
+            last = hasOption ? arr.length - 1 : -1,
+            arr = ne.util.filter(arr, function(label, index) {
                 return index !== 0 && index !== last;
             });
         return arr;

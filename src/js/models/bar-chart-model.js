@@ -1,5 +1,5 @@
 /**
- * @fileoverview bar chart model
+ * @fileoverview This model is bar chart model for management of bar chart data.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -24,17 +24,17 @@ BarChartModel = ne.util.defineClass(ChartModel, {
     bars: 'vertical',
 
     /**
-     * constructor
-     * @param {object} data
-     * @param {object} options
+     * Constructor
+     * @param {object} data user chart data
+     * @param {object} options chart options
      */
     init: function(data, options) {
         ChartModel.prototype.init.call(this, data, options);
     },
 
     /**
-     * set bar chart data
-     * @param {object} data
+     * Set bar chart data.
+     * @param {object} data user chart data
      */
     setData: function(data) {
         var options = this.options || {},
