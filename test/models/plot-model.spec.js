@@ -16,15 +16,15 @@ describe('test plot model', function() {
         it('setData', function() {
             var plotModel = new PlotModel();
 
-            plotModel.setData({vTickCount: vTickCount, hTickCount: hTickCount});
+            plotModel._setData({vTickCount: vTickCount, hTickCount: hTickCount});
             expect(plotModel.getVTickCount()).toEqual(vTickCount);
             expect(plotModel.getHTickCount()).toEqual(hTickCount);
 
-            plotModel.setData({vTickCount: vTickCount});
+            plotModel._setData({vTickCount: vTickCount});
             expect(plotModel.getVTickCount()).toEqual(vTickCount);
             expect(plotModel.getHTickCount()).toEqual(0);
 
-            plotModel.setData({hTickCount: hTickCount});
+            plotModel._setData({hTickCount: hTickCount});
             expect(plotModel.getVTickCount()).toEqual(0);
             expect(plotModel.getHTickCount()).toEqual(hTickCount);
         });

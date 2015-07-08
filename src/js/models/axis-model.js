@@ -7,48 +7,77 @@
 
 'use strict';
 
-var aps = Array.prototype.slice,
+var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
     AxisModel;
 
 AxisModel = ne.util.defineClass({
-    title: '',
-    labels: [],
-    tickCount: 5,
-    scale: null,
-    axisType: null,
-
     /**
      * Constructor
      * @param {{label:array, values: [array, ...]} data labels or values
      * @param {object} options chart options
      */
     init: function(data, options) {
+        /**
+         * Axis options
+         * @type {object}
+         */
         this.options = options || {};
 
+        /**
+         * Axis title
+         * @type {string}
+         */
+        this.title = '',
+
+        /**
+         * Axis labels
+         * @type {array}
+         */
+        this.labels = [];
+
+        /**
+         * Axis tick count
+         * @type {number}
+         */
+        this.tickCount = 5;
+
+        /**
+         * Axis tick scale
+         * @type {{min: number, max: number}
+         */
+        this.scale = null;
+
+        /**
+         * Axis type
+         * @type {string}
+         */
+        this.axisType = null;
         if (data) {
-            this.setData(data);
+            this._setData(data);
         }
     },
 
     /**
      * Set axis data.
      * @param {{label:array, values: [array, ...]} data labels or values
+     * @private
      */
-    setData: function(data) {
+    _setData: function(data) {
         if (data.labels) {
-            this.setLabelAxisData(data.labels);
+            this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this.setValueAxisData(data.values);
+            this._setValueAxisData(data.values);
         }
     },
 
     /**
      * Set label type axis data.
      * @param {array} labels labels
+     * @private
      */
-    setLabelAxisData: function(labels) {
+    _setLabelAxisData: function(labels) {
         var options = this.options;
 
         this.title = options.title || this.title;
@@ -60,18 +89,19 @@ AxisModel = ne.util.defineClass({
     /**
      * Set value type axis data.
      * @param {[array, ...]} arr2d chart values
+     * @private
      */
-    setValueAxisData: function(arr2d) {
+    _setValueAxisData: function(arr2d) {
         var options = this.options,
-            arr = this.flattenArray(arr2d),
-            minMax = this.pickMinMax(arr),
-            scale = this.calculateScale(minMax.min, minMax.max, options.minValue),
-            step = this.getScaleStep(scale, this.tickCount),
+            arr = apc.apply([], arr2d), // flatten array
+            minMax = this._pickMinMax(arr),
+            scale = this._calculateScale(minMax.min, minMax.max, options.minValue),
+            step = this._getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : arr,
-            lenUnderPoint = this.pickMaxLenUnderPoint(formats),
+            lenUnderPoint = this._pickMaxLenUnderPoint(formats),
             labels = this.range(scale.min, scale.max + 1, step);
 
-        labels = this.formatLabels(labels, lenUnderPoint);
+        labels = this._formatLabels(labels, lenUnderPoint);
         this.title = options.title || this.title;
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
@@ -79,24 +109,12 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
-     * Flatten array
-     * @param {[array, ...]} arr2d 2d array
-     * @returns {array}
-     */
-    flattenArray: function(arr2d) {
-        var result = ne.util.reduce(arr2d, function(concatArr, arr) {
-            concatArr = concatArr.concat(aps.call(arr));
-            return concatArr;
-        }, []);
-        return result;
-    },
-
-    /**
      * Pick min and max from chart values
      * @param {[array, ...]} arr2d chart values
      * @returns {{min: number, max: number}}
+     * @private
      */
-    pickMinMax: function(arr) {
+    _pickMinMax: function(arr) {
         arr.sort(function(a, b) {
             return a - b;
         });
@@ -109,9 +127,11 @@ AxisModel = ne.util.defineClass({
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min chart min value
      * @param {number} max max cahrt max value
+     * @params {optionMin} optional min value
      * @returns {{min: number, max: number}}
+     * @private
      */
-    calculateScale: function(min, max, optionMin) {
+    _calculateScale: function(min, max, optionMin) {
         var scale = {},
             iodValue = (max - min) / 20; // increase or decrease the value;
         scale.max = max + iodValue;
@@ -132,8 +152,9 @@ AxisModel = ne.util.defineClass({
      * @param {object} scale axis scale
      * @param {number} count value count
      * @returns {number}
+     * @private
      */
-    getScaleStep: function(scale, count) {
+    _getScaleStep: function(scale, count) {
         return (scale.max - scale.min) / (count - 1);
     },
 
@@ -169,8 +190,9 @@ AxisModel = ne.util.defineClass({
      * Pick max length under point.
      * @param {array} arr chart values
      * @returns {number}
+     * @private
      */
-    pickMaxLenUnderPoint: function(arr) {
+    _pickMaxLenUnderPoint: function(arr) {
         var max = 0;
 
         ne.util.forEachArray(arr, function(value) {
@@ -188,8 +210,9 @@ AxisModel = ne.util.defineClass({
      * @param {array} arr labels
      * @param {number} len length under point
      * @returns {Array}
+     * @private
      */
-    formatLabels: function(arr, len) {
+    _formatLabels: function(arr, len) {
         var format, result;
         if (len === 0) {
             format = function(value) {
@@ -209,8 +232,9 @@ AxisModel = ne.util.defineClass({
      * @param {object} scale axis scale
      * @param {number} step step between max and min
      * @returns {array}
+     * @private
      */
-    makeLabelsFromScale: function(scale, step) {
+    _makeLabelsFromScale: function(scale, step) {
         var labels = this.range(scale.min, scale.max + 1, step);
         return labels;
     },

@@ -10,33 +10,58 @@
 var SeriesModel;
 
 SeriesModel = ne.util.defineClass({
-    markers: [],
-    percentValues: [],
-    tickScale: {},
-    colors: [],
-    lastColors: [],
-
     /**
      * Constructor
      * @param {data} data
      */
     init: function(data) {
+        /**
+         * Series makers
+         * @type {array}
+         */
+        this.markers = [];
+
+        /**
+         * Series percent values
+         * @type {Array}
+         */
+        this.percentValues = [];
+
+        /**
+         * Axis scale
+         * @type {{min: number, max: number}}
+         */
+        this.tickScale = {};
+
+        /**
+         * Series colors
+         * @type {Array}
+         */
+        this.colors = [];
+
+        /**
+         * Series lastColors
+         * @type {Array}
+         */
+        this.lastColors = [];
+
         if (data) {
-            this.setData(data);
+            this._setData(data);
         }
     },
 
     /**
      * Set series data.
      * @param {{values: array, scale: object, colors: array}} data series data
+     * @private
      */
-    setData: function(data) {
+    _setData: function(data) {
         if (!data || ne.util.isEmpty(data.values) || !data.scale || !data.colors) {
             throw new Error('...');
         }
 
         this.markers = data.values;
-        this.percentValues = this.makePercentValues(data.values, data.scale);
+        this.percentValues = this._makePercentValues(data.values, data.scale);
         this.colors = data.colors;
 
         if (ne.util.isNotEmpty(data.lastColors)) {
@@ -49,8 +74,9 @@ SeriesModel = ne.util.defineClass({
      * @param {[array, ...]} arr2d target 2d array
      * @param {function} callback convert callback function
      * @returns {array}
+     * @private
      */
-    convertValues: function(arr2d, callback) {
+    _convertValues: function(arr2d, callback) {
         var result = ne.util.map(arr2d, function(arr) {
             return ne.util.map(arr, callback);
         });
@@ -62,11 +88,12 @@ SeriesModel = ne.util.defineClass({
      * @param {[array, ...]} arr2d maker data
      * @param {{min:number, max:number}} scale min, max scale
      * @returns {array}
+     * @private
      */
-    makePercentValues: function(arr2d, scale) {
+    _makePercentValues: function(arr2d, scale) {
         var min = scale.min,
             max = scale.max,
-            result = this.convertValues(arr2d, function(value) {
+            result = this._convertValues(arr2d, function(value) {
                 return (value - min) / max;
             });
         return result;
@@ -78,8 +105,8 @@ SeriesModel = ne.util.defineClass({
      * @param {number} size width or height
      * @returns {array}
      */
-    makePixelValues: function(arr2d, size) {
-        var result = this.convertValues(arr2d, function(value) {
+    getPixelValues: function(size) {
+        var result = this._convertValues(this.percentValues, function(value) {
             return value * size;
         });
         return result;

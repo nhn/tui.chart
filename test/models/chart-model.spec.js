@@ -26,68 +26,69 @@ describe('test chart model', function() {
         ],
         userData3 = [
             ['Element', 'Density', 'Density2', 'Density3', {role: 'style'}]
+        ],
+        axisData = [
+            ['Copper', 8.94],
+            ['Silver', 10.49],
+            ['Gold', 19.30],
+            ['Platinum', 21.45]
         ];
 
     describe('test method', function() {
         var chartModel = new ChartModel();
 
         it('pickColor', function() {
-            var colors = chartModel.pickColors(3),
-                compareColors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS);
+            var colors = chartModel._pickColors(3),
+                compareColors = chartConst.DEFAUlT_COLORS.slice();
 
             compareColors.length = 3;
             expect(colors).toEqual(compareColors);
         });
 
-        it('pickAxisData', function() {
-            var seriesData = chartModel.pickAxisData(userData);
+        it('_pickAxisData', function() {
+            var result = chartModel._pickAxisData(userData);
 
             // removed title items
-            expect(seriesData.length).toEqual(userData.length-1);
-            expect(seriesData[0][0]).toEqual('Copper');
+            expect(result.length).toEqual(userData.length-1);
+            expect(result).toEqual(axisData);
 
-            seriesData = chartModel.pickAxisData(userData2);
+            result = chartModel._pickAxisData(userData2);
 
             // removed title items
-            expect(seriesData.length).toEqual(userData2.length-1);
-            // removed 2d array last item of seriesData
-            expect(seriesData[0].length).toEqual(2);
-            // not removed 2d array last item of origin data
-            expect(userData2[1].length).toEqual(3);
+            expect(result.length).toEqual(userData2.length-1);
+            expect(result).toEqual(axisData);
         });
 
-        it('pickLabels', function() {
-            var seriesData = chartModel.pickAxisData(userData),
-                labels = chartModel.pickLabels(seriesData);
+        it('_pickLabels', function() {
+            var result = chartModel._pickLabels(axisData);
 
-            expect(labels.length).toEqual(seriesData.length);
-            expect(labels[0]).toEqual(seriesData[0][0]);
+            expect(result.length).toEqual(axisData.length);
+            expect(result).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
         });
 
-        it('pickValues', function() {
-            var seriesData = chartModel.pickAxisData(userData),
-                values = chartModel.pickValues(seriesData);
+        it('_pickValues', function() {
+            var result = chartModel._pickValues(axisData);
 
-            expect(values.length).toEqual(seriesData.length);
-            expect(values[0][0]).toEqual(seriesData[0][1]);
+            expect(result.length).toEqual(axisData.length);
+            expect(result).toEqual([[8.94], [10.49], [19.30], [21.45]]);
         });
 
-        it('hasStyleOption', function() {
-            var hasOption = chartModel.hasStyleOption(userData[0]);
+        it('_hasStyleOption', function() {
+            var hasOption = chartModel._hasStyleOption(userData[0]);
             expect(hasOption).toBeFalsy();
 
-            hasOption = chartModel.hasStyleOption(userData2[0]);
+            hasOption = chartModel._hasStyleOption(userData2[0]);
             expect(hasOption).toBeTruthy();
         });
 
-        it('pickLegendLabels', function() {
-            var labels = chartModel.pickLegendLabels(userData[0]);
+        it('_pickLegendLabels', function() {
+            var labels = chartModel._pickLegendLabels(userData[0]);
             expect(labels).toEqual(['Density']);
 
-            labels = chartModel.pickLegendLabels(userData2[0]);
+            labels = chartModel._pickLegendLabels(userData2[0]);
             expect(labels).toEqual(['Density']);
 
-            labels = chartModel.pickLegendLabels(userData3[0]);
+            labels = chartModel._pickLegendLabels(userData3[0]);
             expect(labels).toEqual(['Density', 'Density2', 'Density3']);
         });
     });
@@ -97,7 +98,7 @@ describe('test chart model', function() {
             var chartModel = new ChartModel(null, {
                     colors: ['black', 'white', 'gray']
                 }),
-                colors = chartModel.pickColors(2);
+                colors = chartModel._pickColors(2);
             expect(colors).toEqual(['black', 'white']);
         });
     });

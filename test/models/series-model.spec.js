@@ -9,12 +9,8 @@
 var SeriesModel = require('../../src/js/models/series-model.js');
 
 describe('test series model', function() {
-    var values = [
-            [20],
-            [40],
-            [80],
-            [120]
-        ],
+    var values = [[20], [40], [80], [120]],
+        percentValues = [[0.125], [0.25], [0.5], [0.75]],
         colors = ['blue'],
         lastColors =  ['red', 'ornage', 'yellow', 'green'],
         scale = {min: 0, max: 160 };
@@ -26,19 +22,22 @@ describe('test series model', function() {
             seriesModel = new SeriesModel();
         });
 
-        it('makePercentValues', function() {
-            var percentValues = seriesModel.makePercentValues(values, scale);
-            expect(percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+        it('_makePercentValues', function() {
+            var percentValues = seriesModel._makePercentValues(values, scale);
+            expect(percentValues).toEqual(percentValues);
         });
 
-        it('makePixelValues', function() {
-            var percentValues = seriesModel.makePercentValues(values, scale),
-                pixelValues = seriesModel.makePixelValues(percentValues, 400);
+        it('getPixelValues', function() {
+            var pixelValues;
+
+            seriesModel.percentValues = seriesModel._makePercentValues(values, scale);
+            pixelValues = seriesModel.getPixelValues(400);
+
             expect(pixelValues).toEqual([[50], [100], [200], [300]]);
         });
 
-        it('setData', function() {
-            seriesModel.setData({
+        it('_setData', function() {
+            seriesModel._setData({
                 values: values,
                 colors: colors,
                 scale: scale
@@ -46,10 +45,10 @@ describe('test series model', function() {
 
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.colors).toEqual(colors);
-            expect(seriesModel.percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+            expect(seriesModel.percentValues).toEqual(percentValues);
             expect(seriesModel.lastColors).toEqual([]);
 
-            seriesModel.setData({
+            seriesModel._setData({
                 values: values,
                 colors: colors,
                 scale: scale,
@@ -67,11 +66,18 @@ describe('test series model', function() {
                     scale: scale,
                     lastColors: lastColors
                 },
-                seriesModel = new SeriesModel(data);
+                seriesModel = new SeriesModel(data),
+                pixelValues;
 
             expect(seriesModel.markers).toEqual(values);
-            expect(seriesModel.percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+            expect(seriesModel.percentValues).toEqual(percentValues);
             expect(seriesModel.colors).toEqual(colors);
+
+            pixelValues = seriesModel.getPixelValues(400);
+            expect(pixelValues).toEqual([[50], [100], [200], [300]]);
+
+            pixelValues = seriesModel.getPixelValues(200);
+            expect(pixelValues).toEqual([[25], [50], [100], [150]]);
         });
     });
 });

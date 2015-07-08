@@ -8,40 +8,76 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    aps = Array.prototype.slice,
     ChartModel;
 
 ChartModel = ne.util.defineClass({
+    /**
+     * Chart title
+     * @type {string}
+     */
+    title: '',
+
+    /**
+     * Chart area percentage
+     * @type {string}
+     */
+    chartArea: '50%',
     /**
      * Constructor
      * @param {object} data user chart data
      * @param {object} options user options
      */
     init: function(data, options) {
-        this.options = options || {};
+        options = options || {};
+
+        this.options = options;
+
+        this._setTitle(options.title || this.title);
+        this._setChartArea(options.chartArea || this.chartArea);
+
         if (data) {
-            this.setData(data);
+            this._setData(data);
         }
     },
 
     /**
      * Please implement the setData.
+     * @private
      */
-    setData: function() {
+    _setData: function() {
       throw new Error('Please implement the setData.');
+    },
+
+    /**
+     * Set title.
+     * @param {string} title
+     * @private
+     */
+    _setTitle: function(title) {
+        this.title = title;
+    },
+
+    /**
+     * set chartArea.
+     * @param {string} chartArea
+     * @private
+     */
+    _setChartArea: function(chartArea) {
+        this.chartArea = chartArea;
     },
 
     /**
      * Pick colors.
      * @param {number} count color count
      * @returns {array}
+     * @private
      */
-    pickColors: function(count) {
+    _pickColors: function(count) {
         var colors;
         if (this.options && this.options.colors) {
             colors = this.options.colors;
         } else {
-            colors = aps.call(chartConst.DEFAUlT_COLORS);
+            colors = chartConst.DEFAUlT_COLORS.slice();
         }
 
         if (count && count > 0) {
@@ -55,16 +91,17 @@ ChartModel = ne.util.defineClass({
      * Axis data is pairs of label and value​.
      * @param {object} data user data
      * @return {object} axis data;
+     * @private
      */
-    pickAxisData: function(data) {
+    _pickAxisData: function(data) {
         var titleArr = data[0],
-            axisData = aps.call(data);
+            axisData = data.slice();
 
         axisData.shift();
 
-        if (this.hasStyleOption(titleArr)) {
+        if (this._hasStyleOption(titleArr)) {
             axisData = ne.util.map(axisData, function(items) {
-                items = aps.call(items);
+                items = items.slice();
                 items.length = items.length - 1;
                 return items;
             });
@@ -77,8 +114,9 @@ ChartModel = ne.util.defineClass({
      * Pick labels from axis data.
      * @param {object} axisData axis data
      * @returns {array}
+     * @private
      */
-    pickLabels: function(axisData) {
+    _pickLabels: function(axisData) {
         var arr = ne.util.map(axisData, function(items) {
             return items[0];
         });
@@ -89,10 +127,11 @@ ChartModel = ne.util.defineClass({
      * Pick values from axis data.
      * @param {object} axisData axis data
      * @returns {array}
+     * @private
      */
-    pickValues: function(axisData) {
+    _pickValues: function(axisData) {
         var arr2d = ne.util.map(axisData, function(items) {
-            var values = aps.call(items);
+            var values = items.slice();
             values.shift();
             return values;
         });
@@ -103,8 +142,9 @@ ChartModel = ne.util.defineClass({
      * Has style option?
      * @param {array} arr labels
      * @returns {boolean}
+     * @private
      */
-    hasStyleOption: function(arr) {
+    _hasStyleOption: function(arr) {
         var last = arr[arr.length-1];
         return ne.util.isObject(last);
     },
@@ -113,9 +153,10 @@ ChartModel = ne.util.defineClass({
      * Pick legend labels.
      * @param {array} arr labels
      * @returns {Object}
+     * @private
      */
-    pickLegendLabels: function(arr) {
-        var hasOption = this.hasStyleOption(arr),
+    _pickLegendLabels: function(arr) {
+        var hasOption = this._hasStyleOption(arr),
             last = hasOption ? arr.length - 1 : -1,
             arr = ne.util.filter(arr, function(label, index) {
                 return index !== 0 && index !== last;

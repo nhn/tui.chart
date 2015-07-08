@@ -10,24 +10,34 @@
 var PlotModel;
 
 PlotModel = ne.util.defineClass({
-    vTickCount: 0,
-    hTickCount: 0,
-
     /**
      * Constructor
      * @param {data} data
      */
     init: function(data) {
+        /**
+         * Vertical tick count
+         * @type {number}
+         */
+        this.vTickCount = 0;
+
+        /**
+         * Horizontal tick count
+         * @type {number}
+         */
+        this.hTickCount = 0;
+
         if (data) {
-            this.setData(data);
+            this._setData(data);
         }
     },
 
     /**
      * Set plot data.
      * @param {vTickCount: number, hTickCount: number} data plot data
+     * @private
      */
-    setData: function(data) {
+    _setData: function(data) {
         this.vTickCount = data.vTickCount || 0;
         this.hTickCount = data.hTickCount || 0;
     },

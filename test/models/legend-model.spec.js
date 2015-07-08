@@ -24,7 +24,7 @@ describe('test legend model', function() {
         it('setData', function() {
             var legendModel = new LegendModel();
 
-            legendModel.setData({labels: labels, colors: colors});
+            legendModel._setData({labels: labels, colors: colors});
             var data = legendModel.getData();
 
             expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));

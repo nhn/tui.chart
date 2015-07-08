@@ -44,23 +44,28 @@ LegendModel = ne.util.defineClass({
         return result;
     },
 
-    data: [],
-
     /**
      * Constructor
      * @param {{labels: array, colors: array} data legend data
      */
     init: function(data) {
+        /**
+         * Legend data
+         * @type {[[array, array], ...]}
+         */
+        this.data = [];
+
         if (data) {
-            this.setData(data);
+            this._setData(data);
         }
     },
 
     /**
      * Get legend data.
      * @param {{labels: array, colors: array} data legend data
+     * @private
      */
-    setData: function(data) {
+    _setData: function(data) {
         this.data = this.zip(data.labels, data.colors);
     },
 

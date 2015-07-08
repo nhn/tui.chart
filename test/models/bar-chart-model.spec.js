@@ -21,8 +21,8 @@ describe('test bar chart model', function() {
     describe('test method', function() {
         var barChartModel = new BarChartModel();
 
-        it('setData', function() {
-            barChartModel.setData(userData);
+        it('_setData', function() {
+            barChartModel._setData(userData);
             expect(barChartModel.vAxis.axisType).toEqual('value');
             expect(barChartModel.hAxis.axisType).toEqual('label');
             expect(barChartModel.plot.hTickCount).toEqual(4);

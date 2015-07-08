@@ -14,64 +14,141 @@ var ChartModel = require('./chart-model.js'),
     BarChartModel;
 
 BarChartModel = ne.util.defineClass(ChartModel, {
-    title: '',
-    chartArea: '50%',
-    hAxis: null,
-    vAxis: null,
-    legend: null,
-    plot: null,
-    series: null,
-    bars: 'vertical',
-
     /**
      * Constructor
      * @param {object} data user chart data
      * @param {object} options chart options
      */
     init: function(data, options) {
+        options = options || {};
+
+        /**
+         * Horizontal AxisModel instance
+         * @type {object}
+         */
+        this.hAxis = null;
+
+        /**
+         * Vertical AxisModel instance
+         * @type {object}
+         */
+        this.vAxis = null;
+
+        /**
+         * Legend Model instance
+         * @type {object}
+         */
+        this.legend = null;
+
+        /**
+         * PlotModel instance
+         * @type {object}
+         */
+        this.plot = null;
+
+        /**
+         * SeriesModel instance
+         * @type {object}
+         */
+        this.series = null;
+
+        /**
+         * Bar chart type
+         * vertical or horizontal
+         * @type {string}
+         */
+        this.bars = 'vertical';
+
+        this._setBars(options.bars || this.bars);
+
         ChartModel.prototype.init.call(this, data, options);
     },
 
     /**
      * Set bar chart data.
      * @param {object} data user chart data
+     * @private
      */
-    setData: function(data) {
+    _setData: function(data) {
         var options = this.options || {},
-            axisData = this.pickAxisData(data),
-            labels = this.pickLabels(axisData),
-            values = this.pickValues(axisData),
-            legendLabels = this.pickLegendLabels(data[0]),
+            axisData = this._pickAxisData(data),
+            labels = this._pickLabels(axisData),
+            values = this._pickValues(axisData),
+            legendLabels = this._pickLegendLabels(data[0]),
             hAxis = new AxisModel({labels: labels}, options.hAxis),
             vAxis = new AxisModel({values: values}, options.vAxis),
             axisScale = vAxis.scale,
-            colors = this.pickColors(legendLabels.length);
+            colors = this._pickColors(legendLabels.length);
 
-        this.title = options.title || this.title;
-        this.chartArea = options.chartArea || this.chartArea;
-        this.bars = options.bars || this.bars;
+        this._setAxis(hAxis, vAxis, this.bars);
+        this._setPlot(this.hAxis.tickCount, this.vAxis.tickCount);
+        this._setLegend(legendLabels, colors);
+        this._setSeries(values, axisScale, colors);
+    },
 
-        if (this.bars === 'vertical') {
+    /**
+     * Set bars.
+     * @param {string} bars
+     * @private
+     */
+    _setBars: function(bars) {
+        this.bars = bars;
+    },
+
+    /**
+     * Set axis.
+     * @param {object} hAxis horizontal axis
+     * @param {object} vAxis vertical axis
+     * @param {object} bars bar type
+     * @private
+     */
+    _setAxis: function(hAxis, vAxis, bars) {
+        if (bars === 'vertical') {
             this.hAxis = hAxis;
             this.vAxis = vAxis;
         } else {
             this.hAxis = vAxis;
             this.vAxis = hAxis;
         }
+    },
 
+    /**
+     * Set plot.
+     * @param {number} hTickcount horizontal tick count
+     * @param {number} vTickCount vertical tick count
+     * @private
+     */
+    _setPlot: function(hTickcount, vTickCount) {
         this.plot = new PlotModel({
-            vTickCount: this.vAxis.tickCount,
-            hTickCount: this.hAxis.tickCount
+            hTickCount: hTickcount,
+            vTickCount: vTickCount
         });
+    },
 
+    /**
+     * Set legend.
+     * @param {array} labels legend labels
+     * @param {array} colors legend colors
+     * @private
+     */
+    _setLegend: function(labels, colors) {
         this.legend = new LegendModel({
-            labels: legendLabels,
+            labels: labels,
             colors: colors
         });
+    },
 
+    /**
+     * Set series
+     * @param {[array, ...]} values chart values
+     * @param {{min: number, max: number}} scale axis scale
+     * @param {array} colors series colors
+     * @private
+     */
+    _setSeries: function(values, scale, colors) {
         this.series = new SeriesModel({
             values: values,
-            scale: axisScale,
+            scale: scale,
             colors: colors
         });
     }
