@@ -6,11 +6,11 @@
 
 'use strict';
 
-var ChartModel = require('./chart-model.js'),
-    AxisModel = require('./axis-model.js'),
-    PlotModel = require('./plot-model.js'),
-    LegendModel = require('./legend-model.js'),
-    SeriesModel = require('./series-model.js'),
+var ChartModel = require('./chartModel.js'),
+    AxisModel = require('./axisModel.js'),
+    PlotModel = require('./plotModel.js'),
+    LegendModel = require('./legendModel.js'),
+    SeriesModel = require('./seriesModel.js'),
     BarChartModel;
 
 BarChartModel = ne.util.defineClass(ChartModel, {

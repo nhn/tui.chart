@@ -6,7 +6,7 @@
 
 'use strict';
 
-var LegendModel = require('../../src/js/models/legend-model.js'),
+var LegendModel = require('../../src/js/models/legendModel.js'),
     chartConst = require('../../src/js/const.js');
 
 describe('test legend model', function() {

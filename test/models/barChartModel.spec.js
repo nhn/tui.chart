@@ -5,7 +5,7 @@
 
 'use strict';
 
-var BarChartModel = require('../../src/js/models/bar-chart-model.js'),
+var BarChartModel = require('../../src/js/models/barChartModel.js'),
     chartConst = require('../../src/js/const.js');
 
 describe('test bar chart model', function() {

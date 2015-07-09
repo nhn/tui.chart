@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AxisModel = require('../../src/js/models/axis-model.js');
+var AxisModel = require('../../src/js/models/axisModel.js');
 
 describe('test axis model', function() {
     var labels = [

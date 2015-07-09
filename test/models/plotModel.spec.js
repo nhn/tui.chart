@@ -6,7 +6,7 @@
 
 'use strict';
 
-var PlotModel = require('../../src/js/models/plot-model.js');
+var PlotModel = require('../../src/js/models/plotModel.js');
 
 describe('test plot model', function() {
     var vTickCount = 5,

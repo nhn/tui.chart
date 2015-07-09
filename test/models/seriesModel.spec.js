@@ -6,7 +6,7 @@
 
 'use strict';
 
-var SeriesModel = require('../../src/js/models/series-model.js');
+var SeriesModel = require('../../src/js/models/seriesModel.js');
 
 describe('test series model', function() {
     var values = [[20], [40], [80], [120]],
