@@ -54,6 +54,13 @@ AxisModel = ne.util.defineClass({
          * @type {string}
          */
         this.axisType = null;
+
+        /**
+         * Is vertical?
+         * @type {boolean}
+         */
+        this.isVertical = false;
+
         if (data) {
             this._setData(data);
         }
@@ -83,7 +90,7 @@ AxisModel = ne.util.defineClass({
         this.title = options.title || this.title;
         this.axisType = AXIS_TYPE_LABEL;
         this.labels = labels;
-        this.tickCount = labels.length;
+        this.tickCount = labels.length + 1;
     },
 
     /**
@@ -240,6 +247,21 @@ AxisModel = ne.util.defineClass({
     },
 
     /**
+     * Makes tick pixel positions.
+     * @param {number} size axis area width or height
+     * @returns {Array}
+     */
+    makeTickPixelPositions: function(size) {
+        var pxScale = {min: 0, max: size - 1},
+            pxStep = this._getScaleStep(pxScale, this.tickCount),
+            positions = ne.util.map(this.range(0, size, pxStep), function(position) {
+                return Math.round(position);
+            });
+        positions[positions.length-1] = size - 1;
+        return positions;
+    },
+
+    /**
      * Is label axis?
      * @returns {boolean}
      */
@@ -253,6 +275,13 @@ AxisModel = ne.util.defineClass({
      */
     isValueAxis: function() {
         return this.axisType === AXIS_TYPE_VALUE;
+    },
+
+    /**
+     * Vertical is.
+     */
+    verticalIs: function() {
+        this.isVertical = true;
     }
 });
 

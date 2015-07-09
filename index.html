@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Chart</title>
+    <link rel="stylesheet" type="text/css" href="dist/style.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<script src="lib/ne-code-snippet/code-snippet.min.js"></script>
+<script src="dist/application-chart.js"></script>
+<script>
+    var chart = ne.application.chart,
+        elChartArea = document.getElementById('chart-area'),
+        data = [
+            ['Element', 'Density'],
+            ['Copper', 10],
+            ['Silver', 20],
+            ['Gold', 30],
+            ['Platinum', 40]
+        ],
+        options = {
+            title: 'chart title',
+            chartArea: '60%',
+            colors: ['black'],
+            hAxis: {
+                title: 'hAxis title'
+            },
+            vAxis: {
+                title: 'vAxis title',
+                minValue: 1,
+                format: '0.0'
+            },
+            bars: 'vertical'
+        };
+
+    chart.barChart(elChartArea, data, options);
+</script>
+</body>
+</html>

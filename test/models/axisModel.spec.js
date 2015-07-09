@@ -36,7 +36,7 @@ describe('test axis model', function() {
 
             axisModel._setLabelAxisData(labels);
             expect(axisModel.labels.join(',')).toEqual(labels.join(','));
-            expect(axisModel.tickCount).toEqual(labels.length);
+            expect(axisModel.tickCount).toEqual(labels.length + 1);
             expect(axisModel.scale).toBeNull();
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
@@ -105,6 +105,11 @@ describe('test axis model', function() {
 
             axisModel._setData({values: values});
             expect(axisModel.isValueAxis()).toBeTruthy();
+        });
+
+        it('makeTickPixelPositions', function() {
+            var positions = axisModel.makeTickPixelPositions(300);
+            expect(positions).toEqual([0, 75, 150, 224, 299]);
         });
     });
 

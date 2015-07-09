@@ -104,12 +104,13 @@ BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setAxis: function(hAxis, vAxis, bars) {
         if (bars === 'vertical') {
-            this.hAxis = hAxis;
-            this.vAxis = vAxis;
+            this.hAxis = hAxis
+            this.vAxis = vAxis
         } else {
             this.hAxis = vAxis;
             this.vAxis = hAxis;
         }
+        this.vAxis.verticalIs();
     },
 
     /**

@@ -1,0 +1,45 @@
+.bar-chart-area {
+  position: relative;
+  .axis-area {
+    position: absolute;
+    &.vertical  {
+      left: 1px;
+      top:0;
+    }
+
+    &.horizontal {
+      bottom:1px;
+      right:0;
+    }
+    .tick-area {
+      position: absolute;
+      top:0;
+      .tick {
+        position: absolute;
+        background-color: #000;
+      }
+    }
+
+    &.vertical {
+      .tick-area {
+        right:0;
+        .tick {
+          right: 0px;
+          width: 5px;
+          height: 1px;
+        }
+      }
+    }
+
+    &.horizontal {
+      .tick-area {
+        left:0;
+        .tick {
+          top: 0px;
+          width: 1px;
+          height: 5px;
+        }
+      }
+    }
+  }
+}
