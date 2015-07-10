@@ -1,6 +1,7 @@
 @import 'prefixer';
 
 @axis-color: #000;
+@chart-padding: 20px;
 
 .ne-chart {
   position: relative;
@@ -13,45 +14,72 @@
   .axis-area {
     position: absolute;
     &.vertical {
-      left: 1px;
-      top: 0;
+      left: @chart-padding + 1;
+      top: @chart-padding;
       border-right: 1px solid @axis-color;
     }
 
     &.horizontal {
-      bottom: 1px;
-      right: 0;
+      bottom: @chart-padding + 1;
+      right: @chart-padding;
       border-top: 1px solid @axis-color;
     }
-    .tick-area {
+    .tick-area, .label-area {
       position: absolute;
       top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .tick-area {
       .tick {
         position: absolute;
         background-color: @axis-color;
       }
     }
 
+    .label-area {
+      .label {
+        position: absolute;
+      }
+    }
+
     &.vertical {
-      .tick-area {
+      .tick-area, .label-area {
         right: 0;
-        height: 100%;
+      }
+
+      .tick-area {
         .tick {
           right: 0px;
           width: 5px;
           height: 1px;
         }
       }
+
+      .label-area {
+        .label {
+          right: 10px;
+        }
+      }
     }
 
     &.horizontal {
-      .tick-area {
+      .tick-area, .label-area {
         left: 0;
-        width:100%;
+      }
+
+      .tick-area {
         .tick {
           top: 0px;
           width: 1px;
           height: 5px;
+        }
+      }
+
+      .label-area {
+        .label {
+          top: 10px;
+          text-align:center;
         }
       }
     }
@@ -59,8 +87,8 @@
 
   .plot-area {
     position: absolute;
-    right: 0px;
-    top: 0px;
+    right: @chart-padding;
+    top: @chart-padding;
     .plot-line {
       background-color:#ccc;
       position:absolute;

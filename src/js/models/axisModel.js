@@ -12,6 +12,7 @@ var Model = require('./model.js');
 var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
+    DEFAULT_FONT_SIZE = 12,
     AxisModel;
 
 AxisModel = ne.util.defineClass(Model, {
@@ -21,6 +22,7 @@ AxisModel = ne.util.defineClass(Model, {
      * @param {object} options chart options
      */
     init: function(data, options) {
+        options = options || {};
         /**
          * Axis options
          * @type {object}
@@ -38,6 +40,8 @@ AxisModel = ne.util.defineClass(Model, {
          * @type {array}
          */
         this.labels = [];
+
+        this.labelFontSize = options.fontSize || DEFAULT_FONT_SIZE;
 
         /**
          * Axis tick count

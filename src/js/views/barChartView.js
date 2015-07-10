@@ -14,7 +14,8 @@ var ChartView = require('./chartView.js'),
 
 var BarChartView,
     V_AXIS_WIDTH = 100,
-    H_AXIS_HEIGHT = 50;
+    H_AXIS_HEIGHT = 50,
+    CHART_PADDING = 20;
 
 
 BarChartView = ne.util.defineClass(ChartView, {
@@ -68,8 +69,8 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var width = this.size.width,
-            height = this.size.height,
+        var width = this.size.width - CHART_PADDING * 2,
+            height = this.size.height - CHART_PADDING * 2,
             plotSize = {width: width - V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
             vAxisSize = {width: V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
             hAxisSize = {width: width - V_AXIS_WIDTH, height: H_AXIS_HEIGHT},
