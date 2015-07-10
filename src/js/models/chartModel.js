@@ -8,9 +8,9 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    ChartModel;
+    Model = require('./model.js');
 
-ChartModel = ne.util.defineClass({
+var ChartModel = ne.util.defineClass(Model, {
     /**
      * Chart title
      * @type {string}

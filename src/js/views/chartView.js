@@ -9,19 +9,25 @@
 var View = require('./view.js');
 
 var ChartView = ne.util.defineClass(View, {
-    width: 500,
-    height: 300,
-    init: function(data, options) {
-        this.width = options.width || this.width;
-        this.height = options.height || this.height;
-        View.prototype.init.call(this);
+    /**
+     * Chart size
+     * @type {{width: number, height: number}
+     */
+    size: {
+        width: 500,
+        height: 300
     },
 
-    renderSize: function() {
-        this.el.style.cssText = [
-            ['width:', this.width, 'px'].join(''),
-            ['height:', this.height, 'px'].join(''),
-        ].join(';');
+    /**
+     * constructor
+     * @param {object} data chart data
+     * @param {options} options chart options
+     */
+    init: function(data, options) {
+        this.size.width = options.width || this.size.width;
+        this.size.height = options.height || this.size.height;
+        View.prototype.init.call(this);
+        this.addClass(this.el, 'ne-chart');
     }
 });
 

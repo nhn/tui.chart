@@ -1,28 +1,41 @@
-.bar-chart-area {
+@import 'prefixer';
+
+@axis-color: #000;
+
+.ne-chart {
   position: relative;
+  &, * {
+    .border-box();
+  }
+}
+
+.ne-bar-chart {
   .axis-area {
     position: absolute;
-    &.vertical  {
+    &.vertical {
       left: 1px;
-      top:0;
+      top: 0;
+      border-right: 1px solid @axis-color;
     }
 
     &.horizontal {
-      bottom:1px;
-      right:0;
+      bottom: 1px;
+      right: 0;
+      border-top: 1px solid @axis-color;
     }
     .tick-area {
       position: absolute;
-      top:0;
+      top: 0;
       .tick {
         position: absolute;
-        background-color: #000;
+        background-color: @axis-color;
       }
     }
 
     &.vertical {
       .tick-area {
-        right:0;
+        right: 0;
+        height: 100%;
         .tick {
           right: 0px;
           width: 5px;
@@ -33,12 +46,32 @@
 
     &.horizontal {
       .tick-area {
-        left:0;
+        left: 0;
+        width:100%;
         .tick {
           top: 0px;
           width: 1px;
           height: 5px;
         }
+      }
+    }
+  }
+
+  .plot-area {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    .plot-line {
+      background-color:#ccc;
+      position:absolute;
+      &.vertical {
+        top: 0px;
+        width: 1px;
+      }
+
+      &.horizontal {
+        left: 0px;
+        height: 1px;
       }
     }
   }

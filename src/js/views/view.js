@@ -12,6 +12,18 @@ var DOMHandler = require('./domHandler.js');
 var View = ne.util.defineClass({
     init: function() {
         this.el = this.createElement('DIV', this.className || '');
+    },
+
+    /**
+     * size rendering
+     * @param {number} width area width
+     * @param {number} height area height
+     */
+    renderSize: function(size) {
+        this.el.style.cssText = [
+            ['width:', size.width, 'px'].join(''),
+            ['height:', size.height, 'px'].join(''),
+        ].join(';');
     }
 });
 

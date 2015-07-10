@@ -7,12 +7,14 @@
 
 'use strict';
 
+var Model = require('./model.js');
+
 var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
     AxisModel;
 
-AxisModel = ne.util.defineClass({
+AxisModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {{label:array, values: [array, ...]} data labels or values
@@ -103,7 +105,7 @@ AxisModel = ne.util.defineClass({
             arr = apc.apply([], arr2d), // flatten array
             minMax = this._pickMinMax(arr),
             scale = this._calculateScale(minMax.min, minMax.max, options.minValue),
-            step = this._getScaleStep(scale, this.tickCount),
+            step = this.getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : arr,
             lenUnderPoint = this._pickMaxLenUnderPoint(formats),
             labels = this.range(scale.min, scale.max + 1, step);
@@ -152,45 +154,6 @@ AxisModel = ne.util.defineClass({
         }
 
         return scale;
-    },
-
-    /**
-     * Get scale step.
-     * @param {object} scale axis scale
-     * @param {number} count value count
-     * @returns {number}
-     * @private
-     */
-    _getScaleStep: function(scale, count) {
-        return (scale.max - scale.min) / (count - 1);
-    },
-
-    /**
-     * ne.util에 range가 추가되기 전까지 임시로 사용
-     * @param {number} start
-     * @param {number} stop
-     * @param {number} step
-     * @returns {array}
-     */
-    range: function(start, stop, step) {
-        var arr = [],
-            flag;
-
-        if (ne.util.isUndefined(stop)) {
-            stop = start || 0;
-            start = 0;
-        }
-
-        step = step || 1;
-        flag = step < 0 ? -1 : 1;
-        stop *= flag;
-
-        while(start * flag < stop) {
-            arr.push(start);
-            start += step;
-        }
-
-        return arr;
     },
 
     /**
@@ -244,21 +207,6 @@ AxisModel = ne.util.defineClass({
     _makeLabelsFromScale: function(scale, step) {
         var labels = this.range(scale.min, scale.max + 1, step);
         return labels;
-    },
-
-    /**
-     * Makes tick pixel positions.
-     * @param {number} size axis area width or height
-     * @returns {Array}
-     */
-    makeTickPixelPositions: function(size) {
-        var pxScale = {min: 0, max: size - 1},
-            pxStep = this._getScaleStep(pxScale, this.tickCount),
-            positions = ne.util.map(this.range(0, size, pxStep), function(position) {
-                return Math.round(position);
-            });
-        positions[positions.length-1] = size - 1;
-        return positions;
     },
 
     /**

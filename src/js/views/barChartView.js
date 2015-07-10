@@ -9,24 +9,78 @@
 var ChartView = require('./chartView.js'),
     chartFactory = require('../factory/chartFactory.js'),
     BarChartModel = require('../models/BarChartModel.js'),
-    AxisView = require('./axisView.js');
+    AxisView = require('./axisView.js'),
+    PlotView = require('./plotView.js');
 
-var BarChartView = ne.util.defineClass(ChartView, {
-    className: 'bar-chart-area',
+var BarChartView,
+    V_AXIS_WIDTH = 100,
+    H_AXIS_HEIGHT = 50;
+
+
+BarChartView = ne.util.defineClass(ChartView, {
+    /**
+     * constructor
+     * @param {object} data bar chart data
+     * @param {options} options bar chart options
+     */
     init: function(data, options) {
+        /**
+         * Chart options
+         * @type {object}
+         */
         this.options = options;
+
+        /**
+         * Bar chart className
+         * @type {string}
+         */
+        this.className = 'ne-bar-chart';
+
+        /**
+         * Bar chart model
+         * @type {object}
+         */
         this.model = new BarChartModel(data, options);
+
+        /**
+         * Plot view
+         * @type {object}
+         */
+        this.plotView = new PlotView(this.model.plot);
+
+        /**
+         * Vertical axis view
+         * @type {object}
+         */
         this.vAxisView = new AxisView(this.model.vAxis);
+
+        /**
+         * Horizontal axis view
+         * @type {object}
+         */
         this.hAxisView = new AxisView(this.model.hAxis);
+
         ChartView.prototype.init.call(this, data, options);
     },
 
+    /**
+     * Bar chart renderer
+     * @returns {element}
+     */
     render: function() {
-        var elVAxis = this.vAxisView.render(100, 250),
-            elHAxis = this.hAxisView.render(400, 50);
+        var width = this.size.width,
+            height = this.size.height,
+            plotSize = {width: width - V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
+            vAxisSize = {width: V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
+            hAxisSize = {width: width - V_AXIS_WIDTH, height: H_AXIS_HEIGHT},
+            elPlot = this.plotView.render(plotSize),
+            elVAxis = this.vAxisView.render(vAxisSize),
+            elHAxis = this.hAxisView.render(hAxisSize);
+
+        this.el.appendChild(elPlot);
         this.el.appendChild(elVAxis);
         this.el.appendChild(elHAxis);
-        this.renderSize();
+        this.renderSize(this.size);
         return this.el;
     }
 });

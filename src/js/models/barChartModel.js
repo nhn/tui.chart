@@ -81,7 +81,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
             colors = this._pickColors(legendLabels.length);
 
         this._setAxis(hAxis, vAxis, this.bars);
-        this._setPlot(this.hAxis.tickCount, this.vAxis.tickCount);
+        this._setPlot(this.hAxis, this.vAxis);
         this._setLegend(legendLabels, colors);
         this._setSeries(values, axisScale, colors);
     },
@@ -119,10 +119,10 @@ BarChartModel = ne.util.defineClass(ChartModel, {
      * @param {number} vTickCount vertical tick count
      * @private
      */
-    _setPlot: function(hTickcount, vTickCount) {
+    _setPlot: function(hAxis, vAxis) {
         this.plot = new PlotModel({
-            hTickCount: hTickcount,
-            vTickCount: vTickCount
+            hTickCount: hAxis.isValueAxis() ? hAxis.tickCount : 0,
+            vTickCount: vAxis.isValueAxis() ? vAxis.tickCount : 0
         });
     },
 

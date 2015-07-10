@@ -7,9 +7,9 @@
 
 'use strict';
 
-var PlotModel;
+var Model = require('./model.js');
 
-PlotModel = ne.util.defineClass({
+var PlotModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {data} data
@@ -42,20 +42,37 @@ PlotModel = ne.util.defineClass({
         this.hTickCount = data.hTickCount || 0;
     },
 
-    /**
-     * Get vertical tick count.
-     * @returns {number}
-     */
-    getVTickCount: function() {
-        return this.vTickCount;
+    range: function(start, stop, step) {
+        var arr = [],
+            flag;
+
+        if (ne.util.isUndefined(stop)) {
+            stop = start || 0;
+            start = 0;
+        }
+
+        step = step || 1;
+        flag = step < 0 ? -1 : 1;
+        stop *= flag;
+
+        while(start * flag < stop) {
+            arr.push(start);
+            start += step;
+        }
+
+        return arr;
     },
 
-    /**
-     * Get horizontal tick count.
-     * @returns {number}
-     */
-    getHTickCount: function() {
-        return this.hTickCount;
+    makeVPixelPositions: function(width) {
+        var positions = this.makePixelPositions(width, this.vTickCount);
+        positions.shift();
+        return positions;
+    },
+
+    makeHPixelPositions: function(width) {
+        var positions = this.makePixelPositions(width, this.hTickCount);;
+        positions.shift();
+        return positions;
     }
 });
 

@@ -7,9 +7,9 @@
 
 'use strict';
 
-var SeriesModel;
+var Model = require('./model.js');
 
-SeriesModel = ne.util.defineClass({
+var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {data} data

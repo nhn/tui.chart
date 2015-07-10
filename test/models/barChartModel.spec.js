@@ -25,7 +25,8 @@ describe('test bar chart model', function() {
             barChartModel._setData(userData);
             expect(barChartModel.vAxis.axisType).toEqual('value');
             expect(barChartModel.hAxis.axisType).toEqual('label');
-            expect(barChartModel.plot.hTickCount).toEqual(5);
+            expect(barChartModel.plot.vTickCount).toEqual(5);
+            expect(barChartModel.plot.hTickCount).toEqual(0);
             expect(barChartModel.legend.data[0]).toEqual(['Density', defaultFirstColor]);
             expect(barChartModel.series.colors).toEqual([defaultFirstColor]);
         });

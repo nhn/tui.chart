@@ -13,20 +13,47 @@ describe('test plot model', function() {
         hTickCount = 6;
 
     describe('test method', function() {
-        it('setData', function() {
-            var plotModel = new PlotModel();
+        var plotModel;
 
+        beforeEach(function() {
+            plotModel = new PlotModel();
+        });
+
+        it('setData', function() {
             plotModel._setData({vTickCount: vTickCount, hTickCount: hTickCount});
-            expect(plotModel.getVTickCount()).toEqual(vTickCount);
-            expect(plotModel.getHTickCount()).toEqual(hTickCount);
+            expect(plotModel.vTickCount).toEqual(vTickCount);
+            expect(plotModel.hTickCount).toEqual(hTickCount);
 
             plotModel._setData({vTickCount: vTickCount});
-            expect(plotModel.getVTickCount()).toEqual(vTickCount);
-            expect(plotModel.getHTickCount()).toEqual(0);
+            expect(plotModel.vTickCount).toEqual(vTickCount);
+            expect(plotModel.hTickCount).toEqual(0);
 
             plotModel._setData({hTickCount: hTickCount});
-            expect(plotModel.getVTickCount()).toEqual(0);
-            expect(plotModel.getHTickCount()).toEqual(hTickCount);
+            expect(plotModel.vTickCount).toEqual(0);
+            expect(plotModel.hTickCount).toEqual(hTickCount);
+        });
+
+        it('makeVPixelPositions', function() {
+            var positions;
+            plotModel._setData({vTickCount: 5});
+            positions = plotModel.makeVPixelPositions(200);
+            expect(positions).toEqual([50, 100, 149, 199]);
+
+            plotModel._setData({hTickCount: 5});
+            positions = plotModel.makeVPixelPositions(200);
+            expect(positions).toEqual([]);
+        });
+
+        it('makeHPixelPositions', function() {
+            var positions;
+
+            plotModel._setData({vTickCount: 5});
+            positions = plotModel.makeHPixelPositions(200);
+            expect(positions).toEqual([]);
+
+            plotModel._setData({hTickCount: 5});
+            positions = plotModel.makeHPixelPositions(200);
+            expect(positions).toEqual([50, 100, 149, 199]);
         });
     });
 
@@ -35,8 +62,8 @@ describe('test plot model', function() {
             var data = {vTickCount: vTickCount, hTickCount: hTickCount},
                 plotModel = new PlotModel(data);
 
-            expect(plotModel.getVTickCount()).toEqual(vTickCount);
-            expect(plotModel.getHTickCount()).toEqual(hTickCount);
+            expect(plotModel.vTickCount).toEqual(vTickCount);
+            expect(plotModel.hTickCount).toEqual(hTickCount);
         });
     });
 });

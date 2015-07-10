@@ -7,43 +7,9 @@
 
 'use strict';
 
-var LegendModel;
+var Model = require('./model.js');
 
-LegendModel = ne.util.defineClass({
-    /**
-     * * ne.util에 pluck이 추가되기 전까지 임시로 사용
-     * @param {array} arr
-     * @param {string} property
-     * @returns {Array}
-     */
-    pluck: function(arr, property) {
-        var result = ne.util.map(arr, function(item) {
-            return item[property];
-        });
-        return result;
-    },
-
-    /**
-     * * ne.util에 zip이 추가되기 전까지 임시로 사용
-     * @params {...array}
-     * @returns {array}
-     */
-    zip: function() {
-        var arr2 = Array.prototype.slice.call(arguments),
-            result = [];
-
-        ne.util.forEach(arr2, function(arr) {
-            ne.util.forEach(arr, function(value, index) {
-                if (!result[index]) {
-                    result[index] = [];
-                }
-                result[index].push(value);
-            });
-        });
-
-        return result;
-    },
-
+var LegendModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {{labels: array, colors: array} data legend data

@@ -11,15 +11,6 @@ describe('test Axis View', function() {
         };
 
     describe('test method', function() {
-
-        it('test _renderSize', function() {
-            var axisView = new AxisView(),
-                el = axisView.el;
-            axisView._renderSize(500, 300);
-            expect(el.style.width).toEqual('500px');
-            expect(el.style.height).toEqual('300px');
-        });
-
         describe('test value type axis', function() {
             var axisModel, axisView, el;
 
@@ -56,11 +47,11 @@ describe('test Axis View', function() {
                 elTickArea = axisView._renderTickArea(300);
 
                 compareHtml = '<div class="tick-area">' +
-                    '<div class="tick" style="top: 0px"></div>' +
-                    '<div class="tick" style="top: 75px"></div>' +
-                    '<div class="tick" style="top: 150px"></div>' +
-                    '<div class="tick" style="top: 224px"></div>' +
-                    '<div class="tick" style="top: 299px"></div>' +
+                    '<div class="tick" style="bottom: 0px"></div>' +
+                    '<div class="tick" style="bottom: 75px"></div>' +
+                    '<div class="tick" style="bottom: 150px"></div>' +
+                    '<div class="tick" style="bottom: 224px"></div>' +
+                    '<div class="tick" style="bottom: 299px"></div>' +
                     '</div>';
                 elTemp = document.createElement('DIV');
                 elTemp.innerHTML = compareHtml;
@@ -104,10 +95,10 @@ describe('test Axis View', function() {
                 elTickArea = axisView._renderTickArea(300);
 
                 compareHtml = '<div class="tick-area">' +
-                    '<div class="tick" style="top: 0px"></div>' +
-                    '<div class="tick" style="top: 100px"></div>' +
-                    '<div class="tick" style="top: 199px"></div>' +
-                    '<div class="tick" style="top: 299px"></div>' +
+                    '<div class="tick" style="bottom: 0px"></div>' +
+                    '<div class="tick" style="bottom: 100px"></div>' +
+                    '<div class="tick" style="bottom: 199px"></div>' +
+                    '<div class="tick" style="bottom: 299px"></div>' +
                     '</div>';
                 elTemp = document.createElement('DIV');
                 elTemp.innerHTML = compareHtml;
