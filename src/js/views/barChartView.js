@@ -8,9 +8,10 @@
 
 var ChartView = require('./chartView.js'),
     chartFactory = require('../factories/chartFactory.js'),
-    BarChartModel = require('../models/BarChartModel.js'),
-    AxisView = require('./axisView.js'),
-    PlotView = require('./plotView.js');
+    BarChartModel = require('../models/barChartModel.js'),
+    PlotView = require('./plotView.js'),
+    AxisView = require('./axisView.js');
+
 
 var BarChartView,
     V_AXIS_WIDTH = 100,
