@@ -156,9 +156,9 @@ var AxisView = ne.util.defineClass(View, {
         }
 
         if (isVertical) {
-            elLabelArea.style.top = (labelFontSize + 3) / 2 + 'px';
+            elLabelArea.style.top = [parseInt((labelFontSize + 3) / 2), 'px'].join('');
         } else if (!isLabelAxis) {
-            elLabelArea.style.left = - (labelWidth / 2) + 'px';
+            elLabelArea.style.left = ['-', parseInt(labelWidth / 2), 'px'].join('');
         }
     }
 });

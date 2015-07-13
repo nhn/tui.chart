@@ -92,7 +92,7 @@ describe('test Axis View', function() {
 
                 elTickArea = axisView._renderLabelArea(300);
 
-                compareHtml = '<div class="label-area" style="left:-37.5px;">' +
+                compareHtml = '<div class="label-area" style="left:-37px;">' +
                     '<div class="label" style="font-size:12px;width:75px;left:0px">0</div>' +
                     '<div class="label" style="font-size:12px;width:75px;left:75px">13</div>' +
                     '<div class="label" style="font-size:12px;width:75px;left:150px">26</div>' +
@@ -106,8 +106,8 @@ describe('test Axis View', function() {
 
                 expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
 
-                childNodes = aps.call(elTickArea.childNodes);
-                tmpChildNodes = aps.call(elTempArea.childNodes);
+                childNodes = elTickArea.childNodes;
+                tmpChildNodes = elTempArea.childNodes;
 
                 ne.util.forEachArray(childNodes, function(child, index) {
                     var tmpChild = tmpChildNodes[index];
@@ -123,7 +123,7 @@ describe('test Axis View', function() {
 
                 elTickArea = axisView._renderLabelArea(300);
 
-                compareHtml = '<div class="label-area" style="top:7.5px">' +
+                compareHtml = '<div class="label-area" style="top:7px">' +
                     '<div class="label" style="font-size:12px;bottom: 0px">0</div>' +
                     '<div class="label" style="font-size:12px;bottom: 75px">13</div>' +
                     '<div class="label" style="font-size:12px;bottom: 150px">26</div>' +
@@ -137,8 +137,8 @@ describe('test Axis View', function() {
 
                 expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
 
-                childNodes = aps.call(elTickArea.childNodes);
-                tmpChildNodes = aps.call(elTempArea.childNodes);
+                childNodes = elTickArea.childNodes;
+                tmpChildNodes = elTempArea.childNodes;
 
                 ne.util.forEachArray(childNodes, function(child, index) {
                     var tmpChild = tmpChildNodes[index];
@@ -211,8 +211,8 @@ describe('test Axis View', function() {
 
                 expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
 
-                childNodes = aps.call(elTickArea.childNodes);
-                tmpChildNodes = aps.call(elTempArea.childNodes);
+                childNodes = elTickArea.childNodes;
+                tmpChildNodes = elTempArea.childNodes;
 
                 ne.util.forEachArray(childNodes, function(child, index) {
                     var tmpChild = tmpChildNodes[index];
@@ -240,8 +240,8 @@ describe('test Axis View', function() {
 
                 expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
 
-                childNodes = aps.call(elTickArea.childNodes);
-                tmpChildNodes = aps.call(elTempArea.childNodes);
+                childNodes = elTickArea.childNodes;
+                tmpChildNodes = elTempArea.childNodes;
 
                 ne.util.forEachArray(childNodes, function(child, index) {
                     var tmpChild = tmpChildNodes[index];
