@@ -1,5 +1,5 @@
 /**
- * @fileoverview DOMHandler
+ * @fileoverview This is DOM Handler.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */

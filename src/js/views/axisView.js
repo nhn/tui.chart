@@ -1,5 +1,5 @@
 /**
- * @fileoverview AxisView
+ * @fileoverview  AxisView render axis ticks and labels.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */

@@ -1,5 +1,5 @@
 /**
- * @fileoverview PlotView
+ * @fileoverview PlotView render plot area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */

@@ -1,5 +1,5 @@
 /**
- * @fileoverview View
+ * @fileoverview View is parent of all view.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -7,7 +7,6 @@
 'use strict';
 
 var DOMHandler = require('./domHandler.js');
-//    EventHandler = require('./eventListener.js');
 
 var View = ne.util.defineClass({
     init: function() {
@@ -15,7 +14,7 @@ var View = ne.util.defineClass({
     },
 
     /**
-     * size rendering
+     * Size(width, height) rendering
      * @param {number} width area width
      * @param {number} height area height
      */
@@ -28,6 +27,5 @@ var View = ne.util.defineClass({
 });
 
 DOMHandler.mixin(View);
-//EventHandler.mixin(View);
 
 module.exports = View;

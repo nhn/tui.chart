@@ -1,5 +1,5 @@
 /**
- * @fileoverview BarChartView
+ * @fileoverview BarChartView render axis area, plot area and series area of bar chart.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */

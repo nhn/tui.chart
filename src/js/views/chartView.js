@@ -1,5 +1,5 @@
 /**
- * @fileoverview ChartView
+ * @fileoverview ChartView is parent of all chart.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
