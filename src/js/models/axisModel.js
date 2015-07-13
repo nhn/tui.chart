@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is axis model for management of axis data.
+ * @fileoverview AxisModel is model for management of axis data.
  *               Axis data used to draw the axis area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
@@ -15,6 +15,11 @@ var apc = Array.prototype.concat,
     DEFAULT_FONT_SIZE = 12,
     AxisModel;
 
+/**
+ * @classdesc AxisModel is model for management of axis data.
+ * @class
+ * @augments Model
+ */
 AxisModel = ne.util.defineClass(Model, {
     /**
      * Constructor
@@ -230,10 +235,20 @@ AxisModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Vertical is.
+     * Change vertical state
+     * @param {boolean} isVertical is vertical
      */
-    verticalIs: function() {
-        this.isVertical = true;
+    changeVerticalState: function(isVertical) {
+        this.isVertical = isVertical;
+    },
+
+    /**
+     * Get valid tick count
+     * @returns {number}
+     */
+    getValidTickCount: function() {
+        var validTickCount = this.isValueAxis() ? this.tickCount : 0;
+        return validTickCount;
     }
 });
 

@@ -8,6 +8,10 @@
 
 var DOMHandler = require('./domHandler.js');
 
+/**
+ * @classdesc View is parent of all view.
+ * @class
+ */
 var View = ne.util.defineClass({
     init: function() {
         this.el = this.createElement('DIV', this.className || '');

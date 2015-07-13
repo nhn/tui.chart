@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is parent chart model.
+ * @fileoverview ChartModel is parent of all chart model.
  *               This model provides a method to convert the data.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
@@ -10,6 +10,11 @@
 var chartConst = require('../const.js'),
     Model = require('./model.js');
 
+/**
+ * @classdesc ChartModel is parent of all chart model.
+ * @class
+ * @augments Model
+ */
 var ChartModel = ne.util.defineClass(Model, {
     /**
      * Chart title

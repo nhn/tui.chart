@@ -7,7 +7,7 @@
 'use strict';
 
 var ChartView = require('./chartView.js'),
-    chartFactory = require('../factory/chartFactory.js'),
+    chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/BarChartModel.js'),
     AxisView = require('./axisView.js'),
     PlotView = require('./plotView.js');
@@ -17,7 +17,11 @@ var BarChartView,
     H_AXIS_HEIGHT = 50,
     CHART_PADDING = 20;
 
-
+/**
+ * @classdesc BarChartView render axis area, plot area and series area of bar chart.
+ * @class
+ * @augments ChartView
+ */
 BarChartView = ne.util.defineClass(ChartView, {
     /**
      * constructor
@@ -61,7 +65,16 @@ BarChartView = ne.util.defineClass(ChartView, {
          */
         this.hAxisView = new AxisView(this.model.hAxis);
 
-        ChartView.prototype.init.call(this, data, options);
+        /**
+         * series view
+         * @type {object}
+         */
+        //this.seriesView = new SeriesView(this.model.series, {
+        //    chartType: 'bar',
+        //
+        //});
+
+        ChartView.call(this, data, options);
     },
 
     /**

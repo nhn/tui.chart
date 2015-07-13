@@ -9,6 +9,11 @@
 var View = require('./view.js'),
     plotTemplate = require('./plotTemplate.js');
 
+/**
+ * @classdesc PlotView render plot area.
+ * @class
+ * @augments View
+ */
 var PlotView = ne.util.defineClass(View, {
     /**
      * constructor
@@ -27,7 +32,7 @@ var PlotView = ne.util.defineClass(View, {
          */
         this.className = 'plot-area';
 
-        View.prototype.init.call(this);
+        View.call(this);
     },
 
     /**

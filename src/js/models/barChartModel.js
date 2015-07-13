@@ -61,7 +61,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
 
         this._setBars(options.bars || this.bars);
 
-        ChartModel.prototype.init.call(this, data, options);
+        ChartModel.call(this, data, options);
     },
 
     /**
@@ -104,13 +104,13 @@ BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setAxis: function(hAxis, vAxis, bars) {
         if (bars === 'vertical') {
-            this.hAxis = hAxis
-            this.vAxis = vAxis
+            this.hAxis = hAxis;
+            this.vAxis = vAxis;
         } else {
             this.hAxis = vAxis;
             this.vAxis = hAxis;
         }
-        this.vAxis.verticalIs();
+        this.vAxis.changeVerticalState(true);
     },
 
     /**
@@ -121,8 +121,8 @@ BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setPlot: function(hAxis, vAxis) {
         this.plot = new PlotModel({
-            hTickCount: hAxis.isValueAxis() ? hAxis.tickCount : 0,
-            vTickCount: vAxis.isValueAxis() ? vAxis.tickCount : 0
+            hTickCount: hAxis.getValidTickCount(),
+            vTickCount: vAxis.getValidTickCount()
         });
     },
 

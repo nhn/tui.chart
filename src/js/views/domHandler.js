@@ -30,7 +30,7 @@ var DOMHandler = ne.util.defineClass({
      */
     addClass: function(el, newClass) {
         var className = el.className,
-            classNameArr
+            classNameArr;
 
         if (className && (className + ' ').indexOf(newClass + ' ') > -1) {
             return;

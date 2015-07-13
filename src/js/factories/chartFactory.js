@@ -14,8 +14,9 @@ module.exports = {
      * @returns {*}
      */
     get: function(type, data, options) {
-        if (charts[type]) {
-            var chart = new charts[type](data, options);
+        var Chart = charts[type];
+        if (Chart) {
+            var chart = new Chart(data, options);
             return chart;
         } else {
             throw new Error(type + '차트는 존재하지 않습니다.');

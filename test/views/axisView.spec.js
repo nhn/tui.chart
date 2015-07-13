@@ -69,7 +69,7 @@ describe('test Axis View', function() {
             it('test vertical _renderTickArea', function() {
                 var elTickArea, compareHtml, elTemp;
 
-                axisModel.verticalIs();
+                axisModel.changeVerticalState(true);
 
                 elTickArea = axisView._renderTickArea(300);
 
@@ -119,7 +119,7 @@ describe('test Axis View', function() {
             it('test vertical _renderLabelArea', function() {
                 var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
-                axisModel.verticalIs();
+                axisModel.changeVerticalState(true);
 
                 elTickArea = axisView._renderLabelArea(300);
 
@@ -177,7 +177,7 @@ describe('test Axis View', function() {
             it('test vertical _renderTickArea', function() {
                 var elTickArea, compareHtml, elTemp;
 
-                axisModel.verticalIs();
+                axisModel.changeVerticalState(true);
 
                 elTickArea = axisView._renderTickArea(300);
 
@@ -224,7 +224,7 @@ describe('test Axis View', function() {
             it('test vertical _renderLabelArea', function() {
                 var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
-                axisModel.verticalIs();
+                axisModel.changeVerticalState(true);
 
                 elTickArea = axisView._renderLabelArea(300);
 

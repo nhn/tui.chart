@@ -6,9 +6,11 @@
 
 'use strict';
 
-var Model;
-
-Model = ne.util.defineClass({
+/**
+ * @classdesc Model is parent of all model.
+ * @class
+ */
+var Model = ne.util.defineClass({
     /**
      * ne.util에 range가 추가되기 전까지 임시로 사용
      * @param {number} start

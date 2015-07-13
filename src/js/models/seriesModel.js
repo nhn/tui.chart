@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is series model for management of series data.
+ * @fileoverview SeriesModel is model for management of series data.
  *               Series data used to draw the series area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
@@ -9,6 +9,11 @@
 
 var Model = require('./model.js');
 
+/**
+ * @classdesc SeriesModel is model for management of series data.
+ * @class
+ * @augments Model
+ */
 var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Constructor

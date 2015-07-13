@@ -9,6 +9,11 @@
 var View = require('./view.js'),
     axisTemplate = require('./axisTemplate.js');
 
+/**
+ * @classdesc AxisView render axis ticks and labels.
+ * @class
+ * @augments View
+ */
 var AxisView = ne.util.defineClass(View, {
     /**
      * constructor
@@ -26,7 +31,7 @@ var AxisView = ne.util.defineClass(View, {
          */
         this.className =  'axis-area';
 
-        View.prototype.init.call(this);
+        View.call(this);
     },
 
     /**
@@ -146,7 +151,11 @@ var AxisView = ne.util.defineClass(View, {
      * @private
      */
     _changeLabelAreaPosition: function(elLabelArea, isVertical, isLabelAxis, labelFontSize, labelWidth) {
-        if (!isLabelAxis && isVertical) {
+        if (isLabelAxis) {
+            return;
+        }
+
+        if (isVertical) {
             elLabelArea.style.top = (labelFontSize + 3) / 2 + 'px';
         } else if (!isLabelAxis) {
             elLabelArea.style.left = - (labelWidth / 2) + 'px';

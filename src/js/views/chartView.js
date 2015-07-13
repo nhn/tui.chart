@@ -8,6 +8,12 @@
 
 var View = require('./view.js');
 
+
+/**
+ * @classdesc ChartView is parent of all chart.
+ * @class
+ * @augments View
+ */
 var ChartView = ne.util.defineClass(View, {
     /**
      * Chart size
@@ -26,7 +32,7 @@ var ChartView = ne.util.defineClass(View, {
     init: function(data, options) {
         this.size.width = options.width || this.size.width;
         this.size.height = options.height || this.size.height;
-        View.prototype.init.call(this);
+        View.call(this);
         this.addClass(this.el, 'ne-chart');
     }
 });
