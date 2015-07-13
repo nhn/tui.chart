@@ -17,12 +17,12 @@ gulp.task('browser-sync', function() {
 });
 
 gulp.task('browserify', function() {
-    var b = watchify(browserify('./src/app.js', {debug: true})),
+    var b = watchify(browserify('./src/js/chart.js', {debug: true})),
         rebundle;
     gutil.log(gutil.colors.green('rebundle...'));
     rebundle = function() {
         return b.bundle()
-            .pipe(source('./chart.js'))
+            .pipe(source('./application-chart.js'))
             .pipe(gulp.dest('./dist'));
     };
 
@@ -32,7 +32,7 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('compile-less', function() {
-    return gulp.src('less/*.less')
+    return gulp.src('src/less/*.less')
         .pipe(less())
         .pipe(gulp.dest('./dist'));
 
@@ -47,9 +47,8 @@ gulp.task('reload-less', ['compile-less'], function() {
 });
 
 gulp.task('watch', ['browserify', 'compile-less', 'browser-sync'], function() {
-    gulp.watch('src/*', ['reload-js']);
-    gulp.watch('src/**/*', ['reload-js']);
-    gulp.watch('less/**/*', ['reload-less']);
+    gulp.watch('src/js/**/*', ['reload-js']);
+    gulp.watch('src/less/**/*', ['reload-less']);
 
     gutil.log(gutil.colors.green('Watching for changes...'));
 });

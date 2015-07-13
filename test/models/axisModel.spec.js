@@ -36,7 +36,7 @@ describe('test axis model', function() {
 
             axisModel._setLabelAxisData(labels);
             expect(axisModel.labels.join(',')).toEqual(labels.join(','));
-            expect(axisModel.tickCount).toEqual(labels.length);
+            expect(axisModel.tickCount).toEqual(labels.length + 1);
             expect(axisModel.scale).toBeNull();
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
@@ -61,13 +61,6 @@ describe('test axis model', function() {
             expect(scale.min).toEqual(0);
         });
 
-        it('_getScaleStep', function() {
-            var tickCount = 5,
-                scale = {min: 20, max: 100},
-                step = axisModel._getScaleStep(scale, tickCount);
-            expect(step).toEqual(20);
-        });
-
         it('_pickMaxLenUnderPoint', function() {
             var point = axisModel._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
             expect(point).toEqual(3);
@@ -83,7 +76,7 @@ describe('test axis model', function() {
         it('_makeLabelsFromScale', function() {
             var tickCount = 5,
                 scale = {min: 20, max: 100},
-                step = axisModel._getScaleStep(scale, tickCount),
+                step = axisModel.getScaleStep(scale, tickCount),
                 labels = axisModel._makeLabelsFromScale(scale, step);
             expect(labels).toEqual([20, 40, 60, 80, 100]);
         });

@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is plot model for management of plot data.
+ * @fileoverview PlotModel is model for management of plot data.
  *               Plot data used to draw the plot area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
@@ -7,9 +7,14 @@
 
 'use strict';
 
-var PlotModel;
+var Model = require('./model.js');
 
-PlotModel = ne.util.defineClass({
+/**
+ * @classdesc PlotModel is model for management of plot data.
+ * @class
+ * @augments Model
+ */
+var PlotModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {data} data
@@ -43,19 +48,20 @@ PlotModel = ne.util.defineClass({
     },
 
     /**
-     * Get vertical tick count.
-     * @returns {number}
+     * makes vertical pixel positions
+     * @param {} width
+     * @returns {*|Array}
      */
-    getVTickCount: function() {
-        return this.vTickCount;
+    makeVPixelPositions: function(height) {
+        var positions = this.makePixelPositions(height, this.vTickCount);
+        positions.shift();
+        return positions;
     },
 
-    /**
-     * Get horizontal tick count.
-     * @returns {number}
-     */
-    getHTickCount: function() {
-        return this.hTickCount;
+    makeHPixelPositions: function(width) {
+        var positions = this.makePixelPositions(width, this.hTickCount);;
+        positions.shift();
+        return positions;
     }
 });
 

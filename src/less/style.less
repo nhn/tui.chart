@@ -1,0 +1,106 @@
+@import 'prefixer';
+
+@axis-color: #000;
+@chart-padding: 20px;
+
+.ne-chart {
+  position: relative;
+  &, * {
+    .border-box();
+  }
+}
+
+.ne-bar-chart {
+  .axis-area {
+    position: absolute;
+    &.vertical {
+      left: @chart-padding + 1;
+      top: @chart-padding;
+      border-right: 1px solid @axis-color;
+    }
+
+    &.horizontal {
+      bottom: @chart-padding + 1;
+      right: @chart-padding;
+      border-top: 1px solid @axis-color;
+    }
+    .tick-area, .label-area {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .tick-area {
+      .tick {
+        position: absolute;
+        background-color: @axis-color;
+      }
+    }
+
+    .label-area {
+      .label {
+        position: absolute;
+      }
+    }
+
+    &.vertical {
+      .tick-area, .label-area {
+        right: 0;
+      }
+
+      .tick-area {
+        .tick {
+          right: 0px;
+          width: 5px;
+          height: 1px;
+        }
+      }
+
+      .label-area {
+        .label {
+          right: 10px;
+        }
+      }
+    }
+
+    &.horizontal {
+      .tick-area, .label-area {
+        left: 0;
+      }
+
+      .tick-area {
+        .tick {
+          top: 0px;
+          width: 1px;
+          height: 5px;
+        }
+      }
+
+      .label-area {
+        .label {
+          top: 10px;
+          text-align:center;
+        }
+      }
+    }
+  }
+
+  .plot-area {
+    position: absolute;
+    right: @chart-padding;
+    top: @chart-padding;
+    .plot-line {
+      background-color:#ccc;
+      position:absolute;
+      &.vertical {
+        top: 0px;
+        width: 1px;
+      }
+
+      &.horizontal {
+        left: 0px;
+        height: 1px;
+      }
+    }
+  }
+}

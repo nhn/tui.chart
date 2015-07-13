@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is axis model for management of axis data.
+ * @fileoverview AxisModel is model for management of axis data.
  *               Axis data used to draw the axis area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
@@ -7,18 +7,27 @@
 
 'use strict';
 
+var Model = require('./model.js');
+
 var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
+    DEFAULT_FONT_SIZE = 12,
     AxisModel;
 
-AxisModel = ne.util.defineClass({
+/**
+ * @classdesc AxisModel is model for management of axis data.
+ * @class
+ * @augments Model
+ */
+AxisModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {{label:array, values: [array, ...]} data labels or values
      * @param {object} options chart options
      */
     init: function(data, options) {
+        options = options || {};
         /**
          * Axis options
          * @type {object}
@@ -37,6 +46,8 @@ AxisModel = ne.util.defineClass({
          */
         this.labels = [];
 
+        this.labelFontSize = options.fontSize || DEFAULT_FONT_SIZE;
+
         /**
          * Axis tick count
          * @type {number}
@@ -54,6 +65,13 @@ AxisModel = ne.util.defineClass({
          * @type {string}
          */
         this.axisType = null;
+
+        /**
+         * Is vertical?
+         * @type {boolean}
+         */
+        this.isVertical = false;
+
         if (data) {
             this._setData(data);
         }
@@ -83,7 +101,7 @@ AxisModel = ne.util.defineClass({
         this.title = options.title || this.title;
         this.axisType = AXIS_TYPE_LABEL;
         this.labels = labels;
-        this.tickCount = labels.length;
+        this.tickCount = labels.length + 1;
     },
 
     /**
@@ -96,7 +114,7 @@ AxisModel = ne.util.defineClass({
             arr = apc.apply([], arr2d), // flatten array
             minMax = this._pickMinMax(arr),
             scale = this._calculateScale(minMax.min, minMax.max, options.minValue),
-            step = this._getScaleStep(scale, this.tickCount),
+            step = this.getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : arr,
             lenUnderPoint = this._pickMaxLenUnderPoint(formats),
             labels = this.range(scale.min, scale.max + 1, step);
@@ -145,45 +163,6 @@ AxisModel = ne.util.defineClass({
         }
 
         return scale;
-    },
-
-    /**
-     * Get scale step.
-     * @param {object} scale axis scale
-     * @param {number} count value count
-     * @returns {number}
-     * @private
-     */
-    _getScaleStep: function(scale, count) {
-        return (scale.max - scale.min) / (count - 1);
-    },
-
-    /**
-     * ne.util에 range가 추가되기 전까지 임시로 사용
-     * @param {number} start
-     * @param {number} stop
-     * @param {number} step
-     * @returns {array}
-     */
-    range: function(start, stop, step) {
-        var arr = [],
-            flag;
-
-        if (ne.util.isUndefined(stop)) {
-            stop = start || 0;
-            start = 0;
-        }
-
-        step = step || 1;
-        flag = step < 0 ? -1 : 1;
-        stop *= flag;
-
-        while(start * flag < stop) {
-            arr.push(start);
-            start += step;
-        }
-
-        return arr;
     },
 
     /**
@@ -253,6 +232,23 @@ AxisModel = ne.util.defineClass({
      */
     isValueAxis: function() {
         return this.axisType === AXIS_TYPE_VALUE;
+    },
+
+    /**
+     * Change vertical state
+     * @param {boolean} isVertical is vertical
+     */
+    changeVerticalState: function(isVertical) {
+        this.isVertical = isVertical;
+    },
+
+    /**
+     * Get valid tick count
+     * @returns {number}
+     */
+    getValidTickCount: function() {
+        var validTickCount = this.isValueAxis() ? this.tickCount : 0;
+        return validTickCount;
     }
 });
 
