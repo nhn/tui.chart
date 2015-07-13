@@ -41,7 +41,6 @@ var AxisView = ne.util.defineClass(View, {
      */
     render: function(size) {
         var width = this.model.isVertical ? size.height : size.width,
-            width = this.model.isVertical ? size.height : size.width,
             elTickArea = this._renderTickArea(width),
             elLabelArea = this._renderLabelArea(width);
 
@@ -133,9 +132,16 @@ var AxisView = ne.util.defineClass(View, {
      */
     _makeLabelsHtml: function(positions, labels, posType, cssTexts) {
         var labelsHtml = ne.util.map(positions,  function(position, index) {
-                var labelCssTexts = cssTexts.slice();
-                labelCssTexts.push([posType, ':', position, 'px'].join(''))
-                return axisTemplate.TPL_AXIS_LABEL({cssText: labelCssTexts.join(';'), label: labels[index]});
+                var labelCssTexts = cssTexts.slice(),
+                    html;
+
+                labelCssTexts.push([posType, ':', position, 'px'].join(''));
+
+                html = axisTemplate.TPL_AXIS_LABEL({
+                    cssText: labelCssTexts.join(';'),
+                    label: labels[index]
+                });
+                return html;
             }, this).join('');
 
         return labelsHtml;
@@ -156,9 +162,9 @@ var AxisView = ne.util.defineClass(View, {
         }
 
         if (isVertical) {
-            elLabelArea.style.top = [parseInt((labelFontSize + 3) / 2), 'px'].join('');
+            elLabelArea.style.top = [parseInt((labelFontSize + 3) / 2, 10), 'px'].join('');
         } else if (!isLabelAxis) {
-            elLabelArea.style.left = ['-', parseInt(labelWidth / 2), 'px'].join('');
+            elLabelArea.style.left = ['-', parseInt(labelWidth / 2, 10), 'px'].join('');
         }
     }
 });

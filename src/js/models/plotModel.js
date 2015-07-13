@@ -47,29 +47,13 @@ var PlotModel = ne.util.defineClass(Model, {
         this.hTickCount = data.hTickCount || 0;
     },
 
-    range: function(start, stop, step) {
-        var arr = [],
-            flag;
-
-        if (ne.util.isUndefined(stop)) {
-            stop = start || 0;
-            start = 0;
-        }
-
-        step = step || 1;
-        flag = step < 0 ? -1 : 1;
-        stop *= flag;
-
-        while(start * flag < stop) {
-            arr.push(start);
-            start += step;
-        }
-
-        return arr;
-    },
-
-    makeVPixelPositions: function(width) {
-        var positions = this.makePixelPositions(width, this.vTickCount);
+    /**
+     * makes vertical pixel positions
+     * @param {} width
+     * @returns {*|Array}
+     */
+    makeVPixelPositions: function(height) {
+        var positions = this.makePixelPositions(height, this.vTickCount);
         positions.shift();
         return positions;
     },
