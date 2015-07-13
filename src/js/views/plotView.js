@@ -7,7 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
-    plotTemplate = require('./plotTemplate.js')
+    plotTemplate = require('./plotTemplate.js');
 
 var PlotView = ne.util.defineClass(View, {
     /**
