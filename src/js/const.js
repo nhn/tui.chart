@@ -5,5 +5,6 @@
  */
 
 module.exports = {
+    DEFAULT_PLUGIN: 'raphael',
     DEFAUlT_COLORS: ['red', 'orange', 'yellow', 'green', 'blue']
 };

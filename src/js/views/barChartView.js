@@ -10,7 +10,8 @@ var ChartView = require('./chartView.js'),
     chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
-    AxisView = require('./axisView.js');
+    AxisView = require('./axisView.js'),
+    SeriesView = require('./seriesView.js');
 
 
 var BarChartView,
@@ -30,6 +31,8 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @param {options} options bar chart options
      */
     init: function(data, options) {
+        options = options || {};
+
         /**
          * Chart options
          * @type {object}
@@ -70,10 +73,10 @@ BarChartView = ne.util.defineClass(ChartView, {
          * series view
          * @type {object}
          */
-        //this.seriesView = new SeriesView(this.model.series, {
-        //    chartType: 'bar',
-        //
-        //});
+        this.seriesView = new SeriesView(this.model.series, {
+            chartType: 'bar',
+            bars: options.bars
+        });
 
         ChartView.call(this, data, options);
     },
@@ -90,11 +93,13 @@ BarChartView = ne.util.defineClass(ChartView, {
             hAxisSize = {width: width - V_AXIS_WIDTH, height: H_AXIS_HEIGHT},
             elPlot = this.plotView.render(plotSize),
             elVAxis = this.vAxisView.render(vAxisSize),
-            elHAxis = this.hAxisView.render(hAxisSize);
+            elHAxis = this.hAxisView.render(hAxisSize),
+            elSeries = this.seriesView.render(plotSize);
 
         this.el.appendChild(elPlot);
         this.el.appendChild(elVAxis);
         this.el.appendChild(elHAxis);
+        this.el.appendChild(elSeries);
         this.renderSize(this.size);
         return this.el;
     }

@@ -5,7 +5,8 @@
  */
 'use strict';
 
-var chartFactory = require('./factories/chartFactory.js');
+var chartFactory = require('./factories/chartFactory.js'),
+    pluginFactory = require('./factories/pluginFactory.js');
 
 var neChart = ne.util.defineNamespace('ne.application.chart');
 
@@ -23,3 +24,5 @@ neChart.barChart = function(container, data, options) {
     container.appendChild(chart.render());
     return chart;
 };
+
+neChart.registPlugin = pluginFactory.register;

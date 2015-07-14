@@ -26,6 +26,7 @@ gulp.task('browserify', function() {
             .pipe(gulp.dest('./dist'));
     };
 
+    b.add('./src/js/plugins/pluginRaphael.js');
     b.transform(stringify(['.html']));
 
     return rebundle();
