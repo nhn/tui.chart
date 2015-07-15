@@ -109,5 +109,8 @@
     right: @chart-padding - 1;
     top: @chart-padding - 1;
     overflow:hidden;
+    &.horizontal > div {
+      left: -1px !important; //Fixed ie8 left border error;
+    }
   }
 }
