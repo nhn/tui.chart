@@ -97,10 +97,10 @@ BarChart = ne.util.defineClass({
             barMaxSize, renderBars;
 
         if (isVertical) {
-            barMaxSize = (size.width/groupValues.length);
+            barMaxSize = (size.width / groupValues.length);
             renderBars = this._renderVerticalBars;
         } else {
-            barMaxSize = (size.height/groupValues.length);
+            barMaxSize = (size.height / groupValues.length);
             renderBars = this._renderHorizontalBars;
         }
 

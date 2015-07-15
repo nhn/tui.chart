@@ -145,17 +145,20 @@ AxisModel = ne.util.defineClass(Model, {
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min chart min value
      * @param {number} max max cahrt max value
-     * @params {optionMin} optional min value
+     * @params {minValue} optional min value
      * @returns {{min: number, max: number}}
      * @private
      */
-    _calculateScale: function(min, max, optionMin) {
+    _calculateScale: function(min, max, minValue) {
         var scale = {},
             iodValue = (max - min) / 20; // increase or decrease the value;
         scale.max = max + iodValue;
 
-        if (!ne.util.isUndefined(optionMin)) {
-            scale.min = optionMin;
+        if (!ne.util.isUndefined(minValue)) {
+            if (minValue > min) {
+                throw new Error('Option minValue can not be smaller than min.');
+            }
+            scale.min = minValue;
         } else if (max / 6 > min) {
             scale.min  = 0;
         } else {
