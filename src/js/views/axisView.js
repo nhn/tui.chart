@@ -81,7 +81,6 @@ var AxisView = ne.util.defineClass(View, {
 
         if (isVertical) {
             titleWidth = this.calculateRenderedLabelWidth(title, fontSize);
-            console.log(titleWidth);
             elTitleArea.style.top = ((width - titleWidth) / 2) + 'px';
         }
 
