@@ -48,8 +48,6 @@ BarChart = ne.util.defineClass({
         //    height: barHeight
         //};
 
-
-
         //rect.hover(function() {
         //    inCallback(pos, groupIndex);
         //}, function() {
