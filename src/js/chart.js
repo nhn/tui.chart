@@ -10,6 +10,7 @@ var chartFactory = require('./factories/chartFactory.js'),
 
 var neChart = ne.util.defineNamespace('ne.application.chart');
 
+require('./util.js');
 require('./views/barChartView.js');
 
 /**

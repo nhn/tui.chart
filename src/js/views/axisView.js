@@ -7,6 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
+    neConst = require('../const.js'),
     axisTemplate = require('./axisTemplate.js');
 
 /**
@@ -16,7 +17,7 @@ var View = require('./view.js'),
  */
 var AxisView = ne.util.defineClass(View, {
     /**
-     * constructor
+     * Constructor
      * @param {object} model axis model
      */
     init: function(model) {
@@ -35,18 +36,24 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * axis renderer
+     * Axis renderer
      * @param {{width: number, height: number}} size axis area size
      * @returns {element} axis area base element
      */
-    render: function(size) {
-        var width = this.model.isVertical ? size.height : size.width,
+    render: function(size, titleAreaWidth) {
+        var model = this.model,
+            isVertical = model.isVertical,
+            width = isVertical ? size.height : size.width,
+            elTitleArea = this._renderTitleArea(model.title, model.titleFontSize, isVertical, width),
             elTickArea = this._renderTickArea(width),
-            elLabelArea = this._renderLabelArea(width);
+            elLabelArea = this._renderLabelArea(width, size.width, titleAreaWidth);
+
 
         this.renderSize(size);
+
         this.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
 
+        this.el.appendChild(elTitleArea);
         this.el.appendChild(elTickArea);
         this.el.appendChild(elLabelArea);
 
@@ -54,7 +61,35 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * tick area renderer
+     * Title Area renderer
+     * @param {string} title axis title
+     * @returns {element}
+     * @private
+     */
+    _renderTitleArea: function(title, fontSize, isVertical, width) {
+        var elTitleArea, titleWidth;
+
+        if (!title) {
+            return;
+        }
+
+        fontSize = fontSize || neConst.DEFAULT_TITLE_FONT_SIZE;
+
+        elTitleArea = this.createElement('DIV', 'title-area');
+        elTitleArea.innerHTML = title;
+        elTitleArea.style.fontSize = fontSize + 'px';
+
+        if (isVertical) {
+            titleWidth = this.calculateRenderedLabelWidth(title, fontSize);
+            console.log(titleWidth);
+            elTitleArea.style.top = ((width - titleWidth) / 2) + 'px';
+        }
+
+        return elTitleArea;
+    },
+
+    /**
+     * Tick area renderer
      * @param {number} width width or height
      * @returns {element} tick area element
      * @private
@@ -74,12 +109,12 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * label area renderer
+     * Label area renderer
      * @param {number} width
      * @returns {element} label area element
      * @private
      */
-    _renderLabelArea: function(width) {
+    _renderLabelArea: function(width, axisWidth, titleAreaWidth) {
         var positions = this.model.makePixelPositions(width, this.model.tickCount),
             labelWidth = positions[1] - positions[0],
             labels = this.model.labels,
@@ -94,13 +129,17 @@ var AxisView = ne.util.defineClass(View, {
         positions.length = labels.length;
         labelsHtml = this._makeLabelsHtml(positions, labels, posType, cssTexts);
         elLabelArea.innerHTML = labelsHtml;
+
+        if (isVertical) {
+            elLabelArea.style.width = (axisWidth - titleAreaWidth) + 'px';
+        }
         this._changeLabelAreaPosition(elLabelArea, isVertical, isLabelAxis, labelFontSize, labelWidth);
 
         return elLabelArea;
     },
 
     /**
-     * makes label css array
+     * Makes label css array
      * @param {boolean} isVertical is vertical
      * @param {boolean} isLabelAxis is label axis
      * @param {number} labelFontSize label font size
@@ -122,7 +161,7 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * makes label html
+     * Makes label html
      * @param {array} positions label position array
      * @param {array} labels label array
      * @param {string} posType position type (left or bottom)
@@ -148,7 +187,7 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * change label area position
+     * Change label area position
      * @param {element} elLabelArea label area element
      * @param {boolean} isVertical is vertical
      * @param {boolean} isLabelAxis is label axis

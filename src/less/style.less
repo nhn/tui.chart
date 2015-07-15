@@ -13,17 +13,11 @@
 .ne-bar-chart {
   .axis-area {
     position: absolute;
-    &.vertical {
-      left: @chart-padding + 1;
-      top: @chart-padding;
-      border-right: 1px solid @axis-color;
+
+    .title-area {
+      position: absolute;
     }
 
-    &.horizontal {
-      bottom: @chart-padding + 1;
-      right: @chart-padding;
-      border-top: 1px solid @axis-color;
-    }
     .tick-area, .label-area {
       position: absolute;
       top: 0;
@@ -44,6 +38,18 @@
     }
 
     &.vertical {
+      left: @chart-padding + 1;
+      top: @chart-padding;
+      border-right: 1px solid @axis-color;
+
+      .title-area {
+        left: 0px;
+        left/*\**/: 20px\9;
+        text-align: center;
+        .rotate(-90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+      }
+
       .tick-area, .label-area {
         right: 0;
       }
@@ -58,12 +64,23 @@
 
       .label-area {
         .label {
-          right: 10px;
+          width: 100%;
+          text-align: center;
+          padding-right: 10px;
         }
       }
     }
 
     &.horizontal {
+      bottom: @chart-padding + 1;
+      right: @chart-padding;
+      border-top: 1px solid @axis-color;
+
+      .title-area {
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+      }
       .tick-area, .label-area {
         left: 0;
       }
@@ -79,7 +96,7 @@
       .label-area {
         .label {
           top: 10px;
-          text-align:center;
+          text-align: center;
         }
       }
     }
@@ -90,8 +107,8 @@
     right: @chart-padding;
     top: @chart-padding;
     .plot-line {
-      background-color:#ccc;
-      position:absolute;
+      background-color: #ccc;
+      position: absolute;
       &.vertical {
         top: 0px;
         width: 1px;
@@ -108,7 +125,7 @@
     position: absolute;
     right: @chart-padding - 1;
     top: @chart-padding - 1;
-    overflow:hidden;
+    overflow: hidden;
     &.horizontal > div {
       left: -1px !important; //Fixed ie8 left border error;
     }

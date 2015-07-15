@@ -7,12 +7,12 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    neConst = require('../const.js');
 
 var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
-    DEFAULT_FONT_SIZE = 12,
     AxisModel;
 
 /**
@@ -38,7 +38,13 @@ AxisModel = ne.util.defineClass(Model, {
          * Axis title
          * @type {string}
          */
-        this.title = '',
+        this.title = '';
+
+        /**
+         * title font size
+         * @type {number}
+         */
+        this.titleFontSize = options.titleFontSize || neConst.DEFAULT_TITLE_FONT_SIZE;
 
         /**
          * Axis labels
@@ -46,7 +52,11 @@ AxisModel = ne.util.defineClass(Model, {
          */
         this.labels = [];
 
-        this.labelFontSize = options.fontSize || DEFAULT_FONT_SIZE;
+        /**
+         * label font size
+         * @type {number}
+         */
+        this.labelFontSize = options.fontSize || neConst.DEFAULT_LABEL_FONT_SIZE
 
         /**
          * Axis tick count
@@ -117,7 +127,7 @@ AxisModel = ne.util.defineClass(Model, {
             step = this.getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : arr,
             lenUnderPoint = this._pickMaxLenUnderPoint(formats),
-            labels = this.range(scale.min, scale.max + 1, step);
+            labels = ne.util.range(scale.min, scale.max + 1, step);
 
         labels = this._formatLabels(labels, lenUnderPoint);
         this.title = options.title || this.title;
@@ -217,7 +227,7 @@ AxisModel = ne.util.defineClass(Model, {
      * @private
      */
     _makeLabelsFromScale: function(scale, step) {
-        var labels = this.range(scale.min, scale.max + 1, step);
+        var labels = ne.util.range(scale.min, scale.max + 1, step);
         return labels;
     },
 

@@ -35,6 +35,15 @@ describe('test Axis View', function() {
         expect(labelsHtml).toEqual(compareHtml)
     });
 
+    it('test _renderTitleArea', function() {
+        var axisView = new AxisView(),
+            elTitle = axisView._renderTitleArea('Axis title.');
+
+        expect(elTitle.innerHTML).toEqual('Axis title.');
+        elTitle = axisView._renderTitleArea('');
+        expect(elTitle).toBeUndefined();
+    });
+
     describe('test value type axis', function() {
         var axisModel, axisView, el;
 
@@ -246,5 +255,9 @@ describe('test Axis View', function() {
                 expect(child.innerHTML).toEqual(tmpChild.innerHTML);
             });
         });
+    });
+
+    it('test axis title', function(){
+
     });
 });

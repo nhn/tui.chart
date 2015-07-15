@@ -27,8 +27,8 @@ describe('test legend model', function() {
             legendModel._setData({labels: labels, colors: colors});
             var data = legendModel.getData();
 
-            expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));
-            expect(legendModel.pluck(data, 1).join(',')).toEqual(colors.join(','));
+            expect(ne.util.pluck(data, 0).join(',')).toEqual(labels.join(','));
+            expect(ne.util.pluck(data, 1).join(',')).toEqual(colors.join(','));
         });
     });
 
@@ -38,8 +38,8 @@ describe('test legend model', function() {
                 legendModel = new LegendModel(data),
                 data = legendModel.getData();
 
-            expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));
-            expect(legendModel.pluck(data, 1).join(',')).toEqual(colors.join(','));
+            expect(ne.util.pluck(data, 0).join(',')).toEqual(labels.join(','));
+            expect(ne.util.pluck(data, 1).join(',')).toEqual(colors.join(','));
         });
     });
 });

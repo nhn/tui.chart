@@ -6,7 +6,8 @@
 
 'use strict';
 
-var DOMHandler = require('./domHandler.js');
+var DOMHandler = require('./domHandler.js'),
+    neConst = require('../const.js');
 
 /**
  * @classdesc View is parent of all view.
@@ -27,6 +28,41 @@ var View = ne.util.defineClass({
             ['width:', size.width, 'px'].join(''),
             ['height:', size.height, 'px'].join(''),
         ].join(';');
+    },
+
+    /**
+     * Calculate rendered label width.
+     * @param {string} label label
+     * @param {number} fontSize font size
+     * @returns {number}
+     */
+    calculateRenderedLabelWidth: function(label, fontSize) {
+        var elDiv = document.createElement('DIV'),
+            elSpan = document.createElement('SPAN'),
+            labelWidth;
+        elDiv.appendChild(elSpan);
+        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px';
+        elSpan.innerHTML = label;
+        elSpan.style.fontSize = (fontSize || neConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        document.body.appendChild(elDiv);
+        labelWidth = elSpan.offsetWidth;
+        document.body.removeChild(elDiv);
+
+        return labelWidth;
+    },
+
+    /**
+     * Get rendered labels max width.
+     * @param {array} labels labels
+     * @param {number} fontSize font size
+     * @returns {number}
+     */
+    getRenderedLabelsMaxWidth: function(labels, fontSize) {
+        var widths = ne.util.map(labels, function(label) {
+                return this.calculateRenderedLabelWidth(label, fontSize);
+            }, this),
+            result = ne.util.max(widths);
+        return result;
     }
 });
 

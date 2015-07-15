@@ -86,13 +86,16 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var width = this.size.width - CHART_PADDING * 2,
+        var vTitleAreaWidth = this.model.title ? 50 : 0,
+            labels = this.model.vAxis.labels,
+            vAxisWidth = this.getRenderedLabelsMaxWidth(labels) + vTitleAreaWidth + 10,
+            width = this.size.width - CHART_PADDING * 2,
             height = this.size.height - CHART_PADDING * 2,
-            plotSize = {width: width - V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
-            vAxisSize = {width: V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
-            hAxisSize = {width: width - V_AXIS_WIDTH, height: H_AXIS_HEIGHT},
+            plotSize = {width: width - vAxisWidth, height: height - H_AXIS_HEIGHT},
+            vAxisSize = {width: vAxisWidth, height: height - H_AXIS_HEIGHT},
+            hAxisSize = {width: width - vAxisWidth, height: H_AXIS_HEIGHT},
             elPlot = this.plotView.render(plotSize),
-            elVAxis = this.vAxisView.render(vAxisSize),
+            elVAxis = this.vAxisView.render(vAxisSize, vTitleAreaWidth),
             elHAxis = this.hAxisView.render(hAxisSize),
             elSeries = this.seriesView.render(plotSize);
 

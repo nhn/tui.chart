@@ -22,7 +22,7 @@ describe('test seriesView', function() {
         var seriesView = new SeriesView(seriesModel, options),
             elSeries = seriesView.render(size);
 
-        expect(elSeries.className).toEqual('series-area');
+        expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
         expect(elSeries.style.width).toEqual('200px');
         expect(elSeries.style.height).toEqual('100px');
         expect(!!elSeries.firstChild).toBeTruthy();

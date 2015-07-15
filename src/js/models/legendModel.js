@@ -37,7 +37,7 @@ var LegendModel = ne.util.defineClass(Model, {
      * @private
      */
     _setData: function(data) {
-        this.data = this.zip(data.labels, data.colors);
+        this.data = ne.util.zip(data.labels, data.colors);
     },
 
     /**
