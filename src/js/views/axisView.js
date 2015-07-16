@@ -7,7 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
-    neConst = require('../const.js'),
+    chartConst = require('../const.js'),
     axisTemplate = require('./axisTemplate.js');
 
 var TITLE_AREA_WIDTH_PADDING = 35,
@@ -44,7 +44,7 @@ var AxisView = ne.util.defineClass(View, {
      * @param {{width: number, height: number}} size axis area size
      * @returns {element} axis area base element
      */
-    render: function(size, top) {
+    render: function(size, position) {
         var model = this.model,
             isVertical = model.isVertical,
             width = isVertical ? size.height : size.width,
@@ -54,7 +54,7 @@ var AxisView = ne.util.defineClass(View, {
 
 
         this.renderSize(size);
-        this.renderPositionTop(top);
+        this.renderPosition(position);
         this.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
 
         if (elTitleArea) {
@@ -80,7 +80,7 @@ var AxisView = ne.util.defineClass(View, {
             return;
         }
 
-        fontSize = fontSize || neConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
+        fontSize = fontSize || chartConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
 
         elTitleArea = this.createElement('DIV', 'title-area');
         elTitleArea.innerHTML = title;

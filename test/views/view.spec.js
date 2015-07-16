@@ -10,6 +10,14 @@ describe('test View', function() {
         expect(el.style.height).toEqual('300px');
     });
 
+    it('test renderPosition', function() {
+        var el = view.el,
+            position = {top: 50, right: 50};
+        view.renderPosition(position);
+        expect(el.style.top).toEqual('50px');
+        expect(el.style.right).toEqual('50px');
+    });
+
     it('test getRenderedLabelWidth', function() {
         var labelWidth = view.getRenderedLabelWidth('Label1', 12);
         expect(labelWidth).toBeGreaterThan(30);

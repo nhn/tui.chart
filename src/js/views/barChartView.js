@@ -11,7 +11,8 @@ var ChartView = require('./chartView.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
     AxisView = require('./axisView.js'),
-    SeriesView = require('./seriesView.js');
+    SeriesView = require('./seriesView.js'),
+    LegendView = require('./legendView.js');
 
 
 var BarChartView,
@@ -78,6 +79,8 @@ BarChartView = ne.util.defineClass(ChartView, {
             bars: options.bars
         });
 
+        this.legendView = new LegendView(this.model.legend);
+
         ChartView.call(this, data, options);
     },
 
@@ -89,17 +92,21 @@ BarChartView = ne.util.defineClass(ChartView, {
         var titleHeight = this.getRenderedTitleHeight(),
             vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
             hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
-            width = this.size.width - CHART_PADDING * 2,
-            height = this.size.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            legendWidth = this.legendView.getLegendAreaWidth(),
+            plotWidth = this.size.width - CHART_PADDING * 2 - vAxisWidth - legendWidth,
+            plotHeight = this.size.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
-            plotSize = {width: width - vAxisWidth, height: height},
-            vAxisSize = {width: vAxisWidth, height: height},
-            hAxisSize = {width: width - vAxisWidth, height: hAxisHeight},
+            right = legendWidth + CHART_PADDING,
+            plotPos = {top: top, right: right},
+            plotSize = {width: plotWidth, height: plotHeight},
+            vAxisSize = {width: vAxisWidth, height: plotHeight},
+            hAxisSize = {width: plotWidth, height: hAxisHeight},
             elTitle = this.renderTitle(),
-            elPlot = this.plotView.render(plotSize, top),
-            elVAxis = this.vAxisView.render(vAxisSize, top),
-            elHAxis = this.hAxisView.render(hAxisSize),
-            elSeries = this.seriesView.render(plotSize, top);
+            elPlot = this.plotView.render(plotSize, plotPos),
+            elVAxis = this.vAxisView.render(vAxisSize, {top: top}),
+            elHAxis = this.hAxisView.render(hAxisSize, {right: right}),
+            elSeries = this.seriesView.render(plotSize, plotPos),
+            elLegend = this.legendView.render(plotHeight, top);
 
         if (elTitle) {
             this.el.appendChild(elTitle);
@@ -108,6 +115,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.el.appendChild(elVAxis);
         this.el.appendChild(elHAxis);
         this.el.appendChild(elSeries);
+        this.el.appendChild(elLegend);
         this.renderSize(this.size);
         return this.el;
     }

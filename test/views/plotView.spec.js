@@ -2,11 +2,6 @@ var PlotView = require('../../src/js/views/plotView.js'),
     PlotModel = require('../../src/js/models/plotModel.js');
 
 describe('test Plot View', function() {
-
-    it('test vertical _renderLines', function() {
-
-    });
-
     it('test _makeLineHtml', function() {
         var positions = [10, 20, 30, 40],
             width = 200,

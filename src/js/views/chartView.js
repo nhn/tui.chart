@@ -7,7 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
-    neConst = require('../const.js');
+    chartConst = require('../const.js');
 
 /**
  * @classdesc ChartView is parent of all chart.

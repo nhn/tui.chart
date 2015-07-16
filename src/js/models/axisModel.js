@@ -8,7 +8,7 @@
 'use strict';
 
 var Model = require('./model.js'),
-    neConst = require('../const.js');
+    chartConst = require('../const.js');
 
 var apc = Array.prototype.concat,
     AXIS_TYPE_VALUE = 'value',
@@ -44,7 +44,7 @@ AxisModel = ne.util.defineClass(Model, {
          * title font size
          * @type {number}
          */
-        this.titleFontSize = options.titleFontSize || neConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
+        this.titleFontSize = options.titleFontSize || chartConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
 
         /**
          * Axis labels
@@ -56,7 +56,7 @@ AxisModel = ne.util.defineClass(Model, {
          * label font size
          * @type {number}
          */
-        this.labelFontSize = options.fontSize || neConst.DEFAULT_LABEL_FONT_SIZE
+        this.labelFontSize = options.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE
 
         /**
          * Axis tick count

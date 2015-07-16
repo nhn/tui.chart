@@ -7,7 +7,7 @@
 'use strict';
 
 var DOMHandler = require('./domHandler.js'),
-    neConst = require('../const.js');
+    chartConst = require('../const.js');
 
 /**
  * @classdesc View is parent of all view.
@@ -30,11 +30,18 @@ var View = ne.util.defineClass({
         ].join(';');
     },
 
-    renderPositionTop: function(top) {
-        if (ne.util.isUndefined(top)) {
+    renderPosition: function(position) {
+        if (ne.util.isUndefined(position)) {
             return;
         }
-        this.el.style.top = top + 'px';
+
+        if (position.top) {
+            this.el.style.top = position.top + 'px';
+        }
+
+        if (position.right) {
+            this.el.style.right = position.right + 'px';
+        }
     },
 
 
@@ -59,7 +66,7 @@ var View = ne.util.defineClass({
             labelWidth;
 
         elSpan.innerHTML = label;
-        elSpan.style.fontSize = (fontSize || neConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
         document.body.appendChild(elDiv);
         labelWidth = elSpan.offsetWidth;
         document.body.removeChild(elDiv);
@@ -79,7 +86,7 @@ var View = ne.util.defineClass({
             labelHeight;
 
         elSpan.innerHTML = label;
-        elSpan.style.fontSize = (fontSize || neConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
         document.body.appendChild(elDiv);
         labelHeight = elSpan.offsetHeight;
         document.body.removeChild(elDiv);

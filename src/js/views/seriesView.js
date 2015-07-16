@@ -7,7 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
-    neConst = require('../const.js'),
+    chartConst = require('../const.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
 var HIDDEN_WIDTH = 1;
@@ -28,7 +28,7 @@ var SeriesView = ne.util.defineClass(View, {
 
         this.options = options || {};
 
-        libType = options.libType || neConst.DEFAULT_PLUGIN;
+        libType = options.libType || chartConst.DEFAULT_PLUGIN;
         this.graphRenderer = pluginFactory.get(libType, options.chartType);
         this.bars = options.bars;
         /**
@@ -50,9 +50,13 @@ var SeriesView = ne.util.defineClass(View, {
      * @param {{width: number, height: number}} size series size
      * @returns {element}
      */
-    render: function(size, top) {
+    render: function(size, position) {
         this.renderSize(size);
-        this.renderPositionTop(top - HIDDEN_WIDTH);
+
+        position.top -= HIDDEN_WIDTH;
+        position.right -= HIDDEN_WIDTH;
+        this.renderPosition(position);
+
         this.graphRenderer.render(this.el, {
             size: size,
             model: this.model,

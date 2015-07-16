@@ -16,15 +16,21 @@ describe('test seriesView', function() {
             width: 200,
             height: 100
         },
+        position = {
+            top: 50,
+            right: 50
+        },
         seriesModel = new SeriesModel(data);
 
     it('test render', function() {
         var seriesView = new SeriesView(seriesModel, options),
-            elSeries = seriesView.render(size);
+            elSeries = seriesView.render(size, position);
 
         expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
         expect(elSeries.style.width).toEqual('200px');
         expect(elSeries.style.height).toEqual('100px');
+        expect(elSeries.style.top).toEqual('49px');
+        expect(elSeries.style.right).toEqual('49px');
         expect(!!elSeries.firstChild).toBeTruthy();
     });
 

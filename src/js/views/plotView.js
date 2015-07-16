@@ -40,9 +40,9 @@ var PlotView = ne.util.defineClass(View, {
      * @param {{width: number, height:number}} size plot area size
      * @returns {element}
      */
-    render: function(size, top) {
+    render: function(size, position) {
         this.renderSize(size);
-        this.renderPositionTop(top);
+        this.renderPosition(position);
         this._renderLines(size);
 
         return this.el;
