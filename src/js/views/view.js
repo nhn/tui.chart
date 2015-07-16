@@ -125,8 +125,16 @@ var View = ne.util.defineClass({
         var iteratee = ne.util.bind(this.getRenderedLabelHeight, this),
             result = this._getRenderedLabelsMaxSize(labels, fontSize, iteratee);
         return result;
-    }
+    },
 
+    isIE8: function() {
+        var ie8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1,
+            isIE8 = function() {
+                return ie8;
+            };
+        this.isIE8 = isIE8;
+        return isIE8();
+    }
 });
 
 DOMHandler.mixin(View);

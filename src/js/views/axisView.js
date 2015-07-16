@@ -10,8 +10,8 @@ var View = require('./view.js'),
     neConst = require('../const.js'),
     axisTemplate = require('./axisTemplate.js');
 
-var TITLE_AREA_WIDTH_PADDING = 45,
-    TITLE_AREA_HEIGH_PADDING = 20,
+var TITLE_AREA_WIDTH_PADDING = 35,
+    TITLE_AREA_HEIGHT_PADDING = 20,
     V_LABEL_RIGHT_PADDING = 10;
 
 /**
@@ -74,7 +74,7 @@ var AxisView = ne.util.defineClass(View, {
      * @private
      */
     _renderTitleArea: function(title, fontSize, isVertical, width) {
-        var elTitleArea, titleWidth;
+        var elTitleArea, titleWidth, titleHeight;
 
         if (!title) {
             return;
@@ -88,7 +88,12 @@ var AxisView = ne.util.defineClass(View, {
 
         if (isVertical) {
             titleWidth = this.getRenderedLabelWidth(title, fontSize);
-            elTitleArea.style.top = ((width - titleWidth) / 2) + 'px';
+            titleHeight = this.getRenderedLabelHeight(title, fontSize);
+            elTitleArea.style.width = width + 'px';
+            if (!this.isIE8()) {
+                elTitleArea.style.top = width + 'px';
+            }
+            elTitleArea.style.left = titleHeight + 'px';
         }
 
         return elTitleArea;
@@ -216,12 +221,15 @@ var AxisView = ne.util.defineClass(View, {
      * @private
      */
     _changeLabelAreaPosition: function(elLabelArea, isVertical, isLabelAxis, labelFontSize, labelWidth) {
+        var labelHeight;
+
         if (isLabelAxis) {
             return;
         }
 
         if (isVertical) {
-            elLabelArea.style.top = [parseInt((labelFontSize + 3) / 2, 10), 'px'].join('');
+            labelHeight = this.getRenderedLabelHeight('ABC', labelFontSize);
+            elLabelArea.style.top = [parseInt(labelHeight / 2, 10), 'px'].join('');
         } else if (!isLabelAxis) {
             elLabelArea.style.left = ['-', parseInt(labelWidth / 2, 10), 'px'].join('');
         }
@@ -242,7 +250,7 @@ var AxisView = ne.util.defineClass(View, {
      * @returns {number}
      */
     getHAxisAreaHeight: function() {
-        var titleAreaHeight = this._getRenderedTitleHeight() + TITLE_AREA_HEIGH_PADDING,
+        var titleAreaHeight = this._getRenderedTitleHeight() + TITLE_AREA_HEIGHT_PADDING,
             height = this.getRenderedLabelsMaxHeight(this.model.labels) + titleAreaHeight;
         return height;
     }
