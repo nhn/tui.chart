@@ -38,6 +38,7 @@ var ChartModel = ne.util.defineClass(Model, {
         this.options = options;
 
         this._setTitle(options.title || this.title);
+        this._setTitleFontSize(options.titleFontSize || chartConst.DEFAULT_TITLE_FONT_SIZE);
         this._setChartArea(options.chartArea || this.chartArea);
 
         if (data) {
@@ -60,6 +61,15 @@ var ChartModel = ne.util.defineClass(Model, {
      */
     _setTitle: function(title) {
         this.title = title;
+    },
+
+    /**
+     * Set title font size
+     * @param {number} fontSize
+     * @private
+     */
+    _setTitleFontSize: function(fontSize) {
+        this.titleFontSize = fontSize;
     },
 
     /**

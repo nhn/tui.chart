@@ -10,14 +10,25 @@ describe('test View', function() {
         expect(el.style.height).toEqual('300px');
     });
 
-    it('test calculateRenderedLabelWidth', function() {
-        var labelWidth = view.calculateRenderedLabelWidth('Label1', 12);
+    it('test getRenderedLabelWidth', function() {
+        var labelWidth = view.getRenderedLabelWidth('Label1', 12);
         expect(labelWidth).toBeGreaterThan(30);
+    });
+
+    it('test getRenderedLabelHeight', function() {
+        var labelHeight = view.getRenderedLabelHeight('Label2', 12);
+        expect(labelHeight).toBeGreaterThan(12);
     });
 
     it('test getRenderedLabelsMaxWidth', function() {
         var data = ['a', 'abcde', 'label1', 'I am a boy.'],
             maxWidth = view.getRenderedLabelsMaxWidth(data, 12);
         expect(maxWidth).toBeGreaterThan(50);
+    });
+
+    it('test getRenderedLabelsMaxHeight', function() {
+        var data = ['a', 'abcde', 'label1', 'I am a boy.'],
+            maxHeight = view.getRenderedLabelsMaxHeight(data, 12);
+        expect(maxHeight).toBeGreaterThan(12);
     });
 });

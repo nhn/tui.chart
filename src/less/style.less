@@ -11,6 +11,14 @@
 }
 
 .ne-bar-chart {
+  .ne-chart-title {
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align:center;
+    padding-top:10px;
+  }
   .axis-area {
     position: absolute;
 
@@ -43,10 +51,11 @@
       border-right: 1px solid @axis-color;
 
       .title-area {
-        left: 0px;
+        left: -10px;
         left/*\**/: 20px\9;
         text-align: center;
         .rotate(-90deg);
+        white-space: nowrap;
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
       }
 
@@ -124,7 +133,6 @@
   .series-area {
     position: absolute;
     right: @chart-padding - 1;
-    top: @chart-padding - 1;
     overflow: hidden;
     &.horizontal > div {
       left: -1px !important; //Fixed ie8 left border error;

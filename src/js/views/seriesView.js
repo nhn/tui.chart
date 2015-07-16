@@ -10,6 +10,8 @@ var View = require('./view.js'),
     neConst = require('../const.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
+var HIDDEN_WIDTH = 1;
+
 /**
  * @classdesc SeriesView render series area.
  * @class
@@ -48,8 +50,9 @@ var SeriesView = ne.util.defineClass(View, {
      * @param {{width: number, height: number}} size series size
      * @returns {element}
      */
-    render: function(size) {
+    render: function(size, top) {
         this.renderSize(size);
+        this.renderPositionTop(top - HIDDEN_WIDTH);
         this.graphRenderer.render(this.el, {
             size: size,
             model: this.model,

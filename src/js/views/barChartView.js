@@ -86,19 +86,24 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var vTitleAreaWidth = this.model.title ? 50 : 0,
-            labels = this.model.vAxis.labels,
-            vAxisWidth = this.getRenderedLabelsMaxWidth(labels) + vTitleAreaWidth + 10,
+        var titleHeight = this.getRenderedTitleHeight(),
+            vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
+            hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
             width = this.size.width - CHART_PADDING * 2,
-            height = this.size.height - CHART_PADDING * 2,
-            plotSize = {width: width - vAxisWidth, height: height - H_AXIS_HEIGHT},
-            vAxisSize = {width: vAxisWidth, height: height - H_AXIS_HEIGHT},
-            hAxisSize = {width: width - vAxisWidth, height: H_AXIS_HEIGHT},
-            elPlot = this.plotView.render(plotSize),
-            elVAxis = this.vAxisView.render(vAxisSize, vTitleAreaWidth),
+            height = this.size.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            top = titleHeight + CHART_PADDING,
+            plotSize = {width: width - vAxisWidth, height: height},
+            vAxisSize = {width: vAxisWidth, height: height},
+            hAxisSize = {width: width - vAxisWidth, height: hAxisHeight},
+            elTitle = this.renderTitle(),
+            elPlot = this.plotView.render(plotSize, top),
+            elVAxis = this.vAxisView.render(vAxisSize, top),
             elHAxis = this.hAxisView.render(hAxisSize),
-            elSeries = this.seriesView.render(plotSize);
+            elSeries = this.seriesView.render(plotSize, top);
 
+        if (elTitle) {
+            this.el.appendChild(elTitle);
+        }
         this.el.appendChild(elPlot);
         this.el.appendChild(elVAxis);
         this.el.appendChild(elHAxis);

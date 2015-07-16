@@ -44,7 +44,7 @@ AxisModel = ne.util.defineClass(Model, {
          * title font size
          * @type {number}
          */
-        this.titleFontSize = options.titleFontSize || neConst.DEFAULT_TITLE_FONT_SIZE;
+        this.titleFontSize = options.titleFontSize || neConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
 
         /**
          * Axis labels

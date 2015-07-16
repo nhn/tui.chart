@@ -6,7 +6,8 @@
 
 'use strict';
 
-var View = require('./view.js');
+var View = require('./view.js'),
+    neConst = require('../const.js');
 
 /**
  * @classdesc ChartView is parent of all chart.
@@ -33,6 +34,36 @@ var ChartView = ne.util.defineClass(View, {
         this.size = ne.util.extend(this.size, options.size);
         View.call(this);
         this.addClass(this.el, 'ne-chart');
+    },
+
+    /**
+     * Chart title renderer.
+     * @returns {element}
+     */
+    renderTitle: function() {
+        var title = this.model.title,
+            titleSize = this.model.titleFontSize,
+            elTitle;
+
+        if (!this.model.title) {
+            return;
+        }
+
+        elTitle = this.createElement('DIV', 'ne-chart-title');
+        elTitle.innerHTML = title;
+        elTitle.style.fontSize = titleSize + 'px';
+
+        return elTitle;
+    },
+
+    /**
+     * Get rendered title height.
+     * @returns {number}
+     */
+    getRenderedTitleHeight: function() {
+        var title = this.model.title,
+            result = title ? this.getRenderedLabelHeight(title) + 10 : 0;
+        return result;
     }
 });
 
