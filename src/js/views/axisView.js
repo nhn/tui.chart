@@ -41,28 +41,27 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Axis renderer
-     * @param {{width: number, height: number}} size axis area size
+     * @param {{width: number, height: number, top: number, right: number}} dimension axis area dimension
      * @returns {element} axis area base element
      */
-    render: function(size, position) {
+    render: function(bound) {
         var model = this.model,
             isVertical = model.isVertical,
-            width = isVertical ? size.height : size.width,
-            elTitleArea = this._renderTitleArea(model.title, model.titleFontSize, isVertical, width),
-            elTickArea = this._renderTickArea(width),
-            elLabelArea = this._renderLabelArea(width, size.width);
+            dimension = bound.dimension,
+            size = isVertical ? dimension.height : dimension.width,
+            elTitleArea = this._renderTitleArea(model.title, model.titleFontSize, isVertical, size),
+            elTickArea = this._renderTickArea(size),
+            elLabelArea = this._renderLabelArea(size, dimension.width);
 
 
-        this.renderSize(size);
-        this.renderPosition(position);
+        this.renderDimension(dimension);
+        this.renderPosition(bound.position);
         this.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
 
-        if (elTitleArea) {
-            this.el.appendChild(elTitleArea);
-        }
-
-        this.el.appendChild(elTickArea);
-        this.el.appendChild(elLabelArea);
+        
+        this.append(elTitleArea);
+        this.append(elTickArea);
+        this.append(elLabelArea);
 
         return this.el;
     },
@@ -70,10 +69,13 @@ var AxisView = ne.util.defineClass(View, {
     /**
      * Title Area renderer
      * @param {string} title axis title
+     * @param {number} fontSize font size
+     * @param {boolean} isVertical is vertical?
+     * @param {number} size (width or height)
      * @returns {element}
      * @private
      */
-    _renderTitleArea: function(title, fontSize, isVertical, width) {
+    _renderTitleArea: function(title, fontSize, isVertical, size) {
         var elTitleArea, titleWidth, titleHeight;
 
         if (!title) {
@@ -89,9 +91,9 @@ var AxisView = ne.util.defineClass(View, {
         if (isVertical) {
             titleWidth = this.getRenderedLabelWidth(title, fontSize);
             titleHeight = this.getRenderedLabelHeight(title, fontSize);
-            elTitleArea.style.width = width + 'px';
+            elTitleArea.style.width = size + 'px';
             if (!this.isIE8()) {
-                elTitleArea.style.top = width + 'px';
+                elTitleArea.style.top = size + 'px';
             }
             elTitleArea.style.left = titleHeight + 'px';
         }
@@ -101,13 +103,13 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Tick area renderer
-     * @param {number} width width or height
+     * @param {number} size size or height
      * @returns {element} tick area element
      * @private
      */
-    _renderTickArea: function(width) {
+    _renderTickArea: function(size) {
         var tickCount = this.model.tickCount,
-            positions = this.model.makePixelPositions(width, tickCount),
+            positions = this.model.makePixelPositions(size, tickCount),
             elTickArea = this.createElement('DIV', 'tick-area'),
             posType = this.model.isVertical ? 'bottom' : 'left',
             ticksHtml = ne.util.map(positions, function(position) {
@@ -121,13 +123,13 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Label area renderer
-     * @param {number} width
+     * @param {number} size
      * @returns {element} label area element
      * @private
      */
-    _renderLabelArea: function(width, axisWidth) {
+    _renderLabelArea: function(size, axisWidth) {
         var model = this.model,
-            positions = model.makePixelPositions(width, model.tickCount),
+            positions = model.makePixelPositions(size, model.tickCount),
             labelWidth = positions[1] - positions[0],
             labels = model.labels,
             isVertical = model.isVertical,

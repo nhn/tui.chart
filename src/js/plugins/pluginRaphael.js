@@ -20,21 +20,21 @@ BarChart = ne.util.defineClass({
     /**
      * Vertical bars renderer
      * @param {object} paper raphael paper
-     * @param {{width: number, height: number}} size graph size
+     * @param {{width: number, height: number}} dimension graph dimension
      * @param {number} maxBarWidth max bar width
      * @param {[array, ...]} values percent values
      * @param {array} colors colors
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderVerticalBars: function(paper, size, maxBarWidth, values, colors, groupIndex) {
+    _renderVerticalBars: function(paper, dimension, maxBarWidth, values, colors, groupIndex) {
         var value = values[0],
             barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
             paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
 
         ne.util.forEach(values, function(value, index) {
-            var barHeight = parseInt(value * size.height, 10),
-                top = size.height - barHeight + HIDDEN_WIDTH,
+            var barHeight = parseInt(value * dimension.height, 10),
+                top = dimension.height - barHeight + HIDDEN_WIDTH,
                 left = paddingLeft + (barWidth * index),
                 rect = paper.rect(left, top, barWidth, barHeight);
             rect.attr({
@@ -90,22 +90,22 @@ BarChart = ne.util.defineClass({
      */
     render: function(container, data, inCallback, outCallback) {
         var isVertical = data.options.bars === 'vertical',
-            size = data.size,
+            dimension = data.dimension,
             groupValues = data.model.percentValues,
             colors = data.model.colors,
-            paper = Raphael(container, size.width, size.height),
+            paper = Raphael(container, dimension.width, dimension.height),
             barMaxSize, renderBars;
 
         if (isVertical) {
-            barMaxSize = (size.width / groupValues.length);
+            barMaxSize = (dimension.width / groupValues.length);
             renderBars = this._renderVerticalBars;
         } else {
-            barMaxSize = (size.height / groupValues.length);
+            barMaxSize = (dimension.height / groupValues.length);
             renderBars = this._renderHorizontalBars;
         }
 
         ne.util.forEachArray(groupValues, function(values, index) {
-            renderBars(paper, size, barMaxSize, values, colors, index);
+            renderBars(paper, dimension, barMaxSize, values, colors, index);
         }, this);
     }
 });

@@ -15,8 +15,8 @@ describe('test Legend View', function() {
     legendView = new LegendView(legendModel)
 
 
-    it('test _getLegendAreaHeight', function() {
-        var result = legendView._getLegendAreaHeight();
+    it('test getLegendAreaHeight', function() {
+        var result = legendView.getLegendAreaHeight();
         expect(result).toEqual(30);
     });
 

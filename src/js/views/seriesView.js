@@ -47,18 +47,22 @@ var SeriesView = ne.util.defineClass(View, {
 
     /**
      * series renderer
-     * @param {{width: number, height: number}} size series size
+     * @param {{width: number, height: number, top: number, right: number}} dimension series dimension
      * @returns {element}
      */
-    render: function(size, position) {
-        this.renderSize(size);
+    render: function(bound) {
+        var dimension = bound.dimension,
+            position = bound.position;
+
+        this.renderDimension(dimension);
 
         position.top -= HIDDEN_WIDTH;
         position.right -= HIDDEN_WIDTH;
+
         this.renderPosition(position);
 
         this.graphRenderer.render(this.el, {
-            size: size,
+            dimension: dimension,
             model: this.model,
             options: this.options
         });

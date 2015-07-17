@@ -19,14 +19,24 @@ var View = ne.util.defineClass({
     },
 
     /**
-     * Size(width, height) renderer
-     * @param {number} width area width
-     * @param {number} height area height
+     * Append child element.
+     * @param {element} elChild child element
      */
-    renderSize: function(size) {
+    append: function(elChild) {
+        if (!elChild) {
+            return;
+        }
+        this.el.appendChild(elChild);
+    },
+
+    /**
+     * Dimension renderer
+     * @param {{width: number, height: number} dimension dimension
+     */
+    renderDimension: function(dimension) {
         this.el.style.cssText = [
-            ['width:', size.width, 'px'].join(''),
-            ['height:', size.height, 'px'].join(''),
+            ['width:', dimension.width, 'px'].join(''),
+            ['height:', dimension.height, 'px'].join(''),
         ].join(';');
     },
 

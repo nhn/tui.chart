@@ -44,7 +44,7 @@ var LegendView = ne.util.defineClass(View, {
      * @param {number} plotHeight plot height
      * @returns {element}
      */
-    render: function(plotHeight) {
+    render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
             html = ne.util.map(this.model.data, function(items) {
                 var data = {
@@ -52,12 +52,10 @@ var LegendView = ne.util.defineClass(View, {
                         label: items[0]
                     };
                 return template(data);
-            }).join(''),
-            height = this._getLegendAreaHeight(),
-            position = {top: (plotHeight - height) / 2 };
+            }).join('');
 
         this.el.innerHTML = html;
-        this.renderPosition(position);
+        this.renderPosition(bound.position);
 
         return this.el;
     },
@@ -67,7 +65,7 @@ var LegendView = ne.util.defineClass(View, {
      * @returns {number}
      * @private
      */
-    _getLegendAreaHeight: function() {
+    getLegendAreaHeight: function() {
         var maxLabelHeight = this.getRenderedLabelsMaxHeight(this.labels);
         return maxLabelHeight * this.labels.length;
     },

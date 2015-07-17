@@ -12,19 +12,15 @@ describe('test seriesView', function() {
             bars: 'vertical',
             chartType: 'bar'
         },
-        size = {
-            width: 200,
-            height: 100
-        },
-        position = {
-            top: 50,
-            right: 50
+        bound = {
+            dimension: {width: 200, height: 100},
+            position: {top: 50, right: 50}
         },
         seriesModel = new SeriesModel(data);
 
     it('test render', function() {
         var seriesView = new SeriesView(seriesModel, options),
-            elSeries = seriesView.render(size, position);
+            elSeries = seriesView.render(bound);
 
         expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
         expect(elSeries.style.width).toEqual('200px');

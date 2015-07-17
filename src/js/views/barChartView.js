@@ -89,35 +89,81 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
+        var bounds = this.getViewsBound(),
+            elTitle = this.renderTitle(),
+            elPlot = this.plotView.render(bounds.plot),
+            elVAxis = this.vAxisView.render(bounds.vAxis),
+            elHAxis = this.hAxisView.render(bounds.hAxis),
+            elSeries = this.seriesView.render(bounds.series),
+            elLegend = this.legendView.render(bounds.legend);
+
+        this.append(elTitle);
+        this.append(elPlot);
+        this.append(elVAxis);
+        this.append(elHAxis);
+        this.append(elSeries);
+        this.append(elLegend);
+        this.renderDimension(this.size);
+        return this.el;
+    },
+
+    /**
+     * Get views bound information.
+     * @returns {{
+     *   plot: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   vAxis: {
+     *     dimension: {width: (number), height: number},
+     *     position: {top: number}
+     *   },
+     *   hAxis: {
+     *     dimension: {width: number, height: (number)},
+     *     position: {right: number}
+     *   },
+     *   series: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   legend: {
+     *     position: {top: number}
+     *   }
+     * }}
+     */
+    getViewsBound: function() {
         var titleHeight = this.getRenderedTitleHeight(),
             vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
             hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
             legendWidth = this.legendView.getLegendAreaWidth(),
-            plotWidth = this.size.width - CHART_PADDING * 2 - vAxisWidth - legendWidth,
+            legendHeight = this.legendView.getLegendAreaHeight(),
+            plotWidth = this.size.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
             plotHeight = this.size.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
             right = legendWidth + CHART_PADDING,
-            plotPos = {top: top, right: right},
-            plotSize = {width: plotWidth, height: plotHeight},
-            vAxisSize = {width: vAxisWidth, height: plotHeight},
-            hAxisSize = {width: plotWidth, height: hAxisHeight},
-            elTitle = this.renderTitle(),
-            elPlot = this.plotView.render(plotSize, plotPos),
-            elVAxis = this.vAxisView.render(vAxisSize, {top: top}),
-            elHAxis = this.hAxisView.render(hAxisSize, {right: right}),
-            elSeries = this.seriesView.render(plotSize, plotPos),
-            elLegend = this.legendView.render(plotHeight, top);
+            bounds = {
+                plot: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, right: right}
+                },
+                vAxis: {
+                    dimension: {width: vAxisWidth, height: plotHeight},
+                    position: {top: top}
+                },
+                hAxis: {
+                    dimension: {width: plotWidth, height: hAxisHeight},
+                    position: {right: right}
+                },
+                series: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, right: right}
+                },
+                legend: {
+                    position: {top: (plotHeight - legendHeight) / 2 }
+                }
+            };
 
-        if (elTitle) {
-            this.el.appendChild(elTitle);
-        }
-        this.el.appendChild(elPlot);
-        this.el.appendChild(elVAxis);
-        this.el.appendChild(elHAxis);
-        this.el.appendChild(elSeries);
-        this.el.appendChild(elLegend);
-        this.renderSize(this.size);
-        return this.el;
+        return bounds;
     }
 });
 

@@ -37,29 +37,29 @@ var PlotView = ne.util.defineClass(View, {
 
     /**
      * Plot view renderer
-     * @param {{width: number, height:number}} size plot area size
+     * @param {{width: number, height: number, top: number, right: number}} bound plot area bound
      * @returns {element}
      */
-    render: function(size, position) {
-        this.renderSize(size);
-        this.renderPosition(position);
-        this._renderLines(size);
+    render: function(bound) {
+        this.renderDimension(bound.dimension);
+        this.renderPosition(bound.position);
+        this._renderLines(bound.dimension);
 
         return this.el;
     },
 
     /**
      * Plot line renderer
-     * @param {{width: number, height: number}} size plot area size
+     * @param {{width: number, height: number}} dimension plot area dimension
      * @private
      */
-    _renderLines: function(size) {
-        var hPositions = this.model.makeHPixelPositions(size.width),
-            vPositions = this.model.makeVPixelPositions(size.height),
+    _renderLines: function(dimension) {
+        var hPositions = this.model.makeHPixelPositions(dimension.width),
+            vPositions = this.model.makeVPixelPositions(dimension.height),
             lineHtml = '';
 
-        lineHtml += this._makeLineHtml(hPositions, size.height, 'vertical', 'left', 'height');
-        lineHtml += this._makeLineHtml(vPositions, size.width, 'horizontal', 'bottom', 'width');
+        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height');
+        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width');
 
         this.el.innerHTML = lineHtml;
     },
@@ -67,18 +67,18 @@ var PlotView = ne.util.defineClass(View, {
     /**
      * Makes line html
      * @param {array} positions
-     * @param {number} width width or height
+     * @param {number} size size or height
      * @param {string} className line className
      * @param {string} positionType position type (left or bottom)
-     * @param {string} sizeType size type (width or height)
+     * @param {string} sizeType size type (size or height)
      * @returns {string}
      * @private
      */
-    _makeLineHtml: function(positions, width, className, positionType, sizeType) {
+    _makeLineHtml: function(positions, size, className, positionType, sizeType) {
         var lineHtml = ne.util.map(positions, function(position) {
             var cssText = [
                     [positionType, ':', position, 'px'].join(''),
-                    [sizeType, ':', width, 'px'].join('')
+                    [sizeType, ':', size, 'px'].join('')
                 ].join(';'),
                 data = {className: className, cssText: cssText};
             return plotTemplate.TPL_PLOT_LINE(data);

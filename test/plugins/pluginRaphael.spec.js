@@ -7,7 +7,7 @@ var supportsSvg = function() {
 describe('test pluginRaphael', function() {
     var graphRenderer,
         data = {
-            size: {width: 200, height: 100},
+            dimension: {width: 200, height: 100},
             model: {
                 percentValues: [
                     [0.2, 0.4],
@@ -25,7 +25,7 @@ describe('test pluginRaphael', function() {
     });
 
     describe('test BarChart renderer', function() {
-        var size = data.size,
+        var dimension = data.dimension,
             values = data.model.percentValues[0],
             colors = data.model.colors,
             groupIndex = 0,
@@ -34,14 +34,14 @@ describe('test pluginRaphael', function() {
 
         beforeEach(function() {
             container = document.createElement('DIV');
-            paper = Raphael(container, size.width, size.height);
+            paper = Raphael(container, dimension.width, dimension.height);
         });
 
         it('test _renderVerticalBars', function() {
-            var maxBarWidth = size.width / 2,
+            var maxBarWidth = dimension.width / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderVerticalBars(paper, size, maxBarWidth, values, colors, groupIndex);
+            graphRenderer._renderVerticalBars(paper, dimension, maxBarWidth, values, colors, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
@@ -79,10 +79,10 @@ describe('test pluginRaphael', function() {
         });
 
         it('test _renderHorizontalBars', function() {
-            var maxBarHeight = size.height / 2,
+            var maxBarHeight = dimension.height / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderHorizontalBars(paper, size, maxBarHeight, values, colors, groupIndex);
+            graphRenderer._renderHorizontalBars(paper, dimension, maxBarHeight, values, colors, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;

@@ -2,6 +2,8 @@
 
 @axis-color: #000;
 @chart-padding: 20px;
+@legend-rect-width: 12px;
+@hidden-padding: 1px;
 
 .ne-chart {
   position: relative;
@@ -132,7 +134,7 @@
 
   .series-area {
     position: absolute;
-    right: @chart-padding - 1;
+    right: @chart-padding - @hidden-padding;
     overflow: hidden;
     &.horizontal > div {
       left: -1px !important; //Fixed ie8 left border error;
@@ -150,8 +152,8 @@
       }
 
       .ne-chart-legend-rect {
-        width: 12px;
-        height: 12px
+        width: @legend-rect-width;
+        height: @legend-rect-width
       }
       .ne-chart-legend-label {
         padding-left: 5px;

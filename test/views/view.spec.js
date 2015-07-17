@@ -2,10 +2,10 @@ var View = require('../../src/js/views/axisView.js');
 
 describe('test View', function() {
     var view = new View();
-    it('test renderSize', function() {
+    it('test renderDimension', function() {
         var el = view.el,
             size = {width: 500, height: 300};
-        view.renderSize(size);
+        view.renderDimension(size);
         expect(el.style.width).toEqual('500px');
         expect(el.style.height).toEqual('300px');
     });
