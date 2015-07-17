@@ -123,8 +123,9 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Label area renderer
-     * @param {number} size
-     * @returns {element} label area element
+     * @param {number} size label area size
+     * @params {number} axisWidth axis area width
+     * @returns {element}
      * @private
      */
     _renderLabelArea: function(size, axisWidth) {
@@ -167,8 +168,8 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Makes label css array
-     * @param {boolean} isVertical is vertical
-     * @param {boolean} isLabelAxis is label axis
+     * @param {boolean} isVertical Is vertical ?
+     * @param {boolean} isLabelAxis Is label axis ?
      * @param {number} labelFontSize label font size
      * @param {number} labelWidth label width or height
      * @returns {array}

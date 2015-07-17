@@ -17,12 +17,12 @@ describe('test Legend View', function() {
 
     it('test getLegendAreaHeight', function() {
         var result = legendView.getLegendAreaHeight();
-        expect(result).toEqual(30);
+        expect(result).toBeGreaterThan(20);
     });
 
     it('test getLegendAreaWidth', function() {
         var result = legendView.getLegendAreaWidth();
-        expect(result).toEqual(82);
+        expect(result).toBeGreaterThan(70);
     });
 
     it('test render', function() {
@@ -34,9 +34,11 @@ describe('test Legend View', function() {
             '<div class="ne-chart-legend">' +
                 '<div class="ne-chart-legend-rect" style="background-color:orange"></div>' +
                 '<div class="ne-chart-legend-label">Density2</div>' +
-            '</div>';
+            '</div>',
+            elTemp = document.createElement('DIV');
+        elTemp.innerHTML = compareHtml;
 
         expect(elLegend.className).toEqual('ne-chart-legend-area');
-        expect(elLegend.innerHTML).toEqual(compareHtml);
+        expect(elLegend.innerHTML).toEqual(elTemp.innerHTML);
     });
 });

@@ -125,11 +125,11 @@ describe('test Axis View', function() {
         it('test vertical _renderLabelArea', function() {
             var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
-            axisModel.changeVerticalState(true);
+            axisModel.changeVerticalState(true)
 
-            elTickArea = axisView._renderLabelArea(300);
+            elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area" style="top:7px">' +
+            compareHtml = '<div class="label-area" style="width:63px;top:7px">' +
                 '<div class="label" style="font-size:12px;bottom: 0px">0</div>' +
                 '<div class="label" style="font-size:12px;bottom: 75px">13</div>' +
                 '<div class="label" style="font-size:12px;bottom: 150px">26</div>' +
@@ -141,7 +141,8 @@ describe('test Axis View', function() {
             elTemp.innerHTML = compareHtml;
             elTempArea = elTemp.firstChild;
 
-            expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
+            expect(parseInt(elTickArea.style.width) / 10).toBeCloseTo(parseInt(elTempArea.style.width) / 10, 0);
+            expect(parseInt(elTickArea.style.top) / 10).toBeCloseTo(parseInt(elTempArea.style.top) / 10, 0);
 
             childNodes = elTickArea.childNodes;
             tmpChildNodes = elTempArea.childNodes;
@@ -215,8 +216,6 @@ describe('test Axis View', function() {
             elTemp.innerHTML = compareHtml;
             elTempArea = elTemp.firstChild;
 
-            expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
-
             childNodes = elTickArea.childNodes;
             tmpChildNodes = elTempArea.childNodes;
 
@@ -232,9 +231,9 @@ describe('test Axis View', function() {
 
             axisModel.changeVerticalState(true);
 
-            elTickArea = axisView._renderLabelArea(300);
+            elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area">' +
+            compareHtml = '<div class="label-area" style="width: 63px;">' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 0px">label1</div>' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 100px">label2</div>' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 199px">label3</div>' +
@@ -244,20 +243,17 @@ describe('test Axis View', function() {
             elTemp.innerHTML = compareHtml;
             elTempArea = elTemp.firstChild;
 
-            expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
+            expect(parseInt(elTickArea.style.width) / 10).toBeCloseTo(parseInt(elTempArea.style.width) / 10, 0);
 
             childNodes = elTickArea.childNodes;
             tmpChildNodes = elTempArea.childNodes;
 
             ne.util.forEachArray(childNodes, function(child, index) {
                 var tmpChild = tmpChildNodes[index];
+
                 expect(child.style.cssText).toEqual(tmpChild.style.cssText);
                 expect(child.innerHTML).toEqual(tmpChild.innerHTML);
             });
         });
-    });
-
-    it('test axis title', function(){
-
     });
 });

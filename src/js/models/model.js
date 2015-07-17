@@ -22,8 +22,9 @@ var Model = ne.util.defineClass({
     },
 
     /**
-     * Makes tick positions.
+     * Makes pixel type tick positions.
      * @param {number} size area width or height
+     * @param {number} count tick count
      * @returns {Array}
      */
     makePixelPositions: function(size, count) {
