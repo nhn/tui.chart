@@ -103,7 +103,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elHAxis);
         this.append(elSeries);
         this.append(elLegend);
-        this.renderDimension(this.size);
+        this.renderDimension(this.dimension);
         return this.el;
     },
 
@@ -137,8 +137,8 @@ BarChartView = ne.util.defineClass(ChartView, {
             hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
             legendWidth = this.legendView.getLegendAreaWidth(),
             legendHeight = this.legendView.getLegendAreaHeight(),
-            plotWidth = this.size.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
-            plotHeight = this.size.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            plotWidth = this.dimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
+            plotHeight = this.dimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
             right = legendWidth + CHART_PADDING,
             bounds = {

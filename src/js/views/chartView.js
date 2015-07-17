@@ -19,7 +19,7 @@ var ChartView = ne.util.defineClass(View, {
      * Chart size
      * @type {{width: number, height: number}
      */
-    size: {
+    dimension: {
         width: 500,
         height: 300
     },
@@ -31,7 +31,7 @@ var ChartView = ne.util.defineClass(View, {
      */
     init: function(data, options) {
         options = options || {};
-        this.size = ne.util.extend(this.size, options.size);
+        this.dimension = ne.util.extend(this.dimension, options.size);
         View.call(this);
         this.addClass(this.el, 'ne-chart');
     },
