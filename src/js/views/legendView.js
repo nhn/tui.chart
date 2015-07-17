@@ -10,6 +10,7 @@ var View = require('./view.js'),
     legendTemplate = require('./legendTemplate.js');
 
 var LEGEND_AREA_PADDING = 10,
+    LEGEND_RECT_WIDTH = 12,
     LABEL_PADDING = 5;
 /**
  * @classdesc LegendView render legend area.
@@ -28,7 +29,7 @@ var LegendView = ne.util.defineClass(View, {
          * Legend labels
          * @type {array}
          */
-        this.labels = this.model.data[0];
+        this.labels = ne.util.pluck(this.model.data, 0);
 
         /**
          * Legend view className
@@ -76,8 +77,10 @@ var LegendView = ne.util.defineClass(View, {
      * @returns {number}
      */
     getLegendAreaWidth: function() {
-        var maxLabelWidth = this.getRenderedLabelWidth(this.labels),
-            legendWidth = maxLabelWidth + (LEGEND_AREA_PADDING * 2) + LABEL_PADDING;
+        var maxLabelWidth = this.getRenderedLabelsMaxWidth(this.labels),
+            legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
+                LABEL_PADDING + (LEGEND_AREA_PADDING * 2);
+
         return legendWidth;
     }
 });

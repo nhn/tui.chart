@@ -19,7 +19,7 @@ var View = ne.util.defineClass({
     },
 
     /**
-     * Size(width, height) rendering
+     * Size(width, height) renderer
      * @param {number} width area width
      * @param {number} height area height
      */
@@ -30,6 +30,10 @@ var View = ne.util.defineClass({
         ].join(';');
     },
 
+    /**
+     * Position(top, right) renderer
+     * @param position
+     */
     renderPosition: function(position) {
         if (ne.util.isUndefined(position)) {
             return;
@@ -44,8 +48,12 @@ var View = ne.util.defineClass({
         }
     },
 
-
-    createSizeCheckEl: function() {
+    /**
+     * Create size check element
+     * @returns {element}
+     * @private
+     */
+    _createSizeCheckEl: function() {
         var elDiv = document.createElement('DIV'),
             elSpan = document.createElement('SPAN');
 
@@ -55,22 +63,35 @@ var View = ne.util.defineClass({
     },
 
     /**
+     * Get rendered label size (width or height)
+     * @param {string} label label
+     * @param {number} fontSize font size
+     * @param {string} property element property
+     * @returns {number}
+     * @private
+     */
+    _getRenderedLabelSize: function(label, fontSize, property) {
+        var elDiv = this._createSizeCheckEl(),
+            elSpan = elDiv.firstChild,
+            labelSize;
+
+        elSpan.innerHTML = label;
+        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        document.body.appendChild(elDiv);
+        labelSize = elSpan[property];
+        document.body.removeChild(elDiv);
+
+        return labelSize;
+    },
+
+    /**
      * Get rendered label width.
      * @param {string} label label
      * @param {number} fontSize font size
      * @returns {number}
      */
     getRenderedLabelWidth: function(label, fontSize) {
-        var elDiv = this.createSizeCheckEl(),
-            elSpan = elDiv.firstChild,
-            labelWidth;
-
-        elSpan.innerHTML = label;
-        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
-        document.body.appendChild(elDiv);
-        labelWidth = elSpan.offsetWidth;
-        document.body.removeChild(elDiv);
-
+        var labelWidth = this._getRenderedLabelSize(label, fontSize, 'offsetWidth');
         return labelWidth;
     },
 
@@ -81,16 +102,7 @@ var View = ne.util.defineClass({
      * @returns {number}
      */
     getRenderedLabelHeight: function(label, fontSize) {
-        var elDiv = this.createSizeCheckEl(),
-            elSpan = elDiv.firstChild,
-            labelHeight;
-
-        elSpan.innerHTML = label;
-        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
-        document.body.appendChild(elDiv);
-        labelHeight = elSpan.offsetHeight;
-        document.body.removeChild(elDiv);
-
+        var labelHeight = this._getRenderedLabelSize(label, fontSize, 'offsetHeight');
         return labelHeight;
     },
 
@@ -134,6 +146,10 @@ var View = ne.util.defineClass({
         return result;
     },
 
+    /**
+     * Is IE8?
+     * @returns {boolean}
+     */
     isIE8: function() {
         var ie8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1,
             isIE8 = function() {
