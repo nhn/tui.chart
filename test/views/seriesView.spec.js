@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test series view
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var SeriesView = require('../../src/js/views/seriesView.js'),
     SeriesModel = require('../../src/js/models/seriesModel.js');
 

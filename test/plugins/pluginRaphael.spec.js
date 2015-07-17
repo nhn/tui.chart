@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test plugin raphael
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var pluginFactory = require('../../src/js/factories/pluginFactory.js');
 
 var supportsSvg = function() {

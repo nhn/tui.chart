@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test DOMHandler
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var DOMHandler = require('../../src/js/views/domHandler.js');
 
 describe('test DOM Handler', function() {

@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test axis view
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var AxisView = require('../../src/js/views/axisView.js'),
     AxisModel = require('../../src/js/models/axisModel.js');
 

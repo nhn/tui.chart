@@ -38,14 +38,6 @@ var LegendModel = ne.util.defineClass(Model, {
      */
     _setData: function(data) {
         this.data = ne.util.zip(data.labels, data.colors);
-    },
-
-    /**
-     * Get legend data.
-     * @returns {array}
-     */
-    getData: function() {
-        return this.data;
     }
 });
 

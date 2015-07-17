@@ -162,4 +162,24 @@
       }
     }
   }
+
+  .ne-chart-popup-area {
+    position:absolute;
+    > * {
+      display: none;
+      &.show {
+        display: block;
+      }
+    }
+    .ne-chart-popup {
+      font-size:12px;
+      width: 100px;
+      border:1px solid #888;
+      background-color:#efefef;
+      position: absolute;
+      >:first-child {
+        text-align: center;
+      }
+    }
+  }
 }

@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test legend view
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var LegendView = require('../../src/js/views/legendView.js'),
     LegendModel = require('../../src/js/models/legendModel.js'),
     chartConst = require('../../src/js/const.js');

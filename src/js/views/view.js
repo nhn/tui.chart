@@ -53,6 +53,10 @@ var View = ne.util.defineClass({
             this.el.style.top = position.top + 'px';
         }
 
+        if (position.left) {
+            this.el.style.left = position.left + 'px';
+        }
+
         if (position.right) {
             this.el.style.right = position.right + 'px';
         }

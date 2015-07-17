@@ -11,6 +11,7 @@ var ChartModel = require('./chartModel.js'),
     PlotModel = require('./plotModel.js'),
     LegendModel = require('./legendModel.js'),
     SeriesModel = require('./seriesModel.js'),
+    PopupModel = require('./popupModel.js'),
     BarChartModel;
 
 BarChartModel = ne.util.defineClass(ChartModel, {
@@ -53,6 +54,12 @@ BarChartModel = ne.util.defineClass(ChartModel, {
         this.series = null;
 
         /**
+         * PopupModel instance
+         * @type {object}
+         */
+        this.popup = null;
+
+        /**
          * Bar chart type
          * vertical or horizontal
          * @type {string}
@@ -84,6 +91,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
         this._setPlot(this.hAxis, this.vAxis);
         this._setLegend(legendLabels, colors);
         this._setSeries(values, axisScale, colors);
+        this._setPopup(values, labels, legendLabels);
     },
 
     /**
@@ -151,6 +159,14 @@ BarChartModel = ne.util.defineClass(ChartModel, {
             values: values,
             scale: scale,
             colors: colors
+        });
+    },
+
+    _setPopup: function(values, labels, legendLabels) {
+        this.popup = new PopupModel({
+            values: values,
+            labels: labels,
+            legendLabels: legendLabels
         });
     }
 });

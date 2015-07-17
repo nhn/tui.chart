@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test plot view
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var PlotView = require('../../src/js/views/plotView.js'),
     PlotModel = require('../../src/js/models/plotModel.js');
 

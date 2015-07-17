@@ -45,14 +45,24 @@ var SeriesView = ne.util.defineClass(View, {
         View.call(this);
     },
 
+    showPopup: function(prefix, isVertical, position, id) {
+        console.log(prefix, isVertical, position, id);
+    },
+
+    hidePopup: function(prefix, isVertical, id) {
+        console.log(prefix, isVertical, id);
+    },
+
     /**
      * series renderer
      * @param {{width: number, height: number, top: number, right: number}} dimension series dimension
      * @returns {element}
      */
-    render: function(bound) {
+    render: function(bound, popupPrefix, isVertical) {
         var dimension = bound.dimension,
-            position = bound.position;
+            position = bound.position,
+            inCallback = ne.util.bind(this.showPopup, this, popupPrefix, isVertical),
+            outCallback = ne.util.bind(this.hidePopup, this, popupPrefix, isVertical);
 
         this.renderDimension(dimension);
 
@@ -64,8 +74,8 @@ var SeriesView = ne.util.defineClass(View, {
         this.graphRenderer.render(this.el, {
             dimension: dimension,
             model: this.model,
-            options: this.options
-        });
+            options: this.options,
+        },inCallback, outCallback);
         return this.el;
     }
 });

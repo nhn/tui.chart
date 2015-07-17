@@ -12,12 +12,12 @@ var ChartView = require('./chartView.js'),
     PlotView = require('./plotView.js'),
     AxisView = require('./axisView.js'),
     SeriesView = require('./seriesView.js'),
-    LegendView = require('./legendView.js');
+    LegendView = require('./legendView.js'),
+    PopupView = require('./popupView.js');
 
 
 var BarChartView,
-    V_AXIS_WIDTH = 100,
-    H_AXIS_HEIGHT = 50,
+    POPUP_PREFIX = 'ne-chart-popup-',
     CHART_PADDING = 20;
 
 /**
@@ -79,7 +79,17 @@ BarChartView = ne.util.defineClass(ChartView, {
             bars: options.bars
         });
 
+        /**
+         * legend view
+         * @type {object}
+         */
         this.legendView = new LegendView(this.model.legend);
+
+        /**
+         * legend view
+         * @type {object}
+         */
+        this.popupView = new PopupView(this.model.popup);
 
         ChartView.call(this, data, options);
     },
@@ -89,13 +99,16 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var bounds = this.getViewsBound(),
+        var popupPrefix = POPUP_PREFIX + (new Date).getTime(),
+            isVertical = this.options.bars === 'vertical',
+            bounds = this.getViewsBound(),
             elTitle = this.renderTitle(),
             elPlot = this.plotView.render(bounds.plot),
             elVAxis = this.vAxisView.render(bounds.vAxis),
             elHAxis = this.hAxisView.render(bounds.hAxis),
-            elSeries = this.seriesView.render(bounds.series),
-            elLegend = this.legendView.render(bounds.legend);
+            elSeries = this.seriesView.render(bounds.series, popupPrefix, isVertical),
+            elLegend = this.legendView.render(bounds.legend),
+            elPopup = this.popupView.render(bounds.popup, popupPrefix);
 
         this.append(elTitle);
         this.append(elPlot);
@@ -103,6 +116,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elHAxis);
         this.append(elSeries);
         this.append(elLegend);
+        this.append(elPopup);
         this.renderDimension(this.dimension);
         return this.el;
     },
@@ -160,6 +174,10 @@ BarChartView = ne.util.defineClass(ChartView, {
                 },
                 legend: {
                     position: {top: (plotHeight - legendHeight) / 2 }
+                },
+                popup: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, left: vAxisWidth + CHART_PADDING}
                 }
             };
 

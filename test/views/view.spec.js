@@ -1,3 +1,11 @@
+/**
+ * @fileoverview test basic view
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var View = require('../../src/js/views/axisView.js');
 
 describe('test View', function() {
