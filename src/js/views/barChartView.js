@@ -6,7 +6,8 @@
 
 'use strict';
 
-var ChartView = require('./chartView.js'),
+var chartConst = require('../const.js'),
+    ChartView = require('./chartView.js'),
     chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
@@ -76,7 +77,7 @@ BarChartView = ne.util.defineClass(ChartView, {
          */
         this.seriesView = new SeriesView(this.model.series, {
             chartType: 'bar',
-            bars: options.bars
+            barType: options.barType
         });
 
         /**
@@ -99,14 +100,14 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var popupPrefix = POPUP_PREFIX + (new Date).getTime(),
-            isVertical = this.options.bars === 'vertical',
+        var popupPrefix = POPUP_PREFIX + (new Date).getTime() + '-',
+            isColumn = this.options.barType === chartConst.BAR_TYPE_COLUMN,
             bounds = this.getViewsBound(),
             elTitle = this.renderTitle(),
             elPlot = this.plotView.render(bounds.plot),
             elVAxis = this.vAxisView.render(bounds.vAxis),
             elHAxis = this.hAxisView.render(bounds.hAxis),
-            elSeries = this.seriesView.render(bounds.series, popupPrefix, isVertical),
+            elSeries = this.seriesView.render(bounds.series, popupPrefix, isColumn),
             elLegend = this.legendView.render(bounds.legend),
             elPopup = this.popupView.render(bounds.popup, popupPrefix);
 
@@ -118,6 +119,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elLegend);
         this.append(elPopup);
         this.renderDimension(this.dimension);
+        this._attachCustomEvent();
         return this.el;
     },
 
@@ -182,6 +184,12 @@ BarChartView = ne.util.defineClass(ChartView, {
             };
 
         return bounds;
+    },
+
+    _attachCustomEvent: function() {
+        var popupView = this.popupView;
+        this.seriesView.on('showPopup', popupView.onShow, popupView);
+        this.seriesView.on('hidePopup', popupView.onHide, popupView);
     }
 });
 

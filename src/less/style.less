@@ -136,7 +136,7 @@
     position: absolute;
     right: @chart-padding - @hidden-padding;
     overflow: hidden;
-    &.horizontal > div {
+    &.column > div {
       left: -1px !important; //Fixed ie8 left border error;
     }
   }
@@ -178,7 +178,12 @@
       background-color:#efefef;
       position: absolute;
       >:first-child {
+        backgound-color: #fff;
+        font-weight: bold;
         text-align: center;
+      }
+      > * {
+        padding:2px 5px;
       }
     }
   }

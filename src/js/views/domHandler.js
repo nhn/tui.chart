@@ -26,7 +26,7 @@ var DOMHandler = ne.util.defineClass({
     /**
      * Add class.
      * @param {element} el target element
-     * @param {string} newClass class name
+     * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
         var className = el.className,
@@ -40,6 +40,22 @@ var DOMHandler = ne.util.defineClass({
         classNameArr.push(newClass);
 
         el.className = classNameArr.join(' ');
+    },
+
+    /**
+     * Remove class.
+     * @param {element} el target element
+     * @param {string} rmClass remove class name
+     */
+    removeClass: function(el, rmClass) {
+        var className = el.className ? el.className + ' ' : '';
+
+        if (className && className.indexOf(rmClass + ' ') === -1) {
+            return;
+        }
+
+        className = className.replace(rmClass + ' ', '');
+        el.className = className;
     }
 });
 

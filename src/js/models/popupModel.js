@@ -42,7 +42,6 @@ PopupModel = ne.util.defineClass(Model, {
     _setData: function(data) {
         var labels = data.labels,
             groupValues = data.values,
-            percentValues = data.percentValues,
             legendLabels = data.legendLabels,
             popupData = ne.util.map(groupValues, function(values, groupIndex) {
                 var items = ne.util.map(values, function(value, index) {

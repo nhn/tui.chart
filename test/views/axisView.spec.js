@@ -242,9 +242,9 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300, 100);
 
             compareHtml = '<div class="label-area" style="width: 63px;">' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 0px">label1</div>' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 100px">label2</div>' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;bottom: 199px">label3</div>' +
+                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 0px">label1</div>' +
+                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 100px">label2</div>' +
+                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 199px">label3</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');

@@ -23,7 +23,7 @@ describe('test pluginRaphael', function() {
                 ],
                 colors: ['red', 'blue']
             },
-            options: {bars: 'vertical'}
+            options: {barType: 'bar'}
         },
         isSvgSupport = supportsSvg();
 
@@ -49,7 +49,7 @@ describe('test pluginRaphael', function() {
             var maxBarWidth = dimension.width / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderVerticalBars(paper, dimension, maxBarWidth, values, colors, groupIndex);
+            graphRenderer._renderBars(paper, dimension, maxBarWidth, values, colors, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
@@ -90,7 +90,7 @@ describe('test pluginRaphael', function() {
             var maxBarHeight = dimension.height / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderHorizontalBars(paper, dimension, maxBarHeight, values, colors, groupIndex);
+            graphRenderer._renderColumns(paper, dimension, maxBarHeight, values, colors, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
@@ -190,7 +190,7 @@ describe('test pluginRaphael', function() {
             expect(container.innerHTML).toEqual(compareHtml);
         }
 
-        data.options.bars = 'horizontal';
+        data.options.barType = 'column';
         container = document.createElement('DIV');
 
         graphRenderer.render(container, data);

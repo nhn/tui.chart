@@ -6,15 +6,15 @@
 
 'use strict';
 
-var ChartModel = require('./chartModel.js'),
+var chartConst = require('../const.js'),
+    ChartModel = require('./chartModel.js'),
     AxisModel = require('./axisModel.js'),
     PlotModel = require('./plotModel.js'),
     LegendModel = require('./legendModel.js'),
     SeriesModel = require('./seriesModel.js'),
-    PopupModel = require('./popupModel.js'),
-    BarChartModel;
+    PopupModel = require('./popupModel.js');
 
-BarChartModel = ne.util.defineClass(ChartModel, {
+var BarChartModel = ne.util.defineClass(ChartModel, {
     /**
      * Constructor
      * @param {object} data user chart data
@@ -22,6 +22,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
      */
     init: function(data, options) {
         options = options || {};
+        options.barType  = options.barType  || chartConst.BAR_TYPE_BAR;
 
         /**
          * Horizontal AxisModel instance
@@ -64,9 +65,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
          * vertical or horizontal
          * @type {string}
          */
-        this.bars = 'vertical';
-
-        this._setBars(options.bars || this.bars);
+        this.barType = options.barType;
 
         ChartModel.call(this, data, options);
     },
@@ -87,7 +86,7 @@ BarChartModel = ne.util.defineClass(ChartModel, {
             axisScale = vAxis.scale,
             colors = this._pickColors(legendLabels.length);
 
-        this._setAxis(hAxis, vAxis, this.bars);
+        this._setAxis(hAxis, vAxis, this.barType);
         this._setPlot(this.hAxis, this.vAxis);
         this._setLegend(legendLabels, colors);
         this._setSeries(values, axisScale, colors);
@@ -95,23 +94,14 @@ BarChartModel = ne.util.defineClass(ChartModel, {
     },
 
     /**
-     * Set bars.
-     * @param {string} bars
-     * @private
-     */
-    _setBars: function(bars) {
-        this.bars = bars;
-    },
-
-    /**
      * Set axis.
      * @param {object} hAxis horizontal axis
      * @param {object} vAxis vertical axis
-     * @param {object} bars bar type
+     * @param {object} barType bar type
      * @private
      */
-    _setAxis: function(hAxis, vAxis, bars) {
-        if (bars === 'vertical') {
+    _setAxis: function(hAxis, vAxis, barType) {
+        if (barType === chartConst.BAR_TYPE_COLUMN) {
             this.hAxis = hAxis;
             this.vAxis = vAxis;
         } else {

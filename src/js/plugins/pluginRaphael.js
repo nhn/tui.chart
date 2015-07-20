@@ -6,6 +6,8 @@
 
 'use strict';
 
+var chartConst = require('../const.js');
+
 var HIDDEN_WIDTH = 1;
 
 var pluginName = 'raphael',
@@ -41,7 +43,7 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderVerticalBars: function(paper, dimension, maxBarWidth, values, colors, groupIndex, inCallback, outCallback) {
+    _renderBars: function(paper, dimension, maxBarWidth, values, colors, groupIndex, inCallback, outCallback) {
         var barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
             paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
         ne.util.forEachArray(values, function(value, index) {
@@ -49,7 +51,7 @@ BarChart = ne.util.defineClass({
                 barHeight = parseInt(value * dimension.height, 10),
                 top = dimension.height - barHeight + HIDDEN_WIDTH,
                 left = paddingLeft + (barWidth * index),
-                position = {
+                bound = {
                     top: top,
                     left: left,
                     width: barWidth,
@@ -57,12 +59,12 @@ BarChart = ne.util.defineClass({
                 },
                 id = groupIndex + '-' + index;
 
-            this._setRect(paper, color, position, id, inCallback, outCallback);
+            this._setRect(paper, color, bound, id, inCallback, outCallback);
         }, this);
     },
 
     /**
-     * Horizontal bars renderer
+     * Columns(horizontal bars) renderer
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} size graph size
      * @param {number} maxBarHeight max bar height
@@ -71,7 +73,7 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderHorizontalBars: function(paper, size, maxBarHeight, values, colors, groupIndex, inCallback, outCallback) {
+    _renderColumns: function(paper, size, maxBarHeight, values, colors, groupIndex, inCallback, outCallback) {
         var barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
             paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2);
 
@@ -80,7 +82,7 @@ BarChart = ne.util.defineClass({
                 barWidth = parseInt(value * size.width, 10),
                 top = paddingTop + (barHeight * index),
                 left = - HIDDEN_WIDTH,
-                position = {
+                bound = {
                     top: top,
                     left: left,
                     width: barWidth,
@@ -88,7 +90,7 @@ BarChart = ne.util.defineClass({
                 },
                 id = groupIndex + '-' + index;
 
-            this._setRect(paper, color, position, id, inCallback, outCallback);
+            this._setRect(paper, color, bound, id, inCallback, outCallback);
         }, this);
     },
 
@@ -100,19 +102,19 @@ BarChart = ne.util.defineClass({
      * @param {function} outCallback mouseout callback
      */
     render: function(container, data, inCallback, outCallback) {
-        var isVertical = data.options.bars === 'vertical',
+        var isColumn = data.options.barType === chartConst.BAR_TYPE_COLUMN,
             dimension = data.dimension,
             groupValues = data.model.percentValues,
             colors = data.model.colors,
             paper = Raphael(container, dimension.width, dimension.height),
             barMaxSize, renderBars;
 
-        if (isVertical) {
+        if (isColumn) {
             barMaxSize = (dimension.width / groupValues.length);
-            renderBars = ne.util.bind(this._renderVerticalBars, this);
+            renderBars = ne.util.bind(this._renderBars, this);
         } else {
             barMaxSize = (dimension.height / groupValues.length);
-            renderBars = ne.util.bind(this._renderHorizontalBars, this);
+            renderBars = ne.util.bind(this._renderColumns, this);
         }
 
         ne.util.forEachArray(groupValues, function(values, index) {

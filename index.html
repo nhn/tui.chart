@@ -21,24 +21,23 @@
             ['Copper', 20, 30, 50],
             ['Silver', 40, 40, 60],
             ['Gold', 60, 50, 10],
-            ['Platinum', 80, 0, 70]
+            ['Platinum', 80, 10, 70]
         ],
         options = {
             title: 'chart title',
-            chartArea: '60%',
+            titleFontSize: 16,
             hAxis: {
-                title: 'hAxis title'
+                title: 'title',
             },
             vAxis: {
-                title: 'vAxis title',
-                format: '0.0'
+                title: 'Vertical Axis title'
             },
-            bars: 'vertical'
+            barType: 'column'
         };
 
     chart.barChart(elChartArea, data, options);
 
-    options.bars = 'horizontal';
+    options.barType = 'bar';
     chart.barChart(elChartArea2, data, options);
 </script>
 </body>

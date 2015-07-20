@@ -47,7 +47,7 @@ describe('test bar chart model', function() {
                         minValue: 1,
                         format: '0.0'
                     },
-                    bars: 'horizontal'
+                    barType: 'column'
                 },
                 barChartModel = new BarChartModel(userData, options);
             expect(barChartModel.vAxis.isLabelAxis()).toBeTruthy();

@@ -174,6 +174,8 @@ var View = ne.util.defineClass({
     }
 });
 
+ne.util.CustomEvents.mixin(View);
+
 DOMHandler.mixin(View);
 
 module.exports = View;

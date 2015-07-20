@@ -208,10 +208,12 @@ AxisModel = ne.util.defineClass(Model, {
         var format, result;
         if (len === 0) {
             format = function(value) {
-                return parseInt(value, 10);
+                return Math.round(value, 10);
             }
         } else {
             format = function(value) {
+                var pow = Math.pow(10, len);
+                value = Math.round(value * pow) / pow;
                 return parseFloat(parseFloat(value).toFixed(len));
             };
         }

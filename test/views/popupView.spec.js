@@ -29,7 +29,7 @@ describe('test Legend View', function() {
                     id: '1-0'
                 }
             ],
-            html = popupView._makePopupsHtml(data, 'ne-chart-popup'),
+            html = popupView._makePopupsHtml(data, 'ne-chart-popup-'),
             compareHtml = '<div class="ne-chart-popup" id="ne-chart-popup-0-0">' +
                     '<div>Silver</div>' +
                     '<div><span>Density1</span>:<span>10</span></div>' +

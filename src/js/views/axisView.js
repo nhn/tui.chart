@@ -136,7 +136,7 @@ var AxisView = ne.util.defineClass(View, {
             isVertical = model.isVertical,
             isLabelAxis = model.isLabelAxis(),
             labelFontSize = model.labelFontSize,
-            posType = isVertical ? 'bottom' : 'left',
+            posType = isVertical ? (model.isLabelAxis() ? 'top' : 'bottom') : 'left',
             cssTexts = this._makeLabelCssTexts(isVertical, isLabelAxis, labelFontSize, labelWidth),
             elLabelArea = this.createElement('DIV', 'label-area'),
             labelsHtml, titleAreaWidth;
