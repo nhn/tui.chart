@@ -64,9 +64,7 @@ var PlotView = ne.util.defineClass(View, {
 
         this.el.innerHTML = lineHtml;
 
-        if(options.backgroundColor) {
-            this.el.style.backgroundColor = options.backgroundColor;
-        }
+        this.renderBackground(options.background);
     },
 
     /**

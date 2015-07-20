@@ -30,7 +30,10 @@ var ChartView = ne.util.defineClass(View, {
      * @param {options} options chart options
      */
     init: function(data, options) {
-        options = options || {};
+        /**
+         * Chart dimension
+         * @type {Object}
+         */
         this.dimension = ne.util.extend(this.dimension, options.size);
         View.call(this);
         this.addClass(this.el, 'ne-chart');
@@ -56,14 +59,24 @@ var ChartView = ne.util.defineClass(View, {
         return elTitle;
     },
 
+    render: function() {
+        this.renderBackground(this.options.background);
+    },
+
     /**
      * Get rendered title height.
      * @returns {number}
      */
     getRenderedTitleHeight: function() {
         var title = this.model.title,
-            result = title ? this.getRenderedLabelHeight(title) + 10 : 0;
-        return result;
+            titleSize = this.model.titleFontSize,
+            titleHeight = 0;
+        if (title) {
+            titleHeight = this.getRenderedLabelHeight(title, titleSize);
+            titleHeight *= 1.5;
+        }
+
+        return titleHeight;
     }
 });
 

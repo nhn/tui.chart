@@ -35,10 +35,6 @@ BarChartView = ne.util.defineClass(ChartView, {
     init: function(data, options) {
         options = options || {};
 
-        /**
-         * Chart options
-         * @type {object}
-         */
         this.options = options;
 
         /**
@@ -119,7 +115,11 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elLegend);
         this.append(elPopup);
         this.renderDimension(this.dimension);
+
         this._attachCustomEvent();
+
+        ChartView.prototype.render.call(this);
+
         return this.el;
     },
 

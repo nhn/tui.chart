@@ -62,6 +62,14 @@ var View = ne.util.defineClass({
         }
     },
 
+    renderBackground: function(background) {
+        if (!background) {
+            return;
+        }
+
+        this.el.style.background = background;
+    },
+
     /**
      * Create size check element
      * @returns {element}
