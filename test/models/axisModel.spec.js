@@ -70,7 +70,7 @@ describe('test axis model', function() {
             var labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 2);
             expect(labels).toEqual([1.11, 2.22, 3.33, 4.00, 5.55]);
             labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 0);
-            expect(labels).toEqual([1, 2, 3, 4, 5]);
+            expect(labels).toEqual([1, 2, 3, 4, 6]);
         });
 
         it('_makeLabelsFromScale', function() {

@@ -23,7 +23,8 @@ BarChart = ne.util.defineClass({
     _setRect: function(paper, color, position, id, inCallback, outCallback) {
         var rect = paper.rect(position.left, position.top, position.width, position.height);
         rect.attr({
-            fill: color
+            fill: color,
+            stroke: 'none'
         });
 
         rect.hover(function() {
@@ -43,11 +44,13 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderBars: function(paper, dimension, maxBarWidth, values, colors, groupIndex, inCallback, outCallback) {
+    _renderBars: function(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex, inCallback, outCallback) {
         var barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
-            paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
+            paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2),
+            lastIndex = values.length - 1;
+
         ne.util.forEachArray(values, function(value, index) {
-            var color = colors[index],
+            var color = lastIndex === index && lastColor ? lastColor : colors[index],
                 barHeight = parseInt(value * dimension.height, 10),
                 top = dimension.height - barHeight + HIDDEN_WIDTH,
                 left = paddingLeft + (barWidth * index),
@@ -73,12 +76,13 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderColumns: function(paper, size, maxBarHeight, values, colors, groupIndex, inCallback, outCallback) {
+    _renderColumns: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
         var barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
-            paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2);
+            paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2),
+            lastIndex = values.length - 1;
 
         ne.util.forEachArray(values, function(value, index) {
-            var color = colors[index],
+            var color = lastIndex === index && lastColor ? lastColor : colors[index],
                 barWidth = parseInt(value * size.width, 10),
                 top = paddingTop + (barHeight * index),
                 left = - HIDDEN_WIDTH,
@@ -106,6 +110,7 @@ BarChart = ne.util.defineClass({
             dimension = data.dimension,
             groupValues = data.model.percentValues,
             colors = data.model.colors,
+            lastColors = data.model.pickLastColors(),
             paper = Raphael(container, dimension.width, dimension.height),
             barMaxSize, renderBars;
 
@@ -118,7 +123,8 @@ BarChart = ne.util.defineClass({
         }
 
         ne.util.forEachArray(groupValues, function(values, index) {
-            renderBars(paper, dimension, barMaxSize, values, colors, index, inCallback, outCallback);
+            var lastColor = lastColors.length ? lastColors[index] : '';
+            renderBars(paper, dimension, barMaxSize, values, colors, lastColor, index, inCallback, outCallback);
         }, this);
     }
 });

@@ -84,12 +84,13 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
             hAxis = new AxisModel({labels: labels}, options.hAxis),
             vAxis = new AxisModel({values: values}, options.vAxis),
             axisScale = vAxis.scale,
-            colors = this._pickColors(legendLabels.length);
+            colors = this._pickColors(legendLabels.length),
+            lastItemStyles = this._pickLastItemStyles(data);
 
         this._setAxis(hAxis, vAxis, this.barType);
         this._setPlot(this.hAxis, this.vAxis);
         this._setLegend(legendLabels, colors);
-        this._setSeries(values, axisScale, colors);
+        this._setSeries(values, axisScale, colors, lastItemStyles);
         this._setPopup(values, labels, legendLabels);
     },
 
@@ -144,11 +145,12 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @param {array} colors series colors
      * @private
      */
-    _setSeries: function(values, scale, colors) {
+    _setSeries: function(values, scale, colors, lastItemStyles) {
         this.series = new SeriesModel({
             values: values,
             scale: scale,
-            colors: colors
+            colors: colors,
+            lastItemStyles: lastItemStyles
         });
     },
 

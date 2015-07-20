@@ -9,6 +9,8 @@
 var SeriesView = require('../../src/js/views/seriesView.js'),
     SeriesModel = require('../../src/js/models/seriesModel.js');
 
+var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
+
 describe('test seriesView', function() {
     var data = {
             values: [[20], [40]],
@@ -33,8 +35,15 @@ describe('test seriesView', function() {
         expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
         expect(elSeries.style.width).toEqual('200px');
         expect(elSeries.style.height).toEqual('100px');
-        expect(elSeries.style.top).toEqual('51px');
-        expect(elSeries.style.right).toEqual('49px');
+
+        if (isIE8) {
+            expect(elSeries.style.top).toEqual('50px');
+            expect(elSeries.style.right).toEqual('50px');
+        } else {
+            expect(elSeries.style.top).toEqual('51px');
+            expect(elSeries.style.right).toEqual('49px');
+        }
+
         expect(!!elSeries.firstChild).toBeTruthy();
     });
 
