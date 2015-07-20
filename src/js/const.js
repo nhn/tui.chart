@@ -11,6 +11,7 @@ module.exports = {
     DEFAULT_LABEL_FONT_SIZE: 12,
     DEFAULT_PLUGIN: 'raphael',
     DEFAUlT_COLORS: ['red', 'orange', 'yellow', 'green', 'blue'],
+    DEFAULT_TICK_COLOR: 'black',
     BAR_TYPE_BAR: 'bar',
     BAR_TYPE_COLUMN: 'column'
 };

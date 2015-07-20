@@ -50,7 +50,6 @@
     &.vertical {
       left: @chart-padding + 1;
       top: @chart-padding;
-      border-right: 1px solid @axis-color;
 
       .title-area {
         .transform-origin(top left);
@@ -66,6 +65,7 @@
       }
 
       .tick-area {
+        border-right: 1px solid @axis-color;
         .tick {
           right: 0px;
           width: 5px;
@@ -85,7 +85,6 @@
     &.horizontal {
       bottom: @chart-padding + 1;
       right: @chart-padding;
-      border-top: 1px solid @axis-color;
 
       .title-area {
         bottom: 0;
@@ -97,6 +96,7 @@
       }
 
       .tick-area {
+        border-top: 1px solid @axis-color;
         .tick {
           top: 0px;
           width: 1px;

@@ -108,16 +108,28 @@ var AxisView = ne.util.defineClass(View, {
      * @private
      */
     _renderTickArea: function(size) {
-        var tickCount = this.model.tickCount,
-            positions = this.model.makePixelPositions(size, tickCount),
+        var model = this.model,
+            tickCount = model.tickCount,
+            tickColor = model.tickColor,
+            positions = model.makePixelPositions(size, tickCount),
             elTickArea = this.createElement('DIV', 'tick-area'),
-            posType = this.model.isVertical ? 'bottom' : 'left',
+            isVertical = model.isVertical,
+            posType = isVertical ? 'bottom' : 'left',
             ticksHtml = ne.util.map(positions, function(position) {
-                var cssPosition = [posType, ': ', position, 'px'].join('');
-                return axisTemplate.TPL_AXIS_TICK({position: cssPosition});
+                var cssText = [
+                    ['background-color:', tickColor].join(''),
+                    [posType, ': ', position, 'px'].join('')
+                ].join(';');
+                return axisTemplate.TPL_AXIS_TICK({cssText: cssText});
             }).join('');
 
         elTickArea.innerHTML = ticksHtml;
+
+        if (isVertical) {
+            elTickArea.style.borderRightColor = tickColor;
+        } else {
+            elTickArea.style.borderTopColor = tickColor;
+        }
         return elTickArea;
     },
 

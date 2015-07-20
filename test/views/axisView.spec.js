@@ -62,43 +62,61 @@ describe('test Axis View', function() {
         });
 
         it('test horizontal _renderTickArea', function() {
-            var elTickArea, compareHtml, elTemp;
+            var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area">' +
-                '<div class="tick" style="left: 0px"></div>' +
-                '<div class="tick" style="left: 75px"></div>' +
-                '<div class="tick" style="left: 150px"></div>' +
-                '<div class="tick" style="left: 224px"></div>' +
-                '<div class="tick" style="left: 299px"></div>' +
+            compareHtml = '<div class="tick-area" style="border-top-color: black;">' +
+                '<div class="tick" style="background-color:black;left: 0px"></div>' +
+                '<div class="tick" style="background-color:black;left: 75px"></div>' +
+                '<div class="tick" style="background-color:black;left: 150px"></div>' +
+                '<div class="tick" style="background-color:black;left: 224px"></div>' +
+                '<div class="tick" style="background-color:black;left: 299px"></div>' +
                 '</div>';
+
             elTemp = document.createElement('DIV');
             elTemp.innerHTML = compareHtml;
-            el.appendChild(elTickArea);
+            elCompare = elTemp.firstChild;
+            compareChildren = elCompare.childNodes;
 
-            expect(el.innerHTML).toEqual(elTemp.innerHTML);
+            el.appendChild(elTickArea);
+            children = elCompare.childNodes;
+
+            expect(elTickArea.style.cssText).toEqual(elCompare.style.cssText);
+
+            ne.util.forEachArray(children, function(child, index) {
+                expect(child.style.cssText).toEqual(compareChildren[index].style.cssText);
+            });
         });
 
         it('test vertical _renderTickArea', function() {
-            var elTickArea, compareHtml, elTemp;
+            var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             axisModel.changeVerticalState(true);
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area">' +
-                '<div class="tick" style="bottom: 0px"></div>' +
-                '<div class="tick" style="bottom: 75px"></div>' +
-                '<div class="tick" style="bottom: 150px"></div>' +
-                '<div class="tick" style="bottom: 224px"></div>' +
-                '<div class="tick" style="bottom: 299px"></div>' +
+            compareHtml = '<div class="tick-area" style="border-right-color: black;">' +
+                '<div class="tick" style="background-color:black;bottom: 0px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 75px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 150px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 224px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 299px"></div>' +
                 '</div>';
+
             elTemp = document.createElement('DIV');
             elTemp.innerHTML = compareHtml;
-            el.appendChild(elTickArea);
+            elCompare = elTemp.firstChild;
+            compareChildren = elCompare.childNodes;
 
-            expect(el.innerHTML).toEqual(elTemp.innerHTML);
+            el.appendChild(elTickArea);
+            children = elCompare.childNodes;
+
+            expect(elTickArea.style.cssText).toEqual(elCompare.style.cssText);
+
+            ne.util.forEachArray(children, function(child, index) {
+                expect(child.style.cssText).toEqual(compareChildren[index].style.cssText);
+            });
         });
 
         it('test horizontal _renderLabelArea', function() {
@@ -172,41 +190,59 @@ describe('test Axis View', function() {
             el = axisView.el;
         });
         it('test horizontal _renderTickArea', function() {
-            var elTickArea, compareHtml, elTemp;
+            var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area">' +
-                '<div class="tick" style="left: 0px"></div>' +
-                '<div class="tick" style="left: 100px"></div>' +
-                '<div class="tick" style="left: 199px"></div>' +
-                '<div class="tick" style="left: 299px"></div>' +
+            compareHtml = '<div class="tick-area" style="border-top-color: black;">' +
+                '<div class="tick" style="background-color:black;left: 0px"></div>' +
+                '<div class="tick" style="background-color:black;left: 100px"></div>' +
+                '<div class="tick" style="background-color:black;left: 199px"></div>' +
+                '<div class="tick" style="background-color:black;left: 299px"></div>' +
                 '</div>';
+
             elTemp = document.createElement('DIV');
             elTemp.innerHTML = compareHtml;
-            el.appendChild(elTickArea);
+            elCompare = elTemp.firstChild;
+            compareChildren = elCompare.childNodes;
 
-            expect(el.innerHTML).toEqual(elTemp.innerHTML);
+            el.appendChild(elTickArea);
+            children = elCompare.childNodes;
+
+            expect(elTickArea.style.cssText).toEqual(elCompare.style.cssText);
+
+            ne.util.forEachArray(children, function(child, index) {
+                expect(child.style.cssText).toEqual(compareChildren[index].style.cssText);
+            });
         });
 
         it('test vertical _renderTickArea', function() {
-            var elTickArea, compareHtml, elTemp;
+            var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             axisModel.changeVerticalState(true);
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area">' +
-                '<div class="tick" style="bottom: 0px"></div>' +
-                '<div class="tick" style="bottom: 100px"></div>' +
-                '<div class="tick" style="bottom: 199px"></div>' +
-                '<div class="tick" style="bottom: 299px"></div>' +
+            compareHtml = '<div class="tick-area" style="border-right-color: black;">' +
+                '<div class="tick" style="background-color:black;bottom: 0px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 100px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 199px"></div>' +
+                '<div class="tick" style="background-color:black;bottom: 299px"></div>' +
                 '</div>';
+
             elTemp = document.createElement('DIV');
             elTemp.innerHTML = compareHtml;
-            el.appendChild(elTickArea);
+            elCompare = elTemp.firstChild;
+            compareChildren = elCompare.childNodes;
 
-            expect(el.innerHTML).toEqual(elTemp.innerHTML);
+            el.appendChild(elTickArea);
+            children = elCompare.childNodes;
+
+            expect(elTickArea.style.cssText).toEqual(elCompare.style.cssText);
+
+            ne.util.forEachArray(children, function(child, index) {
+                expect(child.style.cssText).toEqual(compareChildren[index].style.cssText);
+            });
         });
 
         it('test horizontal _renderLabelArea', function() {

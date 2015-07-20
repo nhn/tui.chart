@@ -56,13 +56,19 @@ AxisModel = ne.util.defineClass(Model, {
          * label font size
          * @type {number}
          */
-        this.labelFontSize = options.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE
+        this.labelFontSize = options.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE;
 
         /**
          * Axis tick count
          * @type {number}
          */
         this.tickCount = 5;
+
+        /**
+         * Axis tick color
+         * @type {string|string|*}
+         */
+        this.tickColor = options.tickColor || chartConst.DEFAULT_TICK_COLOR;
 
         /**
          * Axis tick scale
