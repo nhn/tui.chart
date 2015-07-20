@@ -21,8 +21,9 @@ describe('test Plot View', function() {
             className = 'vertical',
             positionType = 'left',
             sizeType = 'height',
+            options = {},
             plotView = new PlotView(),
-            resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType),
+            resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType, {}),
             compareHtml = '<div class="plot-line vertical" style="left:10px;height:200px"></div>' +
                 '<div class="plot-line vertical" style="left:20px;height:200px"></div>' +
                 '<div class="plot-line vertical" style="left:30px;height:200px"></div>' +

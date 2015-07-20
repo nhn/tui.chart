@@ -56,12 +56,17 @@ var PlotView = ne.util.defineClass(View, {
     _renderLines: function(dimension) {
         var hPositions = this.model.makeHPixelPositions(dimension.width),
             vPositions = this.model.makeVPixelPositions(dimension.height),
+            options = this.model.options,
             lineHtml = '';
 
-        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height');
-        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width');
+        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height', options);
+        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width', options);
 
         this.el.innerHTML = lineHtml;
+
+        if(options.backgroundColor) {
+            this.el.style.backgroundColor = options.backgroundColor;
+        }
     },
 
     /**
@@ -74,13 +79,18 @@ var PlotView = ne.util.defineClass(View, {
      * @returns {string}
      * @private
      */
-    _makeLineHtml: function(positions, size, className, positionType, sizeType) {
+    _makeLineHtml: function(positions, size, className, positionType, sizeType, options) {
         var lineHtml = ne.util.map(positions, function(position) {
-            var cssText = [
+            var cssTexts = [
                     [positionType, ':', position, 'px'].join(''),
                     [sizeType, ':', size, 'px'].join('')
-                ].join(';'),
-                data = {className: className, cssText: cssText};
+                ], data;
+
+            if(options.lineColor) {
+                cssTexts.push(['background-color', options.lineColor].join(':'));
+            }
+
+            data = {className: className, cssText: cssTexts.join(';')};
             return plotTemplate.TPL_PLOT_LINE(data);
         }).join('');
         return lineHtml;
