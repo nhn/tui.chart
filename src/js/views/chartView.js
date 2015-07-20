@@ -45,7 +45,7 @@ var ChartView = ne.util.defineClass(View, {
      */
     renderTitle: function() {
         var title = this.model.title,
-            titleSize = this.model.titleFontSize,
+            options = this.model.titleOptions,
             elTitle;
 
         if (!this.model.title) {
@@ -54,7 +54,15 @@ var ChartView = ne.util.defineClass(View, {
 
         elTitle = this.createElement('DIV', 'ne-chart-title');
         elTitle.innerHTML = title;
-        elTitle.style.fontSize = titleSize + 'px';
+        elTitle.style.fontSize = options.fontSize + 'px';
+
+        if (options.color) {
+            elTitle.style.color = options.color;
+        }
+
+        if (options.background) {
+            elTitle.style.background = options.background;
+        }
 
         return elTitle;
     },
@@ -72,7 +80,7 @@ var ChartView = ne.util.defineClass(View, {
             titleSize = this.model.titleFontSize,
             titleHeight = 0;
         if (title) {
-            titleHeight = this.getRenderedLabelHeight(title, titleSize);
+            titleHeight = this.getRenderedLabelHeight(title, titleSize) + 10;
             titleHeight *= 1.5;
         }
 
