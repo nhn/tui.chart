@@ -26,7 +26,6 @@ describe('test pluginRaphael', function() {
                     return [];
                 }
             },
-            lastColors: ['white', 'black'],
             options: {barType: 'bar'}
         },
         isSvgSupport = supportsSvg();
@@ -40,7 +39,7 @@ describe('test pluginRaphael', function() {
         var dimension = data.dimension,
             values = data.model.percentValues[0],
             colors = data.model.colors,
-            lastColors = data.lastColors,
+            lastColor = 'black',
             groupIndex = 0,
             container,
             paper;
@@ -54,7 +53,7 @@ describe('test pluginRaphael', function() {
             var maxBarWidth = dimension.width / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderBars(paper, dimension, maxBarWidth, values, colors, lastColors, groupIndex);
+            graphRenderer._renderBars(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
@@ -93,7 +92,7 @@ describe('test pluginRaphael', function() {
             var maxBarHeight = dimension.height / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderColumns(paper, dimension, maxBarHeight, values, colors, colors, groupIndex);
+            graphRenderer._renderColumns(paper, dimension, maxBarHeight, values, colors, '', groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
