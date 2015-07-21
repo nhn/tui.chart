@@ -6,7 +6,7 @@
 
 'use strict';
 
-var DOMHandler = require('./domHandler.js'),
+var dom = require('./domHandler.js'),
     chartConst = require('../const.js');
 
 /**
@@ -15,7 +15,7 @@ var DOMHandler = require('./domHandler.js'),
  */
 var View = ne.util.defineClass({
     init: function() {
-        this.el = this.createElement('DIV', this.className || '');
+        this.el = dom.createElement('DIV', this.className || '');
     },
 
     /**
@@ -76,7 +76,7 @@ var View = ne.util.defineClass({
             return;
         }
 
-        elTitle = this.createElement('DIV', className);
+        elTitle = dom.createElement('DIV', className);
         elTitle.innerHTML = title;
         elTitle.style.fontSize = options.fontSize + 'px';
 
@@ -109,8 +109,8 @@ var View = ne.util.defineClass({
      * @private
      */
     _createSizeCheckEl: function() {
-        var elDiv = document.createElement('DIV'),
-            elSpan = document.createElement('SPAN');
+        var elDiv = dom.createElement('DIV'),
+            elSpan = dom.createElement('SPAN');
 
         elDiv.appendChild(elSpan);
         elDiv.style.cssText = 'position:relative;top:10000px;left:10000px';
@@ -216,7 +216,5 @@ var View = ne.util.defineClass({
 });
 
 ne.util.CustomEvents.mixin(View);
-
-DOMHandler.mixin(View);
 
 module.exports = View;

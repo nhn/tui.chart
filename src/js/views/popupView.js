@@ -6,7 +6,8 @@
 
 'use strict';
 
-var View = require('./view.js'),
+var dom = require('./domHandler.js'),
+    View = require('./view.js'),
     templateMaker = require('./templateMaker.js'),
     popupTemplate = require('./popupTemplate.js');
 
@@ -66,7 +67,7 @@ var PopupView = ne.util.defineClass(View, {
             tplPopup = optionTemplate ? templateMaker.template(optionTemplate) :  popupTemplate.TPL_POPUP,
             html = ne.util.map(data, function(popupData) {
                 var id = prefix + popupData.id,
-                    elTemp = this.createElement('DIV');
+                    elTemp = dom.createElement('DIV');
 
                 popupData = ne.util.extend({
                     label: '',
@@ -112,7 +113,7 @@ var PopupView = ne.util.defineClass(View, {
         var elPopup = document.getElementById(data.id),
             dimension, position;
 
-        this.addClass(elPopup, 'show');
+        dom.addClass(elPopup, 'show');
         dimension = {
             width: elPopup.offsetWidth,
             height: elPopup.offsetHeight
@@ -131,7 +132,7 @@ var PopupView = ne.util.defineClass(View, {
      */
     onHide: function(data) {
         var elPopup = document.getElementById(data.id);
-        this.removeClass(elPopup, 'show');
+        dom.removeClass(elPopup, 'show');
     }
 });
 

@@ -6,7 +6,8 @@
 
 'use strict';
 
-var View = require('./view.js'),
+var dom = require('./domHandler.js'),
+    View = require('./view.js'),
     chartConst = require('../const.js'),
     axisTemplate = require('./axisTemplate.js');
 
@@ -56,7 +57,7 @@ var AxisView = ne.util.defineClass(View, {
 
         this.renderDimension(dimension);
         this.renderPosition(bound.position);
-        this.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
 
         
         this.append(elTitleArea);
@@ -106,7 +107,7 @@ var AxisView = ne.util.defineClass(View, {
             tickCount = model.tickCount,
             tickColor = model.tickColor,
             positions = model.makePixelPositions(size, tickCount),
-            elTickArea = this.createElement('DIV', 'tick-area'),
+            elTickArea = dom.createElement('DIV', 'tick-area'),
             isVertical = model.isVertical,
             posType = isVertical ? 'bottom' : 'left',
             ticksHtml = ne.util.map(positions, function(position) {
@@ -149,7 +150,7 @@ var AxisView = ne.util.defineClass(View, {
             labelFontSize = model.labelFontSize,
             posType = isVertical ? (model.isLabelAxis() ? 'top' : 'bottom') : 'left',
             cssTexts = this._makeLabelCssTexts(isVertical, isLabelAxis, labelFontSize, labelWidth),
-            elLabelArea = this.createElement('DIV', 'label-area'),
+            elLabelArea = dom.createElement('DIV', 'label-area'),
             labelsHtml, titleAreaWidth;
 
         positions.length = labels.length;

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var DOMHandler = ne.util.defineClass({
+var DOMHandler = {
     /**
      * Create element.
      * @param {string} tag html tag
@@ -59,14 +59,14 @@ var DOMHandler = ne.util.defineClass({
         classNames.splice(index, 1);
         el.className = classNames.join(' ');
     }
-});
-
-/**
- * mixin function
- * @param {class} target
- */
-DOMHandler.mixin = function(target) {
-    ne.util.extend(target.prototype, DOMHandler.prototype);
 };
+
+///**
+// * mixin function
+// * @param {class} target
+// */
+//DOMHandler.mixin = function(target) {
+//    ne.util.extend(target.prototype, DOMHandler.prototype);
+//};
 
 module.exports = DOMHandler;

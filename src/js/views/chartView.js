@@ -6,7 +6,8 @@
 
 'use strict';
 
-var View = require('./view.js'),
+var dom = require('./domHandler.js'),
+    View = require('./view.js'),
     chartConst = require('../const.js');
 
 var TITLE_ADD_PADDING = 20;
@@ -38,7 +39,7 @@ var ChartView = ne.util.defineClass(View, {
          */
         this.dimension = ne.util.extend(this.dimension, options.size);
         View.call(this);
-        this.addClass(this.el, 'ne-chart');
+        dom.addClass(this.el, 'ne-chart');
     },
 
     /**
