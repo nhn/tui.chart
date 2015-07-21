@@ -9,6 +9,8 @@
 var AxisView = require('../../src/js/views/axisView.js'),
     AxisModel = require('../../src/js/models/axisModel.js');
 
+var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
+
 describe('test Axis View', function() {
     var valueData = {values: [[10], [20], [30], [40], [50]]},
         labelData = {labels: ['label1', 'label2', 'label3']},
@@ -45,9 +47,21 @@ describe('test Axis View', function() {
 
     it('test _renderTitleArea', function() {
         var axisView = new AxisView(),
-            elTitle = axisView._renderTitleArea('Axis title.');
+            title = 'Axis title.',
+            options = {
+                fontSize: 12
+            },
+            elTitle = axisView._renderTitleArea(title, options);
 
-        expect(elTitle.innerHTML).toEqual('Axis title.');
+        expect(elTitle.innerHTML).toEqual(title);
+
+        elTitle = axisView._renderTitleArea(title, options, true, 50);
+        expect(elTitle.style.width).toEqual('50px');
+
+        if (!isIE8) {
+            expect(elTitle.style.top).toEqual('50px');
+        }
+
         elTitle = axisView._renderTitleArea('');
         expect(elTitle).toBeUndefined();
     });
@@ -155,7 +169,7 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area" style="width:63px;top:7px">' +
+            compareHtml = '<div class="label-area" style="width:75px;top:7px">' +
                 '<div class="label" style="font-size:12px;bottom: 0px">0</div>' +
                 '<div class="label" style="font-size:12px;bottom: 75px">13</div>' +
                 '<div class="label" style="font-size:12px;bottom: 150px">26</div>' +
@@ -277,7 +291,7 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area" style="width: 63px;">' +
+            compareHtml = '<div class="label-area" style="width: 75px;">' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 0px">label1</div>' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 100px">label2</div>' +
                 '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 199px">label3</div>' +
