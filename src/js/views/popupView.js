@@ -7,6 +7,7 @@
 'use strict';
 
 var View = require('./view.js'),
+    templateMaker = require('./templateMaker.js'),
     popupTemplate = require('./popupTemplate.js');
 
 var POPUP_GAP = 5,
@@ -60,10 +61,24 @@ var PopupView = ne.util.defineClass(View, {
      * @private
      */
     _makePopupsHtml: function(data, prefix) {
-        var html = ne.util.map(data, function(popupData) {
-            popupData.id = prefix + popupData.id;
-            return popupTemplate.TPL_POPUP(popupData);
-        }).join('');
+        var options = this.model.options,
+            optionTemplate = options.template ? options.template : '',
+            tplPopup = optionTemplate ? templateMaker.template(optionTemplate) :  popupTemplate.TPL_POPUP,
+            html = ne.util.map(data, function(popupData) {
+                var id = prefix + popupData.id,
+                    elTemp = this.createElement('DIV');
+
+                popupData = ne.util.extend({
+                    label: '',
+                    legendLabel: '',
+                    value: '',
+                }, popupData);
+
+                elTemp.innerHTML = tplPopup(popupData);
+                elTemp.firstChild.id = id;
+
+                return elTemp.innerHTML;
+            }, this).join('');
         return html;
     },
 

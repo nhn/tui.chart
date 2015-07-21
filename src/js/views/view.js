@@ -42,7 +42,7 @@ var View = ne.util.defineClass({
 
     /**
      * Position(top, right) renderer
-     * @param position
+     * @param {{top: number, left: number, right: number} position position
      */
     renderPosition: function(position) {
         if (ne.util.isUndefined(position)) {
@@ -62,6 +62,13 @@ var View = ne.util.defineClass({
         }
     },
 
+    /**
+     * Title renderer
+     * @param {string} title title
+     * @param {{fontSize: number, color: string, background: string}} options options
+     * @param {string} className css class name
+     * @returns {element}
+     */
     renderTitle: function(title, options, className) {
         var elTitle;
 
@@ -84,6 +91,10 @@ var View = ne.util.defineClass({
         return elTitle;
     },
 
+    /**
+     * Background renderer.
+     * @param {string} background background option
+     */
     renderBackground: function(background) {
         if (!background) {
             return;

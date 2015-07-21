@@ -7,11 +7,11 @@
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_POPUP: '<div class="ne-chart-popup" id="{= id }">' +
+    HTML_POPUP: '<div class="ne-chart-popup">' +
         '<div>{= label }</div>' +
         '<div>' +
             '<span>{= legendLabel }</span>:' +
-            '<span>{= value }</span>' +
+            '&nbsp;<span>{= value }</span>' +
         '</div>' +
     '</div>'
 };

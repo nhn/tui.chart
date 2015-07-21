@@ -14,12 +14,12 @@
 
 .ne-bar-chart {
   .ne-chart-title {
-    position:absolute;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    text-align:center;
-    padding:10px 0 5px 0;
+    text-align: center;
+    padding: 10px 0 5px 0;
   }
   .axis-area {
     position: absolute;
@@ -54,7 +54,7 @@
       .title-area {
         .transform-origin(top left);
         .rotate(-90deg);
-        text-align:center;
+        text-align: center;
         white-space: nowrap;
         top: 0px;
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
@@ -145,7 +145,7 @@
     .ne-chart-legend {
       clear: both;
       > div {
-        float:left;
+        float: left;
       }
 
       .ne-chart-legend-rect {
@@ -161,7 +161,7 @@
   }
 
   .ne-chart-popup-area {
-    position:absolute;
+    position: absolute;
     > * {
       display: none;
       &.show {
@@ -169,18 +169,21 @@
       }
     }
     .ne-chart-popup {
-      font-size:12px;
+      font-size: 12px;
       width: 100px;
-      border:1px solid #888;
-      background-color:#efefef;
+      border: 1px solid #888;
+      background-color: #efefef;
       position: absolute;
-      >:first-child {
+      > * {
+        padding: 2px 5px;
+      }
+      > :first-child {
         backgound-color: #fff;
         font-weight: bold;
         text-align: center;
       }
-      > * {
-        padding:2px 5px;
+      > :last-child > span:last-child {
+        font-weight: bold;
       }
     }
   }

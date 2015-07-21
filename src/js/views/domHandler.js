@@ -48,14 +48,16 @@ var DOMHandler = ne.util.defineClass({
      * @param {string} rmClass remove class name
      */
     removeClass: function(el, rmClass) {
-        var className = el.className ? el.className + ' ' : '';
+        var className = el.className ? el.className : '',
+            classNames = className.split(' '),
+            index = ne.util.indexOf(classNames, rmClass);
 
-        if (className && className.indexOf(rmClass + ' ') === -1) {
+        if (index === -1) {
             return;
         }
 
-        className = className.replace(rmClass + ' ', '');
-        el.className = className;
+        classNames.splice(index, 1);
+        el.className = classNames.join(' ');
     }
 });
 

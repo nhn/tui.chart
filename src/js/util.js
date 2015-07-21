@@ -90,8 +90,39 @@ var max = function(arr) {
     return result;
 };
 
+/**
+ * Find index from array.
+ * @param {array} arr
+ * @param {string|number|object|array} value
+ * @returns {number}
+ */
+var indexOf = function(arr, value) {
+    var findIndex;
+
+    if (arr.indexOf) {
+        findIndex = function(arr, value) {
+            return arr.indexOf(value);
+        };
+    } else {
+        findIndex = function(arr, value) {
+            var result = -1;
+            ne.util.forEachArray(arr, function(_value, index) {
+                if (_value === value) {
+                    result = index;
+                    return;
+                }
+            });
+            return result;
+        }
+    }
+
+    indexOf = findIndex;
+    return findIndex(arr, value);
+};
+
 ne.util.range = range;
 ne.util.pluck = pluck;
 ne.util.zip = zip;
 ne.util.min = min;
 ne.util.max = max;
+ne.util.indexOf = indexOf;

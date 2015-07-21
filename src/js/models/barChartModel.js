@@ -91,7 +91,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         this._setPlot(this.hAxis, this.vAxis, options.plot);
         this._setLegend(legendLabels, colors);
         this._setSeries(values, axisScale, colors, lastItemStyles);
-        this._setPopup(values, labels, legendLabels);
+        this._setPopup(values, labels, legendLabels, options.popup);
     },
 
     /**
@@ -154,12 +154,12 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         });
     },
 
-    _setPopup: function(values, labels, legendLabels) {
+    _setPopup: function(values, labels, legendLabels, options) {
         this.popup = new PopupModel({
             values: values,
             labels: labels,
             legendLabels: legendLabels
-        });
+        }, options);
     }
 });
 

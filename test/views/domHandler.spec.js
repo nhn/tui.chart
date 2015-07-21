@@ -19,6 +19,16 @@ describe('test DOM Handler', function() {
         expect(el.className).toEqual('test1 test2');
     });
 
+    it('test removeClass', function() {
+        var el = document.createElement('DIV');
+        el.className = 'test1';
+        domHandler.removeClass(el, 'test1');
+        expect(el.className).toEqual('');
+        domHandler.addClass(el, 'test2 test1');
+        domHandler.removeClass(el, 'test1');
+        expect(el.className).toEqual('test2');
+    });
+
     it('test createElement', function() {
         var el = domHandler.createElement('DIV');
         expect(el.nodeName).toEqual('DIV');

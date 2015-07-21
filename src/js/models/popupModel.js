@@ -22,9 +22,17 @@ PopupModel = ne.util.defineClass(Model, {
      * Constructor
      * @param {{labels: array, colors: array} data legend data
      */
-    init: function(data) {
+    init: function(data, options) {
+        options = options || {};
+
         /**
-         * Legend data
+         * Popup options
+         * @type {{template: string}}
+         */
+        this.options = options;
+
+        /**
+         * Popup data
          * @type {[[array, array], ...]}
          */
         this.data = [];
