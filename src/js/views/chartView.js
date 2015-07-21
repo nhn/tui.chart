@@ -9,6 +9,8 @@
 var View = require('./view.js'),
     chartConst = require('../const.js');
 
+var TITLE_ADD_PADDING = 20;
+
 /**
  * @classdesc ChartView is parent of all chart.
  * @class
@@ -43,27 +45,10 @@ var ChartView = ne.util.defineClass(View, {
      * Chart title renderer.
      * @returns {element}
      */
-    renderTitle: function() {
+    renderTitleArea: function() {
         var title = this.model.title,
             options = this.model.titleOptions,
-            elTitle;
-
-        if (!this.model.title) {
-            return;
-        }
-
-        elTitle = this.createElement('DIV', 'ne-chart-title');
-        elTitle.innerHTML = title;
-        elTitle.style.fontSize = options.fontSize + 'px';
-
-        if (options.color) {
-            elTitle.style.color = options.color;
-        }
-
-        if (options.background) {
-            elTitle.style.background = options.background;
-        }
-
+            elTitle = this.renderTitle(title, options, 'ne-chart-title');
         return elTitle;
     },
 
@@ -80,8 +65,8 @@ var ChartView = ne.util.defineClass(View, {
             titleSize = this.model.titleFontSize,
             titleHeight = 0;
         if (title) {
-            titleHeight = this.getRenderedLabelHeight(title, titleSize) + 10;
-            titleHeight *= 1.5;
+            titleHeight = this.getRenderedLabelHeight(title, titleSize) + TITLE_ADD_PADDING;
+            titleHeight = parseInt(titleHeight * 1.5, 10);
         }
 
         return titleHeight;

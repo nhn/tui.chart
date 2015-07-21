@@ -6,8 +6,6 @@
 
 'use strict';
 
-var chartConst = require('../const.js');
-
 var HIDDEN_WIDTH = 1;
 
 var pluginName = 'raphael',
@@ -19,23 +17,22 @@ var pluginName = 'raphael',
  * @class
  */
 BarChart = ne.util.defineClass({
-
-    _setRect: function(paper, color, position, id, inCallback, outCallback) {
-        var rect = paper.rect(position.left, position.top, position.width, position.height);
+    _setRect: function(paper, color, bound, id, inCallback, outCallback) {
+        var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: color,
             stroke: 'none'
         });
 
         rect.hover(function() {
-            inCallback(position, id)
+            inCallback(bound, id)
         }, function() {
             outCallback(id);
         });
     },
 
     /**
-     * Vertical bars renderer
+     * Columns(Vertical bars) bars renderer
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} dimension graph dimension
      * @param {number} maxBarWidth max bar width
@@ -44,7 +41,7 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderBars: function(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex, inCallback, outCallback) {
+    _renderColumns: function(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex, inCallback, outCallback) {
         var barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
             paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2),
             lastIndex = values.length - 1;
@@ -67,7 +64,20 @@ BarChart = ne.util.defineClass({
     },
 
     /**
-     * Columns(horizontal bars) renderer
+     * Is IE8?
+     * @returns {boolean}
+     */
+    isIE8: function() {
+        var ie8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1,
+            isIE8 = function() {
+                return ie8;
+            };
+        this.isIE8 = isIE8;
+        return isIE8();
+    },
+
+    /**
+     * Bars(horizontal bars) renderer
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} size graph size
      * @param {number} maxBarHeight max bar height
@@ -76,9 +86,10 @@ BarChart = ne.util.defineClass({
      * @param {number} groupIndex bar group index
      * @private;
      */
-    _renderColumns: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
+    _renderBars: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
         var barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
-            paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2),
+            hiddenWidth = this.isIE8() ? 0 : HIDDEN_WIDTH,
+            paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
             lastIndex = values.length - 1;
 
         ne.util.forEachArray(values, function(value, index) {
@@ -106,7 +117,7 @@ BarChart = ne.util.defineClass({
      * @param {function} outCallback mouseout callback
      */
     render: function(container, data, inCallback, outCallback) {
-        var isColumn = data.options.barType === chartConst.BAR_TYPE_COLUMN,
+        var isColumn = data.options.barType === 'column',
             dimension = data.dimension,
             groupValues = data.model.percentValues,
             colors = data.model.colors,
@@ -116,10 +127,10 @@ BarChart = ne.util.defineClass({
 
         if (isColumn) {
             barMaxSize = (dimension.width / groupValues.length);
-            renderBars = ne.util.bind(this._renderBars, this);
+            renderBars = ne.util.bind(this._renderColumns, this);
         } else {
             barMaxSize = (dimension.height / groupValues.length);
-            renderBars = ne.util.bind(this._renderColumns, this);
+            renderBars = ne.util.bind(this._renderBars, this);
         }
 
         ne.util.forEachArray(groupValues, function(values, index) {

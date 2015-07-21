@@ -1,7 +1,7 @@
 @import 'prefixer';
 
 @axis-color: #000;
-@chart-padding: 20px;
+@chart-padding: 10px;
 @legend-rect-width: 12px;
 @hidden-padding: 1px;
 
@@ -83,7 +83,6 @@
     }
 
     &.horizontal {
-      bottom: @chart-padding + 1;
       right: @chart-padding;
 
       .title-area {
@@ -134,17 +133,15 @@
 
   .series-area {
     position: absolute;
-    right: @chart-padding - @hidden-padding;
     overflow: hidden;
-    &.column > div {
-      left: -1px !important; //Fixed ie8 left border error;
+    &.column > * {
+      //left: -1px !important; //Fixed ie8 left border error;
     }
   }
 
   .ne-chart-legend-area {
     position: absolute;
     padding: 10px;
-    right: @chart-padding;
     .ne-chart-legend {
       clear: both;
       > div {

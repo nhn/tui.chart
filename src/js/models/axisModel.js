@@ -38,13 +38,15 @@ AxisModel = ne.util.defineClass(Model, {
          * Axis title
          * @type {string}
          */
-        this.title = '';
+        this.title = options.title || '';
 
         /**
-         * title font size
+         * title options
          * @type {number}
          */
-        this.titleFontSize = options.titleFontSize || chartConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
+        this.titleOptions = ne.util.extend({
+            fontSize: chartConst.DEFAULT_TITLE_FONT_SIZE
+        }, options.titleOptions);
 
         /**
          * Axis labels
@@ -112,9 +114,6 @@ AxisModel = ne.util.defineClass(Model, {
      * @private
      */
     _setLabelAxisData: function(labels) {
-        var options = this.options;
-
-        this.title = options.title || this.title;
         this.axisType = AXIS_TYPE_LABEL;
         this.labels = labels;
         this.tickCount = labels.length + 1;
@@ -136,7 +135,6 @@ AxisModel = ne.util.defineClass(Model, {
             labels = ne.util.range(scale.min, scale.max + 1, step);
 
         labels = this._formatLabels(labels, lenUnderPoint);
-        this.title = options.title || this.title;
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
         this.scale = scale;

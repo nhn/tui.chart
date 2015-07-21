@@ -62,6 +62,28 @@ var View = ne.util.defineClass({
         }
     },
 
+    renderTitle: function(title, options, className) {
+        var elTitle;
+
+        if (!title) {
+            return;
+        }
+
+        elTitle = this.createElement('DIV', className);
+        elTitle.innerHTML = title;
+        elTitle.style.fontSize = options.fontSize + 'px';
+
+        if (options.color) {
+            elTitle.style.color = options.color;
+        }
+
+        if (options.background) {
+            elTitle.style.background = options.background;
+        }
+
+        return elTitle;
+    },
+
     renderBackground: function(background) {
         if (!background) {
             return;

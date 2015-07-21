@@ -19,7 +19,8 @@ var chartConst = require('../const.js'),
 
 var BarChartView,
     POPUP_PREFIX = 'ne-chart-popup-',
-    CHART_PADDING = 20;
+    CHART_PADDING = 10,
+    HIDDEN_WIDTH = 1;
 
 /**
  * @classdesc BarChartView render axis area, plot area and series area of bar chart.
@@ -99,7 +100,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         var popupPrefix = POPUP_PREFIX + (new Date).getTime() + '-',
             isColumn = this.options.barType === chartConst.BAR_TYPE_COLUMN,
             bounds = this.getViewsBound(),
-            elTitle = this.renderTitle(),
+            elTitle = this.renderTitleArea(),
             elPlot = this.plotView.render(bounds.plot),
             elVAxis = this.vAxisView.render(bounds.vAxis),
             elHAxis = this.hAxisView.render(bounds.hAxis),
@@ -152,7 +153,6 @@ BarChartView = ne.util.defineClass(ChartView, {
             vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
             hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
             legendWidth = this.legendView.getLegendAreaWidth(),
-            legendHeight = this.legendView.getLegendAreaHeight(),
             plotWidth = this.dimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
             plotHeight = this.dimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
@@ -168,14 +168,14 @@ BarChartView = ne.util.defineClass(ChartView, {
                 },
                 hAxis: {
                     dimension: {width: plotWidth, height: hAxisHeight},
-                    position: {right: right}
+                    position: {top: top + plotHeight - HIDDEN_WIDTH, right: right}
                 },
                 series: {
                     dimension: {width: plotWidth, height: plotHeight},
                     position: {top: top, right: right}
                 },
                 legend: {
-                    position: {top: (plotHeight - legendHeight) / 2 }
+                    position: {top: titleHeight, right: CHART_PADDING}
                 },
                 popup: {
                     dimension: {width: plotWidth, height: plotHeight},

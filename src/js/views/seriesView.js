@@ -85,7 +85,7 @@ var SeriesView = ne.util.defineClass(View, {
 
         this.renderDimension(dimension);
 
-        position.top = position.top + (isColumn ? - HIDDEN_WIDTH : hiddenWidth);
+        position.top = position.top + (isColumn ? - HIDDEN_WIDTH : - 1 );
         position.right = position.right + (isColumn ? - (HIDDEN_WIDTH * 2) : - hiddenWidth);
 
         this.renderPosition(position);

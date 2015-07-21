@@ -10,7 +10,7 @@ var View = require('./view.js'),
     chartConst = require('../const.js'),
     axisTemplate = require('./axisTemplate.js');
 
-var TITLE_AREA_WIDTH_PADDING = 35,
+var TITLE_AREA_WIDTH_PADDING = 20,
     TITLE_AREA_HEIGHT_PADDING = 20,
     V_LABEL_RIGHT_PADDING = 10;
 
@@ -49,7 +49,7 @@ var AxisView = ne.util.defineClass(View, {
             isVertical = model.isVertical,
             dimension = bound.dimension,
             size = isVertical ? dimension.height : dimension.width,
-            elTitleArea = this._renderTitleArea(model.title, model.titleFontSize, isVertical, size),
+            elTitleArea = this._renderTitleArea(model.title, model.titleOptions, isVertical, size),
             elTickArea = this._renderTickArea(size),
             elLabelArea = this._renderLabelArea(size, dimension.width);
 
@@ -75,27 +75,21 @@ var AxisView = ne.util.defineClass(View, {
      * @returns {element}
      * @private
      */
-    _renderTitleArea: function(title, fontSize, isVertical, size) {
-        var elTitleArea, titleWidth, titleHeight;
+    _renderTitleArea: function(title, options, isVertical, size) {
+        var elTitleArea = this.renderTitle(title, options, 'title-area'),
+            titleHeight;
 
-        if (!title) {
+        if (!elTitleArea) {
             return;
         }
 
-        fontSize = fontSize || chartConst.DEFAULT_AXIS_TITLE_FONT_SIZE;
-
-        elTitleArea = this.createElement('DIV', 'title-area');
-        elTitleArea.innerHTML = title;
-        elTitleArea.style.fontSize = fontSize + 'px';
-
         if (isVertical) {
-            titleWidth = this.getRenderedLabelWidth(title, fontSize);
-            titleHeight = this.getRenderedLabelHeight(title, fontSize);
+            titleHeight = this.getRenderedLabelHeight(title, options.fontSize);
             elTitleArea.style.width = size + 'px';
             if (!this.isIE8()) {
                 elTitleArea.style.top = size + 'px';
             }
-            elTitleArea.style.left = titleHeight + 'px';
+            elTitleArea.style.left = 0 + 'px';
         }
 
         return elTitleArea;
@@ -125,12 +119,17 @@ var AxisView = ne.util.defineClass(View, {
 
         elTickArea.innerHTML = ticksHtml;
 
+        this._renderTickBorderColor(elTickArea, tickColor, isVertical);
+
+        return elTickArea;
+    },
+
+    _renderTickBorderColor: function(elTickArea, tickColor, isVertical) {
         if (isVertical) {
             elTickArea.style.borderRightColor = tickColor;
         } else {
             elTickArea.style.borderTopColor = tickColor;
         }
-        return elTickArea;
     },
 
     /**
