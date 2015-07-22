@@ -11,7 +11,8 @@ var View = require('./view.js'),
 
 var LEGEND_AREA_PADDING = 10,
     LEGEND_RECT_WIDTH = 12,
-    LABEL_PADDING = 5;
+    LABEL_PADDING_LEFT = 5,
+    LABEL_PADDING_TOP = 2;
 /**
  * @classdesc LegendView render legend area.
  * @class
@@ -46,18 +47,34 @@ var LegendView = ne.util.defineClass(View, {
      */
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
+            data = this.model.data,
+            labelHeight = this.getRenderedLabelHeight(data[0][0], this.model.labelOptions) + (LABEL_PADDING_TOP * 2),
+            rectMargin = this.concatStr('margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2) - 1, 'px'),
             html = ne.util.map(this.model.data, function(items) {
                 var data = {
-                        cssText: 'background-color:' + items[1],
+                        cssText: this.concatStr('background-color:', items[1], ';', rectMargin),
+                        height: labelHeight,
                         label: items[0]
                     };
                 return template(data);
-            }).join('');
+            }, this).join('');
 
         this.el.innerHTML = html;
         this.renderPosition(bound.position);
+        this._renderLabelOption(this.model.labelOptions);
 
         return this.el;
+    },
+
+    /**
+     * Render label option
+     * @param {{fontSize:number, fontFamily: string, color: string}}options
+     * @private
+     */
+    _renderLabelOption: function(options) {
+        var cssText = this.makeFontCssText(options);
+
+        this.el.style.cssText += ';' + cssText;
     },
 
     /**
@@ -66,7 +83,7 @@ var LegendView = ne.util.defineClass(View, {
      * @private
      */
     getLegendAreaHeight: function() {
-        var maxLabelHeight = this.getRenderedLabelsMaxHeight(this.labels);
+        var maxLabelHeight = this.getRenderedLabelsMaxHeight(this.labels, this.model.labelOptions);
         return maxLabelHeight * this.labels.length;
     },
 
@@ -75,10 +92,9 @@ var LegendView = ne.util.defineClass(View, {
      * @returns {number}
      */
     getLegendAreaWidth: function() {
-        var maxLabelWidth = this.getRenderedLabelsMaxWidth(this.labels),
+        var maxLabelWidth = this.getRenderedLabelsMaxWidth(this.labels, this.model.labelOptions),
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
-                LABEL_PADDING + (LEGEND_AREA_PADDING * 2);
-
+                LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
         return legendWidth;
     }
 });

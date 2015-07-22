@@ -14,6 +14,9 @@ var dom = require('./domHandler.js'),
  * @class
  */
 var View = ne.util.defineClass({
+    /**
+     * Constructor
+     */
     init: function() {
         this.el = dom.createElement('DIV', this.className || '');
     },
@@ -35,8 +38,8 @@ var View = ne.util.defineClass({
      */
     renderDimension: function(dimension) {
         this.el.style.cssText = [
-            ['width:', dimension.width, 'px'].join(''),
-            ['height:', dimension.height, 'px'].join(''),
+            this.concatStr('width:', dimension.width, 'px'),
+            this.concatStr('height:', dimension.height, 'px'),
         ].join(';');
     },
 
@@ -70,7 +73,7 @@ var View = ne.util.defineClass({
      * @returns {element}
      */
     renderTitle: function(title, options, className) {
-        var elTitle;
+        var elTitle, cssText;
 
         if (!title) {
             return;
@@ -78,15 +81,14 @@ var View = ne.util.defineClass({
 
         elTitle = dom.createElement('DIV', className);
         elTitle.innerHTML = title;
-        elTitle.style.fontSize = options.fontSize + 'px';
 
-        if (options.color) {
-            elTitle.style.color = options.color;
-        }
+        cssText = this.makeFontCssText(options);
 
         if (options.background) {
-            elTitle.style.background = options.background;
+            cssText += ';' + this.concatStr('background:', options.background);
         }
+
+        elTitle.style.cssText = cssText;
 
         return elTitle;
     },
@@ -104,6 +106,38 @@ var View = ne.util.defineClass({
     },
 
     /**
+     * concat string
+     * @params {...string} target strings
+     * @returns {string}
+     */
+    concatStr: function() {
+        return String.prototype.concat.apply('', arguments);
+    },
+
+    /**
+     * Makes css text for font.
+     * @param options
+     * @returns {string}
+     */
+    makeFontCssText: function(options) {
+        var cssTexts = [];
+
+        if (options.fontSize) {
+            cssTexts.push(this.concatStr('font-size:', options.fontSize, 'px'));
+        }
+
+        if (options.fontFamily) {
+            cssTexts.push(this.concatStr('font-family:', options.fontFamily));
+        }
+
+        if (options.color) {
+            cssTexts.push(this.concatStr('color:', options.color));
+        }
+
+        return cssTexts.join(';');
+    },
+
+    /**
      * Create size check element
      * @returns {element}
      * @private
@@ -113,7 +147,7 @@ var View = ne.util.defineClass({
             elSpan = dom.createElement('SPAN');
 
         elDiv.appendChild(elSpan);
-        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px';
+        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px;line-height:1';
         return elDiv;
     },
 
@@ -125,53 +159,58 @@ var View = ne.util.defineClass({
      * @returns {number}
      * @private
      */
-    _getRenderedLabelSize: function(label, fontSize, property) {
+    _getRenderedLabelSize: function(label, options, property) {
         var elDiv = this._createSizeCheckEl(),
             elSpan = elDiv.firstChild,
             labelSize;
 
+        options = options || {};
         elSpan.innerHTML = label;
-        elSpan.style.fontSize = (fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        elSpan.style.fontSize = (options.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+
+        if (options.fontFamily) {
+            elSpan.style.fontFamily = options.fontFamily;
+        }
+
         document.body.appendChild(elDiv);
         labelSize = elSpan[property];
         document.body.removeChild(elDiv);
-
         return labelSize;
     },
 
     /**
      * Get rendered label width.
      * @param {string} label label
-     * @param {number} fontSize font size
+     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
      * @returns {number}
      */
-    getRenderedLabelWidth: function(label, fontSize) {
-        var labelWidth = this._getRenderedLabelSize(label, fontSize, 'offsetWidth');
+    getRenderedLabelWidth: function(label, options) {
+        var labelWidth = this._getRenderedLabelSize(label, options, 'offsetWidth');
         return labelWidth;
     },
 
     /**
      * Get rendered label height.
      * @param {string} label label
-     * @param {number} fontSize font size
+     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
      * @returns {number}
      */
-    getRenderedLabelHeight: function(label, fontSize) {
-        var labelHeight = this._getRenderedLabelSize(label, fontSize, 'offsetHeight');
+    getRenderedLabelHeight: function(label, options) {
+        var labelHeight = this._getRenderedLabelSize(label, options, 'offsetHeight');
         return labelHeight;
     },
 
     /**
      * Get Rendered Labels Max Size(width or height)
      * @param {array} labels
-     * @param {number} fontSize
+     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
      * @param {function} iteratee
      * @returns {number}
      * @private
      */
-    _getRenderedLabelsMaxSize: function(labels, fontSize, iteratee) {
+    _getRenderedLabelsMaxSize: function(labels, options, iteratee) {
         var sizes = ne.util.map(labels, function(label) {
-                return iteratee(label, fontSize);
+                return iteratee(label, options);
             }, this),
             result = ne.util.max(sizes);
         return result;
@@ -180,24 +219,24 @@ var View = ne.util.defineClass({
     /**
      * Get rendered labels max width.
      * @param {array} labels labels
-     * @param {number} fontSize font size
+     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
      * @returns {number}
      */
-    getRenderedLabelsMaxWidth: function(labels, fontSize) {
+    getRenderedLabelsMaxWidth: function(labels, options) {
         var iteratee = ne.util.bind(this.getRenderedLabelWidth, this),
-            result = this._getRenderedLabelsMaxSize(labels, fontSize, iteratee);
+            result = this._getRenderedLabelsMaxSize(labels, options, iteratee);
         return result;
     },
 
     /**
      * Get rendered labels max height.
      * @param {array} labels labels
-     * @param {number} fontSize font size
+     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
      * @returns {number}
      */
-    getRenderedLabelsMaxHeight: function(labels, fontSize) {
+    getRenderedLabelsMaxHeight: function(labels, options) {
         var iteratee = ne.util.bind(this.getRenderedLabelHeight, this),
-            result = this._getRenderedLabelsMaxSize(labels, fontSize, iteratee);
+            result = this._getRenderedLabelsMaxSize(labels, options, iteratee);
         return result;
     },
 
@@ -206,7 +245,8 @@ var View = ne.util.defineClass({
      * @returns {boolean}
      */
     isIE8: function() {
-        var ie8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1,
+        var browser = ne.util.browser,
+            ie8 = browser.msie && browser.version === 8,
             isIE8 = function() {
                 return ie8;
             };

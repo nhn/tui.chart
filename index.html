@@ -24,13 +24,47 @@
             ['Platinum', 80, 10, 70]
         ],
         options = {
+            size: {
+                width: 500,
+                height: 400
+            },
+            fontFamily: 'Verdana',
             title: 'chart title',
-            titleFontSize: 16,
+            titleOptions: {
+                fontSize: 24,
+                fontFamily: 'Verdana',
+                color: 'red',
+                background: 'white'
+            },
+            background: '#efefef',
             hAxis: {
                 title: 'title',
+                tickColor: 'red'
             },
             vAxis: {
-                title: 'Vertical Axis title'
+                title: 'Axis title',
+                titleOptions: {
+                    fontSize: 14,
+                    fontFamily: 'Verdana',
+                    color: 'blue'
+                },
+                tickColor: 'red',
+                labelOptions: {
+                    fontSize: 12,
+                    fontFamily: 'Verdana',
+                    color: 'green'
+                }
+            },
+            plot: {
+                background: 'skyblue',
+                lineColor: 'gold'
+            },
+            legend: {
+                labelOptions: {
+                    fontSize: 12,
+                    fontFamily: 'Verdana',
+                    color: 'violet'
+                }
             },
             barType: 'column'
         };

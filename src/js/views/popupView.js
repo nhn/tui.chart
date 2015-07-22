@@ -121,8 +121,8 @@ var PopupView = ne.util.defineClass(View, {
         position = this.calculatePosition(data, dimension);
 
         elPopup.style.cssText = [
-            ['left:', position.left, 'px'].join(''),
-            ['top:', position.top, 'px'].join('')
+            this.concatStr('left:', position.left, 'px'),
+            this.concatStr('top:', position.top, 'px')
         ].join(';');
     },
 

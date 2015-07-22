@@ -16,13 +16,16 @@ var charts = {},
          * @returns {object}
          */
         get: function(chartType, data, options) {
-            var Chart = charts[chartType];
-            if (Chart) {
-                var chart = new Chart(data, options);
-                return chart;
-            } else {
+            var Chart = charts[chartType],
+                chart;
+
+            if (!Chart) {
                 throw new Error('Not exist ' + chartType + ' chart.');
             }
+
+            chart = new Chart(data, options);
+
+            return chart;
         },
 
         /**

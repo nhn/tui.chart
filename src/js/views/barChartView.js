@@ -117,6 +117,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elPopup);
         this.renderDimension(this.dimension);
         this.renderBackground(this.options.background);
+        this.renderChartFont(this.options.fontFamily);
 
         this._attachCustomEvent();
 

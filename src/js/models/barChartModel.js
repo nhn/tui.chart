@@ -89,7 +89,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
         this._setAxis(hAxis, vAxis, this.barType);
         this._setPlot(this.hAxis, this.vAxis, options.plot);
-        this._setLegend(legendLabels, colors);
+        this._setLegend(legendLabels, colors, options.legend);
         this._setSeries(values, axisScale, colors, lastItemStyles);
         this._setPopup(values, labels, legendLabels, options.popup);
     },
@@ -131,11 +131,11 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @param {array} colors legend colors
      * @private
      */
-    _setLegend: function(labels, colors) {
+    _setLegend: function(labels, colors, options) {
         this.legend = new LegendModel({
             labels: labels,
             colors: colors
-        });
+        }, options);
     },
 
     /**

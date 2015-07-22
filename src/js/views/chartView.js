@@ -5,7 +5,6 @@
  */
 
 'use strict';
-
 var dom = require('./domHandler.js'),
     View = require('./view.js'),
     chartConst = require('../const.js');
@@ -55,17 +54,24 @@ var ChartView = ne.util.defineClass(View, {
         return elTitle;
     },
 
+    renderChartFont: function(fontFamily) {
+        if (!fontFamily) {
+            return;
+        }
+
+        this.el.style.fontFamily = fontFamily;
+    },
+
     /**
      * Get rendered title height.
      * @returns {number}
      */
     getRenderedTitleHeight: function() {
         var title = this.model.title,
-            titleSize = this.model.titleFontSize,
+            options = this.model.titleOptions,
             titleHeight = 0;
         if (title) {
-            titleHeight = this.getRenderedLabelHeight(title, titleSize) + TITLE_ADD_PADDING;
-            titleHeight = parseInt(titleHeight * 1.5, 10);
+            titleHeight = this.getRenderedLabelHeight(title, options) + TITLE_ADD_PADDING;
         }
 
         return titleHeight;

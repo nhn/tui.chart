@@ -43,17 +43,22 @@ describe('test Axis View', function() {
 
     it('test _makeLabelCssTexts', function() {
         var axisView = new AxisView(),
-            cssTexts = axisView._makeLabelCssTexts(true, true, 12, 100);
-        expect(cssTexts).toEqual(['font-size:12px', 'height:100px', 'line-height:100px']);
+            labelOptions = {
+                fontSize: 12,
+                fontFamily: 'Verdana',
+                color: 'blue'
+            },
+            cssTexts = axisView._makeLabelCssTexts(true, true, 100);
+        expect(cssTexts).toEqual(['height:100px', 'line-height:100px']);
 
-        cssTexts = axisView._makeLabelCssTexts(true, false, 12, 100);
-        expect(cssTexts).toEqual(['font-size:12px']);
+        cssTexts = axisView._makeLabelCssTexts(true, false, 100);
+        expect(cssTexts).toEqual([]);
 
-        cssTexts = axisView._makeLabelCssTexts(false, true, 12, 100);
-        expect(cssTexts).toEqual(['font-size:12px', 'width:100px']);
+        cssTexts = axisView._makeLabelCssTexts(false, true, 100);
+        expect(cssTexts).toEqual(['width:100px']);
 
-        cssTexts = axisView._makeLabelCssTexts(false, false, 12, 100);
-        expect(cssTexts).toEqual(['font-size:12px', 'width:100px']);
+        cssTexts = axisView._makeLabelCssTexts(false, false, 100);
+        expect(cssTexts).toEqual(['width:100px']);
     });
 
     it('test _makeLabelsHtml', function() {
@@ -138,12 +143,12 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300);
 
-            compareHtml = '<div class="label-area" style="left:-37px;">' +
-                '<div class="label" style="font-size:12px;width:75px;left:0px">0</div>' +
-                '<div class="label" style="font-size:12px;width:75px;left:75px">13</div>' +
-                '<div class="label" style="font-size:12px;width:75px;left:150px">26</div>' +
-                '<div class="label" style="font-size:12px;width:75px;left:224px">39</div>' +
-                '<div class="label" style="font-size:12px;width:75px;left:299px">52</div>' +
+            compareHtml = '<div class="label-area" style="font-size:12px;left:-37px;">' +
+                '<div class="label" style="width:75px;left:0px">0</div>' +
+                '<div class="label" style="width:75px;left:75px">13</div>' +
+                '<div class="label" style="width:75px;left:150px">26</div>' +
+                '<div class="label" style="width:75px;left:224px">39</div>' +
+                '<div class="label" style="width:75px;left:299px">52</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -170,11 +175,11 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300, 100);
 
             compareHtml = '<div class="label-area" style="width:75px;top:7px">' +
-                '<div class="label" style="font-size:12px;bottom: 0px">0</div>' +
-                '<div class="label" style="font-size:12px;bottom: 75px">13</div>' +
-                '<div class="label" style="font-size:12px;bottom: 150px">26</div>' +
-                '<div class="label" style="font-size:12px;bottom: 224px">39</div>' +
-                '<div class="label" style="font-size:12px;bottom: 299px">52</div>' +
+                '<div class="label" style="bottom: 0px">0</div>' +
+                '<div class="label" style="bottom: 75px">13</div>' +
+                '<div class="label" style="bottom: 150px">26</div>' +
+                '<div class="label" style="bottom: 224px">39</div>' +
+                '<div class="label" style="bottom: 299px">52</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -265,9 +270,9 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300);
 
             compareHtml = '<div class="label-area">' +
-                '<div class="label" style="font-size:12px;width:100px;left: 0px">label1</div>' +
-                '<div class="label" style="font-size:12px;width:100px;left: 100px">label2</div>' +
-                '<div class="label" style="font-size:12px;width:100px;left: 199px">label3</div>' +
+                '<div class="label" style="width:100px;left: 0px">label1</div>' +
+                '<div class="label" style="width:100px;left: 100px">label2</div>' +
+                '<div class="label" style="width:100px;left: 199px">label3</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -292,9 +297,9 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300, 100);
 
             compareHtml = '<div class="label-area" style="width: 75px;">' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 0px">label1</div>' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 100px">label2</div>' +
-                '<div class="label" style="font-size:12px;height:100px;line-height:100px;top: 199px">label3</div>' +
+                '<div class="label" style="height:100px;line-height:100px;top: 0px">label1</div>' +
+                '<div class="label" style="height:100px;line-height:100px;top: 100px">label2</div>' +
+                '<div class="label" style="height:100px;line-height:100px;top: 199px">label3</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');

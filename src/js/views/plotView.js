@@ -80,17 +80,17 @@ var PlotView = ne.util.defineClass(View, {
     _makeLineHtml: function(positions, size, className, positionType, sizeType, options) {
         var lineHtml = ne.util.map(positions, function(position) {
             var cssTexts = [
-                    [positionType, ':', position, 'px'].join(''),
-                    [sizeType, ':', size, 'px'].join('')
+                    this.concatStr(positionType, ':', position, 'px'),
+                    this.concatStr(sizeType, ':', size, 'px')
                 ], data;
 
             if(options.lineColor) {
-                cssTexts.push(['background-color', options.lineColor].join(':'));
+                cssTexts.push(this.concatStr('background-color:', options.lineColor));
             }
 
             data = {className: className, cssText: cssTexts.join(';')};
             return plotTemplate.TPL_PLOT_LINE(data);
-        }).join('');
+        }, this).join('');
         return lineHtml;
     }
 });

@@ -68,7 +68,8 @@ BarChart = ne.util.defineClass({
      * @returns {boolean}
      */
     isIE8: function() {
-        var ie8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1,
+        var browser = ne.util.browser,
+            ie8 = browser.msie && browser.version === 8,
             isIE8 = function() {
                 return ie8;
             };

@@ -9,6 +9,7 @@
   position: relative;
   &, * {
     .border-box();
+    line-height: 1;
   }
 }
 
@@ -19,7 +20,7 @@
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 10px 0 5px 0;
+    padding: 10px 0;
   }
   .axis-area {
     position: absolute;
@@ -149,13 +150,13 @@
       }
 
       .ne-chart-legend-rect {
+        margin-top:2px;
         width: @legend-rect-width;
         height: @legend-rect-width
       }
       .ne-chart-legend-label {
-        padding-left: 5px;
-        font-size: 12px;
-        line-height: 15px;
+        padding: 2px 0 2px 5px;
+        line-height:1;
       }
     }
   }
