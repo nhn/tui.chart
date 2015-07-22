@@ -81,9 +81,9 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
             labels = this._pickLabels(axisData),
             values = this._pickValues(axisData),
             legendLabels = this._pickLegendLabels(data[0]),
-            hAxis = new AxisModel({labels: labels}, options.hAxis),
-            vAxis = new AxisModel({values: values}, options.vAxis),
-            axisScale = vAxis.scale,
+            vAxis = new AxisModel({labels: labels}, options.hAxis),
+            hAxis = new AxisModel({values: values}, options.vAxis),
+            axisScale = hAxis.scale,
             colors = this._pickColors(legendLabels.length),
             lastItemStyles = this._pickLastItemStyles(data);
 
@@ -103,11 +103,11 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setAxis: function(hAxis, vAxis, barType) {
         if (barType === chartConst.BAR_TYPE_COLUMN) {
-            this.hAxis = hAxis;
-            this.vAxis = vAxis;
-        } else {
             this.hAxis = vAxis;
             this.vAxis = hAxis;
+        } else {
+            this.hAxis = hAxis;
+            this.vAxis = vAxis;
         }
         this.vAxis.changeVerticalState(true);
     },

@@ -116,10 +116,9 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.append(elLegend);
         this.append(elPopup);
         this.renderDimension(this.dimension);
+        this.renderBackground(this.options.background);
 
         this._attachCustomEvent();
-
-        ChartView.prototype.render.call(this);
 
         return this.el;
     },
@@ -186,6 +185,10 @@ BarChartView = ne.util.defineClass(ChartView, {
         return bounds;
     },
 
+    /**
+     * Attach custom event
+     * @private
+     */
     _attachCustomEvent: function() {
         var popupView = this.popupView;
         this.seriesView.on('showPopup', popupView.onShow, popupView);

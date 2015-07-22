@@ -56,8 +56,8 @@ var PopupView = ne.util.defineClass(View, {
 
     /**
      * Makes popup html.
-     * @param data
-     * @param prefix
+     * @param {object} data popup data
+     * @param {string} prefix popup id prefix
      * @returns {string}
      * @private
      */
@@ -106,8 +106,8 @@ var PopupView = ne.util.defineClass(View, {
     },
 
     /**
-     * On show.
-     * @param {id: string, bound: object} data
+     * This is custom event callback of SeriesView.
+     * @param {{id: string, bound: object}} data popup data
      */
     onShow: function(data) {
         var elPopup = document.getElementById(data.id),
@@ -127,8 +127,8 @@ var PopupView = ne.util.defineClass(View, {
     },
 
     /**
-     * On hide
-     * @param data
+     * This is custom event callback of SeriesView.
+     * @param {{id: string}} data popup data
      */
     onHide: function(data) {
         var elPopup = document.getElementById(data.id);

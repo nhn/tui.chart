@@ -68,7 +68,7 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * Title Area renderer
+     * Title area renderer
      * @param {string} title axis title
      * @param {number} fontSize font size
      * @param {boolean} isVertical is vertical?
@@ -125,6 +125,13 @@ var AxisView = ne.util.defineClass(View, {
         return elTickArea;
     },
 
+    /**
+     * Render tick border color.
+     * @param {element} elTickArea tick area element
+     * @param {string} tickColor tick color
+     * @param {boolean} isVertical Is vertical?
+     * @private
+     */
     _renderTickBorderColor: function(elTickArea, tickColor, isVertical) {
         if (isVertical) {
             elTickArea.style.borderRightColor = tickColor;

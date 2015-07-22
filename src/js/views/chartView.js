@@ -19,7 +19,7 @@ var TITLE_ADD_PADDING = 20;
  */
 var ChartView = ne.util.defineClass(View, {
     /**
-     * Chart size
+     * Chart dimension
      * @type {{width: number, height: number}
      */
     dimension: {
@@ -33,11 +33,13 @@ var ChartView = ne.util.defineClass(View, {
      * @param {options} options chart options
      */
     init: function(data, options) {
+        options = options || {};
+
         /**
          * Chart dimension
          * @type {Object}
          */
-        this.dimension = ne.util.extend(this.dimension, options.size);
+        this.dimension = ne.util.extend(this.dimension, options.size || {});
         View.call(this);
         dom.addClass(this.el, 'ne-chart');
     },
@@ -51,10 +53,6 @@ var ChartView = ne.util.defineClass(View, {
             options = this.model.titleOptions,
             elTitle = this.renderTitle(title, options, 'ne-chart-title');
         return elTitle;
-    },
-
-    render: function() {
-        this.renderBackground(this.options.background);
     },
 
     /**

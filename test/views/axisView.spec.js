@@ -20,6 +20,27 @@ describe('test Axis View', function() {
             title: 'value title'
         };
 
+    it('test _renderTitleArea', function() {
+        var axisView = new AxisView(),
+            title = 'Axis title.',
+            options = {
+                fontSize: 12
+            },
+            elTitle = axisView._renderTitleArea(title, options);
+
+        expect(elTitle.innerHTML).toEqual(title);
+
+        elTitle = axisView._renderTitleArea(title, options, true, 50);
+        expect(elTitle.style.width).toEqual('50px');
+
+        if (!isIE8) {
+            expect(elTitle.style.top).toEqual('50px');
+        }
+
+        elTitle = axisView._renderTitleArea('');
+        expect(elTitle).toBeUndefined();
+    });
+
     it('test _makeLabelCssTexts', function() {
         var axisView = new AxisView(),
             cssTexts = axisView._makeLabelCssTexts(true, true, 12, 100);
@@ -43,27 +64,6 @@ describe('test Axis View', function() {
                 '<div class="label" style="left:30px">label3</div>';
 
         expect(labelsHtml).toEqual(compareHtml)
-    });
-
-    it('test _renderTitleArea', function() {
-        var axisView = new AxisView(),
-            title = 'Axis title.',
-            options = {
-                fontSize: 12
-            },
-            elTitle = axisView._renderTitleArea(title, options);
-
-        expect(elTitle.innerHTML).toEqual(title);
-
-        elTitle = axisView._renderTitleArea(title, options, true, 50);
-        expect(elTitle.style.width).toEqual('50px');
-
-        if (!isIE8) {
-            expect(elTitle.style.top).toEqual('50px');
-        }
-
-        elTitle = axisView._renderTitleArea('');
-        expect(elTitle).toBeUndefined();
     });
 
     describe('test value type axis', function() {

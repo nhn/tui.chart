@@ -1,12 +1,12 @@
 /**
- * @fileoverview This is DOM Handler.
+ * @fileoverview DOM Handler.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
 
 'use strict';
 
-var DOMHandler = {
+var domHandler = {
     /**
      * Create element.
      * @param {string} tag html tag
@@ -61,12 +61,4 @@ var DOMHandler = {
     }
 };
 
-///**
-// * mixin function
-// * @param {class} target
-// */
-//DOMHandler.mixin = function(target) {
-//    ne.util.extend(target.prototype, DOMHandler.prototype);
-//};
-
-module.exports = DOMHandler;
+module.exports = domHandler;
