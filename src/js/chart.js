@@ -21,7 +21,24 @@ require('./views/barChartView.js');
  * @returns {object}
  */
 neChart.barChart = function(container, data, options) {
-    var chart = chartFactory.get('Bar', data, options);
+    var chart;
+    options.barType = 'bar';
+    chart = chartFactory.get('Bar', data, options);
+    container.appendChild(chart.render());
+    return chart;
+};
+
+/**
+ * Column chart creator
+ * @param {element} container chart container
+ * @param {object} data chart data
+ * @param {object} options chart options
+ * @returns {object}
+ */
+neChart.columnChart = function(container, data, options) {
+    var chart;
+    options.barType = 'column';
+    chart = chartFactory.get('Bar', data, options);
     container.appendChild(chart.render());
     return chart;
 };
