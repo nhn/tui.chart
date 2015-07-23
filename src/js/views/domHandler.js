@@ -29,17 +29,16 @@ var domHandler = {
      * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
-        var className = el.className,
-            classNameArr;
+        var className = el.className ? el.className : '',
+            classNames = className.split(' '),
+            index = ne.util.indexOf(classNames, newClass);
 
-        if (className && (className + ' ').indexOf(newClass + ' ') > -1) {
+        if (index > -1) {
             return;
         }
 
-        classNameArr = className ? className.split(' ') : [];
-        classNameArr.push(newClass);
-
-        el.className = classNameArr.join(' ');
+        classNames.push(newClass);
+        el.className = classNames.join(' ');
     },
 
     /**
