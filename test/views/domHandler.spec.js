@@ -23,7 +23,8 @@ describe('test DOM Handler', function() {
         el.className = 'test1';
         dom.removeClass(el, 'test1');
         expect(el.className).toEqual('');
-        dom.addClass(el, 'test2 test1');
+        dom.addClass(el, 'test2');
+        dom.addClass(el, 'test1');
         dom.removeClass(el, 'test1');
         expect(el.className).toEqual('test2');
     });

@@ -114,11 +114,11 @@ var AxisView = ne.util.defineClass(View, {
             posType = isVertical ? 'bottom' : 'left',
             ticksHtml = ne.util.map(positions, function(position) {
                 var cssText = [
-                    ['background-color:', tickColor].join(''),
-                    [posType, ': ', position, 'px'].join('')
+                    this.concatStr('background-color:', tickColor),
+                    this.concatStr(posType, ': ', position, 'px')
                 ].join(';');
                 return axisTemplate.TPL_AXIS_TICK({cssText: cssText});
-            }).join('');
+            }, this).join('');
 
         elTickArea.innerHTML = ticksHtml;
 
@@ -202,10 +202,10 @@ var AxisView = ne.util.defineClass(View, {
         var cssTexts = [];
 
         if (isVertical && isLabelAxis) {
-            cssTexts.push(['height:', labelWidth, 'px'].join(''));
-            cssTexts.push(['line-height:', labelWidth, 'px'].join(''));
+            cssTexts.push(this.concatStr('height:', labelWidth, 'px'));
+            cssTexts.push(this.concatStr('line-height:', labelWidth, 'px'));
         } else if (!isVertical) {
-            cssTexts.push(['width:', labelWidth, 'px'].join(''));
+            cssTexts.push(this.concatStr('width:', labelWidth, 'px'));
         }
 
         return cssTexts;
@@ -225,7 +225,7 @@ var AxisView = ne.util.defineClass(View, {
                 var labelCssTexts = cssTexts.slice(),
                     html;
 
-                labelCssTexts.push([posType, ':', position, 'px'].join(''));
+                labelCssTexts.push(this.concatStr(posType, ':', position, 'px'));
 
                 html = axisTemplate.TPL_AXIS_LABEL({
                     cssText: labelCssTexts.join(';'),
@@ -255,9 +255,9 @@ var AxisView = ne.util.defineClass(View, {
 
         if (isVertical) {
             labelHeight = this.getRenderedLabelHeight('ABC', options);
-            elLabelArea.style.top = [parseInt(labelHeight / 2, 10), 'px'].join('');
-        } else if (!isLabelAxis) {
-            elLabelArea.style.left = ['-', parseInt(labelWidth / 2, 10), 'px'].join('');
+            elLabelArea.style.top = this.concatStr(parseInt(labelHeight / 2, 10), 'px');
+        } else {
+            elLabelArea.style.left = this.concatStr('-', parseInt(labelWidth / 2, 10), 'px');
         }
     },
 

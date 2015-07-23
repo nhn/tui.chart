@@ -10,9 +10,11 @@
 var Model = require('./model.js'),
     chartConst = require('../const.js');
 
-var apc = Array.prototype.concat,
-    AXIS_TYPE_VALUE = 'value',
+var AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
+    DEFAULT_TICK_COUNT = 5;
+
+var apc = Array.prototype.concat,
     AxisModel;
 
 /**
@@ -66,7 +68,7 @@ AxisModel = ne.util.defineClass(Model, {
          * Axis tick count
          * @type {number}
          */
-        this.tickCount = 5;
+        this.tickCount = DEFAULT_TICK_COUNT;
 
         /**
          * Axis tick color
@@ -123,16 +125,17 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set value type axis data.
-     * @param {[array, ...]} arr2d chart values
+     * @param {[array, ...]} values2d chart values
      * @private
      */
-    _setValueAxisData: function(arr2d) {
+    _setValueAxisData: function(values2d) {
         var options = this.options,
-            arr = apc.apply([], arr2d), // flatten array
-            minMax = this._pickMinMax(arr),
-            scale = this._calculateScale(minMax.min, minMax.max, options.minValue),
+            values = apc.apply([], values2d), // flatten array
+            min = ne.util.min(values),
+            max = ne.util.max(values),
+            scale = this._calculateScale(min, max, options.minValue),
             step = this.getScaleStep(scale, this.tickCount),
-            formats = options.format ? [options.format] : arr,
+            formats = options.format ? [options.format] : values,
             lenUnderPoint = this._pickMaxLenUnderPoint(formats),
             labels = ne.util.range(scale.min, scale.max + 1, step);
 
@@ -140,20 +143,6 @@ AxisModel = ne.util.defineClass(Model, {
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
         this.scale = scale;
-    },
-
-    /**
-     * Pick min and max from chart values
-     * @param {[array, ...]} arr2d chart values
-     * @returns {{min: number, max: number}}
-     * @private
-     */
-    _pickMinMax: function(arr) {
-        arr.sort(function(a, b) {
-            return a - b;
-        });
-
-        return {min: arr[0], max: arr[arr.length - 1]};
     },
 
     /**

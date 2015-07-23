@@ -62,7 +62,7 @@ var SeriesModel = ne.util.defineClass(Model, {
      */
     _setData: function(data) {
         if (!data || ne.util.isEmpty(data.values) || !data.scale || !data.colors) {
-            throw new Error('...');
+            throw new Error('Invalid series data.');
         }
 
         this.markers = data.values;

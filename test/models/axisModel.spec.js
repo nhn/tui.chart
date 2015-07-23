@@ -41,12 +41,6 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
-        it('_pickMinMax', function() {
-            var minMax = axisModel._pickMinMax([80, 40, 60, 20]);
-            expect(minMax.min).toEqual(20);
-            expect(minMax.max).toEqual(80);
-        });
-
         it('getCalculateScale', function() {
             var scale = axisModel._calculateScale(10, 100);
             expect(scale.max).toEqual(104.5);
