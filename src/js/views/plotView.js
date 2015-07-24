@@ -19,12 +19,14 @@ var PlotView = ne.util.defineClass(View, {
      * constructor
      * @param {object} model plot model
      */
-    init: function(model) {
+    init: function(model, theme) {
         /**
          * Plot model
          * @type {Object}
          */
         this.model = model;
+
+        this.theme = theme;
 
         /**
          * Plot view className
@@ -56,15 +58,15 @@ var PlotView = ne.util.defineClass(View, {
     _renderLines: function(dimension) {
         var hPositions = this.model.makeHPixelPositions(dimension.width),
             vPositions = this.model.makeVPixelPositions(dimension.height),
-            options = this.model.options,
+            theme = this.theme,
             lineHtml = '';
 
-        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height', options);
-        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width', options);
+        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height', theme.lineColor);
+        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width', theme.lineColor);
 
         this.el.innerHTML = lineHtml;
 
-        this.renderBackground(options.background);
+        this.renderBackground(theme.background);
     },
 
     /**
@@ -77,15 +79,15 @@ var PlotView = ne.util.defineClass(View, {
      * @returns {string}
      * @private
      */
-    _makeLineHtml: function(positions, size, className, positionType, sizeType, options) {
+    _makeLineHtml: function(positions, size, className, positionType, sizeType, lineColor) {
         var lineHtml = ne.util.map(positions, function(position) {
             var cssTexts = [
                     this.concatStr(positionType, ':', position, 'px'),
                     this.concatStr(sizeType, ':', size, 'px')
                 ], data;
 
-            if(options.lineColor) {
-                cssTexts.push(this.concatStr('background-color:', options.lineColor));
+            if(lineColor) {
+                cssTexts.push(this.concatStr('background-color:', lineColor));
             }
 
             data = {className: className, cssText: cssTexts.join(';')};

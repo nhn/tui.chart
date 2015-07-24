@@ -6,13 +6,28 @@
 'use strict';
 
 var chartFactory = require('./factories/chartFactory.js'),
-    pluginFactory = require('./factories/pluginFactory.js');
-
-var neChart = ne.util.defineNamespace('ne.application.chart');
+    pluginFactory = require('./factories/pluginFactory.js'),
+    themeFactory = require('./factories/themeFactory.js');
 
 require('./util.js');
 require('./views/barChartView.js');
+require('./themes/defaultTheme.js');
 
+var DEFAULT_THEME_NAME = 'default';
+
+var neChart = ne.util.defineNamespace('ne.application.chart'),
+    chart = function(container, chartType, data, options) {
+        var theme, chart;
+
+        options = options || {};
+        theme = options.theme || DEFAULT_THEME_NAME;
+        options.theme = themeFactory.get(theme);
+
+        chart = chartFactory.get(chartType, data, options);
+        container.appendChild(chart.render());
+
+        return chart;
+    };
 /**
  * Bar chart creator
  * @param {element} container chart container
@@ -21,11 +36,10 @@ require('./views/barChartView.js');
  * @returns {object}
  */
 neChart.barChart = function(container, data, options) {
-    var chart;
+    options = options || {};
+    options.chartType = 'bar';
     options.barType = 'bar';
-    chart = chartFactory.get('Bar', data, options);
-    container.appendChild(chart.render());
-    return chart;
+    return chart(container, 'Bar', data, options);;
 };
 
 /**
@@ -36,11 +50,11 @@ neChart.barChart = function(container, data, options) {
  * @returns {object}
  */
 neChart.columnChart = function(container, data, options) {
-    var chart;
+    options = options || {};
+    options.chartType = 'bar';
     options.barType = 'column';
-    chart = chartFactory.get('Bar', data, options);
-    container.appendChild(chart.render());
-    return chart;
+    return chart(container, 'Bar', data, options);;
 };
 
 neChart.registPlugin = pluginFactory.register;
+neChart.registTheme = themeFactory.register;

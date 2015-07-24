@@ -11,8 +11,10 @@ var ChartView = require('../../src/js/views/chartView.js');
 describe('test ChartView', function() {
     var chartView = new ChartView();
     chartView.model = {
-        title: 'Test title',
-        titleOptions: {
+        title: 'Test title'
+    };
+    chartView.theme = {
+        title: {
             fontSize: 12,
             color: 'orange',
             background: 'white'
@@ -30,6 +32,6 @@ describe('test ChartView', function() {
     it('test getRenderedTitleHeight', function() {
         var height = chartView.getRenderedTitleHeight();
         expect(height).toBeGreaterThan(32);
-    })
+    });
 
 });

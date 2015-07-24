@@ -47,50 +47,53 @@
         </div>
         <div style="float:left; margin-left:10px;position:relative;">
             <div>options</div>
-            <button id="btn">적용</button>
             <textarea id="options">
 {
-    "size": {
+    "chart": {
         "width": 500,
-        "height": 400
+        "height": 400,
+        "title": "chart title"
     },
-    "fontFamily": "Verdana",
-    "title": "chart title",
-    "titleOptions": {
-        "fontSize": 24,
-        "fontFamily": "Verdana",
-        "color": "red",
-        "background": "white"
-    },
-    "background": "#efefef",
-    "hAxis": {
-        "title": "title",
-        "tickColor": "red"},
     "vAxis": {
-        "title": "Axis title",
-        "titleOptions": {
-            "fontSize": 14,
-            "fontFamily": "Verdana",
-            "color": "blue"},
-        "tickColor": "red",
-        "labelOptions": {
-            "fontSize": 12,
-            "fontFamily": "Verdana",
-            "color": "green"
+        "title": "vAxis title"
+    },
+    "hAxis": {
+        "title": "hAxis title",
+        "format": '0.0',
+        "min": 0
+    },
+    "tooltip": {
+        "suffix": '',
+        "template": ''
+    }
+}
+            </textarea>
+        </div>
+        <div style="float:left; margin-left:10px;position:relative;">
+            <div>theme</div>
+            <button id="btn">적용</button>
+            <textarea id="theme">
+{
+    chart: {
+        colors: ['black', 'white', 'gray', 'green', 'blue'],
+        background: DEFAULT_BACKGROUND,
+        fontFamily: 'Verdana'
+    },
+    title: {
+        fontSize: 14,
+        color: DEFAULT_COLOR
+    },
+    vAxis: DEFAULT_AXIS,
+    hAxis: DEFAULT_AXIS,
+    plot: {
+        lineColor: '#dddddd'
+    },
+    legend: {
+        label: {
+            fontSize: 12,
+            color: DEFAULT_COLOR
         }
-    },
-    "plot": {
-        "background": "skyblue",
-        "lineColor": "gold"
-    },
-    "legend": {
-        "labelOptions": {
-            "fontSize": 12,
-            "fontFamily": "Verdana",
-            "color": "violet"
-        }
-    },
-    "barType": "column"
+    }
 }
             </textarea>
         </div>
@@ -112,51 +115,26 @@
             ['Platinum', 80, 10, 70]
         ],
         options = {
-            size: {
+            chart: {
                 width: 500,
-                height: 400
-            },
-            fontFamily: 'Verdana',
-            title: 'chart title',
-            titleOptions: {
-                fontSize: 24,
-                fontFamily: 'Verdana',
-                color: 'red',
-                background: 'white'
-            },
-            background: '#efefef',
-            hAxis: {
-                title: 'title',
-                tickColor: 'red'
+                height: 400,
+                title: 'chart title'
             },
             vAxis: {
-                title: 'Axis title',
-                titleOptions: {
-                    fontSize: 14,
-                    fontFamily: 'Verdana',
-                    color: 'blue'
-                },
-                tickColor: 'red',
-                labelOptions: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana',
-                    color: 'green'
-                }
+                title: 'vAxis title'
             },
-            plot: {
-                background: 'skyblue',
-                lineColor: 'gold'
+            hAxis: {
+                title: 'hAxis title',
+                format: '0.0',
+                min: 0
             },
-            legend: {
-                labelOptions: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana',
-                    color: 'violet'
-                }
+            tooltip: {
+                suffix: 'unit',
+                template: ''
             }
         };
 
-    chart.barChart(elChartArea, data, options);
+    chart.columnChart(elChartArea, data, options);
 
     elBtn.addEventListener('click', function() {
         var type = document.getElementById('type').value,

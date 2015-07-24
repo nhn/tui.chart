@@ -19,7 +19,7 @@ var SeriesModel = ne.util.defineClass(Model, {
      * Constructor
      * @param {data} data
      */
-    init: function(data) {
+    init: function(data, options) {
         /**
          * Series makers
          * @type {array}
@@ -61,13 +61,12 @@ var SeriesModel = ne.util.defineClass(Model, {
      * @private
      */
     _setData: function(data) {
-        if (!data || ne.util.isEmpty(data.values) || !data.scale || !data.colors) {
+        if (!data || ne.util.isEmpty(data.values) || !data.scale) {
             throw new Error('Invalid series data.');
         }
 
         this.markers = data.values;
         this.percentValues = this._makePercentValues(data.values, data.scale);
-        this.colors = data.colors;
 
         if (ne.util.isNotEmpty(data.lastItemStyles)) {
             this.lastItemStyles = data.lastItemStyles;

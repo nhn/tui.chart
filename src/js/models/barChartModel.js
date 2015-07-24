@@ -22,7 +22,6 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      */
     init: function(data, options) {
         options = options || {};
-        options.barType  = options.barType  || chartConst.BAR_TYPE_BAR;
 
         /**
          * Horizontal AxisModel instance
@@ -65,7 +64,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
          * vertical or horizontal
          * @type {string}
          */
-        this.barType = options.barType;
+        this.barType = options.barType || chartConst.BAR_TYPE_BAR;
 
         ChartModel.call(this, data, options);
     },
@@ -77,39 +76,52 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setData: function(data) {
         var options = this.options || {},
-            axisData = this._pickAxisData(data),
-            labels = this._pickLabels(axisData),
-            values = this._pickValues(axisData),
-            legendLabels = this._pickLegendLabels(data[0]),
-            vAxis = new AxisModel({labels: labels}, options.hAxis),
-            hAxis = new AxisModel({values: values}, options.vAxis),
-            axisScale = hAxis.scale,
-            colors = this._pickColors(legendLabels.length),
-            lastItemStyles = this._pickLastItemStyles(data);
+            axisData = this.pickAxisData(data),
+            labels = this.pickLabels(axisData),
+            values = this.pickValues(axisData),
+            legendLabels = this.pickLegendLabels(data[0]),
+            lastItemStyles = this.pickLastItemStyles(data),
+            axisInfo;
 
-        this._setAxis(hAxis, vAxis, this.barType);
-        this._setPlot(this.hAxis, this.vAxis, options.plot);
-        this._setLegend(legendLabels, colors, options.legend);
-        this._setSeries(values, axisScale, colors, lastItemStyles);
-        this._setPopup(values, labels, legendLabels, options.popup);
+        axisInfo = this._setAxis(labels, values, options);
+        this._setPlot(axisInfo.hAxis, axisInfo.vAxis);
+        this._setLegend(legendLabels);
+        this._setSeries(values, axisInfo.valueScale, lastItemStyles, options.series);
+        this._setPopup(values, labels, legendLabels, options.tooltip);
     },
 
     /**
-     * Set axis.
-     * @param {object} hAxis horizontal axis
-     * @param {object} vAxis vertical axis
-     * @param {object} barType bar type
+     *
+     * @param {array} labels labels
+     * @param {[array, ...] values values
+     * @param {object} options options
+     * @returns {{vAxis: object, hAxis: object, valueScale: object}}
      * @private
      */
-    _setAxis: function(hAxis, vAxis, barType) {
-        if (barType === chartConst.BAR_TYPE_COLUMN) {
-            this.hAxis = vAxis;
-            this.vAxis = hAxis;
+    _setAxis: function(labels, values, options) {
+        var vAxis, hAxis, valueScale, axisInfo;
+        if (options.barType === chartConst.BAR_TYPE_COLUMN) {
+            vAxis = new AxisModel({values: values}, options.vAxis);
+            hAxis = new AxisModel({labels: labels}, options.hAxis);
+            valueScale = vAxis.scale;
         } else {
-            this.hAxis = hAxis;
-            this.vAxis = vAxis;
+            vAxis = new AxisModel({labels: labels}, options.vAxis);
+            hAxis = new AxisModel({values: values}, options.hAxis);
+            valueScale = hAxis.scale;
         }
-        this.vAxis.changeVerticalState(true);
+
+        vAxis.changeVerticalState(true);
+
+        this.vAxis = vAxis;
+        this.hAxis = hAxis;
+
+        axisInfo = {
+            vAxis: vAxis,
+            hAxis: hAxis,
+            valueScale: valueScale
+        };
+
+        return axisInfo;
     },
 
     /**
@@ -131,11 +143,10 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @param {array} colors legend colors
      * @private
      */
-    _setLegend: function(labels, colors, options) {
+    _setLegend: function(labels) {
         this.legend = new LegendModel({
-            labels: labels,
-            colors: colors
-        }, options);
+            labels: labels
+        });
     },
 
     /**
@@ -145,13 +156,12 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @param {array} colors series colors
      * @private
      */
-    _setSeries: function(values, scale, colors, lastItemStyles) {
+    _setSeries: function(values, scale, lastItemStyles, options) {
         this.series = new SeriesModel({
             values: values,
             scale: scale,
-            colors: colors,
             lastItemStyles: lastItemStyles
-        });
+        }, options);
     },
 
     _setPopup: function(values, labels, legendLabels, options) {

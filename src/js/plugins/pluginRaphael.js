@@ -8,7 +8,10 @@
 
 var HIDDEN_WIDTH = 1;
 
-var pluginName = 'raphael',
+var Raphael = window.Raphael,
+    pluginName = 'raphael',
+    browser = ne.util.browser,
+    ie8 = browser.msie && browser.version === 8,
     BarChart,
     pluginRaphael;
 
@@ -25,7 +28,7 @@ BarChart = ne.util.defineClass({
         });
 
         rect.hover(function() {
-            inCallback(bound, id)
+            inCallback(bound, id);
         }, function() {
             outCallback(id);
         });
@@ -64,20 +67,6 @@ BarChart = ne.util.defineClass({
     },
 
     /**
-     * Is IE8?
-     * @returns {boolean}
-     */
-    isIE8: function() {
-        var browser = ne.util.browser,
-            ie8 = browser.msie && browser.version === 8,
-            isIE8 = function() {
-                return ie8;
-            };
-        this.isIE8 = isIE8;
-        return isIE8();
-    },
-
-    /**
      * Bars(horizontal bars) renderer
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} size graph size
@@ -89,7 +78,7 @@ BarChart = ne.util.defineClass({
      */
     _renderBars: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
         var barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
-            hiddenWidth = this.isIE8() ? 0 : HIDDEN_WIDTH,
+            hiddenWidth = ie8 ? 0 : HIDDEN_WIDTH,
             paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
             lastIndex = values.length - 1;
 
@@ -97,7 +86,7 @@ BarChart = ne.util.defineClass({
             var color = lastIndex === index && lastColor ? lastColor : colors[index],
                 barWidth = parseInt(value * size.width, 10),
                 top = paddingTop + (barHeight * index),
-                left = - HIDDEN_WIDTH,
+                left = -HIDDEN_WIDTH,
                 bound = {
                     top: top,
                     left: left,
@@ -121,7 +110,7 @@ BarChart = ne.util.defineClass({
         var isColumn = data.options.barType === 'column',
             dimension = data.dimension,
             groupValues = data.model.percentValues,
-            colors = data.model.colors,
+            colors = data.theme.colors,
             lastColors = data.model.pickLastColors(),
             paper = Raphael(container, dimension.width, dimension.height),
             barMaxSize, renderBars;

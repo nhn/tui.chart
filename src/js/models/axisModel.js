@@ -7,8 +7,7 @@
 
 'use strict';
 
-var Model = require('./model.js'),
-    chartConst = require('../const.js');
+var Model = require('./model.js');
 
 var AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
@@ -25,16 +24,13 @@ var apc = Array.prototype.concat,
 AxisModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {{label:array, values: [array, ...]} data labels or values
+     * @param {{label:array, values: [array]}} data labels or values
      * @param {object} options chart options
      */
     init: function(data, options) {
         options = options || {};
-        /**
-         * Axis options
-         * @type {object}
-         */
-        this.options = options || {};
+
+        this.options = options;
 
         /**
          * Axis title
@@ -43,38 +39,16 @@ AxisModel = ne.util.defineClass(Model, {
         this.title = options.title || '';
 
         /**
-         * title options
-         * @type {number}
-         */
-        this.titleOptions = ne.util.extend({
-            fontSize: chartConst.DEFAULT_TITLE_FONT_SIZE
-        }, options.titleOptions);
-
-        /**
          * Axis labels
          * @type {array}
          */
         this.labels = [];
 
         /**
-         * label options
-         * @type {number}
-         */
-        this.labelOptions = ne.util.extend({
-            fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-        }, options.labelOptions);
-
-        /**
          * Axis tick count
          * @type {number}
          */
         this.tickCount = DEFAULT_TICK_COUNT;
-
-        /**
-         * Axis tick color
-         * @type {string|string|*}
-         */
-        this.tickColor = options.tickColor || chartConst.DEFAULT_TICK_COLOR;
 
         /**
          * Axis tick scale
@@ -101,7 +75,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set axis data.
-     * @param {{label:array, values: [array, ...]} data labels or values
+     * @param {{label:array, values: [array]}} data labels or values
      * @private
      */
     _setData: function(data) {
@@ -125,7 +99,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set value type axis data.
-     * @param {[array, ...]} values2d chart values
+     * @param {[array]} values2d chart values
      * @private
      */
     _setValueAxisData: function(values2d) {
@@ -133,7 +107,7 @@ AxisModel = ne.util.defineClass(Model, {
             values = apc.apply([], values2d), // flatten array
             min = ne.util.min(values),
             max = ne.util.max(values),
-            scale = this._calculateScale(min, max, options.minValue),
+            scale = this._calculateScale(min, max, options.min),
             step = this.getScaleStep(scale, this.tickCount),
             formats = options.format ? [options.format] : values,
             lenUnderPoint = this._pickMaxLenUnderPoint(formats),
@@ -149,9 +123,9 @@ AxisModel = ne.util.defineClass(Model, {
      * Calculate scale from chart min, max data.
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min chart min value
-     * @param {number} max max cahrt max value
-     * @params {minValue} optional min value
-     * @returns {{min: number, max: number}}
+     * @param {number} max max chart max value
+     * @params {number} minValue optional min value
+     * @returns {{min: number, max: number}} scale
      * @private
      */
     _calculateScale: function(min, max, minValue) {

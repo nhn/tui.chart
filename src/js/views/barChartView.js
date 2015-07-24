@@ -34,9 +34,12 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @param {options} options bar chart options
      */
     init: function(data, options) {
-        options = options || {};
+        var theme = options.theme;
 
-        this.options = options;
+        this.options = options.chart;
+        this.options.barType = options.barType;
+
+        this.theme = theme.chart;
 
         /**
          * Bar chart className
@@ -54,34 +57,34 @@ BarChartView = ne.util.defineClass(ChartView, {
          * Plot view
          * @type {object}
          */
-        this.plotView = new PlotView(this.model.plot);
+        this.plotView = new PlotView(this.model.plot, theme.plot);
 
         /**
          * Vertical axis view
          * @type {object}
          */
-        this.vAxisView = new AxisView(this.model.vAxis);
+        this.vAxisView = new AxisView(this.model.vAxis, theme.vAxis);
 
         /**
          * Horizontal axis view
          * @type {object}
          */
-        this.hAxisView = new AxisView(this.model.hAxis);
+        this.hAxisView = new AxisView(this.model.hAxis, theme.hAxis);
 
         /**
          * series view
          * @type {object}
          */
         this.seriesView = new SeriesView(this.model.series, {
-            chartType: 'bar',
+            chartType: options.chartType,
             barType: options.barType
-        });
+        }, theme.series);
 
         /**
          * legend view
          * @type {object}
          */
-        this.legendView = new LegendView(this.model.legend);
+        this.legendView = new LegendView(this.model.legend, theme.legend);
 
         /**
          * legend view
@@ -89,6 +92,7 @@ BarChartView = ne.util.defineClass(ChartView, {
          */
         this.popupView = new PopupView(this.model.popup);
 
+        options = options.chart || {};
         ChartView.call(this, data, options);
     },
 

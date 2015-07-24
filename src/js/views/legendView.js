@@ -19,18 +19,14 @@ var LEGEND_AREA_PADDING = 10,
  * @augments View
  */
 var LegendView = ne.util.defineClass(View, {
-    init: function(model) {
+    init: function(model, theme) {
         /**
          * Legend model
          * @type {Object}
          */
         this.model = model;
 
-        /**
-         * Legend labels
-         * @type {array}
-         */
-        this.labels = ne.util.pluck(this.model.data, 0);
+        this.theme = theme;
 
         /**
          * Legend view className
@@ -47,32 +43,34 @@ var LegendView = ne.util.defineClass(View, {
      */
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
-            data = this.model.data,
-            labelHeight = this.getRenderedLabelHeight(data[0][0], this.model.labelOptions) + (LABEL_PADDING_TOP * 2),
-            rectMargin = this.concatStr('margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2) - 1, 'px'),
-            html = ne.util.map(this.model.data, function(items) {
+            labels = this.model.labels,
+            themeLabel = this.theme.label,
+            colors = this.theme.colors,
+            labelHeight = this.getRenderedLabelHeight(labels[0], themeLabel) + (LABEL_PADDING_TOP * 2),
+            rectMargin = this.concatStr('margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
+            html = ne.util.map(labels, function(label, index) {
                 var data = {
-                        cssText: this.concatStr('background-color:', items[1], ';', rectMargin),
-                        height: labelHeight,
-                        label: items[0]
-                    };
+                    cssText: this.concatStr('background-color:', colors[index], ';', rectMargin),
+                    height: labelHeight,
+                    label: label
+                };
                 return template(data);
             }, this).join('');
 
         this.el.innerHTML = html;
         this.renderPosition(bound.position);
-        this._renderLabelOption(this.model.labelOptions);
+        this._renderLabelTheme(themeLabel);
 
         return this.el;
     },
 
     /**
      * Render label option
-     * @param {{fontSize:number, fontFamily: string, color: string}}options
+     * @param {{fontSize:number, fontFamily: string, color: string}}theme
      * @private
      */
-    _renderLabelOption: function(options) {
-        var cssText = this.makeFontCssText(options);
+    _renderLabelTheme: function(theme) {
+        var cssText = this.makeFontCssText(theme);
 
         this.el.style.cssText += ';' + cssText;
     },
@@ -83,8 +81,9 @@ var LegendView = ne.util.defineClass(View, {
      * @private
      */
     getLegendAreaHeight: function() {
-        var maxLabelHeight = this.getRenderedLabelsMaxHeight(this.labels, this.model.labelOptions);
-        return maxLabelHeight * this.labels.length;
+        var labels = this.model.labels,
+            maxLabelHeight = this.getRenderedLabelsMaxHeight(labels, this.theme.label);
+        return maxLabelHeight * labels.length;
     },
 
     /**
@@ -92,7 +91,8 @@ var LegendView = ne.util.defineClass(View, {
      * @returns {number}
      */
     getLegendAreaWidth: function() {
-        var maxLabelWidth = this.getRenderedLabelsMaxWidth(this.labels, this.model.labelOptions),
+        var labels = this.model.labels,
+            maxLabelWidth = this.getRenderedLabelsMaxWidth(labels, this.theme.label),
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
                 LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
         return legendWidth;

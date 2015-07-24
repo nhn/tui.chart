@@ -17,17 +17,6 @@ var chartConst = require('../const.js'),
  */
 var ChartModel = ne.util.defineClass(Model, {
     /**
-     * Chart title
-     * @type {string}
-     */
-    title: '',
-
-    /**
-     * Chart area percentage
-     * @type {string}
-     */
-    chartArea: '50%',
-    /**
      * Constructor
      * @param {object} data user chart data
      * @param {object} options user options
@@ -35,15 +24,17 @@ var ChartModel = ne.util.defineClass(Model, {
     init: function(data, options) {
         options = options || {};
 
+        /**
+         * Chart options
+         * @type {object}
+         */
         this.options = options;
 
-        this.titleOptions = {
-            fontSize: chartConst.DEFAULT_TITLE_FONT_SIZE
-        };
-
-        this._setTitle(options.title || this.title);
-        this._setTitleOptions(options.titleOptions);
-        this._setChartArea(options.chartArea || this.chartArea);
+        /**
+         * Chart title
+         * @type {string}
+         */
+        this.title = options.chart ? options.chart.title : '';
 
         if (data) {
             this._setData(data);
@@ -55,57 +46,7 @@ var ChartModel = ne.util.defineClass(Model, {
      * @private
      */
     _setData: function() {
-      throw new Error('Please implement the setData.');
-    },
-
-    /**
-     * Set title.
-     * @param {string} title
-     * @private
-     */
-    _setTitle: function(title) {
-        this.title = title;
-    },
-
-    /**
-     * Set title options
-     * @param {{fontSize: number, color: string}} options
-     * @private
-     */
-    _setTitleOptions: function(options) {
-        if (!options) {
-            return;
-        }
-        this.titleOptions = ne.util.extend(this.titleOptions, options);
-    },
-
-    /**
-     * set chartArea.
-     * @param {string} chartArea
-     * @private
-     */
-    _setChartArea: function(chartArea) {
-        this.chartArea = chartArea;
-    },
-
-    /**
-     * Pick colors.
-     * @param {number} count color count
-     * @returns {array}
-     * @private
-     */
-    _pickColors: function(count) {
-        var colors;
-        if (this.options && this.options.colors) {
-            colors = this.options.colors;
-        } else {
-            colors = chartConst.DEFAUlT_COLORS.slice();
-        }
-
-        if (count && count > 0) {
-            colors.length = count;
-        }
-        return colors;
+        throw new Error('Please implement the setData.');
     },
 
     /**
@@ -113,9 +54,8 @@ var ChartModel = ne.util.defineClass(Model, {
      * Axis data is pairs of label and value​.
      * @param {object} data user data
      * @return {object} axis data;
-     * @private
      */
-    _pickAxisData: function(data) {
+    pickAxisData: function(data) {
         var titles = data[0],
             axisData = data.slice();
 
@@ -136,9 +76,8 @@ var ChartModel = ne.util.defineClass(Model, {
      * Pick labels from axis data.
      * @param {object} axisData axis data
      * @returns {array}
-     * @private
      */
-    _pickLabels: function(axisData) {
+    pickLabels: function(axisData) {
         var labels = ne.util.map(axisData, function(items) {
             return items[0];
         });
@@ -149,9 +88,8 @@ var ChartModel = ne.util.defineClass(Model, {
      * Pick values from axis data.
      * @param {object} axisData axis data
      * @returns {array}
-     * @private
      */
-    _pickValues: function(axisData) {
+    pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
             var values = items.slice();
             values.shift();
@@ -180,9 +118,8 @@ var ChartModel = ne.util.defineClass(Model, {
      * Pick last item styles.
      * @param {object} data axis data
      * @returns {array}
-     * @private
      */
-    _pickLastItemStyles: function(data) {
+    pickLastItemStyles: function(data) {
         var titles = data[0],
             styles = [],
             axisData;
@@ -214,9 +151,8 @@ var ChartModel = ne.util.defineClass(Model, {
      * Pick legend labels.
      * @param {array} arr labels
      * @returns {Object}
-     * @private
      */
-    _pickLegendLabels: function(arr) {
+    pickLegendLabels: function(arr) {
         var hasOption = this._hasStyleOption(arr),
             last = hasOption ? arr.length - 1 : -1,
             arr = ne.util.filter(arr, function(label, index) {

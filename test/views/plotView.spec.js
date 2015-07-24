@@ -11,9 +11,12 @@ var PlotView = require('../../src/js/views/plotView.js'),
 
 describe('test Plot View', function() {
     var bound = {
-        dimension: {width: 400, height: 200},
-        position: {top: 5, right: 5}
-    };
+            dimension: {width: 400, height: 200},
+            position: {top: 5, right: 5}
+        },
+        theme = {
+            lineColor: 'black'
+        };
 
     it('test _makeLineHtml', function() {
         var positions = [10, 20, 30, 40],
@@ -21,9 +24,8 @@ describe('test Plot View', function() {
             className = 'vertical',
             positionType = 'left',
             sizeType = 'height',
-            options = {},
-            plotView = new PlotView(),
-            resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType, options),
+            plotView = new PlotView(null, theme),
+            resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType),
             compareHtml = '<div class="plot-line vertical" style="left:10px;height:200px"></div>' +
                 '<div class="plot-line vertical" style="left:20px;height:200px"></div>' +
                 '<div class="plot-line vertical" style="left:30px;height:200px"></div>' +
@@ -33,12 +35,12 @@ describe('test Plot View', function() {
 
     it('test _renderLines', function() {
         var plotModel = new PlotModel({vTickCount: 5}),
-            plotView = new PlotView(plotModel),
+            plotView = new PlotView(plotModel, theme),
             el = plotView.el,
-            compareHtml = '<div class="plot-line horizontal" style="bottom:50px;width:400px"></div>' +
-                '<div class="plot-line horizontal" style="bottom:100px;width:400px"></div>' +
-                '<div class="plot-line horizontal" style="bottom:149px;width:400px"></div>' +
-                '<div class="plot-line horizontal" style="bottom:199px;width:400px"></div>',
+            compareHtml = '<div class="plot-line horizontal" style="bottom:50px;width:400px;background-color:black"></div>' +
+                '<div class="plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
+                '<div class="plot-line horizontal" style="bottom:149px;width:400px;background-color:black"></div>' +
+                '<div class="plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>',
             elTemp = document.createElement('DIV');
 
         plotView._renderLines(bound.dimension);
@@ -50,11 +52,11 @@ describe('test Plot View', function() {
     it('test vertical render', function() {
         var data = {vTickCount: 3},
             plotModel = new PlotModel(data),
-            plotView = new PlotView(plotModel),
+            plotView = new PlotView(plotModel, theme),
             el = plotView.render(bound),
             elTemp = document.createElement('DIV'),
-            compareHtml = '<div class="plot-line horizontal" style="bottom:100px;width:400px"></div>' +
-                '<div class="plot-line horizontal" style="bottom:199px;width:400px"></div>';
+            compareHtml = '<div class="plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
+                '<div class="plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>';
 
         elTemp.innerHTML = compareHtml;
 

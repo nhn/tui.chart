@@ -12,7 +12,7 @@ var plugins = {},
          * Get graph renderer.
          * @param {string} libType library type
          * @param {string} chartType chart type
-         * @returns {object}
+         * @returns {object} renderer instance
          */
         get: function(libType, chartType) {
             var plugin = plugins[libType],

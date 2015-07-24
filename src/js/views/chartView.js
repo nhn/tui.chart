@@ -34,11 +34,14 @@ var ChartView = ne.util.defineClass(View, {
     init: function(data, options) {
         options = options || {};
 
-        /**
-         * Chart dimension
-         * @type {Object}
-         */
-        this.dimension = ne.util.extend(this.dimension, options.size || {});
+        if (options.width) {
+            this.dimension.width = options.width;
+        }
+
+        if (options.height) {
+            this.dimension.height = options.height;
+        }
+
         View.call(this);
         dom.addClass(this.el, 'ne-chart');
     },
@@ -48,9 +51,7 @@ var ChartView = ne.util.defineClass(View, {
      * @returns {element}
      */
     renderTitleArea: function() {
-        var title = this.model.title,
-            options = this.model.titleOptions,
-            elTitle = this.renderTitle(title, options, 'ne-chart-title');
+        var elTitle = this.renderTitle(this.model.title, this.theme.title, 'ne-chart-title');
         return elTitle;
     },
 

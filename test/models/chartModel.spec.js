@@ -37,44 +37,36 @@ describe('test chart model', function() {
     describe('test method', function() {
         var chartModel = new ChartModel();
 
-        it('pickColor', function() {
-            var colors = chartModel._pickColors(3),
-                compareColors = chartConst.DEFAUlT_COLORS.slice();
-
-            compareColors.length = 3;
-            expect(colors).toEqual(compareColors);
-        });
-
-        it('_pickAxisData', function() {
-            var result = chartModel._pickAxisData(userData);
+        it('pickAxisData', function() {
+            var result = chartModel.pickAxisData(userData);
 
             // removed title items
             expect(result.length).toEqual(userData.length-1);
             expect(result).toEqual(axisData);
 
-            result = chartModel._pickAxisData(userData2);
+            result = chartModel.pickAxisData(userData2);
 
             // removed title items
             expect(result.length).toEqual(userData2.length-1);
             expect(result).toEqual(axisData);
         });
 
-        it('_pickLabels', function() {
-            var result = chartModel._pickLabels(axisData);
+        it('pickLabels', function() {
+            var result = chartModel.pickLabels(axisData);
 
             expect(result.length).toEqual(axisData.length);
             expect(result).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
         });
 
-        it('_pickValues', function() {
-            var result = chartModel._pickValues(axisData);
+        it('pickValues', function() {
+            var result = chartModel.pickValues(axisData);
 
             expect(result.length).toEqual(axisData.length);
             expect(result).toEqual([[8.94], [10.49], [19.30], [21.45]]);
         });
 
         it('_pickStyles', function() {
-            var result = chartModel._pickLastItemStyles(userData2);
+            var result = chartModel.pickLastItemStyles(userData2);
             expect(result).toEqual([{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}]);
         });
 
@@ -86,14 +78,14 @@ describe('test chart model', function() {
             expect(hasOption).toBeTruthy();
         });
 
-        it('_pickLegendLabels', function() {
-            var labels = chartModel._pickLegendLabels(userData[0]);
+        it('pickLegendLabels', function() {
+            var labels = chartModel.pickLegendLabels(userData[0]);
             expect(labels).toEqual(['Density']);
 
-            labels = chartModel._pickLegendLabels(userData2[0]);
+            labels = chartModel.pickLegendLabels(userData2[0]);
             expect(labels).toEqual(['Density']);
 
-            labels = chartModel._pickLegendLabels(userData3[0]);
+            labels = chartModel.pickLegendLabels(userData3[0]);
             expect(labels).toEqual(['Density', 'Density2', 'Density3']);
         });
     });
@@ -101,10 +93,17 @@ describe('test chart model', function() {
     describe('test construct', function() {
         it('init', function() {
             var chartModel = new ChartModel(null, {
-                    colors: ['black', 'white', 'gray']
-                }),
-                colors = chartModel._pickColors(2);
-            expect(colors).toEqual(['black', 'white']);
+                chart: {
+                    title: 'chat title'
+                }
+            });
+            expect(chartModel.title).toEqual('chat title');
+
+            try {
+                chartModel._setData();
+            } catch (e) {
+                expect(e.message).toEqual('Please implement the setData.');
+            }
         });
     });
 });

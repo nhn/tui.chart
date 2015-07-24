@@ -17,20 +17,15 @@ describe('test legend model', function() {
             'Density4',
             'Density5'
         ],
-        colors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS),
-        data = {labels: labels, colors: colors};
-
-    colors.length = labels.length;
+        data = {labels: labels};
 
     describe('test method', function() {
         it('setData', function() {
-            var legendModel = new LegendModel(),
-                result;
+            var legendModel = new LegendModel();
 
             legendModel._setData(data);
 
-            expect(ne.util.pluck(legendModel.data, 0)).toEqual(labels);
-            expect(ne.util.pluck(legendModel.data, 1)).toEqual(colors);
+            expect(legendModel.labels).toEqual(labels);
         });
     });
 
@@ -38,8 +33,7 @@ describe('test legend model', function() {
         it('init', function() {
             var legendModel = new LegendModel(data);
 
-            expect(ne.util.pluck(legendModel.data, 0)).toEqual(labels);
-            expect(ne.util.pluck(legendModel.data, 1)).toEqual(colors);
+            expect(legendModel.labels).toEqual(labels);
         });
     });
 });

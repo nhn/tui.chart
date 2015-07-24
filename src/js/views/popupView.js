@@ -24,12 +24,14 @@ var PopupView = ne.util.defineClass(View, {
      * constructor
      * @param {object} model popup model
      */
-    init: function(model) {
+    init: function(model, theme) {
         /**
          * Popup model
          * @type {object}
          */
         this.model = model;
+
+        this.theme = theme;
 
         /**
          * Popup view className
@@ -65,6 +67,7 @@ var PopupView = ne.util.defineClass(View, {
         var options = this.model.options,
             optionTemplate = options.template ? options.template : '',
             tplPopup = optionTemplate ? templateMaker.template(optionTemplate) :  popupTemplate.TPL_POPUP,
+            suffix = options.suffix ? '&nbsp;' + options.suffix : '',
             html = ne.util.map(data, function(popupData) {
                 var id = prefix + popupData.id,
                     elTemp = dom.createElement('DIV');
@@ -73,6 +76,7 @@ var PopupView = ne.util.defineClass(View, {
                     label: '',
                     legendLabel: '',
                     value: '',
+                    suffix: suffix
                 }, popupData);
 
                 elTemp.innerHTML = tplPopup(popupData);

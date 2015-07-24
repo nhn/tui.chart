@@ -31,7 +31,7 @@ var domHandler = {
     addClass: function(el, newClass) {
         var className = el.className ? el.className : '',
             classNames = className ? className.split(' ') : [],
-            index = ne.util.indexOf(classNames, newClass);
+            index = ne.util.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -49,7 +49,7 @@ var domHandler = {
     removeClass: function(el, rmClass) {
         var className = el.className ? el.className : '',
             classNames = className ? className.split(' ') : [],
-            index = ne.util.indexOf(classNames, rmClass);
+            index = ne.util.inArray(rmClass, classNames);
 
         if (index === -1) {
             return;
