@@ -3,44 +3,168 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Chart</title>
+    <title>Bar Chart</title>
     <link rel="stylesheet" type="text/css" href="dist/style.css" />
+    <style>
+        textarea {
+            width: 300px;
+            height: 400px;
+        }
+
+        #btn {
+            position:absolute;
+            right:10px;
+            top: 0;
+        }
+
+        body > div {
+            float:left;
+        }
+    </style>
 </head>
 <body>
 <div id="chart-area"></div>
-<div id="chart-area2"></div>
-<script src="lib/ne-code-snippet/code-snippet.min.js"></script>
+<div style="width:630px;margin-left:10px;margin-top:5px;">
+    <div>
+        chart type :
+        <select id="type">
+            <option value="barChart">Bar Chart</option>
+            <option value="columnChart">Column Chart</option>
+        </select>
+    </div>
+    <div>
+        <div style="float:left;">
+            <div>data</div>
+            <textarea id="data">
+[
+    ["Element", "Density", "Density2", "Density3"],
+    ["Copper", 20, 30, 50],
+    ["Silver", 40, 40, 60],
+    ["Gold", 60, 50, 10],
+    ["Platinum", 80, 10, 70]
+]
+            </textarea>
+        </div>
+        <div style="float:left; margin-left:10px;position:relative;">
+            <div>options</div>
+            <button id="btn">적용</button>
+            <textarea id="options">
+{
+    "size": {
+        "width": 500,
+        "height": 400
+    },
+    "fontFamily": "Verdana",
+    "title": "chart title",
+    "titleOptions": {
+        "fontSize": 24,
+        "fontFamily": "Verdana",
+        "color": "red",
+        "background": "white"
+    },
+    "background": "#efefef",
+    "hAxis": {
+        "title": "title",
+        "tickColor": "red"},
+    "vAxis": {
+        "title": "Axis title",
+        "titleOptions": {
+            "fontSize": 14,
+            "fontFamily": "Verdana",
+            "color": "blue"},
+        "tickColor": "red",
+        "labelOptions": {
+            "fontSize": 12,
+            "fontFamily": "Verdana",
+            "color": "green"
+        }
+    },
+    "plot": {
+        "background": "skyblue",
+        "lineColor": "gold"
+    },
+    "legend": {
+        "labelOptions": {
+            "fontSize": 12,
+            "fontFamily": "Verdana",
+            "color": "violet"
+        }
+    },
+    "barType": "column"
+}
+            </textarea>
+        </div>
+    </div>
+</div>
+
+<script src="lib/ne-code-snippet/code-snippet.js"></script>
+<script src="lib/raphael/raphael-min.js"></script>
 <script src="dist/application-chart.js"></script>
 <script>
     var chart = ne.application.chart,
         elChartArea = document.getElementById('chart-area'),
-        elChartArea2 = document.getElementById('chart-area2'),
+        elBtn = document.getElementById('btn'),
         data = [
-            ['Element', 'Density'],
-            ['Copper', 20],
-            ['Silver', 40],
-            ['Gold', 60],
-            ['Platinum', 80]
+            ['Element', 'Density', 'Density2', 'Density3'],
+            ['Copper', 20, 30, 50],
+            ['Silver', 40, 40, 60],
+            ['Gold', 60, 50, 10],
+            ['Platinum', 80, 10, 70]
         ],
         options = {
+            size: {
+                width: 500,
+                height: 400
+            },
+            fontFamily: 'Verdana',
             title: 'chart title',
-            chartArea: '60%',
-            colors: ['black'],
+            titleOptions: {
+                fontSize: 24,
+                fontFamily: 'Verdana',
+                color: 'red',
+                background: 'white'
+            },
+            background: '#efefef',
             hAxis: {
-                title: 'hAxis title'
+                title: 'title',
+                tickColor: 'red'
             },
             vAxis: {
-                title: 'vAxis title',
-                minValue: 1,
-                format: '0.0'
+                title: 'Axis title',
+                titleOptions: {
+                    fontSize: 14,
+                    fontFamily: 'Verdana',
+                    color: 'blue'
+                },
+                tickColor: 'red',
+                labelOptions: {
+                    fontSize: 12,
+                    fontFamily: 'Verdana',
+                    color: 'green'
+                }
             },
-            bars: 'vertical'
+            plot: {
+                background: 'skyblue',
+                lineColor: 'gold'
+            },
+            legend: {
+                labelOptions: {
+                    fontSize: 12,
+                    fontFamily: 'Verdana',
+                    color: 'violet'
+                }
+            }
         };
 
     chart.barChart(elChartArea, data, options);
 
-    options.bars = 'horizontal';
-    chart.barChart(elChartArea2, data, options);
+    elBtn.addEventListener('click', function() {
+        var type = document.getElementById('type').value,
+            customData = JSON.parse(document.getElementById('data').value),
+            options = JSON.parse(document.getElementById('options').value);
+        elChartArea.innerHTML = '';
+        chart[type](elChartArea, customData, options);
+    });
 </script>
 </body>
 </html>

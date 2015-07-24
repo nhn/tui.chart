@@ -5,9 +5,11 @@
  */
 
 'use strict';
+var dom = require('./domHandler.js'),
+    View = require('./view.js'),
+    chartConst = require('../const.js');
 
-var View = require('./view.js');
-
+var TITLE_ADD_PADDING = 20;
 
 /**
  * @classdesc ChartView is parent of all chart.
@@ -16,10 +18,10 @@ var View = require('./view.js');
  */
 var ChartView = ne.util.defineClass(View, {
     /**
-     * Chart size
+     * Chart dimension
      * @type {{width: number, height: number}
      */
-    size: {
+    dimension: {
         width: 500,
         height: 300
     },
@@ -30,10 +32,49 @@ var ChartView = ne.util.defineClass(View, {
      * @param {options} options chart options
      */
     init: function(data, options) {
-        this.size.width = options.width || this.size.width;
-        this.size.height = options.height || this.size.height;
+        options = options || {};
+
+        /**
+         * Chart dimension
+         * @type {Object}
+         */
+        this.dimension = ne.util.extend(this.dimension, options.size || {});
         View.call(this);
-        this.addClass(this.el, 'ne-chart');
+        dom.addClass(this.el, 'ne-chart');
+    },
+
+    /**
+     * Chart title renderer.
+     * @returns {element}
+     */
+    renderTitleArea: function() {
+        var title = this.model.title,
+            options = this.model.titleOptions,
+            elTitle = this.renderTitle(title, options, 'ne-chart-title');
+        return elTitle;
+    },
+
+    renderChartFont: function(fontFamily) {
+        if (!fontFamily) {
+            return;
+        }
+
+        this.el.style.fontFamily = fontFamily;
+    },
+
+    /**
+     * Get rendered title height.
+     * @returns {number}
+     */
+    getRenderedTitleHeight: function() {
+        var title = this.model.title,
+            options = this.model.titleOptions,
+            titleHeight = 0;
+        if (title) {
+            titleHeight = this.getRenderedLabelHeight(title, options) + TITLE_ADD_PADDING;
+        }
+
+        return titleHeight;
     }
 });
 

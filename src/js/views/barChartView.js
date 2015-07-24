@@ -6,17 +6,21 @@
 
 'use strict';
 
-var ChartView = require('./chartView.js'),
+var chartConst = require('../const.js'),
+    ChartView = require('./chartView.js'),
     chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
-    AxisView = require('./axisView.js');
+    AxisView = require('./axisView.js'),
+    SeriesView = require('./seriesView.js'),
+    LegendView = require('./legendView.js'),
+    PopupView = require('./popupView.js');
 
 
 var BarChartView,
-    V_AXIS_WIDTH = 100,
-    H_AXIS_HEIGHT = 50,
-    CHART_PADDING = 20;
+    POPUP_PREFIX = 'ne-chart-popup-',
+    CHART_PADDING = 10,
+    HIDDEN_WIDTH = 1;
 
 /**
  * @classdesc BarChartView render axis area, plot area and series area of bar chart.
@@ -30,10 +34,8 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @param {options} options bar chart options
      */
     init: function(data, options) {
-        /**
-         * Chart options
-         * @type {object}
-         */
+        options = options || {};
+
         this.options = options;
 
         /**
@@ -70,10 +72,22 @@ BarChartView = ne.util.defineClass(ChartView, {
          * series view
          * @type {object}
          */
-        //this.seriesView = new SeriesView(this.model.series, {
-        //    chartType: 'bar',
-        //
-        //});
+        this.seriesView = new SeriesView(this.model.series, {
+            chartType: 'bar',
+            barType: options.barType
+        });
+
+        /**
+         * legend view
+         * @type {object}
+         */
+        this.legendView = new LegendView(this.model.legend);
+
+        /**
+         * legend view
+         * @type {object}
+         */
+        this.popupView = new PopupView(this.model.popup);
 
         ChartView.call(this, data, options);
     },
@@ -83,20 +97,103 @@ BarChartView = ne.util.defineClass(ChartView, {
      * @returns {element}
      */
     render: function() {
-        var width = this.size.width - CHART_PADDING * 2,
-            height = this.size.height - CHART_PADDING * 2,
-            plotSize = {width: width - V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
-            vAxisSize = {width: V_AXIS_WIDTH, height: height - H_AXIS_HEIGHT},
-            hAxisSize = {width: width - V_AXIS_WIDTH, height: H_AXIS_HEIGHT},
-            elPlot = this.plotView.render(plotSize),
-            elVAxis = this.vAxisView.render(vAxisSize),
-            elHAxis = this.hAxisView.render(hAxisSize);
+        var popupPrefix = POPUP_PREFIX + (new Date).getTime() + '-',
+            isColumn = this.options.barType === chartConst.BAR_TYPE_COLUMN,
+            bounds = this.getViewsBound(),
+            elTitle = this.renderTitleArea(),
+            elPlot = this.plotView.render(bounds.plot),
+            elVAxis = this.vAxisView.render(bounds.vAxis),
+            elHAxis = this.hAxisView.render(bounds.hAxis),
+            elSeries = this.seriesView.render(bounds.series, popupPrefix, isColumn),
+            elLegend = this.legendView.render(bounds.legend),
+            elPopup = this.popupView.render(bounds.popup, popupPrefix);
 
-        this.el.appendChild(elPlot);
-        this.el.appendChild(elVAxis);
-        this.el.appendChild(elHAxis);
-        this.renderSize(this.size);
+        this.append(elTitle);
+        this.append(elPlot);
+        this.append(elVAxis);
+        this.append(elHAxis);
+        this.append(elSeries);
+        this.append(elLegend);
+        this.append(elPopup);
+        this.renderDimension(this.dimension);
+        this.renderBackground(this.options.background);
+        this.renderChartFont(this.options.fontFamily);
+
+        this._attachCustomEvent();
+
         return this.el;
+    },
+
+    /**
+     * Get views bound information.
+     * @returns {{
+     *   plot: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   vAxis: {
+     *     dimension: {width: (number), height: number},
+     *     position: {top: number}
+     *   },
+     *   hAxis: {
+     *     dimension: {width: number, height: (number)},
+     *     position: {right: number}
+     *   },
+     *   series: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   legend: {
+     *     position: {top: number}
+     *   }
+     * }}
+     */
+    getViewsBound: function() {
+        var titleHeight = this.getRenderedTitleHeight(),
+            vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
+            hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
+            legendWidth = this.legendView.getLegendAreaWidth(),
+            plotWidth = this.dimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
+            plotHeight = this.dimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            top = titleHeight + CHART_PADDING,
+            right = legendWidth + CHART_PADDING,
+            bounds = {
+                plot: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, right: right}
+                },
+                vAxis: {
+                    dimension: {width: vAxisWidth, height: plotHeight},
+                    position: {top: top}
+                },
+                hAxis: {
+                    dimension: {width: plotWidth, height: hAxisHeight},
+                    position: {top: top + plotHeight - HIDDEN_WIDTH, right: right}
+                },
+                series: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, right: right}
+                },
+                legend: {
+                    position: {top: titleHeight, right: CHART_PADDING}
+                },
+                popup: {
+                    dimension: {width: plotWidth, height: plotHeight},
+                    position: {top: top, left: vAxisWidth + CHART_PADDING}
+                }
+            };
+
+        return bounds;
+    },
+
+    /**
+     * Attach custom event
+     * @private
+     */
+    _attachCustomEvent: function() {
+        var popupView = this.popupView;
+        this.seriesView.on('showPopup', popupView.onShow, popupView);
+        this.seriesView.on('hidePopup', popupView.onHide, popupView);
     }
 });
 

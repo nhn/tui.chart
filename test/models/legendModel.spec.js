@@ -17,29 +17,29 @@ describe('test legend model', function() {
             'Density4',
             'Density5'
         ],
-        colors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS);
+        colors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS),
+        data = {labels: labels, colors: colors};
+
     colors.length = labels.length;
 
     describe('test method', function() {
         it('setData', function() {
-            var legendModel = new LegendModel();
+            var legendModel = new LegendModel(),
+                result;
 
-            legendModel._setData({labels: labels, colors: colors});
-            var data = legendModel.getData();
+            legendModel._setData(data);
 
-            expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));
-            expect(legendModel.pluck(data, 1).join(',')).toEqual(colors.join(','));
+            expect(ne.util.pluck(legendModel.data, 0)).toEqual(labels);
+            expect(ne.util.pluck(legendModel.data, 1)).toEqual(colors);
         });
     });
 
     describe('test construct', function() {
         it('init', function() {
-            var data = {labels: labels, colors: colors},
-                legendModel = new LegendModel(data),
-                data = legendModel.getData();
+            var legendModel = new LegendModel(data);
 
-            expect(legendModel.pluck(data, 0).join(',')).toEqual(labels.join(','));
-            expect(legendModel.pluck(data, 1).join(',')).toEqual(colors.join(','));
+            expect(ne.util.pluck(legendModel.data, 0)).toEqual(labels);
+            expect(ne.util.pluck(legendModel.data, 1)).toEqual(colors);
         });
     });
 });

@@ -20,9 +20,9 @@ describe('test chart model', function() {
         userData2 = [
             ['Element', 'Density', {role: 'style'}],
             ['Copper', 8.94, 'color:red'],
-            ['Silver', 10.49, 'color:red'],
-            ['Gold', 19.30, 'color:red'],
-            ['Platinum', 21.45, 'color:red']
+            ['Silver', 10.49, 'color:orange'],
+            ['Gold', 19.30, 'color:yellow'],
+            ['Platinum', 21.45, 'color:green']
         ],
         userData3 = [
             ['Element', 'Density', 'Density2', 'Density3', {role: 'style'}]
@@ -71,6 +71,11 @@ describe('test chart model', function() {
 
             expect(result.length).toEqual(axisData.length);
             expect(result).toEqual([[8.94], [10.49], [19.30], [21.45]]);
+        });
+
+        it('_pickStyles', function() {
+            var result = chartModel._pickLastItemStyles(userData2);
+            expect(result).toEqual([{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}]);
         });
 
         it('_hasStyleOption', function() {

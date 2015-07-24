@@ -1,12 +1,12 @@
 /**
- * @fileoverview This is DOM Handler.
+ * @fileoverview DOM Handler.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
 
 'use strict';
 
-var DOMHandler = ne.util.defineClass({
+var domHandler = {
     /**
      * Create element.
      * @param {string} tag html tag
@@ -26,29 +26,38 @@ var DOMHandler = ne.util.defineClass({
     /**
      * Add class.
      * @param {element} el target element
-     * @param {string} newClass class name
+     * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
-        var className = el.className,
-            classNameArr;
+        var className = el.className ? el.className : '',
+            classNames = className ? className.split(' ') : [],
+            index = ne.util.indexOf(classNames, newClass);
 
-        if (className && (className + ' ').indexOf(newClass + ' ') > -1) {
+        if (index > -1) {
             return;
         }
 
-        classNameArr = className ? className.split(' ') : [];
-        classNameArr.push(newClass);
+        classNames.push(newClass);
+        el.className = classNames.join(' ');
+    },
 
-        el.className = classNameArr.join(' ');
+    /**
+     * Remove class.
+     * @param {element} el target element
+     * @param {string} rmClass remove class name
+     */
+    removeClass: function(el, rmClass) {
+        var className = el.className ? el.className : '',
+            classNames = className ? className.split(' ') : [],
+            index = ne.util.indexOf(classNames, rmClass);
+
+        if (index === -1) {
+            return;
+        }
+
+        classNames.splice(index, 1);
+        el.className = classNames.join(' ');
     }
-});
-
-/**
- * mixin function
- * @param {class} target
- */
-DOMHandler.mixin = function(target) {
-    ne.util.extend(target.prototype, DOMHandler.prototype);
 };
 
-module.exports = DOMHandler;
+module.exports = domHandler;

@@ -12,7 +12,7 @@ describe('test series model', function() {
     var values = [[20], [40], [80], [120]],
         percentValues = [[0.125], [0.25], [0.5], [0.75]],
         colors = ['blue'],
-        lastColors =  ['red', 'ornage', 'yellow', 'green'],
+        lastItemStyles =  [{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}],
         scale = {min: 0, max: 160 };
 
     describe('test method', function() {
@@ -46,15 +46,15 @@ describe('test series model', function() {
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.colors).toEqual(colors);
             expect(seriesModel.percentValues).toEqual(percentValues);
-            expect(seriesModel.lastColors).toEqual([]);
+            expect(seriesModel.lastItemStyles).toEqual([]);
 
             seriesModel._setData({
                 values: values,
                 colors: colors,
                 scale: scale,
-                lastColors: lastColors
+                lastItemStyles: lastItemStyles
             });
-            expect(seriesModel.lastColors).toEqual(lastColors);
+            expect(seriesModel.lastItemStyles).toEqual(lastItemStyles);
         });
     });
 
@@ -64,7 +64,7 @@ describe('test series model', function() {
                     values: values,
                     colors: colors,
                     scale: scale,
-                    lastColors: lastColors
+                    lastItemStyles: lastItemStyles
                 },
                 seriesModel = new SeriesModel(data),
                 pixelValues;

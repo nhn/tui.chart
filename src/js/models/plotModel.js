@@ -19,7 +19,14 @@ var PlotModel = ne.util.defineClass(Model, {
      * Constructor
      * @param {data} data
      */
-    init: function(data) {
+    init: function(data, options) {
+        options = options || {};
+        /**
+         * Axis options
+         * @type {object}
+         */
+        this.options = options || {};
+
         /**
          * Vertical tick count
          * @type {number}

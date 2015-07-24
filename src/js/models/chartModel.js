@@ -37,7 +37,12 @@ var ChartModel = ne.util.defineClass(Model, {
 
         this.options = options;
 
+        this.titleOptions = {
+            fontSize: chartConst.DEFAULT_TITLE_FONT_SIZE
+        };
+
         this._setTitle(options.title || this.title);
+        this._setTitleOptions(options.titleOptions);
         this._setChartArea(options.chartArea || this.chartArea);
 
         if (data) {
@@ -60,6 +65,18 @@ var ChartModel = ne.util.defineClass(Model, {
      */
     _setTitle: function(title) {
         this.title = title;
+    },
+
+    /**
+     * Set title options
+     * @param {{fontSize: number, color: string}} options
+     * @private
+     */
+    _setTitleOptions: function(options) {
+        if (!options) {
+            return;
+        }
+        this.titleOptions = ne.util.extend(this.titleOptions, options);
     },
 
     /**
@@ -99,12 +116,12 @@ var ChartModel = ne.util.defineClass(Model, {
      * @private
      */
     _pickAxisData: function(data) {
-        var titleArr = data[0],
+        var titles = data[0],
             axisData = data.slice();
 
         axisData.shift();
 
-        if (this._hasStyleOption(titleArr)) {
+        if (this._hasStyleOption(titles)) {
             axisData = ne.util.map(axisData, function(items) {
                 items = items.slice();
                 items.length = items.length - 1;
@@ -122,10 +139,10 @@ var ChartModel = ne.util.defineClass(Model, {
      * @private
      */
     _pickLabels: function(axisData) {
-        var arr = ne.util.map(axisData, function(items) {
+        var labels = ne.util.map(axisData, function(items) {
             return items[0];
         });
-        return arr;
+        return labels;
     },
 
     /**
@@ -135,12 +152,51 @@ var ChartModel = ne.util.defineClass(Model, {
      * @private
      */
     _pickValues: function(axisData) {
-        var arr2d = ne.util.map(axisData, function(items) {
+        var result = ne.util.map(axisData, function(items) {
             var values = items.slice();
             values.shift();
             return values;
         });
-        return arr2d;
+        return result;
+    },
+
+    /**
+     * Get styles from cssText
+     * @param {string} cssText cssText ex)color:red, border-color:blue
+     * @returns {object}
+     * @private
+     */
+    _getStyles: function(cssText) {
+        var cssTexts = cssText.split(','),
+            styles = {};
+        ne.util.forEachArray(cssTexts, function(item) {
+            var selectors = item.split(':');
+            styles[selectors[0]] = selectors[1];
+        });
+        return styles;
+    },
+
+    /**
+     * Pick last item styles.
+     * @param {object} data axis data
+     * @returns {array}
+     * @private
+     */
+    _pickLastItemStyles: function(data) {
+        var titles = data[0],
+            styles = [],
+            axisData;
+
+        if (this._hasStyleOption(titles)) {
+            axisData = data.slice();
+            axisData.shift();
+            styles = ne.util.map(axisData, function(items) {
+                var style = items[items.length - 1];
+                return this._getStyles(style);
+            }, this);
+        }
+
+        return styles;
     },
 
     /**
@@ -151,7 +207,7 @@ var ChartModel = ne.util.defineClass(Model, {
      */
     _hasStyleOption: function(arr) {
         var last = arr[arr.length-1];
-        return ne.util.isObject(last);
+        return ne.util.isObject(last) && last.role === 'style';
     },
 
     /**

@@ -4,31 +4,38 @@
  *         FE Development Team <jiung.kang@nhnent.com>
  */
 
-var charts = {};
-module.exports = {
-    /**
-     * Get chart.
-     * @param {string} type chart type
-     * @param {object} data chart data
-     * @param {object} options chart options
-     * @returns {*}
-     */
-    get: function(type, data, options) {
-        var Chart = charts[type];
-        if (Chart) {
-            var chart = new Chart(data, options);
-            return chart;
-        } else {
-            throw new Error(type + '차트는 존재하지 않습니다.');
-        }
-    },
+'use strict';
 
-    /**
-     * Chart register.
-     * @param {string} type char type
-     * @param {class} ChartClass chart class
-     */
-    register: function(type, ChartClass) {
-        charts[type] = ChartClass;
-    }
-};
+var charts = {},
+    factory = {
+        /**
+         * Get chart.
+         * @param {string} chartType chart type
+         * @param {object} data chart data
+         * @param {object} options chart options
+         * @returns {object}
+         */
+        get: function(chartType, data, options) {
+            var Chart = charts[chartType],
+                chart;
+
+            if (!Chart) {
+                throw new Error('Not exist ' + chartType + ' chart.');
+            }
+
+            chart = new Chart(data, options);
+
+            return chart;
+        },
+
+        /**
+         * Chart register.
+         * @param {string} chartType char type
+         * @param {class} ChartClass chart class
+         */
+        register: function(chartType, ChartClass) {
+            charts[chartType] = ChartClass;
+        }
+    };
+
+module.exports = factory;

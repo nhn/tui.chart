@@ -1,3 +1,11 @@
+/**
+ * @fileoverview template maker
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ */
+
+'use strict';
+
 var templateMaker = require('../../src/js/views/templateMaker.js');
 
 describe('test templateMaker', function() {

@@ -23,12 +23,13 @@ describe('test bar chart model', function() {
 
         it('_setData', function() {
             barChartModel._setData(userData);
-            expect(barChartModel.vAxis.axisType).toEqual('value');
-            expect(barChartModel.hAxis.axisType).toEqual('label');
-            expect(barChartModel.plot.vTickCount).toEqual(5);
-            expect(barChartModel.plot.hTickCount).toEqual(0);
+            expect(barChartModel.vAxis.axisType).toEqual('label');
+            expect(barChartModel.hAxis.axisType).toEqual('value');
+            expect(barChartModel.plot.vTickCount).toEqual(0);
+            expect(barChartModel.plot.hTickCount).toEqual(5);
             expect(barChartModel.legend.data[0]).toEqual(['Density', defaultFirstColor]);
             expect(barChartModel.series.colors).toEqual([defaultFirstColor]);
+            expect(barChartModel.popup.data[0]).toEqual({label:'Copper', value: 8.94, legendLabel: 'Density', id: '0-0'});
         });
     });
 
@@ -46,13 +47,15 @@ describe('test bar chart model', function() {
                         minValue: 1,
                         format: '0.0'
                     },
-                    bars: 'horizontal'
+                    barType: 'column'
                 },
                 barChartModel = new BarChartModel(userData, options);
-            expect(barChartModel.vAxis.isLabelAxis()).toBeTruthy();
-            expect(barChartModel.hAxis.scale.min).toEqual(1);
-            expect(barChartModel.hAxis.labels[1]).toEqual(6.3);
+            expect(barChartModel.hAxis.isLabelAxis()).toBeTruthy();
+            expect(barChartModel.vAxis.scale.min).toEqual(1);
+            expect(barChartModel.vAxis.labels[1]).toEqual(6.3);
+            expect(barChartModel.legend.data[0]).toEqual(['Density', 'black']);
             expect(barChartModel.series.colors).toEqual(['black']);
+            expect(barChartModel.popup.data[1]).toEqual({label:'Silver', value: 10.49, legendLabel: 'Density', id: '1-0'});
         });
     });
 });

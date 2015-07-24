@@ -7,7 +7,7 @@
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_AXIS_TICK: '<div class="tick" style="{= position }"></div>',
+    HTML_AXIS_TICK: '<div class="tick" style="{= cssText }"></div>',
     HTML_AXIS_LABEL: '<div class="label" style="{= cssText }">{= label }</div>'
 };
 
