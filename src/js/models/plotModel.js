@@ -17,16 +17,9 @@ var Model = require('./model.js');
 var PlotModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {data} data
+     * @param {data} data plot data
      */
-    init: function(data, options) {
-        options = options || {};
-        /**
-         * Axis options
-         * @type {object}
-         */
-        this.options = options || {};
-
+    init: function(data) {
         /**
          * Vertical tick count
          * @type {number}
@@ -46,7 +39,7 @@ var PlotModel = ne.util.defineClass(Model, {
 
     /**
      * Set plot data.
-     * @param {vTickCount: number, hTickCount: number} data plot data
+     * @param {{vTickCount: number, hTickCount: number}} data plot data
      * @private
      */
     _setData: function(data) {
@@ -56,8 +49,8 @@ var PlotModel = ne.util.defineClass(Model, {
 
     /**
      * makes vertical pixel positions
-     * @param {} width
-     * @returns {*|Array}
+     * @param {number} height plot height
+     * @returns {array} positions
      */
     makeVPixelPositions: function(height) {
         var positions = this.makePixelPositions(height, this.vTickCount);
@@ -65,8 +58,13 @@ var PlotModel = ne.util.defineClass(Model, {
         return positions;
     },
 
+    /**
+     * makes horizontal pixel position
+     * @param {number} width plot width
+     * @returns {array} positions
+     */
     makeHPixelPositions: function(width) {
-        var positions = this.makePixelPositions(width, this.hTickCount);;
+        var positions = this.makePixelPositions(width, this.hTickCount);
         positions.shift();
         return positions;
     }

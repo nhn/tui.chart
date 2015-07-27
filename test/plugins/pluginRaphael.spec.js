@@ -14,6 +14,7 @@ var supportsSvg = function() {
 
 describe('test pluginRaphael', function() {
     var graphRenderer,
+        colors = ['red', 'blue'],
         data = {
             dimension: {width: 200, height: 100},
             model: {
@@ -21,10 +22,12 @@ describe('test pluginRaphael', function() {
                     [0.2, 0.4],
                     [0.6, 0.3]
                 ],
-                colors: ['red', 'blue'],
                 pickLastColors: function() {
                     return [];
                 }
+            },
+            theme: {
+                colors: colors
             },
             options: {barType: 'bar'}
         },
@@ -38,7 +41,6 @@ describe('test pluginRaphael', function() {
     describe('test BarChart renderer', function() {
         var dimension = data.dimension,
             values = data.model.percentValues[0],
-            colors = data.model.colors,
             lastColor = 'black',
             groupIndex = 0,
             container,
@@ -53,7 +55,7 @@ describe('test pluginRaphael', function() {
             var maxBarWidth = dimension.width / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderBars(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex);
+            graphRenderer._renderBars(paper, dimension, maxBarWidth, values, data.theme, lastColor, groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;
@@ -92,7 +94,7 @@ describe('test pluginRaphael', function() {
             var maxBarHeight = dimension.height / 2,
                 svg, rects, compareHtml;
 
-            graphRenderer._renderColumns(paper, dimension, maxBarHeight, values, colors, '', groupIndex);
+            graphRenderer._renderColumns(paper, dimension, maxBarHeight, values, data.theme, '', groupIndex);
 
             if (isSvgSupport) {
                 svg = container.firstChild;

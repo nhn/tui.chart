@@ -22,25 +22,33 @@ var SeriesView = ne.util.defineClass(View, {
      * Constructor
      * @param {object} model series model
      * @param {object} options series options
+     * @param {object} theme series theme
      */
-    init: function(model, options) {
+    init: function(model, options, theme) {
         var libType, barType;
 
-        this.options = options || {};
-
-        libType = options.libType || chartConst.DEFAULT_PLUGIN;
-        this.graphRenderer = pluginFactory.get(libType, options.chartType);
-        barType = options.barType;
         /**
          * Series model
-         * @type {Object}
+         * @type {object}
          */
         this.model = model;
 
+        this.theme = theme;
+
+        options = ne.util.extend(options, model.options);
+
+        barType = options.barType;
+        libType = options.libType || chartConst.DEFAULT_PLUGIN;
+
+        this.options = options;
+
+        this.graphRenderer = pluginFactory.get(libType, options.chartType);
+
         /**
          * Series view className
+         * @type {string}
          */
-        this.className =  'series-area ' + barType;
+        this.className = 'series-area ' + barType;
 
         View.call(this);
     },
@@ -49,7 +57,7 @@ var SeriesView = ne.util.defineClass(View, {
      * Show popup (mouseover callback).
      * @param {string} prefix popup id prefix
      * @param {boolean} isColumn Is column(horizontal bar)?
-     * @param {{top:number, left: number, width: number, height: number} bound graph bound information
+     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id popup id
      */
     showPopup: function(prefix, isColumn, bound, id) {
@@ -72,9 +80,11 @@ var SeriesView = ne.util.defineClass(View, {
     },
 
     /**
-     * series renderer
-     * @param {{width: number, height: number, top: number, right: number}} dimension series dimension
-     * @returns {element}
+     * Series renderer
+     * @param {{width: number, height: number, top: number, right: number}} bound series bound
+     * @param {string} popupPrefix popup prefix
+     * @param {boolean} isColumn is column
+     * @returns {HTMLElement} series element
      */
     render: function(bound, popupPrefix, isColumn) {
         var dimension = bound.dimension,
@@ -85,16 +95,17 @@ var SeriesView = ne.util.defineClass(View, {
 
         this.renderDimension(dimension);
 
-        position.top = position.top + (isColumn ? - HIDDEN_WIDTH : - 1 );
-        position.right = position.right + (isColumn ? - (HIDDEN_WIDTH * 2) : - hiddenWidth);
+        position.top = position.top + (isColumn ? -HIDDEN_WIDTH : -1);
+        position.right = position.right + (isColumn ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
 
         this.renderPosition(position);
 
         this.graphRenderer.render(this.el, {
             dimension: dimension,
             model: this.model,
-            options: this.options,
-        },inCallback, outCallback);
+            theme: this.theme,
+            options: this.options
+        }, inCallback, outCallback);
         return this.el;
     }
 });

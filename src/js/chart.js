@@ -5,42 +5,61 @@
  */
 'use strict';
 
-var chartFactory = require('./factories/chartFactory.js'),
-    pluginFactory = require('./factories/pluginFactory.js');
+var chartConst = require('./const.js'),
+    chartFactory = require('./factories/chartFactory.js'),
+    pluginFactory = require('./factories/pluginFactory.js'),
+    themeFactory = require('./factories/themeFactory.js');
 
-var neChart = ne.util.defineNamespace('ne.application.chart');
+var DEFAULT_THEME_NAME = 'default';
+
+var neChart, createChart;
 
 require('./util.js');
-require('./views/barChartView.js');
+require('./registerCharts.js');
+require('./registerThemes.js');
+
+neChart = ne.util.defineNamespace('ne.application.chart');
+
+createChart = function(container, data, options) {
+    var theme, chart;
+
+    options = options || {};
+    theme = options.theme || DEFAULT_THEME_NAME;
+    options.theme = themeFactory.get(theme);
+
+    chart = chartFactory.get(options.chartType, data, options);
+    container.appendChild(chart.render());
+
+    return chart;
+};
 
 /**
  * Bar chart creator
- * @param {element} container chart container
+ * @param {HTMLElement} container chart container
  * @param {object} data chart data
  * @param {object} options chart options
- * @returns {object}
+ * @returns {object} bar chart
  */
 neChart.barChart = function(container, data, options) {
-    var chart;
-    options.barType = 'bar';
-    chart = chartFactory.get('Bar', data, options);
-    container.appendChild(chart.render());
-    return chart;
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_BAR;
+    options.barType = chartConst.BAR_TYPE_BAR;
+    return createChart(container, data, options);
 };
 
 /**
  * Column chart creator
- * @param {element} container chart container
+ * @param {HTMLElement} container chart container
  * @param {object} data chart data
  * @param {object} options chart options
- * @returns {object}
+ * @returns {object} column chart
  */
 neChart.columnChart = function(container, data, options) {
-    var chart;
-    options.barType = 'column';
-    chart = chartFactory.get('Bar', data, options);
-    container.appendChild(chart.render());
-    return chart;
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_BAR;
+    options.barType = chartConst.BAR_TYPE_COLUMN;
+    return createChart(container, data, options);
 };
 
-neChart.registPlugin = pluginFactory.register;
+neChart.registerPlugin = pluginFactory.register;
+neChart.registerTheme = themeFactory.register;

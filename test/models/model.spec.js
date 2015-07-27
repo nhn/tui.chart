@@ -9,7 +9,6 @@
 var Model = require('../../src/js/models/model.js');
 
 describe('test axis model', function() {
-
     var model;
 
     beforeEach(function() {

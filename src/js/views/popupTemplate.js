@@ -12,6 +12,7 @@ var tags = {
         '<div>' +
             '<span>{= legendLabel }</span>:' +
             '&nbsp;<span>{= value }</span>' +
+            '<span>{= suffix }</span>' +
         '</div>' +
     '</div>'
 };

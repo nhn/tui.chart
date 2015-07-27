@@ -11,12 +11,12 @@ var domHandler = {
      * Create element.
      * @param {string} tag html tag
      * @param {string} newClass class name
-     * @returns {Element}
+     * @returns {HTMLElement} created element
      */
     createElement: function(tag, newClass) {
         var el = document.createElement(tag);
 
-        if(newClass) {
+        if (newClass) {
             this.addClass(el, newClass);
         }
 
@@ -25,13 +25,13 @@ var domHandler = {
 
     /**
      * Add class.
-     * @param {element} el target element
+     * @param {HTMLElement} el target element
      * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
         var className = el.className ? el.className : '',
             classNames = className ? className.split(' ') : [],
-            index = ne.util.indexOf(classNames, newClass);
+            index = ne.util.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -43,13 +43,13 @@ var domHandler = {
 
     /**
      * Remove class.
-     * @param {element} el target element
+     * @param {HTMLElement} el target element
      * @param {string} rmClass remove class name
      */
     removeClass: function(el, rmClass) {
         var className = el.className ? el.className : '',
             classNames = className ? className.split(' ') : [],
-            index = ne.util.indexOf(classNames, rmClass);
+            index = ne.util.inArray(rmClass, classNames);
 
         if (index === -1) {
             return;

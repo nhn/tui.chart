@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="dist/style.css" />
     <style>
         textarea {
-            width: 300px;
+            width: 200px;
             height: 400px;
         }
 
@@ -24,7 +24,7 @@
 </head>
 <body>
 <div id="chart-area"></div>
-<div style="width:630px;margin-left:10px;margin-top:5px;">
+<div style="width:640px;margin-left:10px;margin-top:5px;">
     <div>
         chart type :
         <select id="type">
@@ -47,50 +47,78 @@
         </div>
         <div style="float:left; margin-left:10px;position:relative;">
             <div>options</div>
-            <button id="btn">적용</button>
             <textarea id="options">
 {
-    "size": {
+    "chart": {
         "width": 500,
-        "height": 400
+        "height": 400,
+        "title": "chart title"
     },
-    "fontFamily": "Verdana",
-    "title": "chart title",
-    "titleOptions": {
-        "fontSize": 24,
-        "fontFamily": "Verdana",
-        "color": "red",
-        "background": "white"
-    },
-    "background": "#efefef",
-    "hAxis": {
-        "title": "title",
-        "tickColor": "red"},
     "vAxis": {
-        "title": "Axis title",
-        "titleOptions": {
-            "fontSize": 14,
-            "fontFamily": "Verdana",
-            "color": "blue"},
-        "tickColor": "red",
-        "labelOptions": {
+        "title": "vAxis title"
+    },
+    "hAxis": {
+        "title": "hAxis title",
+        "format": "0.0",
+        "min": 0
+    },
+    "tooltip": {
+        "suffix": "",
+        "template": ""
+    },
+    "theme": "newTheme"
+}
+            </textarea>
+        </div>
+        <div style="float:left; margin-left:10px;position:relative;">
+            <div>theme</div>
+            <button id="btn">적용</button>
+            <textarea id="theme">
+{
+    "chart": {
+        "background": "#ffffff",
+        "fontFamily": "Verdana"
+    },
+    "title": {
+        "fontSize": 14,
+        "color": "#000000"
+    },
+    "vAxis": {
+        "tickColor": "#000000",
+        "title": {
             "fontSize": 12,
-            "fontFamily": "Verdana",
-            "color": "green"
+            "color": "#000000"
+        },
+        "label": {
+            "fontSize": 12,
+            "color": "#000000"
+        }
+    },
+    "hAxis": {
+        "tickColor": "#000000",
+        "title": {
+            "fontSize": 12,
+            "color": "#000000"
+        },
+        "label": {
+            "fontSize": 12,
+            "color": "#000000"
         }
     },
     "plot": {
-        "background": "skyblue",
-        "lineColor": "gold"
+        "lineColor": "#dddddd",
+        "background": "#aaaaaa"
+    },
+    "series": {
+        "colors": ["black", "silver", "gray", "green", "blue"],
+        "borderColor": "red"
     },
     "legend": {
-        "labelOptions": {
+        "label": {
             "fontSize": 12,
-            "fontFamily": "Verdana",
-            "color": "violet"
+            "color": "#000000"
         }
-    },
-    "barType": "column"
+    }
 }
             </textarea>
         </div>
@@ -112,47 +140,22 @@
             ['Platinum', 80, 10, 70]
         ],
         options = {
-            size: {
+            chart: {
                 width: 500,
-                height: 400
-            },
-            fontFamily: 'Verdana',
-            title: 'chart title',
-            titleOptions: {
-                fontSize: 24,
-                fontFamily: 'Verdana',
-                color: 'red',
-                background: 'white'
-            },
-            background: '#efefef',
-            hAxis: {
-                title: 'title',
-                tickColor: 'red'
+                height: 400,
+                title: 'chart title'
             },
             vAxis: {
-                title: 'Axis title',
-                titleOptions: {
-                    fontSize: 14,
-                    fontFamily: 'Verdana',
-                    color: 'blue'
-                },
-                tickColor: 'red',
-                labelOptions: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana',
-                    color: 'green'
-                }
+                title: 'vAxis title'
             },
-            plot: {
-                background: 'skyblue',
-                lineColor: 'gold'
+            hAxis: {
+                title: 'hAxis title',
+                format: '0.0',
+                min: 0
             },
-            legend: {
-                labelOptions: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana',
-                    color: 'violet'
-                }
+            tooltip: {
+                suffix: 'unit',
+                template: ''
             }
         };
 
@@ -161,7 +164,11 @@
     elBtn.addEventListener('click', function() {
         var type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
-            options = JSON.parse(document.getElementById('options').value);
+            options = JSON.parse(document.getElementById('options').value),
+            theme = JSON.parse(document.getElementById('theme').value);
+
+        chart.registerTheme(options.theme, theme);
+
         elChartArea.innerHTML = '';
         chart[type](elChartArea, customData, options);
     });

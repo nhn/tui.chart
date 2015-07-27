@@ -32,8 +32,6 @@ describe('test axis model', function() {
         });
 
         it('_setLabelAxisData', function() {
-            var scale;
-
             axisModel._setLabelAxisData(labels);
             expect(axisModel.labels.join(',')).toEqual(labels.join(','));
             expect(axisModel.tickCount).toEqual(labels.length + 1);
@@ -61,18 +59,18 @@ describe('test axis model', function() {
         });
 
         it('_formatLabels', function() {
-            var labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 2);
-            expect(labels).toEqual([1.11, 2.22, 3.33, 4.00, 5.55]);
-            labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 0);
-            expect(labels).toEqual([1, 2, 3, 4, 6]);
+            var _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 2);
+            expect(_labels).toEqual([1.11, 2.22, 3.33, 4.00, 5.55]);
+            _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 0);
+            expect(_labels).toEqual([1, 2, 3, 4, 6]);
         });
 
         it('_makeLabelsFromScale', function() {
             var tickCount = 5,
                 scale = {min: 20, max: 100},
                 step = axisModel.getScaleStep(scale, tickCount),
-                labels = axisModel._makeLabelsFromScale(scale, step);
-            expect(labels).toEqual([20, 40, 60, 80, 100]);
+                _labels = axisModel._makeLabelsFromScale(scale, step);
+            expect(_labels).toEqual([20, 40, 60, 80, 100]);
         });
 
         it('_setValueAxisData', function() {
@@ -110,7 +108,7 @@ describe('test axis model', function() {
             var data = {values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]]},
                 options = {
                     format: '0.00',
-                    minValue: 0,
+                    min: 0,
                     title: 'value title'
                 },
                 axisModel = new AxisModel(data, options),

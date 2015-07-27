@@ -15,7 +15,7 @@ var Model = ne.util.defineClass({
      * Get scale step.
      * @param {object} scale axis scale
      * @param {number} count value count
-     * @returns {number}
+     * @returns {number} scale step
      */
     getScaleStep: function(scale, count) {
         return (scale.max - scale.min) / (count - 1);
@@ -25,7 +25,7 @@ var Model = ne.util.defineClass({
      * Makes pixel type tick positions.
      * @param {number} size area width or height
      * @param {number} count tick count
-     * @returns {Array}
+     * @returns {array} positions
      */
     makePixelPositions: function(size, count) {
         var positions = [],
@@ -37,7 +37,7 @@ var Model = ne.util.defineClass({
             positions = ne.util.map(ne.util.range(0, size, pxStep), function(position) {
                 return Math.round(position);
             });
-            positions[positions.length-1] = size - 1;
+            positions[positions.length - 1] = size - 1;
         }
 
         return positions;

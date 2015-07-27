@@ -1,8 +1,9 @@
+'use strict';
+
 var chartFactory = require('../../src/js/factories/chartFactory.js');
 
 describe('test chartFactory', function() {
-    var TempClass = function() {},
-        chart;
+    var TempClass = function() {};
 
     chartFactory.register('barChart', TempClass);
 
@@ -12,7 +13,7 @@ describe('test chartFactory', function() {
         expect(!!chart).toBeTruthy();
         expect(chart.constructor).toEqual(TempClass);
 
-        try{
+        try {
             chartFactory.get('lineChart');
         } catch(e) {
             expect(e.message).toEqual('Not exist lineChart chart.');

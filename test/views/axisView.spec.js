@@ -16,21 +16,24 @@ describe('test Axis View', function() {
         labelData = {labels: ['label1', 'label2', 'label3']},
         options = {
             format: '0.00',
-            minValue: 0,
+            min: 0,
             title: 'value title'
+        },
+        theme = {
+            tickColor: 'black',
+            label: {
+                fontSize: 12
+            }
         };
 
     it('test _renderTitleArea', function() {
         var axisView = new AxisView(),
             title = 'Axis title.',
-            options = {
-                fontSize: 12
-            },
-            elTitle = axisView._renderTitleArea(title, options);
+            elTitle = axisView._renderTitleArea(title, theme);
 
         expect(elTitle.innerHTML).toEqual(title);
 
-        elTitle = axisView._renderTitleArea(title, options, true, 50);
+        elTitle = axisView._renderTitleArea(title, theme, true, 50);
         expect(elTitle.style.width).toEqual('50px');
 
         if (!isIE8) {
@@ -43,11 +46,6 @@ describe('test Axis View', function() {
 
     it('test _makeLabelCssTexts', function() {
         var axisView = new AxisView(),
-            labelOptions = {
-                fontSize: 12,
-                fontFamily: 'Verdana',
-                color: 'blue'
-            },
             cssTexts = axisView._makeLabelCssTexts(true, true, 100);
         expect(cssTexts).toEqual(['height:100px', 'line-height:100px']);
 
@@ -68,7 +66,7 @@ describe('test Axis View', function() {
                 '<div class="label" style="left:20px">label2</div>' +
                 '<div class="label" style="left:30px">label3</div>';
 
-        expect(labelsHtml).toEqual(compareHtml)
+        expect(labelsHtml).toEqual(compareHtml);
     });
 
     describe('test value type axis', function() {
@@ -76,7 +74,7 @@ describe('test Axis View', function() {
 
         beforeEach(function() {
             axisModel = new AxisModel(valueData, options);
-            axisView = new AxisView(axisModel);
+            axisView = new AxisView(axisModel, theme);
             el = axisView.el;
         });
 
@@ -170,7 +168,7 @@ describe('test Axis View', function() {
         it('test vertical _renderLabelArea', function() {
             var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
-            axisModel.changeVerticalState(true)
+            axisModel.changeVerticalState(true);
 
             elTickArea = axisView._renderLabelArea(300, 100);
 
@@ -205,7 +203,7 @@ describe('test Axis View', function() {
 
         beforeEach(function () {
             axisModel = new AxisModel(labelData, options);
-            axisView = new AxisView(axisModel);
+            axisView = new AxisView(axisModel, theme);
             el = axisView.el;
         });
         it('test horizontal _renderTickArea', function() {

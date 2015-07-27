@@ -7,8 +7,7 @@
 
 'use strict';
 
-var Model = require('./model.js'),
-    chartConst = require('../const.js');
+var Model = require('./model.js');
 
 /**
  * @classdesc LegendModel is model for management of legend data.
@@ -18,23 +17,14 @@ var Model = require('./model.js'),
 var LegendModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {{labels: array, colors: array} data legend data
+     * @param {{labels: array, colors: array}} data legend data
      */
-    init: function(data, options) {
-        options = options || {};
+    init: function(data) {
         /**
-         * Legend data
-         * @type {[[array, array], ...]}
+         * Legend labels
+         * @type {array}
          */
-        this.data = [];
-
-        /**
-         * Legend label options
-         * @type {{fontSize: number, fontFamily: string, color: string}}
-         */
-        this.labelOptions = ne.util.extend({
-            fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-        }, options.labelOptions);
+        this.labels = [];
 
         if (data) {
             this._setData(data);
@@ -43,11 +33,11 @@ var LegendModel = ne.util.defineClass(Model, {
 
     /**
      * Get legend data.
-     * @param {{labels: array, colors: array} data legend data
+     * @param {{labels: array, colors: array}} data legend data
      * @private
      */
     _setData: function(data) {
-        this.data = ne.util.zip(data.labels, data.colors);
+        this.labels = data.labels;
     }
 });
 

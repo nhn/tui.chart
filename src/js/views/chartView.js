@@ -6,8 +6,7 @@
 
 'use strict';
 var dom = require('./domHandler.js'),
-    View = require('./view.js'),
-    chartConst = require('../const.js');
+    View = require('./view.js');
 
 var TITLE_ADD_PADDING = 20;
 
@@ -34,26 +33,31 @@ var ChartView = ne.util.defineClass(View, {
     init: function(data, options) {
         options = options || {};
 
-        /**
-         * Chart dimension
-         * @type {Object}
-         */
-        this.dimension = ne.util.extend(this.dimension, options.size || {});
+        if (options.width) {
+            this.dimension.width = options.width;
+        }
+
+        if (options.height) {
+            this.dimension.height = options.height;
+        }
+
         View.call(this);
         dom.addClass(this.el, 'ne-chart');
     },
 
     /**
      * Chart title renderer.
-     * @returns {element}
+     * @returns {HTMLElement} title element
      */
     renderTitleArea: function() {
-        var title = this.model.title,
-            options = this.model.titleOptions,
-            elTitle = this.renderTitle(title, options, 'ne-chart-title');
+        var elTitle = this.renderTitle(this.model.title, this.theme.title, 'ne-chart-title');
         return elTitle;
     },
 
+    /**
+     * Render chart font.
+     * @param {string} fontFamily font-family
+     */
     renderChartFont: function(fontFamily) {
         if (!fontFamily) {
             return;
@@ -64,14 +68,14 @@ var ChartView = ne.util.defineClass(View, {
 
     /**
      * Get rendered title height.
-     * @returns {number}
+     * @returns {number} title height
      */
     getRenderedTitleHeight: function() {
         var title = this.model.title,
-            options = this.model.titleOptions,
+            theme = this.theme.title,
             titleHeight = 0;
         if (title) {
-            titleHeight = this.getRenderedLabelHeight(title, options) + TITLE_ADD_PADDING;
+            titleHeight = this.getRenderedLabelHeight(title, theme) + TITLE_ADD_PADDING;
         }
 
         return titleHeight;

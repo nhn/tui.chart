@@ -21,15 +21,18 @@ var POPUP_GAP = 5,
  */
 var PopupView = ne.util.defineClass(View, {
     /**
-     * constructor
+     * Constructor
      * @param {object} model popup model
+     * @param {object} theme popup theme
      */
-    init: function(model) {
+    init: function(model, theme) {
         /**
          * Popup model
          * @type {object}
          */
         this.model = model;
+
+        this.theme = theme;
 
         /**
          * Popup view className
@@ -42,9 +45,9 @@ var PopupView = ne.util.defineClass(View, {
 
     /**
      * Popup view renderer.
-     * @param {position: object} bound
-     * @param {string} prefix
-     * @returns {element}
+     * @param {{position: object}} bound popup bound
+     * @param {string} prefix popup id prefix
+     * @returns {HTMLElement} popup element
      */
     render: function(bound, prefix) {
         this.renderPosition(bound.position);
@@ -58,13 +61,14 @@ var PopupView = ne.util.defineClass(View, {
      * Makes popup html.
      * @param {object} data popup data
      * @param {string} prefix popup id prefix
-     * @returns {string}
+     * @returns {string} html
      * @private
      */
     _makePopupsHtml: function(data, prefix) {
         var options = this.model.options,
             optionTemplate = options.template ? options.template : '',
-            tplPopup = optionTemplate ? templateMaker.template(optionTemplate) :  popupTemplate.TPL_POPUP,
+            tplPopup = optionTemplate ? templateMaker.template(optionTemplate) : popupTemplate.TPL_POPUP,
+            suffix = options.suffix ? '&nbsp;' + options.suffix : '',
             html = ne.util.map(data, function(popupData) {
                 var id = prefix + popupData.id,
                     elTemp = dom.createElement('DIV');
@@ -73,6 +77,7 @@ var PopupView = ne.util.defineClass(View, {
                     label: '',
                     legendLabel: '',
                     value: '',
+                    suffix: suffix
                 }, popupData);
 
                 elTemp.innerHTML = tplPopup(popupData);
@@ -87,7 +92,7 @@ var PopupView = ne.util.defineClass(View, {
      * Calculate popup position
      * @param {{bound: object, isVertical: boolean}} data graph information
      * @param {{width: number, height: number}} dimension popup dimension
-     * @returns {{top: number, left: number}}
+     * @returns {{top: number, left: number}} position
      */
     calculatePosition: function(data, dimension) {
         var isColumn = data.isColumn,

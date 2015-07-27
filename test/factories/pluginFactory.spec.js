@@ -1,3 +1,5 @@
+'use strict';
+
 var pluginFactory = require('../../src/js/factories/pluginFactory.js');
 
 describe('test pluginFactory', function() {

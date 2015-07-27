@@ -9,11 +9,15 @@
 var dom = require('./domHandler.js'),
     chartConst = require('../const.js');
 
+var browser = ne.util.browser,
+    isIE8 = browser.msie && browser.version === 8,
+    View;
+
 /**
  * @classdesc View is parent of all view.
  * @class
  */
-var View = ne.util.defineClass({
+View = ne.util.defineClass({
     /**
      * Constructor
      */
@@ -23,7 +27,7 @@ var View = ne.util.defineClass({
 
     /**
      * Append child element.
-     * @param {element} elChild child element
+     * @param {HTMLElement} elChild child element
      */
     append: function(elChild) {
         if (!elChild) {
@@ -34,18 +38,18 @@ var View = ne.util.defineClass({
 
     /**
      * Dimension renderer
-     * @param {{width: number, height: number} dimension dimension
+     * @param {{width: number, height: number}} dimension dimension
      */
     renderDimension: function(dimension) {
         this.el.style.cssText = [
             this.concatStr('width:', dimension.width, 'px'),
-            this.concatStr('height:', dimension.height, 'px'),
+            this.concatStr('height:', dimension.height, 'px')
         ].join(';');
     },
 
     /**
      * Position(top, right) renderer
-     * @param {{top: number, left: number, right: number} position position
+     * @param {{top: number, left: number, right: number}} position position
      */
     renderPosition: function(position) {
         if (ne.util.isUndefined(position)) {
@@ -68,11 +72,11 @@ var View = ne.util.defineClass({
     /**
      * Title renderer
      * @param {string} title title
-     * @param {{fontSize: number, color: string, background: string}} options options
+     * @param {{fontSize: number, color: string, background: string}} theme title theme
      * @param {string} className css class name
-     * @returns {element}
+     * @returns {HTMLElement} title element
      */
-    renderTitle: function(title, options, className) {
+    renderTitle: function(title, theme, className) {
         var elTitle, cssText;
 
         if (!title) {
@@ -82,10 +86,10 @@ var View = ne.util.defineClass({
         elTitle = dom.createElement('DIV', className);
         elTitle.innerHTML = title;
 
-        cssText = this.makeFontCssText(options);
+        cssText = this.makeFontCssText(theme);
 
-        if (options.background) {
-            cssText += ';' + this.concatStr('background:', options.background);
+        if (theme.background) {
+            cssText += ';' + this.concatStr('background:', theme.background);
         }
 
         elTitle.style.cssText = cssText;
@@ -106,9 +110,9 @@ var View = ne.util.defineClass({
     },
 
     /**
-     * concat string
+     * Concat string
      * @params {...string} target strings
-     * @returns {string}
+     * @returns {string} concat string
      */
     concatStr: function() {
         return String.prototype.concat.apply('', arguments);
@@ -116,22 +120,26 @@ var View = ne.util.defineClass({
 
     /**
      * Makes css text for font.
-     * @param options
-     * @returns {string}
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
+     * @returns {string} cssText
      */
-    makeFontCssText: function(options) {
+    makeFontCssText: function(theme) {
         var cssTexts = [];
 
-        if (options.fontSize) {
-            cssTexts.push(this.concatStr('font-size:', options.fontSize, 'px'));
+        if (!theme) {
+            return '';
         }
 
-        if (options.fontFamily) {
-            cssTexts.push(this.concatStr('font-family:', options.fontFamily));
+        if (theme.fontSize) {
+            cssTexts.push(this.concatStr('font-size:', theme.fontSize, 'px'));
         }
 
-        if (options.color) {
-            cssTexts.push(this.concatStr('color:', options.color));
+        if (theme.fontFamily) {
+            cssTexts.push(this.concatStr('font-family:', theme.fontFamily));
+        }
+
+        if (theme.color) {
+            cssTexts.push(this.concatStr('color:', theme.color));
         }
 
         return cssTexts.join(';');
@@ -139,7 +147,7 @@ var View = ne.util.defineClass({
 
     /**
      * Create size check element
-     * @returns {element}
+     * @returns {HTMLElement} element
      * @private
      */
     _createSizeCheckEl: function() {
@@ -154,9 +162,9 @@ var View = ne.util.defineClass({
     /**
      * Get rendered label size (width or height)
      * @param {string} label label
-     * @param {number} fontSize font size
+     * @param {object} options options
      * @param {string} property element property
-     * @returns {number}
+     * @returns {number} size
      * @private
      */
     _getRenderedLabelSize: function(label, options, property) {
@@ -182,7 +190,7 @@ var View = ne.util.defineClass({
      * Get rendered label width.
      * @param {string} label label
      * @param {{fontSize: number, fontFamily: string, color: string}} options label options
-     * @returns {number}
+     * @returns {number} width
      */
     getRenderedLabelWidth: function(label, options) {
         var labelWidth = this._getRenderedLabelSize(label, options, 'offsetWidth');
@@ -192,66 +200,60 @@ var View = ne.util.defineClass({
     /**
      * Get rendered label height.
      * @param {string} label label
-     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
-     * @returns {number}
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} height
      */
-    getRenderedLabelHeight: function(label, options) {
-        var labelHeight = this._getRenderedLabelSize(label, options, 'offsetHeight');
+    getRenderedLabelHeight: function(label, theme) {
+        var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
         return labelHeight;
     },
 
     /**
      * Get Rendered Labels Max Size(width or height)
-     * @param {array} labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
-     * @param {function} iteratee
-     * @returns {number}
+     * @param {array} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @param {function} iteratee iteratee
+     * @returns {number} max size (width or height)
      * @private
      */
-    _getRenderedLabelsMaxSize: function(labels, options, iteratee) {
+    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
         var sizes = ne.util.map(labels, function(label) {
-                return iteratee(label, options);
+                return iteratee(label, theme);
             }, this),
-            result = ne.util.max(sizes);
-        return result;
+            maxSize = ne.util.max(sizes);
+        return maxSize;
     },
 
     /**
      * Get rendered labels max width.
      * @param {array} labels labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
-     * @returns {number}
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max width
      */
-    getRenderedLabelsMaxWidth: function(labels, options) {
+    getRenderedLabelsMaxWidth: function(labels, theme) {
         var iteratee = ne.util.bind(this.getRenderedLabelWidth, this),
-            result = this._getRenderedLabelsMaxSize(labels, options, iteratee);
-        return result;
+            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        return maxWidth;
     },
 
     /**
      * Get rendered labels max height.
      * @param {array} labels labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} options label options
-     * @returns {number}
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max height
      */
-    getRenderedLabelsMaxHeight: function(labels, options) {
+    getRenderedLabelsMaxHeight: function(labels, theme) {
         var iteratee = ne.util.bind(this.getRenderedLabelHeight, this),
-            result = this._getRenderedLabelsMaxSize(labels, options, iteratee);
+            result = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
         return result;
     },
 
     /**
      * Is IE8?
-     * @returns {boolean}
+     * @returns {boolean} is ie8
      */
     isIE8: function() {
-        var browser = ne.util.browser,
-            ie8 = browser.msie && browser.version === 8,
-            isIE8 = function() {
-                return ie8;
-            };
-        this.isIE8 = isIE8;
-        return isIE8();
+        return isIE8;
     }
 });
 

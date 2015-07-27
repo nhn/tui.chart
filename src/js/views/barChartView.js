@@ -8,7 +8,6 @@
 
 var chartConst = require('../const.js'),
     ChartView = require('./chartView.js'),
-    chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
     AxisView = require('./axisView.js'),
@@ -16,9 +15,7 @@ var chartConst = require('../const.js'),
     LegendView = require('./legendView.js'),
     PopupView = require('./popupView.js');
 
-
-var BarChartView,
-    POPUP_PREFIX = 'ne-chart-popup-',
+var POPUP_PREFIX = 'ne-chart-popup-',
     CHART_PADDING = 10,
     HIDDEN_WIDTH = 1;
 
@@ -27,16 +24,19 @@ var BarChartView,
  * @class
  * @augments ChartView
  */
-BarChartView = ne.util.defineClass(ChartView, {
+var BarChartView = ne.util.defineClass(ChartView, {
     /**
      * constructor
      * @param {object} data bar chart data
      * @param {options} options bar chart options
      */
     init: function(data, options) {
-        options = options || {};
+        var theme = options.theme;
 
-        this.options = options;
+        this.options = options.chart;
+        this.options.barType = options.barType;
+
+        this.theme = theme;
 
         /**
          * Bar chart className
@@ -54,34 +54,34 @@ BarChartView = ne.util.defineClass(ChartView, {
          * Plot view
          * @type {object}
          */
-        this.plotView = new PlotView(this.model.plot);
+        this.plotView = new PlotView(this.model.plot, theme.plot);
 
         /**
          * Vertical axis view
          * @type {object}
          */
-        this.vAxisView = new AxisView(this.model.vAxis);
+        this.vAxisView = new AxisView(this.model.vAxis, theme.vAxis);
 
         /**
          * Horizontal axis view
          * @type {object}
          */
-        this.hAxisView = new AxisView(this.model.hAxis);
+        this.hAxisView = new AxisView(this.model.hAxis, theme.hAxis);
 
         /**
          * series view
          * @type {object}
          */
         this.seriesView = new SeriesView(this.model.series, {
-            chartType: 'bar',
+            chartType: options.chartType,
             barType: options.barType
-        });
+        }, theme.series);
 
         /**
          * legend view
          * @type {object}
          */
-        this.legendView = new LegendView(this.model.legend);
+        this.legendView = new LegendView(this.model.legend, theme.legend);
 
         /**
          * legend view
@@ -89,15 +89,16 @@ BarChartView = ne.util.defineClass(ChartView, {
          */
         this.popupView = new PopupView(this.model.popup);
 
+        options = options.chart || {};
         ChartView.call(this, data, options);
     },
 
     /**
      * Bar chart renderer
-     * @returns {element}
+     * @returns {HTMLElement} bar chart element
      */
     render: function() {
-        var popupPrefix = POPUP_PREFIX + (new Date).getTime() + '-',
+        var popupPrefix = POPUP_PREFIX + (new Date()).getTime() + '-',
             isColumn = this.options.barType === chartConst.BAR_TYPE_COLUMN,
             bounds = this.getViewsBound(),
             elTitle = this.renderTitleArea(),
@@ -146,7 +147,7 @@ BarChartView = ne.util.defineClass(ChartView, {
      *   legend: {
      *     position: {top: number}
      *   }
-     * }}
+     * }} bounds
      */
     getViewsBound: function() {
         var titleHeight = this.getRenderedTitleHeight(),
@@ -197,5 +198,4 @@ BarChartView = ne.util.defineClass(ChartView, {
     }
 });
 
-chartFactory.register('Bar', BarChartView);
 module.exports = BarChartView;

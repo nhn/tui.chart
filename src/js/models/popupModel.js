@@ -20,7 +20,8 @@ var apc = Array.prototype.concat,
 PopupModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {{labels: array, colors: array} data legend data
+     * @param {{labels: array, colors: array}} data legend data
+     * @param {object} options options
      */
     init: function(data, options) {
         options = options || {};
@@ -44,7 +45,7 @@ PopupModel = ne.util.defineClass(Model, {
 
     /**
      * Get legend data.
-     * @param {{labels: array, colors: array} data legend data
+     * @param {{labels: array, colors: array}} data legend data
      * @private
      */
     _setData: function(data) {

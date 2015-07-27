@@ -7,20 +7,22 @@
 'use strict';
 
 var LegendView = require('../../src/js/views/legendView.js'),
-    LegendModel = require('../../src/js/models/legendModel.js'),
-    chartConst = require('../../src/js/const.js');
+    LegendModel = require('../../src/js/models/legendModel.js');
 
 describe('test Legend View', function() {
     var labels = [
             'Density',
             'Density2'
         ],
-        colors = Array.prototype.slice.call(chartConst.DEFAUlT_COLORS),
-        data, legendModel, legendView;
-
-    colors.length = labels.length;
-    legendModel = new LegendModel({labels: labels, colors: colors});
-    legendView = new LegendView(legendModel)
+        theme = {
+            label: {
+                fontSize: 12
+            },
+            colors: ['red', 'orange']
+        },
+        legendModel, legendView;
+    legendModel = new LegendModel({labels: labels});
+    legendView = new LegendView(legendModel, theme);
 
 
     it('test getLegendAreaHeight', function() {

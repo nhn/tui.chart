@@ -14,9 +14,8 @@ var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
 describe('test seriesView', function() {
     var data = {
             values: [[20], [40]],
-            colors: ['blue'],
-            scale: {min: 0, max: 160 },
-            lastColors: ['red', 'ornage', 'yellow', 'green'],
+            scale: {min: 0, max: 160},
+            lastColors: ['red', 'ornage', 'yellow', 'green']
         },
         options = {
             bars: 'vertical',
@@ -26,10 +25,13 @@ describe('test seriesView', function() {
             dimension: {width: 200, height: 100},
             position: {top: 50, right: 50}
         },
+        theme = {
+            colors: ['blue']
+        },
         seriesModel = new SeriesModel(data);
 
     it('test render', function() {
-        var seriesView = new SeriesView(seriesModel, options),
+        var seriesView = new SeriesView(seriesModel, options, theme),
             elSeries = seriesView.render(bound);
 
         expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
@@ -46,5 +48,4 @@ describe('test seriesView', function() {
 
         expect(!!elSeries.firstChild).toBeTruthy();
     });
-
 });

@@ -15,8 +15,7 @@ describe('test bar chart model', function() {
             ['Silver', 10.49],
             ['Gold', 19.30],
             ['Platinum', 21.45]
-        ],
-        defaultFirstColor = chartConst.DEFAUlT_COLORS[0];
+        ];
 
     describe('test method', function() {
         var barChartModel = new BarChartModel();
@@ -27,8 +26,7 @@ describe('test bar chart model', function() {
             expect(barChartModel.hAxis.axisType).toEqual('value');
             expect(barChartModel.plot.vTickCount).toEqual(0);
             expect(barChartModel.plot.hTickCount).toEqual(5);
-            expect(barChartModel.legend.data[0]).toEqual(['Density', defaultFirstColor]);
-            expect(barChartModel.series.colors).toEqual([defaultFirstColor]);
+            expect(barChartModel.legend.labels).toEqual(['Density']);
             expect(barChartModel.popup.data[0]).toEqual({label:'Copper', value: 8.94, legendLabel: 'Density', id: '0-0'});
         });
     });
@@ -36,25 +34,25 @@ describe('test bar chart model', function() {
     describe('test construct', function() {
         it('init label axis', function() {
             var options = {
-                    title: 'chart title',
-                    chartArea: '60%',
-                    colors: ['black'],
+                    chart: {
+                        title: 'chart title',
+                    },
                     hAxis: {
                         title: 'hAxis title'
                     },
                     vAxis: {
                         title: 'vAxis title',
-                        minValue: 1,
+                        min: 1,
                         format: '0.0'
                     },
                     barType: 'column'
                 },
                 barChartModel = new BarChartModel(userData, options);
+            expect(barChartModel.title).toEqual('chart title');
             expect(barChartModel.hAxis.isLabelAxis()).toBeTruthy();
             expect(barChartModel.vAxis.scale.min).toEqual(1);
             expect(barChartModel.vAxis.labels[1]).toEqual(6.3);
-            expect(barChartModel.legend.data[0]).toEqual(['Density', 'black']);
-            expect(barChartModel.series.colors).toEqual(['black']);
+            expect(barChartModel.legend.labels).toEqual(['Density']);
             expect(barChartModel.popup.data[1]).toEqual({label:'Silver', value: 10.49, legendLabel: 'Density', id: '1-0'});
         });
     });

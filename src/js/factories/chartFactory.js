@@ -13,7 +13,7 @@ var charts = {},
          * @param {string} chartType chart type
          * @param {object} data chart data
          * @param {object} options chart options
-         * @returns {object}
+         * @returns {object} chart instance;
          */
         get: function(chartType, data, options) {
             var Chart = charts[chartType],

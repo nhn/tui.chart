@@ -6,11 +6,9 @@
 
 'use strict';
 
-var PopupView = require('../../src/js/views/popupView.js'),
-    PopupModel = require('../../src/js/models/popupModel.js');
+var PopupView = require('../../src/js/views/popupView.js');
 
 describe('test Legend View', function() {
-
     it('test _makePopupsHtml', function() {
         var popupView = new PopupView({
                 options: {}
@@ -34,12 +32,13 @@ describe('test Legend View', function() {
             resultHtml = popupView._makePopupsHtml(data, 'ne-chart-popup-'),
             compareHtml = '<div class="ne-chart-popup">' +
                     '<div>Silver</div>' +
-                    '<div><span>Density1</span>:&nbsp;<span>10</span></div>' +
+                    '<div><span>Density1</span>:&nbsp;' +
+                    '<span>10</span><span></span></div>' +
                 '</div>' +
                 '<div class="ne-chart-popup">' +
                     '<div>Silver</div>' +
                     '<div><span>Density2</span>:&nbsp;' +
-                '<span>20</span></div>' +
+                    '<span>20</span><span></span></div>' +
                 '</div>',
             elTemp = document.createElement('DIV');
 
