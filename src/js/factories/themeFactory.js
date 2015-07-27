@@ -8,10 +8,15 @@
 
 var DEFAULT_THEME_NAME = 'default';
 
+var themes = {},
+    _initTheme, _inheritThemeProperty;
 
-var themes = {};
-
-var _updateThemeItemsFontFamily = function(theme) {
+/**
+ * Inherit theme property.
+ * @param {object} theme theme
+ * @private
+ */
+_inheritThemeProperty = function(theme) {
     var baseFont = theme.chart.fontFamily,
         items = [
             theme.title,
@@ -33,7 +38,13 @@ var _updateThemeItemsFontFamily = function(theme) {
     theme.legend.colors = theme.chart.colors;
 };
 
-var _initTheme = function(theme) {
+/**
+ * Init theme.
+ * @param {object} theme theme
+ * @returns {object} theme
+ * @private
+ */
+_initTheme = function(theme) {
     var defaultTheme = themes[DEFAULT_THEME_NAME],
         cloneTheme = JSON.parse(JSON.stringify(defaultTheme));
 
@@ -70,7 +81,7 @@ module.exports = {
             theme = _initTheme(theme);
         }
 
-        _updateThemeItemsFontFamily(theme);
+        _inheritThemeProperty(theme);
 
         themes[themeName] = theme;
     }
