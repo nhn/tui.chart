@@ -15,8 +15,7 @@ describe('test bar chart model', function() {
             ['Silver', 10.49],
             ['Gold', 19.30],
             ['Platinum', 21.45]
-        ],
-        defaultFirstColor = chartConst.DEFAUlT_COLORS[0];
+        ];
 
     describe('test method', function() {
         var barChartModel = new BarChartModel();

@@ -11,7 +11,7 @@ var domHandler = {
      * Create element.
      * @param {string} tag html tag
      * @param {string} newClass class name
-     * @returns {element} created element
+     * @returns {HTMLElement} created element
      */
     createElement: function(tag, newClass) {
         var el = document.createElement(tag);
@@ -25,7 +25,7 @@ var domHandler = {
 
     /**
      * Add class.
-     * @param {element} el target element
+     * @param {HTMLElement} el target element
      * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
@@ -43,7 +43,7 @@ var domHandler = {
 
     /**
      * Remove class.
-     * @param {element} el target element
+     * @param {HTMLElement} el target element
      * @param {string} rmClass remove class name
      */
     removeClass: function(el, rmClass) {

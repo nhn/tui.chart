@@ -1,5 +1,3 @@
-var themeFactory = require('../factories/themeFactory.js');
-
 var DEFAULT_COLOR = '#000000',
     DEFAULT_BACKGROUND = '#ffffff',
     DEFAULT_AXIS = {
@@ -16,7 +14,6 @@ var DEFAULT_COLOR = '#000000',
 
 var defaultTheme = {
     chart: {
-        colors: ['red', 'orange', 'yellow', 'green', 'blue'],
         background: DEFAULT_BACKGROUND,
         fontFamily: 'Verdana'
     },
@@ -30,6 +27,10 @@ var defaultTheme = {
         lineColor: '#dddddd',
         background: '#ffffff'
     },
+    series: {
+        colors: ['red', 'orange', 'yellow', 'green', 'blue'],
+        borderColor: 'blue'
+    },
     legend: {
         label: {
             fontSize: 12,
@@ -38,4 +39,4 @@ var defaultTheme = {
     }
 };
 
-themeFactory.register('default', defaultTheme);
+module.exports = defaultTheme;

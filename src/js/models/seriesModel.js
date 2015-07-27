@@ -17,7 +17,7 @@ var Model = require('./model.js');
 var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {data} data series data
+     * @param {object} data series data
      */
     init: function(data) {
         /**
@@ -75,9 +75,9 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Convert two dimensional(2d) values.
-     * @param {[array]} values2d target 2d array
+     * @param {array.<array>} values2d target 2d array
      * @param {function} condition convert condition function
-     * @returns {array} 2d array
+     * @returns {array.<array>} 2d array
      * @private
      */
     _convertValues: function(values2d, condition) {
@@ -89,9 +89,9 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Make to percent value.
-     * @param {[array]} values maker data
+     * @param {array.<array>} values maker data
      * @param {{min:number, max:number}} scale min, max scale
-     * @returns {array} percent values
+     * @returns {array.<array>} percent values
      * @private
      */
     _makePercentValues: function(values, scale) {
@@ -106,7 +106,7 @@ var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Make to pixel values.
      * @param {number} size width or height
-     * @returns {array} pixel values
+     * @returns {array.<array>} pixel values
      */
     getPixelValues: function(size) {
         var result = this._convertValues(this.percentValues, function(value) {

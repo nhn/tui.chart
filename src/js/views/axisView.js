@@ -45,7 +45,7 @@ var AxisView = ne.util.defineClass(View, {
     /**
      * Axis renderer
      * @param {{width: number, height: number, top: number, right: number}} bound axis area dimension
-     * @returns {element} axis area base element
+     * @returns {HTMLElement} axis area base element
      */
     render: function(bound) {
         var model = this.model,
@@ -73,7 +73,7 @@ var AxisView = ne.util.defineClass(View, {
      * @param {obejct} theme title theme
      * @param {boolean} isVertical is vertical?
      * @param {number} size (width or height)
-     * @returns {element} title element
+     * @returns {HTMLElement} title element
      * @private
      */
     _renderTitleArea: function(title, theme, isVertical, size) {
@@ -96,7 +96,7 @@ var AxisView = ne.util.defineClass(View, {
     /**
      * Tick area renderer
      * @param {number} size size or height
-     * @returns {element} tick area element
+     * @returns {HTMLElement} tick area element
      * @private
      */
     _renderTickArea: function(size) {
@@ -125,7 +125,7 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Render tick border color.
-     * @param {element} elTickArea tick area element
+     * @param {HTMLElement} elTickArea tick area element
      * @param {string} tickColor tick color
      * @param {boolean} isVertical Is vertical?
      * @private
@@ -142,7 +142,7 @@ var AxisView = ne.util.defineClass(View, {
      * Label area renderer
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
-     * @returns {element} label area element
+     * @returns {HTMLElement} label area element
      * @private
      */
     _renderLabelArea: function(size, axisWidth) {
@@ -235,7 +235,7 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Change label area position
-     * @param {element} elLabelArea label area element
+     * @param {HTMLElement} elLabelArea label area element
      * @param {boolean} isVertical is vertical
      * @param {boolean} isLabelAxis is label axis
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme

@@ -47,7 +47,7 @@ var PopupView = ne.util.defineClass(View, {
      * Popup view renderer.
      * @param {{position: object}} bound popup bound
      * @param {string} prefix popup id prefix
-     * @returns {element} popup element
+     * @returns {HTMLElement} popup element
      */
     render: function(bound, prefix) {
         this.renderPosition(bound.position);

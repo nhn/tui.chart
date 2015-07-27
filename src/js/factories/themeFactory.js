@@ -6,7 +6,7 @@
 
 'use strict';
 
-var DEFAULT_THEME_NAME = 'default';
+var chartConst = require('../const.js');
 
 var themes = {},
     _initTheme, _inheritThemeProperty;
@@ -31,11 +31,10 @@ _inheritThemeProperty = function(theme) {
             item.fontFamily = baseFont;
         }
     });
-
-    theme.series = {
-        colors: theme.chart.colors
-    };
-    theme.legend.colors = theme.chart.colors;
+    theme.legend.colors = theme.series.colors;
+    if (theme.series.borderColor) {
+        theme.legend.borderColor = theme.series.borderColor;
+    }
 };
 
 /**
@@ -45,7 +44,7 @@ _inheritThemeProperty = function(theme) {
  * @private
  */
 _initTheme = function(theme) {
-    var defaultTheme = themes[DEFAULT_THEME_NAME],
+    var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME],
         cloneTheme = JSON.parse(JSON.stringify(defaultTheme));
 
     theme = ne.util.extend(cloneTheme, theme);
@@ -56,7 +55,7 @@ _initTheme = function(theme) {
 module.exports = {
     /**
      * Get theme.
-     * @param {string} themeName chart type
+     * @param {string} themeName theme name
      * @returns {object} theme object
      */
     get: function(themeName) {
@@ -72,12 +71,12 @@ module.exports = {
     /**
      * Theme register.
      * @param {string} themeName theme name
-     * @param {class} theme theme
+     * @param {object} theme theme
      */
     register: function(themeName, theme) {
-        var defaultTheme = themes[DEFAULT_THEME_NAME];
+        var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME];
 
-        if (themeName !== DEFAULT_THEME_NAME && defaultTheme) {
+        if (themeName !== chartConst.DEFAULT_THEME_NAME && defaultTheme) {
             theme = _initTheme(theme);
         }
 

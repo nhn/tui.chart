@@ -84,7 +84,7 @@ var SeriesView = ne.util.defineClass(View, {
      * @param {{width: number, height: number, top: number, right: number}} bound series bound
      * @param {string} popupPrefix popup prefix
      * @param {boolean} isColumn is column
-     * @returns {element} series element
+     * @returns {HTMLElement} series element
      */
     render: function(bound, popupPrefix, isColumn) {
         var dimension = bound.dimension,

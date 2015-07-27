@@ -8,7 +8,6 @@
 
 var chartConst = require('../const.js'),
     ChartView = require('./chartView.js'),
-    chartFactory = require('../factories/chartFactory.js'),
     BarChartModel = require('../models/barChartModel.js'),
     PlotView = require('./plotView.js'),
     AxisView = require('./axisView.js'),
@@ -16,9 +15,7 @@ var chartConst = require('../const.js'),
     LegendView = require('./legendView.js'),
     PopupView = require('./popupView.js');
 
-
-var BarChartView,
-    POPUP_PREFIX = 'ne-chart-popup-',
+var POPUP_PREFIX = 'ne-chart-popup-',
     CHART_PADDING = 10,
     HIDDEN_WIDTH = 1;
 
@@ -27,7 +24,7 @@ var BarChartView,
  * @class
  * @augments ChartView
  */
-BarChartView = ne.util.defineClass(ChartView, {
+var BarChartView = ne.util.defineClass(ChartView, {
     /**
      * constructor
      * @param {object} data bar chart data
@@ -98,7 +95,7 @@ BarChartView = ne.util.defineClass(ChartView, {
 
     /**
      * Bar chart renderer
-     * @returns {element} bar chart element
+     * @returns {HTMLElement} bar chart element
      */
     render: function() {
         var popupPrefix = POPUP_PREFIX + (new Date()).getTime() + '-',
@@ -201,5 +198,4 @@ BarChartView = ne.util.defineClass(ChartView, {
     }
 });
 
-chartFactory.register('Bar', BarChartView);
 module.exports = BarChartView;

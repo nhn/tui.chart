@@ -76,7 +76,6 @@
             <textarea id="theme">
 {
     "chart": {
-        "colors": ["black", "silver", "gray", "green", "blue"],
         "background": "#ffffff",
         "fontFamily": "Verdana"
     },
@@ -108,7 +107,11 @@
     },
     "plot": {
         "lineColor": "#dddddd",
-        "background": "#efefef"
+        "background": "#aaaaaa"
+    },
+    "series": {
+        "colors": ["black", "silver", "gray", "green", "blue"],
+        "borderColor": "red"
     },
     "legend": {
         "label": {
@@ -164,7 +167,7 @@
             options = JSON.parse(document.getElementById('options').value),
             theme = JSON.parse(document.getElementById('theme').value);
 
-        chart.registTheme(options.theme, theme);
+        chart.registerTheme(options.theme, theme);
 
         elChartArea.innerHTML = '';
         chart[type](elChartArea, customData, options);

@@ -10,7 +10,7 @@ var dom = require('./domHandler.js'),
     chartConst = require('../const.js');
 
 var browser = ne.util.browser,
-    ie8 = browser.msie && browser.version === 8,
+    isIE8 = browser.msie && browser.version === 8,
     View;
 
 /**
@@ -27,7 +27,7 @@ View = ne.util.defineClass({
 
     /**
      * Append child element.
-     * @param {element} elChild child element
+     * @param {HTMLElement} elChild child element
      */
     append: function(elChild) {
         if (!elChild) {
@@ -74,7 +74,7 @@ View = ne.util.defineClass({
      * @param {string} title title
      * @param {{fontSize: number, color: string, background: string}} theme title theme
      * @param {string} className css class name
-     * @returns {element} title element
+     * @returns {HTMLElement} title element
      */
     renderTitle: function(title, theme, className) {
         var elTitle, cssText;
@@ -147,7 +147,7 @@ View = ne.util.defineClass({
 
     /**
      * Create size check element
-     * @returns {element} element
+     * @returns {HTMLElement} element
      * @private
      */
     _createSizeCheckEl: function() {
@@ -253,7 +253,7 @@ View = ne.util.defineClass({
      * @returns {boolean} is ie8
      */
     isIE8: function() {
-        return ie8;
+        return isIE8;
     }
 });
 

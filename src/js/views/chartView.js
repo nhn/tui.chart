@@ -47,7 +47,7 @@ var ChartView = ne.util.defineClass(View, {
 
     /**
      * Chart title renderer.
-     * @returns {element} title element
+     * @returns {HTMLElement} title element
      */
     renderTitleArea: function() {
         var elTitle = this.renderTitle(this.model.title, this.theme.title, 'ne-chart-title');

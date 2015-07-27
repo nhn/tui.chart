@@ -39,24 +39,25 @@ var LegendView = ne.util.defineClass(View, {
     /**
      * Legend renderer.
      * @param {obejct} bound plot bound
-     * @returns {element} legend element
+     * @returns {HTMLElement} legend element
      */
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
             labels = this.model.labels,
             themeLabel = this.theme.label,
             colors = this.theme.colors,
+            borderColor = this.theme.borderColor,
             labelHeight = this.getRenderedLabelHeight(labels[0], themeLabel) + (LABEL_PADDING_TOP * 2),
-            rectMargin = this.concatStr('margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
+            borderCssText = borderColor ? this.concatStr(';border:1px solid ', borderColor) : '',
+            rectMargin = this.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
             html = ne.util.map(labels, function(label, index) {
                 var data = {
-                    cssText: this.concatStr('background-color:', colors[index], ';', rectMargin),
+                    cssText: this.concatStr('background-color:', colors[index], borderCssText, rectMargin),
                     height: labelHeight,
                     label: label
                 };
                 return template(data);
             }, this).join('');
-
         this.el.innerHTML = html;
         this.renderPosition(bound.position);
         this._renderLabelTheme(themeLabel);

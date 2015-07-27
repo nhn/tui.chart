@@ -41,7 +41,7 @@ var PlotView = ne.util.defineClass(View, {
     /**
      * Plot view renderer
      * @param {{width: number, height: number, top: number, right: number}} bound plot area bound
-     * @returns {element} plot element
+     * @returns {HTMLElement} plot element
      */
     render: function(bound) {
         this.renderDimension(bound.dimension);

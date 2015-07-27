@@ -11,7 +11,7 @@ var HIDDEN_WIDTH = 1;
 var Raphael = window.Raphael,
     pluginName = 'raphael',
     browser = ne.util.browser,
-    ie8 = browser.msie && browser.version === 8,
+    isIE8 = browser.msie && browser.version === 8,
     BarChart,
     pluginRaphael;
 
@@ -20,11 +20,22 @@ var Raphael = window.Raphael,
  * @class
  */
 BarChart = ne.util.defineClass({
-    _setRect: function(paper, color, bound, id, inCallback, outCallback) {
+    /**
+     * set Rect
+     * @param {object} paper raphael paper
+     * @param {string} color series color
+     * @param {string} borderColor series borderColor
+     * @param {object} bound bound
+     * @param {string} id tooltip id
+     * @param {function} inCallback in callback
+     * @param {function} outCallback out callback
+     * @private
+     */
+    _setRect: function(paper, color, borderColor, bound, id, inCallback, outCallback) {
         var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: color,
-            stroke: 'none'
+            stroke: borderColor
         });
 
         rect.hover(function() {
@@ -40,15 +51,17 @@ BarChart = ne.util.defineClass({
      * @param {{width: number, height: number}} dimension graph dimension
      * @param {number} maxBarWidth max bar width
      * @param {[array]} values percent values
-     * @param {array} colors colors
+     * @param {object} theme theme
      * @param {string} lastColor last color
      * @param {number} groupIndex bar group index
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private;
      */
-    _renderColumns: function(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex, inCallback, outCallback) {
-        var barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
+    _renderColumns: function(paper, dimension, maxBarWidth, values, theme, lastColor, groupIndex, inCallback, outCallback) {
+        var colors = theme.colors,
+            borderColor = theme.borderColor || 'none',
+            barWidth = parseInt(maxBarWidth / (values.length + 1), 10),
             paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2),
             lastIndex = values.length - 1;
 
@@ -65,7 +78,7 @@ BarChart = ne.util.defineClass({
                 },
                 id = groupIndex + '-' + index;
 
-            this._setRect(paper, color, bound, id, inCallback, outCallback);
+            this._setRect(paper, color, borderColor, bound, id, inCallback, outCallback);
         }, this);
     },
 
@@ -75,16 +88,18 @@ BarChart = ne.util.defineClass({
      * @param {{width: number, height: number}} size graph size
      * @param {number} maxBarHeight max bar height
      * @param {[array]} values percent values
-     * @param {array} colors colors
+     * @param {object} theme theme
      * @param {string} lastColor last color
      * @param {number} groupIndex bar group index
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private;
      */
-    _renderBars: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
-        var barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
-            hiddenWidth = ie8 ? 0 : HIDDEN_WIDTH,
+    _renderBars: function(paper, size, maxBarHeight, values, theme, lastColor, groupIndex, inCallback, outCallback) {
+        var colors = theme.colors,
+            borderColor = theme.borderColor || 'none',
+            barHeight = parseInt(maxBarHeight / (values.length + 1), 10),
+            hiddenWidth = isIE8 ? 0 : HIDDEN_WIDTH,
             paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
             lastIndex = values.length - 1;
 
@@ -101,13 +116,13 @@ BarChart = ne.util.defineClass({
                 },
                 id = groupIndex + '-' + index;
 
-            this._setRect(paper, color, bound, id, inCallback, outCallback);
+            this._setRect(paper, color, borderColor, bound, id, inCallback, outCallback);
         }, this);
     },
 
     /**
      * This is Bar chart graph render function.
-     * @param {element} container container element
+     * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object}} data chart data
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
@@ -116,7 +131,7 @@ BarChart = ne.util.defineClass({
         var isColumn = data.options.barType === 'column',
             dimension = data.dimension,
             groupValues = data.model.percentValues,
-            colors = data.theme.colors,
+            theme = data.theme,
             lastColors = data.model.pickLastColors(),
             paper = Raphael(container, dimension.width, dimension.height),
             barMaxSize, renderBars;
@@ -131,7 +146,7 @@ BarChart = ne.util.defineClass({
 
         ne.util.forEachArray(groupValues, function(values, index) {
             var lastColor = lastColors.length ? lastColors[index] : '';
-            renderBars(paper, dimension, barMaxSize, values, colors, lastColor, index, inCallback, outCallback);
+            renderBars(paper, dimension, barMaxSize, values, theme, lastColor, index, inCallback, outCallback);
         }, this);
     }
 });
@@ -140,4 +155,4 @@ pluginRaphael = {
     bar: BarChart
 };
 
-ne.application.chart.registPlugin(pluginName, pluginRaphael);
+ne.application.chart.registerPlugin(pluginName, pluginRaphael);
