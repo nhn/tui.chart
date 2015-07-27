@@ -17,9 +17,9 @@ var Model = require('./model.js');
 var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Constructor
-     * @param {data} data
+     * @param {data} data series data
      */
-    init: function(data, options) {
+    init: function(data) {
         /**
          * Series makers
          * @type {array}
@@ -74,40 +74,39 @@ var SeriesModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Convert two dimensional(2d) array.
-     * @param {[array, ...]} arr2d target 2d array
-     * @param {function} callback convert callback function
-     * @returns {array}
+     * Convert two dimensional(2d) values.
+     * @param {[array]} values2d target 2d array
+     * @param {function} condition convert condition function
+     * @returns {array} 2d array
      * @private
      */
-    _convertValues: function(arr2d, callback) {
-        var result = ne.util.map(arr2d, function(arr) {
-            return ne.util.map(arr, callback);
+    _convertValues: function(values2d, condition) {
+        var result = ne.util.map(values2d, function(values) {
+            return ne.util.map(values, condition);
         });
         return result;
     },
 
     /**
      * Make to percent value.
-     * @param {[array, ...]} arr2d maker data
+     * @param {[array]} values maker data
      * @param {{min:number, max:number}} scale min, max scale
-     * @returns {array}
+     * @returns {array} percent values
      * @private
      */
-    _makePercentValues: function(arr2d, scale) {
+    _makePercentValues: function(values, scale) {
         var min = scale.min,
             max = scale.max,
-            result = this._convertValues(arr2d, function(value) {
+            percentValues = this._convertValues(values, function(value) {
                 return (value - min) / max;
             });
-        return result;
+        return percentValues;
     },
 
     /**
-     * Make to pixel value.
-     * @param {[array, ...]}arr2d percent data
+     * Make to pixel values.
      * @param {number} size width or height
-     * @returns {array}
+     * @returns {array} pixel values
      */
     getPixelValues: function(size) {
         var result = this._convertValues(this.percentValues, function(value) {
@@ -118,14 +117,16 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Pick last colors.
-     * @returns {array}
+     * @returns {array} colors
      */
     pickLastColors: function() {
-        if (!this.lastItemStyles.length || !this.lastItemStyles[0]['color']) {
-            return  [];
+        var lastItemsStyles = this.lastItemStyles,
+            colors = [];
+        if (lastItemsStyles.length && lastItemsStyles[0].color) {
+            colors = ne.util.pluck(lastItemsStyles, 'color');
         }
 
-        return ne.util.pluck(this.lastItemStyles, 'color');
+        return colors;
     }
 
 });

@@ -6,11 +6,9 @@
 
 'use strict';
 
-var PopupView = require('../../src/js/views/popupView.js'),
-    PopupModel = require('../../src/js/models/popupModel.js');
+var PopupView = require('../../src/js/views/popupView.js');
 
 describe('test Legend View', function() {
-
     it('test _makePopupsHtml', function() {
         var popupView = new PopupView({
                 options: {}

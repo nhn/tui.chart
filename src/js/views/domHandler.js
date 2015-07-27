@@ -11,12 +11,12 @@ var domHandler = {
      * Create element.
      * @param {string} tag html tag
      * @param {string} newClass class name
-     * @returns {Element}
+     * @returns {element} created element
      */
     createElement: function(tag, newClass) {
         var el = document.createElement(tag);
 
-        if(newClass) {
+        if (newClass) {
             this.addClass(el, newClass);
         }
 

@@ -6,8 +6,7 @@
 
 'use strict';
 
-var ChartModel = require('../../src/js/models/chartModel.js'),
-    chartConst = require('../../src/js/const.js');
+var ChartModel = require('../../src/js/models/chartModel.js');
 
 describe('test chart model', function() {
     var userData = [

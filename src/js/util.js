@@ -1,9 +1,11 @@
+'use strict';
+
 /**
  * ne.util에 range가 추가되기 전까지 임시로 사용
- * @param {number} start
- * @param {number} stop
- * @param {number} step
- * @returns {array}
+ * @param {number} start start
+ * @param {number} stop stop
+ * @param {number} step step
+ * @returns {array} result array
  */
 var range = function(start, stop, step) {
     var arr = [],
@@ -28,9 +30,9 @@ var range = function(start, stop, step) {
 
 /**
  * * ne.util에 pluck이 추가되기 전까지 임시로 사용
- * @param {array} arr
- * @param {string} property
- * @returns {Array}
+ * @param {array} arr array
+ * @param {string} property property
+ * @returns {array} result array
  */
 var pluck = function(arr, property) {
     var result = ne.util.map(arr, function(item) {
@@ -41,8 +43,8 @@ var pluck = function(arr, property) {
 
 /**
  * * ne.util에 zip이 추가되기 전까지 임시로 사용
- * @params {...array}
- * @returns {array}
+ * @params {...array} array
+ * @returns {array} result array
  */
 var zip = function() {
     var arr2 = Array.prototype.slice.call(arguments),
@@ -63,7 +65,7 @@ var zip = function() {
 /**
  * Pick min number from number array.
  * @param {array} arr number array
- * @returns {number}
+ * @returns {number} result array
  */
 var min = function(arr) {
     var result = Math.min.apply(null, arr);
@@ -73,7 +75,7 @@ var min = function(arr) {
 /**
  * Pick max number from number array.
  * @param {array} arr number array
- * @returns {number}
+ * @returns {number} result array
  */
 var max = function(arr) {
     var result = Math.max.apply(null, arr);

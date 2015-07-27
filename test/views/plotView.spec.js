@@ -67,5 +67,4 @@ describe('test Plot View', function() {
         expect(el.className).toEqual('plot-area');
         expect(el.innerHTML).toEqual(elTemp.innerHTML);
     });
-
 });

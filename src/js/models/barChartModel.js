@@ -84,18 +84,18 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
             axisInfo;
 
         axisInfo = this._setAxis(labels, values, options);
-        this._setPlot(axisInfo.hAxis, axisInfo.vAxis);
+        this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
-        this._setSeries(values, axisInfo.valueScale, lastItemStyles, options.series);
+        this._setSeries(values, axisInfo.valueScale, lastItemStyles);
         this._setPopup(values, labels, legendLabels, options.tooltip);
     },
 
     /**
-     *
+     * Set Axis.
      * @param {array} labels labels
-     * @param {[array, ...] values values
+     * @param {[array]} values values
      * @param {object} options options
-     * @returns {{vAxis: object, hAxis: object, valueScale: object}}
+     * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
     _setAxis: function(labels, values, options) {
@@ -126,14 +126,15 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set plot.
-     * @param {number} hTickcount horizontal tick count
+     * @param {number} hTickCount horizontal tick count
      * @param {number} vTickCount vertical tick count
+     * @param {object} options options
      * @private
      */
-    _setPlot: function(hAxis, vAxis, options) {
+    _setPlot: function(hTickCount, vTickCount, options) {
         this.plot = new PlotModel({
-            hTickCount: hAxis.getValidTickCount(),
-            vTickCount: vAxis.getValidTickCount()
+            hTickCount: hTickCount,
+            vTickCount: vTickCount
         }, options);
     },
 
@@ -151,17 +152,18 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set series
-     * @param {[array, ...]} values chart values
+     * @param {[array]} values chart values
      * @param {{min: number, max: number}} scale axis scale
-     * @param {array} colors series colors
+     * @param {array} lastItemStyles last item styles
+     * @param {object} options options
      * @private
      */
-    _setSeries: function(values, scale, lastItemStyles, options) {
+    _setSeries: function(values, scale, lastItemStyles) {
         this.series = new SeriesModel({
             values: values,
             scale: scale,
             lastItemStyles: lastItemStyles
-        }, options);
+        });
     },
 
     _setPopup: function(values, labels, legendLabels, options) {

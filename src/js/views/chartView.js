@@ -6,8 +6,7 @@
 
 'use strict';
 var dom = require('./domHandler.js'),
-    View = require('./view.js'),
-    chartConst = require('../const.js');
+    View = require('./view.js');
 
 var TITLE_ADD_PADDING = 20;
 
@@ -48,13 +47,17 @@ var ChartView = ne.util.defineClass(View, {
 
     /**
      * Chart title renderer.
-     * @returns {element}
+     * @returns {element} title element
      */
     renderTitleArea: function() {
         var elTitle = this.renderTitle(this.model.title, this.theme.title, 'ne-chart-title');
         return elTitle;
     },
 
+    /**
+     * Render chart font.
+     * @param {string} fontFamily font-family
+     */
     renderChartFont: function(fontFamily) {
         if (!fontFamily) {
             return;
@@ -65,7 +68,7 @@ var ChartView = ne.util.defineClass(View, {
 
     /**
      * Get rendered title height.
-     * @returns {number}
+     * @returns {number} title height
      */
     getRenderedTitleHeight: function() {
         var title = this.model.title,

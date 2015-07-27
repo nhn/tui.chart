@@ -46,11 +46,6 @@ describe('test Axis View', function() {
 
     it('test _makeLabelCssTexts', function() {
         var axisView = new AxisView(),
-            labelOptions = {
-                fontSize: 12,
-                fontFamily: 'Verdana',
-                color: 'blue'
-            },
             cssTexts = axisView._makeLabelCssTexts(true, true, 100);
         expect(cssTexts).toEqual(['height:100px', 'line-height:100px']);
 
@@ -71,7 +66,7 @@ describe('test Axis View', function() {
                 '<div class="label" style="left:20px">label2</div>' +
                 '<div class="label" style="left:30px">label3</div>';
 
-        expect(labelsHtml).toEqual(compareHtml)
+        expect(labelsHtml).toEqual(compareHtml);
     });
 
     describe('test value type axis', function() {
@@ -173,7 +168,7 @@ describe('test Axis View', function() {
         it('test vertical _renderLabelArea', function() {
             var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
-            axisModel.changeVerticalState(true)
+            axisModel.changeVerticalState(true);
 
             elTickArea = axisView._renderLabelArea(300, 100);
 

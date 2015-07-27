@@ -31,15 +31,15 @@ var LegendView = ne.util.defineClass(View, {
         /**
          * Legend view className
          */
-        this.className =  'ne-chart-legend-area';
+        this.className = 'ne-chart-legend-area';
 
         View.call(this);
     },
 
     /**
      * Legend renderer.
-     * @param {number} plotHeight plot height
-     * @returns {element}
+     * @param {obejct} bound plot bound
+     * @returns {element} legend element
      */
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
@@ -66,7 +66,7 @@ var LegendView = ne.util.defineClass(View, {
 
     /**
      * Render label option
-     * @param {{fontSize:number, fontFamily: string, color: string}}theme
+     * @param {{fontSize:number, fontFamily: string, color: string}} theme label theme
      * @private
      */
     _renderLabelTheme: function(theme) {
@@ -77,7 +77,7 @@ var LegendView = ne.util.defineClass(View, {
 
     /**
      * Get legend area height.
-     * @returns {number}
+     * @returns {number} height
      * @private
      */
     getLegendAreaHeight: function() {
@@ -88,7 +88,7 @@ var LegendView = ne.util.defineClass(View, {
 
     /**
      * Get legend area width.
-     * @returns {number}
+     * @returns {number} width
      */
     getLegendAreaWidth: function() {
         var labels = this.model.labels,

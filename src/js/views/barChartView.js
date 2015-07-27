@@ -98,10 +98,10 @@ BarChartView = ne.util.defineClass(ChartView, {
 
     /**
      * Bar chart renderer
-     * @returns {element}
+     * @returns {element} bar chart element
      */
     render: function() {
-        var popupPrefix = POPUP_PREFIX + (new Date).getTime() + '-',
+        var popupPrefix = POPUP_PREFIX + (new Date()).getTime() + '-',
             isColumn = this.options.barType === chartConst.BAR_TYPE_COLUMN,
             bounds = this.getViewsBound(),
             elTitle = this.renderTitleArea(),
@@ -150,7 +150,7 @@ BarChartView = ne.util.defineClass(ChartView, {
      *   legend: {
      *     position: {top: number}
      *   }
-     * }}
+     * }} bounds
      */
     getViewsBound: function() {
         var titleHeight = this.getRenderedTitleHeight(),

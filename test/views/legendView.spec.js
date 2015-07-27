@@ -7,8 +7,7 @@
 'use strict';
 
 var LegendView = require('../../src/js/views/legendView.js'),
-    LegendModel = require('../../src/js/models/legendModel.js'),
-    chartConst = require('../../src/js/const.js');
+    LegendModel = require('../../src/js/models/legendModel.js');
 
 describe('test Legend View', function() {
     var labels = [
@@ -23,7 +22,7 @@ describe('test Legend View', function() {
         },
         legendModel, legendView;
     legendModel = new LegendModel({labels: labels});
-    legendView = new LegendView(legendModel, theme)
+    legendView = new LegendView(legendModel, theme);
 
 
     it('test getLegendAreaHeight', function() {

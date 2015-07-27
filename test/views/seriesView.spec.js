@@ -14,8 +14,8 @@ var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
 describe('test seriesView', function() {
     var data = {
             values: [[20], [40]],
-            scale: {min: 0, max: 160 },
-            lastColors: ['red', 'ornage', 'yellow', 'green'],
+            scale: {min: 0, max: 160},
+            lastColors: ['red', 'ornage', 'yellow', 'green']
         },
         options = {
             bars: 'vertical',
@@ -48,5 +48,4 @@ describe('test seriesView', function() {
 
         expect(!!elSeries.firstChild).toBeTruthy();
     });
-
 });

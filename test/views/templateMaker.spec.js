@@ -14,6 +14,5 @@ describe('test templateMaker', function() {
             template = templateMaker.template(tag),
             result = template({key1: '가나다', key2: '라마바'});
         expect(result).toEqual('<a>가나다<span>라마바</span></a>가나다');
-
     });
 });

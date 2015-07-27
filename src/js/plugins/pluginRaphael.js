@@ -39,9 +39,12 @@ BarChart = ne.util.defineClass({
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} dimension graph dimension
      * @param {number} maxBarWidth max bar width
-     * @param {[array, ...]} values percent values
+     * @param {[array]} values percent values
      * @param {array} colors colors
+     * @param {string} lastColor last color
      * @param {number} groupIndex bar group index
+     * @param {function} inCallback in callback
+     * @param {function} outCallback out callback
      * @private;
      */
     _renderColumns: function(paper, dimension, maxBarWidth, values, colors, lastColor, groupIndex, inCallback, outCallback) {
@@ -71,9 +74,12 @@ BarChart = ne.util.defineClass({
      * @param {object} paper raphael paper
      * @param {{width: number, height: number}} size graph size
      * @param {number} maxBarHeight max bar height
-     * @param {[array, ...]} values percent values
+     * @param {[array]} values percent values
      * @param {array} colors colors
+     * @param {string} lastColor last color
      * @param {number} groupIndex bar group index
+     * @param {function} inCallback in callback
+     * @param {function} outCallback out callback
      * @private;
      */
     _renderBars: function(paper, size, maxBarHeight, values, colors, lastColor, groupIndex, inCallback, outCallback) {
@@ -102,7 +108,7 @@ BarChart = ne.util.defineClass({
     /**
      * This is Bar chart graph render function.
      * @param {element} container container element
-     * @param {size: object, model: object, options: object} data chart data
+     * @param {{size: object, model: object, options: object}} data chart data
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
      */

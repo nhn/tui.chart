@@ -124,8 +124,8 @@ AxisModel = ne.util.defineClass(Model, {
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min chart min value
      * @param {number} max max chart max value
-     * @params {number} minValue optional min value
-     * @returns {{min: number, max: number}} scale
+     * @param {number} minValue optional min value
+     * @returns {{min: number, max: number}} scale axis scale
      * @private
      */
     _calculateScale: function(min, max, minValue) {
@@ -139,7 +139,7 @@ AxisModel = ne.util.defineClass(Model, {
             }
             scale.min = minValue;
         } else if (max / 6 > min) {
-            scale.min  = 0;
+            scale.min = 0;
         } else {
             scale.min = min - iodValue;
         }
@@ -150,14 +150,14 @@ AxisModel = ne.util.defineClass(Model, {
     /**
      * Pick max length under point.
      * @param {array} arr chart values
-     * @returns {number}
+     * @returns {number} max length under point
      * @private
      */
     _pickMaxLenUnderPoint: function(arr) {
         var max = 0;
 
         ne.util.forEachArray(arr, function(value) {
-            var valueArr =  (value + '').split('.');
+            var valueArr = (value + '').split('.');
             if (valueArr.length === 2 && valueArr[1].length > max) {
                 max = valueArr[1].length;
             }
@@ -170,7 +170,7 @@ AxisModel = ne.util.defineClass(Model, {
      * Format labels.
      * @param {array} arr labels
      * @param {number} len length under point
-     * @returns {Array}
+     * @returns {array} formatted labels
      * @private
      */
     _formatLabels: function(arr, len) {
@@ -178,7 +178,7 @@ AxisModel = ne.util.defineClass(Model, {
         if (len === 0) {
             format = function(value) {
                 return Math.round(value, 10);
-            }
+            };
         } else {
             format = function(value) {
                 var pow = Math.pow(10, len);
@@ -194,7 +194,7 @@ AxisModel = ne.util.defineClass(Model, {
      * Make labels from scale.
      * @param {object} scale axis scale
      * @param {number} step step between max and min
-     * @returns {array}
+     * @returns {array} labels
      * @private
      */
     _makeLabelsFromScale: function(scale, step) {
@@ -204,7 +204,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Is label axis?
-     * @returns {boolean}
+     * @returns {boolean} label axised
      */
     isLabelAxis: function() {
         return this.axisType === AXIS_TYPE_LABEL;
@@ -212,7 +212,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Is value axis?
-     * @returns {boolean}
+     * @returns {boolean} value axised
      */
     isValueAxis: function() {
         return this.axisType === AXIS_TYPE_VALUE;
@@ -228,7 +228,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Get valid tick count
-     * @returns {number}
+     * @returns {number} tick count
      */
     getValidTickCount: function() {
         var validTickCount = this.isValueAxis() ? this.tickCount : 0;

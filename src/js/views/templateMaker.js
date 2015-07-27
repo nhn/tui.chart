@@ -9,8 +9,8 @@
 module.exports = {
     /**
      * This is template maker.
-     * @param {string} tag
-     * @returns {function}
+     * @param {string} html html
+     * @returns {function} template function
      * @eaxmple
      *
      *   var template = templateMaker.template('<span>{= name }</span>'),
@@ -18,14 +18,14 @@ module.exports = {
      *   console.log(result); // <span>John</span>
      *
      */
-    template: function (tag) {
+    template: function (html) {
         return function (data) {
-            var result = tag;
+            var result = html;
             ne.util.forEach(data, function (value, key) {
                 var regExp = new RegExp('{=\\s*' + key + '\\s*}', 'g');
                 result = result.replace(regExp, value);
             });
             return result;
-        }
+        };
     }
 };

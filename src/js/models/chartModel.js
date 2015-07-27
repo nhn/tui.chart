@@ -7,8 +7,7 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    Model = require('./model.js');
+var Model = require('./model.js');
 
 /**
  * @classdesc ChartModel is parent of all chart model.
@@ -51,7 +50,7 @@ var ChartModel = ne.util.defineClass(Model, {
 
     /**
      * Pick axis data from user data.
-     * Axis data is pairs of label and value​.
+     * Axis data is pairs of label and value.
      * @param {object} data user data
      * @return {object} axis data;
      */
@@ -75,7 +74,7 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Pick labels from axis data.
      * @param {object} axisData axis data
-     * @returns {array}
+     * @returns {array} labels
      */
     pickLabels: function(axisData) {
         var labels = ne.util.map(axisData, function(items) {
@@ -87,7 +86,7 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Pick values from axis data.
      * @param {object} axisData axis data
-     * @returns {array}
+     * @returns {array} values
      */
     pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
@@ -101,7 +100,7 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Get styles from cssText
      * @param {string} cssText cssText ex)color:red, border-color:blue
-     * @returns {object}
+     * @returns {object} styles
      * @private
      */
     _getStyles: function(cssText) {
@@ -117,7 +116,7 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Pick last item styles.
      * @param {object} data axis data
-     * @returns {array}
+     * @returns {array} last item styles
      */
     pickLastItemStyles: function(data) {
         var titles = data[0],
@@ -139,26 +138,26 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Has style option?
      * @param {array} arr labels
-     * @returns {boolean}
+     * @returns {boolean} has style option?
      * @private
      */
     _hasStyleOption: function(arr) {
-        var last = arr[arr.length-1];
+        var last = arr[arr.length - 1];
         return ne.util.isObject(last) && last.role === 'style';
     },
 
     /**
      * Pick legend labels.
-     * @param {array} arr labels
-     * @returns {Object}
+     * @param {array} labels labels
+     * @returns {Object} labels
      */
-    pickLegendLabels: function(arr) {
-        var hasOption = this._hasStyleOption(arr),
-            last = hasOption ? arr.length - 1 : -1,
-            arr = ne.util.filter(arr, function(label, index) {
+    pickLegendLabels: function(labels) {
+        var hasOption = this._hasStyleOption(labels),
+            last = hasOption ? labels.length - 1 : -1,
+            result = ne.util.filter(labels, function(label, index) {
                 return index !== 0 && index !== last;
             });
-        return arr;
+        return result;
     }
 });
 

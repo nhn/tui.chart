@@ -33,5 +33,4 @@ describe('test ChartView', function() {
         var height = chartView.getRenderedTitleHeight();
         expect(height).toBeGreaterThan(32);
     });
-
 });
