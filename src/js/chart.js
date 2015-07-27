@@ -26,7 +26,7 @@ createChart = function(container, chartType, data, options) {
     options.theme = themeFactory.get(theme);
 
     chart = chartFactory.get(chartType, data, options);
-    container.appendChild(createChart.render());
+    container.appendChild(chart.render());
 
     return chart;
 };

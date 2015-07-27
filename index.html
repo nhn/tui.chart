@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="dist/style.css" />
     <style>
         textarea {
-            width: 300px;
+            width: 200px;
             height: 400px;
         }
 
@@ -24,7 +24,7 @@
 </head>
 <body>
 <div id="chart-area"></div>
-<div style="width:630px;margin-left:10px;margin-top:5px;">
+<div style="width:640px;margin-left:10px;margin-top:5px;">
     <div>
         chart type :
         <select id="type">
@@ -59,13 +59,14 @@
     },
     "hAxis": {
         "title": "hAxis title",
-        "format": '0.0',
+        "format": "0.0",
         "min": 0
     },
     "tooltip": {
-        "suffix": '',
-        "template": ''
-    }
+        "suffix": "",
+        "template": ""
+    },
+    "theme": "newTheme"
 }
             </textarea>
         </div>
@@ -74,24 +75,45 @@
             <button id="btn">적용</button>
             <textarea id="theme">
 {
-    chart: {
-        colors: ['black', 'white', 'gray', 'green', 'blue'],
-        background: DEFAULT_BACKGROUND,
-        fontFamily: 'Verdana'
+    "chart": {
+        "colors": ["black", "silver", "gray", "green", "blue"],
+        "background": "#ffffff",
+        "fontFamily": "Verdana"
     },
-    title: {
-        fontSize: 14,
-        color: DEFAULT_COLOR
+    "title": {
+        "fontSize": 14,
+        "color": "#000000"
     },
-    vAxis: DEFAULT_AXIS,
-    hAxis: DEFAULT_AXIS,
-    plot: {
-        lineColor: '#dddddd'
+    "vAxis": {
+        "tickColor": "#000000",
+        "title": {
+            "fontSize": 12,
+            "color": "#000000"
+        },
+        "label": {
+            "fontSize": 12,
+            "color": "#000000"
+        }
     },
-    legend: {
-        label: {
-            fontSize: 12,
-            color: DEFAULT_COLOR
+    "hAxis": {
+        "tickColor": "#000000",
+        "title": {
+            "fontSize": 12,
+            "color": "#000000"
+        },
+        "label": {
+            "fontSize": 12,
+            "color": "#000000"
+        }
+    },
+    "plot": {
+        "lineColor": "#dddddd",
+        "background": "#efefef"
+    },
+    "legend": {
+        "label": {
+            "fontSize": 12,
+            "color": "#000000"
         }
     }
 }
@@ -134,12 +156,16 @@
             }
         };
 
-    chart.columnChart(elChartArea, data, options);
+    chart.barChart(elChartArea, data, options);
 
     elBtn.addEventListener('click', function() {
         var type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
-            options = JSON.parse(document.getElementById('options').value);
+            options = JSON.parse(document.getElementById('options').value),
+            theme = JSON.parse(document.getElementById('theme').value);
+
+        chart.registTheme(options.theme, theme);
+
         elChartArea.innerHTML = '';
         chart[type](elChartArea, customData, options);
     });

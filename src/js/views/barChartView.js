@@ -39,7 +39,7 @@ BarChartView = ne.util.defineClass(ChartView, {
         this.options = options.chart;
         this.options.barType = options.barType;
 
-        this.theme = theme.chart;
+        this.theme = theme;
 
         /**
          * Bar chart className

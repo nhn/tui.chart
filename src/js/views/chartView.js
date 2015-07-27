@@ -72,10 +72,10 @@ var ChartView = ne.util.defineClass(View, {
      */
     getRenderedTitleHeight: function() {
         var title = this.model.title,
-            options = this.model.titleOptions,
+            theme = this.theme.title,
             titleHeight = 0;
         if (title) {
-            titleHeight = this.getRenderedLabelHeight(title, options) + TITLE_ADD_PADDING;
+            titleHeight = this.getRenderedLabelHeight(title, theme) + TITLE_ADD_PADDING;
         }
 
         return titleHeight;

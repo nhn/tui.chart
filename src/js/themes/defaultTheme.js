@@ -27,7 +27,8 @@ var defaultTheme = {
     vAxis: DEFAULT_AXIS,
     hAxis: DEFAULT_AXIS,
     plot: {
-        lineColor: '#dddddd'
+        lineColor: '#dddddd',
+        background: '#ffffff'
     },
     legend: {
         label: {
