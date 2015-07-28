@@ -1,5 +1,5 @@
 /**
- * @fileoverview BarChartView render axis area, plot area and series area of bar chart.
+ * @fileoverview LineChartView render axis area, plot area and series area of line chart.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -7,15 +7,19 @@
 'use strict';
 
 var AxisChartView = require('./axisChartView.js'),
-    BarChartModel = require('../models/barChartModel.js'),
+    chartFactory = require('../factories/chartFactory.js'),
+    LineChartModel = require('../models/lineChartModel.js'),
     SeriesView = require('./seriesView.js');
 
+
+var LineChartView;
+
 /**
- * @classdesc BarChartView render axis area, plot area and series area of bar chart.
+ * @classdesc LineChartView render axis area, plot area and series area of line chart.
  * @class
  * @augments ChartView
  */
-var BarChartView = ne.util.defineClass(AxisChartView, {
+LineChartView = ne.util.defineClass(AxisChartView, {
     /**
      * constructor
      * @param {object} data bar chart data
@@ -28,13 +32,13 @@ var BarChartView = ne.util.defineClass(AxisChartView, {
          * Bar chart className
          * @type {string}
          */
-        this.className = 'ne-bar-chart';
+        this.className = 'ne-line-chart';
 
         /**
          * Bar chart model
          * @type {object}
          */
-        this.model = new BarChartModel(data, options);
+        this.model = new LineChartModel(data, options);
 
         /**
          * series view
@@ -48,4 +52,4 @@ var BarChartView = ne.util.defineClass(AxisChartView, {
     }
 });
 
-module.exports = BarChartView;
+module.exports = LineChartView;

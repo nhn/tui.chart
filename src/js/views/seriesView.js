@@ -37,7 +37,7 @@ var SeriesView = ne.util.defineClass(View, {
 
         options = ne.util.extend(options, model.options);
 
-        barType = options.barType;
+        //barType = options.barType;
         libType = options.libType || chartConst.DEFAULT_PLUGIN;
 
         this.options = options;
@@ -48,7 +48,7 @@ var SeriesView = ne.util.defineClass(View, {
          * Series view className
          * @type {string}
          */
-        this.className = 'series-area ' + barType;
+        this.className = 'series-area';
 
         View.call(this);
     },
@@ -83,20 +83,20 @@ var SeriesView = ne.util.defineClass(View, {
      * Series renderer
      * @param {{width: number, height: number, top: number, right: number}} bound series bound
      * @param {string} popupPrefix popup prefix
-     * @param {boolean} isColumn is column
+     * @param {boolean} isVertical is vertical
      * @returns {HTMLElement} series element
      */
-    render: function(bound, popupPrefix, isColumn) {
+    render: function(bound, popupPrefix, isVertical) {
         var dimension = bound.dimension,
             position = bound.position,
-            inCallback = ne.util.bind(this.showPopup, this, popupPrefix, isColumn),
+            inCallback = ne.util.bind(this.showPopup, this, popupPrefix, isVertical),
             outCallback = ne.util.bind(this.hidePopup, this, popupPrefix),
             hiddenWidth = this.isIE8() ? 0 : HIDDEN_WIDTH;
 
         this.renderDimension(dimension);
 
-        position.top = position.top + (isColumn ? -HIDDEN_WIDTH : -1);
-        position.right = position.right + (isColumn ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+        position.top = position.top + (isVertical ? -HIDDEN_WIDTH : -1);
+        position.right = position.right + (isVertical ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
 
         this.renderPosition(position);
 

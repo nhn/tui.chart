@@ -13,6 +13,7 @@ module.exports = {
     DEFAULT_TICK_COLOR: 'black',
     DEFAULT_THEME_NAME: 'default',
     CHART_TYPE_BAR: 'bar',
+    CHART_TYPE_LINE: 'line',
     BAR_TYPE_BAR: 'bar',
     BAR_TYPE_COLUMN: 'column'
 };

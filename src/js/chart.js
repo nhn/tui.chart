@@ -61,5 +61,18 @@ neChart.columnChart = function(container, data, options) {
     return createChart(container, data, options);
 };
 
+/**
+ * Line chart creator
+ * @param {HTMLElement} container chart container
+ * @param {object} data chart data
+ * @param {object} options chart options
+ * @returns {object} bar chart
+ */
+neChart.lineChart = function(container, data, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_LINE;
+    return createChart(container, data, options);
+};
+
 neChart.registerPlugin = pluginFactory.register;
 neChart.registerTheme = themeFactory.register;

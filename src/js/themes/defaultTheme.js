@@ -28,8 +28,7 @@ var defaultTheme = {
         background: '#ffffff'
     },
     series: {
-        colors: ['red', 'orange', 'yellow', 'green', 'blue'],
-        borderColor: 'blue'
+        colors: ['red', 'orange', 'yellow', 'green', 'blue']
     },
     legend: {
         label: {

@@ -9,6 +9,8 @@
 
 var Model = require('./model.js');
 
+var HIDDEN_WIDTH = 1;
+
 /**
  * @classdesc SeriesModel is model for management of series data.
  * @class
@@ -19,7 +21,9 @@ var SeriesModel = ne.util.defineClass(Model, {
      * Constructor
      * @param {object} data series data
      */
-    init: function(data) {
+    init: function(data, options) {
+        console.log(options);
+        this.options = options = options || {};
         /**
          * Series makers
          * @type {array}
@@ -67,6 +71,7 @@ var SeriesModel = ne.util.defineClass(Model, {
 
         this.markers = data.values;
         this.percentValues = this._makePercentValues(data.values, data.scale);
+        this.isVertical = data.isVertical;
 
         if (ne.util.isNotEmpty(data.lastItemStyles)) {
             this.lastItemStyles = data.lastItemStyles;
@@ -104,18 +109,6 @@ var SeriesModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Make to pixel values.
-     * @param {number} size width or height
-     * @returns {array.<array>} pixel values
-     */
-    getPixelValues: function(size) {
-        var result = this._convertValues(this.percentValues, function(value) {
-            return value * size;
-        });
-        return result;
-    },
-
-    /**
      * Pick last colors.
      * @returns {array} colors
      */
@@ -127,8 +120,44 @@ var SeriesModel = ne.util.defineClass(Model, {
         }
 
         return colors;
-    }
+    },
 
+    makeColumnBounds: function(dimension) {
+        var groupValues = this.percentValues,
+            maxBarWidth = (dimension.width / groupValues.length),
+            barWidth = parseInt(maxBarWidth / (groupValues[0].length + 1), 10),
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
+                return ne.util.map(values, function (value, index) {
+                    var barHeight = parseInt(value * dimension.height, 10);
+                    return {
+                        top: dimension.height - barHeight + HIDDEN_WIDTH,
+                        left: paddingLeft + (barWidth * index),
+                        width: barWidth,
+                        height: barHeight
+                    };
+                }, this);
+            });
+        return bounds;
+    },
+
+    makeBarBounds: function(dimension, hiddenWidth) {
+        var groupValues = this.percentValues,
+            maxBarHeight = (dimension.height / groupValues.length),
+            barHeight = parseInt(maxBarHeight / (groupValues[0].length + 1), 10),
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+                return ne.util.map(values, function (value, index) {
+                    return {
+                        top: paddingTop + (barHeight * index),
+                        left: -HIDDEN_WIDTH,
+                        width: parseInt(value * dimension.width, 10),
+                        height: barHeight
+                    };
+                }, this);
+            });
+        return bounds;
+    }
 });
 
 module.exports = SeriesModel;

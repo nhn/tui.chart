@@ -98,7 +98,6 @@ var PopupView = ne.util.defineClass(View, {
         var isColumn = data.isColumn,
             bound = data.bound,
             result = {};
-
         if (isColumn) {
             result.top = bound.top - dimension.height - POPUP_GAP;
             result.left = bound.left + HIDDEN_WIDTH;
@@ -106,7 +105,6 @@ var PopupView = ne.util.defineClass(View, {
             result.top = bound.top;
             result.left = bound.width + POPUP_GAP;
         }
-
         return result;
     },
 
