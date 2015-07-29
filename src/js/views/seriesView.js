@@ -48,7 +48,7 @@ var SeriesView = ne.util.defineClass(View, {
          * Series view className
          * @type {string}
          */
-        this.className = 'series-area';
+        this.className = 'ne-chart-series-area';
 
         View.call(this);
     },

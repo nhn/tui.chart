@@ -33,7 +33,7 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('compile-less', function() {
-    return gulp.src('src/less/*.less')
+    return gulp.src('src/less/style.less')
         .pipe(less())
         .pipe(gulp.dest('./dist'));
 

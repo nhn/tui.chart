@@ -62,9 +62,9 @@ describe('test Axis View', function() {
     it('test _makeLabelsHtml', function() {
         var axisView = new AxisView(),
             labelsHtml = axisView._makeLabelsHtml([10, 20, 30], ['label1', 'label2', 'label3'], 'left', []),
-            compareHtml = '<div class="label" style="left:10px">label1</div>' +
-                '<div class="label" style="left:20px">label2</div>' +
-                '<div class="label" style="left:30px">label3</div>';
+            compareHtml = '<div class="ne-chart-label" style="left:10px">label1</div>' +
+                '<div class="ne-chart-label" style="left:20px">label2</div>' +
+                '<div class="ne-chart-label" style="left:30px">label3</div>';
 
         expect(labelsHtml).toEqual(compareHtml);
     });
@@ -84,11 +84,11 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderTickArea(300);
 
             compareHtml = '<div class="tick-area" style="border-top-color: black;">' +
-                '<div class="tick" style="background-color:black;left: 0px"></div>' +
-                '<div class="tick" style="background-color:black;left: 75px"></div>' +
-                '<div class="tick" style="background-color:black;left: 150px"></div>' +
-                '<div class="tick" style="background-color:black;left: 224px"></div>' +
-                '<div class="tick" style="background-color:black;left: 299px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 0px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 75px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 150px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 224px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 299px"></div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -113,12 +113,12 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area" style="border-right-color: black;">' +
-                '<div class="tick" style="background-color:black;bottom: 0px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 75px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 150px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 224px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 299px"></div>' +
+            compareHtml = '<div class="ne-chart-tick-area" style="border-right-color: black;">' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 0px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 75px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 150px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 224px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 299px"></div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -141,12 +141,12 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300);
 
-            compareHtml = '<div class="label-area" style="font-size:12px;left:-37px;">' +
-                '<div class="label" style="width:75px;left:0px">0</div>' +
-                '<div class="label" style="width:75px;left:75px">13</div>' +
-                '<div class="label" style="width:75px;left:150px">26</div>' +
-                '<div class="label" style="width:75px;left:224px">39</div>' +
-                '<div class="label" style="width:75px;left:299px">52</div>' +
+            compareHtml = '<div class="ne-chart-label-area" style="font-size:12px;left:-37px;">' +
+                '<div class="ne-chart-label" style="width:75px;left:0px">0</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:75px">13</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:150px">26</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:224px">39</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:299px">52</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -172,12 +172,12 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area" style="width:75px;top:7px">' +
-                '<div class="label" style="bottom: 0px">0</div>' +
-                '<div class="label" style="bottom: 75px">13</div>' +
-                '<div class="label" style="bottom: 150px">26</div>' +
-                '<div class="label" style="bottom: 224px">39</div>' +
-                '<div class="label" style="bottom: 299px">52</div>' +
+            compareHtml = '<div class="ne-chart-label-area" style="width:75px;top:7px">' +
+                '<div class="ne-chart-label" style="bottom: 0px">0</div>' +
+                '<div class="ne-chart-label" style="bottom: 75px">13</div>' +
+                '<div class="ne-chart-label" style="bottom: 150px">26</div>' +
+                '<div class="ne-chart-label" style="bottom: 224px">39</div>' +
+                '<div class="ne-chart-label" style="bottom: 299px">52</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -211,11 +211,11 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area" style="border-top-color: black;">' +
-                '<div class="tick" style="background-color:black;left: 0px"></div>' +
-                '<div class="tick" style="background-color:black;left: 100px"></div>' +
-                '<div class="tick" style="background-color:black;left: 199px"></div>' +
-                '<div class="tick" style="background-color:black;left: 299px"></div>' +
+            compareHtml = '<div class="ne-chart-tick-area" style="border-top-color: black;">' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 0px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 100px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 199px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;left: 299px"></div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -240,11 +240,11 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderTickArea(300);
 
-            compareHtml = '<div class="tick-area" style="border-right-color: black;">' +
-                '<div class="tick" style="background-color:black;bottom: 0px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 100px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 199px"></div>' +
-                '<div class="tick" style="background-color:black;bottom: 299px"></div>' +
+            compareHtml = '<div class="ne-chart-tick-area" style="border-right-color: black;">' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 0px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 100px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 199px"></div>' +
+                '<div class="ne-chart-tick" style="background-color:black;bottom: 299px"></div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -267,10 +267,10 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300);
 
-            compareHtml = '<div class="label-area">' +
-                '<div class="label" style="width:100px;left: 0px">label1</div>' +
-                '<div class="label" style="width:100px;left: 100px">label2</div>' +
-                '<div class="label" style="width:100px;left: 199px">label3</div>' +
+            compareHtml = '<div class="ne-chart-label-area">' +
+                '<div class="ne-chart-label" style="width:100px;left: 0px">label1</div>' +
+                '<div class="ne-chart-label" style="width:100px;left: 100px">label2</div>' +
+                '<div class="ne-chart-label" style="width:100px;left: 199px">label3</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -294,10 +294,10 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300, 100);
 
-            compareHtml = '<div class="label-area" style="width: 75px;">' +
-                '<div class="label" style="height:100px;line-height:100px;top: 0px">label1</div>' +
-                '<div class="label" style="height:100px;line-height:100px;top: 100px">label2</div>' +
-                '<div class="label" style="height:100px;line-height:100px;top: 199px">label3</div>' +
+            compareHtml = '<div class="ne-chart-label-area" style="width: 75px;">' +
+                '<div class="ne-chart-label" style="height:100px;line-height:100px;top: 0px">label1</div>' +
+                '<div class="ne-chart-label" style="height:100px;line-height:100px;top: 100px">label2</div>' +
+                '<div class="ne-chart-label" style="height:100px;line-height:100px;top: 199px">label3</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');

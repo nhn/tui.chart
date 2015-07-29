@@ -33,7 +33,7 @@ var PlotView = ne.util.defineClass(View, {
          * Plot view className
          * @type {string}
          */
-        this.className = 'plot-area';
+        this.className = 'ne-chart-plot-area';
 
         View.call(this);
     },
