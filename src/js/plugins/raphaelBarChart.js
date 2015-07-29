@@ -53,15 +53,13 @@ var BarChart = ne.util.defineClass({
      * @private
      */
     _renderBars: function(paper, model, theme, groupBounds, inCallback, outCallback) {
-        var lastColors = model.pickLastColors() || [],
+        var singleColors = (groupBounds[0].length === 1) && theme.singleColors || [],
             colors = theme.colors,
             borderColor = theme.borderColor || 'none';
-
         ne.util.forEachArray(groupBounds, function(bounds, groupIndex) {
-            var lastIndex = bounds.length - 1,
-                lastColor = lastColors[groupIndex];
+            var singleColor = singleColors[groupIndex]
             ne.util.forEachArray(bounds, function(bound, index) {
-                var color = (lastIndex === index && lastColor) ? lastColor : colors[index],
+                var color = singleColor || colors[index],
                     id = groupIndex + '-' + index,
                     rect = this._renderBar(paper, color, borderColor, bound);
                 this._bindHoverEvent(rect, bound, id, inCallback, outCallback);

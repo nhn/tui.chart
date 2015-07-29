@@ -30,15 +30,14 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, {
      * @param {array.array} values chart values
      * @param {array.array} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale
-     * @param {array.object} lastItemStyles last item styles
      * @param {boolean} isVertical is vertical
      * @param {object} options options
      * @private
      */
-    _setSeries: function(values, formatValues, scale, lastItemStyles, isVertical, options) {
+    _setSeries: function(values, formatValues, scale, isVertical, options) {
         values = this.arrayPivot(values);
         formatValues = this.arrayPivot(formatValues);
-        AxisChartModel.prototype._setSeries.call(this, values, formatValues, scale, lastItemStyles, isVertical, options);
+        AxisChartModel.prototype._setSeries.call(this, values, formatValues, scale, isVertical, options);
     }
 });
 

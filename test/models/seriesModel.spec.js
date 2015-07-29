@@ -11,7 +11,6 @@ var SeriesModel = require('../../src/js/models/seriesModel.js');
 describe('test series model', function() {
     var values = [[20], [40], [80], [120]],
         percentValues = [[0.125], [0.25], [0.5], [0.75]],
-        lastItemStyles = [{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}],
         scale = {min: 0, max: 160};
 
     describe('test method', function() {
@@ -35,14 +34,6 @@ describe('test series model', function() {
 
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.percentValues).toEqual(percentValues);
-            expect(seriesModel.lastItemStyles).toEqual([]);
-
-            seriesModel._setData({
-                values: values,
-                scale: scale,
-                lastItemStyles: lastItemStyles
-            });
-            expect(seriesModel.lastItemStyles).toEqual(lastItemStyles);
         });
     });
 
@@ -51,8 +42,7 @@ describe('test series model', function() {
             var data = {
                     values: values,
                     formatValues: values,
-                    scale: scale,
-                    lastItemStyles: lastItemStyles
+                    scale: scale
                 },
                 seriesModel = new SeriesModel(data),
                 pixelValues;

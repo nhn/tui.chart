@@ -50,9 +50,10 @@ var LegendView = ne.util.defineClass(View, {
             labelHeight = this.getRenderedLabelHeight(labels[0], themeLabel) + (LABEL_PADDING_TOP * 2),
             borderCssText = borderColor ? this.concatStr(';border:1px solid ', borderColor) : '',
             rectMargin = this.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
+            singleColor = (labels.length === 1) && 'transparent',
             html = ne.util.map(labels, function(label, index) {
                 var data = {
-                    cssText: this.concatStr('background-color:', colors[index], borderCssText, rectMargin),
+                    cssText: this.concatStr('background-color:', singleColor || colors[index], borderCssText, rectMargin),
                     height: labelHeight,
                     label: label
                 };

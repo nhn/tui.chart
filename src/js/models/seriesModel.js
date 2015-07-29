@@ -48,12 +48,6 @@ var SeriesModel = ne.util.defineClass(Model, {
          */
         this.colors = [];
 
-        /**
-         * Series last item styles
-         * @type {Array}
-         */
-        this.lastItemStyles = [];
-
         if (data) {
             this._setData(data);
         }
@@ -72,10 +66,6 @@ var SeriesModel = ne.util.defineClass(Model, {
         this.markers = data.formatValues;
         this.percentValues = this._makePercentValues(data.values, data.scale);
         this.isVertical = data.isVertical;
-
-        if (ne.util.isNotEmpty(data.lastItemStyles)) {
-            this.lastItemStyles = data.lastItemStyles;
-        }
     },
 
     /**
@@ -106,20 +96,6 @@ var SeriesModel = ne.util.defineClass(Model, {
                 return (value - min) / (max - min);
             });
         return percentValues;
-    },
-
-    /**
-     * Pick last colors.
-     * @returns {array} colors
-     */
-    pickLastColors: function() {
-        var lastItemsStyles = this.lastItemStyles,
-            colors = [];
-        if (lastItemsStyles.length && lastItemsStyles[0].color) {
-            colors = ne.util.pluck(lastItemsStyles, 'color');
-        }
-
-        return colors;
     },
 
     /**
