@@ -49,6 +49,18 @@ LineChartView = ne.util.defineClass(AxisChartView, {
         }, theme.series);
 
         AxisChartView.call(this, data, options);
+    },
+
+    /**
+     * Attach custom event
+     * @private
+     */
+    _attachCustomEvent: function() {
+        var popupView = this.popupView,
+            seriesView = this.seriesView;
+        popupView.on('showDot', seriesView.onShowDot, seriesView);
+        popupView.on('hideDot', seriesView.onHideDot, seriesView);
+        AxisChartView.prototype._attachCustomEvent.apply(this);
     }
 });
 

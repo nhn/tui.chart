@@ -8,6 +8,8 @@
 
 var Raphael = window.Raphael;
 
+var HIDE_DELAY = 100;
+
 /**
  * @classdesc This class is LineChart graph renderer.
  * @class
@@ -15,33 +17,75 @@ var Raphael = window.Raphael;
 var LineChart = ne.util.defineClass({
     render: function(container, data, inCallback, outCallback) {
         var dimension = data.dimension,
-            colors = data.theme.colors,
-            fillOpacity = data.model.options.dot ? 1 : 0,
+            theme = data.theme,
+            colors = theme.colors,
+            opacity = data.model.options.dot ? 1 : 0,
             paper = Raphael(container, dimension.width, dimension.height),
-            groupPositions = this._makePositions(data.dimension, data.model.percentValues),
+            groupPositions = data.model.makeLinePositions(data.dimension),
             groupLines = this._renderLines(paper, colors, groupPositions),
-            groupDots = this._renderDots(paper, colors, groupPositions, fillOpacity);
+            borderStyle = theme.borderColor && {
+                'stroke': theme.borderColor,
+                'stroke-width': 1,
+                'stroke-opacity': opacity
+            },
+            groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
 
-        this._attachLinesEvent(groupDots, groupLines, groupPositions, fillOpacity, inCallback, outCallback);
+        this._attachEvent(groupDots, groupLines, groupPositions, opacity, borderStyle, inCallback, outCallback);
+
+        this.groupDots = groupDots;
     },
 
-    _makePositions: function(dimension, groupValues) {
-        var width = dimension.width,
-            height = dimension.height,
-            step = width / groupValues[0].length,
-            start = step / 2,
-            result = ne.util.map(groupValues, function(values) {
-                return ne.util.map(values, function(value, index) {
-                    return {
-                        left: start + (step * index),
-                        top: height - (value * height)
-                    };
-                });
-            });
-        return result;
+    showDot: function(data) {
+        var index = data.groupIndex, // Line chart has pivot values.
+            groupIndex = data.index,
+            dot = this.groupDots[groupIndex][index];
+
+        dot.attr({
+            'fill-opacity': 1,
+            'stroke-opacity': 0.3,
+            'stroke-width': 3,
+            r: 6
+        });
     },
 
-    _getLinePath: function(fx, fy, tx, ty, width) {
+    hideDot: function(data) {
+        var index = data.groupIndex, // Line chart has pivot values.
+            groupIndex = data.index,
+            dot = this.groupDots[groupIndex][index];
+
+        dot.attr(this.outDotStyle);
+    },
+
+    _renderDot: function(paper, position, color, opacity, borderStyle) {
+        var dot = paper.circle(position.left, position.top, 4),
+            dotStyle = {
+                fill: color,
+                'fill-opacity': opacity,
+                'stroke-opacity': 0
+            };
+
+        if (borderStyle) {
+            ne.util.extend(dotStyle, borderStyle);
+        }
+
+        dot.attr(dotStyle);
+
+        return dot;
+    },
+
+    _renderDots: function(paper, groupPositions, colors, opacity, borderStyle) {
+        var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
+            var color = colors[groupIndex];
+            return ne.util.map(positions, function(position) {
+                var dot = this._renderDot(paper, position, color, opacity, borderStyle);
+                return dot;
+            }, this);
+        }, this);
+
+        return dots;
+    },
+
+    _makeLinePath: function(fx, fy, tx, ty, width) {
         var fromPoint = [fx, fy];
         var toPoint = [tx, ty];
 
@@ -64,64 +108,14 @@ var LineChart = ne.util.defineClass({
         };
     },
 
-    _renderDot: function(paper, position, color, fillOpacity) {
-        var dot = paper.circle(position.left, position.top, 4);
-
-        dot.attr({
-            fill: color,
-            'fill-opacity': fillOpacity,
-            'stroke-width': 3,
-            'stroke-opacity': 0
-        });
-
-        return dot;
-    },
-
-    _renderLine: function(paper, path, color) {
+    _renderLine: function(paper, path, color, strokeWidth) {
         var line = paper.path([path]);
         line.attr({
             stroke: color,
-            'stroke-width': 2
+            'stroke-width': strokeWidth || 2
         });
 
         return line;
-    },
-
-    _attachEvent: function(target, dot, fillOpacity, position, id, inCallback, outCallback) {
-        target.hover(function() {
-            dot.attr({
-                'fill-opacity': 1,
-                'stroke-opacity': 0.3,
-                r: 6
-            });
-            inCallback(position, id);
-        }, function() {
-            dot.attr({
-                'fill-opacity': fillOpacity,
-                'stroke-opacity': 0,
-                r: 4
-            });
-            outCallback(id);
-        });
-    },
-
-    _attachLinesEvent: function(groupDots, groupLines, groupPositions, fillOpacity, inCallback, outCallback) {
-        ne.util.forEach(groupDots, function(dots, groupIndex) {
-            ne.util.forEach(dots, function(dot, index, scope) {
-                var position = groupPositions[groupIndex][index],
-                    id = index + '-' + groupIndex,
-                    prevIndex, prevPositon, lines, prevId;
-                this._attachEvent(dot, dot, fillOpacity, position, id, inCallback, outCallback);
-                if (index > 0) {
-                    prevIndex = index - 1;
-                    lines = groupLines[groupIndex][prevIndex];
-                    prevPositon = groupPositions[groupIndex][prevIndex];
-                    prevId = prevIndex + '-' + groupIndex;
-                    this._attachEvent(lines[0], scope[prevIndex], fillOpacity, prevPositon, prevId, inCallback, outCallback);
-                    this._attachEvent(lines[1], dot, fillOpacity, position, id, inCallback, outCallback);
-                }
-            }, this);
-        }, this);
     },
 
     _renderLines: function(paper, colors, groupPositions) {
@@ -131,8 +125,8 @@ var LineChart = ne.util.defineClass({
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
                 var center = this._getCenter(from, position),
-                    firstPath = this._getLinePath(from.left, from.top, center.left, center.top),
-                    secondPath = this._getLinePath(center.left, center.top, position.left, position.top),
+                    firstPath = this._makeLinePath(from.left, from.top, center.left, center.top),
+                    secondPath = this._makeLinePath(center.left, center.top, position.left, position.top),
                     firstLine = this._renderLine(paper, firstPath, color),
                     secondLine = this._renderLine(paper, secondPath, color);
 
@@ -144,16 +138,50 @@ var LineChart = ne.util.defineClass({
         return groupLines;
     },
 
-    _renderDots: function(paper, colors, groupPositions, fillOpacity) {
-        var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
-            var color = colors[groupIndex];
-            return ne.util.map(positions, function(position) {
-                var dot = this._renderDot(paper, position, color, fillOpacity);
-                return dot;
+    _bindHoverEvent: function(target, dot, outDotStyle, position, id, inCallback, outCallback) {
+        target.hover(function() {
+            dot.attr({
+                'fill-opacity': 1,
+                'stroke-opacity': 0.3,
+                'stroke-width': 3,
+                r: 6
+            });
+            inCallback(position, id);
+        }, function() {
+            setTimeout(function() {
+                dot.attr(outDotStyle);
+            }, HIDE_DELAY);
+            outCallback(id);
+        });
+    },
+
+    _attachEvent: function(groupDots, groupLines, groupPositions, opacity, borderStyle, inCallback, outCallback) {
+        var outDotStyle = {
+            'fill-opacity': opacity,
+            'stroke-opacity': 0,
+            r: 4
+        };
+
+        this.outDotStyle = outDotStyle;
+        if (borderStyle) {
+            ne.util.extend(outDotStyle, borderStyle);
+        }
+        ne.util.forEach(groupDots, function(dots, groupIndex) {
+            ne.util.forEach(dots, function(dot, index, scope) {
+                var position = groupPositions[groupIndex][index],
+                    id = index + '-' + groupIndex,
+                    prevIndex, prevPositon, lines, prevId;
+                this._bindHoverEvent(dot, dot, outDotStyle, position, id, inCallback, outCallback);
+                if (index > 0) {
+                    prevIndex = index - 1;
+                    lines = groupLines[groupIndex][prevIndex];
+                    prevPositon = groupPositions[groupIndex][prevIndex];
+                    prevId = prevIndex + '-' + groupIndex;
+                    this._bindHoverEvent(lines[0], scope[prevIndex], outDotStyle, prevPositon, prevId, inCallback, outCallback);
+                    this._bindHoverEvent(lines[1], dot, outDotStyle, position, id, inCallback, outCallback);
+                }
             }, this);
         }, this);
-
-        return dots;
     }
 });
 

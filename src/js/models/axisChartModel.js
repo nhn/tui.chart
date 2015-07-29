@@ -65,7 +65,6 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @private
      */
     _setData: function(data) {
-        console.log(this.options);
         var options = this.options || {},
             axisData = this.pickAxisData(data),
             labels = this.pickLabels(axisData),
@@ -77,7 +76,6 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         axisInfo = this._setAxis(labels, values, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
-        console.log(options.series);
         this._setSeries(values, axisInfo.valueScale, lastItemStyles, this.isVertical, options.series);
         this._setPopup(values, labels, legendLabels, options.tooltip);
     },
@@ -152,7 +150,6 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @private
      */
     _setSeries: function(values, scale, lastItemStyles, isVertical, options) {
-        console.log(':::', options);
         this.series = new SeriesModel({
             values: values,
             scale: scale,

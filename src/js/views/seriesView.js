@@ -107,6 +107,14 @@ var SeriesView = ne.util.defineClass(View, {
             options: this.options
         }, inCallback, outCallback);
         return this.el;
+    },
+
+    onShowDot: function(data) {
+        this.graphRenderer.showDot.call(this.graphRenderer, data);
+    },
+
+    onHideDot: function(data) {
+        this.graphRenderer.hideDot.call(this.graphRenderer, data);
     }
 });
 

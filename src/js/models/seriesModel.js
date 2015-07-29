@@ -22,7 +22,6 @@ var SeriesModel = ne.util.defineClass(Model, {
      * @param {object} data series data
      */
     init: function(data, options) {
-        console.log(options);
         this.options = options = options || {};
         /**
          * Series makers
@@ -157,6 +156,23 @@ var SeriesModel = ne.util.defineClass(Model, {
                 }, this);
             });
         return bounds;
+    },
+
+    makeLinePositions: function(dimension) {
+        var groupValues = this.percentValues,
+            width = dimension.width,
+            height = dimension.height,
+            step = width / groupValues[0].length,
+            start = step / 2,
+            result = ne.util.map(groupValues, function(values) {
+                return ne.util.map(values, function(value, index) {
+                    return {
+                        left: start + (step * index),
+                        top: height - (value * height)
+                    };
+                });
+            });
+        return result;
     }
 });
 

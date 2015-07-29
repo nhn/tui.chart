@@ -167,9 +167,10 @@ AxisChartView = ne.util.defineClass(ChartView, {
      * @private
      */
     _attachCustomEvent: function() {
-        var popupView = this.popupView;
-        this.seriesView.on('showPopup', popupView.onShow, popupView);
-        this.seriesView.on('hidePopup', popupView.onHide, popupView);
+        var popupView = this.popupView,
+            seriesView = this.seriesView;
+        seriesView.on('showPopup', popupView.onShow, popupView);
+        seriesView.on('hidePopup', popupView.onHide, popupView);
     }
 });
 

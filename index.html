@@ -30,6 +30,7 @@
         <select id="type">
             <option value="barChart">Bar Chart</option>
             <option value="columnChart">Column Chart</option>
+            <option value="lineChart">line Chart</option>
         </select>
     </div>
     <div>
@@ -65,6 +66,9 @@
     "tooltip": {
         "suffix": "",
         "template": ""
+    },
+    "series": {
+        "dot": true
     },
     "theme": "newTheme"
 }
@@ -159,7 +163,7 @@
             }
         };
 
-    chart.barChart(elChartArea, data, options);
+    chart.lineChart(elChartArea, data, options);
 
     elBtn.addEventListener('click', function() {
         var type = document.getElementById('type').value,
