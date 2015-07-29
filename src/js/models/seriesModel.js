@@ -103,7 +103,7 @@ var SeriesModel = ne.util.defineClass(Model, {
         var min = scale.min,
             max = scale.max,
             percentValues = this._convertValues(values, function(value) {
-                return (value - min) / max;
+                return (value - min) / (max - min);
             });
         return percentValues;
     },

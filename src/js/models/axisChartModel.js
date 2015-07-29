@@ -83,8 +83,8 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     /**
      * Set Axis.
      * @param {array} labels labels
-     * @param {[array]} values values
-     * @param {object} options options
+     * @param {[array]} values chart values
+     * @param {object} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
@@ -115,10 +115,10 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     },
 
     /**
-     * Set plot.
+     * Set plot model.
      * @param {number} hTickCount horizontal tick count
      * @param {number} vTickCount vertical tick count
-     * @param {object} options options
+     * @param {object} options plot options
      * @private
      */
     _setPlot: function(hTickCount, vTickCount, options) {
@@ -129,7 +129,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     },
 
     /**
-     * Set legend.
+     * Set legend model.
      * @param {array} labels legend labels
      * @param {array} colors legend colors
      * @private
@@ -141,12 +141,12 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     },
 
     /**
-     * Set series
+     * Set series model.
      * @param {[array]} values chart values
      * @param {{min: number, max: number}} scale axis scale
      * @param {array} lastItemStyles last item styles
-     * @param {object} options options
      * @param {boolean} isVertical is vertical
+     * @param {object} options series options
      * @private
      */
     _setSeries: function(values, scale, lastItemStyles, isVertical, options) {
@@ -158,6 +158,14 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         }, options);
     },
 
+    /**
+     * Set popup model.
+     * @param {array.array} values chart values
+     * @param {array} labels chart labels
+     * @param {array} legendLabels chart legend labels
+     * @param {object} options tooltip options
+     * @private
+     */
     _setPopup: function(values, labels, legendLabels, options) {
         this.popup = new PopupModel({
             values: values,
