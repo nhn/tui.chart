@@ -40,28 +40,24 @@ describe('test chart model', function() {
             var result = chartModel.pickAxisData(userData);
 
             // removed title items
-            expect(result.length).toEqual(userData.length-1);
+            expect(result.length).toEqual(userData.length - 1);
             expect(result).toEqual(axisData);
 
             result = chartModel.pickAxisData(userData2);
 
             // removed title items
-            expect(result.length).toEqual(userData2.length-1);
+            expect(result.length).toEqual(userData2.length - 1);
             expect(result).toEqual(axisData);
         });
 
         it('pickLabels', function() {
-            var result = chartModel.pickLabels(axisData);
-
-            expect(result.length).toEqual(axisData.length);
-            expect(result).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
+            var result = chartModel.pickLabels(userData3[0]);
+            expect(result).toEqual(['Density', 'Density2', 'Density3']);
         });
 
         it('pickValues', function() {
             var result = chartModel.pickValues(axisData);
-
-            expect(result.length).toEqual(axisData.length);
-            expect(result).toEqual([[8.94], [10.49], [19.30], [21.45]]);
+            expect(result).toEqual([[8.94, 10.49, 19.30, 21.45]]);
         });
 
         it('_pickStyles', function() {
@@ -78,14 +74,8 @@ describe('test chart model', function() {
         });
 
         it('pickLegendLabels', function() {
-            var labels = chartModel.pickLegendLabels(userData[0]);
-            expect(labels).toEqual(['Density']);
-
-            labels = chartModel.pickLegendLabels(userData2[0]);
-            expect(labels).toEqual(['Density']);
-
-            labels = chartModel.pickLegendLabels(userData3[0]);
-            expect(labels).toEqual(['Density', 'Density2', 'Density3']);
+            var labels = chartModel.pickLegendLabels(axisData);
+            expect(labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
         });
     });
 

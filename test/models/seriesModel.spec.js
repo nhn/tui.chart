@@ -26,15 +26,6 @@ describe('test series model', function() {
             expect(result).toEqual(percentValues);
         });
 
-        it('getPixelValues', function() {
-            var result;
-
-            seriesModel.percentValues = seriesModel._makePercentValues(values, scale);
-            result = seriesModel.getPixelValues(400);
-
-            expect(result).toEqual([[50], [100], [200], [300]]);
-        });
-
         it('_setData', function() {
             seriesModel._setData({
                 values: values,
@@ -66,12 +57,6 @@ describe('test series model', function() {
 
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.percentValues).toEqual(percentValues);
-
-            pixelValues = seriesModel.getPixelValues(400);
-            expect(pixelValues).toEqual([[50], [100], [200], [300]]);
-
-            pixelValues = seriesModel.getPixelValues(200);
-            expect(pixelValues).toEqual([[25], [50], [100], [150]]);
         });
     });
 });
