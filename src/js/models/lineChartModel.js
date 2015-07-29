@@ -34,21 +34,8 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, {
      * @private
      */
     _setSeries: function(values, scale, lastItemStyles, isVertical, options) {
-        values = this._pivotValues(values);
+        values = this.pivotArray(values);
         AxisChartModel.prototype._setSeries.call(this, values, scale, lastItemStyles, isVertical, options);
-    },
-
-    _pivotValues: function(values2d) {
-        var result = [];
-        ne.util.forEachArray(values2d, function(values) {
-            ne.util.forEachArray(values, function(value, index) {
-                if (!result[index]) {
-                    result[index] = [];
-                }
-                result[index].push(value);
-            });
-        });
-        return result;
     }
 });
 

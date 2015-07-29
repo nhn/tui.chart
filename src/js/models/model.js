@@ -41,6 +41,19 @@ var Model = ne.util.defineClass({
         }
 
         return positions;
+    },
+
+    pivotArray: function(arr2d) {
+        var result = [];
+        ne.util.forEachArray(arr2d, function(arr) {
+            ne.util.forEachArray(arr, function(value, index) {
+                if (!result[index]) {
+                    result[index] = [];
+                }
+                result[index].push(value);
+            });
+        });
+        return result;
     }
 });
 

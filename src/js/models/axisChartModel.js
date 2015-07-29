@@ -67,9 +67,9 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     _setData: function(data) {
         var options = this.options || {},
             axisData = this.pickAxisData(data),
-            labels = this.pickLabels(axisData),
+            labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
-            legendLabels = this.pickLegendLabels(data[0]),
+            legendLabels = this.pickLegendLabels(axisData),
             lastItemStyles = this.pickLastItemStyles(data),
             axisInfo;
 

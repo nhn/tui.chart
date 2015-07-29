@@ -72,15 +72,17 @@ var ChartModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Pick labels from axis data.
-     * @param {object} axisData axis data
-     * @returns {array} labels
+     * Pick labels.
+     * @param {array} labels labels
+     * @returns {Object} labels
      */
-    pickLabels: function(axisData) {
-        var labels = ne.util.map(axisData, function(items) {
-            return items[0];
-        });
-        return labels;
+    pickLabels: function(labels) {
+        var hasOption = this._hasStyleOption(labels),
+            last = hasOption ? labels.length - 1 : -1,
+            result = ne.util.filter(labels, function(label, index) {
+                return index !== 0 && index !== last;
+            });
+        return result;
     },
 
     /**
@@ -94,7 +96,8 @@ var ChartModel = ne.util.defineClass(Model, {
             values.shift();
             return values;
         });
-        return result;
+
+        return this.pivotArray(result);
     },
 
     /**
@@ -147,17 +150,15 @@ var ChartModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Pick legend labels.
-     * @param {array} labels labels
-     * @returns {Object} labels
+     * Pick legend labels from axis data.
+     * @param {object} axisData axis data
+     * @returns {array} labels
      */
-    pickLegendLabels: function(labels) {
-        var hasOption = this._hasStyleOption(labels),
-            last = hasOption ? labels.length - 1 : -1,
-            result = ne.util.filter(labels, function(label, index) {
-                return index !== 0 && index !== last;
-            });
-        return result;
+    pickLegendLabels: function(axisData) {
+        var labels = ne.util.map(axisData, function(items) {
+            return items[0];
+        });
+        return labels;
     }
 });
 
