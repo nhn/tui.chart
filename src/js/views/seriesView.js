@@ -54,14 +54,14 @@ var SeriesView = ne.util.defineClass(View, {
     },
 
     /**
-     * Show popup (mouseover callback).
-     * @param {string} prefix popup id prefix
+     * Show tooltip (mouseover callback).
+     * @param {string} prefix tooltip id prefix
      * @param {boolean} isColumn Is column(horizontal bar)?
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
-     * @param {string} id popup id
+     * @param {string} id tooltip id
      */
-    showPopup: function(prefix, isColumn, bound, id) {
-        this.fire('showPopup', {
+    showTooltip: function(prefix, isColumn, bound, id) {
+        this.fire('showTooltip', {
             id: prefix + id,
             isColumn: isColumn,
             bound: bound
@@ -69,12 +69,12 @@ var SeriesView = ne.util.defineClass(View, {
     },
 
     /**
-     * Hide popup (mouseout callback).
-     * @param {string} prefix popup id prefix
-     * @param {string} id popup id
+     * Hide tooltip (mouseout callback).
+     * @param {string} prefix tooltip id prefix
+     * @param {string} id tooltip id
      */
-    hidePopup: function(prefix, id) {
-        this.fire('hidePopup', {
+    hideTooltip: function(prefix, id) {
+        this.fire('hideTooltip', {
             id: prefix + id
         });
     },
@@ -82,15 +82,15 @@ var SeriesView = ne.util.defineClass(View, {
     /**
      * Series renderer.
      * @param {{width: number, height: number, top: number, right: number}} bound series bound
-     * @param {string} popupPrefix popup prefix
+     * @param {string} tooltipPrefix tooltip prefix
      * @param {boolean} isVertical is vertical
      * @returns {HTMLElement} series element
      */
-    render: function(bound, popupPrefix, isVertical) {
+    render: function(bound, tooltipPrefix, isVertical) {
         var dimension = bound.dimension,
             position = bound.position,
-            inCallback = ne.util.bind(this.showPopup, this, popupPrefix, isVertical),
-            outCallback = ne.util.bind(this.hidePopup, this, popupPrefix),
+            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isVertical),
+            outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             hiddenWidth = this.isIE8() ? 0 : HIDDEN_WIDTH;
 
         this.renderDimension(dimension);

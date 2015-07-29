@@ -92,7 +92,7 @@ var BarChart = ne.util.defineClass({
      * Bind hover event.
      * @param {object} rect raphael rect
      * @param {{left: number, top: number, width: number, height: number}} bound bound
-     * @param {string} id popup id
+     * @param {string} id tooltip id
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private

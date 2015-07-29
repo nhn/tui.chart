@@ -56,10 +56,10 @@ LineChartView = ne.util.defineClass(AxisChartView, {
      * @private
      */
     _attachCustomEvent: function() {
-        var popupView = this.popupView,
+        var tooltipView = this.tooltipView,
             seriesView = this.seriesView;
-        popupView.on('showDot', seriesView.onShowDot, seriesView);
-        popupView.on('hideDot', seriesView.onHideDot, seriesView);
+        tooltipView.on('showDot', seriesView.onShowDot, seriesView);
+        tooltipView.on('hideDot', seriesView.onHideDot, seriesView);
         AxisChartView.prototype._attachCustomEvent.apply(this);
     }
 });

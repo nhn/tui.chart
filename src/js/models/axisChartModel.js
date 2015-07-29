@@ -11,7 +11,7 @@ var ChartModel = require('./chartModel.js'),
     PlotModel = require('./plotModel.js'),
     LegendModel = require('./legendModel.js'),
     SeriesModel = require('./seriesModel.js'),
-    PopupModel = require('./popupModel.js');
+    TooltipModel = require('./tooltipModel.js');
 
 var BarChartModel = ne.util.defineClass(ChartModel, {
     /**
@@ -51,10 +51,10 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         this.series = null;
 
         /**
-         * PopupModel instance
+         * TooltipModel instance
          * @type {object}
          */
-        this.popup = null;
+        this.tooltip = null;
 
         ChartModel.call(this, data, options);
     },
@@ -77,7 +77,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
         this._setSeries(values, axisInfo.valueScale, lastItemStyles, this.isVertical, options.series);
-        this._setPopup(values, labels, legendLabels, options.tooltip);
+        this._setTooltip(values, labels, legendLabels, options.tooltip);
     },
 
     /**
@@ -159,15 +159,15 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     },
 
     /**
-     * Set popup model.
+     * Set tooltip model.
      * @param {array.array} values chart values
      * @param {array} labels chart labels
      * @param {array} legendLabels chart legend labels
      * @param {object} options tooltip options
      * @private
      */
-    _setPopup: function(values, labels, legendLabels, options) {
-        this.popup = new PopupModel({
+    _setTooltip: function(values, labels, legendLabels, options) {
+        this.tooltip = new TooltipModel({
             values: values,
             labels: labels,
             legendLabels: legendLabels

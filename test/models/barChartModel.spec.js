@@ -27,7 +27,7 @@ describe('test bar chart model', function() {
             expect(barChartModel.plot.vTickCount).toEqual(0);
             expect(barChartModel.plot.hTickCount).toEqual(5);
             expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
-            expect(barChartModel.popup.data[0]).toEqual({label:'Density', value: 8.94, legendLabel: 'Copper', id: '0-0'});
+            expect(barChartModel.tooltip.data[0]).toEqual({label:'Density', value: 8.94, legendLabel: 'Copper', id: '0-0'});
         });
     });
 
@@ -53,7 +53,7 @@ describe('test bar chart model', function() {
             expect(barChartModel.vAxis.scale.min).toEqual(1);
             expect(barChartModel.vAxis.labels[1]).toEqual(6.3);
             expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
-            expect(barChartModel.popup.data[1]).toEqual({label:'Density', value: 10.49, legendLabel: 'Silver', id: '0-1'});
+            expect(barChartModel.tooltip.data[1]).toEqual({label:'Density', value: 10.49, legendLabel: 'Silver', id: '0-1'});
         });
     });
 });

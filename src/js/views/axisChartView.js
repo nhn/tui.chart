@@ -10,11 +10,11 @@ var ChartView = require('./chartView.js'),
     PlotView = require('./plotView.js'),
     AxisView = require('./axisView.js'),
     LegendView = require('./legendView.js'),
-    PopupView = require('./popupView.js');
+    TooltipView = require('./tooltipView.js');
 
 
 var AxisChartView,
-    POPUP_PREFIX = 'ne-chart-popup-',
+    TOOLTIP_PREFIX = 'ne-chart-tooltip-',
     CHART_PADDING = 10,
     HIDDEN_WIDTH = 1;
 
@@ -62,7 +62,7 @@ AxisChartView = ne.util.defineClass(ChartView, {
          * legend view
          * @type {object}
          */
-        this.popupView = new PopupView(this.model.popup);
+        this.tooltipView = new TooltipView(this.model.tooltip);
 
         options = options.chart || {};
 
@@ -75,15 +75,15 @@ AxisChartView = ne.util.defineClass(ChartView, {
      * @returns {HTMLElement} bar chart element
      */
     render: function() {
-        var popupPrefix = POPUP_PREFIX + (new Date()).getTime() + '-',
+        var tooltipPrefix = TOOLTIP_PREFIX + (new Date()).getTime() + '-',
             bounds = this.getViewsBound(),
             elTitle = this.renderTitleArea(),
             elPlot = this.plotView.render(bounds.plot),
             elVAxis = this.vAxisView.render(bounds.vAxis),
             elHAxis = this.hAxisView.render(bounds.hAxis),
-            elSeries = this.seriesView.render(bounds.series, popupPrefix, this.model.isVertical),
+            elSeries = this.seriesView.render(bounds.series, tooltipPrefix, this.model.isVertical),
             elLegend = this.legendView.render(bounds.legend),
-            elPopup = this.popupView.render(bounds.popup, popupPrefix);
+            elTooltip = this.tooltipView.render(bounds.tooltip, tooltipPrefix);
 
         this.append(elTitle);
         this.append(elPlot);
@@ -91,7 +91,7 @@ AxisChartView = ne.util.defineClass(ChartView, {
         this.append(elHAxis);
         this.append(elSeries);
         this.append(elLegend);
-        this.append(elPopup);
+        this.append(elTooltip);
         this.renderDimension(this.dimension);
         this.renderBackground(this.theme.background);
         this.renderChartFont(this.theme.fontFamily);
@@ -154,7 +154,7 @@ AxisChartView = ne.util.defineClass(ChartView, {
                 legend: {
                     position: {top: titleHeight, right: CHART_PADDING}
                 },
-                popup: {
+                tooltip: {
                     dimension: {width: plotWidth, height: plotHeight},
                     position: {top: top, left: vAxisWidth + CHART_PADDING}
                 }
@@ -167,10 +167,10 @@ AxisChartView = ne.util.defineClass(ChartView, {
      * @private
      */
     _attachCustomEvent: function() {
-        var popupView = this.popupView,
+        var tooltipView = this.tooltipView,
             seriesView = this.seriesView;
-        seriesView.on('showPopup', popupView.onShow, popupView);
-        seriesView.on('hidePopup', popupView.onHide, popupView);
+        seriesView.on('showTooltip', tooltipView.onShow, tooltipView);
+        seriesView.on('hideTooltip', tooltipView.onHide, tooltipView);
     }
 });
 

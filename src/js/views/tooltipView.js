@@ -1,5 +1,5 @@
 /**
- * @fileoverview PopupView render popup area.
+ * @fileoverview TooltipView render tooltip area.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */
@@ -10,27 +10,27 @@ var dom = require('./domHandler.js'),
     View = require('./view.js'),
     event = require('./eventListener.js'),
     templateMaker = require('./templateMaker.js'),
-    popupTemplate = require('./popupTemplate.js');
+    tooltipTemplate = require('./tooltipTemplate.js');
 
 var POPUP_GAP = 5,
     HIDDEN_WIDTH = 1,
-    TOOLTIP_CLASS_NAME = 'ne-chart-popup',
+    TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
 
 /**
- * @classdesc PopupView render popup area.
+ * @classdesc TooltipView render tooltip area.
  * @class
  * @augments View
  */
-var PopupView = ne.util.defineClass(View, {
+var TooltipView = ne.util.defineClass(View, {
     /**
      * Constructor
-     * @param {object} model popup model
-     * @param {object} theme popup theme
+     * @param {object} model tooltip model
+     * @param {object} theme tooltip theme
      */
     init: function(model, theme) {
         /**
-         * Popup model
+         * Tooltip model
          * @type {object}
          */
         this.model = model;
@@ -38,53 +38,53 @@ var PopupView = ne.util.defineClass(View, {
         this.theme = theme;
 
         /**
-         * Popup view className
+         * Tooltip view className
          * @type {string}
          */
-        this.className = 'ne-chart-popup-area';
+        this.className = 'ne-chart-tooltip-area';
 
         View.call(this);
     },
 
     /**
-     * Popup view renderer.
-     * @param {{position: object}} bound popup bound
-     * @param {string} prefix popup id prefix
-     * @returns {HTMLElement} popup element
+     * Tooltip view renderer.
+     * @param {{position: object}} bound tooltip bound
+     * @param {string} prefix tooltip id prefix
+     * @returns {HTMLElement} tooltip element
      */
     render: function(bound, prefix) {
         this.renderPosition(bound.position);
 
-        this.el.innerHTML = this._makePopupsHtml(this.model.data, prefix);
+        this.el.innerHTML = this._makeTooltipsHtml(this.model.data, prefix);
 
         this.attachEvent();
         return this.el;
     },
 
     /**
-     * Makes popup html.
-     * @param {object} data popup data
-     * @param {string} prefix popup id prefix
+     * Makes tooltip html.
+     * @param {object} data tooltip data
+     * @param {string} prefix tooltip id prefix
      * @returns {string} html
      * @private
      */
-    _makePopupsHtml: function(data, prefix) {
+    _makeTooltipsHtml: function(data, prefix) {
         var options = this.model.options,
             optionTemplate = options.template ? options.template : '',
-            tplPopup = optionTemplate ? templateMaker.template(optionTemplate) : popupTemplate.TPL_POPUP,
+            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.TPL_POPUP,
             suffix = options.suffix ? '&nbsp;' + options.suffix : '',
-            html = ne.util.map(data, function(popupData) {
-                var id = prefix + popupData.id,
+            html = ne.util.map(data, function(tooltipData) {
+                var id = prefix + tooltipData.id,
                     elTemp = dom.createElement('DIV');
 
-                popupData = ne.util.extend({
+                tooltipData = ne.util.extend({
                     label: '',
                     legendLabel: '',
                     value: '',
                     suffix: suffix
-                }, popupData);
+                }, tooltipData);
 
-                elTemp.innerHTML = tplPopup(popupData);
+                elTemp.innerHTML = tplTooltip(tooltipData);
                 elTemp.firstChild.id = id;
 
                 return elTemp.innerHTML;
@@ -178,9 +178,9 @@ var PopupView = ne.util.defineClass(View, {
     },
 
     /**
-     * Calculate popup position
+     * Calculate tooltip position
      * @param {{bound: object, isVertical: boolean}} data graph information
-     * @param {{width: number, height: number}} dimension popup dimension
+     * @param {{width: number, height: number}} dimension tooltip dimension
      * @returns {{top: number, left: number}} position
      */
     calculatePosition: function(data, dimension) {
@@ -199,7 +199,7 @@ var PopupView = ne.util.defineClass(View, {
 
     /**
      * This is custom event callback of SeriesView.
-     * @param {{id: string, bound: object}} data popup data
+     * @param {{id: string, bound: object}} data tooltip data
      */
     onShow: function(data) {
         var elTooltip = document.getElementById(data.id),
@@ -228,7 +228,7 @@ var PopupView = ne.util.defineClass(View, {
 
     /**
      * This is custom event callback of SeriesView.
-     * @param {{id: string}} data popup data
+     * @param {{id: string}} data tooltip data
      */
     onHide: function(data) {
         var elTooltip = document.getElementById(data.id),
@@ -272,4 +272,4 @@ var PopupView = ne.util.defineClass(View, {
     }
 });
 
-module.exports = PopupView;
+module.exports = TooltipView;
