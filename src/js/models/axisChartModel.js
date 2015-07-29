@@ -66,18 +66,21 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      */
     _setData: function(data) {
         var options = this.options || {},
+            chartOptions = options.chart || {},
             axisData = this.pickAxisData(data),
             labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
             lastItemStyles = this.pickLastItemStyles(data),
+            formatFns = this.findFormatFns(chartOptions.format, values),
+            formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
 
-        axisInfo = this._setAxis(labels, values, options);
+        axisInfo = this._setAxis(labels, values, formatFns, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
-        this._setSeries(values, axisInfo.valueScale, lastItemStyles, this.isVertical, options.series);
-        this._setTooltip(values, labels, legendLabels, options.tooltip);
+        this._setSeries(values, formatValues, axisInfo.valueScale, lastItemStyles, this.isVertical, options.series);
+        this._setTooltip(formatValues, labels, legendLabels, options.tooltip);
     },
 
     /**
@@ -88,15 +91,22 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
-    _setAxis: function(labels, values, options) {
-        var vAxis, hAxis, valueScale, axisInfo;
+    _setAxis: function(labels, values, formatFns, options) {
+        var valueData = {
+                values: values,
+                formatFns: formatFns
+            },
+            labelData = {
+                labels: labels
+            },
+            vAxis, hAxis, valueScale, axisInfo;
         if (this.isVertical) {
-            vAxis = new AxisModel({values: values}, options.vAxis);
-            hAxis = new AxisModel({labels: labels}, options.hAxis);
+            vAxis = new AxisModel(valueData, options.vAxis);
+            hAxis = new AxisModel(labelData, options.hAxis);
             valueScale = vAxis.scale;
         } else {
-            vAxis = new AxisModel({labels: labels}, options.vAxis);
-            hAxis = new AxisModel({values: values}, options.hAxis);
+            vAxis = new AxisModel(labelData, options.vAxis);
+            hAxis = new AxisModel(valueData, options.hAxis);
             valueScale = hAxis.scale;
         }
 
@@ -142,19 +152,21 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set series model.
-     * @param {[array]} values chart values
+     * @param {array.array} values chart values
+     * @param {array.array} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale
-     * @param {array} lastItemStyles last item styles
+     * @param {array.object} lastItemStyles last item styles
      * @param {boolean} isVertical is vertical
      * @param {object} options series options
      * @private
      */
-    _setSeries: function(values, scale, lastItemStyles, isVertical, options) {
+    _setSeries: function(values, formatValues, scale, lastItemStyles, isVertical, options) {
         this.series = new SeriesModel({
             values: values,
+            formatValues: formatValues,
             scale: scale,
             lastItemStyles: lastItemStyles,
-            isVertical: isVertical,
+            isVertical: isVertical
         }, options);
     },
 

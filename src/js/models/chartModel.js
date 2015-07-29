@@ -9,6 +9,8 @@
 
 var Model = require('./model.js');
 
+var apc = Array.prototype.concat;
+
 /**
  * @classdesc ChartModel is parent of all chart model.
  * @class
@@ -97,7 +99,7 @@ var ChartModel = ne.util.defineClass(Model, {
             return values;
         });
 
-        return this.pivotArray(result);
+        return this.arrayPivot(result);
     },
 
     /**
@@ -159,6 +161,24 @@ var ChartModel = ne.util.defineClass(Model, {
             return items[0];
         });
         return labels;
+    },
+
+    /**
+     * Format values.
+     * @param {array.array} groupValues values
+     * @param {array.functoin} formatFns format functions
+     * @returns {array} formatted values
+     */
+    formatValues: function(groupValues, formatFns) {
+        var result = ne.util.map(groupValues, function(values) {
+            return ne.util.map(values, function(value) {
+                var fns = apc.apply([value], formatFns);
+                return ne.util.reduce(fns, function(stored, fn) {
+                    return fn(stored);
+                });
+            });
+        });
+        return result;
     }
 });
 

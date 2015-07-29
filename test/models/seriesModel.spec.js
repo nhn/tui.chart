@@ -29,6 +29,7 @@ describe('test series model', function() {
         it('_setData', function() {
             seriesModel._setData({
                 values: values,
+                formatValues: values,
                 scale: scale
             });
 
@@ -49,6 +50,7 @@ describe('test series model', function() {
         it('init', function() {
             var data = {
                     values: values,
+                    formatValues: values,
                     scale: scale,
                     lastItemStyles: lastItemStyles
                 },

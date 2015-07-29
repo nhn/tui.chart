@@ -69,7 +69,7 @@ var SeriesModel = ne.util.defineClass(Model, {
             throw new Error('Invalid series data.');
         }
 
-        this.markers = data.values;
+        this.markers = data.formatValues;
         this.percentValues = this._makePercentValues(data.values, data.scale);
         this.isVertical = data.isVertical;
 
@@ -80,13 +80,13 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Convert two dimensional(2d) values.
-     * @param {array.<array>} values2d target 2d array
+     * @param {array.<array>} groupValues target 2d array
      * @param {function} condition convert condition function
      * @returns {array.<array>} 2d array
      * @private
      */
-    _convertValues: function(values2d, condition) {
-        var result = ne.util.map(values2d, function(values) {
+    _convertValues: function(groupValues, condition) {
+        var result = ne.util.map(groupValues, function(values) {
             return ne.util.map(values, condition);
         });
         return result;

@@ -59,10 +59,14 @@ describe('test axis model', function() {
         });
 
         it('_formatLabels', function() {
-            var _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 2);
-            expect(_labels).toEqual([1.11, 2.22, 3.33, 4.00, 5.55]);
-            _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 0);
-            expect(_labels).toEqual([1, 2, 3, 4, 6]);
+            var fns = axisModel.findFormatFns('1,000.00'),
+                result = axisModel._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
+
+            expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
+
+            fns = axisModel.findFormatFns('0001');
+            result = axisModel._formatLabels([1, 2, 3], fns);
+            expect(result).toEqual(['0001', '0002', '0003']);
         });
 
         it('_makeLabelsFromScale', function() {
@@ -105,9 +109,12 @@ describe('test axis model', function() {
         });
 
         it('init value axis', function() {
-            var data = {values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]]},
+            var tmpAxisModel = new AxisModel(),
+                data = {
+                    values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]],
+                    formatFns: tmpAxisModel.findFormatFns('0.00')
+                },
                 options = {
-                    format: '0.00',
                     min: 0,
                     title: 'value title'
                 },

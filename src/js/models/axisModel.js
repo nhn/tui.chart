@@ -82,7 +82,7 @@ AxisModel = ne.util.defineClass(Model, {
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this._setValueAxisData(data.values);
+            this._setValueAxisData(data.values, data.formatFns);
         }
     },
 
@@ -99,21 +99,19 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set value type axis data.
-     * @param {[array]} values2d chart values
+     * @param {array.array} groupValues chart values
      * @private
      */
-    _setValueAxisData: function(values2d) {
+    _setValueAxisData: function(groupValues, formatFns) {
         var options = this.options,
-            values = apc.apply([], values2d), // flatten array
+            values = apc.apply([], groupValues), // flatten array
             min = ne.util.min(values),
             max = ne.util.max(values),
             scale = this._calculateScale(min, max, options.min),
             step = this.getScaleStep(scale, this.tickCount),
-            formats = options.format ? [options.format] : values,
-            lenUnderPoint = this._pickMaxLenUnderPoint(formats),
             labels = ne.util.range(scale.min, scale.max + 1, step);
 
-        labels = this._formatLabels(labels, lenUnderPoint);
+        labels = this._formatLabels(labels, formatFns);
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
         this.scale = scale;
@@ -148,45 +146,19 @@ AxisModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Pick max length under point.
-     * @param {array} arr chart values
-     * @returns {number} max length under point
-     * @private
-     */
-    _pickMaxLenUnderPoint: function(arr) {
-        var max = 0;
-
-        ne.util.forEachArray(arr, function(value) {
-            var valueArr = (value + '').split('.');
-            if (valueArr.length === 2 && valueArr[1].length > max) {
-                max = valueArr[1].length;
-            }
-        });
-
-        return max;
-    },
-
-    /**
      * Format labels.
-     * @param {array} arr labels
-     * @param {number} len length under point
-     * @returns {array} formatted labels
+     * @param {array} labels labels
+     * @param {array} formatFns format functions
+     * @returns {array} labels
      * @private
      */
-    _formatLabels: function(arr, len) {
-        var format, result;
-        if (len === 0) {
-            format = function(value) {
-                return Math.round(value, 10);
-            };
-        } else {
-            format = function(value) {
-                var pow = Math.pow(10, len);
-                value = Math.round(value * pow) / pow;
-                return parseFloat(parseFloat(value).toFixed(len));
-            };
-        }
-        result = ne.util.map(arr, format);
+    _formatLabels: function(labels, formatFns) {
+        var result = ne.util.map(labels, function(label) {
+            var fns = apc.apply([label], formatFns);
+            return ne.util.reduce(fns, function(stored, fn) {
+                return fn(stored);
+            });
+        });
         return result;
     },
 

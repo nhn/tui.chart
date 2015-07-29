@@ -36,14 +36,14 @@ describe('test bar chart model', function() {
             var options = {
                     chart: {
                         title: 'chart title',
+                        format: '0.0'
                     },
                     hAxis: {
                         title: 'hAxis title'
                     },
                     vAxis: {
                         title: 'vAxis title',
-                        min: 1,
-                        format: '0.0'
+                        min: 1
                     },
                     barType: 'column'
                 },
@@ -51,9 +51,9 @@ describe('test bar chart model', function() {
             expect(barChartModel.title).toEqual('chart title');
             expect(barChartModel.hAxis.isLabelAxis()).toBeTruthy();
             expect(barChartModel.vAxis.scale.min).toEqual(1);
-            expect(barChartModel.vAxis.labels[1]).toEqual(6.3);
+            expect(barChartModel.vAxis.labels[1]).toEqual('6.3');
             expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
-            expect(barChartModel.tooltip.data[1]).toEqual({label:'Density', value: 10.49, legendLabel: 'Silver', id: '0-1'});
+            expect(barChartModel.tooltip.data[1]).toEqual({label:'Density', value: '10.5', legendLabel: 'Silver', id: '0-1'});
         });
     });
 });

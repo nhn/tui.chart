@@ -12,10 +12,13 @@ var AxisView = require('../../src/js/views/axisView.js'),
 var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
 
 describe('test Axis View', function() {
-    var valueData = {values: [[10], [20], [30], [40], [50]]},
+    var tmpAxisModel = new AxisModel(),
+        valueData = {
+            values: [[10], [20], [30], [40], [50]],
+            formatFns: tmpAxisModel.findFormatFns('0.00')
+        },
         labelData = {labels: ['label1', 'label2', 'label3']},
         options = {
-            format: '0.00',
             min: 0,
             title: 'value title'
         },
@@ -142,11 +145,11 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300);
 
             compareHtml = '<div class="ne-chart-label-area" style="font-size:12px;left:-37px;">' +
-                '<div class="ne-chart-label" style="width:75px;left:0px">0</div>' +
-                '<div class="ne-chart-label" style="width:75px;left:75px">13</div>' +
-                '<div class="ne-chart-label" style="width:75px;left:150px">26</div>' +
-                '<div class="ne-chart-label" style="width:75px;left:224px">39</div>' +
-                '<div class="ne-chart-label" style="width:75px;left:299px">52</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:0px">0.00</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:75px">13.00</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:150px">26.00</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:224px">39.00</div>' +
+                '<div class="ne-chart-label" style="width:75px;left:299px">52.00</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -173,11 +176,11 @@ describe('test Axis View', function() {
             elTickArea = axisView._renderLabelArea(300, 100);
 
             compareHtml = '<div class="ne-chart-label-area" style="width:75px;top:7px">' +
-                '<div class="ne-chart-label" style="bottom: 0px">0</div>' +
-                '<div class="ne-chart-label" style="bottom: 75px">13</div>' +
-                '<div class="ne-chart-label" style="bottom: 150px">26</div>' +
-                '<div class="ne-chart-label" style="bottom: 224px">39</div>' +
-                '<div class="ne-chart-label" style="bottom: 299px">52</div>' +
+                '<div class="ne-chart-label" style="bottom: 0px">0.00</div>' +
+                '<div class="ne-chart-label" style="bottom: 75px">13.00</div>' +
+                '<div class="ne-chart-label" style="bottom: 150px">26.00</div>' +
+                '<div class="ne-chart-label" style="bottom: 224px">39.00</div>' +
+                '<div class="ne-chart-label" style="bottom: 299px">52.00</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
