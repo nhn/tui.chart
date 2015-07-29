@@ -80,7 +80,7 @@ var SeriesView = ne.util.defineClass(View, {
     },
 
     /**
-     * Series renderer
+     * Series renderer.
      * @param {{width: number, height: number, top: number, right: number}} bound series bound
      * @param {string} popupPrefix popup prefix
      * @param {boolean} isVertical is vertical
@@ -109,10 +109,18 @@ var SeriesView = ne.util.defineClass(View, {
         return this.el;
     },
 
+    /**
+     * Call showDot function of graphRenderer.
+     * @param {{groupIndex: number, index: number}} data data
+     */
     onShowDot: function(data) {
         this.graphRenderer.showDot.call(this.graphRenderer, data);
     },
 
+    /**
+     * Call hideDot function of graphRenderer.
+     * @param {{groupIndex: number, index: number}} data data
+     */
     onHideDot: function(data) {
         this.graphRenderer.hideDot.call(this.graphRenderer, data);
     }

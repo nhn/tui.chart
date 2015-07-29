@@ -20,6 +20,13 @@ require('./registerThemes.js');
 
 neChart = ne.util.defineNamespace('ne.application.chart');
 
+/**
+ * Create chart.
+ * @param {HTMLElement} container container
+ * @param {object} data user data
+ * @param {object} options chart options
+ * @returns {object} chart instance.
+ */
 createChart = function(container, data, options) {
     var theme, chart;
 

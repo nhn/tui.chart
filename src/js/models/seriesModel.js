@@ -20,6 +20,7 @@ var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Constructor
      * @param {object} data series data
+     * @param {object} options options
      */
     init: function(data, options) {
         this.options = options = options || {};
@@ -121,6 +122,11 @@ var SeriesModel = ne.util.defineClass(Model, {
         return colors;
     },
 
+    /**
+     * Make column chart bounds.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @returns {array.array} bounds
+     */
     makeColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
             maxBarWidth = (dimension.width / groupValues.length),
@@ -140,6 +146,12 @@ var SeriesModel = ne.util.defineClass(Model, {
         return bounds;
     },
 
+    /**
+     * Make bar chart bounds.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.array} bounds
+     */
     makeBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
             maxBarHeight = (dimension.height / groupValues.length),
@@ -158,6 +170,11 @@ var SeriesModel = ne.util.defineClass(Model, {
         return bounds;
     },
 
+    /**
+     * Make line chart positions.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @returns {array.array} positions
+     */
     makeLinePositions: function(dimension) {
         var groupValues = this.percentValues,
             width = dimension.width,

@@ -15,7 +15,7 @@ var dom = require('./domHandler.js'),
 var POPUP_GAP = 5,
     HIDDEN_WIDTH = 1,
     TOOLTIP_CLASS_NAME = 'ne-chart-popup',
-    HIDE_DELAY = 100;
+    HIDE_DELAY = 0;
 
 /**
  * @classdesc PopupView render popup area.
@@ -92,37 +92,72 @@ var PopupView = ne.util.defineClass(View, {
         return html;
     },
 
+    /**
+     * Attach event
+     */
     attachEvent: function() {
         event.bindEvent('mouseover', this.el, ne.util.bind(this.onMouseover, this));
         event.bindEvent('mouseout', this.el, ne.util.bind(this.onMouseout, this));
     },
 
+    /**
+     * Get index from id
+     * @param {string} id id
+     * @returns {array} indexes
+     * @private
+     */
     _getIndexFromId: function(id) {
         var ids = id.split('-'),
             sliceIndex = ids.length - 2;
         return ids.slice(sliceIndex);
     },
 
+    /**
+     * Fire showDot custom event.
+     * @param {string} id id
+     * @private
+     */
+    _fireShowDot: function(id) {
+        var indexes = this._getIndexFromId(id);
+        this.fire('showDot', {
+            groupIndex: indexes[0],
+            index: indexes[1]
+        });
+    },
+
+    /**
+     * Fire hideDot custom event.
+     * @param {string} id id
+     * @private
+     */
+    _fireHideDot: function(id) {
+        var indexes = this._getIndexFromId(id);
+        this.fire('hideDot', {
+            groupIndex: indexes[0],
+            index: indexes[1]
+        });
+    },
+
+    /**
+     * On mouseover
+     * @param {MouseEvent} e mouse event
+     */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            that = this,
-            id, indexes;
+            id;
 
         if (!dom.hasClass(elTarget, TOOLTIP_CLASS_NAME)) {
             elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
         }
 
         this.showedId = id = elTarget.id;
-        indexes = this._getIndexFromId(id);
-
-        setTimeout(function() {
-            that.fire('showDot', {
-                groupIndex: indexes[0],
-                index: indexes[1]
-            });
-        }, HIDE_DELAY);
+        this._fireShowDot(id);
     },
 
+    /**
+     * On mouseout
+     * @param {MouseEvent} e mouse event
+     */
     onMouseout: function(e) {
         var elTarget = e.target || e.srcElement,
             that = this,
@@ -132,10 +167,9 @@ var PopupView = ne.util.defineClass(View, {
             elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
         }
 
-        delete this.showedId;
         indexes = this._getIndexFromId(elTarget.id);
 
-        this.hideTooltip(elTarget, function() {
+        this._hideTooltip(elTarget, function() {
             that.fire('hideDot', {
                 groupIndex: indexes[0],
                 index: indexes[1]
@@ -171,6 +205,12 @@ var PopupView = ne.util.defineClass(View, {
         var elTooltip = document.getElementById(data.id),
             dimension, position;
 
+        if (this.showedId) {
+            dom.removeClass(elTooltip, 'show');
+            this._fireHideDot(this.showedId);
+        }
+
+        this.showedId = data.id;
         dom.addClass(elTooltip, 'show');
         dimension = {
             width: elTooltip.offsetWidth,
@@ -182,6 +222,8 @@ var PopupView = ne.util.defineClass(View, {
             this.concatStr('left:', position.left, 'px'),
             this.concatStr('top:', position.top, 'px')
         ].join(';');
+
+        this._fireShowDot(data.id);
     },
 
     /**
@@ -189,20 +231,43 @@ var PopupView = ne.util.defineClass(View, {
      * @param {{id: string}} data popup data
      */
     onHide: function(data) {
-        var elTooltip = document.getElementById(data.id);
-        this.hideTooltip(elTooltip);
+        var elTooltip = document.getElementById(data.id),
+            that = this;
+
+        this._hideTooltip(elTooltip, function() {
+            var indexes = that._getIndexFromId(data.id);
+
+            that.fire('hideDot', {
+                groupIndex: indexes[0],
+                index: indexes[1]
+            });
+
+            data = null;
+            elTooltip = null;
+            that = null;
+        });
     },
 
-    hideTooltip: function(elTooltip, callback) {
+    /**
+     * Hide tooltip.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {function} callback callback
+     * @private
+     */
+    _hideTooltip: function(elTooltip, callback) {
         var that = this;
+        delete this.showedId;
         setTimeout(function() {
             if (that.showedId === elTooltip.id) {
                 return;
             }
+
             dom.removeClass(elTooltip, 'show');
             if (callback) {
                 callback();
             }
+
+            that = null;
         }, HIDE_DELAY);
     }
 });

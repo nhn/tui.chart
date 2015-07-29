@@ -18,7 +18,7 @@ var Raphael = window.Raphael,
  */
 var BarChart = ne.util.defineClass({
     /**
-     * This is Bar chart graph render function.
+     * Bar chart graph render function.
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object}} data chart data
      * @param {function} inCallback mouseover callback
@@ -42,6 +42,16 @@ var BarChart = ne.util.defineClass({
         this._renderBars(paper, model, theme, groupBounds, inCallback, outCallback);
     },
 
+    /**
+     * Render bars.
+     * @param {object} paper raphael paper
+     * @param {object} model bar chart data model
+     * @param {object} theme bar chart theme
+     * @param {array.array} groupBounds bounds
+     * @param {function} inCallback in callback
+     * @param {function} outCallback out callback
+     * @private
+     */
     _renderBars: function(paper, model, theme, groupBounds, inCallback, outCallback) {
         var lastColors = model.pickLastColors() || [],
             colors = theme.colors,
@@ -65,6 +75,7 @@ var BarChart = ne.util.defineClass({
      * @param {string} color series color
      * @param {string} borderColor series borderColor
      * @param {object} bound bound
+     * @returns {object} bar rect
      * @private
      */
     _renderBar: function(paper, color, borderColor, bound) {
@@ -77,6 +88,15 @@ var BarChart = ne.util.defineClass({
         return rect;
     },
 
+    /**
+     * Bind hover event.
+     * @param {object} rect raphael rect
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     * @param {string} id popup id
+     * @param {function} inCallback in callback
+     * @param {function} outCallback out callback
+     * @private
+     */
     _bindHoverEvent: function(rect, bound, id, inCallback, outCallback) {
         rect.hover(function() {
             inCallback(bound, id);
