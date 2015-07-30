@@ -60,11 +60,6 @@ describe('test chart model', function() {
             expect(result).toEqual([[8.94, 10.49, 19.30, 21.45]]);
         });
 
-        it('_pickStyles', function() {
-            var result = chartModel.pickLastItemStyles(userData2);
-            expect(result).toEqual([{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}]);
-        });
-
         it('_hasStyleOption', function() {
             var hasOption = chartModel._hasStyleOption(userData[0]);
             expect(hasOption).toBeFalsy();

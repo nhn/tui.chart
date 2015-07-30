@@ -1,5 +1,5 @@
 /**
- * @fileoverview  Chart Factory.
+ * @fileoverview  Chart Factory is register chart and get it.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
  */

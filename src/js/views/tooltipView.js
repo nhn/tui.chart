@@ -105,7 +105,7 @@ var TooltipView = ne.util.defineClass(View, {
     /**
      * Get index from id
      * @param {string} id id
-     * @returns {array} indexes
+     * @returns {array.<number>} indexes
      * @private
      */
     _getIndexFromId: function(id) {

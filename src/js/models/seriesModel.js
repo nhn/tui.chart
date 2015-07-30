@@ -26,7 +26,7 @@ var SeriesModel = ne.util.defineClass(Model, {
         this.options = options = options || {};
         /**
          * Series makers
-         * @type {array}
+         * @type {array.<array>}
          */
         this.markers = [];
 
@@ -84,9 +84,9 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Make to percent value.
-     * @param {array.<array>} values maker data
+     * @param {array.<array.<number>>} values values
      * @param {{min:number, max:number}} scale min, max scale
-     * @returns {array.<array>} percent values
+     * @returns {array.<array.<number>>} percent values
      * @private
      */
     _makePercentValues: function(values, scale) {
@@ -101,7 +101,7 @@ var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Make column chart bounds.
      * @param {{width: number, height:nunber}} dimension dimension
-     * @returns {array.array} bounds
+     * @returns {array.<array.<object>>} bounds
      */
     makeColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
@@ -126,7 +126,7 @@ var SeriesModel = ne.util.defineClass(Model, {
      * Make bar chart bounds.
      * @param {{width: number, height:nunber}} dimension dimension
      * @param {number} hiddenWidth hidden width
-     * @returns {array.array} bounds
+     * @returns {array.<array.<object>>} bounds
      */
     makeBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
@@ -149,7 +149,7 @@ var SeriesModel = ne.util.defineClass(Model, {
     /**
      * Make line chart positions.
      * @param {{width: number, height:nunber}} dimension dimension
-     * @returns {array.array} positions
+     * @returns {array.<array.<object>>} positions
      */
     makeLinePositions: function(dimension) {
         var groupValues = this.percentValues,

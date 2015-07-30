@@ -9,8 +9,6 @@
 
 var Model = require('./model.js');
 
-var apc = Array.prototype.concat;
-
 /**
  * @classdesc ChartModel is parent of all chart model.
  * @class
@@ -75,8 +73,8 @@ var ChartModel = ne.util.defineClass(Model, {
 
     /**
      * Pick labels.
-     * @param {array} labels labels
-     * @returns {Object} labels
+     * @param {string[]} labels labels
+     * @returns {string[]} labels
      */
     pickLabels: function(labels) {
         var hasOption = this._hasStyleOption(labels),
@@ -89,8 +87,8 @@ var ChartModel = ne.util.defineClass(Model, {
 
     /**
      * Pick values from axis data.
-     * @param {object} axisData axis data
-     * @returns {array} values
+     * @param {array.<object>} axisData axis data
+     * @returns {string[]} values
      */
     pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
@@ -103,46 +101,8 @@ var ChartModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Get styles from cssText
-     * @param {string} cssText cssText ex)color:red, border-color:blue
-     * @returns {object} styles
-     * @private
-     */
-    _getStyles: function(cssText) {
-        var cssTexts = cssText.split(','),
-            styles = {};
-        ne.util.forEachArray(cssTexts, function(item) {
-            var selectors = item.split(':');
-            styles[selectors[0]] = selectors[1];
-        });
-        return styles;
-    },
-
-    /**
-     * Pick last item styles.
-     * @param {object} data axis data
-     * @returns {array} last item styles
-     */
-    pickLastItemStyles: function(data) {
-        var titles = data[0],
-            styles = [],
-            axisData;
-
-        if (this._hasStyleOption(titles)) {
-            axisData = data.slice();
-            axisData.shift();
-            styles = ne.util.map(axisData, function(items) {
-                var style = items[items.length - 1];
-                return this._getStyles(style);
-            }, this);
-        }
-
-        return styles;
-    },
-
-    /**
      * Has style option?
-     * @param {array} arr labels
+     * @param {string[]} arr labels
      * @returns {boolean} has style option?
      * @private
      */
@@ -154,7 +114,7 @@ var ChartModel = ne.util.defineClass(Model, {
     /**
      * Pick legend labels from axis data.
      * @param {object} axisData axis data
-     * @returns {array} labels
+     * @returns {string[]} labels
      */
     pickLegendLabels: function(axisData) {
         var labels = ne.util.map(axisData, function(items) {
@@ -165,14 +125,14 @@ var ChartModel = ne.util.defineClass(Model, {
 
     /**
      * Format values.
-     * @param {array.array} groupValues values
-     * @param {array.functoin} formatFns format functions
-     * @returns {array} formatted values
+     * @param {array.<array.<number>>} groupValues values
+     * @param {function[]} formatFns format functions
+     * @returns {string[]} formatted values
      */
     formatValues: function(groupValues, formatFns) {
         var result = ne.util.map(groupValues, function(values) {
             return ne.util.map(values, function(value) {
-                var fns = apc.apply([value], formatFns);
+                var fns = [value].concat(formatFns);
                 return ne.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });

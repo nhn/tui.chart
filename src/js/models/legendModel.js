@@ -22,7 +22,7 @@ var LegendModel = ne.util.defineClass(Model, {
     init: function(data) {
         /**
          * Legend labels
-         * @type {array}
+         * @type {string[]}
          */
         this.labels = [];
 

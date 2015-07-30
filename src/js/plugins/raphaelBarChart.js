@@ -47,7 +47,7 @@ var BarChart = ne.util.defineClass({
      * @param {object} paper raphael paper
      * @param {object} model bar chart data model
      * @param {object} theme bar chart theme
-     * @param {array.array} groupBounds bounds
+     * @param {array.<array.<object>>} groupBounds bounds
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
@@ -57,7 +57,7 @@ var BarChart = ne.util.defineClass({
             colors = theme.colors,
             borderColor = theme.borderColor || 'none';
         ne.util.forEachArray(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex]
+            var singleColor = singleColors[groupIndex];
             ne.util.forEachArray(bounds, function(bound, index) {
                 var color = singleColor || colors[index],
                     id = groupIndex + '-' + index,

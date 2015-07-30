@@ -72,7 +72,7 @@ var PlotView = ne.util.defineClass(View, {
 
     /**
      * Makes line html.
-     * @param {array} positions positions
+     * @param {array.<object>} positions positions
      * @param {number} size width or height
      * @param {string} className line className
      * @param {string} positionType position type (left or bottom)

@@ -60,9 +60,7 @@ var AxisView = ne.util.defineClass(View, {
         this.renderDimension(dimension);
         this.renderPosition(bound.position);
         dom.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
-        this.append(elTitleArea);
-        this.append(elTickArea);
-        this.append(elLabelArea);
+        this.appends([elTitleArea, elTickArea, elLabelArea]);
 
         return this.el;
     },
@@ -191,7 +189,7 @@ var AxisView = ne.util.defineClass(View, {
      * @param {boolean} isVertical Is vertical?
      * @param {boolean} isLabelAxis Is label axis?
      * @param {number} labelWidth label width or height
-     * @returns {array} cssTexts
+     * @returns {string[]} cssTexts
      * @private
      */
     _makeLabelCssTexts: function(isVertical, isLabelAxis, labelWidth) {
@@ -209,10 +207,10 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Makes label html
-     * @param {array} positions label position array
-     * @param {array} labels label array
+     * @param {array.<object>} positions label position array
+     * @param {string[]} labels label array
      * @param {string} posType position type (left or bottom)
-     * @param {array} cssTexts css array
+     * @param {string[]} cssTexts css array
      * @returns {string} html
      * @private
      */

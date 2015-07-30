@@ -39,8 +39,8 @@ _inheritThemeProperty = function(theme) {
 
 /**
  * Copy colors.
- * @param {array} from colors
- * @param {array} to colors
+ * @param {string[]} from colors
+ * @param {string[]} to colors
  * @private
  */
 _copyColors = function(from, to) {
@@ -49,7 +49,7 @@ _copyColors = function(from, to) {
         start,
         i;
     if (diffLen <= 0) {
-        return to;
+        return;
     }
 
     start = fromLen - diffLen;

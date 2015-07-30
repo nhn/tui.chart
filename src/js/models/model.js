@@ -27,7 +27,7 @@ var Model = ne.util.defineClass({
      * Makes pixel type tick positions.
      * @param {number} size area width or height
      * @param {number} count tick count
-     * @returns {array} positions
+     * @returns {array.<object>} positions
      */
     makePixelPositions: function(size, count) {
         var positions = [],
@@ -47,8 +47,8 @@ var Model = ne.util.defineClass({
 
     /**
      * Array pivot
-     * @param {array.array} arr2d 2d array
-     * @returns {array.array} 2d array
+     * @param {array.<array>} arr2d 2d array
+     * @returns {array.<array>} 2d array
      */
     arrayPivot: function(arr2d) {
         var result = [];
@@ -161,8 +161,8 @@ var Model = ne.util.defineClass({
         }
 
         values = (value).split('').reverse();
-        values = ne.util.map(values, function(_value, index) {
-            var result = [_value];
+        values = ne.util.map(values, function(char, index) {
+            var result = [char];
             if ((index + 1) % 3 === 0) {
                 result.push(comma);
             }
@@ -174,14 +174,14 @@ var Model = ne.util.defineClass({
 
     /**
      * Pick max length under point.
-     * @param {array} arr chart values
+     * @param {string[]} values chart values
      * @returns {number} max length under point
      * @private
      */
-    _pickMaxLenUnderPoint: function(arr) {
+    _pickMaxLenUnderPoint: function(values) {
         var max = 0;
 
-        ne.util.forEachArray(arr, function(value) {
+        ne.util.forEachArray(values, function(value) {
             var valueArr = (value + '').split('.');
             if (valueArr.length === 2 && valueArr[1].length > max) {
                 max = valueArr[1].length;
@@ -194,8 +194,8 @@ var Model = ne.util.defineClass({
     /**
      * Find format functions.
      * @param {string} format format
-     * @param {string} values chart values
-     * @returns {array.function} functions
+     * @param {string[]} values chart values
+     * @returns {function[]} functions
      */
     findFormatFns: function(format, values) {
         var funcs = [],

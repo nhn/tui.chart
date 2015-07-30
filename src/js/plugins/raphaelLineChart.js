@@ -113,11 +113,11 @@ var LineChart = ne.util.defineClass({
     /**
      * Render dots.
      * @param {object} paper raphael paper
-     * @param {array.array} groupPositions positions
-     * @param {array.string} colors colors
+     * @param {array.<array.<object>>} groupPositions positions
+     * @param {string[]} colors colors
      * @param {number} opacity opacity
      * @param {object} borderStyle border style
-     * @returns {array} dots
+     * @returns {array.<object>} dots
      * @private
      */
     _renderDots: function(paper, groupPositions, colors, opacity, borderStyle) {
@@ -161,15 +161,15 @@ var LineChart = ne.util.defineClass({
 
     /**
      * Get center
-     * @param {object} from from position
-     * @param {object} to to position
+     * @param {object} fromPos from position
+     * @param {object} toPos to position
      * @returns {{left: number, top: number}} position
      * @private
      */
-    _getCenter: function(from, to) {
+    _getCenter: function(fromPos, toPos) {
         return {
-            left: (from.left + to.left) / 2,
-            top: (from.top + to.top) / 2
+            left: (fromPos.left + toPos.left) / 2,
+            top: (fromPos.top + toPos.top) / 2
         };
     },
 
@@ -201,8 +201,8 @@ var LineChart = ne.util.defineClass({
     /**
      * Render background lines.
      * @param {object} paper raphael paper
-     * @param {array.array} groupPaths paths
-     * @returns {array.array} lines
+     * @param {array.<array.<string>>} groupPaths paths
+     * @returns {array.<array.<object>>} lines
      * @private
      */
     _renderBgLines: function(paper, groupPaths) {
@@ -213,10 +213,10 @@ var LineChart = ne.util.defineClass({
     /**
      * Render lines.
      * @param {object} paper raphael paper
-     * @param {array.array} groupPaths paths
-     * @param {array.string} colors line colors
+     * @param {array.<array.<string>>} groupPaths paths
+     * @param {string[]} colors line colors
      * @param {number} strokeWidth stroke width
-     * @returns {array.array} lines
+     * @returns {array.<array.<object>>} lines
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
@@ -235,19 +235,19 @@ var LineChart = ne.util.defineClass({
 
     /**
      * Get lines path.
-     * @param {array.array} groupPositions positions
-     * @returns {array.array} paths
+     * @param {array.<array.<object>>} groupPositions positions
+     * @returns {array.<array.<string>>} paths
      * @private
      */
     _getLinesPath: function(groupPositions) {
         var groupPaths = ne.util.map(groupPositions, function(positions) {
-            var from = positions[0],
+            var fromPos = positions[0],
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
-                var center = this._getCenter(from, position),
-                    firstPath = this._makeLinePath(from.left, from.top, center.left, center.top),
-                    secondPath = this._makeLinePath(center.left, center.top, position.left, position.top);
-                from = position;
+                var centerPos = this._getCenter(fromPos, position),
+                    firstPath = this._makeLinePath(fromPos.left, fromPos.top, centerPos.left, centerPos.top),
+                    secondPath = this._makeLinePath(centerPos.left, centerPos.top, position.left, position.top);
+                fromPos = position;
                 return [firstPath, secondPath];
             }, this);
         }, this);
@@ -258,7 +258,7 @@ var LineChart = ne.util.defineClass({
      * Bind hover event.
      * @param {object} target raphael item
      * @param {object} dot raphael dot
-     * @param {obejct} outDotStyle mouseout dot style
+     * @param {object} outDotStyle mouseout dot style
      * @param {{left: number, top: number}} position position
      * @param {string} id id
      * @param {function} inCallback in callback
@@ -277,10 +277,8 @@ var LineChart = ne.util.defineClass({
 
     /**
      * Attach event.
-     * @param {array.array} groupDots dots
-     * @param {array.array} groupBgLines background lines
-     * @param {array.array} groupLines lines
-     * @param {array.array} groupPositions positions
+     * @param {array.<array.<object>>} groupDots dots
+     * @param {array.<array.<object>>} groupPositions positions
      * @param {object} outDotStyle dot style
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback

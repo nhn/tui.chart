@@ -71,7 +71,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
             labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
-            formatFns = this.findFormatFns(chartOptions.format, values),
+            formatFns = this.findFormatFns(chartOptions.format, [].concat.apply([], values)),
             formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
 
@@ -84,8 +84,8 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set Axis.
-     * @param {array} labels labels
-     * @param {[array]} values chart values
+     * @param {array.<string>} labels labels
+     * @param {array.<array.<number>>} values chart values
      * @param {object} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
@@ -139,8 +139,8 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set legend model.
-     * @param {array} labels legend labels
-     * @param {array} colors legend colors
+     * @param {array.<string>} labels legend labels
+     * @param {array.<string>} colors legend colors
      * @private
      */
     _setLegend: function(labels) {
@@ -151,8 +151,8 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set series model.
-     * @param {array.array} values chart values
-     * @param {array.array} formatValues formatting values
+     * @param {array.<array.<number>>} values chart values
+     * @param {array.<array.<string>>} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale
      * @param {boolean} isVertical is vertical
      * @param {object} options series options
@@ -169,9 +169,9 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
 
     /**
      * Set tooltip model.
-     * @param {array.array} values chart values
-     * @param {array} labels chart labels
-     * @param {array} legendLabels chart legend labels
+     * @param {array.<array.<string>>} values chart values
+     * @param {array.<string>} labels chart labels
+     * @param {array.<string>} legendLabels chart legend labels
      * @param {object} options tooltip options
      * @private
      */

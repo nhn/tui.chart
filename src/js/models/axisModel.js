@@ -40,7 +40,7 @@ AxisModel = ne.util.defineClass(Model, {
 
         /**
          * Axis labels
-         * @type {array}
+         * @type {string[]}
          */
         this.labels = [];
 
@@ -88,7 +88,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set label type axis data.
-     * @param {array} labels labels
+     * @param {string[]} labels labels
      * @private
      */
     _setLabelAxisData: function(labels) {
@@ -99,7 +99,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set value type axis data.
-     * @param {array.array} groupValues chart values
+     * @param {array.<array.<number>>} groupValues chart values
      * @private
      */
     _setValueAxisData: function(groupValues, formatFns) {
@@ -147,9 +147,9 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Format labels.
-     * @param {array} labels labels
-     * @param {array} formatFns format functions
-     * @returns {array} labels
+     * @param {string[]} labels labels
+     * @param {function[]} formatFns format functions
+     * @returns {string[]} labels
      * @private
      */
     _formatLabels: function(labels, formatFns) {
@@ -166,7 +166,7 @@ AxisModel = ne.util.defineClass(Model, {
      * Make labels from scale.
      * @param {object} scale axis scale
      * @param {number} step step between max and min
-     * @returns {array} labels
+     * @returns {string[]} labels
      * @private
      */
     _makeLabelsFromScale: function(scale, step) {

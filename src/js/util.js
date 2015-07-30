@@ -5,7 +5,7 @@
  * @param {number} start start
  * @param {number} stop stop
  * @param {number} step step
- * @returns {array} result array
+ * @returns {array.<number>} result array
  */
 var range = function(start, stop, step) {
     var arr = [],
@@ -20,7 +20,7 @@ var range = function(start, stop, step) {
     flag = step < 0 ? -1 : 1;
     stop *= flag;
 
-    while(start * flag < stop) {
+    while (start * flag < stop) {
         arr.push(start);
         start += step;
     }
@@ -64,7 +64,7 @@ var zip = function() {
 
 /**
  * Pick min number from number array.
- * @param {array} arr number array
+ * @param {array.<number>} arr number array
  * @returns {number} result array
  */
 var min = function(arr) {
@@ -74,7 +74,7 @@ var min = function(arr) {
 
 /**
  * Pick max number from number array.
- * @param {array} arr number array
+ * @param {array.<number>} arr number array
  * @returns {number} result array
  */
 var max = function(arr) {

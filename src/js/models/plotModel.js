@@ -50,7 +50,7 @@ var PlotModel = ne.util.defineClass(Model, {
     /**
      * makes vertical pixel positions
      * @param {number} height plot height
-     * @returns {array} positions
+     * @returns {array.<object>} positions
      */
     makeVPixelPositions: function(height) {
         var positions = this.makePixelPositions(height, this.vTickCount);
@@ -61,7 +61,7 @@ var PlotModel = ne.util.defineClass(Model, {
     /**
      * makes horizontal pixel position
      * @param {number} width plot width
-     * @returns {array} positions
+     * @returns {array.<object>} positions
      */
     makeHPixelPositions: function(width) {
         var positions = this.makePixelPositions(width, this.hTickCount);

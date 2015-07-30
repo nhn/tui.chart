@@ -27,8 +27,8 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, {
 
     /**
      * Set series
-     * @param {array.array} values chart values
-     * @param {array.array} formatValues formatting values
+     * @param {array.<array.<number>>} values chart values
+     * @param {array.<array.<string>>} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale
      * @param {boolean} isVertical is vertical
      * @param {object} options options
