@@ -1,7 +1,7 @@
 /**
  * @fileoverview  LegendView render legend area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,12 +13,15 @@ var LEGEND_AREA_PADDING = 10,
     LEGEND_RECT_WIDTH = 12,
     LABEL_PADDING_LEFT = 5,
     LABEL_PADDING_TOP = 2;
-/**
- * @classdesc LegendView render legend area.
- * @class
- * @augments View
- */
-var LegendView = ne.util.defineClass(View, {
+
+var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
+    /**
+     * LegendView render legend area.
+     * @constructs LegendView
+     * @extends View
+     * @param {object} model legend model
+     * @param {object} theme legend theme
+     */
     init: function(model, theme) {
         /**
          * Legend model

@@ -1,7 +1,7 @@
 /**
  * @fileoverview SeriesView render series area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -12,14 +12,11 @@ var View = require('./view.js'),
 
 var HIDDEN_WIDTH = 1;
 
-/**
- * @classdesc SeriesView render series area.
- * @class
- * @augments View
- */
-var SeriesView = ne.util.defineClass(View, {
+var SeriesView = ne.util.defineClass(View, /** @lends SeriesView.prototype */ {
     /**
-     * Constructor
+     * SeriesView render series area.
+     * @constructs SeriesView
+     * @extends View
      * @param {object} model series model
      * @param {object} options series options
      * @param {object} theme series theme

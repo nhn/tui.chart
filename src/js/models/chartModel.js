@@ -2,21 +2,19 @@
  * @fileoverview ChartModel is parent of all chart model.
  *               This model provides a method to convert the data.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var Model = require('./model.js');
 
-/**
- * @classdesc ChartModel is parent of all chart model.
- * @class
- * @augments Model
- */
-var ChartModel = ne.util.defineClass(Model, {
+var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
-     * Constructor
+     * ChartModel is parent of all chart model.
+     * This model provides a method to convert the data.
+     * @constructs ChartModel
+     * @extends Model
      * @param {object} data user chart data
      * @param {object} options user options
      */
@@ -33,7 +31,7 @@ var ChartModel = ne.util.defineClass(Model, {
 
         /**
          * Chart dimension
-         * @type {{width: number, height: number}
+         * @type {{width: number, height: number}}
         */
         this.dimension = {
             width: 500,

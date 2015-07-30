@@ -1,7 +1,7 @@
 /**
- * @fileoverview This model is axis chart model for management of bar chart data.
+ * @fileoverview This model is axis chart model for management of axis type chart data.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,9 +13,11 @@ var ChartModel = require('./chartModel.js'),
     SeriesModel = require('./seriesModel.js'),
     TooltipModel = require('./tooltipModel.js');
 
-var BarChartModel = ne.util.defineClass(ChartModel, {
+var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.prototype */ {
     /**
-     * Constructor
+     * This model is axis chart model for management of axis type chart data.
+     * @constructs AxisChartModel
+     * @extends ChartModel
      * @param {object} data user chart data
      * @param {object} options chart options
      */
@@ -185,4 +187,4 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
     }
 });
 
-module.exports = BarChartModel;
+module.exports = AxisChartModel;

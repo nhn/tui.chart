@@ -1,7 +1,7 @@
 /**
- * @fileoverview Raphael line chart renderer
+ * @fileoverview Raphael line chart renderer.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -11,10 +11,10 @@ var Raphael = window.Raphael,
     HOVER_DOT_WIDTH = 5;
 
 /**
- * @classdesc This class is LineChart graph renderer.
- * @class
+ * @classdesc This class is RaphaelLineChart graph renderer.
+ * @class RaphaelLineChart
  */
-var LineChart = ne.util.defineClass({
+var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype */ {
     /**
      * Line chart graph render function.
      * @param {HTMLElement} container container
@@ -337,4 +337,4 @@ var LineChart = ne.util.defineClass({
     }
 });
 
-module.exports = LineChart;
+module.exports = RaphaelLineChart;

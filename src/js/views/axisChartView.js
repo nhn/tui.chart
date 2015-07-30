@@ -1,7 +1,7 @@
 /**
  * @fileoverview AxisChartView render axis area, plot area and series area of axis type chart.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,21 +13,17 @@ var ChartView = require('./chartView.js'),
     TooltipView = require('./tooltipView.js');
 
 
-var AxisChartView,
-    TOOLTIP_PREFIX = 'ne-chart-tooltip-',
+var TOOLTIP_PREFIX = 'ne-chart-tooltip-',
     CHART_PADDING = 10,
     HIDDEN_WIDTH = 1;
 
-/**
- * @classdesc BarChartView render axis area, plot area and series area of axis type chart.
- * @class
- * @augments ChartView
- */
-AxisChartView = ne.util.defineClass(ChartView, {
+var AxisChartView = ne.util.defineClass(ChartView, /** @lends AxisChartView.prototype */ {
     /**
-     * constructor
+     * AxisChartView render axis area, plot area and series area of axis type chart.
+     * @constructs AxisChartView
+     * @extends ChartView
      * @param {object} data bar chart data
-     * @param {options} options bar chart options
+     * @param {object} options bar chart options
      */
     init: function(data, options) {
         var theme = options.theme;

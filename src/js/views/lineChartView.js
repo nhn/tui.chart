@@ -1,7 +1,7 @@
 /**
  * @fileoverview LineChartView render axis area, plot area and series area of line chart.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -10,19 +10,13 @@ var AxisChartView = require('./axisChartView.js'),
     LineChartModel = require('../models/lineChartModel.js'),
     SeriesView = require('./seriesView.js');
 
-
-var LineChartView;
-
-/**
- * @classdesc LineChartView render axis area, plot area and series area of line chart.
- * @class
- * @augments ChartView
- */
-LineChartView = ne.util.defineClass(AxisChartView, {
+var LineChartView = ne.util.defineClass(AxisChartView, /** @lends LineChartView.prototype */ {
     /**
-     * constructor
+     * LineChartView render axis area, plot area and series area of line chart.
+     * @constructs LineChartView
+     * @extends AxisChartView
      * @param {object} data bar chart data
-     * @param {options} options bar chart options
+     * @param {object} options bar chart options
      */
     init: function(data, options) {
         var theme = options.theme;

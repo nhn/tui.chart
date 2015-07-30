@@ -1,7 +1,8 @@
 /**
- * @fileoverview  Theme Factory.
+ * @fileoverview  Theme factory play role register theme.
+ *                And you can get theme from this factory.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -15,6 +16,7 @@ var themes = {},
  * Inherit theme property.
  * @param {object} theme theme
  * @private
+ * @ignore
  */
 _inheritThemeProperty = function(theme) {
     var baseFont = theme.chart.fontFamily,
@@ -42,6 +44,7 @@ _inheritThemeProperty = function(theme) {
  * @param {string[]} from colors
  * @param {string[]} to colors
  * @private
+ * @ignore
  */
 _copyColors = function(from, to) {
     var fromLen = from.length,
@@ -63,6 +66,7 @@ _copyColors = function(from, to) {
  * @param {object} theme theme
  * @returns {object} theme
  * @private
+ * @ignore
  */
 _initTheme = function(theme) {
     var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME],

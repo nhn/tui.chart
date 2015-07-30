@@ -2,7 +2,7 @@
  * @fileoverview AxisModel is model for management of axis data.
  *               Axis data used to draw the axis area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -16,15 +16,13 @@ var AXIS_TYPE_VALUE = 'value',
 var apc = Array.prototype.concat,
     AxisModel;
 
-/**
- * @classdesc AxisModel is model for management of axis data.
- * @class
- * @augments Model
- */
-AxisModel = ne.util.defineClass(Model, {
+AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
-     * Constructor
-     * @param {{label:array, values: [array]}} data labels or values
+     * AxisModel is model for management of axis data.
+     * Axis data used to draw the axis area.
+     * @constructs AxisModel
+     * @extends Model
+     * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
      * @param {object} options chart options
      */
     init: function(data, options) {
@@ -52,7 +50,7 @@ AxisModel = ne.util.defineClass(Model, {
 
         /**
          * Axis tick scale
-         * @type {{min: number, max: number}
+         * @type {{min: number, max: number}}
          */
         this.scale = null;
 
@@ -75,7 +73,7 @@ AxisModel = ne.util.defineClass(Model, {
 
     /**
      * Set axis data.
-     * @param {{label:array, values: [array]}} data labels or values
+     * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
      * @private
      */
     _setData: function(data) {

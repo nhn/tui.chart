@@ -1,6 +1,6 @@
 /**
  * @fileoverview test bar chart model
- * @author jiung.kang@nhnent.com
+ * @author dl_javascript@nhnent.com
  */
 
 'use strict';

@@ -1,7 +1,7 @@
 /**
- * @fileoverview ne chart
+ * @fileoverview
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
 
@@ -12,12 +12,16 @@ var chartConst = require('./const.js'),
 
 var DEFAULT_THEME_NAME = 'default';
 
-var neChart, createChart;
+var neChart, _createChart;
 
 require('./util.js');
 require('./registerCharts.js');
 require('./registerThemes.js');
 
+/**
+ * NHN Entertainment Chart.
+ * @namespace ne.application.chart
+ */
 neChart = ne.util.defineNamespace('ne.application.chart');
 
 /**
@@ -26,8 +30,10 @@ neChart = ne.util.defineNamespace('ne.application.chart');
  * @param {object} data user data
  * @param {object} options chart options
  * @returns {object} chart instance.
+ * @private
+ * @ignore
  */
-createChart = function(container, data, options) {
+_createChart = function(container, data, options) {
     var theme, chart;
 
     options = options || {};
@@ -42,6 +48,7 @@ createChart = function(container, data, options) {
 
 /**
  * Bar chart creator
+ * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  * @param {object} options chart options
@@ -51,11 +58,12 @@ neChart.barChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
     options.barType = chartConst.BAR_TYPE_BAR;
-    return createChart(container, data, options);
+    return _createChart(container, data, options);
 };
 
 /**
  * Column chart creator
+ * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  * @param {object} options chart options
@@ -65,11 +73,12 @@ neChart.columnChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
     options.barType = chartConst.BAR_TYPE_COLUMN;
-    return createChart(container, data, options);
+    return _createChart(container, data, options);
 };
 
 /**
  * Line chart creator
+ * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  * @param {object} options chart options
@@ -78,7 +87,7 @@ neChart.columnChart = function(container, data, options) {
 neChart.lineChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
-    return createChart(container, data, options);
+    return _createChart(container, data, options);
 };
 
 neChart.registerPlugin = pluginFactory.register;

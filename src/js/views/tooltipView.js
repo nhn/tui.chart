@@ -1,7 +1,7 @@
 /**
  * @fileoverview TooltipView render tooltip area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -17,14 +17,11 @@ var POPUP_GAP = 5,
     TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
 
-/**
- * @classdesc TooltipView render tooltip area.
- * @class
- * @augments View
- */
-var TooltipView = ne.util.defineClass(View, {
+var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ {
     /**
-     * Constructor
+     * TooltipView render tooltip area.
+     * @constructs TooltipView
+     * @extends View
      * @param {object} model tooltip model
      * @param {object} theme tooltip theme
      */

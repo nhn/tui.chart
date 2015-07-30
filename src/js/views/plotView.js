@@ -1,7 +1,7 @@
 /**
  * @fileoverview PlotView render plot area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -14,9 +14,11 @@ var View = require('./view.js'),
  * @class
  * @augments View
  */
-var PlotView = ne.util.defineClass(View, {
+var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
     /**
-     * Constructor
+     * PlotView render plot area.
+     * @constructs PlotView
+     * @extends View
      * @param {object} model plot model
      * @param {object} theme plot theme
      */

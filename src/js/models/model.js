@@ -1,7 +1,7 @@
 /**
  * @fileoverview This is base model.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -10,9 +10,9 @@ var apc = Array.prototype.concat;
 
 /**
  * @classdesc Model is parent of all model.
- * @class
+ * @class Model
  */
-var Model = ne.util.defineClass({
+var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Get scale step.
      * @param {object} scale axis scale

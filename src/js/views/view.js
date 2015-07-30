@@ -1,7 +1,7 @@
 /**
  * @fileoverview View is parent of all view.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,13 +13,10 @@ var browser = ne.util.browser,
     isIE8 = browser.msie && browser.version === 8,
     View;
 
-/**
- * @classdesc View is parent of all view.
- * @class
- */
-View = ne.util.defineClass({
+View = ne.util.defineClass(/** @lends View.prototype */ {
     /**
-     * Constructor
+     * View is parent of all view.
+     * @constructs View
      */
     init: function() {
         this.el = dom.createElement('DIV', this.className || '');

@@ -1,14 +1,19 @@
 /**
  * @fileoverview DOM Handler.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
+/**
+ * DOM Handler.
+ * @module domHandler
+ */
 var domHandler = {
     /**
      * Create element.
+     * @memberOf module:domHandler
      * @param {string} tag html tag
      * @param {string} newClass class name
      * @returns {HTMLElement} created element
@@ -23,6 +28,13 @@ var domHandler = {
         return el;
     },
 
+    /**
+     * Get class names.
+     * @memberOf module:domHandler
+     * @param {HTMLElement} el target element
+     * @returns {array} names
+     * @private
+     */
     _getClassNames: function(el) {
         var className = el.className ? el.className : '',
             classNames = className ? className.split(' ') : [];
@@ -30,7 +42,8 @@ var domHandler = {
     },
 
     /**
-     * Add class.
+     * Add css class to target element.
+     * @memberOf module:domHandler
      * @param {HTMLElement} el target element
      * @param {string} newClass add class name
      */
@@ -47,7 +60,8 @@ var domHandler = {
     },
 
     /**
-     * Remove class.
+     * Remove css class to target element.
+     * @memberOf module:domHandler
      * @param {HTMLElement} el target element
      * @param {string} rmClass remove class name
      */
@@ -63,6 +77,13 @@ var domHandler = {
         el.className = classNames.join(' ');
     },
 
+    /**
+     * Target element has a target css class?
+     * @memberOf module:domHandler
+     * @param {HTMLElement} el target element
+     * @param {string} findClass target css class
+     * @returns {boolean} has class
+     */
     hasClass: function(el, findClass) {
         var classNames = this._getClassNames(el),
             index = ne.util.inArray(findClass, classNames);
@@ -70,8 +91,16 @@ var domHandler = {
         return index > -1;
     },
 
-    findParentByClass: function(element, className, lastClass) {
-        var parent = element.parentNode;
+    /**
+     * Find parent by css class name.
+     * @memberOf module:domHandler
+     * @param {HTMLElement} el target element
+     * @param {string} className target css class
+     * @param {string} lastClass last css class
+     * @returns {HTMLElement} result element
+     */
+    findParentByClass: function(el, className, lastClass) {
+        var parent = el.parentNode;
         if (!parent || parent.nodeName === 'BODY' || this.hasClass(parent, lastClass)) {
             return null;
         } else if (this.hasClass(parent, className)) {

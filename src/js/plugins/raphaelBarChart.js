@@ -1,7 +1,7 @@
 /**
- * @fileoverview Raphael bar chart renderer
+ * @fileoverview Raphael bar chart renderer.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,10 +13,10 @@ var Raphael = window.Raphael,
     isIE8 = browser.msie && browser.version === 8;
 
 /**
- * @classdesc This class is BarChart graph renderer.
- * @class
+ * @classdesc This class is RaphaelBarChart graph renderer.
+ * @class RaphaelBarChart
  */
-var BarChart = ne.util.defineClass({
+var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
      * Bar chart graph render function.
      * @param {HTMLElement} container container element
@@ -104,4 +104,4 @@ var BarChart = ne.util.defineClass({
     }
 });
 
-module.exports = BarChart;
+module.exports = RaphaelBarChart;

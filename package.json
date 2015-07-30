@@ -16,6 +16,7 @@
   "author": "extremeFE",
   "license": "MIT",
   "devDependencies": {
+    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
@@ -34,5 +35,8 @@
     "stringify": "^3.1.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"
+  },
+  "scripts": {
+    "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/"
   }
 }

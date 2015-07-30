@@ -2,21 +2,19 @@
  * @fileoverview PlotModel is model for management of plot data.
  *               Plot data used to draw the plot area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var Model = require('./model.js');
 
-/**
- * @classdesc PlotModel is model for management of plot data.
- * @class
- * @augments Model
- */
-var PlotModel = ne.util.defineClass(Model, {
+var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     /**
-     * Constructor
+     * PlotModel is model for management of plot data.
+     * Plot data used to draw the plot area.
+     * @constructs PlotModel
+     * @extends Model
      * @param {data} data plot data
      */
     init: function(data) {

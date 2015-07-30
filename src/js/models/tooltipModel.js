@@ -2,7 +2,7 @@
  * @fileoverview TooltipModel is model for management of tooltip data.
  *               Tooltip data used to draw the tooltip area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -17,9 +17,12 @@ var apc = Array.prototype.concat,
  * @class
  * @augments Model
  */
-TooltipModel = ne.util.defineClass(Model, {
+TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
     /**
-     * Constructor
+     * TooltipModel is model for management of tooltip data.
+     * Tooltip data used to draw the tooltip area.
+     * @constructs TooltipModel
+     * @extends Model
      * @param {{labels: array, colors: array}} data legend data
      * @param {object} options options
      */
@@ -34,7 +37,7 @@ TooltipModel = ne.util.defineClass(Model, {
 
         /**
          * Tooltip data
-         * @type {[[array, array], ...]}
+         * @type {array.<array.<object>>}
          */
         this.data = [];
 

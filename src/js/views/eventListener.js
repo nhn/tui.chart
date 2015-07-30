@@ -1,63 +1,70 @@
 /**
- * @fileoverview EventHandler
+ * @fileoverview Event listener.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var attachEvent, addEventListener;
-
 /**
- * Event listener for IE.
- * @param {string} eventName event name
- * @param {HTMLElement} el target element
- * @param {function} callback callback function
+ * Event listener.
+ * @module eventListener
  */
-attachEvent = function (eventName, el, callback) {
-    if (typeof callback == "object" && callback.handleEvent) {
-        el.attachEvent("on" + eventName, function () {
-            callback.handleEvent.call(callback);
-        });
-    } else {
-        el.attachEvent("on" + eventName, callback);
-    }
-};
-
-/**
- * Event listener for other browsers.
- * @param {string} eventName event name
- * @param {HTMLElement} el target element
- * @param {function} callback callback function
- */
-addEventListener = function (eventName, el, callback) {
-    try {
-        el.addEventListener(eventName, callback);
-    } catch (e) {
+var eventListener = {
+    /**
+     * Event listener for IE.
+     * @memberOf module:eventListener
+     * @param {string} eventName event name
+     * @param {HTMLElement} el target element
+     * @param {function} callback callback function
+     * @private
+     */
+    _attachEvent: function (eventName, el, callback) {
         if (typeof callback == "object" && callback.handleEvent) {
-            el.addEventListener(eventName, function (event) {
-                callback.handleEvent.call(callback, event);
+            el.attachEvent("on" + eventName, function () {
+                callback.handleEvent.call(callback);
             });
         } else {
-            throw e;
+            el.attachEvent("on" + eventName, callback);
         }
-    }
-};
+    },
 
-
-module.exports = {
+    /**
+     * Event listener for other browsers.
+     * @memberOf module:eventListener
+     * @param {string} eventName event name
+     * @param {HTMLElement} el target element
+     * @param {function} callback callback function
+     * @private
+     */
+    _addEventListener: function (eventName, el, callback) {
+        try {
+            el.addEventListener(eventName, callback);
+        } catch (e) {
+            if (typeof callback == "object" && callback.handleEvent) {
+                el.addEventListener(eventName, function (event) {
+                    callback.handleEvent.call(callback, event);
+                });
+            } else {
+                throw e;
+            }
+        }
+    },
     /**
      * Bind event function.
+     * @memberOf module:eventListener
      * @param {string} eventName event name
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
      */
     bindEvent: function (eventName, el, callback) {
         if ("addEventListener" in el) {
-            this.bindEvent = addEventListener;
+            this.bindEvent = this.addEventListener;
         } else if ("attachEvent" in el) {
-            this.bindEvent = attachEvent;
+            this.bindEvent = this.attachEvent;
         }
         this.bindEvent(eventName, el, callback);
     }
 };
+
+module.exports = eventListener;

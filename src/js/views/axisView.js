@@ -1,7 +1,7 @@
 /**
  * @fileoverview  AxisView render axis ticks and labels.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -14,14 +14,11 @@ var TITLE_AREA_WIDTH_PADDING = 20,
     TITLE_AREA_HEIGHT_PADDING = 20,
     V_LABEL_RIGHT_PADDING = 10;
 
-/**
- * @classdesc AxisView render axis ticks and labels.
- * @class
- * @augments View
- */
-var AxisView = ne.util.defineClass(View, {
+var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     /**
-     * Constructor
+     * AxisView render axis ticks and labels.
+     * @constructs AxisView
+     * @extends View
      * @param {object} model axis model
      * @param {object} theme axis theme
      */
@@ -43,7 +40,7 @@ var AxisView = ne.util.defineClass(View, {
     },
 
     /**
-     * Axis renderer
+     * Axis renderer.
      * @param {{width: number, height: number, top: number, right: number}} bound axis area dimension
      * @returns {HTMLElement} axis area base element
      */

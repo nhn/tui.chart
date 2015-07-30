@@ -1,7 +1,8 @@
 /**
- * @fileoverview  Chart Factory is register chart and get it.
+ * @fileoverview  Chart factory play role register chart.
+ *                And you can get chart from this factory.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -9,7 +10,7 @@
 var charts = {},
     factory = {
         /**
-         * Get chart.
+         * Get chart instance.
          * @param {string} chartType chart type
          * @param {object} data chart data
          * @param {object} options chart options
@@ -29,7 +30,7 @@ var charts = {},
         },
 
         /**
-         * Chart register.
+         * Register chart.
          * @param {string} chartType char type
          * @param {class} ChartClass chart class
          */

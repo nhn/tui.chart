@@ -1,16 +1,18 @@
 /**
  * @fileoverview This model is line chart model for management of line chart data.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var AxisChartModel = require('./axisChartModel.js');
 
-var LineChartModel = ne.util.defineClass(AxisChartModel, {
+var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartModel.prototype */ {
     /**
-     * Constructor
+     * This model is line chart model for management of line chart data.
+     * @constructs LineChartModel
+     * @extends AxisChartModel
      * @param {object} data user chart data
      * @param {object} options chart options
      */
