@@ -13,7 +13,7 @@ module.exports = {
      * @returns {function} template function
      * @eaxmple
      *
-     *   var template = templateMaker.template('<span>{= name }</span>'),
+     *   var template = templateMaker.template('<span>{{ name }}</span>'),
      *       result = template({name: 'John');
      *   console.log(result); // <span>John</span>
      *
@@ -22,7 +22,7 @@ module.exports = {
         return function (data) {
             var result = html;
             ne.util.forEach(data, function (value, key) {
-                var regExp = new RegExp('{=\\s*' + key + '\\s*}', 'g');
+                var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
                 result = result.replace(regExp, value);
             });
             return result;

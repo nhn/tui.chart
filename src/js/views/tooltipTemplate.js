@@ -7,16 +7,18 @@
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_POPUP: '<div class="ne-chart-default-tooltip">' +
-        '<div>{= label }</div>' +
+    HTML_TOOLTIP: '<div class="ne-chart-tooltip" id="{{ id }}">{{ html }}</div>',
+    HTML_DEFAULT_TEMPLATE: '<div class="ne-chart-default-tooltip">' +
+        '<div>{{ label }}</div>' +
         '<div>' +
-            '<span>{= legendLabel }</span>:' +
-            '&nbsp;<span>{= value }</span>' +
-            '<span>{= suffix }</span>' +
+            '<span>{{ legendLabel }}</span>:' +
+            '&nbsp;<span>{{ value }}</span>' +
+            '<span>{{ suffix }}</span>' +
         '</div>' +
     '</div>'
 };
 
 module.exports = {
-    TPL_POPUP: templateMaker.template(tags.HTML_POPUP)
+    TPL_TOOLTIP: templateMaker.template(tags.HTML_TOOLTIP),
+    TPL_DEFAULT_TEMPLATE: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE)
 };

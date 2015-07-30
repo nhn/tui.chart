@@ -8,8 +8,8 @@ var templateMaker = require('./templateMaker.js');
 
 var tags = {
     HTML_LEGEND: '<div class="ne-chart-legend">' +
-        '<div class="ne-chart-legend-rect" style="{= cssText }"></div>' +
-        '<div class="ne-chart-legend-label" style="height:{= height }px">{= label }</div></div>'
+        '<div class="ne-chart-legend-rect" style="{{ cssText }}"></div>' +
+        '<div class="ne-chart-legend-label" style="height:{{ height }}px">{{ label }}</div></div>'
 };
 
 module.exports = {

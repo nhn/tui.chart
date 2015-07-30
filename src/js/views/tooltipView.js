@@ -71,11 +71,12 @@ var TooltipView = ne.util.defineClass(View, {
     _makeTooltipsHtml: function(data, prefix) {
         var options = this.model.options,
             optionTemplate = options.template ? options.template : '',
-            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.TPL_POPUP,
+            tplOuter = tooltipTemplate.TPL_TOOLTIP,
+            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.TPL_DEFAULT_TEMPLATE,
             suffix = options.suffix ? '&nbsp;' + options.suffix : '',
             html = ne.util.map(data, function(tooltipData) {
                 var id = prefix + tooltipData.id,
-                    elTemp = dom.createElement('DIV');
+                    tooltipHtml;
 
                 tooltipData = ne.util.extend({
                     label: '',
@@ -83,11 +84,12 @@ var TooltipView = ne.util.defineClass(View, {
                     value: '',
                     suffix: suffix
                 }, tooltipData);
-                elTemp.innerHTML = tplTooltip(tooltipData);
-                elTemp.firstChild.id = id;
-                dom.addClass(elTemp.firstChild, TOOLTIP_CLASS_NAME);
+                tooltipHtml = tplTooltip(tooltipData);
 
-                return elTemp.innerHTML;
+                return tplOuter({
+                    id: id,
+                    html: tooltipHtml
+                });
             }, this).join('');
         return html;
     },

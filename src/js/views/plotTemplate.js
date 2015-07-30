@@ -7,7 +7,7 @@
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_PLOT_LINE: '<div class="ne-chart-plot-line {= className }" style="{= cssText }"></div>'
+    HTML_PLOT_LINE: '<div class="ne-chart-plot-line {{ className }}" style="{{ cssText }}"></div>'
 };
 
 module.exports = {
