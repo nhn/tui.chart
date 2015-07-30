@@ -17,29 +17,12 @@ var TITLE_ADD_PADDING = 20;
  */
 var ChartView = ne.util.defineClass(View, {
     /**
-     * Chart dimension
-     * @type {{width: number, height: number}
-     */
-    dimension: {
-        width: 500,
-        height: 300
-    },
-
-    /**
      * constructor
      * @param {object} data chart data
      * @param {options} options chart options
      */
     init: function(data, options) {
         options = options || {};
-
-        if (options.width) {
-            this.dimension.width = options.width;
-        }
-
-        if (options.height) {
-            this.dimension.height = options.height;
-        }
 
         View.call(this);
         dom.addClass(this.el, 'ne-chart');

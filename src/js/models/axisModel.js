@@ -82,7 +82,7 @@ AxisModel = ne.util.defineClass(Model, {
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this._setValueAxisData(data.values, data.formatFns);
+            this._setValueAxisData(data.values, data.chartDimension, data.formatFns);
         }
     },
 
@@ -100,16 +100,23 @@ AxisModel = ne.util.defineClass(Model, {
     /**
      * Set value type axis data.
      * @param {array.<array.<number>>} groupValues chart values
+     * @param {object} dimension chart dimension
+     * @param {array.<function>} formatFns format functions
      * @private
      */
-    _setValueAxisData: function(groupValues, formatFns) {
+    _setValueAxisData: function(groupValues, dimension, formatFns) {
         var options = this.options,
             values = apc.apply([], groupValues), // flatten array
             min = ne.util.min(values),
             max = ne.util.max(values),
-            scale = this._calculateScale(min, max, options.min),
-            step = this.getScaleStep(scale, this.tickCount),
-            labels = ne.util.range(scale.min, scale.max + 1, step);
+            scale, step, labels;
+
+        this.tickCount = parseInt((dimension.height - 80) / 52, 10);
+
+        scale = this._calculateScale(min, max, this.tickCount, options.min);
+        this._reviseTickCount(scale, this.tickCount, min, max);
+        step = this.getScaleStep(scale, this.tickCount);
+        labels = ne.util.range(scale.min, scale.max + 1, step);
 
         labels = this._formatLabels(labels, formatFns);
         this.axisType = AXIS_TYPE_VALUE;
@@ -118,15 +125,102 @@ AxisModel = ne.util.defineClass(Model, {
     },
 
     /**
+     * Multiple scale.
+     * @param {{min: number, max: number}} scale scale
+     * @param {number} num multiple number
+     * @returns {{max: number, min: number}} scale
+     * @private
+     */
+    _multipleScale: function(scale, num) {
+        return {
+            max: scale.max * num,
+            min: scale.min * num
+        };
+    },
+
+    /**
+     * Divide scale
+     * @param {{min: number, max: number}} scale scale
+     * @param {number} num divide number
+     * @returns {{max: number, min: number}} scale
+     * @private
+     */
+    _divideScale: function(scale, num) {
+        return {
+            max: scale.max / num,
+            min: scale.min / num
+        };
+    },
+
+    /**
+     * Revise scale.
+     * @param {{min: number, max: number}} scale scale
+     * @param {number} tickCount tick count
+     * @returns {{max: number, min: number}} scale
+     * @private
+     */
+    _reviseScale: function(scale, tickCount) {
+        var max = scale.max,
+            min = scale.min,
+            divideCount = tickCount - 1,
+            modNumber = divideCount * 5,
+            diff, addMax, newScale;
+        if (max < 1) {
+            newScale = this._reviseScale(this._multipleScale(scale, 10), tickCount);
+            scale = this._divideScale(newScale, 10);
+
+            return scale;
+        }
+
+        if (max < modNumber) {
+            scale.min = 0;
+        } else if (max >= modNumber && min % 5 > 0) {
+            scale.min = ne.util.max([min - (min % 5), 0]);
+        }
+
+        diff = max - scale.min;
+        if (max < modNumber) {
+            addMax = diff === 0 ? 0 : divideCount - (diff % divideCount);
+        } else {
+            addMax = diff === 0 ? 0 : modNumber - (diff % modNumber);
+        }
+
+        scale.max = scale.max + addMax;
+
+        return scale;
+    },
+
+    /**
+     * Revise tick count and max scale.
+     * @param {{min: number, max: number}} scale scale
+     * @param {number} tickCount tick count
+     * @param {number} orgMin user data min
+     * @param {number} orgMax user data max
+     * @private
+     */
+    _reviseTickCount: function(scale, tickCount, orgMin, orgMax) {
+        var step = scale.max / (tickCount - 1),
+            diffMin = orgMin - scale.min,
+            diffMax = scale.max - orgMax,
+            diffMax2 = scale.max - step - orgMax;
+
+        if (diffMax2 > 0 && (Math.abs(diffMin - diffMax) > Math.abs(diffMin - diffMax2))) {
+            this.tickCount = tickCount - 1;
+            scale.max = scale.max - step;
+        }
+    },
+
+    /**
      * Calculate scale from chart min, max data.
      * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min chart min value
      * @param {number} max max chart max value
+     * @param {number} tickCount tick count
      * @param {number} minValue optional min value
      * @returns {{min: number, max: number}} scale axis scale
      * @private
      */
-    _calculateScale: function(min, max, minValue) {
+    _calculateScale: function(min, max, tickCount, minValue) {
         var scale = {},
             iodValue = (max - min) / 20; // increase or decrease the value;
         scale.max = max + iodValue;
@@ -142,6 +236,7 @@ AxisModel = ne.util.defineClass(Model, {
             scale.min = min - iodValue;
         }
 
+        scale = this._reviseScale(scale, tickCount, min, max);
         return scale;
     },
 

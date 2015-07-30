@@ -30,7 +30,7 @@
         <select id="type">
             <option value="barChart">Bar Chart</option>
             <option value="columnChart">Column Chart</option>
-            <option value="lineChart">line Chart</option>
+            <option value="lineChart" selected>line Chart</option>
         </select>
     </div>
     <div>
@@ -39,10 +39,10 @@
             <textarea id="data">
 [
     ["Element", "Density", "Density2", "Density3"],
-    ["Copper", 20, 30, 50],
-    ["Silver", 40, 40, 60],
-    ["Gold", 60, 50, 10],
-    ["Platinum", 80, 10, 70]
+    ["Copper", 2, 3, 5],
+    ["Silver", 4, 4, 6],
+    ["Gold", 6, 5, 1],
+    ["Platinum", 4, 1, 3]
 ]
             </textarea>
         </div>
@@ -53,8 +53,7 @@
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "chart title",
-        "format": "0.0"
+        "title": "chart title"
     },
     "vAxis": {
         "title": "vAxis title"
@@ -148,12 +147,10 @@
             chart: {
                 width: 500,
                 height: 400,
-                title: 'chart title',
-                format: '0.00'
+                title: 'chart title'
             },
             vAxis: {
-                title: 'vAxis title',
-                min: 0
+                title: 'vAxis title'
             },
             hAxis: {
                 title: 'hAxis title'

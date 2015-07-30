@@ -75,7 +75,7 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
             formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
 
-        axisInfo = this._setAxis(labels, values, formatFns, options);
+        axisInfo = this._setAxis(labels, values, formatFns, this.dimension, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
         this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
@@ -90,9 +90,10 @@ var BarChartModel = ne.util.defineClass(ChartModel, {
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
-    _setAxis: function(labels, values, formatFns, options) {
+    _setAxis: function(labels, values, formatFns, chartDimension, options) {
         var valueData = {
                 values: values,
+                chartDimension: chartDimension,
                 formatFns: formatFns
             },
             labelData = {

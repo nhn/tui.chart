@@ -21,7 +21,9 @@ var ChartModel = ne.util.defineClass(Model, {
      * @param {object} options user options
      */
     init: function(data, options) {
+        var chartOptions;
         options = options || {};
+        chartOptions = options.chart || {};
 
         /**
          * Chart options
@@ -30,10 +32,27 @@ var ChartModel = ne.util.defineClass(Model, {
         this.options = options;
 
         /**
+         * Chart dimension
+         * @type {{width: number, height: number}
+        */
+        this.dimension = {
+            width: 500,
+            height: 300
+        };
+
+        if (chartOptions.width) {
+            this.dimension.width = chartOptions.width;
+        }
+
+        if (chartOptions.height) {
+            this.dimension.height = chartOptions.height;
+        }
+
+        /**
          * Chart title
          * @type {string}
          */
-        this.title = options.chart ? options.chart.title : '';
+        this.title = chartOptions.title || '';
 
         if (data) {
             this._setData(data);

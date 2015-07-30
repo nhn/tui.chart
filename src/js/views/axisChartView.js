@@ -85,7 +85,7 @@ AxisChartView = ne.util.defineClass(ChartView, {
             elLegend = this.legendView.render(bounds.legend),
             elTooltip = this.tooltipView.render(bounds.tooltip, tooltipPrefix);
         this.appends([elTitle, elPlot, elVAxis, elHAxis, elSeries, elLegend, elTooltip]);
-        this.renderDimension(this.dimension);
+        this.renderDimension(this.model.dimension);
         this.renderBackground(this.theme.background);
         this.renderChartFont(this.theme.fontFamily);
 
@@ -123,8 +123,8 @@ AxisChartView = ne.util.defineClass(ChartView, {
             vAxisWidth = this.vAxisView.getVAxisAreaWidth(),
             hAxisHeight = this.hAxisView.getHAxisAreaHeight(),
             legendWidth = this.legendView.getLegendAreaWidth(),
-            plotWidth = this.dimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
-            plotHeight = this.dimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            plotWidth = this.model.dimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
+            plotHeight = this.model.dimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
             right = legendWidth + CHART_PADDING,
             bounds = {
