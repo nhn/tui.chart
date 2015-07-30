@@ -157,18 +157,18 @@
 
   .ne-chart-tooltip-area {
     position: absolute;
-    > * {
+    .ne-chart-tooltip {
+      position: absolute;
       display: none;
       &.show {
         display: block;
       }
     }
-    .ne-chart-tooltip {
+    .ne-chart-default-tooltip {
       font-size: 12px;
       min-width: 100px;
       border: 1px solid #888;
       background-color: #efefef;
-      position: absolute;
       > * {
         padding: 2px 5px;
       }

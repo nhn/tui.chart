@@ -7,7 +7,7 @@
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_POPUP: '<div class="ne-chart-tooltip">' +
+    HTML_POPUP: '<div class="ne-chart-default-tooltip">' +
         '<div>{= label }</div>' +
         '<div>' +
             '<span>{= legendLabel }</span>:' +

@@ -83,9 +83,9 @@ var TooltipView = ne.util.defineClass(View, {
                     value: '',
                     suffix: suffix
                 }, tooltipData);
-
                 elTemp.innerHTML = tplTooltip(tooltipData);
                 elTemp.firstChild.id = id;
+                dom.addClass(elTemp.firstChild, TOOLTIP_CLASS_NAME);
 
                 return elTemp.innerHTML;
             }, this).join('');
