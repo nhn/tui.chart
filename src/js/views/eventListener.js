@@ -6,8 +6,14 @@
 
 'use strict';
 
-var attachEvent, addEventListener, eventListener;
+var attachEvent, addEventListener;
 
+/**
+ * Event listener for IE.
+ * @param {string} eventName event name
+ * @param {HTMLElement} el target element
+ * @param {function} callback callback function
+ */
 attachEvent = function (eventName, el, callback) {
     if (typeof callback == "object" && callback.handleEvent) {
         el.attachEvent("on" + eventName, function () {
@@ -18,13 +24,19 @@ attachEvent = function (eventName, el, callback) {
     }
 };
 
+/**
+ * Event listener for other browsers.
+ * @param {string} eventName event name
+ * @param {HTMLElement} el target element
+ * @param {function} callback callback function
+ */
 addEventListener = function (eventName, el, callback) {
     try {
         el.addEventListener(eventName, callback);
     } catch (e) {
         if (typeof callback == "object" && callback.handleEvent) {
-            el.addEventListener(eventName, function (e) {
-                callback.handleEvent.call(callback, e);
+            el.addEventListener(eventName, function (event) {
+                callback.handleEvent.call(callback, event);
             });
         } else {
             throw e;
@@ -32,11 +44,14 @@ addEventListener = function (eventName, el, callback) {
     }
 };
 
-//EventListener.mixin = function(target) {
-//    ne.util.extend(target.prototype, EventListener.prototype);
-//};
 
-module.exports =  {
+module.exports = {
+    /**
+     * Bind event function.
+     * @param {string} eventName event name
+     * @param {HTMLElement} el target element
+     * @param {function} callback callback function
+     */
     bindEvent: function (eventName, el, callback) {
         if ("addEventListener" in el) {
             this.bindEvent = addEventListener;
