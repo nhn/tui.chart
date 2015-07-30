@@ -31,7 +31,7 @@ var LineChart = ne.util.defineClass({
             paper = Raphael(container, dimension.width, dimension.height),
             groupPositions = model.makeLinePositions(data.dimension),
             groupPaths = this._getLinesPath(groupPositions),
-            groupBgLines = this._renderBgLines(paper, groupPaths),
+            //groupBgLines = this._renderBgLines(paper, groupPaths),
             groupLines = this._renderLines(paper, groupPaths, colors),
             borderStyle = this._makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this._makeOutDotStyle(opacity, borderStyle),
@@ -40,7 +40,7 @@ var LineChart = ne.util.defineClass({
         this.outDotStyle = outDotStyle;
         this.groupDots = groupDots;
 
-        this._attachEvent(groupDots, groupBgLines, groupLines, groupPositions, outDotStyle, inCallback, outCallback);
+        this._attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
     },
 
     /**
@@ -286,25 +286,25 @@ var LineChart = ne.util.defineClass({
      * @param {function} outCallback out callback
      * @private
      */
-    _attachEvent: function(groupDots, groupBgLines, groupLines, groupPositions, outDotStyle, inCallback, outCallback) {
+    _attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
         ne.util.forEach(groupDots, function(dots, groupIndex) {
-            ne.util.forEach(dots, function(dot, index, scope) {
+            ne.util.forEach(dots, function(dot, index) {
                 var position = groupPositions[groupIndex][index],
-                    id = index + '-' + groupIndex,
-                    prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
+                    id = index + '-' + groupIndex;
+                    //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
                 this._bindHoverEvent(dot, dot, outDotStyle, position, id, inCallback, outCallback);
-                if (index > 0) {
-                    prevIndex = index - 1;
-                    prevDot = scope[prevIndex];
-                    prevPositon = groupPositions[groupIndex][prevIndex];
-                    prevId = prevIndex + '-' + groupIndex;
-                    bgLines = groupBgLines[groupIndex][prevIndex];
-                    lines = groupLines[groupIndex][prevIndex];
-                    this._bindHoverEvent(bgLines[0], prevDot, outDotStyle, prevPositon, prevId, inCallback, outCallback);
-                    this._bindHoverEvent(bgLines[1], dot, outDotStyle, position, id, inCallback, outCallback);
-                    this._bindHoverEvent(lines[0], prevDot, outDotStyle, prevPositon, prevId, inCallback, outCallback);
-                    this._bindHoverEvent(lines[1], dot, outDotStyle, position, id, inCallback, outCallback);
-                }
+                //if (index > 0) {
+                //    prevIndex = index - 1;
+                //    prevDot = scope[prevIndex];
+                //    prevPositon = groupPositions[groupIndex][prevIndex];
+                //    prevId = prevIndex + '-' + groupIndex;
+                //    //bgLines = groupBgLines[groupIndex][prevIndex];
+                //    lines = groupLines[groupIndex][prevIndex];
+                //    this._bindHoverEvent(bgLines[0], prevDot, outDotStyle, prevPositon, prevId, inCallback, outCallback);
+                //    this._bindHoverEvent(bgLines[1], dot, outDotStyle, position, id, inCallback, outCallback);
+                //    this._bindHoverEvent(lines[0], prevDot, outDotStyle, prevPositon, prevId, inCallback, outCallback);
+                //    this._bindHoverEvent(lines[1], dot, outDotStyle, position, id, inCallback, outCallback);
+                //}
             }, this);
         }, this);
     },
