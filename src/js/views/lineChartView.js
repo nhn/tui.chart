@@ -7,7 +7,6 @@
 'use strict';
 
 var AxisChartView = require('./axisChartView.js'),
-    chartFactory = require('../factories/chartFactory.js'),
     LineChartModel = require('../models/lineChartModel.js'),
     SeriesView = require('./seriesView.js');
 

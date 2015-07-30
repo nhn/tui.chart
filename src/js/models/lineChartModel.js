@@ -22,6 +22,13 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, {
          * @type {boolean}
          */
         this.isVertical = true;
+
+        if (!options.tooltip) {
+            options.tooltip = {};
+        }
+        options.tooltip.addPosition = {
+            top: -3
+        };
         AxisChartModel.call(this, data, options);
     },
 

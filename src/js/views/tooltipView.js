@@ -205,6 +205,10 @@ var TooltipView = ne.util.defineClass(View, {
      */
     onShow: function(data) {
         var elTooltip = document.getElementById(data.id),
+            addPosition = ne.util.extend({
+                left: 0,
+                top: 0
+            }, this.model.options.addPosition),
             dimension, position;
 
         if (this.showedId) {
@@ -221,8 +225,8 @@ var TooltipView = ne.util.defineClass(View, {
         position = this.calculatePosition(data, dimension);
 
         elTooltip.style.cssText = [
-            this.concatStr('left:', position.left, 'px'),
-            this.concatStr('top:', position.top, 'px')
+            this.concatStr('left:', position.left + addPosition.left, 'px'),
+            this.concatStr('top:', position.top + addPosition.top, 'px')
         ].join(';');
 
         this._fireShowDot(data.id);
