@@ -197,13 +197,12 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
      * @param {string[]} values chart values
      * @returns {function[]} functions
      */
-    findFormatFns: function(format, values) {
+    findFormatFns: function(format) {
         var funcs = [],
             len;
 
         if (!format) {
-            len = this._pickMaxLenUnderPoint(values);
-            return [ne.util.bind(this._formatDecimal, this, len)];
+            return [];
         }
 
         if (this._isDecimal(format)) {

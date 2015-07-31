@@ -73,10 +73,10 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
-            formatFns = this.findFormatFns(chartOptions.format, [].concat.apply([], values)),
+            formatFns = this.findFormatFns(chartOptions.format),
             formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
-
+        
         axisInfo = this._setAxis(labels, values, formatFns, this.dimension, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);

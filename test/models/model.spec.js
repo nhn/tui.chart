@@ -52,8 +52,8 @@ describe('test axis model', function() {
     });
 
     it('_findFormatFns', function() {
-        var result = model.findFormatFns(null, [1.11, 2.2, 3.33, 4, 5.5]);
-        expect(result[0](1000)).toEqual('1000.00');
+        var result = model.findFormatFns();
+        expect(result).toEqual([]);
 
         result = model.findFormatFns('0.000');
         expect(result[0](1000)).toEqual('1000.000');

@@ -44,7 +44,7 @@ describe('test axis model', function() {
                 min: 0,
                 max: 10
             }, 5);
-            expect(scale.max).toEqual(12);
+            expect(scale.max).toEqual(11);
 
             scale = axisModel._correctScale({
                 min: 10,
@@ -56,14 +56,14 @@ describe('test axis model', function() {
                 min: 0,
                 max: 0.1
             }, 5);
-            expect(scale.max).toEqual(0.4);
+            expect(scale.max).toEqual(0.3);
 
             scale = axisModel._correctScale({
                 min: 0.1,
                 max: 0.8
             }, 5);
-            expect(scale.min).toEqual(0.1);
-            expect(scale.max).toEqual(0.9);
+            expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(1.2);
         });
 
         it('getCalculateScale', function() {
@@ -155,7 +155,7 @@ describe('test axis model', function() {
                 axisModel = new AxisModel(data, options),
                 lenUnderPoint = ((axisModel.labels[1] + '').split('.'))[1].length;
             expect(lenUnderPoint).toEqual(2);
-            expect(axisModel.scale.min).toEqual(0);
+            expect(axisModel.scale.min).toEqual(-1);
             expect(axisModel.title).toEqual('value title');
         });
     });
