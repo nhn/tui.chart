@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Bar Chart</title>
-    <link rel="stylesheet" type="text/css" href="dist/style.css" />
+    <link rel="stylesheet" type="text/css" href="dist/style.min.css" />
     <style>
         textarea {
             width: 200px;
@@ -17,26 +17,27 @@
             top: 0;
         }
 
-        body > div {
+        body > div > div {
             float:left;
         }
     </style>
 </head>
-<body>
-<div id="chart-area"></div>
-<div style="width:640px;margin-left:10px;margin-top:5px;">
-    <div>
-        chart type :
-        <select id="type">
-            <option value="barChart">Bar Chart</option>
-            <option value="columnChart">Column Chart</option>
-            <option value="lineChart" selected>line Chart</option>
-        </select>
-    </div>
-    <div>
-        <div style="float:left;">
-            <div>data</div>
-            <textarea id="data">
+<body style="width: 700px; min-height: 900px;">
+<div style="width: 700px;">
+    <div id="chart-area"></div>
+    <div style="width:640px;margin-left:10px;margin-top:5px;">
+        <div>
+            chart type :
+            <select id="type">
+                <option value="barChart">Bar Chart</option>
+                <option value="columnChart">Column Chart</option>
+                <option value="lineChart" selected>line Chart</option>
+            </select>
+        </div>
+        <div>
+            <div style="float:left;">
+                <div>data</div>
+                <textarea id="data">
 [
     ["Groups", "Group1", "Group2", "Group3"],
     ["Legend1", 2, 3, 5],
@@ -44,11 +45,11 @@
     ["Legend3", 6, -5, 1],
     ["Legend4", 4, 1, -3]
 ]
-            </textarea>
-        </div>
-        <div style="float:left; margin-left:10px;position:relative;">
-            <div>options</div>
-            <textarea id="options">
+                </textarea>
+            </div>
+            <div style="float:left; margin-left:10px;position:relative;">
+                <div>options</div>
+                <textarea id="options">
 {
     "chart": {
         "width": 500,
@@ -59,8 +60,7 @@
         "title": "vAxis title"
     },
     "hAxis": {
-        "title": "hAxis title",
-        "min": 0
+        "title": "hAxis title"
     },
     "tooltip": {
         "suffix": "",
@@ -71,12 +71,12 @@
     },
     "theme": "newTheme"
 }
-            </textarea>
-        </div>
-        <div style="float:left; margin-left:10px;position:relative;">
-            <div>theme</div>
-            <button id="btn">적용</button>
-            <textarea id="theme">
+                </textarea>
+            </div>
+            <div style="float:left; margin-left:10px;position:relative;">
+                <div>theme</div>
+                <button id="btn">적용</button>
+                <textarea id="theme">
 {
     "chart": {
         "background": "#ffffff",
@@ -124,14 +124,15 @@
         }
     }
 }
-            </textarea>
+                </textarea>
+            </div>
         </div>
     </div>
 </div>
 
-<script src="lib/ne-code-snippet/code-snippet.js"></script>
-<script src="lib/raphael/raphael-min.js"></script>
-<script src="dist/application-chart.js"></script>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/application-chart.min.js"></script>
 <script>
     var chart = ne.application.chart,
         elChartArea = document.getElementById('chart-area'),
