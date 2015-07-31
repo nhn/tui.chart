@@ -28,6 +28,7 @@ Currently it supports bar charts and line charts.
 
 ## Dependency
 * ne-code-snippet ~1.0.2
+* Raphaël 2.1.4
 
 ## Test environment
 * PC
