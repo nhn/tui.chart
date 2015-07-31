@@ -310,10 +310,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         if (baseMax < 1) {
             newScale = this._correctScale(this._multipleScale(scale, 10), tickCount, userMin, userMax);
             scale = this._divideScale(newScale, 10);
-
             return scale;
         }
-
+        
         if (baseMax < modNumber) {
             if (min % 1 === 0) {
                 min += min < 0 ? 0.1 : -0.1;
@@ -374,10 +373,11 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             scale.min = min - iodValue;
         }
 
+        scale = this._correctScale(scale, tickCount, userMin, userMax);
+
         scale.max += saveMin;
         scale.min += saveMin;
 
-        scale = this._correctScale(scale, tickCount, userMin, userMax);
         return scale;
     },
 

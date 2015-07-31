@@ -76,7 +76,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             formatFns = this.findFormatFns(chartOptions.format),
             formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
-        
+
         axisInfo = this._setAxis(labels, values, formatFns, this.dimension, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
@@ -88,6 +88,8 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * Set Axis.
      * @param {array.<string>} labels labels
      * @param {array.<array.<number>>} values chart values
+     * @param {array.<function>} formatFns format functions
+     * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {object} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
