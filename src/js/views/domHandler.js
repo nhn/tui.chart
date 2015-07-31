@@ -60,7 +60,7 @@ var domHandler = {
     },
 
     /**
-     * Remove css class to target element.
+     * Remove css class from target element.
      * @memberOf module:domHandler
      * @param {HTMLElement} el target element
      * @param {string} rmClass remove class name
@@ -78,7 +78,7 @@ var domHandler = {
     },
 
     /**
-     * Target element has a target css class?
+     * Whether class exist or not.
      * @memberOf module:domHandler
      * @param {HTMLElement} el target element
      * @param {string} findClass target css class
@@ -92,7 +92,7 @@ var domHandler = {
     },
 
     /**
-     * Find parent by css class name.
+     * Find parent by class name.
      * @memberOf module:domHandler
      * @param {HTMLElement} el target element
      * @param {string} className target css class

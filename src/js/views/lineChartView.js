@@ -34,7 +34,7 @@ var LineChartView = ne.util.defineClass(AxisChartView, /** @lends LineChartView.
         this.model = new LineChartModel(data, options);
 
         /**
-         * series view
+         * Series view
          * @type {object}
          */
         this.seriesView = new SeriesView(this.model.series, {

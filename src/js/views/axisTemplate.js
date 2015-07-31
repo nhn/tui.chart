@@ -1,5 +1,5 @@
 /**
- * @fileoverview This is axis view templates.
+ * @fileoverview This is templates or axis view.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

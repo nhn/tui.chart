@@ -41,7 +41,7 @@ var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
 
     /**
      * Legend renderer.
-     * @param {obejct} bound plot bound
+     * @param {object} bound plot bound
      * @returns {HTMLElement} legend element
      */
     render: function(bound) {
@@ -82,7 +82,7 @@ var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
     },
 
     /**
-     * Get legend area height.
+     * Get height of legend area.
      * @returns {number} height
      * @private
      */
@@ -93,7 +93,7 @@ var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
     },
 
     /**
-     * Get legend area width.
+     * Get width of legend area.
      * @returns {number} width
      */
     getLegendAreaWidth: function() {

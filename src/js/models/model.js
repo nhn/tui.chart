@@ -9,7 +9,7 @@
 var apc = Array.prototype.concat;
 
 /**
- * @classdesc Model is parent of all model.
+ * @classdesc This is base model.
  * @class Model
  */
 var Model = ne.util.defineClass(/** @lends Model.prototype */ {
@@ -24,7 +24,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Makes pixel type tick positions.
+     * To Make tick positions of pixel type.
      * @param {number} size area width or height
      * @param {number} count tick count
      * @returns {array.<object>} positions
@@ -46,7 +46,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Array pivot
+     * Array pivot.
      * @param {array.<array>} arr2d 2d array
      * @returns {array.<array>} 2d array
      */
@@ -64,7 +64,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Is zero fill format?
+     * Whether zero fill format or not.
      * @param {string} format format
      * @returns {boolean} is zero fill format?
      * @private
@@ -74,7 +74,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Is decimal format?
+     * Whether decimal format or not.
      * @param {string} format format
      * @returns {boolean} is decimal format?
      * @private
@@ -85,7 +85,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Is comma format?
+     * Whether comma format or not.
      * @param {string} format format
      * @returns {boolean} is comma format?
      * @private
@@ -95,7 +95,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Zero fill formatting .
+     * Format zero fill.
      * @param {number} len length
      * @param {string} value target value
      * @returns {string} formatted value
@@ -118,7 +118,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Decimal formatting.
+     * Format Decimal.
      * @param {number} len length
      * @param {string} value target value
      * @returns {string} formatted value
@@ -138,7 +138,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     },
 
     /**
-     * Comma formatting.
+     * Format Comma.
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
@@ -197,7 +197,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
      * @param {string[]} values chart values
      * @returns {function[]} functions
      */
-    findFormatFns: function(format) {
+    findFormatFunctions: function(format) {
         var funcs = [],
             len;
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview ChartModel is parent of all chart model.
+ * @fileoverview ChartModel is parent of all of chart model.
  *               This model provides a method to convert the data.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
@@ -11,7 +11,7 @@ var Model = require('./model.js');
 
 var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
-     * ChartModel is parent of all chart model.
+     * ChartModel is parent of all of chart model.
      * This model provides a method to convert the data.
      * @constructs ChartModel
      * @extends Model

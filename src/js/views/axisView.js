@@ -119,7 +119,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Render tick border color.
+     * Render border color of tick.
      * @param {HTMLElement} elTickArea tick area element
      * @param {string} tickColor tick color
      * @param {boolean} isVertical Is vertical?
@@ -134,7 +134,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Label area renderer
+     * Label area renderer.
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
      * @returns {HTMLElement} label area element
@@ -170,7 +170,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Get title area height;
+     * Get height of title area ;
      * @returns {number} height
      * @private
      */
@@ -182,7 +182,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Makes label css array
+     * To make cssTexts of label.
      * @param {boolean} isVertical Is vertical?
      * @param {boolean} isLabelAxis Is label axis?
      * @param {number} labelWidth label width or height
@@ -203,7 +203,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Makes label html
+     * To make html of label.
      * @param {array.<object>} positions label position array
      * @param {string[]} labels label array
      * @param {string} posType position type (left or bottom)
@@ -229,7 +229,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Change label area position
+     * Change position of label area.
      * @param {HTMLElement} elLabelArea label area element
      * @param {boolean} isVertical is vertical
      * @param {boolean} isLabelAxis is label axis
@@ -253,7 +253,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Get Vertical Axis Area Width
+     * Get width of vertical axis area.
      * @returns {number} width
      */
     getVAxisAreaWidth: function() {
@@ -263,7 +263,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     },
 
     /**
-     * Get Horizontal Axis Area Height
+     * Get height of horizontal axis area.
      * @returns {number} height
      */
     getHAxisAreaHeight: function() {

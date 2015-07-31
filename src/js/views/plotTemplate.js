@@ -1,5 +1,5 @@
 /**
- * @fileoverview This is plot view templates.
+ * @fileoverview This is templates of plot view .
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

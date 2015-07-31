@@ -1,5 +1,5 @@
 /**
- * @fileoverview View is parent of all view.
+ * @fileoverview View is parent of all views.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -15,7 +15,7 @@ var browser = ne.util.browser,
 
 View = ne.util.defineClass(/** @lends View.prototype */ {
     /**
-     * View is parent of all view.
+     * View is parent of all views.
      * @constructs View
      */
     init: function() {
@@ -124,7 +124,7 @@ View = ne.util.defineClass(/** @lends View.prototype */ {
     },
 
     /**
-     * Makes css text for font.
+     * To make cssText for font.
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
      */
@@ -151,7 +151,7 @@ View = ne.util.defineClass(/** @lends View.prototype */ {
     },
 
     /**
-     * Create size check element
+     * Create element for size check.
      * @returns {HTMLElement} element
      * @private
      */
@@ -165,7 +165,7 @@ View = ne.util.defineClass(/** @lends View.prototype */ {
     },
 
     /**
-     * Get rendered label size (width or height)
+     * Get rendered label size (width or height).
      * @param {string} label label
      * @param {object} options options
      * @param {string} property element property

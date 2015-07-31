@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is line chart model for management of line chart data.
+ * @fileoverview This model is about line chart for management of line chart data.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,7 +10,7 @@ var AxisChartModel = require('./axisChartModel.js');
 
 var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartModel.prototype */ {
     /**
-     * This model is line chart model for management of line chart data.
+     * This model is about line chart for management of line chart data.
      * @constructs LineChartModel
      * @extends AxisChartModel
      * @param {object} data user chart data
@@ -35,7 +35,7 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartMod
     },
 
     /**
-     * Set series
+     * Set series.
      * @param {array.<array.<number>>} values chart values
      * @param {array.<array.<string>>} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale

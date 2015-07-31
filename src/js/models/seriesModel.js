@@ -1,6 +1,6 @@
 /**
  * @fileoverview SeriesModel is model for management of series data.
- *               Series data used to draw the series area.
+ *               Series data used for draw the series area.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -14,7 +14,7 @@ var HIDDEN_WIDTH = 1;
 var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */ {
     /**
      * SeriesModel is model for management of series data.
-     * Series data used to draw the series area.
+     * Series data used for draw the series area.
      * @constructs SeriesModel
      * @extends Model
      * @param {object} data series data
@@ -81,8 +81,8 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * Make to percent value.
-     * @param {array.<array.<number>>} values values
+     * To make percent value.
+     * @param {array.<array.<number>>} values axis percent values
      * @param {{min:number, max:number}} scale min, max scale
      * @returns {array.<array.<number>>} percent values
      * @private
@@ -97,8 +97,8 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * Make column chart bounds.
-     * @param {{width: number, height:nunber}} dimension dimension
+     * To make bounds of column chart.
+     * @param {{width: number, height:nunber}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      */
     makeColumnBounds: function(dimension) {
@@ -121,8 +121,8 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * Make bar chart bounds.
-     * @param {{width: number, height:nunber}} dimension dimension
+     * To make bounds of bar chart.
+     * @param {{width: number, height:nunber}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      */
@@ -145,8 +145,8 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * Make line chart positions.
-     * @param {{width: number, height:nunber}} dimension dimension
+     * To make positions of line chart.
+     * @param {{width: number, height:nunber}} dimension line chart dimension
      * @returns {array.<array.<object>>} positions
      */
     makeLinePositions: function(dimension) {

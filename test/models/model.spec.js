@@ -52,19 +52,19 @@ describe('test axis model', function() {
     });
 
     it('_findFormatFns', function() {
-        var result = model.findFormatFns();
+        var result = model.findFormatFunctions();
         expect(result).toEqual([]);
 
-        result = model.findFormatFns('0.000');
+        result = model.findFormatFunctions('0.000');
         expect(result[0](1000)).toEqual('1000.000');
 
-        result = model.findFormatFns('1,000');
+        result = model.findFormatFunctions('1,000');
         expect(result[0](1000)).toEqual('1,000');
 
-        result = model.findFormatFns('1,000.00');
+        result = model.findFormatFunctions('1,000.00');
         expect(result.length).toEqual(2);
 
-        result = model.findFormatFns('0001');
+        result = model.findFormatFunctions('0001');
         expect(result[0](11)).toEqual('0011');
     });
 });

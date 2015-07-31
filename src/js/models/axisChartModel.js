@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is axis chart model for management of axis type chart data.
+ * @fileoverview AxisChartModel is model about axis chart for management of axis type chart data.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -15,7 +15,7 @@ var ChartModel = require('./chartModel.js'),
 
 var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.prototype */ {
     /**
-     * This model is axis chart model for management of axis type chart data.
+     * This model is about axis chart for management of axis type chart data.
      * @constructs AxisChartModel
      * @extends ChartModel
      * @param {object} data user chart data
@@ -73,7 +73,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
-            formatFns = this.findFormatFns(chartOptions.format),
+            formatFns = this.findFormatFunctions(chartOptions.format),
             formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
             axisInfo;
 

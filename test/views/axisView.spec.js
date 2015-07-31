@@ -16,7 +16,7 @@ describe('test Axis View', function() {
         valueData = {
             values: [[10], [20], [30], [40], [50]],
             chartDimension: {width: 400, height: 300},
-            formatFns: tmpAxisModel.findFormatFns('0.00')
+            formatFns: tmpAxisModel.findFormatFunctions('0.00')
         },
         labelData = {labels: ['label1', 'label2', 'label3']},
         options = {

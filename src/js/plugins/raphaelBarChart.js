@@ -13,12 +13,12 @@ var Raphael = window.Raphael,
     isIE8 = browser.msie && browser.version === 8;
 
 /**
- * @classdesc This class is RaphaelBarChart graph renderer.
+ * @classdesc RaphaelBarChart is graph renderer.
  * @class RaphaelBarChart
  */
 var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
-     * Bar chart graph render function.
+     * Render function of bar chart
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object}} data chart data
      * @param {function} inCallback mouseover callback

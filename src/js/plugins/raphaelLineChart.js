@@ -11,12 +11,12 @@ var Raphael = window.Raphael,
     HOVER_DOT_WIDTH = 5;
 
 /**
- * @classdesc This class is RaphaelLineChart graph renderer.
+ * @classdesc RaphaelLineCharts is graph renderer.
  * @class RaphaelLineChart
  */
 var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype */ {
     /**
-     * Line chart graph render function.
+     * Render function or line chart.
      * @param {HTMLElement} container container
      * @param {{model: object, dimestion: object, theme: object}} data render data
      * @param {function} inCallback in callback
@@ -44,7 +44,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Make border style.
+     * To make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
      * @returns {object} border style
@@ -63,7 +63,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Make mouseout dot style.
+     * To make dot style for mouseout event.
      * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {{fill-opacity: number, stroke-opacity: number, r: number}} style
@@ -133,7 +133,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Make line path.
+     * To make line path.
      * by Sungho Kim <sungho.kim@nhnent.com>
      * @param {number} fx from x
      * @param {number} fy from y
@@ -160,7 +160,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Get center
+     * Get center position
      * @param {object} fromPos from position
      * @param {object} toPos to position
      * @returns {{left: number, top: number}} position
@@ -225,7 +225,6 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             return ne.util.map(paths, function(path) {
                 var firstLine = this._renderLine(paper, path[0], color, strokeWidth),
                     secondLine = this._renderLine(paper, path[1], color, strokeWidth);
-
                 return [firstLine, secondLine];
             }, this);
         }, this);

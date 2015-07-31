@@ -1,6 +1,6 @@
 /**
  * @fileoverview AxisModel is model for management of axis data.
- *               Axis data used to draw the axis area.
+ *               Axis data used for draw the axis area.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -24,7 +24,7 @@ var apc = Array.prototype.concat,
 AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
      * AxisModel is model for management of axis data.
-     * Axis data used to draw the axis area.
+     * Axis data used for draw the axis area.
      * @constructs AxisModel
      * @extends Model
      * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values

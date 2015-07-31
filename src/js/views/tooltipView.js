@@ -59,7 +59,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * Makes tooltip html.
+     * To make html of tooltip.
      * @param {object} data tooltip data
      * @param {string} prefix tooltip id prefix
      * @returns {string} html
@@ -101,7 +101,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
 
     /**
      * Get index from id
-     * @param {string} id id
+     * @param {string} id tooltip id
      * @returns {array.<number>} indexes
      * @private
      */
@@ -112,8 +112,8 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * Fire showDot custom event.
-     * @param {string} id id
+     * Fire custom event showDot.
+     * @param {string} id tooltip id
      * @private
      */
     _fireShowDot: function(id) {
@@ -125,8 +125,8 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * Fire hideDot custom event.
-     * @param {string} id id
+     * Fire custom event hideDot.
+     * @param {string} id tooltip id
      * @private
      */
     _fireHideDot: function(id) {
@@ -138,7 +138,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * On mouseover
+     * On mouseover event handler for tooltip area
      * @param {MouseEvent} e mouse event
      */
     onMouseover: function(e) {
@@ -154,7 +154,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * On mouseout
+     * On mouseout event handler for tooltip area
      * @param {MouseEvent} e mouse event
      */
     onMouseout: function(e) {
@@ -177,7 +177,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * Calculate tooltip position
+     * Calculate tooltip position.
      * @param {{bound: object, isVertical: boolean}} data graph information
      * @param {{width: number, height: number}} dimension tooltip dimension
      * @returns {{top: number, left: number}} position
@@ -197,7 +197,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * This is custom event callback of SeriesView.
+     * onShow is callback of custom event showTooltip for SeriesView.
      * @param {{id: string, bound: object}} data tooltip data
      */
     onShow: function(data) {
@@ -230,7 +230,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
-     * This is custom event callback of SeriesView.
+     * onHide is callback of custom event hideTooltip for SeriesView
      * @param {{id: string}} data tooltip data
      */
     onHide: function(data) {

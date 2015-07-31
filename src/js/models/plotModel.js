@@ -1,6 +1,6 @@
 /**
  * @fileoverview PlotModel is model for management of plot data.
- *               Plot data used to draw the plot area.
+ *               Plot data used for draw the plot area.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,7 +12,7 @@ var Model = require('./model.js');
 var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     /**
      * PlotModel is model for management of plot data.
-     * Plot data used to draw the plot area.
+     * Plot data used for draw the plot area.
      * @constructs PlotModel
      * @extends Model
      * @param {data} data plot data
@@ -46,7 +46,7 @@ var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     },
 
     /**
-     * makes vertical pixel positions
+     * To make vertical pixel positions
      * @param {number} height plot height
      * @returns {array.<object>} positions
      */
@@ -57,7 +57,7 @@ var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     },
 
     /**
-     * makes horizontal pixel position
+     * To make horizontal pixel position
      * @param {number} width plot width
      * @returns {array.<object>} positions
      */

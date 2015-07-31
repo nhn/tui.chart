@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview chart.js is entry point of Application Chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -19,7 +19,7 @@ require('./registerCharts.js');
 require('./registerThemes.js');
 
 /**
- * NHN Entertainment Chart.
+ * NHN Entertainment Application Chart.
  * @namespace ne.application.chart
  */
 neChart = ne.util.defineNamespace('ne.application.chart');
@@ -47,7 +47,7 @@ _createChart = function(container, data, options) {
 };
 
 /**
- * Bar chart creator
+ * Bar chart creator.
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
@@ -62,7 +62,7 @@ neChart.barChart = function(container, data, options) {
 };
 
 /**
- * Column chart creator
+ * Column chart creator.
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
@@ -77,7 +77,7 @@ neChart.columnChart = function(container, data, options) {
 };
 
 /**
- * Line chart creator
+ * Line chart creator.
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data

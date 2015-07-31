@@ -1,5 +1,5 @@
 /**
- * @fileoverview This is legend view templates.
+ * @fileoverview This is templates of legend view.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

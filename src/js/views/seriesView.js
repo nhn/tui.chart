@@ -30,6 +30,10 @@ var SeriesView = ne.util.defineClass(View, /** @lends SeriesView.prototype */ {
          */
         this.model = model;
 
+        /**
+         * Series theme
+         * @type {object}
+         */
         this.theme = theme;
 
         options = ne.util.extend(options, model.options);
@@ -37,8 +41,16 @@ var SeriesView = ne.util.defineClass(View, /** @lends SeriesView.prototype */ {
         //barType = options.barType;
         libType = options.libType || chartConst.DEFAULT_PLUGIN;
 
+        /**
+         * Series options
+         * @type {object}
+         */
         this.options = options;
 
+        /**
+         * Graph renderer
+         * @type {object}
+         */
         this.graphRenderer = pluginFactory.get(libType, options.chartType);
 
         /**

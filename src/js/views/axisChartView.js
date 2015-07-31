@@ -91,7 +91,7 @@ var AxisChartView = ne.util.defineClass(ChartView, /** @lends AxisChartView.prot
     },
 
     /**
-     * Get views bound information.
+     * Get bound of views.
      * @returns {{
      *   plot: {
      *     dimension: {width: number, height: number},

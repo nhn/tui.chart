@@ -86,12 +86,12 @@ describe('test axis model', function() {
         });
 
         it('_formatLabels', function() {
-            var fns = axisModel.findFormatFns('1,000.00'),
+            var fns = axisModel.findFormatFunctions('1,000.00'),
                 result = axisModel._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
 
             expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
 
-            fns = axisModel.findFormatFns('0001');
+            fns = axisModel.findFormatFunctions('0001');
             result = axisModel._formatLabels([1, 2, 3], fns);
             expect(result).toEqual(['0001', '0002', '0003']);
         });
@@ -146,7 +146,7 @@ describe('test axis model', function() {
                 data = {
                     values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]],
                     chartDimension: {width: 400, height: 300},
-                    formatFns: tmpAxisModel.findFormatFns('0.00')
+                    formatFns: tmpAxisModel.findFormatFunctions('0.00')
                 },
                 options = {
                     min: 0,

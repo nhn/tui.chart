@@ -1,5 +1,5 @@
 /**
- * @fileoverview This model is bar chart model for management of bar chart data.
+ * @fileoverview This model is about bar chart for management of bar chart data.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var chartConst = require('../const.js'),
 
 var BarChartModel = ne.util.defineClass(AxisChartModel, /** @lends BarChartModel.prototype */ {
     /**
-     * This model is bar chart model for management of bar chart data.
+     * This model is about bar chart for management of bar chart data.
      * @constructs BarChartModel
      * @extends AxisChartModel
      * @param {object} data user chart data

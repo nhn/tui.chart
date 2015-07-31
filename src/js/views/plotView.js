@@ -73,7 +73,7 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
     },
 
     /**
-     * Makes line html.
+     * To make html of plot line.
      * @param {array.<object>} positions positions
      * @param {number} size width or height
      * @param {string} className line className
