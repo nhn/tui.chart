@@ -1,6 +1,7 @@
 .idea
 node_modules
-lib
+lib/ne-code-snippet
+lib/raphael
 src
 test
 samples
