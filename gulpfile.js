@@ -76,11 +76,15 @@ gulp.task('watch', ['browserify', 'compress-js', 'compile-less', 'minify-css', '
 
 gulp.task('default', ['watch']);
 
-gulp.task('copy-compress-js-css', function() {
-    return gulp.src('dist/*.min.*')
+gulp.task('copy-samples', function() {
+    gulp.src('dist/*.min.*')
         .pipe(gulp.dest('./samples/dist'));
+    gulp.src('lib/ne-code-snippet/code-snippet.min.js')
+        .pipe(gulp.dest('./samples/lib'));
+    gulp.src('lib/raphael/raphael-min.js')
+        .pipe(gulp.dest('./samples/lib'));
 });
 
-gulp.task('deploy', ['browserify', 'compress-js', 'compile-less', 'minify-css', 'copy-compress-js-css'], function() {
+gulp.task('deploy', ['browserify', 'compress-js', 'compile-less', 'minify-css', 'copy-samples'], function() {
     process.exit(0);
 });

@@ -44,7 +44,7 @@ Currently it supports bar charts and line charts.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| <a href="https://nhnent.github.io/fe.application-grid/1.0.0">1.0.0</a> | deploy | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.application-chart/1.0.0">1.0.0</a> | deploy | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 
 ## License
-This software is licensed under the [MIT License](https://github.com/nhnent/fe.application-grid/blob/master/LICENSE).
+This software is licensed under the [MIT License](https://github.com/nhnent/fe.application-chart/blob/master/LICENSE).
