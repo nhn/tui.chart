@@ -34,7 +34,6 @@ module.exports = function(config) {
       'lib/ne-code-snippet/code-snippet.min.js',
       'lib/raphael/raphael-min.js',
       'src/js/**/*.js',
-      { pattern: 'test/fixtures/**/*', included: false },
       'test/**/*.spec.js'
     ],
     preprocessors: {

@@ -4,7 +4,7 @@
   "description": "ne chart component",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/"
   },
   "repository": {
     "type": "git",
@@ -19,12 +19,17 @@
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
+    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "gulp": "^3.9.0",
     "gulp-less": "^3.0.3",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.5",
     "karma": "^0.12.36",
     "karma-browserify": "^4.2.1",
     "karma-chrome-launcher": "^0.1.12",
+    "karma-coverage": "^0.4.2",
     "karma-jasmine": "^0.3.5",
     "karma-junit-reporter": "^0.2.2",
     "karma-mocha-reporter": "^1.0.2",
