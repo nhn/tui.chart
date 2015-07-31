@@ -1,0 +1,9 @@
+.idea
+node_modules
+lib
+src
+test
+samples
+report
+*.json
+

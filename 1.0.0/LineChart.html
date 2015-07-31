@@ -1,0 +1,3274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: LineChart</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Classes</h3><ul class="list classes"><li class="item" id="AxisChartModel"><span class="title"><a href="AxisChartModel.html">AxisChartModel</a></span><ul class="sublist members AxisChartModel"><span class="subtitle">Members</span><li><a href="AxisChartModel.html#dimension">dimension</a></li><li><a href="AxisChartModel.html#hAxis">hAxis</a></li><li><a href="AxisChartModel.html#legend">legend</a></li><li><a href="AxisChartModel.html#options">options</a></li><li><a href="AxisChartModel.html#plot">plot</a></li><li><a href="AxisChartModel.html#series">series</a></li><li><a href="AxisChartModel.html#title">title</a></li><li><a href="AxisChartModel.html#tooltip">tooltip</a></li><li><a href="AxisChartModel.html#vAxis">vAxis</a></li></ul><ul class="sublist division AxisChartModel"><li></li></ul><ul class="sublist methods AxisChartModel"><span class="subtitle">Methods</span><li><a href="AxisChartModel.html#arrayPivot">arrayPivot</a></li><li><a href="AxisChartModel.html#findFormatFns">findFormatFns</a></li><li><a href="AxisChartModel.html#formatValues">formatValues</a></li><li><a href="AxisChartModel.html#getScaleStep">getScaleStep</a></li><li><a href="AxisChartModel.html#makePixelPositions">makePixelPositions</a></li><li><a href="AxisChartModel.html#pickAxisData">pickAxisData</a></li><li><a href="AxisChartModel.html#pickLabels">pickLabels</a></li><li><a href="AxisChartModel.html#pickLegendLabels">pickLegendLabels</a></li><li><a href="AxisChartModel.html#pickValues">pickValues</a></li></ul></li><li class="item" id="AxisChartView"><span class="title"><a href="AxisChartView.html">AxisChartView</a></span></li><li class="item" id="AxisModel"><span class="title"><a href="AxisModel.html">AxisModel</a></span><ul class="sublist members AxisModel"><span class="subtitle">Members</span><li><a href="AxisModel.html#axisType">axisType</a></li><li><a href="AxisModel.html#isVertical">isVertical</a></li><li><a href="AxisModel.html#labels">labels</a></li><li><a href="AxisModel.html#scale">scale</a></li><li><a href="AxisModel.html#tickCount">tickCount</a></li><li><a href="AxisModel.html#title">title</a></li></ul><ul class="sublist division AxisModel"><li></li></ul><ul class="sublist methods AxisModel"><span class="subtitle">Methods</span><li><a href="AxisModel.html#arrayPivot">arrayPivot</a></li><li><a href="AxisModel.html#changeVerticalState">changeVerticalState</a></li><li><a href="AxisModel.html#findFormatFns">findFormatFns</a></li><li><a href="AxisModel.html#getScaleStep">getScaleStep</a></li><li><a href="AxisModel.html#getValidTickCount">getValidTickCount</a></li><li><a href="AxisModel.html#isLabelAxis">isLabelAxis</a></li><li><a href="AxisModel.html#isValueAxis">isValueAxis</a></li><li><a href="AxisModel.html#makePixelPositions">makePixelPositions</a></li></ul></li><li class="item" id="AxisView"><span class="title"><a href="AxisView.html">AxisView</a></span></li><li class="item" id="BarChart"><span class="title"><a href="BarChart.html">BarChart</a></span></li><li class="item" id="BarChartModel"><span class="title"><a href="BarChartModel.html">BarChartModel</a></span><ul class="sublist members BarChartModel"><span class="subtitle">Members</span><li><a href="BarChartModel.html#barType">barType</a></li><li><a href="BarChartModel.html#dimension">dimension</a></li><li><a href="BarChartModel.html#hAxis">hAxis</a></li><li><a href="BarChartModel.html#isVertical">isVertical</a></li><li><a href="BarChartModel.html#legend">legend</a></li><li><a href="BarChartModel.html#options">options</a></li><li><a href="BarChartModel.html#plot">plot</a></li><li><a href="BarChartModel.html#series">series</a></li><li><a href="BarChartModel.html#title">title</a></li><li><a href="BarChartModel.html#tooltip">tooltip</a></li><li><a href="BarChartModel.html#vAxis">vAxis</a></li></ul><ul class="sublist division BarChartModel"><li></li></ul><ul class="sublist methods BarChartModel"><span class="subtitle">Methods</span><li><a href="BarChartModel.html#arrayPivot">arrayPivot</a></li><li><a href="BarChartModel.html#findFormatFns">findFormatFns</a></li><li><a href="BarChartModel.html#formatValues">formatValues</a></li><li><a href="BarChartModel.html#getScaleStep">getScaleStep</a></li><li><a href="BarChartModel.html#makePixelPositions">makePixelPositions</a></li><li><a href="BarChartModel.html#pickAxisData">pickAxisData</a></li><li><a href="BarChartModel.html#pickLabels">pickLabels</a></li><li><a href="BarChartModel.html#pickLegendLabels">pickLegendLabels</a></li><li><a href="BarChartModel.html#pickValues">pickValues</a></li></ul></li><li class="item" id="BarChartView"><span class="title"><a href="BarChartView.html">BarChartView</a></span></li><li class="item" id="ChartModel"><span class="title"><a href="ChartModel.html">ChartModel</a></span><ul class="sublist members ChartModel"><span class="subtitle">Members</span><li><a href="ChartModel.html#dimension">dimension</a></li><li><a href="ChartModel.html#options">options</a></li><li><a href="ChartModel.html#title">title</a></li></ul><ul class="sublist division ChartModel"><li></li></ul><ul class="sublist methods ChartModel"><span class="subtitle">Methods</span><li><a href="ChartModel.html#arrayPivot">arrayPivot</a></li><li><a href="ChartModel.html#findFormatFns">findFormatFns</a></li><li><a href="ChartModel.html#formatValues">formatValues</a></li><li><a href="ChartModel.html#getScaleStep">getScaleStep</a></li><li><a href="ChartModel.html#makePixelPositions">makePixelPositions</a></li><li><a href="ChartModel.html#pickAxisData">pickAxisData</a></li><li><a href="ChartModel.html#pickLabels">pickLabels</a></li><li><a href="ChartModel.html#pickLegendLabels">pickLegendLabels</a></li><li><a href="ChartModel.html#pickValues">pickValues</a></li></ul></li><li class="item" id="ChartView"><span class="title"><a href="ChartView.html">ChartView</a></span></li><li class="item" id="LegendModel"><span class="title"><a href="LegendModel.html">LegendModel</a></span><ul class="sublist members LegendModel"><span class="subtitle">Members</span><li><a href="LegendModel.html#labels">labels</a></li></ul><ul class="sublist division LegendModel"><li></li></ul><ul class="sublist methods LegendModel"><span class="subtitle">Methods</span><li><a href="LegendModel.html#arrayPivot">arrayPivot</a></li><li><a href="LegendModel.html#findFormatFns">findFormatFns</a></li><li><a href="LegendModel.html#getScaleStep">getScaleStep</a></li><li><a href="LegendModel.html#makePixelPositions">makePixelPositions</a></li></ul></li><li class="item" id="LegendView"><span class="title"><a href="LegendView.html">LegendView</a></span></li><li class="item" id="LineChart"><span class="title"><a href="LineChart.html">LineChart</a></span><ul class="sublist methods LineChart"><span class="subtitle">Methods</span><li><a href="LineChart.html#hideDot">hideDot</a></li><li><a href="LineChart.html#render">render</a></li><li><a href="LineChart.html#showDot">showDot</a></li></ul></li><li class="item" id="LineChartModel"><span class="title"><a href="LineChartModel.html">LineChartModel</a></span><ul class="sublist members LineChartModel"><span class="subtitle">Members</span><li><a href="LineChartModel.html#dimension">dimension</a></li><li><a href="LineChartModel.html#hAxis">hAxis</a></li><li><a href="LineChartModel.html#isVertical">isVertical</a></li><li><a href="LineChartModel.html#legend">legend</a></li><li><a href="LineChartModel.html#options">options</a></li><li><a href="LineChartModel.html#plot">plot</a></li><li><a href="LineChartModel.html#series">series</a></li><li><a href="LineChartModel.html#title">title</a></li><li><a href="LineChartModel.html#tooltip">tooltip</a></li><li><a href="LineChartModel.html#vAxis">vAxis</a></li></ul><ul class="sublist division LineChartModel"><li></li></ul><ul class="sublist methods LineChartModel"><span class="subtitle">Methods</span><li><a href="LineChartModel.html#arrayPivot">arrayPivot</a></li><li><a href="LineChartModel.html#findFormatFns">findFormatFns</a></li><li><a href="LineChartModel.html#formatValues">formatValues</a></li><li><a href="LineChartModel.html#getScaleStep">getScaleStep</a></li><li><a href="LineChartModel.html#makePixelPositions">makePixelPositions</a></li><li><a href="LineChartModel.html#pickAxisData">pickAxisData</a></li><li><a href="LineChartModel.html#pickLabels">pickLabels</a></li><li><a href="LineChartModel.html#pickLegendLabels">pickLegendLabels</a></li><li><a href="LineChartModel.html#pickValues">pickValues</a></li></ul></li><li class="item" id="LineChartView"><span class="title"><a href="LineChartView.html">LineChartView</a></span></li><li class="item" id="Model"><span class="title"><a href="Model.html">Model</a></span><ul class="sublist methods Model"><span class="subtitle">Methods</span><li><a href="Model.html#arrayPivot">arrayPivot</a></li><li><a href="Model.html#findFormatFns">findFormatFns</a></li><li><a href="Model.html#getScaleStep">getScaleStep</a></li><li><a href="Model.html#makePixelPositions">makePixelPositions</a></li></ul></li><li class="item" id="PlotModel"><span class="title"><a href="PlotModel.html">PlotModel</a></span><ul class="sublist members PlotModel"><span class="subtitle">Members</span><li><a href="PlotModel.html#hTickCount">hTickCount</a></li><li><a href="PlotModel.html#vTickCount">vTickCount</a></li></ul><ul class="sublist division PlotModel"><li></li></ul><ul class="sublist methods PlotModel"><span class="subtitle">Methods</span><li><a href="PlotModel.html#arrayPivot">arrayPivot</a></li><li><a href="PlotModel.html#findFormatFns">findFormatFns</a></li><li><a href="PlotModel.html#getScaleStep">getScaleStep</a></li><li><a href="PlotModel.html#makeHPixelPositions">makeHPixelPositions</a></li><li><a href="PlotModel.html#makePixelPositions">makePixelPositions</a></li><li><a href="PlotModel.html#makeVPixelPositions">makeVPixelPositions</a></li></ul></li><li class="item" id="PlotView"><span class="title"><a href="PlotView.html">PlotView</a></span></li><li class="item" id="SeriesModel"><span class="title"><a href="SeriesModel.html">SeriesModel</a></span><ul class="sublist members SeriesModel"><span class="subtitle">Members</span><li><a href="SeriesModel.html#colors">colors</a></li><li><a href="SeriesModel.html#markers">markers</a></li><li><a href="SeriesModel.html#percentValues">percentValues</a></li><li><a href="SeriesModel.html#tickScale">tickScale</a></li></ul><ul class="sublist division SeriesModel"><li></li></ul><ul class="sublist methods SeriesModel"><span class="subtitle">Methods</span><li><a href="SeriesModel.html#arrayPivot">arrayPivot</a></li><li><a href="SeriesModel.html#findFormatFns">findFormatFns</a></li><li><a href="SeriesModel.html#getScaleStep">getScaleStep</a></li><li><a href="SeriesModel.html#makeBarBounds">makeBarBounds</a></li><li><a href="SeriesModel.html#makeColumnBounds">makeColumnBounds</a></li><li><a href="SeriesModel.html#makeLinePositions">makeLinePositions</a></li><li><a href="SeriesModel.html#makePixelPositions">makePixelPositions</a></li></ul></li><li class="item" id="SeriesView"><span class="title"><a href="SeriesView.html">SeriesView</a></span></li><li class="item" id="TooltipModel"><span class="title"><a href="TooltipModel.html">TooltipModel</a></span><ul class="sublist members TooltipModel"><span class="subtitle">Members</span><li><a href="TooltipModel.html#data">data</a></li><li><a href="TooltipModel.html#options">options</a></li></ul><ul class="sublist division TooltipModel"><li></li></ul><ul class="sublist methods TooltipModel"><span class="subtitle">Methods</span><li><a href="TooltipModel.html#arrayPivot">arrayPivot</a></li><li><a href="TooltipModel.html#findFormatFns">findFormatFns</a></li><li><a href="TooltipModel.html#getScaleStep">getScaleStep</a></li><li><a href="TooltipModel.html#makePixelPositions">makePixelPositions</a></li></ul></li><li class="item" id="TooltipView"><span class="title"><a href="TooltipView.html">TooltipView</a></span></li><li class="item" id="View"><span class="title"><a href="View.html">View</a></span></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="_attachCustomEvent"><span class="title"><a href="global.html#_attachCustomEvent">_attachCustomEvent</a></span></li><li class="item" id="_bindHoverEvent"><span class="title"><a href="global.html#_bindHoverEvent">_bindHoverEvent</a></span></li><li class="item" id="_changeLabelAreaPosition"><span class="title"><a href="global.html#_changeLabelAreaPosition">_changeLabelAreaPosition</a></span></li><li class="item" id="_copyColors"><span class="title"><a href="global.html#_copyColors">_copyColors</a></span></li><li class="item" id="_createChart"><span class="title"><a href="global.html#_createChart">_createChart</a></span></li><li class="item" id="_createSizeCheckEl"><span class="title"><a href="global.html#_createSizeCheckEl">_createSizeCheckEl</a></span></li><li class="item" id="_fireHideDot"><span class="title"><a href="global.html#_fireHideDot">_fireHideDot</a></span></li><li class="item" id="_fireShowDot"><span class="title"><a href="global.html#_fireShowDot">_fireShowDot</a></span></li><li class="item" id="_getIndexFromId"><span class="title"><a href="global.html#_getIndexFromId">_getIndexFromId</a></span></li><li class="item" id="_getRenderedLabelSize"><span class="title"><a href="global.html#_getRenderedLabelSize">_getRenderedLabelSize</a></span></li><li class="item" id="_getRenderedLabelsMaxSize"><span class="title"><a href="global.html#_getRenderedLabelsMaxSize">_getRenderedLabelsMaxSize</a></span></li><li class="item" id="_getRenderedTitleHeight"><span class="title"><a href="global.html#_getRenderedTitleHeight">_getRenderedTitleHeight</a></span></li><li class="item" id="_hideTooltip"><span class="title"><a href="global.html#_hideTooltip">_hideTooltip</a></span></li><li class="item" id="_inheritThemeProperty"><span class="title"><a href="global.html#_inheritThemeProperty">_inheritThemeProperty</a></span></li><li class="item" id="_initTheme"><span class="title"><a href="global.html#_initTheme">_initTheme</a></span></li><li class="item" id="_makeLabelCssTexts"><span class="title"><a href="global.html#_makeLabelCssTexts">_makeLabelCssTexts</a></span></li><li class="item" id="_makeLabelsHtml"><span class="title"><a href="global.html#_makeLabelsHtml">_makeLabelsHtml</a></span></li><li class="item" id="_makeLineHtml"><span class="title"><a href="global.html#_makeLineHtml">_makeLineHtml</a></span></li><li class="item" id="_makeTooltipsHtml"><span class="title"><a href="global.html#_makeTooltipsHtml">_makeTooltipsHtml</a></span></li><li class="item" id="_renderBar"><span class="title"><a href="global.html#_renderBar">_renderBar</a></span></li><li class="item" id="_renderBars"><span class="title"><a href="global.html#_renderBars">_renderBars</a></span></li><li class="item" id="_renderLabelArea"><span class="title"><a href="global.html#_renderLabelArea">_renderLabelArea</a></span></li><li class="item" id="_renderLabelTheme"><span class="title"><a href="global.html#_renderLabelTheme">_renderLabelTheme</a></span></li><li class="item" id="_renderLines"><span class="title"><a href="global.html#_renderLines">_renderLines</a></span></li><li class="item" id="_renderTickArea"><span class="title"><a href="global.html#_renderTickArea">_renderTickArea</a></span></li><li class="item" id="_renderTickBorderColor"><span class="title"><a href="global.html#_renderTickBorderColor">_renderTickBorderColor</a></span></li><li class="item" id="_renderTitleArea"><span class="title"><a href="global.html#_renderTitleArea">_renderTitleArea</a></span></li><li class="item" id="addEventListener"><span class="title"><a href="global.html#addEventListener">addEventListener</a></span></li><li class="item" id="append"><span class="title"><a href="global.html#append">append</a></span></li><li class="item" id="appends"><span class="title"><a href="global.html#appends">appends</a></span></li><li class="item" id="attachEvent"><span class="title"><a href="global.html#attachEvent">attachEvent</a></span></li><li class="item" id="calculatePosition"><span class="title"><a href="global.html#calculatePosition">calculatePosition</a></span></li><li class="item" id="className"><span class="title"><a href="global.html#className">className</a></span></li><li class="item" id="concatStr"><span class="title"><a href="global.html#concatStr">concatStr</a></span></li><li class="item" id="getHAxisAreaHeight"><span class="title"><a href="global.html#getHAxisAreaHeight">getHAxisAreaHeight</a></span></li><li class="item" id="getLegendAreaHeight"><span class="title"><a href="global.html#getLegendAreaHeight">getLegendAreaHeight</a></span></li><li class="item" id="getLegendAreaWidth"><span class="title"><a href="global.html#getLegendAreaWidth">getLegendAreaWidth</a></span></li><li class="item" id="getRenderedLabelHeight"><span class="title"><a href="global.html#getRenderedLabelHeight">getRenderedLabelHeight</a></span></li><li class="item" id="getRenderedLabelsMaxHeight"><span class="title"><a href="global.html#getRenderedLabelsMaxHeight">getRenderedLabelsMaxHeight</a></span></li><li class="item" id="getRenderedLabelsMaxWidth"><span class="title"><a href="global.html#getRenderedLabelsMaxWidth">getRenderedLabelsMaxWidth</a></span></li><li class="item" id="getRenderedLabelWidth"><span class="title"><a href="global.html#getRenderedLabelWidth">getRenderedLabelWidth</a></span></li><li class="item" id="getRenderedTitleHeight"><span class="title"><a href="global.html#getRenderedTitleHeight">getRenderedTitleHeight</a></span></li><li class="item" id="getVAxisAreaWidth"><span class="title"><a href="global.html#getVAxisAreaWidth">getVAxisAreaWidth</a></span></li><li class="item" id="getViewsBound"><span class="title"><a href="global.html#getViewsBound">getViewsBound</a></span></li><li class="item" id="hAxisView"><span class="title"><a href="global.html#hAxisView">hAxisView</a></span></li><li class="item" id="hideTooltip"><span class="title"><a href="global.html#hideTooltip">hideTooltip</a></span></li><li class="item" id="init"><span class="title"><a href="global.html#init">init</a></span></li><li class="item" id="isIE8"><span class="title"><a href="global.html#isIE8">isIE8</a></span></li><li class="item" id="legendView"><span class="title"><a href="global.html#legendView">legendView</a></span></li><li class="item" id="makeFontCssText"><span class="title"><a href="global.html#makeFontCssText">makeFontCssText</a></span></li><li class="item" id="max"><span class="title"><a href="global.html#max">max</a></span></li><li class="item" id="min"><span class="title"><a href="global.html#min">min</a></span></li><li class="item" id="model"><span class="title"><a href="global.html#model">model</a></span></li><li class="item" id="onHide"><span class="title"><a href="global.html#onHide">onHide</a></span></li><li class="item" id="onHideDot"><span class="title"><a href="global.html#onHideDot">onHideDot</a></span></li><li class="item" id="onMouseout"><span class="title"><a href="global.html#onMouseout">onMouseout</a></span></li><li class="item" id="onMouseover"><span class="title"><a href="global.html#onMouseover">onMouseover</a></span></li><li class="item" id="onShow"><span class="title"><a href="global.html#onShow">onShow</a></span></li><li class="item" id="onShowDot"><span class="title"><a href="global.html#onShowDot">onShowDot</a></span></li><li class="item" id="plotView"><span class="title"><a href="global.html#plotView">plotView</a></span></li><li class="item" id="pluck"><span class="title"><a href="global.html#pluck">pluck</a></span></li><li class="item" id="range"><span class="title"><a href="global.html#range">range</a></span></li><li class="item" id="render"><span class="title"><a href="global.html#render">render</a></span></li><li class="item" id="renderBackground"><span class="title"><a href="global.html#renderBackground">renderBackground</a></span></li><li class="item" id="renderChartFont"><span class="title"><a href="global.html#renderChartFont">renderChartFont</a></span></li><li class="item" id="renderDimension"><span class="title"><a href="global.html#renderDimension">renderDimension</a></span></li><li class="item" id="renderPosition"><span class="title"><a href="global.html#renderPosition">renderPosition</a></span></li><li class="item" id="renderTitle"><span class="title"><a href="global.html#renderTitle">renderTitle</a></span></li><li class="item" id="renderTitleArea"><span class="title"><a href="global.html#renderTitleArea">renderTitleArea</a></span></li><li class="item" id="seriesView"><span class="title"><a href="global.html#seriesView">seriesView</a></span></li><li class="item" id="showTooltip"><span class="title"><a href="global.html#showTooltip">showTooltip</a></span></li><li class="item" id="tooltipView"><span class="title"><a href="global.html#tooltipView">tooltipView</a></span></li><li class="item" id="vAxisView"><span class="title"><a href="global.html#vAxisView">vAxisView</a></span></li><li class="item" id="zip"><span class="title"><a href="global.html#zip">zip</a></span></li></ul></div>
+        <div id="main" class="main">
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        LineChart
+        
+        
+        </h2>
+        
+            <div class="class-description"><p>This class is LineChart graph renderer.</p></div>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+<dt>
+    
+        <h4 class="name" id="LineChart">
+            <span class="type-signature"></span>new LineChart<span class="signature">()</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line13">line 13</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+    <div class="container-methods">
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    
+        <h4 class="name" id="_attachEvent">
+            <span class="type-signature"><span class="icon green">private</span> </span>_attachEvent<span class="signature">(groupDots, groupPositions, outDotStyle, inCallback, outCallback)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line287">line 287</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Attach event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupDots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;object>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>dots</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupPositions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;object>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>positions</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>outDotStyle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>dot style</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>inCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>in callback</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>outCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>out callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_bindHoverEvent">
+            <span class="type-signature"><span class="icon green">private</span> </span>_bindHoverEvent<span class="signature">(target, dot, outDotStyle, position, id, inCallback, outCallback)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line268">line 268</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Bind hover event.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael item</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>dot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael dot</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>outDotStyle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>mouseout dot style</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>position</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>id</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>inCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>in callback</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>outCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>out callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_getCenter">
+            <span class="type-signature"><span class="icon green">private</span> </span>_getCenter<span class="signature">(fromPos, toPos)</span><span class="type-signature"> &rarr; {Object}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line169">line 169</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get center</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>fromPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>from position</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>toPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to position</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>position</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_getLinesPath">
+            <span class="type-signature"><span class="icon green">private</span> </span>_getLinesPath<span class="signature">(groupPositions)</span><span class="type-signature"> &rarr; {array.&lt;array.&lt;string>>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line242">line 242</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get lines path.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupPositions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;object>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>positions</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>paths</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_makeBorderStyle">
+            <span class="type-signature"><span class="icon green">private</span> </span>_makeBorderStyle<span class="signature">(borderColor, opacity)</span><span class="type-signature"> &rarr; {object}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line53">line 53</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Make border style.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>borderColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>border color</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>opacity</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>border style</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_makeLinePath">
+            <span class="type-signature"><span class="icon green">private</span> </span>_makeLinePath<span class="signature">(fx, fy, tx, ty, width)</span><span class="type-signature"> &rarr; {string}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line146">line 146</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Make line path.
+by Sungho Kim <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#x73;&#117;&#x6e;&#103;&#x68;&#111;&#x2e;&#107;&#105;&#109;&#x40;&#110;&#x68;&#x6e;&#101;&#x6e;&#116;&#46;&#x63;&#111;&#x6d;">&#x73;&#117;&#x6e;&#103;&#x68;&#111;&#x2e;&#107;&#105;&#109;&#x40;&#110;&#x68;&#x6e;&#101;&#x6e;&#116;&#46;&#x63;&#111;&#x6d;</a></p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>fx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>from x</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>fy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>from y</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>tx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to x</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>ty</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>to y</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>width</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>path</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_makeOutDotStyle">
+            <span class="type-signature"><span class="icon green">private</span> </span>_makeOutDotStyle<span class="signature">(opacity, borderStyle)</span><span class="type-signature"> &rarr; {Object}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line72">line 72</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Make mouseout dot style.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>opacity</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>borderStyle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>border style</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>style</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderBgLines">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderBgLines<span class="signature">(paper, groupPaths)</span><span class="type-signature"> &rarr; {array.&lt;array.&lt;object>>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line208">line 208</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render background lines.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>paper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael paper</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupPaths</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;string>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>paths</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>lines</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderDot">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderDot<span class="signature">(paper, position, color, opacity, borderStyle)</span><span class="type-signature"> &rarr; {object}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line96">line 96</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render dot.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>paper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael papaer</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>dot position</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>dot color</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>opacity</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>borderStyle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>border style</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>raphael dot</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderDots">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderDots<span class="signature">(paper, groupPositions, colors, opacity, borderStyle)</span><span class="type-signature"> &rarr; {array.&lt;object>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line123">line 123</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render dots.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>paper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael paper</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupPositions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;object>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>positions</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>colors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>colors</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>opacity</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>borderStyle</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>border style</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>dots</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderLine">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderLine<span class="signature">(paper, path, color, strokeWidth)</span><span class="type-signature"> &rarr; {object}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line185">line 185</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render line</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>paper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael paper</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>line path</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>line color</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>strokeWidth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>stroke width</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>raphael line</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderLines">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderLines<span class="signature">(paper, groupPaths, colors, strokeWidth)</span><span class="type-signature"> &rarr; {array.&lt;array.&lt;object>>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line222">line 222</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render lines.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>paper</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>raphael paper</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>groupPaths</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;array.&lt;string>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>paths</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>colors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>line colors</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>strokeWidth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>stroke width</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>lines</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="hideDot">
+            <span class="type-signature"></span>hideDot<span class="signature">(data)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line331">line 331</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Hide dot.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>hide info</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="render">
+            <span class="type-signature"></span>render<span class="signature">(container, data, inCallback, outCallback)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line25">line 25</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Line chart graph render function.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>container</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>container</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>render data</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>inCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>in callback</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>outCallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>out callback</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="showDot">
+            <span class="type-signature"></span>showDot<span class="signature">(data)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plugins_raphaelLineChart.js.html">plugins/raphaelLineChart.js</a></code>,
+                    <code><a href="plugins_raphaelLineChart.js.html#line314">line 314</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Show dot.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>show info</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    </div>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
