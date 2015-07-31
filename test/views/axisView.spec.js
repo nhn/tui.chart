@@ -15,7 +15,7 @@ describe('test Axis View', function() {
     var tmpAxisModel = new AxisModel(),
         valueData = {
             values: [[10], [20], [30], [40], [50]],
-            chartDimension: {height: 300},
+            chartDimension: {width: 400, height: 300},
             formatFns: tmpAxisModel.findFormatFns('0.00')
         },
         labelData = {labels: ['label1', 'label2', 'label3']},
@@ -145,11 +145,10 @@ describe('test Axis View', function() {
 
             elTickArea = axisView._renderLabelArea(300);
 
-            compareHtml = '<div class="ne-chart-label-area" style="font-size:12px;left:-50px;">' +
-                '<div class="ne-chart-label" style="width:100px;left:0px">0.00</div>' +
-                '<div class="ne-chart-label" style="width:100px;left:100px">20.00</div>' +
-                '<div class="ne-chart-label" style="width:100px;left:199px">40.00</div>' +
-                '<div class="ne-chart-label" style="width:100px;left:299px">60.00</div>' +
+            compareHtml = '<div class="ne-chart-label-area" style="font-size:12px;left:-75px;">' +
+                '<div class="ne-chart-label" style="width:150px;left:0px">0.00</div>' +
+                '<div class="ne-chart-label" style="width:150px;left:150px">30.00</div>' +
+                '<div class="ne-chart-label" style="width:150px;left:299px">60.00</div>' +
                 '</div>';
 
             elTemp = document.createElement('DIV');
@@ -177,8 +176,7 @@ describe('test Axis View', function() {
 
             compareHtml = '<div class="ne-chart-label-area" style="width:75px;top:7px">' +
                 '<div class="ne-chart-label" style="bottom: 0px">0.00</div>' +
-                '<div class="ne-chart-label" style="bottom: 100px">20.00</div>' +
-                '<div class="ne-chart-label" style="bottom: 199px">40.00</div>' +
+                '<div class="ne-chart-label" style="bottom: 150px">30.00</div>' +
                 '<div class="ne-chart-label" style="bottom: 299px">60.00</div>' +
                 '</div>';
 

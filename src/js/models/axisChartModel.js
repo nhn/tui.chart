@@ -103,16 +103,16 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             },
             vAxis, hAxis, valueScale, axisInfo;
         if (this.isVertical) {
+            valueData.isVertical = true;
             vAxis = new AxisModel(valueData, options.vAxis);
             hAxis = new AxisModel(labelData, options.hAxis);
             valueScale = vAxis.scale;
         } else {
+            labelData.isVertical = true;
             vAxis = new AxisModel(labelData, options.vAxis);
             hAxis = new AxisModel(valueData, options.hAxis);
             valueScale = hAxis.scale;
         }
-
-        vAxis.changeVerticalState(true);
 
         this.vAxis = vAxis;
         this.hAxis = hAxis;

@@ -78,6 +78,7 @@ _initTheme = function(theme) {
 
     if (theme.series && theme.series.singleColors) {
         _copyColors(seriesColors, theme.series.singleColors);
+        theme.legend.singleColors = theme.series.singleColors;
     }
 
     theme = ne.util.extend(cloneTheme, theme);

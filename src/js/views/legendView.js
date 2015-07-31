@@ -47,13 +47,14 @@ var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
             labels = this.model.labels,
-            themeLabel = this.theme.label,
-            colors = this.theme.colors,
-            borderColor = this.theme.borderColor,
+            theme = this.theme,
+            themeLabel = theme.label,
+            colors = theme.colors,
+            borderColor = theme.borderColor,
             labelHeight = this.getRenderedLabelHeight(labels[0], themeLabel) + (LABEL_PADDING_TOP * 2),
             borderCssText = borderColor ? this.concatStr(';border:1px solid ', borderColor) : '',
             rectMargin = this.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
-            singleColor = (labels.length === 1) && 'transparent',
+            singleColor = theme.singleColors && labels.length === 1 && 'transparent',
             html = ne.util.map(labels, function(label, index) {
                 var data = {
                     cssText: this.concatStr('background-color:', singleColor || colors[index], borderCssText, rectMargin),

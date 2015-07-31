@@ -39,31 +39,31 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
-        it('_reviseScale', function() {
-            var scale = axisModel._reviseScale({
+        it('_correctScale', function() {
+            var scale = axisModel._correctScale({
                 min: 0,
                 max: 10
             }, 5);
             expect(scale.max).toEqual(12);
 
-            scale = axisModel._reviseScale({
+            scale = axisModel._correctScale({
                 min: 10,
                 max: 80
             }, 5);
             expect(scale.max).toEqual(90);
 
-            scale = axisModel._reviseScale({
+            scale = axisModel._correctScale({
                 min: 0,
                 max: 0.1
             }, 5);
             expect(scale.max).toEqual(0.4);
 
-            scale = axisModel._reviseScale({
+            scale = axisModel._correctScale({
                 min: 0.1,
                 max: 0.8
             }, 5);
-            expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(1.2);
+            expect(scale.min).toEqual(0.1);
+            expect(scale.max).toEqual(0.9);
         });
 
         it('getCalculateScale', function() {
@@ -108,12 +108,13 @@ describe('test axis model', function() {
             var scale;
 
             axisModel._setValueAxisData(values, {
+                width: 400,
                 height: 300
             });
             scale = axisModel.scale;
-            expect(axisModel.labels).toEqual([0, 65, 130, 195]);
+            expect(axisModel.labels).toEqual([0, 95, 190]);
             expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(195);
+            expect(scale.max).toEqual(190);
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
 
@@ -122,6 +123,7 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
 
             axisModel._setData({values: values, chartDimension: {
+                width: 400,
                 height: 300
             }});
             expect(axisModel.isValueAxis()).toBeTruthy();
@@ -143,7 +145,7 @@ describe('test axis model', function() {
             var tmpAxisModel = new AxisModel(),
                 data = {
                     values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]],
-                    chartDimension: {height: 300},
+                    chartDimension: {width: 400, height: 300},
                     formatFns: tmpAxisModel.findFormatFns('0.00')
                 },
                 options = {

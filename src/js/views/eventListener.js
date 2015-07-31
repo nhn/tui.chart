@@ -58,12 +58,14 @@ var eventListener = {
      * @param {function} callback callback function
      */
     bindEvent: function (eventName, el, callback) {
+        var bindEvent;
         if ("addEventListener" in el) {
-            this.bindEvent = this.addEventListener;
+            bindEvent = this._addEventListener;
         } else if ("attachEvent" in el) {
-            this.bindEvent = this.attachEvent;
+            bindEvent = this._attachEvent;
         }
-        this.bindEvent(eventName, el, callback);
+        this.bindEvent = bindEvent;
+        bindEvent(eventName, el, callback);
     }
 };
 
