@@ -75,7 +75,7 @@
             </div>
             <div style="float:left; margin-left:10px;position:relative;">
                 <div>theme</div>
-                <button id="btn">적용</button>
+                <button id="btn" onclick="onClick();">적용</button>
                 <textarea id="theme">
 {
     "chart": {
@@ -135,46 +135,46 @@
 <script src="dist/application-chart.min.js"></script>
 <script>
     var chart = ne.application.chart,
-        elChartArea = document.getElementById('chart-area'),
-        elBtn = document.getElementById('btn'),
-        data = [
-            ['Groups', 'Group1', 'Group2', 'Group3'],
-            ['Legend1', 20, 30, 50],
-            ['Legend2', 40, 40, 60],
-            ['Legend3', 60, 50, 10],
-            ['Legend4', 80, 10, 70]
-        ],
-        options = {
-            chart: {
-                width: 500,
-                height: 400,
-                title: 'chart title'
-            },
-            vAxis: {
-                title: 'vAxis title'
-            },
-            hAxis: {
-                title: 'hAxis title'
-            },
-            tooltip: {
-                suffix: 'unit',
-                template: ''
-            }
-        };
+            elChartArea = document.getElementById('chart-area'),
+            elBtn = document.getElementById('btn'),
+            data = [
+                ['Groups', 'Group1', 'Group2', 'Group3'],
+                ['Legend1', 20, 30, 50],
+                ['Legend2', 40, 40, 60],
+                ['Legend3', 60, 50, 10],
+                ['Legend4', 80, 10, 70]
+            ],
+            options = {
+                chart: {
+                    width: 500,
+                    height: 400,
+                    title: 'chart title'
+                },
+                vAxis: {
+                    title: 'vAxis title'
+                },
+                hAxis: {
+                    title: 'hAxis title'
+                },
+                tooltip: {
+                    suffix: 'unit',
+                    template: ''
+                }
+            };
 
     chart.lineChart(elChartArea, data, options);
 
-    elBtn.addEventListener('click', function() {
+    var onClick = function() {
         var type = document.getElementById('type').value,
-            customData = JSON.parse(document.getElementById('data').value),
-            options = JSON.parse(document.getElementById('options').value),
-            theme = JSON.parse(document.getElementById('theme').value);
+                customData = JSON.parse(document.getElementById('data').value),
+                options = JSON.parse(document.getElementById('options').value),
+                theme = JSON.parse(document.getElementById('theme').value);
 
         chart.registerTheme(options.theme, theme);
 
         elChartArea.innerHTML = '';
         chart[type](elChartArea, customData, options);
-    });
+    };
 </script>
 </body>
 </html>

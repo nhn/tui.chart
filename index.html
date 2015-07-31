@@ -75,7 +75,7 @@
         </div>
         <div style="float:left; margin-left:10px;position:relative;">
             <div>theme</div>
-            <button id="btn">적용</button>
+            <button id="btn" onclick="onClick();">적용</button>
             <textarea id="theme">
 {
     "chart": {
@@ -163,7 +163,7 @@
 
     chart.lineChart(elChartArea, data, options);
 
-    elBtn.addEventListener('click', function() {
+    var onClick = function() {
         var type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
             options = JSON.parse(document.getElementById('options').value),
@@ -173,7 +173,7 @@
 
         elChartArea.innerHTML = '';
         chart[type](elChartArea, customData, options);
-    });
+    };
 </script>
 </body>
 </html>
