@@ -1,7 +1,7 @@
 Application Chart
 ===============
 Chart<br>
-This application supports draw a chart on web browser.
+This application supports draw a chart on web browser.<br>
 Currently it supports bar charts and line charts.
 
 ## Feature
