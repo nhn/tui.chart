@@ -1,8 +1,8 @@
 /**
- * @fileoverview PopupModel is model for management of popup data.
- *               Popup data used to draw the popup area.
+ * @fileoverview TooltipModel is model for management of tooltip data.
+ *               Tooltip data used to draw the tooltip area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -10,16 +10,19 @@
 var Model = require('./model.js');
 
 var apc = Array.prototype.concat,
-    PopupModel;
+    TooltipModel;
 
 /**
- * @classdesc PopupModel is model for management of popup data.
+ * @classdesc TooltipModel is model for management of tooltip data.
  * @class
  * @augments Model
  */
-PopupModel = ne.util.defineClass(Model, {
+TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
     /**
-     * Constructor
+     * TooltipModel is model for management of tooltip data.
+     * Tooltip data used to draw the tooltip area.
+     * @constructs TooltipModel
+     * @extends Model
      * @param {{labels: array, colors: array}} data legend data
      * @param {object} options options
      */
@@ -27,14 +30,14 @@ PopupModel = ne.util.defineClass(Model, {
         options = options || {};
 
         /**
-         * Popup options
+         * Tooltip options
          * @type {{template: string}}
          */
         this.options = options;
 
         /**
-         * Popup data
-         * @type {[[array, array], ...]}
+         * Tooltip data
+         * @type {array.<array.<object>>}
          */
         this.data = [];
 
@@ -52,7 +55,7 @@ PopupModel = ne.util.defineClass(Model, {
         var labels = data.labels,
             groupValues = data.values,
             legendLabels = data.legendLabels,
-            popupData = ne.util.map(groupValues, function(values, groupIndex) {
+            tooltipData = ne.util.map(groupValues, function(values, groupIndex) {
                 var items = ne.util.map(values, function(value, index) {
                     var item = {
                         label: labels[groupIndex],
@@ -65,8 +68,8 @@ PopupModel = ne.util.defineClass(Model, {
 
                 return items;
             });
-        this.data = apc.apply([], popupData);
+        this.data = apc.apply([], tooltipData);
     }
 });
 
-module.exports = PopupModel;
+module.exports = TooltipModel;

@@ -18,7 +18,7 @@ var defaultTheme = {
         fontFamily: 'Verdana'
     },
     title: {
-        fontSize: 14,
+        fontSize: 18,
         color: DEFAULT_COLOR
     },
     vAxis: DEFAULT_AXIS,
@@ -28,8 +28,7 @@ var defaultTheme = {
         background: '#ffffff'
     },
     series: {
-        colors: ['red', 'orange', 'yellow', 'green', 'blue'],
-        borderColor: 'blue'
+        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']
     },
     legend: {
         label: {

@@ -1,7 +1,7 @@
 /**
  * @fileoverview  LegendView render legend area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,12 +13,15 @@ var LEGEND_AREA_PADDING = 10,
     LEGEND_RECT_WIDTH = 12,
     LABEL_PADDING_LEFT = 5,
     LABEL_PADDING_TOP = 2;
-/**
- * @classdesc LegendView render legend area.
- * @class
- * @augments View
- */
-var LegendView = ne.util.defineClass(View, {
+
+var LegendView = ne.util.defineClass(View, /** @lends LegendView.prototype */ {
+    /**
+     * LegendView render legend area.
+     * @constructs LegendView
+     * @extends View
+     * @param {object} model legend model
+     * @param {object} theme legend theme
+     */
     init: function(model, theme) {
         /**
          * Legend model
@@ -44,15 +47,17 @@ var LegendView = ne.util.defineClass(View, {
     render: function(bound) {
         var template = legendTemplate.TPL_LEGEND,
             labels = this.model.labels,
-            themeLabel = this.theme.label,
-            colors = this.theme.colors,
-            borderColor = this.theme.borderColor,
+            theme = this.theme,
+            themeLabel = theme.label,
+            colors = theme.colors,
+            borderColor = theme.borderColor,
             labelHeight = this.getRenderedLabelHeight(labels[0], themeLabel) + (LABEL_PADDING_TOP * 2),
             borderCssText = borderColor ? this.concatStr(';border:1px solid ', borderColor) : '',
             rectMargin = this.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
+            singleColor = theme.singleColors && labels.length === 1 && 'transparent',
             html = ne.util.map(labels, function(label, index) {
                 var data = {
-                    cssText: this.concatStr('background-color:', colors[index], borderCssText, rectMargin),
+                    cssText: this.concatStr('background-color:', singleColor || colors[index], borderCssText, rectMargin),
                     height: labelHeight,
                     label: label
                 };

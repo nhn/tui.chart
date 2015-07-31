@@ -1,7 +1,7 @@
 /**
  * @fileoverview ChartView is parent of all chart.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -10,36 +10,16 @@ var dom = require('./domHandler.js'),
 
 var TITLE_ADD_PADDING = 20;
 
-/**
- * @classdesc ChartView is parent of all chart.
- * @class
- * @augments View
- */
-var ChartView = ne.util.defineClass(View, {
+var ChartView = ne.util.defineClass(View, /** @lends ChartView.prototype */{
     /**
-     * Chart dimension
-     * @type {{width: number, height: number}
-     */
-    dimension: {
-        width: 500,
-        height: 300
-    },
-
-    /**
-     * constructor
+     * ChartView is parent of all chart.
+     * @constructs ChartView
+     * @extends View
      * @param {object} data chart data
-     * @param {options} options chart options
+     * @param {object} options chart options
      */
     init: function(data, options) {
         options = options || {};
-
-        if (options.width) {
-            this.dimension.width = options.width;
-        }
-
-        if (options.height) {
-            this.dimension.height = options.height;
-        }
 
         View.call(this);
         dom.addClass(this.el, 'ne-chart');

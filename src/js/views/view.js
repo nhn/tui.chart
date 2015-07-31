@@ -1,7 +1,7 @@
 /**
  * @fileoverview View is parent of all view.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -13,13 +13,10 @@ var browser = ne.util.browser,
     isIE8 = browser.msie && browser.version === 8,
     View;
 
-/**
- * @classdesc View is parent of all view.
- * @class
- */
-View = ne.util.defineClass({
+View = ne.util.defineClass(/** @lends View.prototype */ {
     /**
-     * Constructor
+     * View is parent of all view.
+     * @constructs View
      */
     init: function() {
         this.el = dom.createElement('DIV', this.className || '');
@@ -34,6 +31,14 @@ View = ne.util.defineClass({
             return;
         }
         this.el.appendChild(elChild);
+    },
+
+    /**
+     * Append child elements.
+     * @param {array.<HTMLElement>} elChildren child elements
+     */
+    appends: function(elChildren) {
+        ne.util.forEachArray(elChildren, this.append, this);
     },
 
     /**
@@ -210,7 +215,7 @@ View = ne.util.defineClass({
 
     /**
      * Get Rendered Labels Max Size(width or height)
-     * @param {array} labels labels
+     * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @param {function} iteratee iteratee
      * @returns {number} max size (width or height)
@@ -226,7 +231,7 @@ View = ne.util.defineClass({
 
     /**
      * Get rendered labels max width.
-     * @param {array} labels labels
+     * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max width
      */
@@ -238,7 +243,7 @@ View = ne.util.defineClass({
 
     /**
      * Get rendered labels max height.
-     * @param {array} labels labels
+     * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max height
      */

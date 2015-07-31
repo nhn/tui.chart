@@ -1,6 +1,6 @@
 /**
  * @fileoverview test bar chart model
- * @author jiung.kang@nhnent.com
+ * @author dl_javascript@nhnent.com
  */
 
 'use strict';
@@ -25,9 +25,9 @@ describe('test bar chart model', function() {
             expect(barChartModel.vAxis.axisType).toEqual('label');
             expect(barChartModel.hAxis.axisType).toEqual('value');
             expect(barChartModel.plot.vTickCount).toEqual(0);
-            expect(barChartModel.plot.hTickCount).toEqual(5);
-            expect(barChartModel.legend.labels).toEqual(['Density']);
-            expect(barChartModel.popup.data[0]).toEqual({label:'Copper', value: 8.94, legendLabel: 'Density', id: '0-0'});
+            expect(barChartModel.plot.hTickCount).toEqual(6);
+            expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
+            expect(barChartModel.tooltip.data[0]).toEqual({label:'Density', value: 8.94, legendLabel: 'Copper', id: '0-0'});
         });
     });
 
@@ -36,24 +36,24 @@ describe('test bar chart model', function() {
             var options = {
                     chart: {
                         title: 'chart title',
+                        format: '0.0'
                     },
                     hAxis: {
                         title: 'hAxis title'
                     },
                     vAxis: {
                         title: 'vAxis title',
-                        min: 1,
-                        format: '0.0'
+                        min: 1
                     },
                     barType: 'column'
                 },
                 barChartModel = new BarChartModel(userData, options);
             expect(barChartModel.title).toEqual('chart title');
             expect(barChartModel.hAxis.isLabelAxis()).toBeTruthy();
-            expect(barChartModel.vAxis.scale.min).toEqual(1);
-            expect(barChartModel.vAxis.labels[1]).toEqual(6.3);
-            expect(barChartModel.legend.labels).toEqual(['Density']);
-            expect(barChartModel.popup.data[1]).toEqual({label:'Silver', value: 10.49, legendLabel: 'Density', id: '1-0'});
+            expect(barChartModel.vAxis.scale.min).toEqual(0);
+            expect(barChartModel.vAxis.labels[1]).toEqual('15.0');
+            expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
+            expect(barChartModel.tooltip.data[1]).toEqual({label:'Density', value: '10.5', legendLabel: 'Silver', id: '0-1'});
         });
     });
 });

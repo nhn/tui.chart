@@ -1,7 +1,7 @@
 /**
  * @fileoverview test series model
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -11,7 +11,6 @@ var SeriesModel = require('../../src/js/models/seriesModel.js');
 describe('test series model', function() {
     var values = [[20], [40], [80], [120]],
         percentValues = [[0.125], [0.25], [0.5], [0.75]],
-        lastItemStyles = [{color: 'red'}, {color: 'orange'}, {color: 'yellow'}, {color: 'green'}],
         scale = {min: 0, max: 160};
 
     describe('test method', function() {
@@ -26,31 +25,15 @@ describe('test series model', function() {
             expect(result).toEqual(percentValues);
         });
 
-        it('getPixelValues', function() {
-            var result;
-
-            seriesModel.percentValues = seriesModel._makePercentValues(values, scale);
-            result = seriesModel.getPixelValues(400);
-
-            expect(result).toEqual([[50], [100], [200], [300]]);
-        });
-
         it('_setData', function() {
             seriesModel._setData({
                 values: values,
+                formatValues: values,
                 scale: scale
             });
 
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.percentValues).toEqual(percentValues);
-            expect(seriesModel.lastItemStyles).toEqual([]);
-
-            seriesModel._setData({
-                values: values,
-                scale: scale,
-                lastItemStyles: lastItemStyles
-            });
-            expect(seriesModel.lastItemStyles).toEqual(lastItemStyles);
         });
     });
 
@@ -58,20 +41,14 @@ describe('test series model', function() {
         it('init', function() {
             var data = {
                     values: values,
-                    scale: scale,
-                    lastItemStyles: lastItemStyles
+                    formatValues: values,
+                    scale: scale
                 },
                 seriesModel = new SeriesModel(data),
                 pixelValues;
 
             expect(seriesModel.markers).toEqual(values);
             expect(seriesModel.percentValues).toEqual(percentValues);
-
-            pixelValues = seriesModel.getPixelValues(400);
-            expect(pixelValues).toEqual([[50], [100], [200], [300]]);
-
-            pixelValues = seriesModel.getPixelValues(200);
-            expect(pixelValues).toEqual([[25], [50], [100], [150]]);
         });
     });
 });

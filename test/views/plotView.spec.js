@@ -1,7 +1,7 @@
 /**
  * @fileoverview test plot view
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -26,10 +26,10 @@ describe('test Plot View', function() {
             sizeType = 'height',
             plotView = new PlotView(null, theme),
             resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType),
-            compareHtml = '<div class="plot-line vertical" style="left:10px;height:200px"></div>' +
-                '<div class="plot-line vertical" style="left:20px;height:200px"></div>' +
-                '<div class="plot-line vertical" style="left:30px;height:200px"></div>' +
-                '<div class="plot-line vertical" style="left:40px;height:200px"></div>';
+            compareHtml = '<div class="ne-chart-plot-line vertical" style="left:10px;height:200px"></div>' +
+                '<div class="ne-chart-plot-line vertical" style="left:20px;height:200px"></div>' +
+                '<div class="ne-chart-plot-line vertical" style="left:30px;height:200px"></div>' +
+                '<div class="ne-chart-plot-line vertical" style="left:40px;height:200px"></div>';
         expect(resultHtml).toEqual(compareHtml);
     });
 
@@ -37,10 +37,10 @@ describe('test Plot View', function() {
         var plotModel = new PlotModel({vTickCount: 5}),
             plotView = new PlotView(plotModel, theme),
             el = plotView.el,
-            compareHtml = '<div class="plot-line horizontal" style="bottom:50px;width:400px;background-color:black"></div>' +
-                '<div class="plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
-                '<div class="plot-line horizontal" style="bottom:149px;width:400px;background-color:black"></div>' +
-                '<div class="plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>',
+            compareHtml = '<div class="ne-chart-plot-line horizontal" style="bottom:50px;width:400px;background-color:black"></div>' +
+                '<div class="ne-chart-plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
+                '<div class="ne-chart-plot-line horizontal" style="bottom:149px;width:400px;background-color:black"></div>' +
+                '<div class="ne-chart-plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>',
             elTemp = document.createElement('DIV');
 
         plotView._renderLines(bound.dimension);
@@ -55,8 +55,8 @@ describe('test Plot View', function() {
             plotView = new PlotView(plotModel, theme),
             el = plotView.render(bound),
             elTemp = document.createElement('DIV'),
-            compareHtml = '<div class="plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
-                '<div class="plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>';
+            compareHtml = '<div class="ne-chart-plot-line horizontal" style="bottom:100px;width:400px;background-color:black"></div>' +
+                '<div class="ne-chart-plot-line horizontal" style="bottom:199px;width:400px;background-color:black"></div>';
 
         elTemp.innerHTML = compareHtml;
 
@@ -64,7 +64,7 @@ describe('test Plot View', function() {
         expect(el.style.height).toEqual('200px');
         expect(el.style.top).toEqual('5px');
         expect(el.style.right).toEqual('5px');
-        expect(el.className).toEqual('plot-area');
+        expect(el.className).toEqual('ne-chart-plot-area');
         expect(el.innerHTML).toEqual(elTemp.innerHTML);
     });
 });

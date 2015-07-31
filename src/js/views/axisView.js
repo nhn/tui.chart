@@ -1,7 +1,7 @@
 /**
  * @fileoverview  AxisView render axis ticks and labels.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -14,14 +14,11 @@ var TITLE_AREA_WIDTH_PADDING = 20,
     TITLE_AREA_HEIGHT_PADDING = 20,
     V_LABEL_RIGHT_PADDING = 10;
 
-/**
- * @classdesc AxisView render axis ticks and labels.
- * @class
- * @augments View
- */
-var AxisView = ne.util.defineClass(View, {
+var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
     /**
-     * Constructor
+     * AxisView render axis ticks and labels.
+     * @constructs AxisView
+     * @extends View
      * @param {object} model axis model
      * @param {object} theme axis theme
      */
@@ -37,13 +34,13 @@ var AxisView = ne.util.defineClass(View, {
         /**
          * Axis view className
          */
-        this.className = 'axis-area';
+        this.className = 'ne-chart-axis-area';
 
         View.call(this);
     },
 
     /**
-     * Axis renderer
+     * Axis renderer.
      * @param {{width: number, height: number, top: number, right: number}} bound axis area dimension
      * @returns {HTMLElement} axis area base element
      */
@@ -60,9 +57,7 @@ var AxisView = ne.util.defineClass(View, {
         this.renderDimension(dimension);
         this.renderPosition(bound.position);
         dom.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
-        this.append(elTitleArea);
-        this.append(elTickArea);
-        this.append(elLabelArea);
+        this.appends([elTitleArea, elTickArea, elLabelArea]);
 
         return this.el;
     },
@@ -77,7 +72,7 @@ var AxisView = ne.util.defineClass(View, {
      * @private
      */
     _renderTitleArea: function(title, theme, isVertical, size) {
-        var elTitleArea = this.renderTitle(title, theme, 'title-area'),
+        var elTitleArea = this.renderTitle(title, theme, 'ne-chart-title-area'),
             cssTexts = [];
 
         if (elTitleArea && isVertical) {
@@ -104,7 +99,7 @@ var AxisView = ne.util.defineClass(View, {
             tickCount = model.tickCount,
             tickColor = this.theme.tickColor,
             positions = model.makePixelPositions(size, tickCount),
-            elTickArea = dom.createElement('DIV', 'tick-area'),
+            elTickArea = dom.createElement('DIV', 'ne-chart-tick-area'),
             isVertical = model.isVertical,
             posType = isVertical ? 'bottom' : 'left',
             template = axisTemplate.TPL_AXIS_TICK,
@@ -155,7 +150,7 @@ var AxisView = ne.util.defineClass(View, {
             isLabelAxis = model.isLabelAxis(),
             posType = isVertical ? (model.isLabelAxis() ? 'top' : 'bottom') : 'left',
             cssTexts = this._makeLabelCssTexts(isVertical, isLabelAxis, labelWidth),
-            elLabelArea = dom.createElement('DIV', 'label-area'),
+            elLabelArea = dom.createElement('DIV', 'ne-chart-label-area'),
             labelsHtml, titleAreaWidth, areaCssText;
 
         positions.length = labels.length;
@@ -191,7 +186,7 @@ var AxisView = ne.util.defineClass(View, {
      * @param {boolean} isVertical Is vertical?
      * @param {boolean} isLabelAxis Is label axis?
      * @param {number} labelWidth label width or height
-     * @returns {array} cssTexts
+     * @returns {string[]} cssTexts
      * @private
      */
     _makeLabelCssTexts: function(isVertical, isLabelAxis, labelWidth) {
@@ -209,10 +204,10 @@ var AxisView = ne.util.defineClass(View, {
 
     /**
      * Makes label html
-     * @param {array} positions label position array
-     * @param {array} labels label array
+     * @param {array.<object>} positions label position array
+     * @param {string[]} labels label array
      * @param {string} posType position type (left or bottom)
-     * @param {array} cssTexts css array
+     * @param {string[]} cssTexts css array
      * @returns {string} html
      * @private
      */

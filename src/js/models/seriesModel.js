@@ -2,27 +2,29 @@
  * @fileoverview SeriesModel is model for management of series data.
  *               Series data used to draw the series area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var Model = require('./model.js');
 
-/**
- * @classdesc SeriesModel is model for management of series data.
- * @class
- * @augments Model
- */
-var SeriesModel = ne.util.defineClass(Model, {
+var HIDDEN_WIDTH = 1;
+
+var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */ {
     /**
-     * Constructor
+     * SeriesModel is model for management of series data.
+     * Series data used to draw the series area.
+     * @constructs SeriesModel
+     * @extends Model
      * @param {object} data series data
+     * @param {object} options options
      */
-    init: function(data) {
+    init: function(data, options) {
+        this.options = options = options || {};
         /**
          * Series makers
-         * @type {array}
+         * @type {array.<array>}
          */
         this.markers = [];
 
@@ -44,12 +46,6 @@ var SeriesModel = ne.util.defineClass(Model, {
          */
         this.colors = [];
 
-        /**
-         * Series last item styles
-         * @type {Array}
-         */
-        this.lastItemStyles = [];
-
         if (data) {
             this._setData(data);
         }
@@ -65,23 +61,20 @@ var SeriesModel = ne.util.defineClass(Model, {
             throw new Error('Invalid series data.');
         }
 
-        this.markers = data.values;
+        this.markers = data.formatValues;
         this.percentValues = this._makePercentValues(data.values, data.scale);
-
-        if (ne.util.isNotEmpty(data.lastItemStyles)) {
-            this.lastItemStyles = data.lastItemStyles;
-        }
+        this.isVertical = data.isVertical;
     },
 
     /**
      * Convert two dimensional(2d) values.
-     * @param {array.<array>} values2d target 2d array
+     * @param {array.<array>} groupValues target 2d array
      * @param {function} condition convert condition function
      * @returns {array.<array>} 2d array
      * @private
      */
-    _convertValues: function(values2d, condition) {
-        var result = ne.util.map(values2d, function(values) {
+    _convertValues: function(groupValues, condition) {
+        var result = ne.util.map(groupValues, function(values) {
             return ne.util.map(values, condition);
         });
         return result;
@@ -89,46 +82,89 @@ var SeriesModel = ne.util.defineClass(Model, {
 
     /**
      * Make to percent value.
-     * @param {array.<array>} values maker data
+     * @param {array.<array.<number>>} values values
      * @param {{min:number, max:number}} scale min, max scale
-     * @returns {array.<array>} percent values
+     * @returns {array.<array.<number>>} percent values
      * @private
      */
     _makePercentValues: function(values, scale) {
         var min = scale.min,
             max = scale.max,
             percentValues = this._convertValues(values, function(value) {
-                return (value - min) / max;
+                return (value - min) / (max - min);
             });
         return percentValues;
     },
 
     /**
-     * Make to pixel values.
-     * @param {number} size width or height
-     * @returns {array.<array>} pixel values
+     * Make column chart bounds.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @returns {array.<array.<object>>} bounds
      */
-    getPixelValues: function(size) {
-        var result = this._convertValues(this.percentValues, function(value) {
-            return value * size;
-        });
-        return result;
+    makeColumnBounds: function(dimension) {
+        var groupValues = this.percentValues,
+            maxBarWidth = (dimension.width / groupValues.length),
+            barWidth = parseInt(maxBarWidth / (groupValues[0].length + 1), 10),
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
+                return ne.util.map(values, function (value, index) {
+                    var barHeight = parseInt(value * dimension.height, 10);
+                    return {
+                        top: dimension.height - barHeight + HIDDEN_WIDTH,
+                        left: paddingLeft + (barWidth * index),
+                        width: barWidth,
+                        height: barHeight
+                    };
+                }, this);
+            });
+        return bounds;
     },
 
     /**
-     * Pick last colors.
-     * @returns {array} colors
+     * Make bar chart bounds.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.<array.<object>>} bounds
      */
-    pickLastColors: function() {
-        var lastItemsStyles = this.lastItemStyles,
-            colors = [];
-        if (lastItemsStyles.length && lastItemsStyles[0].color) {
-            colors = ne.util.pluck(lastItemsStyles, 'color');
-        }
+    makeBarBounds: function(dimension, hiddenWidth) {
+        var groupValues = this.percentValues,
+            maxBarHeight = (dimension.height / groupValues.length),
+            barHeight = parseInt(maxBarHeight / (groupValues[0].length + 1), 10),
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+                return ne.util.map(values, function (value, index) {
+                    return {
+                        top: paddingTop + (barHeight * index),
+                        left: -HIDDEN_WIDTH,
+                        width: parseInt(value * dimension.width, 10),
+                        height: barHeight
+                    };
+                }, this);
+            });
+        return bounds;
+    },
 
-        return colors;
+    /**
+     * Make line chart positions.
+     * @param {{width: number, height:nunber}} dimension dimension
+     * @returns {array.<array.<object>>} positions
+     */
+    makeLinePositions: function(dimension) {
+        var groupValues = this.percentValues,
+            width = dimension.width,
+            height = dimension.height,
+            step = width / groupValues[0].length,
+            start = step / 2,
+            result = ne.util.map(groupValues, function(values) {
+                return ne.util.map(values, function(value, index) {
+                    return {
+                        left: start + (step * index),
+                        top: height - (value * height)
+                    };
+                });
+            });
+        return result;
     }
-
 });
 
 module.exports = SeriesModel;

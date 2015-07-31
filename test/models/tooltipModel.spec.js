@@ -1,12 +1,12 @@
 /**
- * @fileoverview test popup model
+ * @fileoverview test tooltip model
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var PopupModel = require('../../src/js/models/popupModel.js');
+var TooltipModel = require('../../src/js/models/tooltipModel.js');
 
 describe('test legend model', function() {
     var data = {
@@ -49,19 +49,19 @@ describe('test legend model', function() {
 
     describe('test method', function() {
         it('setData', function() {
-            var popupModel = new PopupModel();
+            var tooltipModel = new TooltipModel();
 
-            popupModel._setData(data);
+            tooltipModel._setData(data);
 
-            expect(popupModel.data).toEqual(compareData);
+            expect(tooltipModel.data).toEqual(compareData);
         });
     });
 
     describe('test construct', function() {
         it('init', function() {
-            var popupModel = new PopupModel(data);
+            var tooltipModel = new TooltipModel(data);
 
-            expect(popupModel.data).toEqual(compareData);
+            expect(tooltipModel.data).toEqual(compareData);
         });
     });
 });

@@ -2,27 +2,25 @@
  * @fileoverview LegendModel is model for management of legend data.
  *               Legend data used to draw the legend area.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var Model = require('./model.js');
 
-/**
- * @classdesc LegendModel is model for management of legend data.
- * @class
- * @augments Model
- */
-var LegendModel = ne.util.defineClass(Model, {
+var LegendModel = ne.util.defineClass(Model, /** @lends LegendModel.prototype */ {
     /**
-     * Constructor
+     * LegendModel is model for management of legend data.
+     * Legend data used to draw the legend area.
+     * @constructs LegendModel
+     * @extends Model
      * @param {{labels: array, colors: array}} data legend data
      */
     init: function(data) {
         /**
          * Legend labels
-         * @type {array}
+         * @type {string[]}
          */
         this.labels = [];
 

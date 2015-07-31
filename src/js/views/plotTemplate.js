@@ -1,13 +1,13 @@
 /**
  * @fileoverview This is plot view templates.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 var templateMaker = require('./templateMaker.js');
 
 var tags = {
-    HTML_PLOT_LINE: '<div class="plot-line {= className }" style="{= cssText }"></div>'
+    HTML_PLOT_LINE: '<div class="ne-chart-plot-line {{ className }}" style="{{ cssText }}"></div>'
 };
 
 module.exports = {

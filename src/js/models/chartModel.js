@@ -2,26 +2,26 @@
  * @fileoverview ChartModel is parent of all chart model.
  *               This model provides a method to convert the data.
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var Model = require('./model.js');
 
-/**
- * @classdesc ChartModel is parent of all chart model.
- * @class
- * @augments Model
- */
-var ChartModel = ne.util.defineClass(Model, {
+var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
-     * Constructor
+     * ChartModel is parent of all chart model.
+     * This model provides a method to convert the data.
+     * @constructs ChartModel
+     * @extends Model
      * @param {object} data user chart data
      * @param {object} options user options
      */
     init: function(data, options) {
+        var chartOptions;
         options = options || {};
+        chartOptions = options.chart || {};
 
         /**
          * Chart options
@@ -30,10 +30,27 @@ var ChartModel = ne.util.defineClass(Model, {
         this.options = options;
 
         /**
+         * Chart dimension
+         * @type {{width: number, height: number}}
+        */
+        this.dimension = {
+            width: 500,
+            height: 300
+        };
+
+        if (chartOptions.width) {
+            this.dimension.width = chartOptions.width;
+        }
+
+        if (chartOptions.height) {
+            this.dimension.height = chartOptions.height;
+        }
+
+        /**
          * Chart title
          * @type {string}
          */
-        this.title = options.chart ? options.chart.title : '';
+        this.title = chartOptions.title || '';
 
         if (data) {
             this._setData(data);
@@ -72,21 +89,23 @@ var ChartModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Pick labels from axis data.
-     * @param {object} axisData axis data
-     * @returns {array} labels
+     * Pick labels.
+     * @param {string[]} labels labels
+     * @returns {string[]} labels
      */
-    pickLabels: function(axisData) {
-        var labels = ne.util.map(axisData, function(items) {
-            return items[0];
-        });
-        return labels;
+    pickLabels: function(labels) {
+        var hasOption = this._hasStyleOption(labels),
+            last = hasOption ? labels.length - 1 : -1,
+            result = ne.util.filter(labels, function(label, index) {
+                return index !== 0 && index !== last;
+            });
+        return result;
     },
 
     /**
      * Pick values from axis data.
-     * @param {object} axisData axis data
-     * @returns {array} values
+     * @param {array.<object>} axisData axis data
+     * @returns {string[]} values
      */
     pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
@@ -94,50 +113,13 @@ var ChartModel = ne.util.defineClass(Model, {
             values.shift();
             return values;
         });
-        return result;
-    },
 
-    /**
-     * Get styles from cssText
-     * @param {string} cssText cssText ex)color:red, border-color:blue
-     * @returns {object} styles
-     * @private
-     */
-    _getStyles: function(cssText) {
-        var cssTexts = cssText.split(','),
-            styles = {};
-        ne.util.forEachArray(cssTexts, function(item) {
-            var selectors = item.split(':');
-            styles[selectors[0]] = selectors[1];
-        });
-        return styles;
-    },
-
-    /**
-     * Pick last item styles.
-     * @param {object} data axis data
-     * @returns {array} last item styles
-     */
-    pickLastItemStyles: function(data) {
-        var titles = data[0],
-            styles = [],
-            axisData;
-
-        if (this._hasStyleOption(titles)) {
-            axisData = data.slice();
-            axisData.shift();
-            styles = ne.util.map(axisData, function(items) {
-                var style = items[items.length - 1];
-                return this._getStyles(style);
-            }, this);
-        }
-
-        return styles;
+        return this.arrayPivot(result);
     },
 
     /**
      * Has style option?
-     * @param {array} arr labels
+     * @param {string[]} arr labels
      * @returns {boolean} has style option?
      * @private
      */
@@ -147,16 +129,32 @@ var ChartModel = ne.util.defineClass(Model, {
     },
 
     /**
-     * Pick legend labels.
-     * @param {array} labels labels
-     * @returns {Object} labels
+     * Pick legend labels from axis data.
+     * @param {object} axisData axis data
+     * @returns {string[]} labels
      */
-    pickLegendLabels: function(labels) {
-        var hasOption = this._hasStyleOption(labels),
-            last = hasOption ? labels.length - 1 : -1,
-            result = ne.util.filter(labels, function(label, index) {
-                return index !== 0 && index !== last;
+    pickLegendLabels: function(axisData) {
+        var labels = ne.util.map(axisData, function(items) {
+            return items[0];
+        });
+        return labels;
+    },
+
+    /**
+     * Format values.
+     * @param {array.<array.<number>>} groupValues values
+     * @param {function[]} formatFns format functions
+     * @returns {string[]} formatted values
+     */
+    formatValues: function(groupValues, formatFns) {
+        var result = ne.util.map(groupValues, function(values) {
+            return ne.util.map(values, function(value) {
+                var fns = [value].concat(formatFns);
+                return ne.util.reduce(fns, function(stored, fn) {
+                    return fn(stored);
+                });
             });
+        });
         return result;
     }
 });

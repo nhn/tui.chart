@@ -1,7 +1,7 @@
 /**
  * @fileoverview test axis model
  * @author NHN Ent.
- *         FE Development Team <jiung.kang@nhnent.com>
+ *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -39,17 +39,44 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
+        it('_correctScale', function() {
+            var scale = axisModel._correctScale({
+                min: 0,
+                max: 10
+            }, 5);
+            expect(scale.max).toEqual(11);
+
+            scale = axisModel._correctScale({
+                min: 10,
+                max: 80
+            }, 5);
+            expect(scale.max).toEqual(90);
+
+            scale = axisModel._correctScale({
+                min: 0,
+                max: 0.1
+            }, 5);
+            expect(scale.max).toEqual(0.3);
+
+            scale = axisModel._correctScale({
+                min: 0.1,
+                max: 0.8
+            }, 5);
+            expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(1.2);
+        });
+
         it('getCalculateScale', function() {
-            var scale = axisModel._calculateScale(10, 100);
-            expect(scale.max).toEqual(104.5);
+            var scale = axisModel._calculateScale(10, 100, 5);
+            expect(scale.max).toEqual(120);
             expect(scale.min).toEqual(0);
 
-            scale = axisModel._calculateScale(20, 100);
-            expect(scale.max).toEqual(104);
-            expect(scale.min).toEqual(16);
+            scale = axisModel._calculateScale(20, 100, 5);
+            expect(scale.max).toEqual(115);
+            expect(scale.min).toEqual(15);
 
-            scale = axisModel._calculateScale(20, 100, 0);
-            expect(scale.max).toEqual(104);
+            scale = axisModel._calculateScale(20, 100, 5, 0);
+            expect(scale.max).toEqual(120);
             expect(scale.min).toEqual(0);
         });
 
@@ -59,10 +86,14 @@ describe('test axis model', function() {
         });
 
         it('_formatLabels', function() {
-            var _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 2);
-            expect(_labels).toEqual([1.11, 2.22, 3.33, 4.00, 5.55]);
-            _labels = axisModel._formatLabels([1.111, 2.2222, 3.3333333, 4, 5.55], 0);
-            expect(_labels).toEqual([1, 2, 3, 4, 6]);
+            var fns = axisModel.findFormatFns('1,000.00'),
+                result = axisModel._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
+
+            expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
+
+            fns = axisModel.findFormatFns('0001');
+            result = axisModel._formatLabels([1, 2, 3], fns);
+            expect(result).toEqual(['0001', '0002', '0003']);
         });
 
         it('_makeLabelsFromScale', function() {
@@ -76,11 +107,14 @@ describe('test axis model', function() {
         it('_setValueAxisData', function() {
             var scale;
 
-            axisModel._setValueAxisData(values);
+            axisModel._setValueAxisData(values, {
+                width: 400,
+                height: 300
+            });
             scale = axisModel.scale;
-            expect(axisModel.labels.join(',')).toEqual('0,47,94,141,188');
+            expect(axisModel.labels).toEqual([0, 95, 190]);
             expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(188);
+            expect(scale.max).toEqual(190);
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
 
@@ -88,7 +122,10 @@ describe('test axis model', function() {
             axisModel._setData({labels: labels});
             expect(axisModel.isLabelAxis()).toBeTruthy();
 
-            axisModel._setData({values: values});
+            axisModel._setData({values: values, chartDimension: {
+                width: 400,
+                height: 300
+            }});
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
     });
@@ -105,16 +142,20 @@ describe('test axis model', function() {
         });
 
         it('init value axis', function() {
-            var data = {values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]]},
+            var tmpAxisModel = new AxisModel(),
+                data = {
+                    values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]],
+                    chartDimension: {width: 400, height: 300},
+                    formatFns: tmpAxisModel.findFormatFns('0.00')
+                },
                 options = {
-                    format: '0.00',
                     min: 0,
                     title: 'value title'
                 },
                 axisModel = new AxisModel(data, options),
                 lenUnderPoint = ((axisModel.labels[1] + '').split('.'))[1].length;
             expect(lenUnderPoint).toEqual(2);
-            expect(axisModel.scale.min).toEqual(0);
+            expect(axisModel.scale.min).toEqual(-1);
             expect(axisModel.title).toEqual('value title');
         });
     });

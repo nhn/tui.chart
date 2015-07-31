@@ -11,9 +11,6 @@
     .border-box();
     line-height: 1;
   }
-}
-
-.ne-bar-chart {
   .ne-chart-title {
     position: absolute;
     top: 0;
@@ -22,28 +19,28 @@
     text-align: center;
     padding: 10px 0;
   }
-  .axis-area {
+  .ne-chart-axis-area {
     position: absolute;
 
-    .title-area {
+    .ne-chart-title-area {
       position: absolute;
     }
 
-    .tick-area, .label-area {
+    .ne-chart-tick-area, .ne-chart-label-area {
       position: absolute;
       top: 0;
       width: 100%;
       height: 100%;
     }
-    .tick-area {
-      .tick {
+    .ne-chart-tick-area {
+      .ne-chart-tick {
         position: absolute;
         background-color: @axis-color;
       }
     }
 
-    .label-area {
-      .label {
+    .ne-chart-label-area {
+      .ne-chart-label {
         position: absolute;
       }
     }
@@ -52,7 +49,7 @@
       left: @chart-padding + 1;
       top: @chart-padding;
 
-      .title-area {
+      .ne-chart-title-area {
         .transform-origin(top left);
         .rotate(-90deg);
         text-align: center;
@@ -61,23 +58,23 @@
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
       }
 
-      .tick-area, .label-area {
+      .ne-chart-tick-area, .ne-chart-label-area {
         right: 0;
       }
 
-      .tick-area {
+      .ne-chart-tick-area {
         border-right: 1px solid @axis-color;
-        .tick {
+        .ne-chart-tick {
           right: 0px;
           width: 5px;
           height: 1px;
         }
       }
 
-      .label-area {
-        .label {
+      .ne-chart-label-area {
+        .ne-chart-label {
           width: 100%;
-          text-align: center;
+          text-align: right;
           padding-right: 10px;
         }
       }
@@ -86,16 +83,16 @@
     &.horizontal {
       right: @chart-padding;
 
-      .title-area {
+      .ne-chart-title-area {
         bottom: 0;
         width: 100%;
         text-align: center;
       }
-      .tick-area, .label-area {
+      .ne-chart-tick-area, .ne-chart-label-area {
         left: 0;
       }
 
-      .tick-area {
+      .ne-chart-tick-area {
         border-top: 1px solid @axis-color;
         .tick {
           top: 0px;
@@ -104,8 +101,8 @@
         }
       }
 
-      .label-area {
-        .label {
+      .ne-chart-label-area {
+        .ne-chart-label {
           top: 10px;
           text-align: center;
         }
@@ -113,11 +110,11 @@
     }
   }
 
-  .plot-area {
+  .ne-chart-plot-area {
     position: absolute;
     right: @chart-padding;
     top: @chart-padding;
-    .plot-line {
+    .ne-chart-plot-line {
       background-color: #ccc;
       position: absolute;
       &.vertical {
@@ -132,12 +129,9 @@
     }
   }
 
-  .series-area {
+  .ne-chart-series-area {
     position: absolute;
     overflow: hidden;
-    &.column > * {
-      //left: -1px !important; //Fixed ie8 left border error;
-    }
   }
 
   .ne-chart-legend-area {
@@ -161,30 +155,30 @@
     }
   }
 
-  .ne-chart-popup-area {
+  .ne-chart-tooltip-area {
     position: absolute;
-    > * {
+    .ne-chart-tooltip {
+      position: absolute;
       display: none;
       &.show {
         display: block;
       }
-    }
-    .ne-chart-popup {
-      font-size: 12px;
-      width: 100px;
-      border: 1px solid #888;
-      background-color: #efefef;
-      position: absolute;
-      > * {
-        padding: 2px 5px;
-      }
-      > :first-child {
-        backgound-color: #fff;
-        font-weight: bold;
-        text-align: center;
-      }
-      > :last-child > span:last-child {
-        font-weight: bold;
+      .ne-chart-default-tooltip {
+        font-size: 12px;
+        min-width: 100px;
+        border: 1px solid #888;
+        background-color: #efefef;
+        > * {
+          padding: 2px 5px;
+        }
+        > :first-child {
+          backgound-color: #fff;
+          font-weight: bold;
+          text-align: center;
+        }
+        > :last-child > span:last-child {
+          font-weight: bold;
+        }
       }
     }
   }
