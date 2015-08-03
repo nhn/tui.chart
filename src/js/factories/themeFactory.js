@@ -10,7 +10,7 @@
 var chartConst = require('../const.js');
 
 var themes = {},
-    _initTheme, _copyColors, _inheritThemeProperty;
+    _initTheme, _copyColors, _extendTheme, _inheritThemeProperty;
 
 /**
  * To inherit theme property.
@@ -61,6 +61,25 @@ _copyColors = function(from, to) {
     }
 };
 
+_extendTheme = function(to, from) {
+    ne.util.forEach(to, function(item, key) {
+        var fromItem = from[key];
+        if (!fromItem) {
+            return;
+        }
+
+        if (ne.util.isArray(fromItem)) {
+            to[key] = fromItem.slice();
+        } else if (ne.util.isObject(fromItem)) {
+            _extendTheme(item, fromItem);
+        } else {
+            to[key] = fromItem;
+        }
+    });
+
+    return to;
+};
+
 /**
  * Init theme.
  * @param {object} theme theme
@@ -80,9 +99,7 @@ _initTheme = function(theme) {
         _copyColors(seriesColors, theme.series.singleColors);
         theme.legend.singleColors = theme.series.singleColors;
     }
-
-    theme = ne.util.extend(cloneTheme, theme);
-
+    theme = _extendTheme(cloneTheme, theme);
     return theme;
 };
 
@@ -109,7 +126,6 @@ module.exports = {
      */
     register: function(themeName, theme) {
         var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME];
-
         if (themeName !== chartConst.DEFAULT_THEME_NAME && defaultTheme) {
             theme = _initTheme(theme);
         }
