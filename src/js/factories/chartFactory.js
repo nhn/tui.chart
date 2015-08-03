@@ -1,6 +1,6 @@
 /**
  * @fileoverview  Chart factory play role register chart.
- *                And you can get chart from this factory.
+ *                Also, you can get chart from this factory.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

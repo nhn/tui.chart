@@ -86,7 +86,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this._setValueAxisData(data.values, data.chartDimension, data.formatFns);
+            this._setValueAxisData(data.values, data.chartDimension, data.formatFunctions);
         }
     },
 
@@ -105,10 +105,10 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * Set value type axis data.
      * @param {array.<array.<number>>} groupValues chart values
      * @param {object} chartDimension chart dimension
-     * @param {array.<function>} formatFns format functions
+     * @param {array.<function>} formatFunctions format functions
      * @private
      */
-    _setValueAxisData: function(groupValues, chartDimension, formatFns) {
+    _setValueAxisData: function(groupValues, chartDimension, formatFunctions) {
         var options = this.options,
             values = apc.apply([], groupValues), // flatten array
             min = ne.util.min(values),
@@ -121,7 +121,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         scale = tickInfo.scale;
         labels = tickInfo.labels;
         this.tickCount = tickInfo.tickCount;
-        labels = this._formatLabels(labels, formatFns);
+        labels = this._formatLabels(labels, formatFunctions);
         this.axisType = AXIS_TYPE_VALUE;
         this.labels = labels;
         this.scale = scale;
@@ -132,8 +132,8 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {number} userMax user max
      * @param {number} userMin user min
      * @param {{tickCount: number, scale: object}} tickInfo tick info
-     * @param {number} step step
-     * @returns {{tickCount: number, scale: object, labels: array}} tick info
+     * @param {number} step step of increase axis
+     * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
      * @private
      */
     _correctTickInfo: function(userMax, userMin, tickInfo, step) {
@@ -265,9 +265,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Multiple scale.
-     * @param {{min: number, max: number}} scale scale
+     * @param {{min: number, max: number}} scale target scale
      * @param {number} num multiple number
-     * @returns {{max: number, min: number}} scale
+     * @returns {{max: number, min: number}} multiplied scale
      * @private
      */
     _multipleScale: function(scale, num) {
@@ -279,9 +279,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Divide scale
-     * @param {{min: number, max: number}} scale scale
+     * @param {{min: number, max: number}} scale target scale
      * @param {number} num divide number
-     * @returns {{max: number, min: number}} scale
+     * @returns {{max: number, min: number}} divided scale
      * @private
      */
     _divideScale: function(scale, num) {
@@ -293,11 +293,11 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Correct scale.
-     * @param {{min: number, max: number}} scale scale
+     * @param {{min: number, max: number}} scale target scale
      * @param {number} tickCount tick count
-     * @param {number} userMin user min
-     * @param {number} userMax user max
-     * @returns {{max: number, min: number}} scale
+     * @param {number} userMin minimum value of user data
+     * @param {number} userMax maximum value of user data
+     * @returns {{max: number, min: number}} corrected scale
      * @private
      */
     _correctScale: function(scale, tickCount, userMin, userMax) {
@@ -338,20 +338,19 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Calculate scale from chart min, max data.
-     * http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
-     * @param {number} min min chart min value
-     * @param {number} max max chart max value
+     * @param {number} min min minimum value of user data
+     * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
-     * @param {number} minValue optional min value
+     * @param {number} optionMin optional min value
      * @returns {{min: number, max: number}} scale axis scale
      * @private
      */
-    _calculateScale: function(min, max, tickCount, minValue) {
+    _calculateScale: function(min, max, tickCount, optionMin) {
         var userMin = min,
             userMax = max,
             saveMin = 0,
             scale = {},
-            iodValue; // increase or decrease the value;
+            iodValue; // increase or decrease value;
 
         if (min < 0) {
             saveMin = min;
@@ -362,11 +361,11 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         iodValue = (max - min) / 20;
         scale.max = max + iodValue;
 
-        if (!ne.util.isUndefined(minValue)) {
-            if (minValue > min) {
+        if (!ne.util.isUndefined(optionMin)) {
+            if (optionMin > min) {
                 throw new Error('Option minValue can not be smaller than min.');
             }
-            scale.min = minValue;
+            scale.min = optionMin;
         } else if (max / 6 > min) {
             scale.min = 0;
         } else {
@@ -383,14 +382,14 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Format labels.
-     * @param {string[]} labels labels
-     * @param {function[]} formatFns format functions
-     * @returns {string[]} labels
+     * @param {string[]} labels target labels
+     * @param {function[]} formatFunctions format functions
+     * @returns {string[]} formatted labels
      * @private
      */
-    _formatLabels: function(labels, formatFns) {
+    _formatLabels: function(labels, formatFunctions) {
         var result = ne.util.map(labels, function(label) {
-            var fns = apc.apply([label], formatFns);
+            var fns = apc.apply([label], formatFunctions);
             return ne.util.reduce(fns, function(stored, fn) {
                 return fn(stored);
             });
@@ -399,7 +398,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     },
 
     /**
-     * Make labels from scale.
+     * To make labels from scale.
      * @param {object} scale axis scale
      * @param {number} step step between max and min
      * @returns {string[]} labels
@@ -411,16 +410,16 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     },
 
     /**
-     * Is label axis?
-     * @returns {boolean} label axised
+     * Whether label axis or not.
+     * @returns {boolean} result boolean
      */
     isLabelAxis: function() {
         return this.axisType === AXIS_TYPE_LABEL;
     },
 
     /**
-     * Is value axis?
-     * @returns {boolean} value axised
+     * Whether value axis or not.
+     * @returns {boolean} result boolean
      */
     isValueAxis: function() {
         return this.axisType === AXIS_TYPE_VALUE;
@@ -428,7 +427,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Change vertical state
-     * @param {boolean} isVertical is vertical
+     * @param {boolean} isVertical boolean state
      */
     changeVerticalState: function(isVertical) {
         this.isVertical = isVertical;

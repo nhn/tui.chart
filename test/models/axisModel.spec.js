@@ -146,7 +146,7 @@ describe('test axis model', function() {
                 data = {
                     values: [[1.11222], [2.222], [3.3333], [4.44444], [5.555555]],
                     chartDimension: {width: 400, height: 300},
-                    formatFns: tmpAxisModel.findFormatFunctions('0.00')
+                    formatFunctions: tmpAxisModel.findFormatFunctions('0.00')
                 },
                 options = {
                     min: 0,

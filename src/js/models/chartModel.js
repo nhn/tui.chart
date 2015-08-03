@@ -118,13 +118,13 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     },
 
     /**
-     * Has style option?
-     * @param {string[]} arr labels
-     * @returns {boolean} has style option?
+     * Where style option or not.
+     * @param {string[]} labels labels
+     * @returns {boolean} result boolean
      * @private
      */
-    _hasStyleOption: function(arr) {
-        var last = arr[arr.length - 1];
+    _hasStyleOption: function(labels) {
+        var last = labels[labels.length - 1];
         return ne.util.isObject(last) && last.role === 'style';
     },
 
@@ -143,13 +143,13 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
      * Format values.
      * @param {array.<array.<number>>} groupValues values
-     * @param {function[]} formatFns format functions
+     * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
      */
-    formatValues: function(groupValues, formatFns) {
+    formatValues: function(groupValues, formatFunctions) {
         var result = ne.util.map(groupValues, function(values) {
             return ne.util.map(values, function(value) {
-                var fns = [value].concat(formatFns);
+                var fns = [value].concat(formatFunctions);
                 return ne.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });

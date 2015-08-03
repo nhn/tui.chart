@@ -51,7 +51,7 @@ describe('test axis model', function() {
         expect(result).toEqual('1,000,000');
     });
 
-    it('_findFormatFns', function() {
+    it('_findFormatFunctions', function() {
         var result = model.findFormatFunctions();
         expect(result).toEqual([]);
 

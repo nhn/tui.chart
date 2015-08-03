@@ -23,37 +23,37 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      */
     init: function(data, options) {
         /**
-         * Horizontal AxisModel instance
+         * Horizontal axis model instance
          * @type {object}
          */
         this.hAxis = null;
 
         /**
-         * Vertical AxisModel instance
+         * Vertical axis model instance
          * @type {object}
          */
         this.vAxis = null;
 
         /**
-         * Legend Model instance
+         * Legend model instance
          * @type {object}
          */
         this.legend = null;
 
         /**
-         * PlotModel instance
+         * Plot model instance
          * @type {object}
          */
         this.plot = null;
 
         /**
-         * SeriesModel instance
+         * Series model instance
          * @type {object}
          */
         this.series = null;
 
         /**
-         * TooltipModel instance
+         * Tooltip model instance
          * @type {object}
          */
         this.tooltip = null;
@@ -73,11 +73,11 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             labels = this.pickLabels(data[0]),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
-            formatFns = this.findFormatFunctions(chartOptions.format),
-            formatValues = chartOptions.format ? this.formatValues(values, formatFns) : values,
+            formatFunctions = this.findFormatFunctions(chartOptions.format),
+            formatValues = chartOptions.format ? this.formatValues(values, formatFunctions) : values,
             axisInfo;
 
-        axisInfo = this._setAxis(labels, values, formatFns, this.dimension, options);
+        axisInfo = this._setAxis(labels, values, formatFunctions, this.dimension, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
         this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
@@ -86,19 +86,19 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
 
     /**
      * Set Axis.
-     * @param {array.<string>} labels labels
+     * @param {array.<string>} labels axis labels
      * @param {array.<array.<number>>} values chart values
-     * @param {array.<function>} formatFns format functions
+     * @param {array.<function>} formatFunctions format functions
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {object} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
-    _setAxis: function(labels, values, formatFns, chartDimension, options) {
+    _setAxis: function(labels, values, formatFunctions, chartDimension, options) {
         var valueData = {
                 values: values,
                 chartDimension: chartDimension,
-                formatFns: formatFns
+                formatFunctions: formatFunctions
             },
             labelData = {
                 labels: labels
@@ -157,9 +157,9 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
     /**
      * Set series model.
      * @param {array.<array.<number>>} values chart values
-     * @param {array.<array.<string>>} formatValues formatting values
+     * @param {array.<array.<string>>} formatValues formatted values
      * @param {{min: number, max: number}} scale axis scale
-     * @param {boolean} isVertical is vertical
+     * @param {boolean} isVertical whether vertical or not
      * @param {object} options series options
      * @private
      */

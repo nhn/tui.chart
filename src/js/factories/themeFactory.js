@@ -1,6 +1,6 @@
 /**
  * @fileoverview  Theme factory play role register theme.
- *                And you can get theme from this factory.
+ *                Also, you can get theme from this factory.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,7 +13,7 @@ var themes = {},
     _initTheme, _copyColors, _inheritThemeProperty;
 
 /**
- * Inherit theme property.
+ * To inherit theme property.
  * @param {object} theme theme
  * @private
  * @ignore
