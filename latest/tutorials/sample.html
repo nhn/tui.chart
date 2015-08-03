@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Bar Chart</title>
+    <title>Application Chart</title>
     <link rel="stylesheet" type="text/css" href="dist/style.min.css" />
     <style>
         textarea {
@@ -17,27 +17,26 @@
             top: 0;
         }
 
-        body > div > div {
+        body > div {
             float:left;
         }
     </style>
 </head>
-<body style="width: 700px; min-height: 900px;">
-<div style="width: 700px;">
-    <div id="chart-area"></div>
-    <div style="width:640px;margin-left:10px;margin-top:5px;">
-        <div>
-            chart type :
-            <select id="type">
-                <option value="barChart">Bar Chart</option>
-                <option value="columnChart">Column Chart</option>
-                <option value="lineChart" selected>line Chart</option>
-            </select>
-        </div>
-        <div>
-            <div style="float:left;">
-                <div>data</div>
-                <textarea id="data">
+<body style="width:700px;min-height:900px;">
+<div id="chart-area"></div>
+<div style="width:640px;margin-left:10px;margin-top:5px;">
+    <div>
+        chart type :
+        <select id="type">
+            <option value="barChart">Bar Chart</option>
+            <option value="columnChart">Column Chart</option>
+            <option value="lineChart" selected>line Chart</option>
+        </select>
+    </div>
+    <div>
+        <div style="float:left;">
+            <div>data</div>
+            <textarea id="data">
 [
     ["Groups", "Group1", "Group2", "Group3"],
     ["Legend1", 2, 3, 5],
@@ -45,11 +44,11 @@
     ["Legend3", 6, -5, 1],
     ["Legend4", 4, 1, -3]
 ]
-                </textarea>
-            </div>
-            <div style="float:left; margin-left:10px;position:relative;">
-                <div>options</div>
-                <textarea id="options">
+            </textarea>
+        </div>
+        <div style="float:left; margin-left:10px;position:relative;">
+            <div>options</div>
+            <textarea id="options">
 {
     "chart": {
         "width": 500,
@@ -62,70 +61,59 @@
     "hAxis": {
         "title": "hAxis title"
     },
-    "tooltip": {
-        "suffix": "",
-        "template": "<div>label: {{ label }}</div><div>legendLabel: {{ legendLabel }}</div><div>value: {{ value }}</div><div>suffix: {{ suffix }}</div>"
-    },
     "series": {
         "dot": true
     },
     "theme": "newTheme"
 }
-                </textarea>
-            </div>
-            <div style="float:left; margin-left:10px;position:relative;">
-                <div>theme</div>
-                <button id="btn" onclick="onClick();">적용</button>
-                <textarea id="theme">
+            </textarea>
+        </div>
+        <div style="float:left; margin-left:10px;position:relative;">
+            <div>theme</div>
+            <button id="btn" onclick="onClick();">적용</button>
+            <textarea id="theme">
 {
     "chart": {
         "background": "#ffffff",
         "fontFamily": "Verdana"
     },
     "title": {
-        "fontSize": 14,
         "color": "#000000"
     },
     "vAxis": {
-        "tickColor": "#000000",
+        "tickColor": "#ccbd9a",
         "title": {
-            "fontSize": 12,
-            "color": "#000000"
+            "color": "#333333"
         },
         "label": {
-            "fontSize": 12,
-            "color": "#000000"
+            "color": "#6f491d"
         }
     },
     "hAxis": {
-        "tickColor": "#000000",
+        "tickColor": "#ccbd9a",
         "title": {
-            "fontSize": 12,
-            "color": "#000000"
+            "color": "#333333"
         },
         "label": {
-            "fontSize": 12,
-            "color": "#000000"
+            "color": "#6f491d"
         }
     },
     "plot": {
-        "lineColor": "#dddddd",
-        "background": "#cccccc"
+        "lineColor": "#e5dbc4",
+        "background": "#f6f1e5"
     },
     "series": {
-        "colors": ["#151515", "#303030", "#b0b0b0", "#e0e0e0", "#f5f5f5"],
-        "borderColor": "#000000",
+        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
+        "borderColor": "#8e6535",
         "singleColors":[]
     },
     "legend": {
         "label": {
-            "fontSize": 12,
-            "color": "#000000"
+            "color": "#6f491d"
         }
     }
 }
-                </textarea>
-            </div>
+            </textarea>
         </div>
     </div>
 </div>
@@ -148,20 +136,19 @@
                 chart: {
                     width: 500,
                     height: 400,
-                    title: 'chart title'
+                    title: '차트 제목'
                 },
                 vAxis: {
-                    title: 'vAxis title'
+                    title: '세로축 입니다.'
                 },
                 hAxis: {
-                    title: 'hAxis title'
+                    title: '가로축 입니다.'
                 },
                 tooltip: {
                     suffix: 'unit',
                     template: ''
                 }
             };
-
     chart.lineChart(elChartArea, data, options);
 
     var onClick = function() {
