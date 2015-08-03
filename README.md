@@ -6,20 +6,20 @@ Currently it supports Bar Chart, Column Chart and Line Chart.
 
 ## Feature
 
-* Line Chart<br>
-   * A line chart is a type of chart which displays information as a series of data by straight line segments.
 * Bar Chart<br>
    * A bar chart displays a series of data in the form of a horizontal bar.
 * Column Chart<br>
    * A column chart is a type of bar chart. Unlike a bar chart, a column chart, position the vertical bar.
+* Line Chart<br>
+   * A line chart is a type of chart which displays information as a series of data by straight line segments.
 
 ## Sample Images
 
-<img width="489" alt="2015-07-31 4 57 43" src="https://cloud.githubusercontent.com/assets/2888775/9003070/bb67111c-37a5-11e5-8cd5-3912ed48081e.png">
+<img alt="bar chart" src="https://cloud.githubusercontent.com/assets/2888775/9031771/6a244320-39f2-11e5-97ff-d3eee2945e83.png">
 
-<img width="489" alt="2015-07-31 5 03 35" src="https://cloud.githubusercontent.com/assets/2888775/9003145/4479a1ea-37a6-11e5-8780-06858ff50283.png">
+<img alt="column chart" src="https://cloud.githubusercontent.com/assets/2888775/9031773/6e37196a-39f2-11e5-82b5-cfaf2e511498.png">
 
-<img width="495" alt="2015-07-31 5 04 02" src="https://cloud.githubusercontent.com/assets/2888775/9003143/40f2247a-37a6-11e5-81c0-56e274963930.png">
+<img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/9031775/72265540-39f2-11e5-8a9d-74d4d6990ba6.png">
 
 ## Documentation
 * **API** : https://nhnent.github.io/fe.application-chart/latest
