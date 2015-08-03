@@ -736,11 +736,11 @@ Axis data used for draw the axis area.</p>
 <dt>
     
         <h4 class="name" id="_calculateScale">
-            <span class="type-signature"><span class="icon green">private</span> </span>_calculateScale<span class="signature">(min, max, tickCount, minValue)</span><span class="type-signature"> &rarr; {Object}</span>
+            <span class="type-signature"><span class="icon green">private</span> </span>_calculateScale<span class="signature">(min, max, tickCount, optionMin)</span><span class="type-signature"> &rarr; {Object}</span>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line349">line 349</a></code>
+                    <code><a href="models_axisModel.js.html#line348">line 348</a></code>
                 </div>
             
         </h4>
@@ -754,8 +754,7 @@ Axis data used for draw the axis area.</p>
 
     
     <div class="description">
-        <p>Calculate scale from chart min, max data.
-http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
+        <p>Calculate scale from chart min, max data.</p>
     </div>
     
 
@@ -807,7 +806,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>min chart min value</p></td>
+            <td class="description last"><p>min minimum value of user data</p></td>
         </tr>
 
     
@@ -830,7 +829,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>max chart max value</p></td>
+            <td class="description last"><p>max maximum value of user data</p></td>
         </tr>
 
     
@@ -860,7 +859,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
         <tr>
             
-                <td class="name first"><code>minValue</code></td>
+                <td class="name first"><code>optionMin</code></td>
             
 
             <td class="type">
@@ -1030,7 +1029,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>scale</p></td>
+            <td class="description last"><p>target scale</p></td>
         </tr>
 
     
@@ -1076,7 +1075,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>user min</p></td>
+            <td class="description last"><p>minimum value of user data</p></td>
         </tr>
 
     
@@ -1099,7 +1098,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>user max</p></td>
+            <td class="description last"><p>maximum value of user data</p></td>
         </tr>
 
     
@@ -1116,7 +1115,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>scale</p>
+    <p>corrected scale</p>
 </div>
 
             
@@ -1322,7 +1321,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>step</p></td>
+            <td class="description last"><p>step of increase axis</p></td>
         </tr>
 
     
@@ -1339,7 +1338,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>tick info</p>
+    <p>corrected tick info</p>
 </div>
 
             
@@ -1476,7 +1475,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>scale</p></td>
+            <td class="description last"><p>target scale</p></td>
         </tr>
 
     
@@ -1516,7 +1515,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>scale</p>
+    <p>divided scale</p>
 </div>
 
             
@@ -1823,7 +1822,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>length</p></td>
+            <td class="description last"><p>length of under decimal point</p></td>
         </tr>
 
     
@@ -1946,11 +1945,11 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 <dt>
     
         <h4 class="name" id="_formatLabels">
-            <span class="type-signature"><span class="icon green">private</span> </span>_formatLabels<span class="signature">(labels, formatFns)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
+            <span class="type-signature"><span class="icon green">private</span> </span>_formatLabels<span class="signature">(labels, formatFunctions)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line391">line 391</a></code>
+                    <code><a href="models_axisModel.js.html#line390">line 390</a></code>
                 </div>
             
         </h4>
@@ -2016,14 +2015,14 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>labels</p></td>
+            <td class="description last"><p>target labels</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name first"><code>formatFns</code></td>
+                <td class="name first"><code>formatFunctions</code></td>
             
 
             <td class="type">
@@ -2056,7 +2055,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>labels</p>
+    <p>formatted labels</p>
 </div>
 
             
@@ -2193,7 +2192,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>length</p></td>
+            <td class="description last"><p>length of result</p></td>
         </tr>
 
     
@@ -3134,7 +3133,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>is comma format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -3304,7 +3303,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>is decimal format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -3474,7 +3473,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>is zero fill format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -3561,7 +3560,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line408">line 408</a></code>
+                    <code><a href="models_axisModel.js.html#line407">line 407</a></code>
                 </div>
             
         </h4>
@@ -3575,7 +3574,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
     
     <div class="description">
-        <p>Make labels from scale.</p>
+        <p>To make labels from scale.</p>
     </div>
     
 
@@ -3804,7 +3803,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>scale</p></td>
+            <td class="description last"><p>target scale</p></td>
         </tr>
 
     
@@ -3844,7 +3843,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>scale</p>
+    <p>multiplied scale</p>
 </div>
 
             
@@ -4359,7 +4358,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 <dt>
     
         <h4 class="name" id="_setValueAxisData">
-            <span class="type-signature"><span class="icon green">private</span> </span>_setValueAxisData<span class="signature">(groupValues, chartDimension, formatFns)</span><span class="type-signature"></span>
+            <span class="type-signature"><span class="icon green">private</span> </span>_setValueAxisData<span class="signature">(groupValues, chartDimension, formatFunctions)</span><span class="type-signature"></span>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
@@ -4459,7 +4458,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
         <tr>
             
-                <td class="name first"><code>formatFns</code></td>
+                <td class="name first"><code>formatFunctions</code></td>
             
 
             <td class="type">
@@ -4614,7 +4613,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>2d array</p></td>
+            <td class="description last"><p>target 2d array</p></td>
         </tr>
 
     
@@ -4631,7 +4630,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>2d array</p>
+    <p>pivoted 2d array</p>
 </div>
 
             
@@ -4718,7 +4717,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line433">line 433</a></code>
+                    <code><a href="models_axisModel.js.html#line432">line 432</a></code>
                 </div>
             
         </h4>
@@ -4784,7 +4783,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
             
 
-            <td class="description last"><p>is vertical</p></td>
+            <td class="description last"><p>boolean state</p></td>
         </tr>
 
     
@@ -5243,7 +5242,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line441">line 441</a></code>
+                    <code><a href="models_axisModel.js.html#line440">line 440</a></code>
                 </div>
             
         </h4>
@@ -5348,7 +5347,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line417">line 417</a></code>
+                    <code><a href="models_axisModel.js.html#line416">line 416</a></code>
                 </div>
             
         </h4>
@@ -5362,7 +5361,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
     
     <div class="description">
-        <p>Is label axis?</p>
+        <p>Whether label axis or not.</p>
     </div>
     
 
@@ -5382,7 +5381,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>label axised</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -5453,7 +5452,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
             
                 <div class="container-source method">
                     <code><a href="models_axisModel.js.html">models/axisModel.js</a></code>,
-                    <code><a href="models_axisModel.js.html#line425">line 425</a></code>
+                    <code><a href="models_axisModel.js.html#line424">line 424</a></code>
                 </div>
             
         </h4>
@@ -5467,7 +5466,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
 
     
     <div class="description">
-        <p>Is value axis?</p>
+        <p>Whether value axis or not.</p>
     </div>
     
 
@@ -5487,7 +5486,7 @@ http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/</p>
         
                 
 <div class="param-desc">
-    <p>value axised</p>
+    <p>result boolean</p>
 </div>
 
             

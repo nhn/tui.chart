@@ -51,14 +51,13 @@ var BarChartModel = ne.util.defineClass(AxisChartModel, /** @lends BarChartModel
     init: function(data, options) {
         options = options || {};
         /**
-         * Bar chart type
-         * vertical or horizontal
+         * Bar chart type (column or bar)
          * @type {string}
          */
         this.barType = options.barType || chartConst.BAR_TYPE_BAR;
 
         /**
-         * Is vertical chart?
+         * Whether vertical or not
          * @type {boolean}
          */
         this.isVertical = options.barType === chartConst.BAR_TYPE_COLUMN;

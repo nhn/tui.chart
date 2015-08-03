@@ -78,8 +78,8 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
 
     /**
      * Array pivot.
-     * @param {array.&lt;array>} arr2d 2d array
-     * @returns {array.&lt;array>} 2d array
+     * @param {array.&lt;array>} arr2d target 2d array
+     * @returns {array.&lt;array>} pivoted 2d array
      */
     arrayPivot: function(arr2d) {
         var result = [];
@@ -97,7 +97,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Whether zero fill format or not.
      * @param {string} format format
-     * @returns {boolean} is zero fill format?
+     * @returns {boolean} result boolean
      * @private
      */
     _isZeroFill: function(format) {
@@ -107,7 +107,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Whether decimal format or not.
      * @param {string} format format
-     * @returns {boolean} is decimal format?
+     * @returns {boolean} result boolean
      * @private
      */
     _isDecimal: function(format) {
@@ -118,7 +118,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Whether comma format or not.
      * @param {string} format format
-     * @returns {boolean} is comma format?
+     * @returns {boolean} result boolean
      * @private
      */
     _isComma: function(format) {
@@ -127,7 +127,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
 
     /**
      * Format zero fill.
-     * @param {number} len length
+     * @param {number} len length of result
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
@@ -150,7 +150,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
 
     /**
      * Format Decimal.
-     * @param {number} len length
+     * @param {number} len length of under decimal point
      * @param {string} value target value
      * @returns {string} formatted value
      * @private

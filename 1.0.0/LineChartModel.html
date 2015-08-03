@@ -351,7 +351,7 @@
 <dd>
     
     <div class="description">
-        <p>Horizontal AxisModel instance</p>
+        <p>Horizontal axis model instance</p>
     </div>
     
 
@@ -529,7 +529,7 @@
 <dd>
     
     <div class="description">
-        <p>Legend Model instance</p>
+        <p>Legend model instance</p>
     </div>
     
 
@@ -723,7 +723,7 @@
 <dd>
     
     <div class="description">
-        <p>PlotModel instance</p>
+        <p>Plot model instance</p>
     </div>
     
 
@@ -820,7 +820,7 @@
 <dd>
     
     <div class="description">
-        <p>SeriesModel instance</p>
+        <p>Series model instance</p>
     </div>
     
 
@@ -1014,7 +1014,7 @@
 <dd>
     
     <div class="description">
-        <p>TooltipModel instance</p>
+        <p>Tooltip model instance</p>
     </div>
     
 
@@ -1111,7 +1111,7 @@
 <dd>
     
     <div class="description">
-        <p>Vertical AxisModel instance</p>
+        <p>Vertical axis model instance</p>
     </div>
     
 
@@ -1443,7 +1443,7 @@
 
             
 
-            <td class="description last"><p>length</p></td>
+            <td class="description last"><p>length of under decimal point</p></td>
         </tr>
 
     
@@ -1636,7 +1636,7 @@
 
             
 
-            <td class="description last"><p>length</p></td>
+            <td class="description last"><p>length of result</p></td>
         </tr>
 
     
@@ -1759,7 +1759,7 @@
 <dt>
     
         <h4 class="name" id="_hasStyleOption">
-            <span class="type-signature"><span class="icon green">private</span> </span>_hasStyleOption<span class="signature">(arr)</span><span class="type-signature"> &rarr; {boolean}</span>
+            <span class="type-signature"><span class="icon green">private</span> </span>_hasStyleOption<span class="signature">(labels)</span><span class="type-signature"> &rarr; {boolean}</span>
             
                 <div class="container-source method">
                     <code><a href="models_chartModel.js.html">models/chartModel.js</a></code>,
@@ -1777,7 +1777,7 @@
 
     
     <div class="description">
-        <p>Has style option?</p>
+        <p>Where style option or not.</p>
     </div>
     
 
@@ -1813,7 +1813,7 @@
 
         <tr>
             
-                <td class="name first"><code>arr</code></td>
+                <td class="name first"><code>labels</code></td>
             
 
             <td class="type">
@@ -1846,7 +1846,7 @@
         
                 
 <div class="param-desc">
-    <p>has style option?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -2016,7 +2016,7 @@
         
                 
 <div class="param-desc">
-    <p>is comma format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -2186,7 +2186,7 @@
         
                 
 <div class="param-desc">
-    <p>is decimal format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -2356,7 +2356,7 @@
         
                 
 <div class="param-desc">
-    <p>is zero fill format?</p>
+    <p>result boolean</p>
 </div>
 
             
@@ -2609,7 +2609,7 @@
 <dt>
     
         <h4 class="name" id="_setAxis">
-            <span class="type-signature"><span class="icon green">private</span> </span>_setAxis<span class="signature">(labels, values, formatFns, chartDimension, options)</span><span class="type-signature"> &rarr; {Object}</span>
+            <span class="type-signature"><span class="icon green">private</span> </span>_setAxis<span class="signature">(labels, values, formatFunctions, chartDimension, options)</span><span class="type-signature"> &rarr; {Object}</span>
             
                 <div class="container-source method">
                     <code><a href="models_axisChartModel.js.html">models/axisChartModel.js</a></code>,
@@ -2679,7 +2679,7 @@
 
             
 
-            <td class="description last"><p>labels</p></td>
+            <td class="description last"><p>axis labels</p></td>
         </tr>
 
     
@@ -2709,7 +2709,7 @@
 
         <tr>
             
-                <td class="name first"><code>formatFns</code></td>
+                <td class="name first"><code>formatFunctions</code></td>
             
 
             <td class="type">
@@ -3930,7 +3930,7 @@
 
             
 
-            <td class="description last"><p>2d array</p></td>
+            <td class="description last"><p>target 2d array</p></td>
         </tr>
 
     
@@ -3947,7 +3947,7 @@
         
                 
 <div class="param-desc">
-    <p>2d array</p>
+    <p>pivoted 2d array</p>
 </div>
 
             
@@ -4223,7 +4223,7 @@
 <dt>
     
         <h4 class="name" id="formatValues">
-            <span class="type-signature"></span>formatValues<span class="signature">(groupValues, formatFns)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
+            <span class="type-signature"></span>formatValues<span class="signature">(groupValues, formatFunctions)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
             
                 <div class="container-source method">
                     <code><a href="models_chartModel.js.html">models/chartModel.js</a></code>,
@@ -4300,7 +4300,7 @@
 
         <tr>
             
-                <td class="name first"><code>formatFns</code></td>
+                <td class="name first"><code>formatFunctions</code></td>
             
 
             <td class="type">
