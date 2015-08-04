@@ -82,8 +82,8 @@ var AxisChartView = ne.util.defineClass(ChartView, /** @lends AxisChartView.prot
             elTooltip = this.tooltipView.render(bounds.tooltip, tooltipPrefix);
         this.appends([elTitle, elPlot, elVAxis, elHAxis, elSeries, elLegend, elTooltip]);
         this.renderDimension(this.model.dimension);
-        this.renderBackground(this.theme.background);
-        this.renderChartFont(this.theme.fontFamily);
+        this.renderBackground(this.theme.chart.background);
+        this.renderChartFont(this.theme.chart.fontFamily);
 
         this._attachCustomEvent();
 

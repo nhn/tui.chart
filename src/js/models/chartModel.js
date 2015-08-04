@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    chartConst = require('../const.js');
 
 var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
@@ -34,8 +35,8 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
          * @type {{width: number, height: number}}
         */
         this.dimension = {
-            width: 500,
-            height: 300
+            width: chartConst.CHART_DEFAULT_WIDTH,
+            height: chartConst.CHART_DEFAULT_HEIGHT
         };
 
         if (chartOptions.width) {
@@ -72,19 +73,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
      * @return {object} axis data;
      */
     pickAxisData: function(data) {
-        var titles = data[0],
-            axisData = data.slice();
-
-        axisData.shift();
-
-        if (this._hasStyleOption(titles)) {
-            axisData = ne.util.map(axisData, function(items) {
-                items = items.slice();
-                items.length = items.length - 1;
-                return items;
-            });
-        }
-
+        var axisData = data.slice(1);
         return axisData;
     },
 
@@ -109,9 +98,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
      */
     pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
-            var values = items.slice();
-            values.shift();
-            return values;
+            return items.slice(1);
         });
 
         return this.arrayPivot(result);
