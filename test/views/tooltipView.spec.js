@@ -30,24 +30,16 @@ describe('test Legend View', function() {
                 }
             ],
             resultHtml = tooltipView._makeTooltipsHtml(data, 'ne-chart-tooltip-'),
-            compareHtml = '<div class="ne-chart-tooltip"><div class="ne-chart-default-tooltip">' +
+            compareHtml = '<div class="ne-chart-tooltip" id="ne-chart-tooltip-0-0"><div class="ne-chart-default-tooltip">' +
                     '<div>Silver</div>' +
                     '<div><span>Density1</span>:&nbsp;' +
                     '<span>10</span><span></span></div>' +
                 '</div></div>' +
-                '<div class="ne-chart-tooltip"><div class="ne-chart-default-tooltip">' +
+                '<div class="ne-chart-tooltip" id="ne-chart-tooltip-1-0"><div class="ne-chart-default-tooltip">' +
                     '<div>Silver</div>' +
                     '<div><span>Density2</span>:&nbsp;' +
                     '<span>20</span><span></span></div>' +
-                '</div></div>',
-            elTemp = document.createElement('DIV');
-
-        elTemp.innerHTML = resultHtml;
-        resultHtml = elTemp.innerHTML;
-
-        elTemp.innerHTML = compareHtml;
-        elTemp.childNodes[0].id = 'ne-chart-tooltip-0-0';
-        elTemp.childNodes[1].id = 'ne-chart-tooltip-1-0';
-        expect(resultHtml).toEqual(elTemp.innerHTML);
+                '</div></div>';
+        expect(resultHtml).toEqual(compareHtml);
     });
 });
