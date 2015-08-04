@@ -69,8 +69,8 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
     _setData: function(data) {
         var options = this.options || {},
             chartOptions = options.chart || {},
-            axisData = this.pickAxisData(data),
-            labels = this.pickLabels(data[0]),
+            axisData = data.slice(1),
+            labels = data[0].slice(1),
             values = this.pickValues(axisData),
             legendLabels = this.pickLegendLabels(axisData),
             formatFunctions = this.findFormatFunctions(chartOptions.format),

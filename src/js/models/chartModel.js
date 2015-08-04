@@ -67,31 +67,6 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     },
 
     /**
-     * Pick axis data from user data.
-     * Axis data is pairs of label and value.
-     * @param {object} data user data
-     * @return {object} axis data;
-     */
-    pickAxisData: function(data) {
-        var axisData = data.slice(1);
-        return axisData;
-    },
-
-    /**
-     * Pick labels.
-     * @param {string[]} labels labels
-     * @returns {string[]} labels
-     */
-    pickLabels: function(labels) {
-        var hasOption = this._hasStyleOption(labels),
-            last = hasOption ? labels.length - 1 : -1,
-            result = ne.util.filter(labels, function(label, index) {
-                return index !== 0 && index !== last;
-            });
-        return result;
-    },
-
-    /**
      * Pick values from axis data.
      * @param {array.<object>} axisData axis data
      * @returns {string[]} values
@@ -100,19 +75,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
         var result = ne.util.map(axisData, function(items) {
             return items.slice(1);
         });
-
         return this.arrayPivot(result);
-    },
-
-    /**
-     * Where style option or not.
-     * @param {string[]} labels labels
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _hasStyleOption: function(labels) {
-        var last = labels[labels.length - 1];
-        return ne.util.isObject(last) && last.role === 'style';
     },
 
     /**
