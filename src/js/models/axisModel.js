@@ -388,6 +388,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _formatLabels: function(labels, formatFunctions) {
+        if (!formatFunctions || !formatFunctions.length) {
+            return labels;
+        }
         var result = ne.util.map(labels, function(label) {
             var fns = apc.apply([label], formatFunctions);
             return ne.util.reduce(fns, function(stored, fn) {
