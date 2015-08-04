@@ -71,7 +71,7 @@ _createChart = function(container, data, options) {
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {array.<array>} data chart data
- * @param {object} options application options
+ * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
  *          @param {number} options.chart.height chart height
@@ -123,7 +123,7 @@ ne.application.chart.barChart = function(container, data, options) {
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {array.<array>} data chart data
- * @param {object} options application options
+ * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
  *          @param {number} options.chart.height chart height
@@ -175,7 +175,7 @@ ne.application.chart.columnChart = function(container, data, options) {
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
  * @param {array.<array>} data chart data
- * @param {object} options application options
+ * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
  *          @param {number} options.chart.height chart height
