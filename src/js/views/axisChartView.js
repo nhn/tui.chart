@@ -63,7 +63,7 @@ var AxisChartView = ne.util.defineClass(ChartView, /** @lends AxisChartView.prot
         options = options.chart || {};
 
         this.options = options;
-        ChartView.call(this, data, options, theme.chart);
+        ChartView.call(this, data, options);
     },
 
     /**

@@ -11,7 +11,7 @@ var plugins = {},
     factory = {
         /**
          * Get graph renderer.
-         * @param {string} libType library type
+         * @param {string} libType type of graph library
          * @param {string} chartType chart type
          * @returns {object} renderer instance
          */
@@ -34,8 +34,8 @@ var plugins = {},
         },
         /**
          * Plugin register.
-         * @param {string} libType library type
-         * @param {object} plugin plugin object
+         * @param {string} libType type of graph library
+         * @param {object} plugin plugin to control library
          */
         register: function(libType, plugin) {
             plugins[libType] = plugin;

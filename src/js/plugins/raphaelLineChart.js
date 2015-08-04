@@ -27,7 +27,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             dimension = data.dimension,
             theme = data.theme,
             colors = theme.colors,
-            opacity = model.options.dot ? 1 : 0,
+            opacity = model.options.hasDot ? 1 : 0,
             paper = Raphael(container, dimension.width, dimension.height),
             groupPositions = model.makeLinePositions(data.dimension),
             groupPaths = this._getLinesPath(groupPositions),
@@ -47,7 +47,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * To make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
-     * @returns {object} border style
+     * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
      * @private
      */
     _makeBorderStyle: function(borderColor, opacity) {
@@ -134,7 +134,6 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
 
     /**
      * To make line path.
-     * by Sungho Kim <sungho.kim@nhnent.com>
      * @param {number} fx from x
      * @param {number} fy from y
      * @param {number} tx to x
@@ -161,8 +160,8 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
 
     /**
      * Get center position
-     * @param {object} fromPos from position
-     * @param {object} toPos to position
+     * @param {{left: number, top: number}} fromPos from position
+     * @param {{left: number, top: number}} toPos to position
      * @returns {{left: number, top: number}} position
      * @private
      */

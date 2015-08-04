@@ -19,7 +19,7 @@ TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
      * @constructs TooltipModel
      * @extends Model
      * @param {{labels: array, colors: array}} data legend data
-     * @param {object} options options
+     * @param {{suffix: string, template: string}} options options
      */
     init: function(data, options) {
         options = options || {};

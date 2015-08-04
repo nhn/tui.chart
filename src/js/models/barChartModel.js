@@ -14,8 +14,28 @@ var BarChartModel = ne.util.defineClass(AxisChartModel, /** @lends BarChartModel
      * This model is about bar chart for management of bar chart data.
      * @constructs BarChartModel
      * @extends AxisChartModel
-     * @param {object} data user chart data
-     * @param {object} options chart options
+     * @param {array.<array>} data user chart data
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options chart options
      */
     init: function(data, options) {
         options = options || {};

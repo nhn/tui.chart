@@ -46,8 +46,8 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * Render bars.
      * @param {object} paper raphael paper
      * @param {object} model bar chart data model
-     * @param {object} theme bar chart theme
-     * @param {array.<array.<object>>} groupBounds bounds
+     * @param {{colors: string[], singleColors: string[], borderColor: string}} theme bar chart theme
+     * @param {array.<array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
@@ -72,7 +72,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @param {object} paper raphael paper
      * @param {string} color series color
      * @param {string} borderColor series borderColor
-     * @param {object} bound bound
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @returns {object} bar rect
      * @private
      */

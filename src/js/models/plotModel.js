@@ -15,7 +15,7 @@ var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
      * Plot data used for draw the plot area.
      * @constructs PlotModel
      * @extends Model
-     * @param {data} data plot data
+     * @param {{hTickCount: number, vTickCount: number}} data plot data
      */
     init: function(data) {
         /**
@@ -48,7 +48,7 @@ var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     /**
      * To make vertical pixel positions
      * @param {number} height plot height
-     * @returns {array.<object>} positions
+     * @returns {array.<number>} positions
      */
     makeVPixelPositions: function(height) {
         var positions = this.makePixelPositions(height, this.vTickCount);
@@ -59,7 +59,7 @@ var PlotModel = ne.util.defineClass(Model, /** @lends PlotModel.prototype */ {
     /**
      * To make horizontal pixel position
      * @param {number} width plot width
-     * @returns {array.<object>} positions
+     * @returns {array.<number>} positions
      */
     makeHPixelPositions: function(width) {
         var positions = this.makePixelPositions(width, this.hTickCount);

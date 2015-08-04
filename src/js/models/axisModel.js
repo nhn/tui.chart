@@ -28,7 +28,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @constructs AxisModel
      * @extends Model
      * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
-     * @param {object} options chart options
+     * @param {{title: string, min: number}} options axis options
      */
     init: function(data, options) {
         options = options || {};
@@ -66,7 +66,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         this.axisType = null;
 
         /**
-         * Is vertical?
+         * Whether vertical or not.
          * @type {boolean}
          */
         this.isVertical = false;
@@ -104,7 +104,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
      * Set value type axis data.
      * @param {array.<array.<number>>} groupValues chart values
-     * @param {object} chartDimension chart dimension
+     * @param {{width:number, height:number}} chartDimension chart dimension
      * @param {array.<function>} formatFunctions format functions
      * @private
      */
@@ -132,7 +132,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {number} userMin user min
      * @param {{tickCount: number, scale: object}} tickInfo tick info
      * @param {number} step step of increase axis
-     * @param {number} optionsMin option min
+     * @param {number} optionMin option min
      * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
      * @private
      */
@@ -312,7 +312,6 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             scale = this._divideScale(newScale, 10);
             return scale;
         }
-        
         if (baseMax < modNumber) {
             if (min % 1 === 0) {
                 min += min < 0 ? 0.1 : -0.1;
@@ -388,10 +387,11 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _formatLabels: function(labels, formatFunctions) {
+        var result;
         if (!formatFunctions || !formatFunctions.length) {
             return labels;
         }
-        var result = ne.util.map(labels, function(label) {
+        result = ne.util.map(labels, function(label) {
             var fns = apc.apply([label], formatFunctions);
             return ne.util.reduce(fns, function(stored, fn) {
                 return fn(stored);
@@ -402,7 +402,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * To make labels from scale.
-     * @param {object} scale axis scale
+     * @param {{min: number, max: number}} scale axis scale
      * @param {number} step step between max and min
      * @returns {string[]} labels
      * @private
@@ -430,7 +430,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Change vertical state
-     * @param {boolean} isVertical boolean state
+     * @param {boolean} isVertical whether vertical or not
      */
     changeVerticalState: function(isVertical) {
         this.isVertical = isVertical;

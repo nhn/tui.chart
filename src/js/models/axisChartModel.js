@@ -18,8 +18,28 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * This model is about axis chart for management of axis type chart data.
      * @constructs AxisChartModel
      * @extends ChartModel
-     * @param {object} data user chart data
-     * @param {object} options chart options
+     * @param {array.<array>} data user chart data
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: strig,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options chart options
      */
     init: function(data, options) {
         /**
@@ -63,7 +83,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
 
     /**
      * Set bar chart data.
-     * @param {object} data user chart data
+     * @param {array.<array>} data user chart data
      * @private
      */
     _setData: function(data) {
@@ -90,7 +110,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * @param {array.<array.<number>>} values chart values
      * @param {array.<function>} formatFunctions format functions
      * @param {{width: number, height: number}} chartDimension chart dimension
-     * @param {object} options axis options
+     * @param {{title: string, min: number}} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */

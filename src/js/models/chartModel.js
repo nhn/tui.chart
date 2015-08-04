@@ -16,8 +16,28 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
      * This model provides a method to convert the data.
      * @constructs ChartModel
      * @extends Model
-     * @param {object} data user chart data
-     * @param {object} options user options
+     * @param {array.<array>} data user chart data
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options chart options
      */
     init: function(data, options) {
         var chartOptions;
@@ -25,7 +45,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
         chartOptions = options.chart || {};
 
         /**
-         * Chart options
+         * options
          * @type {object}
          */
         this.options = options;
@@ -59,7 +79,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     },
 
     /**
-     * Please implement the setData.
+     * Set data.
      * @private
      */
     _setData: function() {
@@ -68,7 +88,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
 
     /**
      * Pick values from axis data.
-     * @param {array.<object>} axisData axis data
+     * @param {array.<array>} axisData axis data
      * @returns {string[]} values
      */
     pickValues: function(axisData) {
@@ -80,7 +100,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
 
     /**
      * Pick legend labels from axis data.
-     * @param {object} axisData axis data
+     * @param {array.<array>} axisData axis data
      * @returns {string[]} labels
      */
     pickLegendLabels: function(axisData) {
