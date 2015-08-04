@@ -254,8 +254,8 @@ View = ne.util.defineClass(/** @lends View.prototype */ {
     },
 
     /**
-     * Is IE8?
-     * @returns {boolean} is ie8
+     * Whether IE8 or not.
+     * @returns {boolean} result boolean
      */
     isIE8: function() {
         return isIE8;

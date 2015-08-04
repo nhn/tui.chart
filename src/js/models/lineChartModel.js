@@ -13,14 +13,34 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartMod
      * This model is about line chart for management of line chart data.
      * @constructs LineChartModel
      * @extends AxisChartModel
-     * @param {object} data user chart data
-     * @param {object} options chart options
+     * @param {array.<array>} data user chart data
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: strig,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options chart options
      */
     init: function(data, options) {
         options = options || {};
 
         /**
-         * Is vertical chart?
+         * Whether vertical or not.
          * @type {boolean}
          */
         this.isVertical = true;
@@ -40,7 +60,27 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartMod
      * @param {array.<array.<string>>} formatValues formatting values
      * @param {{min: number, max: number}} scale axis scale
      * @param {boolean} isVertical is vertical
-     * @param {object} options options
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: strig,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options options
      * @private
      */
     _setSeries: function(values, formatValues, scale, isVertical, options) {

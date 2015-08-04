@@ -16,15 +16,8 @@ describe('test chart model', function() {
             ['Gold', 19.30],
             ['Platinum', 21.45]
         ],
-        userData2 = [
-            ['Element', 'Density', {role: 'style'}],
-            ['Copper', 8.94, 'color:red'],
-            ['Silver', 10.49, 'color:orange'],
-            ['Gold', 19.30, 'color:yellow'],
-            ['Platinum', 21.45, 'color:green']
-        ],
         userData3 = [
-            ['Element', 'Density', 'Density2', 'Density3', {role: 'style'}]
+            ['Element', 'Density', 'Density2', 'Density3']
         ],
         axisData = [
             ['Copper', 8.94],
@@ -36,36 +29,9 @@ describe('test chart model', function() {
     describe('test method', function() {
         var chartModel = new ChartModel();
 
-        it('pickAxisData', function() {
-            var result = chartModel.pickAxisData(userData);
-
-            // removed title items
-            expect(result.length).toEqual(userData.length - 1);
-            expect(result).toEqual(axisData);
-
-            result = chartModel.pickAxisData(userData2);
-
-            // removed title items
-            expect(result.length).toEqual(userData2.length - 1);
-            expect(result).toEqual(axisData);
-        });
-
-        it('pickLabels', function() {
-            var result = chartModel.pickLabels(userData3[0]);
-            expect(result).toEqual(['Density', 'Density2', 'Density3']);
-        });
-
         it('pickValues', function() {
             var result = chartModel.pickValues(axisData);
             expect(result).toEqual([[8.94, 10.49, 19.30, 21.45]]);
-        });
-
-        it('_hasStyleOption', function() {
-            var hasOption = chartModel._hasStyleOption(userData[0]);
-            expect(hasOption).toBeFalsy();
-
-            hasOption = chartModel._hasStyleOption(userData2[0]);
-            expect(hasOption).toBeTruthy();
         });
 
         it('pickLegendLabels', function() {

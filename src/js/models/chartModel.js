@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    chartConst = require('../const.js');
 
 var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     /**
@@ -15,8 +16,28 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
      * This model provides a method to convert the data.
      * @constructs ChartModel
      * @extends Model
-     * @param {object} data user chart data
-     * @param {object} options user options
+     * @param {array.<array>} data user chart data
+     * @param {{
+     *   chart: {
+     *     width: number,
+     *     height: number,
+     *     title: string,
+     *     format: string
+     *   },
+     *   vAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   hAxis: {
+     *     title: string,
+     *     min: number
+     *   },
+     *   tooltip: {
+     *     suffix: string,
+     *     template: string
+     *   },
+     *   theme: string
+     * }} options chart options
      */
     init: function(data, options) {
         var chartOptions;
@@ -24,7 +45,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
         chartOptions = options.chart || {};
 
         /**
-         * Chart options
+         * options
          * @type {object}
          */
         this.options = options;
@@ -34,8 +55,8 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
          * @type {{width: number, height: number}}
         */
         this.dimension = {
-            width: 500,
-            height: 300
+            width: chartConst.CHART_DEFAULT_WIDTH,
+            height: chartConst.CHART_DEFAULT_HEIGHT
         };
 
         if (chartOptions.width) {
@@ -58,7 +79,7 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     },
 
     /**
-     * Please implement the setData.
+     * Set data.
      * @private
      */
     _setData: function() {
@@ -66,71 +87,20 @@ var ChartModel = ne.util.defineClass(Model, /** @lends ChartModel.prototype */ {
     },
 
     /**
-     * Pick axis data from user data.
-     * Axis data is pairs of label and value.
-     * @param {object} data user data
-     * @return {object} axis data;
-     */
-    pickAxisData: function(data) {
-        var titles = data[0],
-            axisData = data.slice();
-
-        axisData.shift();
-
-        if (this._hasStyleOption(titles)) {
-            axisData = ne.util.map(axisData, function(items) {
-                items = items.slice();
-                items.length = items.length - 1;
-                return items;
-            });
-        }
-
-        return axisData;
-    },
-
-    /**
-     * Pick labels.
-     * @param {string[]} labels labels
-     * @returns {string[]} labels
-     */
-    pickLabels: function(labels) {
-        var hasOption = this._hasStyleOption(labels),
-            last = hasOption ? labels.length - 1 : -1,
-            result = ne.util.filter(labels, function(label, index) {
-                return index !== 0 && index !== last;
-            });
-        return result;
-    },
-
-    /**
      * Pick values from axis data.
-     * @param {array.<object>} axisData axis data
+     * @param {array.<array>} axisData axis data
      * @returns {string[]} values
      */
     pickValues: function(axisData) {
         var result = ne.util.map(axisData, function(items) {
-            var values = items.slice();
-            values.shift();
-            return values;
+            return items.slice(1);
         });
-
         return this.arrayPivot(result);
     },
 
     /**
-     * Where style option or not.
-     * @param {string[]} labels labels
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _hasStyleOption: function(labels) {
-        var last = labels[labels.length - 1];
-        return ne.util.isObject(last) && last.role === 'style';
-    },
-
-    /**
      * Pick legend labels from axis data.
-     * @param {object} axisData axis data
+     * @param {array.<array>} axisData axis data
      * @returns {string[]} labels
      */
     pickLegendLabels: function(axisData) {

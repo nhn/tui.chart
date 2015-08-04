@@ -1,5 +1,17 @@
 {
-  "sample": {
-    "title": "Basic sample"
+  "sample-bar-chart": {
+    "title": "Bar Chart Sample"
+  },
+  "sample-column-chart": {
+    "title": "Column Chart Sample"
+  },
+  "sample-line-chart": {
+    "title": "Line Chart Sample"
+  },
+  "sample-options": {
+    "title": "Option Sample"
+  },
+  "sample-theme": {
+    "title": "Theme Sample"
   }
 }

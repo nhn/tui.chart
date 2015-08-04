@@ -38,7 +38,8 @@ var BarChartView = ne.util.defineClass(AxisChartView, /** @lends BarChartView.pr
          * @type {object}
          */
         this.seriesView = new SeriesView(this.model.series, {
-            chartType: options.chartType
+            chartType: options.chartType,
+            libType: options.libType
         }, theme.series);
 
         AxisChartView.call(this, data, options);

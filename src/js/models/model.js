@@ -15,7 +15,7 @@ var apc = Array.prototype.concat;
 var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Get scale step.
-     * @param {object} scale axis scale
+     * @param {{min: number, max: number} scale axis scale
      * @param {number} count value count
      * @returns {number} scale step
      */
@@ -27,7 +27,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
      * To Make tick positions of pixel type.
      * @param {number} size area width or height
      * @param {number} count tick count
-     * @returns {array.<object>} positions
+     * @returns {array.<number>} positions
      */
     makePixelPositions: function(size, count) {
         var positions = [],

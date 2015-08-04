@@ -17,8 +17,13 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * Series data used for draw the series area.
      * @constructs SeriesModel
      * @extends Model
-     * @param {object} data series data
-     * @param {object} options options
+     * @param {{
+     *   values: array.<array.<number>>,
+     *   formatValue: array.<array.<string>>,
+     *   scale: {min: number, max: number},
+     *   isVertical: boolean
+     * }} data series data
+     * @params {{hasDot: boolean}} options series options
      */
     init: function(data, options) {
         this.options = options = options || {};

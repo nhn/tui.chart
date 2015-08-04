@@ -8,7 +8,8 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     minifiyCss = require('gulp-minify-css'),
     uglify = require('gulp-uglify'),
-    rename = require('gulp-rename');
+    rename = require('gulp-rename'),
+    del = require('del');
 
 gulp.task('browser-sync', function() {
     sync({
@@ -35,7 +36,7 @@ gulp.task('browserify', function() {
     return rebundle();
 });
 
-gulp.task('compress-js', function() {
+gulp.task('compress-js', ['browserify'], function() {
     return gulp.src('dist/application-chart.js')
         .pipe(uglify())
         .pipe(rename({
@@ -50,7 +51,7 @@ gulp.task('compile-less', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('minify-css', function() {
+gulp.task('minify-css', ['compile-less'], function() {
     return gulp.src('dist/style.css')
         .pipe(minifiyCss())
         .pipe(rename({
@@ -67,7 +68,7 @@ gulp.task('reload-less', ['compile-less'], function() {
     sync.reload();
 });
 
-gulp.task('watch', ['browserify', 'compress-js', 'compile-less', 'minify-css', 'browser-sync'], function() {
+gulp.task('watch', ['browserify', 'compile-less', 'browser-sync'], function() {
     gulp.watch('src/js/**/*', ['reload-js']);
     gulp.watch('src/less/**/*', ['reload-less']);
 
@@ -76,15 +77,25 @@ gulp.task('watch', ['browserify', 'compress-js', 'compile-less', 'minify-css', '
 
 gulp.task('default', ['watch']);
 
-gulp.task('copy-samples', function() {
+gulp.task('clean-samples', function(callback) {
+    del([
+        'dist/application-chart.min.js',
+        'dist/application-chart.min.css',
+        'samples/dist/*',
+        'samples/lib/*'
+    ], callback);
+});
+
+gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], function() {
     gulp.src('dist/*.min.*')
         .pipe(gulp.dest('./samples/dist'));
     gulp.src('lib/ne-code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));
-    gulp.src('lib/raphael/raphael-min.js')
+    return gulp.src('lib/raphael/raphael-min.js')
         .pipe(gulp.dest('./samples/lib'));
 });
 
-gulp.task('deploy', ['browserify', 'compress-js', 'compile-less', 'minify-css', 'copy-samples'], function() {
+gulp.task('deploy', ['copy-samples'], function() {
+
     process.exit(0);
 });

@@ -19,6 +19,7 @@
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
+    "del": "^1.2.0",
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "gulp": "^3.9.0",
     "gulp-less": "^3.0.3",

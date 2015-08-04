@@ -22,9 +22,9 @@ Currently it supports Bar Chart, Column Chart and Line Chart.
 <img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/9031775/72265540-39f2-11e5-8a9d-74d4d6990ba6.png">
 
 ## Documentation
-* **API** : https://nhnent.github.io/fe.application-chart/latest
+* **API** : https://nhnent.github.io/fe.application-chart/latest/ne.application.chart.html
 * **Tutorial** : https://github.com/nhnent/fe.application-chart/wiki/application-tutorial
-* **Sample** : https://nhnent.github.io/fe.application-chart/latest/tutorial-sample.html
+* **Sample** : https://nhnent.github.io/fe.application-chart/latest/tutorial-sample-bar-chart.html
 
 ## Dependency
 * ne-code-snippet ~1.0.2

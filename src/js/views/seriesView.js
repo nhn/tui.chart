@@ -22,7 +22,7 @@ var SeriesView = ne.util.defineClass(View, /** @lends SeriesView.prototype */ {
      * @param {object} theme series theme
      */
     init: function(model, options, theme) {
-        var libType, barType;
+        var libType;
 
         /**
          * Series model
