@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Column Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/style.min.css" />
+</head>
+<body style="width:500px;min-height:400px;">
+<div id="chart-area"></div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/application-chart.min.js"></script>
+<script>
+    var chart = ne.application.chart,
+        container = document.getElementById('chart-area'),
+        data = [
+            ['Groups', 'Group1', 'Group2', 'Group3'],
+            ['Legend1', 20, 30, 50],
+            ['Legend2', 40, 40, 60],
+            ['Legend3', 60, 50, 10],
+            ['Legend4', 80, 10, 70]
+        ];
+    chart.columnChart(container, data);
+</script>
+</body>
+</html>
