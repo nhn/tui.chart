@@ -26,7 +26,6 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * @params {{hasDot: boolean}} options series options
      */
     init: function(data, options) {
-        console.log(options);
         this.options = options = options || {};
         /**
          * Series makers

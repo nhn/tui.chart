@@ -23,7 +23,6 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * @param {function} outCallback out callback
      */
     render: function(container, data, inCallback, outCallback) {
-        console.log(data.model.options.hasDot);
         var model = data.model,
             dimension = data.dimension,
             theme = data.theme,
