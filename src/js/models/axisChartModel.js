@@ -95,16 +95,12 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             legendLabels = this.pickLegendLabels(axisData),
             formatFunctions = this.findFormatFunctions(chartOptions.format),
             formatValues = chartOptions.format ? this.formatValues(values, formatFunctions) : values,
-            tooltipPosition = options.tooltip && options.tooltip.position || '',
-            seriesOption = options.series || {},
             axisInfo;
-
-        seriesOption.tooltipPositon = tooltipPosition;
 
         axisInfo = this._setAxis(labels, values, formatFunctions, this.dimension, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
-        this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, tooltipPosition, seriesOption);
+        this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
         this._setTooltip(formatValues, labels, legendLabels, options.tooltip);
     },
 
