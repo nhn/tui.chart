@@ -20,7 +20,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     /**
      * Render function of bar chart
      * @param {HTMLElement} container container element
-     * @param {{size: object, model: object, options: object}} data chart data
+     * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
      */

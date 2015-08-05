@@ -65,14 +65,14 @@ var SeriesView = ne.util.defineClass(View, /** @lends SeriesView.prototype */ {
     /**
      * Show tooltip (mouseover callback).
      * @param {string} prefix tooltip id prefix
-     * @param {boolean} isColumn Is column(horizontal bar)?
+     * @param {boolean} isVertical whether vertical or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(prefix, isColumn, bound, id) {
+    showTooltip: function(prefix, isVertical, bound, id) {
         this.fire('showTooltip', {
             id: prefix + id,
-            isColumn: isColumn,
+            isVertical: isVertical,
             bound: bound
         });
     },

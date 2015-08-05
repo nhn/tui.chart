@@ -12,7 +12,8 @@ var dom = require('./domHandler.js'),
     templateMaker = require('./templateMaker.js'),
     tooltipTemplate = require('./tooltipTemplate.js');
 
-var POPUP_GAP = 5,
+var TOOLTIP_GAP = 5,
+    LINE_TOOLTIP_GAP = 3,
     HIDDEN_WIDTH = 1,
     TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
@@ -177,21 +178,91 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     },
 
     /**
+     * Calculate tooltip position of vertical type chart
+     * @param {{bound: object, isVertical: boolean}} data graph information
+     * @param {{width: number, height: number}} dimension tooltip dimension
+     * @param {string} positionOption position option (ex: 'left top')
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _calculateVerticalPosition: function(data, dimension, positionOption) {
+        var bound = data.bound,
+            minusWidth = dimension.width - (bound.width || 0),
+            lineGap = bound.width ? 0 : TOOLTIP_GAP,
+            result = {};
+
+        positionOption = positionOption || '';
+
+        result.left = bound.left + (HIDDEN_WIDTH * 2);
+        result.top = bound.top - dimension.height;
+
+        if (positionOption.indexOf('left') > -1) {
+            result.left -= minusWidth + lineGap;
+        } else if (positionOption.indexOf('center') > -1) {
+            result.left -= minusWidth / 2;
+        } else {
+            result.left += lineGap;
+        }
+
+        if (positionOption.indexOf('bottom') > -1) {
+            result.top += dimension.height - HIDDEN_WIDTH + lineGap;
+        } else if (positionOption.indexOf('middle') > -1) {
+            result.top += dimension.height / 2;
+        } else {
+            result.top -= TOOLTIP_GAP + HIDDEN_WIDTH;
+        }
+
+        return result;
+    },
+
+    /**
+     * Calculate tooltip position of bar chart
+     * @param {{bound: object, isVertical: boolean}} data graph information
+     * @param {{width: number, height: number}} dimension tooltip dimension
+     * @param {string} positionOption position option (ex: 'left top')
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _calculateBarPosition: function(data, dimension, positionOption) {
+        var bound = data.bound,
+            minusHeight = dimension.height - (bound.height || 0),
+            result = {};
+
+        result.left = bound.width;
+        result.top = bound.top;
+
+        if (positionOption.indexOf('left') > -1) {
+            result.left -= dimension.width;
+        } else if (positionOption.indexOf('center') > -1) {
+            result.left -= dimension.width / 2;
+        } else {
+            result.left += TOOLTIP_GAP;
+        }
+
+        if (positionOption.indexOf('top') > -1) {
+            result.top -= minusHeight + HIDDEN_WIDTH;
+        } else if (positionOption.indexOf('middle') > -1) {
+            result.top -= minusHeight / 2;
+        } else {
+            result.top -= HIDDEN_WIDTH * 2;
+        }
+        return result;
+    },
+
+    /**
      * Calculate tooltip position.
      * @param {{bound: object, isVertical: boolean}} data graph information
      * @param {{width: number, height: number}} dimension tooltip dimension
+     * @param {string} positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      */
-    calculatePosition: function(data, dimension) {
-        var isColumn = data.isColumn,
-            bound = data.bound,
-            result = {};
-        if (isColumn) {
-            result.top = bound.top - dimension.height - POPUP_GAP;
-            result.left = bound.left + HIDDEN_WIDTH;
+    calculatePosition: function(data, dimension, positionOption) {
+        var result = {};
+
+        if (data.isVertical) {
+            result = this._calculateVerticalPosition(data, dimension, positionOption);
         } else {
-            result.top = bound.top;
-            result.left = bound.width + POPUP_GAP;
+            result = this._calculateBarPosition(data, dimension, positionOption);
         }
         return result;
     },
@@ -219,7 +290,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
             width: elTooltip.offsetWidth,
             height: elTooltip.offsetHeight
         };
-        position = this.calculatePosition(data, dimension);
+        position = this.calculatePosition(data, dimension, this.model.options.position);
 
         elTooltip.style.cssText = [
             this.concatStr('left:', position.left + addPosition.left, 'px'),

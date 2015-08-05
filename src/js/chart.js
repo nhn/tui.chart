@@ -86,6 +86,10 @@ _createChart = function(container, data, options) {
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -138,6 +142,10 @@ ne.application.chart.barChart = function(container, data, options) {
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
@@ -192,6 +200,10 @@ ne.application.chart.columnChart = function(container, data, options) {
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
