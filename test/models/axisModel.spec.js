@@ -39,6 +39,129 @@ describe('test axis model', function() {
             expect(axisModel.isLabelAxis()).toBeTruthy();
         });
 
+        it('_getBaseSize', function() {
+            var baseSize = axisModel._getBaseSize({
+                width: 400
+            });
+
+            expect(baseSize).toEqual(220);
+
+            axisModel.changeVerticalState(true);
+
+            baseSize = axisModel._getBaseSize({
+                height: 300
+            });
+
+            expect(baseSize).toEqual(220);
+        });
+
+        it('_getCandidateTickCounts', function() {
+            var tickCounts = axisModel._getCandidateTickCounts(320);
+            expect(tickCounts).toEqual([5, 6, 7, 8]);
+        });
+
+        it('_correctTickInfo', function() {
+            var tickInfo = axisModel._correctTickInfo(10, 90, {
+                scale: {min: 0, max: 100},
+                tickCount: 6
+            }, 25);
+            expect(tickInfo).toEqual({
+                scale: {min: 0, max: 100},
+                tickCount: 5,
+                labels: [0, 25, 50, 75, 100]
+            });
+
+            tickInfo = axisModel._correctTickInfo(10, 90, {
+                scale: {min: 10, max: 100},
+                tickCount: 6
+            }, 25);
+
+            expect(tickInfo).toEqual({
+                scale: {min: 10, max: 110},
+                tickCount: 5,
+                labels: [10, 35, 60, 85, 110]
+            });
+        });
+
+        it('_getTickInfoCandidates', function() {
+            var candidates = axisModel._getTickInfoCandidates(10, 90, [4, 5]);
+            expect(candidates).toEqual([
+                {
+                    scale: {min: 0, max: 105},
+                    tickCount: 4,
+                    step: 35,
+                    labels: [0, 35, 70, 105]
+                },
+                {
+                    scale: {min: 0, max: 100},
+                    tickCount: 5,
+                    step: 25,
+                    labels: [0, 25, 50, 75, 100]
+                }
+            ]);
+        });
+
+        it('_getComparingValue', function() {
+            var value = axisModel._getComparingValue({
+                min: 0,
+                max: 80
+            }, 10, 90);
+            expect(value).toEqual(20);
+        });
+
+        it('_selectTickInfo', function() {
+            var tickInfo = axisModel._selectTickInfo(10, 90, [
+                {
+                    scale: {min: 0, max: 105},
+                    tickCount: 4,
+                    step: 35,
+                    labels: [0, 35, 70, 105]
+                },
+                {
+                    scale: {min: 0, max: 100},
+                    tickCount: 5,
+                    step: 25,
+                    labels: [0, 25, 50, 75, 100]
+                }
+            ]);
+
+            expect(tickInfo).toEqual({
+                scale: {min: 0, max: 100},
+                tickCount: 5,
+                step: 25,
+                labels: [0, 25, 50, 75, 100]
+            });
+        });
+
+        it('_getTickInfo', function() {
+            var tickInfo = axisModel._getTickInfo(10, 90, {
+                width: 500,
+                height: 400
+            });
+            expect(tickInfo).toEqual({
+                scale: {min: 0, max: 100},
+                tickCount: 5,
+                step: 25,
+                labels: [0, 25, 50, 75, 100]
+            });
+        });
+
+        it('_multipleScale', function() {
+            var scale = axisModel._multipleScale({
+                min: 10,
+                max: 20
+            }, 2);
+            expect(scale).toEqual({min: 20, max: 40});
+        });
+
+        it('_divideScale', function() {
+            var scale = axisModel._divideScale({
+                min: 10,
+                max: 20
+            }, 2);
+            expect(scale).toEqual({min: 5, max: 10});
+        });
+
         it('_correctScale', function() {
             var scale = axisModel._correctScale({
                 min: 0,
@@ -66,7 +189,7 @@ describe('test axis model', function() {
             expect(scale.max).toEqual(1.2);
         });
 
-        it('getCalculateScale', function() {
+        it('_calculateScale', function() {
             var scale = axisModel._calculateScale(10, 100, 5);
             expect(scale.max).toEqual(120);
             expect(scale.min).toEqual(0);
@@ -78,11 +201,6 @@ describe('test axis model', function() {
             scale = axisModel._calculateScale(20, 100, 5, 0);
             expect(scale.max).toEqual(120);
             expect(scale.min).toEqual(0);
-        });
-
-        it('_pickMaxLenUnderPoint', function() {
-            var point = axisModel._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
-            expect(point).toEqual(3);
         });
 
         it('_formatLabels', function() {

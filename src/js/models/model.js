@@ -178,7 +178,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
      * @returns {number} max length under point
      * @private
      */
-    _pickMaxLenUnderPoint: function(values) {
+    pickMaxLenUnderPoint: function(values) {
         var max = 0;
 
         ne.util.forEachArray(values, function(value) {
@@ -206,7 +206,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
         }
 
         if (this._isDecimal(format)) {
-            len = this._pickMaxLenUnderPoint([format]);
+            len = this.pickMaxLenUnderPoint([format]);
             funcs = [ne.util.bind(this._formatDecimal, this, len)];
         } else if (this._isZeroFill(format)) {
             len = format.length;
