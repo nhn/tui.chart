@@ -115,11 +115,12 @@ var underPointLength = function(value) {
  * @returns {number} multiple num
  */
 var findMultipleNum = function() {
-    var underPointLens = ne.util.map(arguments, function(value) {
+    var args = Array.prototype.slice.call(arguments),
+        underPointLens = ne.util.map(args, function(value) {
             return ne.util.underPointLength(value);
         }),
-        unerPointLen = ne.util.max(underPointLens),
-        multipleNum = Math.pow(10, unerPointLen);
+        underPointLen = ne.util.max(underPointLens),
+        multipleNum = Math.pow(10, underPointLen);
     return multipleNum;
 };
 
