@@ -15,7 +15,7 @@ var apc = Array.prototype.concat;
 var Model = ne.util.defineClass(/** @lends Model.prototype */ {
     /**
      * Get scale step.
-     * @param {{min: number, max: number} scale axis scale
+     * @param {{min: number, max: number}} scale axis scale
      * @param {number} count value count
      * @returns {number} scale step
      */
@@ -41,7 +41,6 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
             });
             positions[positions.length - 1] = size - 1;
         }
-
         return positions;
     },
 
@@ -182,11 +181,11 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
         var max = 0;
 
         ne.util.forEachArray(values, function(value) {
-            var valueArr = (value + '').split('.');
-            if (valueArr.length === 2 && valueArr[1].length > max) {
-                max = valueArr[1].length;
+            var len = ne.util.underPointLength(value);
+            if (len > max) {
+                max = len;
             }
-        });
+        }, this);
 
         return max;
     },

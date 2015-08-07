@@ -56,47 +56,66 @@ describe('test axis model', function() {
         });
 
         it('_getCandidateTickCounts', function() {
-            var tickCounts = axisModel._getCandidateTickCounts(320);
+            var tickCounts = axisModel._getCandidateTickCounts({
+                width: 500
+            });
             expect(tickCounts).toEqual([5, 6, 7, 8]);
         });
 
-        it('_correctTickInfo', function() {
-            var tickInfo = axisModel._correctTickInfo(10, 90, {
+        it('_minimizeTickScale', function() {
+            var tickInfo = axisModel._minimizeTickScale(10, 90, {
                 scale: {min: 0, max: 100},
+                step: 25,
                 tickCount: 6
-            }, 25);
+            }, {});
             expect(tickInfo).toEqual({
                 scale: {min: 0, max: 100},
+                step: 25,
                 tickCount: 5,
                 labels: [0, 25, 50, 75, 100]
             });
 
-            tickInfo = axisModel._correctTickInfo(10, 90, {
-                scale: {min: 10, max: 100},
+            tickInfo = axisModel._minimizeTickScale(10, 90, {
+                scale: {min: 0, max: 100},
+                step: 25,
                 tickCount: 6
-            }, 25);
+            }, {});
 
             expect(tickInfo).toEqual({
-                scale: {min: 10, max: 110},
+                scale: {min: 0, max: 100},
+                step: 25,
                 tickCount: 5,
-                labels: [10, 35, 60, 85, 110]
+                labels: [0, 25, 50, 75, 100]
+            });
+
+            tickInfo = axisModel._minimizeTickScale(-6, -1, {
+                scale: {min: -10, max: 10},
+                step: 5,
+                tickCount: 6
+            }, {min: -10});
+
+            expect(tickInfo).toEqual({
+                scale: {min: -10, max: 10},
+                step: 5,
+                tickCount: 5,
+                labels: [-10, -5, 0, 5, 10]
             });
         });
 
         it('_getTickInfoCandidates', function() {
-            var candidates = axisModel._getTickInfoCandidates(10, 90, [4, 5]);
+            var candidates = axisModel._getTickInfoCandidates(10, 90, [4, 5], {});
             expect(candidates).toEqual([
                 {
-                    scale: {min: 0, max: 105},
+                    scale: {min: 0, max: 120},
                     tickCount: 4,
-                    step: 35,
-                    labels: [0, 35, 70, 105]
+                    step: 40,
+                    labels: [0, 40, 80, 120]
                 },
                 {
-                    scale: {min: 0, max: 100},
+                    scale: {min: 0, max: 120},
                     tickCount: 5,
-                    step: 25,
-                    labels: [0, 25, 50, 75, 100]
+                    step: 30,
+                    labels: [0, 30, 60, 90, 120]
                 }
             ]);
         });
@@ -105,7 +124,7 @@ describe('test axis model', function() {
             var value = axisModel._getComparingValue({
                 min: 0,
                 max: 80
-            }, 10, 90);
+            }, 20, 10, 90);
             expect(value).toEqual(20);
         });
 
@@ -137,70 +156,90 @@ describe('test axis model', function() {
             var tickInfo = axisModel._getTickInfo(10, 90, {
                 width: 500,
                 height: 400
-            });
+            }, {});
             expect(tickInfo).toEqual({
                 scale: {min: 0, max: 100},
-                tickCount: 5,
-                step: 25,
-                labels: [0, 25, 50, 75, 100]
+                tickCount: 6,
+                step: 20,
+                labels: [0, 20, 40, 60, 80, 100]
             });
         });
 
-        it('_multipleScale', function() {
-            var scale = axisModel._multipleScale({
-                min: 10,
-                max: 20
-            }, 2);
-            expect(scale).toEqual({min: 20, max: 40});
+        it('_normalizeStep', function() {
+            var result = axisModel._normalizeStep(1.6);
+            expect(result).toEqual(2);
+
+            result = axisModel._normalizeStep(4);
+            expect(result).toEqual(5);
+
+            result = axisModel._normalizeStep(6);
+            expect(result).toEqual(10);
+
+            result = axisModel._normalizeStep(40);
+            expect(result).toEqual(40);
+
+            result = axisModel._normalizeStep(1005);
+            expect(result).toEqual(1010);
+
+            result = axisModel._normalizeStep(0.4);
+            expect(result).toEqual(0.5);
+
+            result = axisModel._normalizeStep(0.07);
+            expect(result).toEqual(0.1);
         });
 
-        it('_divideScale', function() {
-            var scale = axisModel._divideScale({
-                min: 10,
-                max: 20
-            }, 2);
-            expect(scale).toEqual({min: 5, max: 10});
-        });
+        it('_normalizeMin', function() {
+            var result = axisModel._normalizeMin(1.6, 2);
+            expect(result).toEqual(0);
 
-        it('_correctScale', function() {
-            var scale = axisModel._correctScale({
-                min: 0,
-                max: 10
-            }, 5);
-            expect(scale.max).toEqual(11);
+            result = axisModel._normalizeMin(1.6, 1);
+            expect(result).toEqual(1);
 
-            scale = axisModel._correctScale({
-                min: 10,
-                max: 80
-            }, 5);
-            expect(scale.max).toEqual(90);
+            result = axisModel._normalizeMin(2.3, 2);
+            expect(result).toEqual(2);
 
-            scale = axisModel._correctScale({
-                min: 0,
-                max: 0.1
-            }, 5);
-            expect(scale.max).toEqual(0.3);
+            result = axisModel._normalizeMin(3.3, 2);
+            expect(result).toEqual(2);
 
-            scale = axisModel._correctScale({
-                min: 0.1,
-                max: 0.8
-            }, 5);
-            expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(1.2);
+            result = axisModel._normalizeMin(3.3, 5);
+            expect(result).toEqual(0);
+
+            result = axisModel._normalizeMin(7.3, 5);
+            expect(result).toEqual(5);
+
+            result = axisModel._normalizeMin(7.3, 10);
+            expect(result).toEqual(0);
+
+            result = axisModel._normalizeMin(-100, 30);
+            expect(result).toEqual(-120);
+
+            result = axisModel._normalizeMin(-10, 30);
+            expect(result).toEqual(-30);
+
+            result = axisModel._normalizeMin(-10, 5);
+            expect(result).toEqual(-10);
         });
 
         it('_calculateScale', function() {
-            var scale = axisModel._calculateScale(10, 100, 5);
-            expect(scale.max).toEqual(120);
+            var scale = axisModel._calculateScale(10, 100, 5, {});
+            expect(scale.max).toEqual(104.5);
             expect(scale.min).toEqual(0);
 
-            scale = axisModel._calculateScale(20, 100, 5);
-            expect(scale.max).toEqual(115);
-            expect(scale.min).toEqual(15);
+            scale = axisModel._calculateScale(20, 100, 5, {});
+            expect(scale.max).toEqual(104);
+            expect(scale.min).toEqual(16);
 
-            scale = axisModel._calculateScale(20, 100, 5, 0);
-            expect(scale.max).toEqual(120);
-            expect(scale.min).toEqual(0);
+            scale = axisModel._calculateScale(20, 100, 5, 0, {});
+            expect(scale.max).toEqual(104);
+            expect(scale.min).toEqual(16);
+
+            scale = axisModel._calculateScale(-100, -20, 5, 0, {});
+            expect(scale.max).toEqual(-16);
+            expect(scale.min).toEqual(-100);
+
+            scale = axisModel._calculateScale(-100, 20, 5, 0, {});
+            expect(scale.max).toEqual(26);
+            expect(scale.min).toEqual(-100);
         });
 
         it('_formatLabels', function() {
@@ -230,9 +269,9 @@ describe('test axis model', function() {
                 height: 300
             });
             scale = axisModel.scale;
-            expect(axisModel.labels).toEqual([0, 95, 190]);
+            expect(axisModel.labels).toEqual([0, 100, 200]);
             expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(190);
+            expect(scale.max).toEqual(200);
             expect(axisModel.isValueAxis()).toBeTruthy();
         });
 
@@ -273,7 +312,7 @@ describe('test axis model', function() {
                 axisModel = new AxisModel(data, options),
                 lenUnderPoint = ((axisModel.labels[1] + '').split('.'))[1].length;
             expect(lenUnderPoint).toEqual(2);
-            expect(axisModel.scale.min).toEqual(-1);
+            expect(axisModel.scale.min).toEqual(0);
             expect(axisModel.title).toEqual('value title');
         });
     });
