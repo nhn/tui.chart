@@ -102,7 +102,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
         this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
-        this._setTooltip(formatValues, labels, legendLabels, options.tooltip);
+        this._setTooltip(formatValues, labels, legendLabels, options);
     },
 
     /**
@@ -116,11 +116,13 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * @private
      */
     _setAxis: function(labels, values, formatFunctions, chartDimension, chartType, options) {
-        var valueData = {
+        var seriesOptions = options.series || {},
+            valueData = {
                 values: values,
                 chartDimension: chartDimension,
                 formatFunctions: formatFunctions,
-                chartType: chartType
+                chartType: chartType,
+                stacked: seriesOptions.stacked
             },
             labelData = {
                 labels: labels,
@@ -200,15 +202,17 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * @param {array.<array.<string>>} values chart values
      * @param {array.<string>} labels chart labels
      * @param {array.<string>} legendLabels chart legend labels
-     * @param {object} options tooltip options
+     * @param {object} options chart options
      * @private
      */
     _setTooltip: function(values, labels, legendLabels, options) {
+        var seriesOptions = options.series || {};
         this.tooltip = new TooltipModel({
             values: values,
             labels: labels,
-            legendLabels: legendLabels
-        }, options);
+            legendLabels: legendLabels,
+            stacked: seriesOptions.stacked
+        }, options.tooltip);
     }
 });
 

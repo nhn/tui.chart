@@ -115,7 +115,7 @@ var underPointLength = function(value) {
  * @returns {number} multiple num
  */
 var findMultipleNum = function() {
-    var args = Array.prototype.slice.call(arguments),
+    var args = [].slice.call(arguments),
         underPointLens = ne.util.map(args, function(value) {
             return ne.util.underPointLength(value);
         }),
@@ -179,6 +179,19 @@ var division = function(a, b) {
     return (a * multipleNum) / (b * multipleNum);
 };
 
+/**
+ * Sum.
+ * @param {array.<number>} values target values
+ * @returns {number} result value
+ */
+var sum = function(values) {
+    var copyArr = values.slice();
+    copyArr.unshift(0);
+    return ne.util.reduce(copyArr, function(base, add) {
+        return parseFloat(base) + parseFloat(add);
+    });
+};
+
 ne.util.range = range;
 ne.util.pluck = pluck;
 ne.util.zip = zip;
@@ -192,3 +205,4 @@ ne.util.addition = addition;
 ne.util.subtraction = subtraction;
 ne.util.multiplication = multiplication;
 ne.util.division = division;
+ne.util.sum = sum;

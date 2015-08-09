@@ -98,7 +98,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this._setValueAxisData(data.values, data.chartDimension, data.formatFunctions);
+            this._setValueAxisData(data.values, data.chartDimension, data.formatFunctions, data.stacked);
         }
     },
 
@@ -120,9 +120,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {array.<function>} formatFunctions format functions
      * @private
      */
-    _setValueAxisData: function(groupValues, chartDimension, formatFunctions) {
+    _setValueAxisData: function(groupValues, chartDimension, formatFunctions, stacked) {
         var options = this.options,
-            values = apc.apply([], groupValues), // flatten array
+            values = this._makeValues(groupValues, stacked),
             min = ne.util.min(values),
             max = ne.util.max(values),
             tickInfo = this._getTickInfo(min, max, chartDimension, options);
@@ -131,6 +131,26 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         this.labels = this._formatLabels(tickInfo.labels, formatFunctions);
         this.scale = tickInfo.scale;
         this.axisType = AXIS_TYPE_VALUE;
+    },
+
+    /**
+     * To make values.
+     * @param {array.<number>} groupValues group values
+     * @param {boolean} stacked whether stacked or not.
+     * @returns {array.<number>} values
+     * @private
+     */
+    _makeValues: function(groupValues, stacked) {
+        var flattenValues = apc.apply([], groupValues); // flatten array
+        if (stacked === 'normal') {
+            flattenValues = flattenValues.concat(ne.util.map(groupValues, function(values) {
+                var plusValues = ne.util.filter(values, function(value) {
+                    return value > 0;
+                });
+                return ne.util.sum(plusValues);
+            }));
+        }
+        return flattenValues;
     },
 
     /**

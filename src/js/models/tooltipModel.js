@@ -36,6 +36,11 @@ TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
          */
         this.data = [];
 
+        /**
+         * Default position option
+         * @type {string}
+         */
+        this.defaultPosition = '';
         if (data) {
             this._setData(data);
         }
@@ -64,7 +69,8 @@ TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
                 return items;
             });
         this.data = apc.apply([], tooltipData);
-    }
+        this.defaultPosition = '';
+    },
 });
 
 module.exports = TooltipModel;

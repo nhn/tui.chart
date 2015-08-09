@@ -85,6 +85,8 @@ _createChart = function(container, data, options) {
  *          @param {string} options.hAxis.title title of horizontal axis
  *          @param {number} options.hAxis.min minimal value of horizontal axis
  *          @param {number} options.hAxis.max maximum value of horizontal axis
+ *      @param {object} options.series options of series
+ *          @param {string} options.series.stacked stacked type
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -143,6 +145,8 @@ ne.application.chart.barChart = function(container, data, options) {
  *          @param {string} options.hAxis.title title of horizontal axis
  *          @param {number} options.hAxis.min minimal value of horizontal axis
  *          @param {number} options.hAxis.max maximum value of horizontal axis
+ *      @param {object} options.series options of series
+ *          @param {string} options.series.stacked stacked type
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip

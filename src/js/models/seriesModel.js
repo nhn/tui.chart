@@ -23,9 +23,13 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      *   scale: {min: number, max: number},
      *   isVertical: boolean
      * }} data series data
-     * @params {{hasDot: boolean}} options series options
+     * @param {{hasDot: boolean, stacked: string}} options series options
      */
     init: function(data, options) {
+        /**
+         * Series options
+         * @type {{hasDot: boolean, stacked: string}}
+         */
         this.options = options = options || {};
         /**
          * Series makers
@@ -67,7 +71,12 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
         }
 
         this.markers = data.formatValues;
-        this.percentValues = this._makePercentValues(data.values, data.scale);
+
+        if (this.options.stacked === 'normal') {
+            this.percentValues = this._makeStackedPercentValues(data.values, data.scale);
+        } else {
+            this.percentValues = this._makePercentValues(data.values, data.scale);
+        }
         this.isVertical = data.isVertical;
         this.tooltipPosition = data.tooltipPositoin;
     },
@@ -87,32 +96,70 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
+     * To make stacked percent values.
+     * @param {array.<array>} groupValues group values
+     * @param {{min:number, max:number}} scale min, max scale
+     * @returns {array} stacked percent values
+     * @private
+     */
+    _makeStackedPercentValues: function(groupValues, scale) {
+        var min = scale.min,
+            max = scale.max,
+            distance = max - min,
+            percentValues = ne.util.map(groupValues, function(values) {
+                var plusValues = ne.util.filter(values, function(value) {
+                    return value > 0;
+                });
+                var sum = ne.util.sum(plusValues),
+                    groupPercent = (sum - min) / distance;
+                return ne.util.map(values, function(value) {
+                    return groupPercent * (value / sum);
+                });
+            });
+        return percentValues;
+    },
+
+    /**
      * To make percent value.
-     * @param {array.<array.<number>>} values axis percent values
+     * @param {array.<array.<number>>} groupValues axis percent values
      * @param {{min:number, max:number}} scale min, max scale
      * @returns {array.<array.<number>>} percent values
      * @private
      */
-    _makePercentValues: function(values, scale) {
+    _makePercentValues: function(groupValues, scale) {
         var min = scale.min,
             max = scale.max,
-            percentValues = this._convertValues(values, function(value) {
-                return (value - min) / (max - min);
+            distance = max - min,
+            percentValues = this._convertValues(groupValues, function(value) {
+                return (value - min) / distance;
             });
         return percentValues;
     },
 
     /**
      * To make bounds of column chart.
-     * @param {{width: number, height:nunber}} dimension column chart dimension
+     * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      */
     makeColumnBounds: function(dimension) {
+        if (this.options.stacked === 'normal') {
+            return this._makeNormalStackedColumnBounds(dimension);
+        } else {
+            return this.makeNormalColumnBounds(dimension);
+        }
+    },
+
+    /**
+     * To make bounds of normal column chart.
+     * @param {{width: number, height:number}} dimension column chart dimension
+     * @returns {array.<array.<object>>} bounds
+     */
+    makeNormalColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
-            maxBarWidth = (dimension.width / groupValues.length),
-            barWidth = parseInt(maxBarWidth / (groupValues[0].length + 1), 10),
+            groupWidth = (dimension.width / groupValues.length),
+            barWidth = parseInt(groupWidth / (groupValues[0].length + 1), 10),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
+                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
                     var barHeight = parseInt(value * dimension.height, 10);
                     return {
@@ -127,17 +174,60 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
+     * To make bounds of normal stacked column chart.
+     * @param {{width: number, height:number}} dimension column chart dimension
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeNormalStackedColumnBounds: function(dimension) {
+        var groupValues = this.percentValues,
+            groupWidth = (dimension.width / groupValues.length),
+            barWidth = groupWidth / 2,
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2),
+                    top = 0;
+                return ne.util.map(values, function (value) {
+                    var height = parseInt(value * dimension.height, 10),
+                        bound = {
+                            top: dimension.height - height - top,
+                            left: paddingLeft,
+                            width: barWidth,
+                            height: height
+                        };
+                    top += height;
+                    return bound;
+                }, this);
+            });
+        return bounds;
+    },
+
+    /**
      * To make bounds of bar chart.
-     * @param {{width: number, height:nunber}} dimension bar chart dimension
+     * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      */
     makeBarBounds: function(dimension, hiddenWidth) {
+        if (this.options.stacked === 'normal') {
+            return this._makeNormalStackedBarBounds(dimension, hiddenWidth);
+        } else {
+            return this._makeNormalBarBounds(dimension, hiddenWidth);
+        }
+    },
+
+    /**
+     * To make bounds of normal bar chart.
+     * @param {{width: number, height:number}} dimension bar chart dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeNormalBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
-            maxBarHeight = (dimension.height / groupValues.length),
-            barHeight = parseInt(maxBarHeight / (groupValues[0].length + 1), 10),
+            groupHeight = (dimension.height / groupValues.length),
+            barHeight = parseInt(groupHeight / (groupValues[0].length + 1), 10),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
                     return {
                         top: paddingTop + (barHeight * index),
@@ -145,6 +235,35 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                         width: parseInt(value * dimension.width, 10),
                         height: barHeight
                     };
+                }, this);
+            });
+        return bounds;
+    },
+
+    /**
+     * To make bounds of normal stacked bar chart.
+     * @param {{width: number, height:number}} dimension bar chart dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeNormalStackedBarBounds: function(dimension, hiddenWidth) {
+        var groupValues = this.percentValues,
+            groupHeight = (dimension.height / groupValues.length),
+            barHeight = groupHeight / 2,
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
+                    left = -HIDDEN_WIDTH;
+                return ne.util.map(values, function (value) {
+                    var width = parseInt(value * dimension.width, 10),
+                        bound = {
+                            top: paddingTop,
+                            left: left,
+                            width: width,
+                            height: barHeight
+                        };
+                    left = left + width;
+                    return bound;
                 }, this);
             });
         return bounds;
@@ -170,14 +289,6 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                 });
             });
         return result;
-    },
-
-    makeBarTooltipBound: function(bound) {
-        var position = this.tooltipPosition;
-
-        if (position.indexOf('left')) {
-
-        }
     }
 });
 

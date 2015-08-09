@@ -228,7 +228,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
             minusHeight = dimension.height - (bound.height || 0),
             result = {};
 
-        result.left = bound.width;
+        result.left = bound.left + bound.width;
         result.top = bound.top;
 
         if (positionOption.indexOf('left') > -1) {
@@ -258,6 +258,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
      */
     calculatePosition: function(data, dimension, positionOption) {
         var result = {};
+        positionOption = positionOption || '';
 
         if (data.isVertical) {
             result = this._calculateVerticalPosition(data, dimension, positionOption);
@@ -277,6 +278,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
                 left: 0,
                 top: 0
             }, this.model.options.addPosition),
+            optionPosition = this.model.options.position || this.model.defaultPosition,
             dimension, position;
 
         if (this.showedId) {
@@ -290,7 +292,8 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
             width: elTooltip.offsetWidth,
             height: elTooltip.offsetHeight
         };
-        position = this.calculatePosition(data, dimension, this.model.options.position);
+
+        position = this.calculatePosition(data, dimension, optionPosition);
 
         elTooltip.style.cssText = [
             this.concatStr('left:', position.left + addPosition.left, 'px'),
