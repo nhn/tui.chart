@@ -114,7 +114,11 @@ describe('test axis model', function() {
         });
 
         it('_getTickInfoCandidates', function() {
-            var candidates = axisModel._getTickInfoCandidates(10, 90, [4, 5], {});
+            var candidates = axisModel._getTickInfoCandidates({
+                min: 10,
+                max: 90,
+                tickCounts: [4, 5]
+            }, {});
             expect(candidates).toEqual([
                 {
                     scale: {min: 0, max: 120},
@@ -133,9 +137,12 @@ describe('test axis model', function() {
 
         it('_getComparingValue', function() {
             var value = axisModel._getComparingValue({
-                min: 0,
-                max: 80
-            }, 20, 10, 90);
+                scale: {
+                    min: 0,
+                    max: 80
+                },
+                step: 20
+            }, 10, 90);
             expect(value).toEqual(20);
         });
 
@@ -164,9 +171,13 @@ describe('test axis model', function() {
         });
 
         it('_getTickInfo', function() {
-            var tickInfo = axisModel._getTickInfo(10, 90, {
-                width: 500,
-                height: 400
+            var tickInfo = axisModel._getTickInfo({
+                min: 10,
+                max: 90,
+                chartDimension: {
+                    width: 500,
+                    height: 400
+                }
             }, {});
             expect(tickInfo).toEqual({
                 scale: {min: 0, max: 100},
@@ -348,9 +359,12 @@ describe('test axis model', function() {
         it('normal _setValueAxisData', function() {
             var scale;
 
-            axisModel._setValueAxisData(groupValues, {
-                width: 400,
-                height: 300
+            axisModel._setValueAxisData({
+                values: groupValues,
+                chartDimension: {
+                    width: 400,
+                    height: 300
+                }
             });
             scale = axisModel.scale;
             expect(axisModel.labels).toEqual([0, 30, 60, 90]);
@@ -362,10 +376,14 @@ describe('test axis model', function() {
         it('normal stacked _setValueAxisData', function() {
             var scale;
 
-            axisModel._setValueAxisData(groupValues, {
-                width: 400,
-                height: 300
-            }, [], 'normal');
+            axisModel._setValueAxisData({
+                values: groupValues,
+                chartDimension: {
+                    width: 400,
+                    height: 300
+                },
+                stacked: 'normal'
+            });
             scale = axisModel.scale;
             expect(axisModel.labels).toEqual([0, 60, 120]);
             expect(scale.min).toEqual(0);
@@ -375,10 +393,14 @@ describe('test axis model', function() {
         it('percent stacked _setValueAxisData', function() {
             var scale;
 
-            axisModel._setValueAxisData(groupValues, {
-                width: 400,
-                height: 300
-            }, [], 'percent');
+            axisModel._setValueAxisData({
+                values: groupValues,
+                chartDimension: {
+                    width: 400,
+                    height: 300
+                },
+                stacked: 'percent'
+            });
             scale = axisModel.scale;
             expect(axisModel.labels).toEqual([0, 25, 50, 75, 100]);
             expect(scale.min).toEqual(0);

@@ -98,37 +98,56 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             formatValues = chartOptions.format ? this.formatValues(values, formatFunctions) : values,
             axisInfo;
 
-        axisInfo = this._setAxis(labels, values, formatFunctions, this.dimension, chartType, options);
+        axisInfo = this._setAxis({
+            labels: labels,
+            values: values,
+            formatFunctions: formatFunctions,
+            chartDimension: this.dimension,
+            chartType: chartType
+        }, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
-        this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
-        this._setTooltip(formatValues, labels, legendLabels, options);
+        this._setSeries({
+            values: values,
+            formatValues: formatValues,
+            scale: axisInfo.valueScale,
+            isVertical: this.isVertical
+        }, options.series);
+        this._setTooltip({
+            values: formatValues,
+            labels: labels,
+            legendLabels: legendLabels
+        }, options);
     },
 
     /**
      * Set Axis.
-     * @param {array.<string>} labels axis labels
-     * @param {array.<array.<number>>} values chart values
-     * @param {array.<function>} formatFunctions format functions
-     * @param {{width: number, height: number}} chartDimension chart dimension
+     * @param {object} data axis setting data
+     *      @param {array.<string>} data.labels axis labels
+     *      @param {array.<array.<number>>} data.values chart values
+     *      @param {array.<function>} data.formatFunctions format functions
+     *      @param {{width: number, height: number}} data.chartDimension chart dimension
+     *      @param {string} data.chartType chart type
+     *      @param {string} data.stacked stacked type
      * @param {{title: string, min: number}} options axis options
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
-    _setAxis: function(labels, values, formatFunctions, chartDimension, chartType, options) {
+    _setAxis: function(data, options) {
         var seriesOptions = options.series || {},
             valueData = {
-                values: values,
-                chartDimension: chartDimension,
-                formatFunctions: formatFunctions,
-                chartType: chartType,
+                values: data.values,
+                chartDimension: data.chartDimension,
+                formatFunctions: data.formatFunctions,
+                chartType: data.chartType,
                 stacked: seriesOptions.stacked
             },
             labelData = {
-                labels: labels,
-                chartType: chartType
+                labels: data.labels,
+                chartType: data.chartType
             },
             vAxis, hAxis, valueScale, axisInfo;
+
         if (this.isVertical) {
             valueData.isVertical = true;
             vAxis = new AxisModel(valueData, options.vAxis);
@@ -181,38 +200,31 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
 
     /**
      * Set series model.
-     * @param {array.<array.<number>>} values chart values
-     * @param {array.<array.<string>>} formatValues formatted values
-     * @param {{min: number, max: number}} scale axis scale
-     * @param {boolean} isVertical whether vertical or not
+     * @param {object} data series setting data
+     *      @param {array.<array.<number>>} data.values chart values
+     *      @param {array.<array.<string>>} data.formatValues formatted values
+     *      @param {{min: number, max: number}} data.scale axis scale
+     *      @param {boolean} data.isVertical whether vertical or not
      * @param {object} options series options
      * @private
      */
-    _setSeries: function(values, formatValues, scale, isVertical, options) {
-        this.series = new SeriesModel({
-            values: values,
-            formatValues: formatValues,
-            scale: scale,
-            isVertical: isVertical
-        }, options);
+    _setSeries: function(data, options) {
+        this.series = new SeriesModel(data, options);
     },
 
     /**
      * Set tooltip model.
-     * @param {array.<array.<string>>} values chart values
-     * @param {array.<string>} labels chart labels
-     * @param {array.<string>} legendLabels chart legend labels
+     * @param {object} data tooltip setting data
+     *      @param {array.<array.<string>>} data.values chart values
+     *      @param {array.<string>} data.labels chart labels
+     *      @param {array.<string>} data.legendLabels chart legend labels
      * @param {object} options chart options
      * @private
      */
-    _setTooltip: function(values, labels, legendLabels, options) {
+    _setTooltip: function(data, options) {
         var seriesOptions = options.series || {};
-        this.tooltip = new TooltipModel({
-            values: values,
-            labels: labels,
-            legendLabels: legendLabels,
-            stacked: seriesOptions.stacked
-        }, options.tooltip);
+        data.stacked = seriesOptions.stacked;
+        this.tooltip = new TooltipModel(data, options.tooltip);
     }
 });
 

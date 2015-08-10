@@ -27,7 +27,7 @@ describe('test bar chart model', function() {
             expect(barChartModel.plot.vTickCount).toEqual(0);
             expect(barChartModel.plot.hTickCount).toEqual(8);
             expect(barChartModel.legend.labels).toEqual(['Copper', 'Silver', 'Gold', 'Platinum']);
-            expect(barChartModel.tooltip.data[0]).toEqual({label:'Density', value: 8.94, legendLabel: 'Copper', id: '0-0'});
+            expect(barChartModel.tooltip.data[0]).toEqual({label: 'Density', value: 8.94, legendLabel: 'Copper', id: '0-0'});
         });
     });
 

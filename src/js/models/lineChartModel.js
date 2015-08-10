@@ -81,10 +81,10 @@ var LineChartModel = ne.util.defineClass(AxisChartModel, /** @lends LineChartMod
      * }} options options
      * @private
      */
-    _setSeries: function(values, formatValues, scale, isVertical, options) {
-        values = this.arrayPivot(values);
-        formatValues = this.arrayPivot(formatValues);
-        AxisChartModel.prototype._setSeries.call(this, values, formatValues, scale, isVertical, options);
+    _setSeries: function(data, options) {
+        data.values = this.arrayPivot(data.values);
+        data.formatValues = this.arrayPivot(data.formatValues);
+        AxisChartModel.prototype._setSeries.call(this, data, options);
     }
 });
 

@@ -70,7 +70,7 @@ TooltipModel = ne.util.defineClass(Model, /** @lends TooltipModel.prototype */ {
             });
         this.data = apc.apply([], tooltipData);
         this.defaultPosition = '';
-    },
+    }
 });
 
 module.exports = TooltipModel;

@@ -18,6 +18,7 @@ var AXIS_TYPE_VALUE = 'value',
     CHART_TITLE_HEIGHT = 80,
     VERTICAL_AXIS_WIDTH = 90,
     LEGEND_WIDTH = 90,
+    AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10],
     PERCENT_STACKED_TICK_INFO = {
         scale: {
             min: 0,
@@ -28,6 +29,7 @@ var AXIS_TYPE_VALUE = 'value',
     };
 
 var apc = Array.prototype.concat,
+    abs = Math.abs,
     AxisModel;
 
 AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
@@ -97,7 +99,12 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Set axis data.
-     * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
+     * @param {object} data axis setting data.
+     *      @param {array.<array.<number>>} data.groupValues chart values
+     *      @param {array.<string>} data.labels chart labels
+     *      @param {{width:number, height:number}} data.chartDimension chart dimension
+     *      @param {array.<function>} data.formatFunctions format functions
+     *      @param {string} data.stacked stacked option
      * @private
      */
     _setData: function(data) {
@@ -106,7 +113,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
-            this._setValueAxisData(data.values, data.chartDimension, data.formatFunctions, data.stacked);
+            this._setValueAxisData(data);
         }
     },
 
@@ -123,28 +130,33 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Set value type axis data.
-     * @param {array.<array.<number>>} groupValues chart values
-     * @param {{width:number, height:number}} chartDimension chart dimension
-     * @param {array.<function>} formatFunctions format functions
-     * @param {string} stacked stackted option
+     * @param {object} data axis setting data.
+     *      @param {array.<array.<number>>} data.groupValues chart values
+     *      @param {{width:number, height:number}} data.chartDimension chart dimension
+     *      @param {array.<function>} data.formatFunctions format functions
+     *      @param {string} data.stacked stacked option
      * @private
      */
-    _setValueAxisData: function(groupValues, chartDimension, formatFunctions, stacked) {
+    _setValueAxisData: function(data) {
         var options = this.options,
             values, min, max, tickInfo;
 
-        if (stacked === 'percent') {
+        if (data.stacked === 'percent') {
             tickInfo = PERCENT_STACKED_TICK_INFO;
-            formatFunctions = [];
+            data.formatFunctions = [];
         } else {
-            values = this._makeValues(groupValues, stacked);
+            values = this._makeValues(data.values, data.stacked);
             min = ne.util.min(values);
             max = ne.util.max(values);
-            tickInfo = this._getTickInfo(min, max, chartDimension, options);
+            tickInfo = this._getTickInfo({
+                min: min,
+                max: max,
+                chartDimension: data.chartDimension
+            }, options);
         }
 
         this.tickCount = tickInfo.tickCount;
-        this.labels = this._formatLabels(tickInfo.labels, formatFunctions);
+        this.labels = this._formatLabels(tickInfo.labels, data.formatFunctions);
         this.scale = tickInfo.scale;
         this.axisType = AXIS_TYPE_VALUE;
     },
@@ -201,17 +213,16 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Get comparing value.
-     * @param {{min: number, max: number}} scale scale
-     * @param {number} step axis tick step
+     * @param {{scale: {min: number, max: number}, step: number}} tickInfo tick info
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(scale, step, min, max) {
-        var diffMax = Math.abs(scale.max - max),
-            diffMin = Math.abs(min - scale.min),
-            weight = Math.pow(10, ne.util.underPointLength(step));
+    _getComparingValue: function(tickInfo, min, max) {
+        var diffMax = abs(tickInfo.scale.max - max),
+            diffMin = abs(min - tickInfo.scale.min),
+            weight = Math.pow(10, ne.util.lengthAfterPoint(tickInfo.step));
         return (diffMax + diffMin) * weight;
     },
 
@@ -226,10 +237,10 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     _selectTickInfo: function(min, max, candidates) {
         var tickInfo = candidates[0],
             rest = candidates.slice(1),
-            minValue = this._getComparingValue(tickInfo.scale, tickInfo.step, min, max);
+            minValue = this._getComparingValue(tickInfo, min, max);
 
         ne.util.forEachArray(rest, function(info) {
-            var compareValue = this._getComparingValue(info.scale, info.step, min, max);
+            var compareValue = this._getComparingValue(info, min, max);
             if (minValue > compareValue) {
                 tickInfo = info;
                 minValue = compareValue;
@@ -240,17 +251,22 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Get tick count and scale.
-     * @param {number} min minimum value of user data
-     * @param {number} max maximum value of user data
-     * @param {{width: number, height: number}} chartDimension chat dimension
+     * @param {object} data params
+     *      @param {number} data.min minimum value of user data
+     *      @param {number} data.max maximum value of user data
+     *      @param {{width: number, height: number}} data.chartDimension chat dimension
      * @param {{min: number, max:number}} options axis options
      * @returns {{tickCount: number, scale: object}} tick info
      * @private
      */
-    _getTickInfo: function(min, max, chartDimension, options) {
-        var intTypeInfo = this._makeIntegerTypeInfo(min, max, options),
-            tickCounts = this._getCandidateTickCounts(chartDimension),
-            candidates = this._getTickInfoCandidates(intTypeInfo.min, intTypeInfo.max, tickCounts, intTypeInfo.options),
+    _getTickInfo: function(data, options) {
+        var intTypeInfo = this._makeIntegerTypeInfo(data.min, data.max, options),
+            tickCounts = this._getCandidateTickCounts(data.chartDimension),
+            candidates = this._getTickInfoCandidates({
+                min: intTypeInfo.min,
+                max: intTypeInfo.max,
+                tickCounts: tickCounts
+            }, intTypeInfo.options),
             tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
         tickInfo = this._makeOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
         return tickInfo;
@@ -267,7 +283,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     _makeIntegerTypeInfo: function(min, max, options) {
         var multipleNum, changeOptions;
 
-        if (Math.abs(min) >= 1 || Math.abs(max) >= 1) {
+        if (abs(min) >= 1 || abs(max) >= 1) {
             return {
                 min: min,
                 max: max,
@@ -331,7 +347,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             return step;
         }
 
-        ne.util.forEachArray([1, 2, 5, 10], function(num) {
+        ne.util.forEachArray(AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
             if (step < num) {
                 if (num > 1) {
                     standard = num;
@@ -372,6 +388,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Calculate scale from chart min, max data.
+     *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
@@ -456,7 +473,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             scale = tickInfo.scale,
             tickCount = tickInfo.tickCount;
         if (step % 2 === 0 && (tickCount % 2) &&
-            Math.abs(orgTickCount - (tickCount * 2)) < Math.abs(orgTickCount - tickCount)) {
+            abs(orgTickCount - (tickCount * 2)) < abs(orgTickCount - tickCount)) {
             step = step / 2;
             tickInfo.labels = this._makeLabelsFromScale(scale, step);
             tickInfo.tickCount = tickInfo.labels.length;
@@ -525,16 +542,19 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Get candidates about tick info.
-     * @param {number} min minimum value of user data
-     * @param {number} max maximum value of user data
-     * @param {array.<number>} tickCounts tick counts
+     * @param {object} data params
+     *      @param {number} data.min minimum value of user data
+     *      @param {number} data.max maximum value of user data
+     *      @param {array.<number>} data.tickCounts tick counts
      * @param {{min: number, max:number}} options axis options
      * @returns {array} candidates about tick info
      * @private
      */
-    _getTickInfoCandidates: function(min, max, tickCounts, options) {
-        var userMin = min,
-            userMax = max,
+    _getTickInfoCandidates: function(data, options) {
+        var userMin = data.min,
+            userMax = data.max,
+            min = data.min,
+            max = data.max,
             isMinus = false,
             tmpMin, candidates;
 
@@ -545,7 +565,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             max = -tmpMin;
         }
 
-        candidates = ne.util.map(tickCounts, function(tickCount) {
+        candidates = ne.util.map(data.tickCounts, function(tickCount) {
             return this._makeTickInfo(tickCount, min, max, userMin, userMax, isMinus, options);
         }, this);
 

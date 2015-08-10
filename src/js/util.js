@@ -100,11 +100,11 @@ var any = function(arr, condition) {
 };
 
 /**
- * Get under point length.
+ * Get after point length.
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var underPointLength = function(value) {
+var lengthAfterPoint = function(value) {
     var valueArr = (value + '').split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -117,7 +117,7 @@ var underPointLength = function(value) {
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
         underPointLens = ne.util.map(args, function(value) {
-            return ne.util.underPointLength(value);
+            return ne.util.lengthAfterPoint(value);
         }),
         underPointLen = ne.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
@@ -198,7 +198,7 @@ ne.util.zip = zip;
 ne.util.min = min;
 ne.util.max = max;
 ne.util.any = any;
-ne.util.underPointLength = underPointLength;
+ne.util.lengthAfterPoint = lengthAfterPoint;
 ne.util.mod = mod;
 ne.util.findMultipleNum = findMultipleNum;
 ne.util.addition = addition;
