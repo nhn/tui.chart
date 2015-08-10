@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    chartConst = require('../const.js');
 
 var HIDDEN_WIDTH = 1;
 
@@ -66,14 +67,20 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * @private
      */
     _setData: function(data) {
+        var stacked;
+
         if (!data || ne.util.isEmpty(data.values) || !data.scale) {
             throw new Error('Invalid series data.');
         }
 
+        stacked = this.options.stacked;
+
         this.markers = data.formatValues;
 
-        if (this.options.stacked === 'normal') {
-            this.percentValues = this._makeStackedPercentValues(data.values, data.scale);
+        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
+            this.percentValues = this._makeNormalStackedPercentValues(data.values, data.scale);
+        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
+            this.percentValues = this._makePercentStackedPercentValues(data.values, data.scale);
         } else {
             this.percentValues = this._makePercentValues(data.values, data.scale);
         }
@@ -96,13 +103,13 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * To make stacked percent values.
+     * To make percent values about normal stacked option.
      * @param {array.<array>} groupValues group values
      * @param {{min:number, max:number}} scale min, max scale
-     * @returns {array} stacked percent values
+     * @returns {array} percent values about normal stacked option.
      * @private
      */
-    _makeStackedPercentValues: function(groupValues, scale) {
+    _makeNormalStackedPercentValues: function(groupValues, scale) {
         var min = scale.min,
             max = scale.max,
             distance = max - min,
@@ -114,6 +121,26 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                     groupPercent = (sum - min) / distance;
                 return ne.util.map(values, function(value) {
                     return groupPercent * (value / sum);
+                });
+            });
+        return percentValues;
+    },
+
+    /**
+     * To make percent values about percent stacked option.
+     * @param {array.<array>} groupValues group values
+     * @param {{min:number, max:number}} scale min, max scale
+     * @returns {array} percent values about percent stacked option
+     * @private
+     */
+    _makePercentStackedPercentValues: function(groupValues) {
+        var percentValues = ne.util.map(groupValues, function(values) {
+                var plusValues = ne.util.filter(values, function(value) {
+                    return value > 0;
+                });
+                var sum = ne.util.sum(plusValues);
+                return ne.util.map(values, function(value) {
+                    return value / sum;
                 });
             });
         return percentValues;
@@ -142,10 +169,10 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * @returns {array.<array.<object>>} bounds
      */
     makeColumnBounds: function(dimension) {
-        if (this.options.stacked === 'normal') {
-            return this._makeNormalStackedColumnBounds(dimension);
-        } else {
+        if (!this.options.stacked) {
             return this.makeNormalColumnBounds(dimension);
+        } else {
+            return this._makeStackedColumnBounds(dimension);
         }
     },
 
@@ -157,11 +184,11 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     makeNormalColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
             groupWidth = (dimension.width / groupValues.length),
-            barWidth = parseInt(groupWidth / (groupValues[0].length + 1), 10),
+            barWidth = groupWidth / (groupValues[0].length + 1),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
-                    var barHeight = parseInt(value * dimension.height, 10);
+                    var barHeight = value * dimension.height;
                     return {
                         top: dimension.height - barHeight + HIDDEN_WIDTH,
                         left: paddingLeft + (barWidth * index),
@@ -174,12 +201,12 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * To make bounds of normal stacked column chart.
+     * To make bounds of stacked column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeNormalStackedColumnBounds: function(dimension) {
+    _makeStackedColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
             groupWidth = (dimension.width / groupValues.length),
             barWidth = groupWidth / 2,
@@ -187,7 +214,7 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2),
                     top = 0;
                 return ne.util.map(values, function (value) {
-                    var height = parseInt(value * dimension.height, 10),
+                    var height = value * dimension.height,
                         bound = {
                             top: dimension.height - height - top,
                             left: paddingLeft,
@@ -208,10 +235,10 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * @returns {array.<array.<object>>} bounds
      */
     makeBarBounds: function(dimension, hiddenWidth) {
-        if (this.options.stacked === 'normal') {
-            return this._makeNormalStackedBarBounds(dimension, hiddenWidth);
-        } else {
+        if (!this.options.stacked) {
             return this._makeNormalBarBounds(dimension, hiddenWidth);
+        } else {
+            return this._makeStackedBarBounds(dimension, hiddenWidth);
         }
     },
 
@@ -225,14 +252,14 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     _makeNormalBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
             groupHeight = (dimension.height / groupValues.length),
-            barHeight = parseInt(groupHeight / (groupValues[0].length + 1), 10),
+            barHeight = groupHeight / (groupValues[0].length + 1),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
                     return {
                         top: paddingTop + (barHeight * index),
                         left: -HIDDEN_WIDTH,
-                        width: parseInt(value * dimension.width, 10),
+                        width: value * dimension.width,
                         height: barHeight
                     };
                 }, this);
@@ -241,13 +268,13 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * To make bounds of normal stacked bar chart.
+     * To make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeNormalStackedBarBounds: function(dimension, hiddenWidth) {
+    _makeStackedBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
             groupHeight = (dimension.height / groupValues.length),
             barHeight = groupHeight / 2,
@@ -255,7 +282,7 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
                     left = -HIDDEN_WIDTH;
                 return ne.util.map(values, function (value) {
-                    var width = parseInt(value * dimension.width, 10),
+                    var width = value * dimension.width,
                         bound = {
                             top: paddingTop,
                             left: left,

@@ -16,12 +16,10 @@ describe('test axis model', function() {
             'Gold',
             'Platinum'
         ],
-        values = [
-            [70],
-            [20],
-            [180],
-            [150],
-            [120]
+        groupValues = [
+            [70, 10],
+            [20, 20],
+            [80, 30]
         ];
 
     describe('test method', function() {
@@ -76,6 +74,19 @@ describe('test axis model', function() {
             });
 
             tickInfo = axisModel._minimizeTickScale(10, 90, {
+                scale: {min: 0, max: 100},
+                step: 25,
+                tickCount: 6
+            }, {});
+
+            expect(tickInfo).toEqual({
+                scale: {min: 0, max: 100},
+                step: 25,
+                tickCount: 5,
+                labels: [0, 25, 50, 75, 100]
+            });
+
+            tickInfo = axisModel._minimizeTickScale(20, 90, {
                 scale: {min: 0, max: 100},
                 step: 25,
                 tickCount: 6
@@ -166,7 +177,10 @@ describe('test axis model', function() {
         });
 
         it('_normalizeStep', function() {
-            var result = axisModel._normalizeStep(1.6);
+            var result = axisModel._normalizeStep(0);
+            expect(result).toEqual(0);
+
+            result = axisModel._normalizeStep(1.6);
             expect(result).toEqual(2);
 
             result = axisModel._normalizeStep(4);
@@ -261,25 +275,121 @@ describe('test axis model', function() {
             expect(_labels).toEqual([20, 40, 60, 80, 100]);
         });
 
-        it('_setValueAxisData', function() {
+        it('_makeValues', function() {
+            var values = axisModel._makeValues(groupValues);
+            expect(values).toEqual([70, 10, 20, 20, 80, 30]);
+
+            values = axisModel._makeValues(groupValues, 'normal');
+            expect(values).toEqual([70, 10, 20, 20, 80, 30, 80, 40, 110]);
+        });
+
+        it('_makeIntegerTypeInfo', function() {
+            var intTypeInfo = axisModel._makeIntegerTypeInfo(1, 100, {});
+            expect(intTypeInfo).toEqual({
+                min: 1,
+                max: 100,
+                options: {},
+                divideNum: 1
+            });
+
+            intTypeInfo = axisModel._makeIntegerTypeInfo(0.1, 0.9, {});
+            expect(intTypeInfo).toEqual({
+                min: 1,
+                max: 9,
+                options: {},
+                divideNum: 10
+            });
+
+            intTypeInfo = axisModel._makeIntegerTypeInfo(0.1, 0.9, {min: 0.2, max: 0.8});
+            expect(intTypeInfo).toEqual({
+                min: 1,
+                max: 9,
+                options: {min: 2, max: 8},
+                divideNum: 10
+            });
+        });
+
+        it('_makeOriginalTypeTickInfo', function() {
+            var tickInfo = axisModel._makeOriginalTypeTickInfo({
+                step: 5,
+                scale: {
+                    min: 1,
+                    max: 10
+                },
+                labels: [2, 3, 9]
+            }, 1);
+            expect(tickInfo).toEqual({
+                step: 5,
+                scale: {
+                    min: 1,
+                    max: 10
+                },
+                labels: [2, 3, 9]
+            });
+
+            tickInfo = axisModel._makeOriginalTypeTickInfo({
+                step: 5,
+                scale: {
+                    min: 1,
+                    max: 10
+                },
+                labels: [2, 3, 9]
+            }, 10);
+            expect(tickInfo).toEqual({
+                step: 0.5,
+                scale: {
+                    min: 0.1,
+                    max: 1
+                },
+                labels: [0.2, 0.3, 0.9]
+            });
+        });
+
+        it('normal _setValueAxisData', function() {
             var scale;
 
-            axisModel._setValueAxisData(values, {
+            axisModel._setValueAxisData(groupValues, {
                 width: 400,
                 height: 300
             });
             scale = axisModel.scale;
-            expect(axisModel.labels).toEqual([0, 100, 200]);
+            expect(axisModel.labels).toEqual([0, 30, 60, 90]);
             expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(200);
+            expect(scale.max).toEqual(90);
             expect(axisModel.isValueAxis()).toBeTruthy();
+        });
+
+        it('normal stacked _setValueAxisData', function() {
+            var scale;
+
+            axisModel._setValueAxisData(groupValues, {
+                width: 400,
+                height: 300
+            }, [], 'normal');
+            scale = axisModel.scale;
+            expect(axisModel.labels).toEqual([0, 60, 120]);
+            expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(120);
+        });
+
+        it('percent stacked _setValueAxisData', function() {
+            var scale;
+
+            axisModel._setValueAxisData(groupValues, {
+                width: 400,
+                height: 300
+            }, [], 'percent');
+            scale = axisModel.scale;
+            expect(axisModel.labels).toEqual([0, 25, 50, 75, 100]);
+            expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(100);
         });
 
         it('setData', function() {
             axisModel._setData({labels: labels});
             expect(axisModel.isLabelAxis()).toBeTruthy();
 
-            axisModel._setData({values: values, chartDimension: {
+            axisModel._setData({values: groupValues, chartDimension: {
                 width: 400,
                 height: 300
             }});

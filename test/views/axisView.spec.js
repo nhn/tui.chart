@@ -11,7 +11,7 @@ var AxisView = require('../../src/js/views/axisView.js'),
 
 var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
 
-xdescribe('test Axis View', function() {
+describe('test Axis View', function() {
     var tmpAxisModel = new AxisModel(),
         valueData = {
             values: [[10], [20], [30], [40], [50]],

@@ -152,13 +152,13 @@
                 title: 'Horizontal Axis'
             },
             series: {
-                stacked: 'normal'
+                stacked: 'percent'
             },
             tooltip: {
                 suffix: 'unit'
             }
         };
-    chart.barChart(elChartArea, data, options);
+    chart.columnChart(elChartArea, data, options);
 
     var onClick = function() {
         var type = document.getElementById('type').value,

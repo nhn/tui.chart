@@ -17,7 +17,15 @@ var AXIS_TYPE_VALUE = 'value',
     MAX_PIXEL_STEP_SIZE = 60,
     CHART_TITLE_HEIGHT = 80,
     VERTICAL_AXIS_WIDTH = 90,
-    LEGEND_WIDTH = 90;
+    LEGEND_WIDTH = 90,
+    PERCENT_STACKED_TICK_INFO = {
+        scale: {
+            min: 0,
+            max: 100
+        },
+        tickCount: 5,
+        labels: [0, 25, 50, 75, 100]
+    };
 
 var apc = Array.prototype.concat,
     AxisModel;
@@ -118,14 +126,22 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {array.<array.<number>>} groupValues chart values
      * @param {{width:number, height:number}} chartDimension chart dimension
      * @param {array.<function>} formatFunctions format functions
+     * @param {string} stacked stackted option
      * @private
      */
     _setValueAxisData: function(groupValues, chartDimension, formatFunctions, stacked) {
         var options = this.options,
-            values = this._makeValues(groupValues, stacked),
-            min = ne.util.min(values),
-            max = ne.util.max(values),
+            values, min, max, tickInfo;
+
+        if (stacked === 'percent') {
+            tickInfo = PERCENT_STACKED_TICK_INFO;
+            formatFunctions = [];
+        } else {
+            values = this._makeValues(groupValues, stacked);
+            min = ne.util.min(values);
+            max = ne.util.max(values);
             tickInfo = this._getTickInfo(min, max, chartDimension, options);
+        }
 
         this.tickCount = tickInfo.tickCount;
         this.labels = this._formatLabels(tickInfo.labels, formatFunctions);
@@ -142,7 +158,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      */
     _makeValues: function(groupValues, stacked) {
         var flattenValues = apc.apply([], groupValues); // flatten array
-        if (stacked === 'normal') {
+        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
             flattenValues = flattenValues.concat(ne.util.map(groupValues, function(values) {
                 var plusValues = ne.util.filter(values, function(value) {
                     return value > 0;
@@ -233,7 +249,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      */
     _getTickInfo: function(min, max, chartDimension, options) {
         var intTypeInfo = this._makeIntegerTypeInfo(min, max, options),
-            tickCounts = options.tickCount ? [options.tickCount] : this._getCandidateTickCounts(chartDimension),
+            tickCounts = this._getCandidateTickCounts(chartDimension),
             candidates = this._getTickInfoCandidates(intTypeInfo.min, intTypeInfo.max, tickCounts, intTypeInfo.options),
             tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
         tickInfo = this._makeOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
@@ -249,6 +265,8 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _makeIntegerTypeInfo: function(min, max, options) {
+        var multipleNum, changeOptions;
+
         if (Math.abs(min) >= 1 || Math.abs(max) >= 1) {
             return {
                 min: min,
@@ -258,8 +276,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             };
         }
 
-        var multipleNum = ne.util.findMultipleNum(min, max),
-            changeOptions = {};
+        multipleNum = ne.util.findMultipleNum(min, max);
+        changeOptions = {};
+
         if (options.min) {
             changeOptions.min = options.min * multipleNum;
         }
@@ -276,6 +295,13 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         };
     },
 
+    /**
+     * To make tick info to original type.
+     * @param {{step: number, scale: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
+     * @param {number} divideNum divide num
+     * @returns {{step: number, scale: {min: number, max: number}, labels: array.<number>}} divided tick info
+     * @private
+     */
     _makeOriginalTypeTickInfo: function(tickInfo, divideNum) {
         if (divideNum === 1) {
             return tickInfo;
@@ -285,7 +311,6 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         tickInfo.scale.min = ne.util.division(tickInfo.scale.min, divideNum);
         tickInfo.scale.max = ne.util.division(tickInfo.scale.max, divideNum);
         tickInfo.labels = ne.util.map(tickInfo.labels, function(label) {
-            console.log(label, divideNum);
             return ne.util.division(label, divideNum);
         });
 
