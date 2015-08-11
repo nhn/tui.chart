@@ -67,23 +67,12 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * @private
      */
     _setData: function(data) {
-        var stacked;
-
         if (!data || ne.util.isEmpty(data.values) || !data.scale) {
             throw new Error('Invalid series data.');
         }
 
-        stacked = this.options.stacked;
-
         this.markers = data.formatValues;
-
-        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            this.percentValues = this._makeNormalStackedPercentValues(data.values, data.scale);
-        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
-            this.percentValues = this._makePercentStackedPercentValues(data.values, data.scale);
-        } else {
-            this.percentValues = this._makePercentValues(data.values, data.scale);
-        }
+        this.percentValues = this._makePercentValues(data, this.options.stacked);
         this.isVertical = data.isVertical;
         this.tooltipPosition = data.tooltipPositoin;
     },
@@ -103,21 +92,41 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
+     * To make percent value.
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {string} stacked stacked option
+     * @returns {array.<array.<number>>} percent values
+     * @private
+     */
+    _makePercentValues: function(data, stacked) {
+        var result;
+
+        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
+            result = this._makeNormalStackedPercentValues(data);
+        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
+            result = this._makePercentStackedPercentValues(data);
+        } else {
+            result = this._makeNormalPercentValues(data);
+        }
+
+        return result;
+    },
+
+    /**
      * To make percent values about normal stacked option.
-     * @param {array.<array>} groupValues group values
-     * @param {{min:number, max:number}} scale min, max scale
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array} percent values about normal stacked option.
      * @private
      */
-    _makeNormalStackedPercentValues: function(groupValues, scale) {
-        var min = scale.min,
-            max = scale.max,
+    _makeNormalStackedPercentValues: function(data) {
+        var min = data.scale.min,
+            max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(groupValues, function(values) {
+            percentValues = ne.util.map(data.values, function(values) {
                 var plusValues = ne.util.filter(values, function(value) {
-                    return value > 0;
-                });
-                var sum = ne.util.sum(plusValues),
+                        return value > 0;
+                    }),
+                    sum = ne.util.sum(plusValues),
                     groupPercent = (sum - min) / distance;
                 return ne.util.map(values, function(value) {
                     return groupPercent * (value / sum);
@@ -128,17 +137,16 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
 
     /**
      * To make percent values about percent stacked option.
-     * @param {array.<array>} groupValues group values
-     * @param {{min:number, max:number}} scale min, max scale
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array} percent values about percent stacked option
      * @private
      */
-    _makePercentStackedPercentValues: function(groupValues) {
-        var percentValues = ne.util.map(groupValues, function(values) {
+    _makePercentStackedPercentValues: function(data) {
+        var percentValues = ne.util.map(data.values, function(values) {
                 var plusValues = ne.util.filter(values, function(value) {
-                    return value > 0;
-                });
-                var sum = ne.util.sum(plusValues);
+                        return value > 0;
+                    }),
+                    sum = ne.util.sum(plusValues);
                 return ne.util.map(values, function(value) {
                     return value / sum;
                 });
@@ -147,17 +155,16 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
-     * To make percent value.
-     * @param {array.<array.<number>>} groupValues axis percent values
-     * @param {{min:number, max:number}} scale min, max scale
+     * To make normal percent value.
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
      */
-    _makePercentValues: function(groupValues, scale) {
-        var min = scale.min,
-            max = scale.max,
+    _makeNormalPercentValues: function(data) {
+        var min = data.scale.min,
+            max = data.scale.max,
             distance = max - min,
-            percentValues = this._convertValues(groupValues, function(value) {
+            percentValues = this._convertValues(data.values, function(value) {
                 return (value - min) / distance;
             });
         return percentValues;
@@ -170,7 +177,7 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      */
     makeColumnBounds: function(dimension) {
         if (!this.options.stacked) {
-            return this.makeNormalColumnBounds(dimension);
+            return this._makeNormalColumnBounds(dimension);
         } else {
             return this._makeStackedColumnBounds(dimension);
         }
@@ -180,8 +187,9 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      * To make bounds of normal column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
+     * @private
      */
-    makeNormalColumnBounds: function(dimension) {
+    _makeNormalColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
             groupWidth = (dimension.width / groupValues.length),
             barWidth = groupWidth / (groupValues[0].length + 1),

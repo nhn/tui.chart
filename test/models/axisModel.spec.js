@@ -136,13 +136,13 @@ describe('test axis model', function() {
         });
 
         it('_getComparingValue', function() {
-            var value = axisModel._getComparingValue({
+            var value = axisModel._getComparingValue(10, 90, {
                 scale: {
                     min: 0,
                     max: 80
                 },
                 step: 20
-            }, 10, 90);
+            });
             expect(value).toEqual(20);
         });
 

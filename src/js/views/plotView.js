@@ -101,18 +101,18 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
     _makeLineHtml: function(params, positions) {
         var template = plotTemplate.TPL_PLOT_LINE,
             lineHtml = ne.util.map(params.positions, function(position) {
-            var cssTexts = [
-                    this.concatStr(params.positionType, ':', position, 'px'),
-                    this.concatStr(params.sizeType, ':', params.size, 'px')
-                ], data;
+                var cssTexts = [
+                        this.concatStr(params.positionType, ':', position, 'px'),
+                        this.concatStr(params.sizeType, ':', params.size, 'px')
+                    ], data;
 
-            if (params.lineColor) {
-                cssTexts.push(this.concatStr('background-color:', params.lineColor));
-            }
+                if (params.lineColor) {
+                    cssTexts.push(this.concatStr('background-color:', params.lineColor));
+                }
 
-            data = {className: params.className, cssText: cssTexts.join(';')};
-            return template(data);
-        }, this).join('');
+                data = {className: params.className, cssText: cssTexts.join(';')};
+                return template(data);
+            }, this).join('');
         return lineHtml;
     }
 });

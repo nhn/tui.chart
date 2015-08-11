@@ -22,18 +22,47 @@ describe('test series model', function() {
             seriesModel = new SeriesModel();
         });
 
-        it('_makePercentValues', function() {
-            var result = seriesModel._makePercentValues(groupValues, scale);
+        it('_makeNormalPercentValues', function() {
+            var result = seriesModel._makeNormalPercentValues({
+                values: groupValues,
+                scale: scale
+            });
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
         it('_makeNormalStackedPercentValues', function() {
-            var result = seriesModel._makeNormalStackedPercentValues(groupValues2, scale);
+            var result = seriesModel._makeNormalStackedPercentValues({
+                values: groupValues2,
+                scale: scale
+            });
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
 
         it('_makePercentStackedPercentValues', function() {
-            var result = seriesModel._makePercentStackedPercentValues(groupValues2, scale);
+            var result = seriesModel._makePercentStackedPercentValues({
+                values: groupValues2,
+                scale: scale
+            });
+            expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+        });
+
+        it('_makePercentValues', function() {
+            var result = seriesModel._makePercentValues({
+                values: groupValues,
+                scale: scale
+            });
+            expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+
+            result = seriesModel._makePercentValues({
+                values: groupValues2,
+                scale: scale
+            }, 'normal');
+            expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+
+            result = seriesModel._makePercentValues({
+                values: groupValues2,
+                scale: scale
+            }, 'percent');
             expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
 
@@ -95,10 +124,10 @@ describe('test series model', function() {
             ]);
         });
 
-        it('makeNormalColumnBounds', function() {
+        it('_makeNormalColumnBounds', function() {
             var bounds;
             seriesModel.percentValues = [[0.25], [0.5]];
-            bounds = seriesModel.makeNormalColumnBounds({
+            bounds = seriesModel._makeNormalColumnBounds({
                 width: 200,
                 height: 400
             });
@@ -172,7 +201,7 @@ describe('test series model', function() {
                 formatValues: groupValues,
                 scale: scale
             });
-
+console.log(seriesModel);
             expect(seriesModel.markers).toEqual(groupValues);
             expect(seriesModel.percentValues).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });

@@ -63,22 +63,56 @@ var zip = function() {
 };
 
 /**
- * Pick min number from number array.
- * @param {array.<number>} arr number array
- * @returns {number} result array
+ * Pick minimum value from value array.
+ * @param {array} arr value array
+ * @param {function} condition condition function
+ * @param {object} context target context
+ * @returns {*} minimum value
  */
-var min = function(arr) {
-    var result = Math.min.apply(null, arr);
+var min = function(arr, condition, context) {
+    var result, minValue, rest;
+    if (!condition) {
+        condition = function(item) {
+            return item;
+        };
+    }
+    result = arr[0];
+    minValue = condition.call(context, result);
+    rest = arr.slice(1);
+    ne.util.forEachArray(rest, function(item) {
+        var compareValue = condition.call(context, item);
+        if (compareValue < minValue) {
+            minValue = compareValue;
+            result = item;
+        }
+    });
     return result;
 };
 
 /**
- * Pick max number from number array.
- * @param {array.<number>} arr number array
- * @returns {number} result array
+ * Pick maximum value from value array.
+ * @param {array} arr value array
+ * @param {function} condition condition function
+ * @param {object} context target context
+ * @returns {*} maximum value
  */
-var max = function(arr) {
-    var result = Math.max.apply(null, arr);
+var max = function(arr, condition, context) {
+    var result, maxValue, rest;
+    if (!condition) {
+        condition = function(item) {
+            return item;
+        };
+    }
+    result = arr[0];
+    maxValue = condition.call(context, result);
+    rest = arr.slice(1);
+    ne.util.forEachArray(rest, function(item) {
+        var compareValue = condition.call(context, item);
+        if (compareValue > maxValue) {
+            maxValue = compareValue;
+            result = item;
+        }
+    });
     return result;
 };
 

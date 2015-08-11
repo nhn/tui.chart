@@ -131,7 +131,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
      * Set value type axis data.
      * @param {object} data axis setting data.
-     *      @param {array.<array.<number>>} data.groupValues chart values
+     *      @param {array.<array.<number>>} data.values chart values
      *      @param {{width:number, height:number}} data.chartDimension chart dimension
      *      @param {array.<function>} data.formatFunctions format functions
      *      @param {string} data.stacked stacked option
@@ -164,7 +164,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
      * To make values.
      * @param {array.<number>} groupValues group values
-     * @param {boolean} stacked whether stacked or not.
+     * @param {string} stacked stacked option.
      * @returns {array.<number>} values
      * @private
      */
@@ -213,13 +213,13 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Get comparing value.
-     * @param {{scale: {min: number, max: number}, step: number}} tickInfo tick info
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
+     * @param {{scale: {min: number, max: number}, step: number}} tickInfo tick info
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(tickInfo, min, max) {
+    _getComparingValue: function(min, max, tickInfo) {
         var diffMax = abs(tickInfo.scale.max - max),
             diffMin = abs(min - tickInfo.scale.min),
             weight = Math.pow(10, ne.util.lengthAfterPoint(tickInfo.step));
@@ -235,17 +235,8 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _selectTickInfo: function(min, max, candidates) {
-        var tickInfo = candidates[0],
-            rest = candidates.slice(1),
-            minValue = this._getComparingValue(tickInfo, min, max);
-
-        ne.util.forEachArray(rest, function(info) {
-            var compareValue = this._getComparingValue(info, min, max);
-            if (minValue > compareValue) {
-                tickInfo = info;
-                minValue = compareValue;
-            }
-        }, this);
+        var getComparingValue = ne.util.bind(this._getComparingValue, this, min, max),
+            tickInfo = ne.util.min(candidates, getComparingValue);
         return tickInfo;
     },
 
