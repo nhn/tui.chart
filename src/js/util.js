@@ -63,22 +63,56 @@ var zip = function() {
 };
 
 /**
- * Pick min number from number array.
- * @param {array.<number>} arr number array
- * @returns {number} result array
+ * Pick minimum value from value array.
+ * @param {array} arr value array
+ * @param {function} condition condition function
+ * @param {object} context target context
+ * @returns {*} minimum value
  */
-var min = function(arr) {
-    var result = Math.min.apply(null, arr);
+var min = function(arr, condition, context) {
+    var result, minValue, rest;
+    if (!condition) {
+        condition = function(item) {
+            return item;
+        };
+    }
+    result = arr[0];
+    minValue = condition.call(context, result);
+    rest = arr.slice(1);
+    ne.util.forEachArray(rest, function(item) {
+        var compareValue = condition.call(context, item);
+        if (compareValue < minValue) {
+            minValue = compareValue;
+            result = item;
+        }
+    });
     return result;
 };
 
 /**
- * Pick max number from number array.
- * @param {array.<number>} arr number array
- * @returns {number} result array
+ * Pick maximum value from value array.
+ * @param {array} arr value array
+ * @param {function} condition condition function
+ * @param {object} context target context
+ * @returns {*} maximum value
  */
-var max = function(arr) {
-    var result = Math.max.apply(null, arr);
+var max = function(arr, condition, context) {
+    var result, maxValue, rest;
+    if (!condition) {
+        condition = function(item) {
+            return item;
+        };
+    }
+    result = arr[0];
+    maxValue = condition.call(context, result);
+    rest = arr.slice(1);
+    ne.util.forEachArray(rest, function(item) {
+        var compareValue = condition.call(context, item);
+        if (compareValue > maxValue) {
+            maxValue = compareValue;
+            result = item;
+        }
+    });
     return result;
 };
 
@@ -100,11 +134,11 @@ var any = function(arr, condition) {
 };
 
 /**
- * Get under point length.
+ * Get after point length.
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var underPointLength = function(value) {
+var lengthAfterPoint = function(value) {
     var valueArr = (value + '').split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -115,9 +149,9 @@ var underPointLength = function(value) {
  * @returns {number} multiple num
  */
 var findMultipleNum = function() {
-    var args = Array.prototype.slice.call(arguments),
+    var args = [].slice.call(arguments),
         underPointLens = ne.util.map(args, function(value) {
-            return ne.util.underPointLength(value);
+            return ne.util.lengthAfterPoint(value);
         }),
         underPointLen = ne.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
@@ -179,16 +213,30 @@ var division = function(a, b) {
     return (a * multipleNum) / (b * multipleNum);
 };
 
+/**
+ * Sum.
+ * @param {array.<number>} values target values
+ * @returns {number} result value
+ */
+var sum = function(values) {
+    var copyArr = values.slice();
+    copyArr.unshift(0);
+    return ne.util.reduce(copyArr, function(base, add) {
+        return parseFloat(base) + parseFloat(add);
+    });
+};
+
 ne.util.range = range;
 ne.util.pluck = pluck;
 ne.util.zip = zip;
 ne.util.min = min;
 ne.util.max = max;
 ne.util.any = any;
-ne.util.underPointLength = underPointLength;
+ne.util.lengthAfterPoint = lengthAfterPoint;
 ne.util.mod = mod;
 ne.util.findMultipleNum = findMultipleNum;
 ne.util.addition = addition;
 ne.util.subtraction = subtraction;
 ne.util.multiplication = multiplication;
 ne.util.division = division;
+ne.util.sum = sum;

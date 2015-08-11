@@ -179,22 +179,23 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
 
     /**
      * Calculate tooltip position of vertical type chart
-     * @param {{bound: object, isVertical: boolean}} data graph information
-     * @param {{width: number, height: number}} dimension tooltip dimension
-     * @param {string} positionOption position option (ex: 'left top')
+     * @param {object} params parameters
+     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateVerticalPosition: function(data, dimension, positionOption) {
-        var bound = data.bound,
-            minusWidth = dimension.width - (bound.width || 0),
+    _calculateVerticalPosition: function(params) {
+        var bound = params.data.bound,
+            minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : TOOLTIP_GAP,
+            positionOption = params.positionOption || '',
+            tooltipHeight = params.dimension.height,
             result = {};
 
-        positionOption = positionOption || '';
-
         result.left = bound.left + (HIDDEN_WIDTH * 2);
-        result.top = bound.top - dimension.height;
+        result.top = bound.top - tooltipHeight;
 
         if (positionOption.indexOf('left') > -1) {
             result.left -= minusWidth + lineGap;
@@ -205,9 +206,9 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
         }
 
         if (positionOption.indexOf('bottom') > -1) {
-            result.top += dimension.height - HIDDEN_WIDTH + lineGap;
+            result.top += tooltipHeight - HIDDEN_WIDTH + lineGap;
         } else if (positionOption.indexOf('middle') > -1) {
-            result.top += dimension.height / 2;
+            result.top += tooltipHeight / 2;
         } else {
             result.top -= TOOLTIP_GAP + HIDDEN_WIDTH;
         }
@@ -217,24 +218,27 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
 
     /**
      * Calculate tooltip position of bar chart
-     * @param {{bound: object, isVertical: boolean}} data graph information
-     * @param {{width: number, height: number}} dimension tooltip dimension
-     * @param {string} positionOption position option (ex: 'left top')
+     * @param {object} params parameters
+     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateBarPosition: function(data, dimension, positionOption) {
-        var bound = data.bound,
-            minusHeight = dimension.height - (bound.height || 0),
+    _calculateBarPosition: function(params) {
+        var bound = params.data.bound,
+            minusHeight = params.dimension.height - (bound.height || 0),
+            positionOption = params.positionOption || '',
+            tooltipWidth = params.dimension.width,
             result = {};
 
-        result.left = bound.width;
+        result.left = bound.left + bound.width;
         result.top = bound.top;
 
         if (positionOption.indexOf('left') > -1) {
-            result.left -= dimension.width;
+            result.left -= tooltipWidth;
         } else if (positionOption.indexOf('center') > -1) {
-            result.left -= dimension.width / 2;
+            result.left -= tooltipWidth / 2;
         } else {
             result.left += TOOLTIP_GAP;
         }
@@ -251,18 +255,20 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
 
     /**
      * Calculate tooltip position.
-     * @param {{bound: object, isVertical: boolean}} data graph information
-     * @param {{width: number, height: number}} dimension tooltip dimension
-     * @param {string} positionOption position option (ex: 'left top')
+     * @param {object} params parameters
+     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
+     * @private
      */
-    calculatePosition: function(data, dimension, positionOption) {
+    _calculatePosition: function(params) {
         var result = {};
 
-        if (data.isVertical) {
-            result = this._calculateVerticalPosition(data, dimension, positionOption);
+        if (params.data.isVertical) {
+            result = this._calculateVerticalPosition(params);
         } else {
-            result = this._calculateBarPosition(data, dimension, positionOption);
+            result = this._calculateBarPosition(params);
         }
         return result;
     },
@@ -277,6 +283,7 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
                 left: 0,
                 top: 0
             }, this.model.options.addPosition),
+            positionOption = this.model.options.position || this.model.defaultPosition,
             dimension, position;
 
         if (this.showedId) {
@@ -290,7 +297,12 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
             width: elTooltip.offsetWidth,
             height: elTooltip.offsetHeight
         };
-        position = this.calculatePosition(data, dimension, this.model.options.position);
+
+        position = this._calculatePosition({
+            data: data,
+            dimension: dimension,
+            positionOption: positionOption || ''
+        });
 
         elTooltip.style.cssText = [
             this.concatStr('left:', position.left + addPosition.left, 'px'),

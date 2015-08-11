@@ -143,7 +143,7 @@
             chart: {
                 width: 500,
                 height: 400,
-                title: 'Line Chart'
+                title: 'Stacked Bar Chart'
             },
             vAxis: {
                 title: 'Vertical Axis'
@@ -151,15 +151,14 @@
             hAxis: {
                 title: 'Horizontal Axis'
             },
+            series: {
+                stacked: 'percent'
+            },
             tooltip: {
-                position: 'right top',
-                addPosition: {
-                    top: -10
-                },
                 suffix: 'unit'
             }
         };
-    chart.lineChart(elChartArea, data, options);
+    chart.columnChart(elChartArea, data, options);
 
     var onClick = function() {
         var type = document.getElementById('type').value,

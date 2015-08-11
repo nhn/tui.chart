@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    chartConst = require('../const.js');
 
 var HIDDEN_WIDTH = 1;
 
@@ -23,9 +24,13 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
      *   scale: {min: number, max: number},
      *   isVertical: boolean
      * }} data series data
-     * @params {{hasDot: boolean}} options series options
+     * @param {{hasDot: boolean, stacked: string}} options series options
      */
     init: function(data, options) {
+        /**
+         * Series options
+         * @type {{hasDot: boolean, stacked: string}}
+         */
         this.options = options = options || {};
         /**
          * Series makers
@@ -67,7 +72,7 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
         }
 
         this.markers = data.formatValues;
-        this.percentValues = this._makePercentValues(data.values, data.scale);
+        this.percentValues = this._makePercentValues(data, this.options.stacked);
         this.isVertical = data.isVertical;
         this.tooltipPosition = data.tooltipPositoin;
     },
@@ -88,33 +93,110 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
 
     /**
      * To make percent value.
-     * @param {array.<array.<number>>} values axis percent values
-     * @param {{min:number, max:number}} scale min, max scale
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {string} stacked stacked option
      * @returns {array.<array.<number>>} percent values
      * @private
      */
-    _makePercentValues: function(values, scale) {
-        var min = scale.min,
-            max = scale.max,
-            percentValues = this._convertValues(values, function(value) {
-                return (value - min) / (max - min);
+    _makePercentValues: function(data, stacked) {
+        var result;
+
+        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
+            result = this._makeNormalStackedPercentValues(data);
+        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
+            result = this._makePercentStackedPercentValues(data);
+        } else {
+            result = this._makeNormalPercentValues(data);
+        }
+
+        return result;
+    },
+
+    /**
+     * To make percent values about normal stacked option.
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @returns {array} percent values about normal stacked option.
+     * @private
+     */
+    _makeNormalStackedPercentValues: function(data) {
+        var min = data.scale.min,
+            max = data.scale.max,
+            distance = max - min,
+            percentValues = ne.util.map(data.values, function(values) {
+                var plusValues = ne.util.filter(values, function(value) {
+                        return value > 0;
+                    }),
+                    sum = ne.util.sum(plusValues),
+                    groupPercent = (sum - min) / distance;
+                return ne.util.map(values, function(value) {
+                    return groupPercent * (value / sum);
+                });
+            });
+        return percentValues;
+    },
+
+    /**
+     * To make percent values about percent stacked option.
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @returns {array} percent values about percent stacked option
+     * @private
+     */
+    _makePercentStackedPercentValues: function(data) {
+        var percentValues = ne.util.map(data.values, function(values) {
+                var plusValues = ne.util.filter(values, function(value) {
+                        return value > 0;
+                    }),
+                    sum = ne.util.sum(plusValues);
+                return ne.util.map(values, function(value) {
+                    return value / sum;
+                });
+            });
+        return percentValues;
+    },
+
+    /**
+     * To make normal percent value.
+     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @returns {array.<array.<number>>} percent values
+     * @private
+     */
+    _makeNormalPercentValues: function(data) {
+        var min = data.scale.min,
+            max = data.scale.max,
+            distance = max - min,
+            percentValues = this._convertValues(data.values, function(value) {
+                return (value - min) / distance;
             });
         return percentValues;
     },
 
     /**
      * To make bounds of column chart.
-     * @param {{width: number, height:nunber}} dimension column chart dimension
+     * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      */
     makeColumnBounds: function(dimension) {
+        if (!this.options.stacked) {
+            return this._makeNormalColumnBounds(dimension);
+        } else {
+            return this._makeStackedColumnBounds(dimension);
+        }
+    },
+
+    /**
+     * To make bounds of normal column chart.
+     * @param {{width: number, height:number}} dimension column chart dimension
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeNormalColumnBounds: function(dimension) {
         var groupValues = this.percentValues,
-            maxBarWidth = (dimension.width / groupValues.length),
-            barWidth = parseInt(maxBarWidth / (groupValues[0].length + 1), 10),
+            groupWidth = (dimension.width / groupValues.length),
+            barWidth = groupWidth / (groupValues[0].length + 1),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingLeft = (maxBarWidth * groupIndex) + (barWidth / 2);
+                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
-                    var barHeight = parseInt(value * dimension.height, 10);
+                    var barHeight = value * dimension.height;
                     return {
                         top: dimension.height - barHeight + HIDDEN_WIDTH,
                         left: paddingLeft + (barWidth * index),
@@ -127,24 +209,96 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
     },
 
     /**
+     * To make bounds of stacked column chart.
+     * @param {{width: number, height:number}} dimension column chart dimension
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeStackedColumnBounds: function(dimension) {
+        var groupValues = this.percentValues,
+            groupWidth = (dimension.width / groupValues.length),
+            barWidth = groupWidth / 2,
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2),
+                    top = 0;
+                return ne.util.map(values, function (value) {
+                    var height = value * dimension.height,
+                        bound = {
+                            top: dimension.height - height - top,
+                            left: paddingLeft,
+                            width: barWidth,
+                            height: height
+                        };
+                    top += height;
+                    return bound;
+                }, this);
+            });
+        return bounds;
+    },
+
+    /**
      * To make bounds of bar chart.
-     * @param {{width: number, height:nunber}} dimension bar chart dimension
+     * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      */
     makeBarBounds: function(dimension, hiddenWidth) {
+        if (!this.options.stacked) {
+            return this._makeNormalBarBounds(dimension, hiddenWidth);
+        } else {
+            return this._makeStackedBarBounds(dimension, hiddenWidth);
+        }
+    },
+
+    /**
+     * To make bounds of normal bar chart.
+     * @param {{width: number, height:number}} dimension bar chart dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeNormalBarBounds: function(dimension, hiddenWidth) {
         var groupValues = this.percentValues,
-            maxBarHeight = (dimension.height / groupValues.length),
-            barHeight = parseInt(maxBarHeight / (groupValues[0].length + 1), 10),
+            groupHeight = (dimension.height / groupValues.length),
+            barHeight = groupHeight / (groupValues[0].length + 1),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingTop = (maxBarHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
                     return {
                         top: paddingTop + (barHeight * index),
                         left: -HIDDEN_WIDTH,
-                        width: parseInt(value * dimension.width, 10),
+                        width: value * dimension.width,
                         height: barHeight
                     };
+                }, this);
+            });
+        return bounds;
+    },
+
+    /**
+     * To make bounds of stacked bar chart.
+     * @param {{width: number, height:number}} dimension bar chart dimension
+     * @param {number} hiddenWidth hidden width
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeStackedBarBounds: function(dimension, hiddenWidth) {
+        var groupValues = this.percentValues,
+            groupHeight = (dimension.height / groupValues.length),
+            barHeight = groupHeight / 2,
+            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
+                    left = -HIDDEN_WIDTH;
+                return ne.util.map(values, function (value) {
+                    var width = value * dimension.width,
+                        bound = {
+                            top: paddingTop,
+                            left: left,
+                            width: width,
+                            height: barHeight
+                        };
+                    left = left + width;
+                    return bound;
                 }, this);
             });
         return bounds;
@@ -170,14 +324,6 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                 });
             });
         return result;
-    },
-
-    makeBarTooltipBound: function(bound) {
-        var position = this.tooltipPosition;
-
-        if (position.indexOf('left')) {
-
-        }
     }
 });
 

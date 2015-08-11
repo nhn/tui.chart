@@ -14,6 +14,8 @@ module.exports = {
     DEFAULT_PLUGIN: 'raphael',
     DEFAULT_TICK_COLOR: 'black',
     DEFAULT_THEME_NAME: 'default',
+    STACKED_NORMAL_TYPE: 'normal',
+    STACKED_PERCENT_TYPE: 'percent',
     CHART_TYPE_BAR: 'bar',
     CHART_TYPE_LINE: 'line',
     BAR_TYPE_BAR: 'bar',

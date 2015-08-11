@@ -181,7 +181,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
         var max = 0;
 
         ne.util.forEachArray(values, function(value) {
-            var len = ne.util.underPointLength(value);
+            var len = ne.util.lengthAfterPoint(value);
             if (len > max) {
                 max = len;
             }

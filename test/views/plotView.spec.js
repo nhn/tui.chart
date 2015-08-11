@@ -25,7 +25,13 @@ describe('test Plot View', function() {
             positionType = 'left',
             sizeType = 'height',
             plotView = new PlotView(null, theme),
-            resultHtml = plotView._makeLineHtml(positions, width, className, positionType, sizeType),
+            resultHtml = plotView._makeLineHtml({
+                positions: positions,
+                size: width,
+                className: className,
+                positionType: positionType,
+                sizeType: sizeType
+            }),
             compareHtml = '<div class="ne-chart-plot-line vertical" style="left:10px;height:200px"></div>' +
                 '<div class="ne-chart-plot-line vertical" style="left:20px;height:200px"></div>' +
                 '<div class="ne-chart-plot-line vertical" style="left:30px;height:200px"></div>' +

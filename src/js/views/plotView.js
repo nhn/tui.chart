@@ -64,8 +64,22 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
             theme = this.theme,
             lineHtml = '';
 
-        lineHtml += this._makeLineHtml(hPositions, dimension.height, 'vertical', 'left', 'height', theme.lineColor);
-        lineHtml += this._makeLineHtml(vPositions, dimension.width, 'horizontal', 'bottom', 'width', theme.lineColor);
+        lineHtml += this._makeLineHtml({
+            positions: hPositions,
+            size: dimension.height,
+            className: 'vertical',
+            positionType: 'left',
+            sizeType: 'height',
+            lineColor: theme.lineColor
+        });
+        lineHtml += this._makeLineHtml({
+            positions: vPositions,
+            size: dimension.width,
+            className: 'horizontal',
+            positionType: 'bottom',
+            sizeType: 'width',
+            lineColor: theme.lineColor
+        });
 
         this.el.innerHTML = lineHtml;
 
@@ -74,30 +88,31 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
 
     /**
      * To make html of plot line.
-     * @param {array.<object>} positions positions
-     * @param {number} size width or height
-     * @param {string} className line className
-     * @param {string} positionType position type (left or bottom)
-     * @param {string} sizeType size type (size or height)
-     * @param {string} lineColor line color
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions positions
+     *      @param {number} params.size width or height
+     *      @param {string} params.className line className
+     *      @param {string} params.positionType position type (left or bottom)
+     *      @param {string} params.sizeType size type (size or height)
+     *      @param {string} params.lineColor line color
      * @returns {string} html
      * @private
      */
-    _makeLineHtml: function(positions, size, className, positionType, sizeType, lineColor) {
+    _makeLineHtml: function(params, positions) {
         var template = plotTemplate.TPL_PLOT_LINE,
-            lineHtml = ne.util.map(positions, function(position) {
-            var cssTexts = [
-                    this.concatStr(positionType, ':', position, 'px'),
-                    this.concatStr(sizeType, ':', size, 'px')
-                ], data;
+            lineHtml = ne.util.map(params.positions, function(position) {
+                var cssTexts = [
+                        this.concatStr(params.positionType, ':', position, 'px'),
+                        this.concatStr(params.sizeType, ':', params.size, 'px')
+                    ], data;
 
-            if (lineColor) {
-                cssTexts.push(this.concatStr('background-color:', lineColor));
-            }
+                if (params.lineColor) {
+                    cssTexts.push(this.concatStr('background-color:', params.lineColor));
+                }
 
-            data = {className: className, cssText: cssTexts.join(';')};
-            return template(data);
-        }, this).join('');
+                data = {className: params.className, cssText: cssTexts.join(';')};
+                return template(data);
+            }, this).join('');
         return lineHtml;
     }
 });
