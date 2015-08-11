@@ -50,22 +50,43 @@ describe('test Axis View', function() {
 
     it('test _makeLabelCssTexts', function() {
         var axisView = new AxisView(),
-            cssTexts = axisView._makeLabelCssTexts(true, true, 100);
+            cssTexts = axisView._makeLabelCssTexts({
+                isVertical: true,
+                isLabelAxis: true,
+                labelWidth: 100
+            });
         expect(cssTexts).toEqual(['height:100px', 'line-height:100px']);
 
-        cssTexts = axisView._makeLabelCssTexts(true, false, 100);
+        cssTexts = axisView._makeLabelCssTexts({
+            isVertical: true,
+            isLabelAxis: false,
+            labelWidth: 100
+        });
         expect(cssTexts).toEqual([]);
 
-        cssTexts = axisView._makeLabelCssTexts(false, true, 100);
+        cssTexts = axisView._makeLabelCssTexts({
+            isVertical: false,
+            isLabelAxis: true,
+            labelWidth: 100
+        });
         expect(cssTexts).toEqual(['width:100px']);
 
-        cssTexts = axisView._makeLabelCssTexts(false, false, 100);
+        cssTexts = axisView._makeLabelCssTexts({
+            isVertical: false,
+            isLabelAxis: false,
+            labelWidth: 100
+        });
         expect(cssTexts).toEqual(['width:100px']);
     });
 
     it('test _makeLabelsHtml', function() {
         var axisView = new AxisView(),
-            labelsHtml = axisView._makeLabelsHtml([10, 20, 30], ['label1', 'label2', 'label3'], 'left', []),
+            labelsHtml = axisView._makeLabelsHtml({
+                positions: [10, 20, 30],
+                labels: ['label1', 'label2', 'label3'],
+                posType: 'left',
+                cssTexts: []
+            }),
             compareHtml = '<div class="ne-chart-label" style="left:10px">label1</div>' +
                 '<div class="ne-chart-label" style="left:20px">label2</div>' +
                 '<div class="ne-chart-label" style="left:30px">label3</div>';

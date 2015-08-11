@@ -102,6 +102,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
             elTickArea = dom.createElement('DIV', 'ne-chart-tick-area'),
             isVertical = model.isVertical,
             posType = isVertical ? 'bottom' : 'left',
+            borderColorType = isVertical ? 'borderRightColor' : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position) {
                 var cssText = [
@@ -112,25 +113,9 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
             }, this).join('');
 
         elTickArea.innerHTML = ticksHtml;
-
-        this._renderTickBorderColor(elTickArea, tickColor, isVertical);
+        elTickArea.style[borderColorType] = tickColor;
 
         return elTickArea;
-    },
-
-    /**
-     * Render border color of tick.
-     * @param {HTMLElement} elTickArea tick area element
-     * @param {string} tickColor tick color
-     * @param {boolean} isVertical Is vertical?
-     * @private
-     */
-    _renderTickBorderColor: function(elTickArea, tickColor, isVertical) {
-        if (isVertical) {
-            elTickArea.style.borderRightColor = tickColor;
-        } else {
-            elTickArea.style.borderTopColor = tickColor;
-        }
     },
 
     /**
@@ -149,12 +134,21 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
             isVertical = model.isVertical,
             isLabelAxis = model.isLabelAxis(),
             posType = isVertical ? (model.isLabelAxis() ? 'top' : 'bottom') : 'left',
-            cssTexts = this._makeLabelCssTexts(isVertical, isLabelAxis, labelWidth),
+            cssTexts = this._makeLabelCssTexts({
+                isVertical: isVertical,
+                isLabelAxis: isLabelAxis,
+                labelWidth: labelWidth
+            }),
             elLabelArea = dom.createElement('DIV', 'ne-chart-label-area'),
             labelsHtml, titleAreaWidth, areaCssText;
 
         positions.length = labels.length;
-        labelsHtml = this._makeLabelsHtml(positions, labels, posType, cssTexts);
+        labelsHtml = this._makeLabelsHtml({
+            positions: positions,
+            labels: labels,
+            posType: posType,
+            cssTexts: cssTexts
+        });
         elLabelArea.innerHTML = labelsHtml;
         areaCssText = this.makeFontCssText(theme.label);
 
@@ -164,7 +158,13 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
         }
 
         elLabelArea.style.cssText = areaCssText;
-        this._changeLabelAreaPosition(elLabelArea, isVertical, isLabelAxis, theme.label, labelWidth);
+        this._changeLabelAreaPosition({
+            elLabelArea: elLabelArea,
+            isVertical: isVertical,
+            isLabelAxis: isLabelAxis,
+            theme: theme.label,
+            labelWidth: labelWidth
+        });
 
         return elLabelArea;
     },
@@ -183,20 +183,21 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
 
     /**
      * To make cssTexts of label.
-     * @param {boolean} isVertical Is vertical?
-     * @param {boolean} isLabelAxis Is label axis?
-     * @param {number} labelWidth label width or height
+     * @param {object} params parameter
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {boolean} params.isLabelAxis whether label axis or not
+     *      @param {number} params.labelWidth label width or height
      * @returns {string[]} cssTexts
      * @private
      */
-    _makeLabelCssTexts: function(isVertical, isLabelAxis, labelWidth) {
+    _makeLabelCssTexts: function(params) {
         var cssTexts = [];
 
-        if (isVertical && isLabelAxis) {
-            cssTexts.push(this.concatStr('height:', labelWidth, 'px'));
-            cssTexts.push(this.concatStr('line-height:', labelWidth, 'px'));
-        } else if (!isVertical) {
-            cssTexts.push(this.concatStr('width:', labelWidth, 'px'));
+        if (params.isVertical && params.isLabelAxis) {
+            cssTexts.push(this.concatStr('height:', params.labelWidth, 'px'));
+            cssTexts.push(this.concatStr('line-height:', params.labelWidth, 'px'));
+        } else if (!params.isVertical) {
+            cssTexts.push(this.concatStr('width:', params.labelWidth, 'px'));
         }
 
         return cssTexts;
@@ -204,23 +205,24 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
 
     /**
      * To make html of label.
-     * @param {array.<object>} positions label position array
-     * @param {string[]} labels label array
-     * @param {string} posType position type (left or bottom)
-     * @param {string[]} cssTexts css array
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions label position array
+     *      @param {string[]} params.labels label array
+     *      @param {string} params.posType position type (left or bottom)
+     *      @param {string[]} params.cssTexts css array
      * @returns {string} html
      * @private
      */
-    _makeLabelsHtml: function(positions, labels, posType, cssTexts) {
+    _makeLabelsHtml: function(params) {
         var template = axisTemplate.TPL_AXIS_LABEL,
-            labelsHtml = ne.util.map(positions, function(position, index) {
-                var labelCssTexts = cssTexts.slice(),
+            labelsHtml = ne.util.map(params.positions, function(position, index) {
+                var labelCssTexts = params.cssTexts.slice(),
                     html;
 
-                labelCssTexts.push(this.concatStr(posType, ':', position, 'px'));
+                labelCssTexts.push(this.concatStr(params.posType, ':', position, 'px'));
                 html = template({
                     cssText: labelCssTexts.join(';'),
-                    label: labels[index]
+                    label: params.labels[index]
                 });
                 return html;
             }, this).join('');
@@ -230,25 +232,26 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
 
     /**
      * Change position of label area.
-     * @param {HTMLElement} elLabelArea label area element
-     * @param {boolean} isVertical is vertical
-     * @param {boolean} isLabelAxis is label axis
-     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-     * @param {number} labelWidth label width or height
+     * @param {object} params parameter
+     *      @param {HTMLElement} params.elLabelArea label area element
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {boolean} params.isLabelAxis whether label axis or not
+     *      @param {{fontSize: number, fontFamily: string, color: string}} params.theme label theme
+     *      @param {number} params.labelWidth label width or height
      * @private
      */
-    _changeLabelAreaPosition: function(elLabelArea, isVertical, isLabelAxis, theme, labelWidth) {
+    _changeLabelAreaPosition: function(params) {
         var labelHeight;
 
-        if (isLabelAxis) {
+        if (params.isLabelAxis) {
             return;
         }
 
-        if (isVertical) {
-            labelHeight = this.getRenderedLabelHeight('ABC', theme);
-            elLabelArea.style.top = this.concatStr(parseInt(labelHeight / 2, 10), 'px');
+        if (params.isVertical) {
+            labelHeight = this.getRenderedLabelHeight('ABC', params.theme);
+            params.elLabelArea.style.top = this.concatStr(parseInt(labelHeight / 2, 10), 'px');
         } else {
-            elLabelArea.style.left = this.concatStr('-', parseInt(labelWidth / 2, 10), 'px');
+            params.elLabelArea.style.left = this.concatStr('-', parseInt(params.labelWidth / 2, 10), 'px');
         }
     },
 
