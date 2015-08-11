@@ -7,7 +7,8 @@
 
 'use strict';
 
-var Model = require('./model.js');
+var Model = require('./model.js'),
+    chartConst = require('../const.js');
 
 var AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
@@ -28,12 +29,22 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @constructs AxisModel
      * @extends Model
      * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
-     * @param {{title: string, min: number}} options axis options
+     * @param {{title: string, min: number, max: number}} options axis options
      */
     init: function(data, options) {
         options = options || {};
 
+        /**
+         * Axis options
+         * @type {{title: string, min: number, max: number}}
+         */
         this.options = options;
+
+        /**
+         * Chart type
+         * @type {string}
+         */
+        this.chartType = '';
 
         /**
          * Axis title
@@ -83,6 +94,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      */
     _setData: function(data) {
         this.isVertical = data.isVertical;
+        this.chartType = data.chartType;
         if (data.labels) {
             this._setLabelAxisData(data.labels);
         } else if (data.values) {
@@ -113,58 +125,12 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             values = apc.apply([], groupValues), // flatten array
             min = ne.util.min(values),
             max = ne.util.max(values),
-            tickInfo = this._getTickInfo(min, max, chartDimension, options.min),
-            step = tickInfo.step,
-            scale, labels;
+            tickInfo = this._getTickInfo(min, max, chartDimension, options);
 
-        tickInfo = this._correctTickInfo(max, min, tickInfo, step, options.min);
-        scale = tickInfo.scale;
         this.tickCount = tickInfo.tickCount;
-        labels = this._formatLabels(tickInfo.labels, formatFunctions);
+        this.labels = this._formatLabels(tickInfo.labels, formatFunctions);
+        this.scale = tickInfo.scale;
         this.axisType = AXIS_TYPE_VALUE;
-        this.labels = labels;
-        this.scale = scale;
-    },
-
-    /**
-     * Correct tick info.
-     * @param {number} userMax user max
-     * @param {number} userMin user min
-     * @param {{tickCount: number, scale: object}} tickInfo tick info
-     * @param {number} step step of increase axis
-     * @param {number} optionMin option min
-     * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
-     * @private
-     */
-    _correctTickInfo: function(userMax, userMin, tickInfo, step, optionMin) {
-        var ticks = ne.util.range(1, tickInfo.tickCount),
-            tickMax = tickInfo.scale.max,
-            tickMin = tickInfo.scale.min,
-            scale;
-
-        ne.util.forEachArray(ticks, function(tickIndex) {
-            var curMax = tickMax - (step * tickIndex),
-                curMin = tickMin + (step * tickIndex);
-
-            if (userMax >= curMax && userMin <= curMin) {
-                return false;
-            }
-
-            if (userMax < curMax) {
-                tickInfo.scale.max = curMax;
-            }
-
-            if (ne.util.isUndefined(optionMin) && userMin > curMin) {
-                tickInfo.scale.min = curMin;
-            }
-        });
-
-        scale = tickInfo.scale;
-        tickInfo.labels = ne.util.range(scale.min, scale.max, step);
-        tickInfo.labels.push(scale.max);
-        tickInfo.tickCount = tickInfo.labels.length;
-
-        return tickInfo;
     },
 
     /**
@@ -185,12 +151,13 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
     /**
      * Get candidate tick counts.
-     * @param {number} baseSize base size
+     * @param {{width: number, height: number}} chartDimension chat dimension
      * @returns {array.<number>} tick counts
      * @private
      */
-    _getCandidateTickCounts: function(baseSize) {
-        var start = parseInt(baseSize / MAX_PIXEL_STEP_SIZE, 10),
+    _getCandidateTickCounts: function(chartDimension) {
+        var baseSize = this._getBaseSize(chartDimension),
+            start = parseInt(baseSize / MAX_PIXEL_STEP_SIZE, 10),
             end = parseInt(baseSize / MIN_PIXEL_STEP_SIZE, 10) + 1,
             tickCounts = ne.util.range(start, end);
         return tickCounts;
@@ -199,16 +166,40 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     /**
      * Get comparing value.
      * @param {{min: number, max: number}} scale scale
+     * @param {number} step axis tick step
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(scale, min, max) {
-        var diffMax = scale.max - max,
-            diffMin = min - scale.min,
-            diffMinMax = Math.abs(diffMax - diffMin);
-        return diffMax + diffMin + diffMinMax;
+    _getComparingValue: function(scale, step, min, max) {
+        var diffMax = Math.abs(scale.max - max),
+            diffMin = Math.abs(min - scale.min),
+            weight = Math.pow(10, ne.util.underPointLength(step));
+        return (diffMax + diffMin) * weight;
+    },
+
+    /**
+     * Select tick info.
+     * @param {number} min minimum value of user data
+     * @param {number} max maximum value of user data
+     * @param {array.<object>} candidates tick info candidates
+     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} selected tick info
+     * @private
+     */
+    _selectTickInfo: function(min, max, candidates) {
+        var tickInfo = candidates[0],
+            rest = candidates.slice(1),
+            minValue = this._getComparingValue(tickInfo.scale, tickInfo.step, min, max);
+
+        ne.util.forEachArray(rest, function(info) {
+            var compareValue = this._getComparingValue(info.scale, info.step, min, max);
+            if (minValue > compareValue) {
+                tickInfo = info;
+                minValue = compareValue;
+            }
+        }, this);
+        return tickInfo;
     },
 
     /**
@@ -216,123 +207,122 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {{width: number, height: number}} chartDimension chat dimension
-     * @param {number} optionMin option.min
+     * @param {{min: number, max:number}} options axis options
      * @returns {{tickCount: number, scale: object}} tick info
      * @private
      */
-    _getTickInfo: function(min, max, chartDimension, optionMin) {
-        var baseSize = this._getBaseSize(chartDimension),
-            tickCounts = this._getCandidateTickCounts(baseSize),
-            isMinus = false,
-            tmp, candidates, result, rest, minValue;
-        if (min < 0 && max <= 0) {
-            isMinus = true;
-            tmp = min;
-            min = -max;
-            max = -tmp;
-        }
-
-        candidates = ne.util.map(tickCounts, function(tickCount) {
-            var scale = this._calculateScale(min, max, tickCount, optionMin),
-                step = this.getScaleStep(scale, tickCount);
-
-            if (isMinus) {
-                tmp = scale.min;
-                scale.min = -scale.max;
-                scale.max = -tmp;
-            } else if (min < 0) {
-                scale.max += (step - (Math.abs(scale.max) % step));
-                scale.min -= (step + (scale.min % step));
-                tickCount += 1;
-            }
-            return {tickCount: tickCount, scale: scale, step: step};
-        }, this);
-
-        result = candidates[0];
-        rest = candidates.slice(1);
-        minValue = this._getComparingValue(result.scale, min, max);
-
-        ne.util.forEachArray(rest, function(info) {
-            var compareValue = this._getComparingValue(info.scale, min, max);
-            if (minValue > compareValue) {
-                result = info;
-                minValue = compareValue;
-            }
-        }, this);
-
-        return result;
+    _getTickInfo: function(min, max, chartDimension, options) {
+        var intTypeInfo = this._makeIntegerTypeInfo(min, max, options),
+            tickCounts = options.tickCount ? [options.tickCount] : this._getCandidateTickCounts(chartDimension),
+            candidates = this._getTickInfoCandidates(intTypeInfo.min, intTypeInfo.max, tickCounts, intTypeInfo.options),
+            tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
+        tickInfo = this._makeOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
+        return tickInfo;
     },
 
     /**
-     * Multiple scale.
-     * @param {{min: number, max: number}} scale target scale
-     * @param {number} num multiple number
-     * @returns {{max: number, min: number}} multiplied scale
+     * To make integer type info
+     * @param {number} min minimum value of user data
+     * @param {number} max maximum value of user data
+     * @param {{min: number, max: number}} options axis options
+     * @returns {{min: number, max: number, options: {min: number, max: number}, divideNum: number}} integer type info
      * @private
      */
-    _multipleScale: function(scale, num) {
+    _makeIntegerTypeInfo: function(min, max, options) {
+        if (Math.abs(min) >= 1 || Math.abs(max) >= 1) {
+            return {
+                min: min,
+                max: max,
+                options: options,
+                divideNum: 1
+            };
+        }
+
+        var multipleNum = ne.util.findMultipleNum(min, max),
+            changeOptions = {};
+        if (options.min) {
+            changeOptions.min = options.min * multipleNum;
+        }
+
+        if (options.max) {
+            changeOptions.max = options.max * multipleNum;
+        }
+
         return {
-            max: scale.max * num,
-            min: scale.min * num
+            min: min * multipleNum,
+            max: max * multipleNum,
+            options: changeOptions,
+            divideNum: multipleNum
         };
     },
 
-    /**
-     * Divide scale
-     * @param {{min: number, max: number}} scale target scale
-     * @param {number} num divide number
-     * @returns {{max: number, min: number}} divided scale
-     * @private
-     */
-    _divideScale: function(scale, num) {
-        return {
-            max: scale.max / num,
-            min: scale.min / num
-        };
+    _makeOriginalTypeTickInfo: function(tickInfo, divideNum) {
+        if (divideNum === 1) {
+            return tickInfo;
+        }
+
+        tickInfo.step = ne.util.division(tickInfo.step, divideNum);
+        tickInfo.scale.min = ne.util.division(tickInfo.scale.min, divideNum);
+        tickInfo.scale.max = ne.util.division(tickInfo.scale.max, divideNum);
+        tickInfo.labels = ne.util.map(tickInfo.labels, function(label) {
+            console.log(label, divideNum);
+            return ne.util.division(label, divideNum);
+        });
+
+        return tickInfo;
     },
 
     /**
-     * Correct scale.
-     * @param {{min: number, max: number}} scale target scale
-     * @param {number} tickCount tick count
-     * @param {number} userMin minimum value of user data
-     * @param {number} userMax maximum value of user data
-     * @returns {{max: number, min: number}} corrected scale
+     * Normalize step.
+     * @param {number} step original step
+     * @returns {number} normalized step
      * @private
      */
-    _correctScale: function(scale, tickCount, userMin, userMax) {
-        var max = scale.max,
-            min = scale.min,
-            baseMax = ne.util.max([Math.abs(min), Math.abs(max)]),
-            divideCount = tickCount - 1,
-            modNumber = divideCount * 5,
-            diff, addMax, newScale;
-        if (baseMax < 1) {
-            newScale = this._correctScale(this._multipleScale(scale, 10), tickCount, userMin, userMax);
-            scale = this._divideScale(newScale, 10);
-            return scale;
+    _normalizeStep: function(step) {
+        var standard = 0,
+            normalized, mod;
+
+        if (step === 0) {
+            return step;
         }
-        if (baseMax < modNumber) {
-            if (min % 1 === 0) {
-                min += min < 0 ? 0.1 : -0.1;
+
+        ne.util.forEachArray([1, 2, 5, 10], function(num) {
+            if (step < num) {
+                if (num > 1) {
+                    standard = num;
+                }
+                return false;
+            } else if (num === 10) {
+                standard = 10;
             }
-            scale.min = Math.floor(min);
-        } else if (baseMax >= modNumber) {
-            if (userMin <= 0 && min % 5 === 0) {
-                scale.min -= 5;
-            } else {
-                scale.min = min - (min % 5);
-            }
-        }
-        diff = max - scale.min;
-        if (baseMax < modNumber) {
-            addMax = diff === 0 ? 0 : divideCount - (diff % divideCount);
+        });
+
+        if (standard < 1) {
+            normalized = this._normalizeStep(step * 10) * 0.1;
         } else {
-            addMax = diff === 0 ? 0 : modNumber - (diff % modNumber);
+            mod = ne.util.mod(step, standard);
+            normalized = ne.util.addition(step, (mod > 0 ? standard - mod : 0));
         }
+        return normalized;
+    },
 
-        scale.max = scale.max + addMax;
-        return scale;
+    /**
+     * Normalize min.
+     * @param {number} min original min
+     * @param {number} step tick step
+     * @returns {number} normalized min
+     * @private
+     */
+    _normalizeMin: function(min, step) {
+        var mod = ne.util.mod(min, step),
+            normalized;
+
+        if (mod === 0) {
+            normalized = min;
+        } else {
+            normalized = ne.util.subtraction(min, (min >= 0 ? mod : step + mod));
+        }
+        return normalized;
     },
 
     /**
@@ -340,14 +330,11 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
-     * @param {number} optionMin optional min value
      * @returns {{min: number, max: number}} scale axis scale
      * @private
      */
-    _calculateScale: function(min, max, tickCount, optionMin) {
-        var userMin = min,
-            userMax = max,
-            saveMin = 0,
+    _calculateScale: function(min, max) {
+        var saveMin = 0,
             scale = {},
             iodValue; // increase or decrease value;
 
@@ -358,25 +345,166 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         }
 
         iodValue = (max - min) / 20;
-        scale.max = max + iodValue;
+        scale.max = max + iodValue + saveMin;
 
-        if (!ne.util.isUndefined(optionMin)) {
-            if (optionMin > min) {
-                throw new Error('Option minValue can not be smaller than min.');
-            }
-            scale.min = optionMin;
-        } else if (max / 6 > min) {
-            scale.min = 0;
+        if (max / 6 > min) {
+            scale.min = 0 + saveMin;
         } else {
-            scale.min = min - iodValue;
+            scale.min = min - iodValue + saveMin;
+        }
+        return scale;
+    },
+
+    /**
+     * To minimize tick scale.
+     * @param {number} userMin user min
+     * @param {number} userMax user max
+     * @param {{tickCount: number, scale: object}} tickInfo tick info
+     * @param {{min: number, max:number}} options axis options
+     * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
+     * @private
+     */
+    _minimizeTickScale: function(userMin, userMax, tickInfo, options) {
+        var ticks = ne.util.range(1, tickInfo.tickCount),
+            step = tickInfo.step,
+            scale = tickInfo.scale,
+            tickMax = scale.max,
+            tickMin = scale.min,
+            isUndefinedMin = ne.util.isUndefined(options.min),
+            isUndefinedMax = ne.util.isUndefined(options.max),
+            labels;
+        ne.util.forEachArray(ticks, function(tickIndex) {
+            var curStep = (step * tickIndex),
+                curMin = tickMin + curStep,
+                curMax = tickMax - curStep;
+            if (userMin <= curMin && userMax >= curMax) {
+                return false;
+            }
+
+            if ((isUndefinedMin && userMin > curMin) ||
+                (!isUndefinedMin && options.min >= curMin)) {
+                scale.min = curMin;
+            }
+
+            if ((isUndefinedMin && userMax < curMax) ||
+                (!isUndefinedMax && options.max <= curMax)) {
+                scale.max = curMax;
+            }
+        });
+
+        labels = this._makeLabelsFromScale(scale, step);
+        tickInfo.labels = labels;
+        tickInfo.step = step;
+        tickInfo.tickCount = labels.length;
+        return tickInfo;
+    },
+
+    /**
+     * To divide tick step.
+     * @param {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
+     * @param {number} orgTickCount original tickCount
+     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
+     * @private
+     */
+    _divideTickStep: function(tickInfo, orgTickCount) {
+        var step = tickInfo.step,
+            scale = tickInfo.scale,
+            tickCount = tickInfo.tickCount;
+        if (step % 2 === 0 && (tickCount % 2) &&
+            Math.abs(orgTickCount - (tickCount * 2)) < Math.abs(orgTickCount - tickCount)) {
+            step = step / 2;
+            tickInfo.labels = this._makeLabelsFromScale(scale, step);
+            tickInfo.tickCount = tickInfo.labels.length;
+            tickInfo.step = step;
+        }
+        return tickInfo;
+    },
+
+    /**
+     * To make tick info
+     * @param {number} tickCount tick count
+     * @param {number} min scale min
+     * @param {number} max scale max
+     * @param {number} userMin minimum value of user data
+     * @param {number} userMax maximum value of user data
+     * @param {boolean} isMinus whether scale is minus or not
+     * @param {{min: number, max: number}} options axis options
+     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
+     * @private
+     */
+    _makeTickInfo: function(tickCount, min, max, userMin, userMax, isMinus, options) {
+        var scale = this._calculateScale(min, max),
+            isLineChart = this.chartType === chartConst.CHART_TYPE_LINE,
+            tmpMin, orgScaleMax, tmpStep, step, multipleNum, tickInfo,
+            diffMax, modDiff, divideDiff;
+
+        if (isMinus) {
+            tmpMin = scale.min;
+            scale.min = -scale.max;
+            scale.max = -tmpMin;
         }
 
-        scale = this._correctScale(scale, tickCount, userMin, userMax);
+        scale.min = options.min || scale.min;
+        scale.max = options.max || scale.max;
 
-        scale.max += saveMin;
-        scale.min += saveMin;
+        orgScaleMax = scale.max;
 
-        return scale;
+        tmpStep = this.getScaleStep(scale, tickCount);
+        step = this._normalizeStep(tmpStep);
+        scale.min = this._normalizeMin(scale.min, step);
+        multipleNum = ne.util.findMultipleNum(step);
+        scale.max = ((scale.min * multipleNum) + (step * multipleNum * (tickCount - 1))) / multipleNum;
+
+        diffMax = orgScaleMax - scale.max;
+        if (diffMax > 0) {
+            modDiff = diffMax % step;
+            divideDiff = Math.floor(diffMax / step);
+            scale.max += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
+        }
+
+        if (ne.util.isUndefined(options.max) && (scale.max === userMax)) {
+            scale.max += step;
+        }
+
+        if ((isLineChart || userMin > 0) &&
+            ne.util.isUndefined(options.min) && (scale.min === userMin)) {
+            scale.min -= step;
+        }
+
+        tickInfo = {scale: scale, step: step, tickCount: tickCount};
+        tickInfo = this._minimizeTickScale(userMin, userMax, tickInfo, options);
+        tickInfo = this._divideTickStep(tickInfo, tickCount);
+
+        return tickInfo;
+    },
+
+    /**
+     * Get candidates about tick info.
+     * @param {number} min minimum value of user data
+     * @param {number} max maximum value of user data
+     * @param {array.<number>} tickCounts tick counts
+     * @param {{min: number, max:number}} options axis options
+     * @returns {array} candidates about tick info
+     * @private
+     */
+    _getTickInfoCandidates: function(min, max, tickCounts, options) {
+        var userMin = min,
+            userMax = max,
+            isMinus = false,
+            tmpMin, candidates;
+
+        if (min < 0 && max <= 0) {
+            isMinus = true;
+            tmpMin = min;
+            min = -max;
+            max = -tmpMin;
+        }
+
+        candidates = ne.util.map(tickCounts, function(tickCount) {
+            return this._makeTickInfo(tickCount, min, max, userMin, userMax, isMinus, options);
+        }, this);
+
+        return candidates;
     },
 
     /**
@@ -408,7 +536,13 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _makeLabelsFromScale: function(scale, step) {
-        var labels = ne.util.range(scale.min, scale.max + 1, step);
+        var multipleNum = ne.util.findMultipleNum(step),
+            min = scale.min * multipleNum,
+            max = scale.max * multipleNum,
+            labels = ne.util.range(min, max + 1, step * multipleNum);
+        labels = ne.util.map(labels, function(label) {
+            return label / multipleNum;
+        });
         return labels;
     },
 

@@ -88,6 +88,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      */
     _setData: function(data) {
         var options = this.options || {},
+            chartType = options.chartType,
             chartOptions = options.chart || {},
             axisData = data.slice(1),
             labels = data[0].slice(1),
@@ -97,7 +98,7 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
             formatValues = chartOptions.format ? this.formatValues(values, formatFunctions) : values,
             axisInfo;
 
-        axisInfo = this._setAxis(labels, values, formatFunctions, this.dimension, options);
+        axisInfo = this._setAxis(labels, values, formatFunctions, this.dimension, chartType, options);
         this._setPlot(axisInfo.hAxis.getValidTickCount(), axisInfo.vAxis.getValidTickCount());
         this._setLegend(legendLabels);
         this._setSeries(values, formatValues, axisInfo.valueScale, this.isVertical, options.series);
@@ -114,14 +115,16 @@ var AxisChartModel = ne.util.defineClass(ChartModel, /** @lends AxisChartModel.p
      * @returns {{vAxis: object, hAxis: object, valueScale: object}} axis info
      * @private
      */
-    _setAxis: function(labels, values, formatFunctions, chartDimension, options) {
+    _setAxis: function(labels, values, formatFunctions, chartDimension, chartType, options) {
         var valueData = {
                 values: values,
                 chartDimension: chartDimension,
-                formatFunctions: formatFunctions
+                formatFunctions: formatFunctions,
+                chartType: chartType
             },
             labelData = {
-                labels: labels
+                labels: labels,
+                chartType: chartType
             },
             vAxis, hAxis, valueScale, axisInfo;
         if (this.isVertical) {

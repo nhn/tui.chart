@@ -80,12 +80,18 @@ _createChart = function(container, data, options) {
  *      @param {object} options.vAxis options of vertical axis
  *          @param {string} options.vAxis.title title of vertical axis
  *          @param {number} options.vAxis.min minimal value of vertical axis
+ *          @param {number} options.vAxis.max maximum value of vertical axis
  *      @param {object} options.hAxis options of horizontal axis
  *          @param {string} options.hAxis.title title of horizontal axis
  *          @param {number} options.hAxis.min minimal value of horizontal axis
+ *          @param {number} options.hAxis.max maximum value of horizontal axis
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -132,12 +138,18 @@ ne.application.chart.barChart = function(container, data, options) {
  *      @param {object} options.vAxis options of vertical axis
  *          @param {string} options.vAxis.title title of vertical axis
  *          @param {number} options.vAxis.min minimal value of vertical axis
+ *          @param {number} options.vAxis.max maximum value of vertical axis
  *      @param {object} options.hAxis options of horizontal axis
  *          @param {string} options.hAxis.title title of horizontal axis
  *          @param {number} options.hAxis.min minimal value of horizontal axis
+ *          @param {number} options.hAxis.max maximum value of horizontal axis
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
@@ -184,14 +196,20 @@ ne.application.chart.columnChart = function(container, data, options) {
  *      @param {object} options.vAxis options of vertical axis
  *          @param {string} options.vAxis.title title of vertical axis
  *          @param {number} options.vAxis.min minimal value of vertical axis
+ *          @param {number} options.vAxis.max maximum value of vertical axis
  *      @param {object} options.hAxis options of horizontal axis
  *          @param {string} options.hAxis.title title of horizontal axis
  *          @param {number} options.hAxis.min minimal value of horizontal axis
+ *          @param {number} options.hAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart

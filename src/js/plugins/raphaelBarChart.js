@@ -20,7 +20,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     /**
      * Render function of bar chart
      * @param {HTMLElement} container container element
-     * @param {{size: object, model: object, options: object}} data chart data
+     * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
      */
@@ -62,7 +62,9 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
                 var color = singleColor || colors[index],
                     id = groupIndex + '-' + index,
                     rect = this._renderBar(paper, color, borderColor, bound);
-                this._bindHoverEvent(rect, bound, id, inCallback, outCallback);
+                if (rect) {
+                    this._bindHoverEvent(rect, bound, id, inCallback, outCallback);
+                }
             }, this);
         }, this);
     },
@@ -77,6 +79,9 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @private
      */
     _renderBar: function(paper, color, borderColor, bound) {
+        if (bound.width < 0 || bound.height < 0) {
+            return null;
+        }
         var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: color,

@@ -69,6 +69,7 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
         this.markers = data.formatValues;
         this.percentValues = this._makePercentValues(data.values, data.scale);
         this.isVertical = data.isVertical;
+        this.tooltipPosition = data.tooltipPositoin;
     },
 
     /**
@@ -169,6 +170,14 @@ var SeriesModel = ne.util.defineClass(Model, /** @lends SeriesModel.prototype */
                 });
             });
         return result;
+    },
+
+    makeBarTooltipBound: function(bound) {
+        var position = this.tooltipPosition;
+
+        if (position.indexOf('left')) {
+
+        }
     }
 });
 

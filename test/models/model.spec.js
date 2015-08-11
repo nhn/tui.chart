@@ -42,7 +42,7 @@ describe('test axis model', function() {
         expect(result).toEqual('1.00');
     });
 
-    it('_formatLabels', function() {
+    it('_formatComma', function() {
         var result = model._formatComma(1000);
 
         expect(result).toEqual('1,000');
@@ -51,7 +51,12 @@ describe('test axis model', function() {
         expect(result).toEqual('1,000,000');
     });
 
-    it('_findFormatFunctions', function() {
+    it('pickMaxLenUnderPoint', function() {
+        var point = model.pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
+        expect(point).toEqual(3);
+    });
+
+    it('findFormatFunctions', function() {
         var result = model.findFormatFunctions();
         expect(result).toEqual([]);
 
