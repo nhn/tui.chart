@@ -472,7 +472,8 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         var step = tickInfo.step,
             scale = tickInfo.scale,
             tickCount = tickInfo.tickCount;
-        if (step % 2 === 0 && (tickCount % 2) &&
+        // step과 tickCount가 모두 2의 배수 이면서 변경된 tickCount의 두배수가 tickCount보다 orgTickCount와 차이가 덜나면 tickCount를 두배수로 변경한다.
+        if ((step % 2 === 0) && (tickCount % 2 === 0) &&
             abs(orgTickCount - (tickCount * 2)) < abs(orgTickCount - tickCount)) {
             step = step / 2;
             tickInfo.labels = this._makeLabelsFromScale(scale, step);
