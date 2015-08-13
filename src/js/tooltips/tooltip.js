@@ -1,15 +1,15 @@
 /**
- * @fileoverview TooltipView render tooltip area.
+ * @fileoverview Tooltip render tooltip area.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var dom = require('./domHandler.js'),
-    View = require('./view.js'),
-    event = require('./eventListener.js'),
-    templateMaker = require('./templateMaker.js'),
+var dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
+    event = require('../helpers/eventListener.js'),
+    templateMaker = require('../helpers/templateMaker.js'),
     tooltipTemplate = require('./tooltipTemplate.js');
 
 var TOOLTIP_GAP = 5,
@@ -18,30 +18,22 @@ var TOOLTIP_GAP = 5,
     TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
 
-var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ {
+var concat = Array.prototype.concat;
+
+var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     /**
-     * TooltipView render tooltip area.
-     * @constructs TooltipView
-     * @extends View
+     * Tooltip render tooltip area.
+     * @constructs Tooltip
      * @param {object} model tooltip model
      * @param {object} theme tooltip theme
      */
-    init: function(model, theme) {
-        /**
-         * Tooltip model
-         * @type {object}
-         */
-        this.model = model;
-
-        this.theme = theme;
-
+    init: function(params) {
+        ne.util.extend(this, params);
         /**
          * Tooltip view className
          * @type {string}
          */
         this.className = 'ne-chart-tooltip-area';
-
-        View.call(this);
     },
 
     /**
@@ -50,13 +42,35 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
      * @param {string} prefix tooltip id prefix
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound, prefix) {
-        this.renderPosition(bound.position);
+    render: function() {
+        var el = dom.createElement('DIV', this.className),
+            bound = this.bound;
 
-        this.el.innerHTML = this._makeTooltipsHtml(this.model.data, prefix);
+        renderUtil.renderPosition(el, bound.position);
+        el.innerHTML = this._makeTooltipsHtml();
 
-        this.attachEvent();
-        return this.el;
+        this.attachEvent(el);
+        return el;
+    },
+
+    _makeTooltipData: function() {
+        var labels = this.labels,
+            groupValues = this.values,
+            legendLabels = this.legendLabels,
+            tooltipData = ne.util.map(groupValues, function(values, groupIndex) {
+                var items = ne.util.map(values, function(value, index) {
+                    var item = {
+                        label: labels[groupIndex],
+                        value: value,
+                        legendLabel: legendLabels[index],
+                        id: groupIndex + '-' + index
+                    };
+                    return item;
+                });
+
+                return items;
+            });
+        return concat.apply([], tooltipData);
     },
 
     /**
@@ -66,8 +80,10 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
      * @returns {string} html
      * @private
      */
-    _makeTooltipsHtml: function(data, prefix) {
-        var options = this.model.options,
+    _makeTooltipsHtml: function() {
+        var options = this.options,
+            prefix = this.prefix,
+            data = this._makeTooltipData(),
             optionTemplate = options.template ? options.template : '',
             tplOuter = tooltipTemplate.TPL_TOOLTIP,
             tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.TPL_DEFAULT_TEMPLATE,
@@ -83,7 +99,6 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
                     suffix: suffix
                 }, tooltipData);
                 tooltipHtml = tplTooltip(tooltipData);
-
                 return tplOuter({
                     id: id,
                     html: tooltipHtml
@@ -95,9 +110,9 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     /**
      * Attach event
      */
-    attachEvent: function() {
-        event.bindEvent('mouseover', this.el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', this.el, ne.util.bind(this.onMouseout, this));
+    attachEvent: function(el) {
+        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
     },
 
     /**
@@ -264,7 +279,6 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
      */
     _calculatePosition: function(params) {
         var result = {};
-
         if (params.data.isVertical) {
             result = this._calculateVerticalPosition(params);
         } else {
@@ -282,8 +296,8 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
             addPosition = ne.util.extend({
                 left: 0,
                 top: 0
-            }, this.model.options.addPosition),
-            positionOption = this.model.options.position || this.model.defaultPosition,
+            }, this.options.addPosition),
+            positionOption = this.options.position || '',
             dimension, position;
 
         if (this.showedId) {
@@ -305,8 +319,8 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
         });
 
         elTooltip.style.cssText = [
-            this.concatStr('left:', position.left + addPosition.left, 'px'),
-            this.concatStr('top:', position.top + addPosition.top, 'px')
+            renderUtil.concatStr('left:', position.left + addPosition.left, 'px'),
+            renderUtil.concatStr('top:', position.top + addPosition.top, 'px')
         ].join(';');
 
         this._fireShowDot(data.id);
@@ -358,4 +372,6 @@ var TooltipView = ne.util.defineClass(View, /** @lends TooltipView.prototype */ 
     }
 });
 
-module.exports = TooltipView;
+ne.util.CustomEvents.mixin(Tooltip);
+
+module.exports = Tooltip;

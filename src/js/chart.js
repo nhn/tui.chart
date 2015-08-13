@@ -14,7 +14,7 @@ var DEFAULT_THEME_NAME = 'default';
 
 var _createChart;
 
-require('./util.js');
+require('./code-snippet-util.js');
 require('./registerCharts.js');
 require('./registerThemes.js');
 
@@ -54,13 +54,12 @@ ne.util.defineNamespace('ne.application.chart');
  * @ignore
  */
 _createChart = function(container, data, options) {
-    var theme, chart;
-
+    var themeName, theme, chart;
     options = options || {};
-    theme = options.theme || DEFAULT_THEME_NAME;
-    options.theme = themeFactory.get(theme);
+    themeName = options.theme || DEFAULT_THEME_NAME;
+    theme = themeFactory.get(themeName);
 
-    chart = chartFactory.get(options.chartType, data, options);
+    chart = chartFactory.get(options.chartType, data, theme, options);
     container.appendChild(chart.render());
 
     return chart;
@@ -122,7 +121,6 @@ _createChart = function(container, data, options) {
 ne.application.chart.barChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
-    options.barType = chartConst.BAR_TYPE_BAR;
     return _createChart(container, data, options);
 };
 
@@ -181,8 +179,7 @@ ne.application.chart.barChart = function(container, data, options) {
  */
 ne.application.chart.columnChart = function(container, data, options) {
     options = options || {};
-    options.chartType = chartConst.CHART_TYPE_BAR;
-    options.barType = chartConst.BAR_TYPE_COLUMN;
+    options.chartType = chartConst.CHART_TYPE_COLUMN;
     return _createChart(container, data, options);
 };
 

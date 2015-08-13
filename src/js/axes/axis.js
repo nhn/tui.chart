@@ -1,42 +1,31 @@
 /**
- * @fileoverview  AxisView render axis ticks and labels.
+ * @fileoverview  Axis render axis ticks and labels.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var dom = require('./domHandler.js'),
-    View = require('./view.js'),
+var dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
     axisTemplate = require('./axisTemplate.js');
 
 var TITLE_AREA_WIDTH_PADDING = 20,
-    TITLE_AREA_HEIGHT_PADDING = 20,
     V_LABEL_RIGHT_PADDING = 10;
 
-var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
+var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
-     * AxisView render axis ticks and labels.
-     * @constructs AxisView
-     * @extends View
+     * Axis render axis ticks and labels.
+     * @constructs Axis
      * @param {object} model axis model
      * @param {object} theme axis theme
      */
-    init: function(model, theme) {
-        /**
-         * Axis model
-         * @type {Object}
-         */
-        this.model = model;
-
-        this.theme = theme;
-
+    init: function(params) {
+        ne.util.extend(this, params);
         /**
          * Axis view className
          */
         this.className = 'ne-chart-axis-area';
-
-        View.call(this);
     },
 
     /**
@@ -44,22 +33,53 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
      * @param {{width: number, height: number, top: number, right: number}} bound axis area dimension
      * @returns {HTMLElement} axis area base element
      */
-    render: function(bound) {
-        var model = this.model,
+    render: function() {
+        var data = this.data,
             theme = this.theme,
-            isVertical = model.isVertical,
+            isVertical = !!data.isVertical,
+            options = this.options,
+            bound = this.bound,
             dimension = bound.dimension,
             size = isVertical ? dimension.height : dimension.width,
-            elTitleArea = this._renderTitleArea(model.title, theme.title, isVertical, size),
+            el = dom.createElement('DIV', this.className),
+            elTitleArea = this._renderTitleArea(options.title, theme.title, isVertical, size),
             elTickArea = this._renderTickArea(size),
             elLabelArea = this._renderLabelArea(size, dimension.width);
 
-        this.renderDimension(dimension);
-        this.renderPosition(bound.position);
-        dom.addClass(this.el, this.model.isVertical ? 'vertical' : 'horizontal');
-        this.appends([elTitleArea, elTickArea, elLabelArea]);
+        renderUtil.renderDimension(el, dimension);
+        renderUtil.renderPosition(el, bound.position);
+        dom.addClass(el, data.isVertical ? 'vertical' : 'horizontal');
+        renderUtil.appends(el, [elTitleArea, elTickArea, elLabelArea]);
 
-        return this.el;
+        return el;
+    },
+
+    /**
+     * Title renderer
+     * @param {string} title title
+     * @param {{fontSize: number, color: string, background: string}} theme title theme
+     * @param {string} className css class name
+     * @returns {HTMLElement} title element
+     */
+    renderTitle: function(title, theme, className) {
+        var elTitle, cssText;
+
+        if (!title) {
+            return;
+        }
+
+        elTitle = dom.createElement('DIV', className);
+        elTitle.innerHTML = title;
+
+        cssText = renderUtil.makeFontCssText(theme);
+
+        if (theme.background) {
+            cssText += ';' + this.concatStr('background:', theme.background);
+        }
+
+        elTitle.style.cssText = cssText;
+
+        return elTitle;
     },
 
     /**
@@ -77,11 +97,11 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
 
         if (elTitleArea && isVertical) {
             cssTexts = [
-                this.concatStr('width:', size, 'px'),
-                this.concatStr('left:', 0, 'px')
+                renderUtil.concatStr('width:', size, 'px'),
+                renderUtil.concatStr('left:', 0, 'px')
             ];
-            if (!this.isIE8()) {
-                cssTexts.push(this.concatStr('top:', size, 'px'));
+            if (!renderUtil.isIE8()) {
+                cssTexts.push(renderUtil.concatStr('top:', size, 'px'));
             }
             elTitleArea.style.cssText += ';' + cssTexts.join(';');
         }
@@ -95,19 +115,19 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
      * @private
      */
     _renderTickArea: function(size) {
-        var model = this.model,
-            tickCount = model.tickCount,
+        var data = this.data,
+            tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
-            positions = model.makePixelPositions(size, tickCount),
+            positions = renderUtil.makePixelPositions(size, tickCount),
             elTickArea = dom.createElement('DIV', 'ne-chart-tick-area'),
-            isVertical = model.isVertical,
+            isVertical = data.isVertical,
             posType = isVertical ? 'bottom' : 'left',
             borderColorType = isVertical ? 'borderRightColor' : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position) {
                 var cssText = [
-                    this.concatStr('background-color:', tickColor),
-                    this.concatStr(posType, ': ', position, 'px')
+                    renderUtil.concatStr('background-color:', tickColor),
+                    renderUtil.concatStr(posType, ': ', position, 'px')
                 ].join(';');
                 return template({cssText: cssText});
             }, this).join('');
@@ -126,14 +146,14 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
      * @private
      */
     _renderLabelArea: function(size, axisWidth) {
-        var model = this.model,
+        var data = this.data,
             theme = this.theme,
-            positions = model.makePixelPositions(size, model.tickCount),
+            positions = renderUtil.makePixelPositions(size, data.tickCount),
             labelWidth = positions[1] - positions[0],
-            labels = model.labels,
-            isVertical = model.isVertical,
-            isLabelAxis = model.isLabelAxis(),
-            posType = isVertical ? (model.isLabelAxis() ? 'top' : 'bottom') : 'left',
+            labels = data.labels,
+            isVertical = data.isVertical,
+            isLabelAxis = data.isLabelAxis,
+            posType = isVertical ? (isLabelAxis ? 'top' : 'bottom') : 'left',
             cssTexts = this._makeLabelCssTexts({
                 isVertical: isVertical,
                 isLabelAxis: isLabelAxis,
@@ -150,7 +170,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
             cssTexts: cssTexts
         });
         elLabelArea.innerHTML = labelsHtml;
-        areaCssText = this.makeFontCssText(theme.label);
+        areaCssText = renderUtil.makeFontCssText(theme.label);
 
         if (isVertical) {
             titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
@@ -175,9 +195,9 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
      * @private
      */
     _getRenderedTitleHeight: function() {
-        var title = this.model.title,
+        var title = this.options.title,
             theme = this.theme.title,
-            result = title ? this.getRenderedLabelHeight(title, theme) : 0;
+            result = title ? renderUtil.getRenderedLabelHeight(title, theme) : 0;
         return result;
     },
 
@@ -194,10 +214,10 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
         var cssTexts = [];
 
         if (params.isVertical && params.isLabelAxis) {
-            cssTexts.push(this.concatStr('height:', params.labelWidth, 'px'));
-            cssTexts.push(this.concatStr('line-height:', params.labelWidth, 'px'));
+            cssTexts.push(renderUtil.concatStr('height:', params.labelWidth, 'px'));
+            cssTexts.push(renderUtil.concatStr('line-height:', params.labelWidth, 'px'));
         } else if (!params.isVertical) {
-            cssTexts.push(this.concatStr('width:', params.labelWidth, 'px'));
+            cssTexts.push(renderUtil.concatStr('width:', params.labelWidth, 'px'));
         }
 
         return cssTexts;
@@ -219,7 +239,7 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
                 var labelCssTexts = params.cssTexts.slice(),
                     html;
 
-                labelCssTexts.push(this.concatStr(params.posType, ':', position, 'px'));
+                labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
                 html = template({
                     cssText: labelCssTexts.join(';'),
                     label: params.labels[index]
@@ -248,32 +268,12 @@ var AxisView = ne.util.defineClass(View, /** @lends AxisView.prototype */ {
         }
 
         if (params.isVertical) {
-            labelHeight = this.getRenderedLabelHeight('ABC', params.theme);
-            params.elLabelArea.style.top = this.concatStr(parseInt(labelHeight / 2, 10), 'px');
+            labelHeight = renderUtil.getRenderedLabelHeight('ABC', params.theme);
+            params.elLabelArea.style.top = renderUtil.concatStr(parseInt(labelHeight / 2, 10), 'px');
         } else {
-            params.elLabelArea.style.left = this.concatStr('-', parseInt(params.labelWidth / 2, 10), 'px');
+            params.elLabelArea.style.left = renderUtil.concatStr('-', parseInt(params.labelWidth / 2, 10), 'px');
         }
-    },
-
-    /**
-     * Get width of vertical axis area.
-     * @returns {number} width
-     */
-    getVAxisAreaWidth: function() {
-        var titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING,
-            width = this.getRenderedLabelsMaxWidth(this.model.labels, this.theme.label) + titleAreaWidth;
-        return width;
-    },
-
-    /**
-     * Get height of horizontal axis area.
-     * @returns {number} height
-     */
-    getHAxisAreaHeight: function() {
-        var titleAreaHeight = this._getRenderedTitleHeight() + TITLE_AREA_HEIGHT_PADDING,
-            height = this.getRenderedLabelsMaxHeight(this.model.labels, this.theme.label) + titleAreaHeight;
-        return height;
     }
 });
 
-module.exports = AxisView;
+module.exports = Axis;

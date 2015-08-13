@@ -4,7 +4,7 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
-var templateMaker = require('./templateMaker.js');
+var templateMaker = require('../helpers/templateMaker.js');
 
 var tags = {
     HTML_PLOT_LINE: '<div class="ne-chart-plot-line {{ className }}" style="{{ cssText }}"></div>'

@@ -1,23 +1,18 @@
 /**
- * @fileoverview AxisModel is model for management of axis data.
- *               Axis data used for draw the axis area.
+ * @fileoverview Axis Data Maker
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Model = require('./model.js'),
-    chartConst = require('../const.js');
+var chartConst = require('../const.js'),
+    renderUtil = require('renderUtil.js');
 
 var AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
-    DEFAULT_TICK_COUNT = 5,
     MIN_PIXEL_STEP_SIZE = 40,
     MAX_PIXEL_STEP_SIZE = 60,
-    CHART_TITLE_HEIGHT = 80,
-    VERTICAL_AXIS_WIDTH = 90,
-    LEGEND_WIDTH = 90,
     AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10],
     PERCENT_STACKED_TICK_INFO = {
         scale: {
@@ -28,104 +23,22 @@ var AXIS_TYPE_VALUE = 'value',
         labels: [0, 25, 50, 75, 100]
     };
 
-var apc = Array.prototype.concat,
-    abs = Math.abs,
-    AxisModel;
-
-AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
-    /**
-     * AxisModel is model for management of axis data.
-     * Axis data used for draw the axis area.
-     * @constructs AxisModel
-     * @extends Model
-     * @param {{labels:array.<string>, values: array.<array.<number>>}} data labels or values
-     * @param {{title: string, min: number, max: number}} options axis options
-     */
-    init: function(data, options) {
-        options = options || {};
-
-        /**
-         * Axis options
-         * @type {{title: string, min: number, max: number}}
-         */
-        this.options = options;
-
-        /**
-         * Chart type
-         * @type {string}
-         */
-        this.chartType = '';
-
-        /**
-         * Axis title
-         * @type {string}
-         */
-        this.title = options.title || '';
-
-        /**
-         * Axis labels
-         * @type {string[]}
-         */
-        this.labels = [];
-
-        /**
-         * Axis tick count
-         * @type {number}
-         */
-        this.tickCount = DEFAULT_TICK_COUNT;
-
-        /**
-         * Axis tick scale
-         * @type {{min: number, max: number}}
-         */
-        this.scale = null;
-
-        /**
-         * Axis type
-         * @type {string}
-         */
-        this.axisType = null;
-
-        /**
-         * Whether vertical or not.
-         * @type {boolean}
-         */
-        this.isVertical = false;
-
-        if (data) {
-            this._setData(data);
-        }
-    },
-
-    /**
-     * Set axis data.
-     * @param {object} data axis setting data.
-     *      @param {array.<array.<number>>} data.groupValues chart values
-     *      @param {array.<string>} data.labels chart labels
-     *      @param {{width:number, height:number}} data.chartDimension chart dimension
-     *      @param {array.<function>} data.formatFunctions format functions
-     *      @param {string} data.stacked stacked option
-     * @private
-     */
-    _setData: function(data) {
-        this.isVertical = data.isVertical;
-        this.chartType = data.chartType;
-        if (data.labels) {
-            this._setLabelAxisData(data.labels);
-        } else if (data.values) {
-            this._setValueAxisData(data);
-        }
-    },
-
-    /**
-     * Set label type axis data.
-     * @param {string[]} labels labels
-     * @private
-     */
-    _setLabelAxisData: function(labels) {
-        this.axisType = AXIS_TYPE_LABEL;
-        this.labels = labels;
-        this.tickCount = labels.length + 1;
+var abs = Math.abs,
+    concat = Array.prototype.concat;
+/**
+ * Axis data maker.
+ * @module axisDataMaker
+ */
+var axisDataMaker = {
+    makeLabelAxisData: function(data) {
+        return {
+            labels: data.labels,
+            tickCount: data.labels.length + 1,
+            validTickCount: 0,
+            isLabelAxis: true,
+            isVertical: data.isVertical,
+            axisType: AXIS_TYPE_LABEL
+        };
     },
 
     /**
@@ -137,9 +50,12 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      *      @param {string} data.stacked stacked option
      * @private
      */
-    _setValueAxisData: function(data) {
-        var options = this.options,
+    makeValueAxisData: function(data) {
+        var options = data.options,
             values, min, max, tickInfo;
+
+        this.isVertical = !!data.isVertical;
+        this.chartType = data.chartType;
 
         if (data.stacked === 'percent') {
             tickInfo = PERCENT_STACKED_TICK_INFO;
@@ -151,14 +67,18 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             tickInfo = this._getTickInfo({
                 min: min,
                 max: max,
-                chartDimension: data.chartDimension
+                seriesDimension: data.seriesDimension
             }, options);
         }
 
-        this.tickCount = tickInfo.tickCount;
-        this.labels = this._formatLabels(tickInfo.labels, data.formatFunctions);
-        this.scale = tickInfo.scale;
-        this.axisType = AXIS_TYPE_VALUE;
+        return {
+            labels: this._formatLabels(tickInfo.labels, data.formatFunctions),
+            tickCount: tickInfo.tickCount,
+            validTickCount: tickInfo.tickCount,
+            scale: tickInfo.scale,
+            isVertical: this.isVertical,
+            axisType: AXIS_TYPE_VALUE
+        };
     },
 
     /**
@@ -169,7 +89,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @private
      */
     _makeValues: function(groupValues, stacked) {
-        var flattenValues = apc.apply([], groupValues); // flatten array
+        var flattenValues = concat.apply([], groupValues); // flatten array
         if (stacked === chartConst.STACKED_NORMAL_TYPE) {
             flattenValues = flattenValues.concat(ne.util.map(groupValues, function(values) {
                 var plusValues = ne.util.filter(values, function(value) {
@@ -190,9 +110,9 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
     _getBaseSize: function(dimension) {
         var baseSize;
         if (this.isVertical) {
-            baseSize = dimension.height - CHART_TITLE_HEIGHT;
+            baseSize = dimension.height;
         } else {
-            baseSize = dimension.width - VERTICAL_AXIS_WIDTH - LEGEND_WIDTH;
+            baseSize = dimension.width;
         }
         return baseSize;
     },
@@ -245,14 +165,14 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
      * @param {object} data params
      *      @param {number} data.min minimum value of user data
      *      @param {number} data.max maximum value of user data
-     *      @param {{width: number, height: number}} data.chartDimension chat dimension
+     *      @param {{width: number, height: number}} data.seriesDimension chat dimension
      * @param {{min: number, max:number}} options axis options
      * @returns {{tickCount: number, scale: object}} tick info
      * @private
      */
     _getTickInfo: function(data, options) {
         var intTypeInfo = this._makeIntegerTypeInfo(data.min, data.max, options),
-            tickCounts = this._getCandidateTickCounts(data.chartDimension),
+            tickCounts = this._getCandidateTickCounts(data.seriesDimension),
             candidates = this._getTickInfoCandidates({
                 min: intTypeInfo.min,
                 max: intTypeInfo.max,
@@ -503,7 +423,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
 
         orgScaleMax = scale.max;
 
-        tmpStep = this.getScaleStep(scale, tickCount);
+        tmpStep = renderUtil.getScaleStep(scale, tickCount);
         step = this._normalizeStep(tmpStep);
         scale.min = this._normalizeMin(scale.min, step);
         multipleNum = ne.util.findMultipleNum(step);
@@ -528,7 +448,6 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
         tickInfo = {scale: scale, step: step, tickCount: tickCount};
         tickInfo = this._minimizeTickScale(userMin, userMax, tickInfo, options);
         tickInfo = this._divideTickStep(tickInfo, tickCount);
-
         return tickInfo;
     },
 
@@ -577,7 +496,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             return labels;
         }
         result = ne.util.map(labels, function(label) {
-            var fns = apc.apply([label], formatFunctions);
+            var fns = concat.apply([label], formatFunctions);
             return ne.util.reduce(fns, function(stored, fn) {
                 return fn(stored);
             });
@@ -601,40 +520,7 @@ AxisModel = ne.util.defineClass(Model, /** @lends AxisModel.prototype */ {
             return label / multipleNum;
         });
         return labels;
-    },
-
-    /**
-     * Whether label axis or not.
-     * @returns {boolean} result boolean
-     */
-    isLabelAxis: function() {
-        return this.axisType === AXIS_TYPE_LABEL;
-    },
-
-    /**
-     * Whether value axis or not.
-     * @returns {boolean} result boolean
-     */
-    isValueAxis: function() {
-        return this.axisType === AXIS_TYPE_VALUE;
-    },
-
-    /**
-     * Change vertical state
-     * @param {boolean} isVertical whether vertical or not
-     */
-    changeVerticalState: function(isVertical) {
-        this.isVertical = isVertical;
-    },
-
-    /**
-     * Get valid tick count
-     * @returns {number} tick count
-     */
-    getValidTickCount: function() {
-        var validTickCount = this.isValueAxis() ? this.tickCount : 0;
-        return validTickCount;
     }
-});
+};
 
-module.exports = AxisModel;
+module.exports = axisDataMaker;

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var dom = require('../../src/js/views/domHandler.js');
+var dom = require('../../src/js/helpers/domHandler.js');
 
 describe('test DOM Handler', function() {
     it('test addClass', function() {

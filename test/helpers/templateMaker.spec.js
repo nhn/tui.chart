@@ -6,7 +6,7 @@
 
 'use strict';
 
-var templateMaker = require('../../src/js/views/templateMaker.js');
+var templateMaker = require('../../src/js/helpers/templateMaker.js');
 
 describe('test templateMaker', function() {
     it('test template', function() {

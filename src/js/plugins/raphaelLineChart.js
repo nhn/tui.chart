@@ -23,13 +23,13 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * @param {function} outCallback out callback
      */
     render: function(container, data, inCallback, outCallback) {
-        var model = data.model,
-            dimension = data.dimension,
+        var dimension = data.dimension,
+            groupPositions = data.groupPositions,
             theme = data.theme,
             colors = theme.colors,
-            opacity = model.options.hasDot ? 1 : 0,
+            opacity = data.options.hasDot ? 1 : 0,
             paper = Raphael(container, dimension.width, dimension.height),
-            groupPositions = model.makeLinePositions(data.dimension),
+
             groupPaths = this._getLinesPath(groupPositions),
             //groupBgLines = this._renderBgLines(paper, groupPaths),
             groupLines = this._renderLines(paper, groupPaths, colors),

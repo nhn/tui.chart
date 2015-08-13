@@ -1,0 +1,59 @@
+/**
+ * @fileoverview BarChart
+ * @author NHN Ent.
+ *         FE Development Team <dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
+var AxisTypeBase = require('./axisTypeBase.js'),
+    dataConverter = require('../helpers/dataConverter.js'),
+    boundsMaker = require('../helpers/boundsMaker.js'),
+    axisDataMaker = require('../helpers/axisDataMaker.js'),
+    Series = require('../series/barChartSeries.js');
+
+var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype */ {
+    init: function(userData, theme, options) {
+        var convertData = dataConverter.convert(userData, options.chart),
+            bounds = boundsMaker.make({
+                convertData: convertData,
+                theme: theme,
+                options: options
+            }),
+            vAxisData, hAxisData;
+
+        AxisTypeBase.call(this, bounds, theme, options);
+
+        vAxisData = axisDataMaker.makeLabelAxisData({
+            labels: convertData.labels,
+            isVertical: true
+        });
+        hAxisData = axisDataMaker.makeValueAxisData({
+            values: convertData.values,
+            seriesDimension: bounds.series.dimension,
+            stacked: options.series && options.series.stacked || '',
+            chartType: options.chartType,
+            formatFunctions: convertData.formatFunctions,
+            options: options.hAxis
+        });
+
+        this.className = 'ne-bar-chart';
+
+        this.addAxisComponents({
+            convertData: convertData,
+            axes: {
+                vAxis: vAxisData,
+                hAxis: hAxisData
+            },
+            plotData: {
+                vTickCount: vAxisData.validTickCount,
+                hTickCount: hAxisData.validTickCount
+            },
+            Series: Series,
+            axisScale: hAxisData.scale,
+            options: options
+        });
+    }
+});
+
+module.exports = BarChart;

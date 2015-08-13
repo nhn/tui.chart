@@ -1,65 +1,99 @@
 /**
- * @fileoverview This is base model.
+ * @fileoverview Data converter.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var apc = Array.prototype.concat;
+var renderUtil = require('renderUtil.js');
+
+var concat = Array.prototype.concat;
 
 /**
- * @classdesc This is base model.
- * @class Model
+ * Data converter.
+ * @module dataConverter
  */
-var Model = ne.util.defineClass(/** @lends Model.prototype */ {
-    /**
-     * Get scale step.
-     * @param {{min: number, max: number}} scale axis scale
-     * @param {number} count value count
-     * @returns {number} scale step
-     */
-    getScaleStep: function(scale, count) {
-        return (scale.max - scale.min) / (count - 1);
+var dataConverter = {
+    convert: function(userData, chartOptions) {
+        var axisData, labels, values, legendLabels, format, formatFunctions, formattedValues;
+
+        axisData = userData.slice(1);
+        labels = userData[0].slice(1);
+        values = this._pickValues(axisData);
+        legendLabels = this._pickLegendLabels(axisData);
+        format = chartOptions && chartOptions.format || '';
+        formatFunctions = this._findFormatFunctions(format);
+        formattedValues = format ? this._formatValues(values, formatFunctions) : values;
+
+        return {
+            labels: labels,
+            values: values,
+            legendLabels: legendLabels,
+            formatFunctions: formatFunctions,
+            formattedValues: formattedValues
+        };
     },
 
     /**
-     * To Make tick positions of pixel type.
-     * @param {number} size area width or height
-     * @param {number} count tick count
-     * @returns {array.<number>} positions
+     * Pick values from axis data.
+     * @param {array.<array>} axisData axis data
+     * @returns {string[]} values
      */
-    makePixelPositions: function(size, count) {
-        var positions = [],
-            pxScale, pxStep;
-
-        if (count > 0) {
-            pxScale = {min: 0, max: size - 1};
-            pxStep = this.getScaleStep(pxScale, count);
-            positions = ne.util.map(ne.util.range(0, size, pxStep), function(position) {
-                return Math.round(position);
-            });
-            positions[positions.length - 1] = size - 1;
-        }
-        return positions;
+    _pickValues: function(axisData) {
+        var result = ne.util.map(axisData, function(items) {
+            return items.slice(1);
+        });
+        return renderUtil.arrayPivot(result);
     },
 
     /**
-     * Array pivot.
-     * @param {array.<array>} arr2d target 2d array
-     * @returns {array.<array>} pivoted 2d array
+     * Pick legend labels from axis data.
+     * @param {array.<array>} axisData axis data
+     * @returns {string[]} labels
      */
-    arrayPivot: function(arr2d) {
-        var result = [];
-        ne.util.forEachArray(arr2d, function(arr) {
-            ne.util.forEachArray(arr, function(value, index) {
-                if (!result[index]) {
-                    result[index] = [];
-                }
-                result[index].push(value);
+    _pickLegendLabels: function(axisData) {
+        var labels = ne.util.map(axisData, function(items) {
+            return items[0];
+        });
+        return labels;
+    },
+
+    /**
+     * Format values.
+     * @param {array.<array.<number>>} groupValues values
+     * @param {function[]} formatFunctions format functions
+     * @returns {string[]} formatted values
+     */
+    _formatValues: function(groupValues, formatFunctions) {
+        var result = ne.util.map(groupValues, function(values) {
+            return ne.util.map(values, function(value) {
+                var fns = [value].concat(formatFunctions);
+                return ne.util.reduce(fns, function(stored, fn) {
+                    return fn(stored);
+                });
             });
         });
         return result;
+    },
+
+    /**
+     * Pick max length under point.
+     * @param {string[]} values chart values
+     * @returns {number} max length under point
+     * @private
+     */
+    _pickMaxLenUnderPoint: function(values) {
+        var max = 0;
+
+        ne.util.forEachArray(values, function(value) {
+            var len = ne.util.lengthAfterPoint(value);
+            if (len > max) {
+                max = len;
+            }
+        }, this);
+
+        return max;
     },
 
     /**
@@ -168,26 +202,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
             return result;
         });
 
-        return apc.apply([], values).reverse().join('') + underPointValue;
-    },
-
-    /**
-     * Pick max length under point.
-     * @param {string[]} values chart values
-     * @returns {number} max length under point
-     * @private
-     */
-    pickMaxLenUnderPoint: function(values) {
-        var max = 0;
-
-        ne.util.forEachArray(values, function(value) {
-            var len = ne.util.lengthAfterPoint(value);
-            if (len > max) {
-                max = len;
-            }
-        }, this);
-
-        return max;
+        return concat.apply([], values).reverse().join('') + underPointValue;
     },
 
     /**
@@ -196,7 +211,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
      * @param {string[]} values chart values
      * @returns {function[]} functions
      */
-    findFormatFunctions: function(format) {
+    _findFormatFunctions: function(format) {
         var funcs = [],
             len;
 
@@ -205,7 +220,7 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
         }
 
         if (this._isDecimal(format)) {
-            len = this.pickMaxLenUnderPoint([format]);
+            len = this._pickMaxLenUnderPoint([format]);
             funcs = [ne.util.bind(this._formatDecimal, this, len)];
         } else if (this._isZeroFill(format)) {
             len = format.length;
@@ -219,6 +234,6 @@ var Model = ne.util.defineClass(/** @lends Model.prototype */ {
 
         return funcs;
     }
-});
+};
 
-module.exports = Model;
+module.exports = dataConverter;

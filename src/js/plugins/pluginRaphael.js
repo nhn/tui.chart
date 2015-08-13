@@ -14,6 +14,7 @@ var pluginName = 'raphael',
 
 pluginRaphael = {
     bar: BarChart,
+    column: BarChart,
     line: LineChart
 };
 

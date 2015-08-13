@@ -1,43 +1,30 @@
 /**
- * @fileoverview PlotView render plot area.
+ * @fileoverview Plot render plot area.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var View = require('./view.js'),
+var dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
     plotTemplate = require('./plotTemplate.js');
 
-/**
- * @classdesc PlotView render plot area.
- * @class
- * @augments View
- */
-var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
+var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     /**
-     * PlotView render plot area.
-     * @constructs PlotView
-     * @extends View
+     * Plot render plot area.
+     * @constructs Plot
      * @param {object} model plot model
      * @param {object} theme plot theme
      */
-    init: function(model, theme) {
-        /**
-         * Plot model
-         * @type {Object}
-         */
-        this.model = model;
-
-        this.theme = theme;
+    init: function(params) {
+        ne.util.extend(this, params);
 
         /**
          * Plot view className
          * @type {string}
          */
         this.className = 'ne-chart-plot-area';
-
-        View.call(this);
     },
 
     /**
@@ -45,12 +32,14 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
      * @param {{width: number, height: number, top: number, right: number}} bound plot area bound
      * @returns {HTMLElement} plot element
      */
-    render: function(bound) {
-        this.renderDimension(bound.dimension);
-        this.renderPosition(bound.position);
-        this._renderLines(bound.dimension);
+    render: function() {
+        var el = dom.createElement('DIV', this.className),
+            bound = this.bound;
+        renderUtil.renderDimension(el, bound.dimension);
+        renderUtil.renderPosition(el, bound.position);
+        this._renderLines(el, bound.dimension);
 
-        return this.el;
+        return el;
     },
 
     /**
@@ -58,9 +47,9 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
      * @param {{width: number, height: number}} dimension plot area dimension
      * @private
      */
-    _renderLines: function(dimension) {
-        var hPositions = this.model.makeHPixelPositions(dimension.width),
-            vPositions = this.model.makeVPixelPositions(dimension.height),
+    _renderLines: function(el, dimension) {
+        var hPositions = this.makeHPixelPositions(dimension.width),
+            vPositions = this.makeVPixelPositions(dimension.height),
             theme = this.theme,
             lineHtml = '';
 
@@ -81,9 +70,9 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
             lineColor: theme.lineColor
         });
 
-        this.el.innerHTML = lineHtml;
+        el.innerHTML = lineHtml;
 
-        this.renderBackground(theme.background);
+        renderUtil.renderBackground(el, theme.background);
     },
 
     /**
@@ -98,23 +87,45 @@ var PlotView = ne.util.defineClass(View, /** @lends PlotView.prototype */ {
      * @returns {string} html
      * @private
      */
-    _makeLineHtml: function(params, positions) {
+    _makeLineHtml: function(params) {
         var template = plotTemplate.TPL_PLOT_LINE,
             lineHtml = ne.util.map(params.positions, function(position) {
                 var cssTexts = [
-                        this.concatStr(params.positionType, ':', position, 'px'),
-                        this.concatStr(params.sizeType, ':', params.size, 'px')
+                        renderUtil.concatStr(params.positionType, ':', position, 'px'),
+                        renderUtil.concatStr(params.sizeType, ':', params.size, 'px')
                     ], data;
 
                 if (params.lineColor) {
-                    cssTexts.push(this.concatStr('background-color:', params.lineColor));
+                    cssTexts.push(renderUtil.concatStr('background-color:', params.lineColor));
                 }
 
                 data = {className: params.className, cssText: cssTexts.join(';')};
                 return template(data);
             }, this).join('');
         return lineHtml;
+    },
+
+    /**
+     * To make vertical pixel positions
+     * @param {number} height plot height
+     * @returns {array.<number>} positions
+     */
+    makeVPixelPositions: function(height) {
+        var positions = renderUtil.makePixelPositions(height, this.vTickCount);
+        positions.shift();
+        return positions;
+    },
+
+    /**
+     * To make horizontal pixel position
+     * @param {number} width plot width
+     * @returns {array.<number>} positions
+     */
+    makeHPixelPositions: function(width) {
+        var positions = renderUtil.makePixelPositions(width, this.hTickCount);
+        positions.shift();
+        return positions;
     }
 });
 
-module.exports = PlotView;
+module.exports = Plot;
