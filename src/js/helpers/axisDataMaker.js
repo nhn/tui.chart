@@ -7,13 +7,12 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    renderUtil = require('renderUtil.js');
+    renderUtil = require('./renderUtil.js');
 
 var AXIS_TYPE_VALUE = 'value',
     AXIS_TYPE_LABEL = 'label',
     MIN_PIXEL_STEP_SIZE = 40,
     MAX_PIXEL_STEP_SIZE = 60,
-    AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10],
     PERCENT_STACKED_TICK_INFO = {
         scale: {
             min: 0,
@@ -30,53 +29,76 @@ var abs = Math.abs,
  * @module axisDataMaker
  */
 var axisDataMaker = {
-    makeLabelAxisData: function(data) {
+    /**
+     * To make data about label axis.
+     * @param {object} params parameters
+     *      @param {array.<string>} labels chart labels
+     *      @param {boolean} isVertical whether vertical or not
+     * @returns {{
+     *      labels: array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      isVertical: boolean,
+     *      axisType: string
+     * }} axis data
+     */
+    makeLabelAxisData: function(params) {
         return {
-            labels: data.labels,
-            tickCount: data.labels.length + 1,
+            labels: params.labels,
+            tickCount: params.labels.length + 1,
             validTickCount: 0,
             isLabelAxis: true,
-            isVertical: data.isVertical,
+            isVertical: !!params.isVertical,
             axisType: AXIS_TYPE_LABEL
         };
     },
 
     /**
      * Set value type axis data.
-     * @param {object} data axis setting data.
-     *      @param {array.<array.<number>>} data.values chart values
-     *      @param {{width:number, height:number}} data.chartDimension chart dimension
-     *      @param {array.<function>} data.formatFunctions format functions
-     *      @param {string} data.stacked stacked option
-     * @private
+     * @param {object} params parameters
+     *      @param {array.<array.<number>>} params.values chart values
+     *      @param {{width:number, height:number}} params.seriesDimension series dimension
+     *      @param {array.<function>} params.formatFunctions format functions
+     *      @param {string} params.stacked stacked option
+     *      @param {string} params.options axis options
+     * @returns {{
+     *      labels: array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      isLabelAxis: boolean,
+     *      scale: {min: number, max: number},
+     *      isVertical: boolean,
+     *      axisType: string
+     * }} axis data
      */
-    makeValueAxisData: function(data) {
-        var options = data.options,
+    makeValueAxisData: function(params) {
+        var options = params.options,
+            isVertical = !!params.isVertical,
             values, min, max, tickInfo;
 
-        this.isVertical = !!data.isVertical;
-        this.chartType = data.chartType;
-
-        if (data.stacked === 'percent') {
+        if (params.stacked === 'percent') {
             tickInfo = PERCENT_STACKED_TICK_INFO;
-            data.formatFunctions = [];
+            params.formatFunctions = [];
         } else {
-            values = this._makeValues(data.values, data.stacked);
+            values = this._makeValues(params.values, params.stacked);
             min = ne.util.min(values);
             max = ne.util.max(values);
             tickInfo = this._getTickInfo({
                 min: min,
                 max: max,
-                seriesDimension: data.seriesDimension
+                seriesDimension: params.seriesDimension,
+                isVertical: isVertical,
+                chartType: params.chartType
             }, options);
         }
 
         return {
-            labels: this._formatLabels(tickInfo.labels, data.formatFunctions),
+            labels: this._formatLabels(tickInfo.labels, params.formatFunctions),
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
-            isVertical: this.isVertical,
+            isVertical: isVertical,
             axisType: AXIS_TYPE_VALUE
         };
     },
@@ -104,12 +126,13 @@ var axisDataMaker = {
     /**
      * Get base size for get candidate tick counts.
      * @param {{width: number, height: number}} dimension chat dimension
+     * @param {boolean} isVertical whether vertical or not
      * @returns {number} base size
      * @private
      */
-    _getBaseSize: function(dimension) {
+    _getBaseSize: function(dimension, isVertical) {
         var baseSize;
-        if (this.isVertical) {
+        if (isVertical) {
             baseSize = dimension.height;
         } else {
             baseSize = dimension.width;
@@ -120,11 +143,12 @@ var axisDataMaker = {
     /**
      * Get candidate tick counts.
      * @param {{width: number, height: number}} chartDimension chat dimension
+     * @param {boolean} isVertical whether vertical or not
      * @returns {array.<number>} tick counts
      * @private
      */
-    _getCandidateTickCounts: function(chartDimension) {
-        var baseSize = this._getBaseSize(chartDimension),
+    _getCandidateTickCounts: function(chartDimension, isVertical) {
+        var baseSize = this._getBaseSize(chartDimension, isVertical),
             start = parseInt(baseSize / MAX_PIXEL_STEP_SIZE, 10),
             end = parseInt(baseSize / MIN_PIXEL_STEP_SIZE, 10) + 1,
             tickCounts = ne.util.range(start, end);
@@ -162,21 +186,24 @@ var axisDataMaker = {
 
     /**
      * Get tick count and scale.
-     * @param {object} data params
-     *      @param {number} data.min minimum value of user data
-     *      @param {number} data.max maximum value of user data
-     *      @param {{width: number, height: number}} data.seriesDimension chat dimension
+     * @param {object} params parameters
+     *      @param {number} params.min minimum value of user data
+     *      @param {number} params.max maximum value of user data
+     *      @param {{width: number, height: number}} params.seriesDimension chat dimension
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {string} params.chartType chat type
      * @param {{min: number, max:number}} options axis options
      * @returns {{tickCount: number, scale: object}} tick info
      * @private
      */
-    _getTickInfo: function(data, options) {
-        var intTypeInfo = this._makeIntegerTypeInfo(data.min, data.max, options),
-            tickCounts = this._getCandidateTickCounts(data.seriesDimension),
+    _getTickInfo: function(params, options) {
+        var intTypeInfo = this._makeIntegerTypeInfo(params.min, params.max, options),
+            tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical),
             candidates = this._getTickInfoCandidates({
                 min: intTypeInfo.min,
                 max: intTypeInfo.max,
-                tickCounts: tickCounts
+                tickCounts: tickCounts,
+                chartType: params.chartType
             }, intTypeInfo.options),
             tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
         tickInfo = this._makeOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
@@ -251,31 +278,7 @@ var axisDataMaker = {
      * @private
      */
     _normalizeStep: function(step) {
-        var standard = 0,
-            normalized, mod;
-
-        if (step === 0) {
-            return step;
-        }
-
-        ne.util.forEachArray(AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
-            if (step < num) {
-                if (num > 1) {
-                    standard = num;
-                }
-                return false;
-            } else if (num === 10) {
-                standard = 10;
-            }
-        });
-
-        if (standard < 1) {
-            normalized = this._normalizeStep(step * 10) * 0.1;
-        } else {
-            mod = ne.util.mod(step, standard);
-            normalized = ne.util.addition(step, (mod > 0 ? standard - mod : 0));
-        }
-        return normalized;
+        return renderUtil.normalizeNumber(step);
     },
 
     /**
@@ -298,47 +301,19 @@ var axisDataMaker = {
     },
 
     /**
-     * Calculate scale from chart min, max data.
-     *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
-     * @param {number} min min minimum value of user data
-     * @param {number} max max maximum value of user data
-     * @param {number} tickCount tick count
-     * @returns {{min: number, max: number}} scale axis scale
-     * @private
-     */
-    _calculateScale: function(min, max) {
-        var saveMin = 0,
-            scale = {},
-            iodValue; // increase or decrease value;
-
-        if (min < 0) {
-            saveMin = min;
-            max -= min;
-            min = 0;
-        }
-
-        iodValue = (max - min) / 20;
-        scale.max = max + iodValue + saveMin;
-
-        if (max / 6 > min) {
-            scale.min = 0 + saveMin;
-        } else {
-            scale.min = min - iodValue + saveMin;
-        }
-        return scale;
-    },
-
-    /**
      * To minimize tick scale.
-     * @param {number} userMin user min
-     * @param {number} userMax user max
-     * @param {{tickCount: number, scale: object}} tickInfo tick info
-     * @param {{min: number, max:number}} options axis options
+     * @param {object} params parameters
+     *      @param {number} params.userMin user min
+     *      @param {number} params.userMax user max
+     *      @param {{tickCount: number, scale: object}} params.tickInfo tick info
+     *      @param {{min: number, max:number}} params.options axis options
      * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
      * @private
      */
-    _minimizeTickScale: function(userMin, userMax, tickInfo, options) {
-        var ticks = ne.util.range(1, tickInfo.tickCount),
+    _minimizeTickScale: function(params) {
+        var tickInfo = params.tickInfo,
+            ticks = ne.util.range(1, tickInfo.tickCount),
+            options = params.options,
             step = tickInfo.step,
             scale = tickInfo.scale,
             tickMax = scale.max,
@@ -350,16 +325,16 @@ var axisDataMaker = {
             var curStep = (step * tickIndex),
                 curMin = tickMin + curStep,
                 curMax = tickMax - curStep;
-            if (userMin <= curMin && userMax >= curMax) {
+            if (params.userMin <= curMin && params.userMax >= curMax) {
                 return false;
             }
 
-            if ((isUndefinedMin && userMin > curMin) ||
+            if ((isUndefinedMin && params.userMin > curMin) ||
                 (!isUndefinedMin && options.min >= curMin)) {
                 scale.min = curMin;
             }
 
-            if ((isUndefinedMin && userMax < curMax) ||
+            if ((isUndefinedMin && params.userMax < curMax) ||
                 (!isUndefinedMax && options.max <= curMax)) {
                 scale.max = curMax;
             }
@@ -383,9 +358,9 @@ var axisDataMaker = {
         var step = tickInfo.step,
             scale = tickInfo.scale,
             tickCount = tickInfo.tickCount;
-        // step과 tickCount가 모두 2의 배수 이면서 변경된 tickCount의 두배수가 tickCount보다 orgTickCount와 차이가 덜나면 tickCount를 두배수로 변경한다.
-        if ((step % 2 === 0) && (tickCount % 2 === 0) &&
-            abs(orgTickCount - (tickCount * 2)) < abs(orgTickCount - tickCount)) {
+        // step 2의 배수 이면서 변경된 tickCount의 두배수-1이 tickCount보다 orgTickCount와 차이가 덜나거나 같으면 step을 반으로 변경한다.
+        if ((step % 2 === 0) &&
+            abs(orgTickCount - ((tickCount * 2) - 1)) <= abs(orgTickCount - tickCount)) {
             step = step / 2;
             tickInfo.labels = this._makeLabelsFromScale(scale, step);
             tickInfo.tickCount = tickInfo.labels.length;
@@ -396,38 +371,45 @@ var axisDataMaker = {
 
     /**
      * To make tick info
-     * @param {number} tickCount tick count
-     * @param {number} min scale min
-     * @param {number} max scale max
-     * @param {number} userMin minimum value of user data
-     * @param {number} userMax maximum value of user data
-     * @param {boolean} isMinus whether scale is minus or not
-     * @param {{min: number, max: number}} options axis options
-     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
+     * @param {object} params parameters
+     *      @param {number} params.tickCount tick count
+     *      @param {number} params.min scale min
+     *      @param {number} params.max scale max
+     *      @param {number} params.userMin minimum value of user data
+     *      @param {number} params.userMax maximum value of user data
+     *      @param {boolean} params.isMinus whether scale is minus or not
+     *      @param {string} params.chartType chart type
+     *      @param {{min: number, max: number}} params.options axis options
+     * @returns {{
+     *      scale: {min: number, max: number},
+     *      tickCount: number,
+     *      step: number,
+     *      labels: array.<number>
+     * }} tick info
      * @private
      */
-    _makeTickInfo: function(tickCount, min, max, userMin, userMax, isMinus, options) {
-        var scale = this._calculateScale(min, max),
-            isLineChart = this.chartType === chartConst.CHART_TYPE_LINE,
+    _makeTickInfo: function(params) {
+        var scale = renderUtil.calculateScale(params.min, params.max),
+            isLineChart = params.chartType === chartConst.CHART_TYPE_LINE,
             tmpMin, orgScaleMax, tmpStep, step, multipleNum, tickInfo,
             diffMax, modDiff, divideDiff;
 
-        if (isMinus) {
+        if (params.isMinus) {
             tmpMin = scale.min;
             scale.min = -scale.max;
             scale.max = -tmpMin;
         }
 
-        scale.min = options.min || scale.min;
-        scale.max = options.max || scale.max;
+        scale.min = params.options.min || scale.min;
+        scale.max = params.options.max || scale.max;
 
         orgScaleMax = scale.max;
 
-        tmpStep = renderUtil.getScaleStep(scale, tickCount);
+        tmpStep = renderUtil.getScaleStep(scale, params.tickCount);
         step = this._normalizeStep(tmpStep);
         scale.min = this._normalizeMin(scale.min, step);
         multipleNum = ne.util.findMultipleNum(step);
-        scale.max = ((scale.min * multipleNum) + (step * multipleNum * (tickCount - 1))) / multipleNum;
+        scale.max = ((scale.min * multipleNum) + (step * multipleNum * (params.tickCount - 1))) / multipleNum;
 
         diffMax = orgScaleMax - scale.max;
         if (diffMax > 0) {
@@ -436,36 +418,42 @@ var axisDataMaker = {
             scale.max += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
         }
 
-        if (ne.util.isUndefined(options.max) && (scale.max === userMax)) {
+        if (ne.util.isUndefined(params.options.max) && (scale.max === params.userMax)) {
             scale.max += step;
         }
 
-        if ((isLineChart || userMin > 0) &&
-            ne.util.isUndefined(options.min) && (scale.min === userMin)) {
+        if ((isLineChart || params.userMin > 0) &&
+            ne.util.isUndefined(params.options.min) && (scale.min === params.userMin)) {
             scale.min -= step;
         }
 
-        tickInfo = {scale: scale, step: step, tickCount: tickCount};
-        tickInfo = this._minimizeTickScale(userMin, userMax, tickInfo, options);
-        tickInfo = this._divideTickStep(tickInfo, tickCount);
+        tickInfo = {scale: scale, step: step, tickCount: params.tickCount};
+        tickInfo = this._minimizeTickScale({
+            userMin: params.userMin,
+            userMax: params.userMax,
+            tickInfo: tickInfo,
+            options: params.options
+        });
+        tickInfo = this._divideTickStep(tickInfo, params.tickCount);
         return tickInfo;
     },
 
     /**
      * Get candidates about tick info.
-     * @param {object} data params
-     *      @param {number} data.min minimum value of user data
-     *      @param {number} data.max maximum value of user data
-     *      @param {array.<number>} data.tickCounts tick counts
+     * @param {object} params parameters
+     *      @param {number} params.min minimum value of user data
+     *      @param {number} params.max maximum value of user data
+     *      @param {array.<number>} params.tickCounts tick counts
+     *      @param {string} params.chartType chart type
      * @param {{min: number, max:number}} options axis options
      * @returns {array} candidates about tick info
      * @private
      */
-    _getTickInfoCandidates: function(data, options) {
-        var userMin = data.min,
-            userMax = data.max,
-            min = data.min,
-            max = data.max,
+    _getTickInfoCandidates: function(params, options) {
+        var userMin = params.min,
+            userMax = params.max,
+            min = params.min,
+            max = params.max,
             isMinus = false,
             tmpMin, candidates;
 
@@ -476,8 +464,17 @@ var axisDataMaker = {
             max = -tmpMin;
         }
 
-        candidates = ne.util.map(data.tickCounts, function(tickCount) {
-            return this._makeTickInfo(tickCount, min, max, userMin, userMax, isMinus, options);
+        candidates = ne.util.map(params.tickCounts, function(tickCount) {
+            return this._makeTickInfo({
+                tickCount: tickCount,
+                min: min,
+                max: max,
+                userMin: userMin,
+                userMax: userMax,
+                isMinus: isMinus,
+                chartType: params.chartType,
+                options: options
+            });
         }, this);
 
         return candidates;

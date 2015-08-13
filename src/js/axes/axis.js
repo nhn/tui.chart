@@ -17,8 +17,11 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis render axis ticks and labels.
      * @constructs Axis
-     * @param {object} model axis model
-     * @param {object} theme axis theme
+     * @param {object} params parameters
+     *      @param {object} params.data axis data
+     *      @param {object} params.bound axis bound
+     *      @param {object} params.theme axis theme
+     *      @param {object} params.options axis options
      */
     init: function(params) {
         ne.util.extend(this, params);
@@ -30,7 +33,6 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Axis renderer.
-     * @param {{width: number, height: number, top: number, right: number}} bound axis area dimension
      * @returns {HTMLElement} axis area base element
      */
     render: function() {
@@ -55,34 +57,6 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Title renderer
-     * @param {string} title title
-     * @param {{fontSize: number, color: string, background: string}} theme title theme
-     * @param {string} className css class name
-     * @returns {HTMLElement} title element
-     */
-    renderTitle: function(title, theme, className) {
-        var elTitle, cssText;
-
-        if (!title) {
-            return;
-        }
-
-        elTitle = dom.createElement('DIV', className);
-        elTitle.innerHTML = title;
-
-        cssText = renderUtil.makeFontCssText(theme);
-
-        if (theme.background) {
-            cssText += ';' + this.concatStr('background:', theme.background);
-        }
-
-        elTitle.style.cssText = cssText;
-
-        return elTitle;
-    },
-
-    /**
      * Title area renderer
      * @param {string} title axis title
      * @param {obejct} theme title theme
@@ -92,7 +66,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderTitleArea: function(title, theme, isVertical, size) {
-        var elTitleArea = this.renderTitle(title, theme, 'ne-chart-title-area'),
+        var elTitleArea = renderUtil.renderTitle(title, theme, 'ne-chart-title-area'),
             cssTexts = [];
 
         if (elTitleArea && isVertical) {

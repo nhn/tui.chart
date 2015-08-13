@@ -6,8 +6,8 @@
 
 'use strict';
 
-var dom = require('domHandler.js'),
-    renderUtil = require('renderUtil.js'),
+var dom = require('./domHandler.js'),
+    renderUtil = require('./renderUtil.js'),
     chartConst = require('../const.js');
 
 var CHART_PADDING = 10,
@@ -24,23 +24,51 @@ var concat = Array.prototype.concat;
  * @module boundsMaker
  */
 var boundsMaker = {
-    make: function(data) {
-        var chartOptions = data.options.chart || {};
-        var chartDimension = {
-            width: chartOptions.width || 500,
-            height: chartOptions.height || 400
-        };
-
-        var convertData = data.convertData;
-        var vAxisTitle = data.options.vAxis.title;
-        var hAxisTitle = data.options.hAxis.title;
-        var valueLabels = concat.apply([], convertData.formattedValues);
-        var vLabels = data.isVertical ? valueLabels : convertData.labels;
-        var hLabels = data.isVertical ? convertData.labels : valueLabels;
-        var titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, data.theme.chart),
-            vAxisWidth = this._getVerticalAxisWidth(vAxisTitle, vLabels, data.theme.vAxis),
-            hAxisHeight = this._getHorizontalAxisHeight(hAxisTitle, hLabels, data.theme.hAxis),
-            legendWidth = this.getLegendAreaWidth(convertData.legendLabels, data.theme.legend.label),
+    /**
+     * To make bounds about chart components.
+     * @param {object} params parameters
+     *      @param {object} convertData converted data
+     *      @param {object} theme chart theme
+     *      @param {boolean} isVertical whether vertical or not
+     *      @param {object} options chart options
+     * @returns {{
+     *   plot: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   vAxis: {
+     *     dimension: {width: (number), height: number},
+     *     position: {top: number}
+     *   },
+     *   hAxis: {
+     *     dimension: {width: number, height: (number)},
+     *     position: {right: number}
+     *   },
+     *   series: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   legend: {
+     *     position: {top: number}
+     *   }
+     * }} bounds
+     */
+    make: function(params) {
+        var chartOptions = params.options.chart || {},
+            chartDimension = {
+                width: chartOptions.width || 500,
+                height: chartOptions.height || 400
+            },
+            convertData = params.convertData,
+            vAxisTitle = params.options.vAxis && params.options.vAxis.title,
+            hAxisTitle = params.options.hAxis && params.options.hAxis.title,
+            maxLabel = this._getValueAxisMaxLabel(convertData.values, convertData.formatFunctions),
+            vLabels = params.isVertical ? [maxLabel] : convertData.labels,
+            hLabels = params.isVertical ? convertData.labels : [maxLabel],
+            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, params.theme.title) + TITLE_ADD_PADDING,
+            vAxisWidth = this._getVerticalAxisWidth(vAxisTitle, vLabels, params.theme.vAxis),
+            hAxisHeight = this._getHorizontalAxisHeight(hAxisTitle, hLabels, params.theme.hAxis),
+            legendWidth = this.getLegendAreaWidth(convertData.legendLabels, params.theme.legend.label),
             plotWidth = chartDimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
             plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
             top = titleHeight + CHART_PADDING,
@@ -74,6 +102,31 @@ var boundsMaker = {
                 }
             };
         return bounds;
+    },
+
+    /**
+     * Get max label of value axis.
+     * @param {array.<number>} values axis values
+     * @param {array.<function>} formatFunctions format functions
+     * @returns {number|string} max label
+     * @private
+     */
+    _getValueAxisMaxLabel: function(values, formatFunctions) {
+        var flattenValues = concat.apply([], values),
+            min = ne.util.min(flattenValues),
+            max = ne.util.max(flattenValues),
+            scale = renderUtil.calculateScale(min, max),
+            minLabel = renderUtil.normalizeNumber(scale.min),
+            maxLabel = renderUtil.normalizeNumber(scale.max),
+            fns = formatFunctions && formatFunctions.slice() || [];
+
+        maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
+        fns.unshift(maxLabel);
+        maxLabel = ne.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
+
+        return maxLabel;
     },
 
     /**
@@ -118,6 +171,9 @@ var boundsMaker = {
 
     /**
      * Get width of vertical axis area.
+     * @param {string} title axis title,
+     * @param {array.<string>} labels axis labels
+     * @param {object} theme axis theme
      * @returns {number} width
      */
     _getVerticalAxisWidth: function(title, labels, theme) {
@@ -128,6 +184,9 @@ var boundsMaker = {
 
     /**
      * Get height of horizontal axis area.
+     * @param {string} title axis title,
+     * @param {array.<string>} labels axis labels
+     * @param {object} theme axis theme
      * @returns {number} height
      */
     _getHorizontalAxisHeight: function(title, labels, theme) {
@@ -138,6 +197,8 @@ var boundsMaker = {
 
     /**
      * Get width of legend area.
+     * @param {array.<string>} legendLabels legend labels
+     * @param {object} labelTheme label theme
      * @returns {number} width
      */
     getLegendAreaWidth: function(legendLabels, labelTheme) {

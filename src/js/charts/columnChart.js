@@ -18,6 +18,7 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
             bounds = boundsMaker.make({
                 convertData: convertData,
                 theme: theme,
+                isVertical: true,
                 options: options
             }),
             vAxisData, hAxisData;

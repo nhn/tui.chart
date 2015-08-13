@@ -6,7 +6,7 @@
 
 'use strict';
 
-var renderUtil = require('renderUtil.js');
+var renderUtil = require('./renderUtil.js');
 
 var concat = Array.prototype.concat;
 

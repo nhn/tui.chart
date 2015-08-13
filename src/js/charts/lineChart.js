@@ -19,6 +19,7 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
             bounds = boundsMaker.make({
                 convertData: convertData,
                 theme: theme,
+                isVertical: true,
                 options: options
             }),
             vAxisData, hAxisData;

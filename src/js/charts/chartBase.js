@@ -36,17 +36,27 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
     render: function() {
         var el = dom.createElement('DIV', this.className);
+
         dom.addClass(el, 'ne-chart');
+        this._renderTitle(el);
         renderUtil.renderDimension(el, this.bounds.chart.dimension);
-        this.appendComponent(el, this.components);
+
+        this._appendComponent(el, this.components);
         this._attachCustomEvent();
         return el;
     },
 
-    appendComponent: function(container, components) {
-        ne.util.forEachArray(components, function(component) {
-            container.appendChild(component.render());
+    _renderTitle: function(el) {
+        var chartOptions = this.options.chart || {},
+            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'ne-chart-title');
+        renderUtil.append(el, elTitle);
+    },
+
+    _appendComponent: function(container, components) {
+        var elements = ne.util.map(components, function(component) {
+            return component.render();
         });
+        renderUtil.appends(container, elements);
     },
 
     /**

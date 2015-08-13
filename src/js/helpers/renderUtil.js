@@ -4,7 +4,72 @@ var dom = require('./domHandler'),
 var browser = ne.util.browser,
     isIE8 = browser.msie && browser.version === 8;
 
+var AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10];
+
 var renderUtil = {
+    /**
+     * Calculate scale from chart min, max data.
+     *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
+     * @param {number} min min minimum value of user data
+     * @param {number} max max maximum value of user data
+     * @param {number} tickCount tick count
+     * @returns {{min: number, max: number}} scale axis scale
+     */
+    calculateScale: function(min, max) {
+        var saveMin = 0,
+            scale = {},
+            iodValue; // increase or decrease value;
+
+        if (min < 0) {
+            saveMin = min;
+            max -= min;
+            min = 0;
+        }
+
+        iodValue = (max - min) / 20;
+        scale.max = max + iodValue + saveMin;
+
+        if (max / 6 > min) {
+            scale.min = 0 + saveMin;
+        } else {
+            scale.min = min - iodValue + saveMin;
+        }
+        return scale;
+    },
+
+    normalizeNumber: function(value) {
+        var standard = 0,
+            flag = 1,
+            normalized, mod;
+
+        if (value === 0) {
+            return value;
+        } else if (value < 0) {
+            flag = -1;
+        }
+
+        value *= flag;
+
+        ne.util.forEachArray(AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
+            if (value < num) {
+                if (num > 1) {
+                    standard = num;
+                }
+                return false;
+            } else if (num === 10) {
+                standard = 10;
+            }
+        });
+
+        if (standard < 1) {
+            normalized = this.normalizeNumber(value * 10) * 0.1;
+        } else {
+            mod = ne.util.mod(value, standard);
+            normalized = ne.util.addition(value, (mod > 0 ? standard - mod : 0));
+        }
+        return normalized *= flag;
+    },
+
     /**
      * To Make tick positions of pixel type.
      * @param {number} size area width or height
@@ -201,23 +266,51 @@ var renderUtil = {
     },
 
     /**
-     * Append child element.
-     * @param {HTMLElement} elChild child element
+     * Title renderer.
+     * @param {string} title title
+     * @param {{fontSize: number, color: string, background: string}} theme title theme
+     * @param {string} className css class name
+     * @returns {HTMLElement} title element
      */
-    append: function(container, elChild) {
-        if (!container || !elChild) {
+    renderTitle: function(title, theme, className) {
+        var elTitle, cssText;
+
+        if (!title) {
             return;
         }
-        container.appendChild(elChild);
+
+        elTitle = dom.createElement('DIV', className);
+        elTitle.innerHTML = title;
+
+        cssText = renderUtil.makeFontCssText(theme);
+
+        if (theme.background) {
+            cssText += ';' + this.concatStr('background:', theme.background);
+        }
+
+        elTitle.style.cssText = cssText;
+
+        return elTitle;
+    },
+
+    /**
+     * Append child element.
+     * @param {HTMLElement} child child element
+     */
+    append: function(container, child) {
+        if (!container || !child) {
+            return;
+        }
+        container.appendChild(child);
     },
 
     /**
      * Append child elements.
-     * @param {array.<HTMLElement>} elChildren child elements
+     * @param {array.<HTMLElement>} children child elements
      */
-    appends: function(container, elChildren) {
+    appends: function(container, children) {
         var append = ne.util.bind(this.append, this, container);
-        ne.util.forEachArray(elChildren, append, this);
+        ne.util.forEachArray(children, append, this);
     },
 
     /**
