@@ -11,14 +11,7 @@ var maker = require('../../src/js/helpers/axisDataMaker.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('axisDataMaker', function() {
-    var labels = [
-            'Element',
-            'Copper',
-            'Silver',
-            'Gold',
-            'Platinum'
-        ],
-        groupValues = [
+    var groupValues = [
             [70, 10],
             [20, 20],
             [80, 30]
@@ -209,38 +202,6 @@ describe('axisDataMaker', function() {
         expect(result).toEqual(0.1);
     });
 
-    it('_normalizeMin()', function() {
-        var result = maker._normalizeMin(1.6, 2);
-        expect(result).toEqual(0);
-
-        result = maker._normalizeMin(1.6, 1);
-        expect(result).toEqual(1);
-
-        result = maker._normalizeMin(2.3, 2);
-        expect(result).toEqual(2);
-
-        result = maker._normalizeMin(3.3, 2);
-        expect(result).toEqual(2);
-
-        result = maker._normalizeMin(3.3, 5);
-        expect(result).toEqual(0);
-
-        result = maker._normalizeMin(7.3, 5);
-        expect(result).toEqual(5);
-
-        result = maker._normalizeMin(7.3, 10);
-        expect(result).toEqual(0);
-
-        result = maker._normalizeMin(-100, 30);
-        expect(result).toEqual(-120);
-
-        result = maker._normalizeMin(-10, 30);
-        expect(result).toEqual(-30);
-
-        result = maker._normalizeMin(-10, 5);
-        expect(result).toEqual(-10);
-    });
-
     it('_minimizeTickScale()', function() {
         var tickInfo = maker._minimizeTickScale({
             userMin: 10,
@@ -326,6 +287,7 @@ describe('axisDataMaker', function() {
             userMin: 10,
             userMax: 90,
             isMinus: false,
+            scale: maker._makeBaseScale(0, 100, {}),
             options: {}
         });
 
@@ -338,6 +300,87 @@ describe('axisDataMaker', function() {
             tickCount: 5,
             labels: [0, 30, 60, 90, 120]
         });
+    });
+
+    it('_addMinPadding() line chart', function() {
+        var result = maker._addMinPadding({
+            min: 0,
+            userMin: 0,
+            step: 20,
+            chartType: 'line'
+        });
+
+        expect(result).toEqual(-20);
+    });
+
+    it('_addMinPadding() bar chart', function() {
+        var result = maker._addMinPadding({
+            min: 0,
+            userMin: 0,
+            step: 20,
+            chartType: 'bar'
+        });
+
+        expect(result).toEqual(0);
+    });
+
+    it('_addMaxPadding()', function() {
+        var result = maker._addMaxPadding({
+            max: 90,
+            userMax: 90,
+            step: 20
+        });
+
+        expect(result).toEqual(110);
+    });
+
+    it('_normalizeMin()', function() {
+        var result = maker._normalizeMin(1.6, 2);
+        expect(result).toEqual(0);
+
+        result = maker._normalizeMin(1.6, 1);
+        expect(result).toEqual(1);
+
+        result = maker._normalizeMin(2.3, 2);
+        expect(result).toEqual(2);
+
+        result = maker._normalizeMin(3.3, 2);
+        expect(result).toEqual(2);
+
+        result = maker._normalizeMin(3.3, 5);
+        expect(result).toEqual(0);
+
+        result = maker._normalizeMin(7.3, 5);
+        expect(result).toEqual(5);
+
+        result = maker._normalizeMin(7.3, 10);
+        expect(result).toEqual(0);
+
+        result = maker._normalizeMin(-100, 30);
+        expect(result).toEqual(-120);
+
+        result = maker._normalizeMin(-10, 30);
+        expect(result).toEqual(-30);
+
+        result = maker._normalizeMin(-10, 5);
+        expect(result).toEqual(-10);
+    });
+
+    it('_makeNormalizedMax()', function() {
+        var result = maker._makeNormalizedMax({
+            min: 0,
+            max: 110
+        }, 20, 5);
+
+        expect(result).toEqual(120);
+    });
+
+    it('_normalizeScale()', function() {
+        var result = maker._makeNormalizedMax({
+            min: 0,
+            max: 110
+        }, 20, 5);
+        expect(result).toEqual(120);
     });
 
     it('_getTickInfoCandidates()', function() {
@@ -362,6 +405,23 @@ describe('axisDataMaker', function() {
         ]);
     });
 
+    it('_makeBaseScale()', function() {
+        var result = maker._makeBaseScale(-90, 0, {});
+        expect(result).toEqual({
+            min: -94.5,
+            max: -0
+        });
+    });
+
+    it('_makeBaseScale() contain option', function() {
+        var result = maker._makeBaseScale(-90, 0, {min: -90, max: 10});
+        expect(result).toEqual({
+            min: -90,
+            max: 10
+        });
+    });
+
+
     it('_formatLabels()', function() {
         var fns = converter._findFormatFunctions('1,000.00'),
             result = maker._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
@@ -381,7 +441,7 @@ describe('axisDataMaker', function() {
         expect(_labels).toEqual([20, 40, 60, 80, 100]);
     });
 
-    it('normal makeValueAxisData()', function() {
+    it('makeValueAxisData() normal', function() {
         var result = maker.makeValueAxisData({
             values: groupValues,
             seriesDimension: {
@@ -404,7 +464,7 @@ describe('axisDataMaker', function() {
         });
     });
 
-    it('normal stacked makeValueAxisData()', function() {
+    it('makeValueAxisData() normal stacked', function() {
         var result = maker.makeValueAxisData({
             values: groupValues,
             seriesDimension: {
@@ -428,7 +488,7 @@ describe('axisDataMaker', function() {
         });
     });
 
-    it('percent stacked makeValueAxisData()', function() {
+    it('makeValueAxisData() percent stacked', function() {
         var result = maker.makeValueAxisData({
             values: groupValues,
             seriesDimension: {

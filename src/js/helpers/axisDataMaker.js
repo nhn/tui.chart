@@ -219,7 +219,7 @@ var axisDataMaker = {
      * @private
      */
     _makeIntegerTypeInfo: function(min, max, options) {
-        var multipleNum, changeOptions;
+        var multipleNum, changedOptions;
 
         if (abs(min) >= 1 || abs(max) >= 1) {
             return {
@@ -231,20 +231,20 @@ var axisDataMaker = {
         }
 
         multipleNum = ne.util.findMultipleNum(min, max);
-        changeOptions = {};
+        changedOptions = {};
 
         if (options.min) {
-            changeOptions.min = options.min * multipleNum;
+            changedOptions.min = options.min * multipleNum;
         }
 
         if (options.max) {
-            changeOptions.max = options.max * multipleNum;
+            changedOptions.max = options.max * multipleNum;
         }
 
         return {
             min: min * multipleNum,
             max: max * multipleNum,
-            options: changeOptions,
+            options: changedOptions,
             divideNum: multipleNum
         };
     },
@@ -279,25 +279,6 @@ var axisDataMaker = {
      */
     _normalizeStep: function(step) {
         return renderUtil.normalizeNumber(step);
-    },
-
-    /**
-     * Normalize min.
-     * @param {number} min original min
-     * @param {number} step tick step
-     * @returns {number} normalized min
-     * @private
-     */
-    _normalizeMin: function(min, step) {
-        var mod = ne.util.mod(min, step),
-            normalized;
-
-        if (mod === 0) {
-            normalized = min;
-        } else {
-            normalized = ne.util.subtraction(min, (min >= 0 ? mod : step + mod));
-        }
-        return normalized;
     },
 
     /**
@@ -389,53 +370,134 @@ var axisDataMaker = {
      * @private
      */
     _makeTickInfo: function(params) {
-        var scale = renderUtil.calculateScale(params.min, params.max),
-            isLineChart = params.chartType === chartConst.CHART_TYPE_LINE,
-            tmpMin, orgScaleMax, tmpStep, step, multipleNum, tickInfo,
-            diffMax, modDiff, divideDiff;
+        var scale = params.scale,
+            step, tickInfo;
 
-        if (params.isMinus) {
-            tmpMin = scale.min;
-            scale.min = -scale.max;
-            scale.max = -tmpMin;
-        }
+        step = renderUtil.getScaleStep(scale, params.tickCount);
+        step = this._normalizeStep(step);
+        scale = this._normalizeScale(scale, step, params.tickCount);
 
-        scale.min = params.options.min || scale.min;
-        scale.max = params.options.max || scale.max;
+        scale.min = this._addMinPadding({
+            min: scale.min,
+            step: step,
+            userMin: params.userMin,
+            minOption: params.options.min,
+            chartType: params.chartType
+        });
 
-        orgScaleMax = scale.max;
+        scale.max = this._addMaxPadding({
+            max: scale.max,
+            step: step,
+            userMax: params.userMax,
+            maxOption: params.options.max
+        });
 
-        tmpStep = renderUtil.getScaleStep(scale, params.tickCount);
-        step = this._normalizeStep(tmpStep);
-        scale.min = this._normalizeMin(scale.min, step);
-        multipleNum = ne.util.findMultipleNum(step);
-        scale.max = ((scale.min * multipleNum) + (step * multipleNum * (params.tickCount - 1))) / multipleNum;
-
-        diffMax = orgScaleMax - scale.max;
-        if (diffMax > 0) {
-            modDiff = diffMax % step;
-            divideDiff = Math.floor(diffMax / step);
-            scale.max += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
-        }
-
-        if (ne.util.isUndefined(params.options.max) && (scale.max === params.userMax)) {
-            scale.max += step;
-        }
-
-        if ((isLineChart || params.userMin > 0) &&
-            ne.util.isUndefined(params.options.min) && (scale.min === params.userMin)) {
-            scale.min -= step;
-        }
-
-        tickInfo = {scale: scale, step: step, tickCount: params.tickCount};
         tickInfo = this._minimizeTickScale({
             userMin: params.userMin,
             userMax: params.userMax,
-            tickInfo: tickInfo,
+            tickInfo: {scale: scale, step: step, tickCount: params.tickCount},
             options: params.options
         });
+
         tickInfo = this._divideTickStep(tickInfo, params.tickCount);
         return tickInfo;
+    },
+
+    /**
+     * Add scale min padding.
+     * @param {object} params parameters
+     *      @prams {number} params.min scale min
+     *      @param {number} params.userMin minimum value of user data
+     *      @param {number} params.minOption min option
+     *      @param {number} params.step tick step
+     * @returns {number} scale min
+     * @private
+     */
+    _addMinPadding: function(params) {
+        var min = params.min;
+
+        if (params.chartType !== chartConst.CHART_TYPE_LINE || !ne.util.isUndefined(params.minOption)) {
+            return min;
+        }
+        // normalize된 scale min값이 user min값과 같을 경우 step 감소
+        if (params.min === params.userMin) {
+            min -= params.step;
+        }
+        return min;
+    },
+
+    /**
+     * Add scale max padding.
+     * @param {object} params parameters
+     *      @prams {number} params.max scale max
+     *      @param {number} params.userMax maximum value of user data
+     *      @param {number} params.maxOption max option
+     *      @param {number} params.step tick step
+     * @returns {number} scale max
+     * @private
+     */
+    _addMaxPadding: function(params) {
+        var max = params.max;
+        // normalize된 scale max값이 user max값과 같을 경우 step 증가
+        if (ne.util.isUndefined(params.maxOption) && (params.max === params.userMax)) {
+            max += params.step;
+        }
+        return max;
+    },
+
+    /**
+     * To normalize min.
+     * @param {number} min original min
+     * @param {number} step tick step
+     * @returns {number} normalized min
+     * @private
+     */
+    _normalizeMin: function(min, step) {
+        var mod = ne.util.mod(min, step),
+            normalized;
+
+        if (mod === 0) {
+            normalized = min;
+        } else {
+            normalized = ne.util.subtraction(min, (min >= 0 ? mod : step + mod));
+        }
+        return normalized;
+    },
+
+    /**
+     * To make normalized max
+     * @param {{min: number, max: number}} scale scale
+     * @param {number} step tick step
+     * @param {number} tickCount tick count
+     * @returns {number} normalized max
+     * @private
+     */
+    _makeNormalizedMax: function(scale, step, tickCount) {
+        var minMaxDiff = ne.util.multiplication(step, tickCount - 1),
+            normalizedMax = ne.util.addition(scale.min, minMaxDiff),
+            maxDiff = scale.max - normalizedMax,
+            modDiff, divideDiff;
+        // normalize된 max값이 원래의 max값 보다 작을 경우 step을 증가시켜 큰 값으로 만들기
+        if (maxDiff > 0) {
+            modDiff = maxDiff % step;
+            divideDiff = Math.floor(maxDiff / step);
+            normalizedMax += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
+        }
+        return normalizedMax;
+    },
+
+    /**
+     * To normalize scale
+     * @param {{min: number, max: number}} scale base scale
+     * @param {number} step tick step
+     * @param {number} tickCount tick count
+     * @returns {{min: number, max: number}} normalized scale
+     * @private
+     */
+    _normalizeScale: function(scale, step, tickCount) {
+        scale.min = this._normalizeMin(scale.min, step);
+        scale.max = this._makeNormalizedMax(scale, step, tickCount);
+        return scale;
     },
 
     /**
@@ -454,8 +516,33 @@ var axisDataMaker = {
             userMax = params.max,
             min = params.min,
             max = params.max,
-            isMinus = false,
-            tmpMin, candidates;
+            scale = this._makeBaseScale(min, max, options),
+            candidates;
+
+        candidates = ne.util.map(params.tickCounts, function(tickCount) {
+            return this._makeTickInfo({
+                tickCount: tickCount,
+                scale: ne.util.extend({}, scale),
+                userMin: userMin,
+                userMax: userMax,
+                chartType: params.chartType,
+                options: options
+            });
+        }, this);
+        return candidates;
+    },
+
+    /**
+     * To make base scale
+     * @param {number} min minimum value of user data
+     * @param {number} max maximum value of user data
+     * @param {{min: number, max: number}} options axis options
+     * @returns {{min: number, max: number}} base scale
+     * @private
+     */
+    _makeBaseScale: function(min, max, options) {
+        var isMinus = false,
+            tmpMin, scale;
 
         if (min < 0 && max <= 0) {
             isMinus = true;
@@ -464,20 +551,18 @@ var axisDataMaker = {
             max = -tmpMin;
         }
 
-        candidates = ne.util.map(params.tickCounts, function(tickCount) {
-            return this._makeTickInfo({
-                tickCount: tickCount,
-                min: min,
-                max: max,
-                userMin: userMin,
-                userMax: userMax,
-                isMinus: isMinus,
-                chartType: params.chartType,
-                options: options
-            });
-        }, this);
+        scale = renderUtil.calculateScale(min, max);
 
-        return candidates;
+        if (isMinus) {
+            tmpMin = scale.min;
+            scale.min = -scale.max;
+            scale.max = -tmpMin;
+        }
+
+        scale.min = options.min || scale.min;
+        scale.max = options.max || scale.max;
+
+        return scale;
     },
 
     /**
