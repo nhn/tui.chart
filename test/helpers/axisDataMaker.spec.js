@@ -31,10 +31,10 @@ describe('test axisDataMaker', function() {
     });
 
     it('_makeValues()', function() {
-        var values = maker._makeValues(groupValues);
+        var values = maker._makeBaseValues(groupValues);
         expect(values).toEqual([70, 10, 20, 20, 80, 30]);
 
-        values = maker._makeValues(groupValues, 'normal');
+        values = maker._makeBaseValues(groupValues, 'normal');
         expect(values).toEqual([70, 10, 20, 20, 80, 30, 80, 40, 110]);
     });
 
@@ -98,8 +98,7 @@ describe('test axisDataMaker', function() {
 
     it('_getTickInfo()', function() {
         var tickInfo = maker._getTickInfo({
-            min: 10,
-            max: 90,
+            values: [10, 20, 40, 90],
             seriesDimension: {
                 width: 500,
                 height: 400
@@ -140,7 +139,7 @@ describe('test axisDataMaker', function() {
     });
 
     it('_makeOriginalTypeTickInfo()', function() {
-        var tickInfo = maker._makeOriginalTypeTickInfo({
+        var tickInfo = maker._revertOriginalTypeTickInfo({
             step: 5,
             scale: {
                 min: 1,
@@ -157,7 +156,7 @@ describe('test axisDataMaker', function() {
             labels: [2, 3, 9]
         });
 
-        tickInfo = maker._makeOriginalTypeTickInfo({
+        tickInfo = maker._revertOriginalTypeTickInfo({
             step: 5,
             scale: {
                 min: 1,
@@ -383,7 +382,7 @@ describe('test axisDataMaker', function() {
     });
 
     it('_getTickInfoCandidates()', function() {
-        var candidates = maker._getTickInfoCandidates({
+        var candidates = maker._getCandidateTickInfos({
             min: 10,
             max: 90,
             tickCounts: [4, 5]

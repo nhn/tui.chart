@@ -70,18 +70,15 @@ var axisDataMaker = {
     makeValueAxisData: function(params) {
         var options = params.options,
             isVertical = !!params.isVertical,
-            values, min, max, tickInfo;
+            formatFunctions = params.formatFunctions,
+            tickInfo;
 
         if (params.stacked === 'percent') {
             tickInfo = PERCENT_STACKED_TICK_INFO;
-            params.formatFunctions = [];
+            formatFunctions = [];
         } else {
-            values = this._makeValues(params.values, params.stacked);
-            min = ne.util.min(values);
-            max = ne.util.max(values);
             tickInfo = this._getTickInfo({
-                min: min,
-                max: max,
+                values: this._makeBaseValues(params.values, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 chartType: params.chartType
@@ -89,7 +86,7 @@ var axisDataMaker = {
         }
 
         return {
-            labels: this._formatLabels(tickInfo.labels, params.formatFunctions),
+            labels: this._formatLabels(tickInfo.labels, formatFunctions),
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
@@ -98,23 +95,23 @@ var axisDataMaker = {
     },
 
     /**
-     * To make values.
+     * To make base values.
      * @param {array.<number>} groupValues group values
      * @param {string} stacked stacked option.
-     * @returns {array.<number>} values
+     * @returns {array.<number>} base values
      * @private
      */
-    _makeValues: function(groupValues, stacked) {
-        var flattenValues = concat.apply([], groupValues); // flatten array
+    _makeBaseValues: function(groupValues, stacked) {
+        var baseValues = concat.apply([], groupValues); // flatten array
         if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            flattenValues = flattenValues.concat(ne.util.map(groupValues, function(values) {
+            baseValues = baseValues.concat(ne.util.map(groupValues, function(values) {
                 var plusValues = ne.util.filter(values, function(value) {
                     return value > 0;
                 });
                 return ne.util.sum(plusValues);
             }));
         }
-        return flattenValues;
+        return baseValues;
     },
 
     /**
@@ -181,8 +178,7 @@ var axisDataMaker = {
     /**
      * Get tick count and scale.
      * @param {object} params parameters
-     *      @param {number} params.min minimum value of user data
-     *      @param {number} params.max maximum value of user data
+     *      @param {number} params.values base values
      *      @param {{width: number, height: number}} params.seriesDimension chat dimension
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {string} params.chartType chat type
@@ -191,16 +187,18 @@ var axisDataMaker = {
      * @private
      */
     _getTickInfo: function(params, options) {
-        var intTypeInfo = this._makeIntegerTypeInfo(params.min, params.max, options),
+        var min = ne.util.min(params.values),
+            max = ne.util.max(params.values),
+            intTypeInfo = this._makeIntegerTypeInfo(min, max, options),
             tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical),
-            candidates = this._getTickInfoCandidates({
+            candidates = this._getCandidateTickInfos({
                 min: intTypeInfo.min,
                 max: intTypeInfo.max,
                 tickCounts: tickCounts,
                 chartType: params.chartType
             }, intTypeInfo.options),
             tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
-        tickInfo = this._makeOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
+        tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
         return tickInfo;
     },
 
@@ -244,13 +242,13 @@ var axisDataMaker = {
     },
 
     /**
-     * To make tick info to original type.
+     * Revert tick info to original type.
      * @param {{step: number, scale: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
      * @param {number} divideNum divide num
      * @returns {{step: number, scale: {min: number, max: number}, labels: array.<number>}} divided tick info
      * @private
      */
-    _makeOriginalTypeTickInfo: function(tickInfo, divideNum) {
+    _revertOriginalTypeTickInfo: function(tickInfo, divideNum) {
         if (divideNum === 1) {
             return tickInfo;
         }
@@ -505,7 +503,7 @@ var axisDataMaker = {
      * @returns {array} candidates about tick info
      * @private
      */
-    _getTickInfoCandidates: function(params, options) {
+    _getCandidateTickInfos: function(params, options) {
         var userMin = params.min,
             userMax = params.max,
             min = params.min,
