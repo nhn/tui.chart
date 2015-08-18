@@ -1,5 +1,5 @@
 /**
- * @fileoverview Series render series area.
+ * @fileoverview Line chart series component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,9 +8,16 @@
 
 var Series = require('./series.js');
 
-var HIDDEN_WIDTH = 1;
-
 var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+    /**
+     * Line chart series component.
+     * @constructs LineChartSeries
+     * @extends Series
+     * @param {object} params parameters
+     *      @param {object} params.model series model
+     *      @param {object} params.options series options
+     *      @param {object} params.theme series theme
+     */
     init: function() {
         Series.apply(this, arguments);
     },

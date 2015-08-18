@@ -1,5 +1,5 @@
 /**
- * @fileoverview  Axis render axis ticks and labels.
+ * @fileoverview  Axis component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler.js'),
+    calculator = require('../helpers/calculator.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     axisTemplate = require('./axisTemplate.js');
 
@@ -15,10 +16,15 @@ var TITLE_AREA_WIDTH_PADDING = 20,
 
 var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
-     * Axis render axis ticks and labels.
+     * Axis component.
      * @constructs Axis
      * @param {object} params parameters
-     *      @param {object} params.data axis data
+     *      @param {{
+     *          labels: array.<string>,
+     *          tickCount: number,
+     *          isLabelAxis: boolean,
+     *          isVertical: boolean
+     *      }} params.data axis data
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      *      @param {object} params.options axis options
@@ -32,7 +38,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Axis renderer.
+     * Render axis.
      * @returns {HTMLElement} axis area base element
      */
     render: function() {
@@ -43,39 +49,45 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             bound = this.bound,
             dimension = bound.dimension,
             size = isVertical ? dimension.height : dimension.width,
-            el = dom.createElement('DIV', this.className),
-            elTitleArea = this._renderTitleArea(options.title, theme.title, isVertical, size),
+            el = dom.create('DIV', this.className),
+            elTitleArea = this._renderTitleArea({
+                title: options.title,
+                theme: theme.title,
+                isVertical: isVertical,
+                size: size
+            }),
             elTickArea = this._renderTickArea(size),
             elLabelArea = this._renderLabelArea(size, dimension.width);
 
         renderUtil.renderDimension(el, dimension);
         renderUtil.renderPosition(el, bound.position);
         dom.addClass(el, data.isVertical ? 'vertical' : 'horizontal');
-        renderUtil.appends(el, [elTitleArea, elTickArea, elLabelArea]);
+        dom.appends(el, [elTitleArea, elTickArea, elLabelArea]);
 
         return el;
     },
 
     /**
      * Title area renderer
-     * @param {string} title axis title
-     * @param {obejct} theme title theme
-     * @param {boolean} isVertical is vertical?
-     * @param {number} size (width or height)
+     * @param {object} params parameters
+     *      @param {string} params.title axis title
+     *      @param {object} params.theme title theme
+     *      @param {boolean} params.isVertical is vertical?
+     *      @param {number} params.size (width or height)
      * @returns {HTMLElement} title element
      * @private
      */
-    _renderTitleArea: function(title, theme, isVertical, size) {
-        var elTitleArea = renderUtil.renderTitle(title, theme, 'ne-chart-title-area'),
+    _renderTitleArea: function(params) {
+        var elTitleArea = renderUtil.renderTitle(params.title, params.theme, 'ne-chart-title-area'),
             cssTexts = [];
 
-        if (elTitleArea && isVertical) {
+        if (elTitleArea && params.isVertical) {
             cssTexts = [
-                renderUtil.concatStr('width:', size, 'px'),
+                renderUtil.concatStr('width:', params.size, 'px'),
                 renderUtil.concatStr('left:', 0, 'px')
             ];
             if (!renderUtil.isIE8()) {
-                cssTexts.push(renderUtil.concatStr('top:', size, 'px'));
+                cssTexts.push(renderUtil.concatStr('top:', params.size, 'px'));
             }
             elTitleArea.style.cssText += ';' + cssTexts.join(';');
         }
@@ -83,7 +95,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Tick area renderer
+     * Redner tick area.
      * @param {number} size size or height
      * @returns {HTMLElement} tick area element
      * @private
@@ -92,8 +104,8 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         var data = this.data,
             tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
-            positions = renderUtil.makePixelPositions(size, tickCount),
-            elTickArea = dom.createElement('DIV', 'ne-chart-tick-area'),
+            positions = calculator.makePixelPositions(size, tickCount),
+            elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
             isVertical = data.isVertical,
             posType = isVertical ? 'bottom' : 'left',
             borderColorType = isVertical ? 'borderRightColor' : 'borderTopColor',
@@ -113,7 +125,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Label area renderer.
+     * Render label area.
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
      * @returns {HTMLElement} label area element
@@ -122,7 +134,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     _renderLabelArea: function(size, axisWidth) {
         var data = this.data,
             theme = this.theme,
-            positions = renderUtil.makePixelPositions(size, data.tickCount),
+            positions = calculator.makePixelPositions(size, data.tickCount),
             labelWidth = positions[1] - positions[0],
             labels = data.labels,
             isVertical = data.isVertical,
@@ -133,7 +145,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 isLabelAxis: isLabelAxis,
                 labelWidth: labelWidth
             }),
-            elLabelArea = dom.createElement('DIV', 'ne-chart-label-area'),
+            elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
             labelsHtml, titleAreaWidth, areaCssText;
 
         positions.length = labels.length;

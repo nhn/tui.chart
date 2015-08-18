@@ -1,5 +1,5 @@
 /**
- * @fileoverview  LegendView render legend area.
+ * @fileoverview  Legend component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,12 +13,14 @@ var dom = require('../helpers/domHandler.js'),
 var LEGEND_RECT_WIDTH = 12,
     LABEL_PADDING_TOP = 2;
 
-var LegendView = ne.util.defineClass(/** @lends LegendView.prototype */ {
+var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
     /**
-     * LegendView render legend area.
-     * @constructs LegendView
-     * @param {object} model legend model
-     * @param {object} theme legend theme
+     * Legend component.
+     * @constructs Legend
+     * @param {object} params parameters
+     *      @param {number} params.legendLabels legend labels
+     *      @param {object} params.bound axis bound
+     *      @param {object} params.theme axis theme
      */
     init: function(params) {
         ne.util.extend(this, params);
@@ -30,12 +32,12 @@ var LegendView = ne.util.defineClass(/** @lends LegendView.prototype */ {
     },
 
     /**
-     * Legend renderer.
+     * Render legend.
      * @param {object} bound plot bound
      * @returns {HTMLElement} legend element
      */
     render: function() {
-        var el = dom.createElement('DIV', this.className);
+        var el = dom.create('DIV', this.className);
         el.innerHTML = this._makeLegendHtml();
         renderUtil.renderPosition(el, this.bound.position);
         this._renderLabelTheme(el, this.theme.label);
@@ -43,6 +45,11 @@ var LegendView = ne.util.defineClass(/** @lends LegendView.prototype */ {
         return el;
     },
 
+    /**
+     * To make legend html.
+     * @returns {string} legend html
+     * @private
+     */
     _makeLegendHtml: function() {
         var theme = this.theme,
             labels = this.legendLabels,
@@ -65,7 +72,8 @@ var LegendView = ne.util.defineClass(/** @lends LegendView.prototype */ {
     },
 
     /**
-     * Render label option
+     * Render css style of label area.
+     * @param {HTMLElement} el label area element
      * @param {{fontSize:number, fontFamily: string, color: string}} theme label theme
      * @private
      */
@@ -75,4 +83,4 @@ var LegendView = ne.util.defineClass(/** @lends LegendView.prototype */ {
     }
 });
 
-module.exports = LegendView;
+module.exports = Legend;

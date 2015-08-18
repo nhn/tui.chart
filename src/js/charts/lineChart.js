@@ -1,5 +1,5 @@
 /**
- * @fileoverview LineChart
+ * @fileoverview Line chart
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -7,13 +7,20 @@
 'use strict';
 
 var AxisTypeBase = require('./axisTypeBase.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
+    calculator = require('../helpers/calculator.js'),
     dataConverter = require('../helpers/dataConverter.js'),
     boundsMaker = require('../helpers/boundsMaker.js'),
     axisDataMaker = require('../helpers/axisDataMaker.js'),
     Series = require('../series/LineChartSeries.js');
 
 var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype */ {
+    /**
+     * Line chart.
+     * * @constructs LineChart
+     * @param {array.<array>} userData chart data
+     * @param {object} theme chart theme
+     * @param {object} options chart options
+     */
     init: function(userData, theme, options) {
         var convertData = dataConverter.convert(userData, options.chart),
             bounds = boundsMaker.make({
@@ -54,8 +61,8 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
             },
             Series: Series,
             seriesData: {
-                values: renderUtil.arrayPivot(convertData.values),
-                formattedValues: renderUtil.arrayPivot(convertData.formattedValues),
+                values: calculator.arrayPivot(convertData.values),
+                formattedValues: calculator.arrayPivot(convertData.formattedValues),
                 scale: vAxisData.scale
             },
             axisScale: vAxisData.scale,

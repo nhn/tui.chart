@@ -13,10 +13,25 @@ var ChartBase = require('./chartBase.js'),
     Tooltip = require('../tooltips/tooltip.js');
 
 var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.prototype */ {
+    /**
+     * Axis type chart base
+     * @constructs AxisTypeBase
+     */
     init: function() {
         var args = [].slice.call(arguments);
         ChartBase.apply(this, args);
     },
+
+    /**
+     * Add axis components
+     * @param {object} params parameters
+     *      @param {object} params.covertData converted data
+     *      @param {object} params.axes axes data
+     *      @param {object} params.plotData plot data
+     *      @param {function} params.Series series class
+     *      @param {object} params.axisScale axis scale
+     *      @param {object} params.options chart options
+     */
     addAxisComponents: function(params) {
         var convertData = params.convertData,
             options = params.options;
@@ -28,7 +43,7 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
                 data: data
             });
         }, this);
-        //console.log()
+
         this.addComponent('series', params.Series, {
             libType: options.libType,
             chartType: options.chartType,

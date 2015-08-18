@@ -8,7 +8,7 @@
 
 var converter = require('../../src/js/helpers/dataConverter.js');
 
-describe('dataConverter', function() {
+describe('test dataConverter', function() {
     it('_pickValues()', function() {
         var result = converter._pickValues([
             ['Legend1', 20, 30, 50],

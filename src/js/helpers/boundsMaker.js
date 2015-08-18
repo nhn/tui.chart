@@ -6,9 +6,8 @@
 
 'use strict';
 
-var dom = require('./domHandler.js'),
-    renderUtil = require('./renderUtil.js'),
-    chartConst = require('../const.js');
+var calculator = require('./calculator.js'),
+    renderUtil = require('./renderUtil.js');
 
 var CHART_PADDING = 10,
     TITLE_ADD_PADDING = 20,
@@ -50,6 +49,10 @@ var boundsMaker = {
      *   },
      *   legend: {
      *     position: {top: number}
+     *   },
+     *   tooltip: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, left: number}
      *   }
      * }} bounds
      */
@@ -115,9 +118,9 @@ var boundsMaker = {
         var flattenValues = concat.apply([], values),
             min = ne.util.min(flattenValues),
             max = ne.util.max(flattenValues),
-            scale = renderUtil.calculateScale(min, max),
-            minLabel = renderUtil.normalizeNumber(scale.min),
-            maxLabel = renderUtil.normalizeNumber(scale.max),
+            scale = calculator.calculateScale(min, max),
+            minLabel = calculator.normalizeAxisNumber(scale.min),
+            maxLabel = calculator.normalizeAxisNumber(scale.max),
             fns = formatFunctions && formatFunctions.slice() || [];
 
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;

@@ -6,7 +6,7 @@
 
 'use strict';
 
-var renderUtil = require('./renderUtil.js');
+var calculator = require('./calculator.js');
 
 var concat = Array.prototype.concat;
 
@@ -44,7 +44,7 @@ var dataConverter = {
         var result = ne.util.map(axisData, function(items) {
             return items.slice(1);
         });
-        return renderUtil.arrayPivot(result);
+        return calculator.arrayPivot(result);
     },
 
     /**

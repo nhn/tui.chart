@@ -7,11 +7,9 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    renderUtil = require('./renderUtil.js');
+    calculator = require('./calculator.js');
 
-var AXIS_TYPE_VALUE = 'value',
-    AXIS_TYPE_LABEL = 'label',
-    MIN_PIXEL_STEP_SIZE = 40,
+var MIN_PIXEL_STEP_SIZE = 40,
     MAX_PIXEL_STEP_SIZE = 60,
     PERCENT_STACKED_TICK_INFO = {
         scale: {
@@ -39,8 +37,7 @@ var axisDataMaker = {
      *      tickCount: number,
      *      validTickCount: number,
      *      isLabelAxis: boolean,
-     *      isVertical: boolean,
-     *      axisType: string
+     *      isVertical: boolean
      * }} axis data
      */
     makeLabelAxisData: function(params) {
@@ -49,8 +46,7 @@ var axisDataMaker = {
             tickCount: params.labels.length + 1,
             validTickCount: 0,
             isLabelAxis: true,
-            isVertical: !!params.isVertical,
-            axisType: AXIS_TYPE_LABEL
+            isVertical: !!params.isVertical
         };
     },
 
@@ -68,8 +64,7 @@ var axisDataMaker = {
      *      validTickCount: number,
      *      isLabelAxis: boolean,
      *      scale: {min: number, max: number},
-     *      isVertical: boolean,
-     *      axisType: string
+     *      isVertical: boolean
      * }} axis data
      */
     makeValueAxisData: function(params) {
@@ -98,8 +93,7 @@ var axisDataMaker = {
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
-            isVertical: isVertical,
-            axisType: AXIS_TYPE_VALUE
+            isVertical: isVertical
         };
     },
 
@@ -278,7 +272,7 @@ var axisDataMaker = {
      * @private
      */
     _normalizeStep: function(step) {
-        return renderUtil.normalizeNumber(step);
+        return calculator.normalizeAxisNumber(step);
     },
 
     /**
@@ -373,7 +367,7 @@ var axisDataMaker = {
         var scale = params.scale,
             step, tickInfo;
 
-        step = renderUtil.getScaleStep(scale, params.tickCount);
+        step = calculator.getScaleStep(scale, params.tickCount);
         step = this._normalizeStep(step);
         scale = this._normalizeScale(scale, step, params.tickCount);
 
@@ -551,7 +545,7 @@ var axisDataMaker = {
             max = -tmpMin;
         }
 
-        scale = renderUtil.calculateScale(min, max);
+        scale = calculator.calculateScale(min, max);
 
         if (isMinus) {
             tmpMin = scale.min;

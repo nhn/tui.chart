@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tooltip render tooltip area.
+ * @fileoverview Tooltip component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,7 +13,6 @@ var dom = require('../helpers/domHandler.js'),
     tooltipTemplate = require('./tooltipTemplate.js');
 
 var TOOLTIP_GAP = 5,
-    LINE_TOOLTIP_GAP = 3,
     HIDDEN_WIDTH = 1,
     TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
@@ -22,10 +21,15 @@ var concat = Array.prototype.concat;
 
 var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     /**
-     * Tooltip render tooltip area.
+     * Tooltip component.
      * @constructs Tooltip
-     * @param {object} model tooltip model
-     * @param {object} theme tooltip theme
+     * @param {object} params parameters
+     *      @param {array.<number>} params.values converted values
+     *      @param {array} params.labels labels
+     *      @param {array} params.legendLabels legend labels
+     *      @param {string} prefix tooltip prefix
+     *      @param {object} params.bound axis bound
+     *      @param {object} params.theme axis theme
      */
     init: function(params) {
         ne.util.extend(this, params);
@@ -37,13 +41,13 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Tooltip view renderer.
+     * Render tooltip.
      * @param {{position: object}} bound tooltip bound
      * @param {string} prefix tooltip id prefix
      * @returns {HTMLElement} tooltip element
      */
     render: function() {
-        var el = dom.createElement('DIV', this.className),
+        var el = dom.create('DIV', this.className),
             bound = this.bound;
 
         renderUtil.renderPosition(el, bound.position);
@@ -53,6 +57,11 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         return el;
     },
 
+    /**
+     * To make tooltip data.
+     * @returns {array.<object>} tooltip data
+     * @private
+     */
     _makeTooltipData: function() {
         var labels = this.labels,
             groupValues = this.values,
@@ -105,14 +114,6 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
                 });
             }, this).join('');
         return html;
-    },
-
-    /**
-     * Attach event
-     */
-    attachEvent: function(el) {
-        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
     },
 
     /**
@@ -298,7 +299,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
                 top: 0
             }, this.options.addPosition),
             positionOption = this.options.position || '',
-            dimension, position;
+            position;
 
         if (this.showedId) {
             dom.removeClass(elTooltip, 'show');
@@ -307,14 +308,13 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
 
         this.showedId = data.id;
         dom.addClass(elTooltip, 'show');
-        dimension = {
-            width: elTooltip.offsetWidth,
-            height: elTooltip.offsetHeight
-        };
 
         position = this._calculatePosition({
             data: data,
-            dimension: dimension,
+            dimension: {
+                width: elTooltip.offsetWidth,
+                height: elTooltip.offsetHeight
+            },
             positionOption: positionOption || ''
         });
 
@@ -369,6 +369,15 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
 
             that = null;
         }, HIDE_DELAY);
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
     }
 });
 

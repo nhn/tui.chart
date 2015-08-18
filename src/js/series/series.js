@@ -1,5 +1,5 @@
 /**
- * @fileoverview Series render series area.
+ * @fileoverview Series base component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -15,12 +15,12 @@ var HIDDEN_WIDTH = 1;
 
 var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
-     * Series render series area.
+     * Series base component.
      * @constructs Series
-     * @extends View
-     * @param {object} model series model
-     * @param {object} options series options
-     * @param {object} theme series theme
+     * @param {object} params parameters
+     *      @param {object} params.model series model
+     *      @param {object} params.options series options
+     *      @param {object} params.theme series theme
      */
     init: function(params) {
         var libType;
@@ -68,14 +68,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Series renderer.
+     * Render series.
      * @param {{width: number, height: number, top: number, right: number}} bound series bound
      * @param {string} tooltipPrefix tooltip prefix
      * @param {boolean} isVertical is vertical
      * @returns {HTMLElement} series element
      */
     render: function() {
-        var el = dom.createElement('DIV', this.className),
+        var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
             isVertical = !!this.isVertical,
@@ -122,20 +122,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     onHideDot: function(data) {
         this.graphRenderer.hideDot.call(this.graphRenderer, data);
-    },
-
-    /**
-     * Convert two dimensional(2d) values.
-     * @param {array.<array>} groupValues target 2d array
-     * @param {function} condition convert condition function
-     * @returns {array.<array>} 2d array
-     * @private
-     */
-    _convertValues: function(groupValues, condition) {
-        var result = ne.util.map(groupValues, function(values) {
-            return ne.util.map(values, condition);
-        });
-        return result;
     },
 
     /**
@@ -211,8 +197,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = this._convertValues(data.values, function(value) {
-                return (value - min) / distance;
+            percentValues = ne.util.map(data.values, function(values) {
+                return ne.util.map(values, function(value) {
+                    return (value - min) / distance;
+                });
             });
         return percentValues;
     }

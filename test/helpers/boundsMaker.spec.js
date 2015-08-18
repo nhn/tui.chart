@@ -9,7 +9,7 @@
 var maker = require('../../src/js/helpers/boundsMaker.js'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
-describe('boundsMaker', function() {
+describe('test boundsMaker', function() {
     it('_getValueAxisMaxLabel()', function() {
         var result = maker._getValueAxisMaxLabel([
             [20, 30, 50],

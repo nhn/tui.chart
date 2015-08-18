@@ -1,5 +1,5 @@
 /**
- * @fileoverview Plot render plot area.
+ * @fileoverview Plot component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -7,15 +7,19 @@
 'use strict';
 
 var dom = require('../helpers/domHandler.js'),
+    calculator = require('../helpers/calculator.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     plotTemplate = require('./plotTemplate.js');
 
 var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     /**
-     * Plot render plot area.
+     * Plot component.
      * @constructs Plot
-     * @param {object} model plot model
-     * @param {object} theme plot theme
+     * @param {object} params parameters
+     *      @param {number} params.vTickCount vertical tick count
+     *      @param {number} params.hTickCount horizontal tick count
+     *      @param {object} params.bound axis bound
+     *      @param {object} params.theme axis theme
      */
     init: function(params) {
         ne.util.extend(this, params);
@@ -28,12 +32,12 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Plot view renderer
+     * Render plot.
      * @param {{width: number, height: number, top: number, right: number}} bound plot area bound
      * @returns {HTMLElement} plot element
      */
     render: function() {
-        var el = dom.createElement('DIV', this.className),
+        var el = dom.create('DIV', this.className),
             bound = this.bound;
         renderUtil.renderDimension(el, bound.dimension);
         renderUtil.renderPosition(el, bound.position);
@@ -43,13 +47,14 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Plot line renderer
+     * Render plot lines.
+     * @param {HTMLElement} el element
      * @param {{width: number, height: number}} dimension plot area dimension
      * @private
      */
     _renderLines: function(el, dimension) {
-        var hPositions = this.makeHPixelPositions(dimension.width),
-            vPositions = this.makeVPixelPositions(dimension.height),
+        var hPositions = this.makeHorizontalPixelPositions(dimension.width),
+            vPositions = this.makeVerticalPixelPositions(dimension.height),
             theme = this.theme,
             lineHtml = '';
 
@@ -106,23 +111,23 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make vertical pixel positions
+     * To make pixel value of vertical positions
      * @param {number} height plot height
      * @returns {array.<number>} positions
      */
-    makeVPixelPositions: function(height) {
-        var positions = renderUtil.makePixelPositions(height, this.vTickCount);
+    makeVerticalPixelPositions: function(height) {
+        var positions = calculator.makePixelPositions(height, this.vTickCount);
         positions.shift();
         return positions;
     },
 
     /**
-     * To make horizontal pixel position
+     * To make pixel value of horizontal positions.
      * @param {number} width plot width
      * @returns {array.<number>} positions
      */
-    makeHPixelPositions: function(width) {
-        var positions = renderUtil.makePixelPositions(width, this.hTickCount);
+    makeHorizontalPixelPositions: function(width) {
+        var positions = calculator.makePixelPositions(width, this.hTickCount);
         positions.shift();
         return positions;
     }

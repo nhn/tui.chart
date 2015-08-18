@@ -25,12 +25,15 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      */
     render: function(container, data, inCallback, outCallback) {
         var groupBounds = data.groupBounds,
-            theme = data.theme,
             dimension = data.dimension,
-            paper = Raphael(container, dimension.width, dimension.height);
+            paper;
 
+        if (!groupBounds) {
+            return;
+        }
 
-        this._renderBars(paper, theme, groupBounds, inCallback, outCallback);
+        paper = Raphael(container, dimension.width, dimension.height);
+        this._renderBars(paper, data.theme, groupBounds, inCallback, outCallback);
     },
 
     /**

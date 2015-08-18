@@ -8,9 +8,9 @@
 
 var maker = require('../../src/js/helpers/axisDataMaker.js'),
     converter = require('../../src/js/helpers/dataConverter.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+    calculator = require('../../src/js/helpers/calculator.js');
 
-describe('axisDataMaker', function() {
+describe('test axisDataMaker', function() {
     var groupValues = [
             [70, 10],
             [20, 20],
@@ -26,8 +26,7 @@ describe('axisDataMaker', function() {
             tickCount: 4,
             validTickCount: 0,
             isLabelAxis: true,
-            isVertical: false,
-            axisType: 'label'
+            isVertical: false
         });
     });
 
@@ -413,7 +412,7 @@ describe('axisDataMaker', function() {
         });
     });
 
-    it('_makeBaseScale() contain option', function() {
+    it('_makeBaseScale() contained option', function() {
         var result = maker._makeBaseScale(-90, 0, {min: -90, max: 10});
         expect(result).toEqual({
             min: -90,
@@ -436,7 +435,7 @@ describe('axisDataMaker', function() {
     it('_makeLabelsFromScale()', function() {
         var tickCount = 5,
             scale = {min: 20, max: 100},
-            step = renderUtil.getScaleStep(scale, tickCount),
+            step = calculator.getScaleStep(scale, tickCount),
             _labels = maker._makeLabelsFromScale(scale, step);
         expect(_labels).toEqual([20, 40, 60, 80, 100]);
     });
@@ -459,8 +458,7 @@ describe('axisDataMaker', function() {
                 min: 0,
                 max: 90
             },
-            isVertical: false,
-            axisType: 'value'
+            isVertical: false
         });
     });
 
@@ -483,8 +481,7 @@ describe('axisDataMaker', function() {
                 min: 0,
                 max: 120
             },
-            isVertical: false,
-            axisType: 'value'
+            isVertical: false
         });
     });
 
@@ -507,8 +504,7 @@ describe('axisDataMaker', function() {
                 min: 0,
                 max: 100
             },
-            isVertical: false,
-            axisType: 'value'
+            isVertical: false
         });
     });
 });

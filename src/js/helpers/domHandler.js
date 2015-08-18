@@ -18,7 +18,7 @@ var domHandler = {
      * @param {string} newClass class name
      * @returns {HTMLElement} created element
      */
-    createElement: function(tag, newClass) {
+    create: function(tag, newClass) {
         var el = document.createElement(tag);
 
         if (newClass) {
@@ -87,7 +87,6 @@ var domHandler = {
     hasClass: function(el, findClass) {
         var classNames = this._getClassNames(el),
             index = ne.util.inArray(findClass, classNames);
-
         return index > -1;
     },
 
@@ -101,13 +100,37 @@ var domHandler = {
      */
     findParentByClass: function(el, className, lastClass) {
         var parent = el.parentNode;
-        if (!parent || parent.nodeName === 'BODY' || this.hasClass(parent, lastClass)) {
+        if (!parent) {
             return null;
         } else if (this.hasClass(parent, className)) {
             return parent;
+        } else if (parent.nodeName === 'BODY' || this.hasClass(parent, lastClass)) {
+            return null;
         } else {
             return this.findParentByClass(parent, className, lastClass);
         }
+    },
+
+    /**
+     * Append child element.
+     * @param {HTMLElement} container container element
+     * @param {HTMLElement} child child element
+     */
+    append: function(container, child) {
+        if (!container || !child) {
+            return;
+        }
+        container.appendChild(child);
+    },
+
+    /**
+     * Append child elements.
+     * @param {HTMLElement} container container element
+     * @param {array.<HTMLElement>} children child elements
+     */
+    appends: function(container, children) {
+        var append = ne.util.bind(this.append, this, container);
+        ne.util.forEachArray(children, append, this);
     }
 };
 

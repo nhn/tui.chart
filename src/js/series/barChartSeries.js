@@ -1,5 +1,5 @@
 /**
- * @fileoverview Series render series area.
+ * @fileoverview Bar chart series component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,17 +12,27 @@ var Series = require('./series.js'),
 var HIDDEN_WIDTH = 1;
 
 var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+    /**
+     * Bar chart series component.
+     * @constructs BarChartSeries
+     * @extends Series
+     * @param {object} params parameters
+     *      @param {object} params.model series model
+     *      @param {object} params.options series options
+     *      @param {object} params.theme series theme
+     */
     init: function() {
         Series.apply(this, arguments);
     },
+
     /**
      * To make bounds of bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      */
-    _makeBounds: function(dimension) {
-        var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
+    _makeBounds: function(dimension, hiddenWidth) {
+        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : HIDDEN_WIDTH);
         if (!this.options.stacked) {
             return this._makeNormalBarBounds(dimension, hiddenWidth);
         } else {

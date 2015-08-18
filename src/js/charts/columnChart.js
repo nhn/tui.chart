@@ -1,5 +1,5 @@
 /**
- * @fileoverview ColumnChart
+ * @fileoverview Column chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,6 +13,13 @@ var AxisTypeBase = require('./axisTypeBase.js'),
     Series = require('../series/ColumnChartSeries.js');
 
 var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.prototype */ {
+    /**
+     * Column chart.
+     * * @constructs ColumnChart
+     * @param {array.<array>} userData chart data
+     * @param {object} theme chart theme
+     * @param {object} options chart options
+     */
     init: function(userData, theme, options) {
         var convertData = dataConverter.convert(userData, options.chart),
             bounds = boundsMaker.make({
