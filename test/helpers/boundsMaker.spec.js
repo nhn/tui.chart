@@ -111,10 +111,10 @@ describe('test boundsMaker', function() {
         expect(result.plot.position.top && result.plot.position.right).toBeTruthy();
         expect(result.series.dimension.width && result.series.dimension.height).toBeTruthy();
         expect(result.series.position.top && result.series.position.right).toBeTruthy();
-        expect(result.vAxis.dimension.width && result.vAxis.dimension.height).toBeTruthy();
-        expect(result.vAxis.position.top).toBeTruthy();
-        expect(result.hAxis.dimension.width && result.hAxis.dimension.height).toBeTruthy();
-        expect(result.hAxis.position.top).toBeTruthy();
+        expect(result.yAxis.dimension.width && result.yAxis.dimension.height).toBeTruthy();
+        expect(result.yAxis.position.top).toBeTruthy();
+        expect(result.xAxis.dimension.width && result.xAxis.dimension.height).toBeTruthy();
+        expect(result.xAxis.position.top).toBeTruthy();
         expect(result.legend.position.top && result.legend.position.right).toBeTruthy();
         expect(result.tooltip.dimension.width && result.tooltip.dimension.height).toBeTruthy();
         expect(result.tooltip.position.top && result.tooltip.position.left).toBeTruthy();

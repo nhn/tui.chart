@@ -21,8 +21,8 @@ var defaultTheme = {
         fontSize: 18,
         color: DEFAULT_COLOR
     },
-    vAxis: DEFAULT_AXIS,
-    hAxis: DEFAULT_AXIS,
+    yAxis: DEFAULT_AXIS,
+    xAxis: DEFAULT_AXIS,
     plot: {
         lineColor: '#dddddd',
         background: '#ffffff'

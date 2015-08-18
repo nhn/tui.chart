@@ -28,21 +28,21 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
                 isVertical: true,
                 options: options
             }),
-            vAxisData, hAxisData;
+            yAxisData, xAxisData;
 
         AxisTypeBase.call(this, bounds, theme, options);
 
-        vAxisData = axisDataMaker.makeValueAxisData({
+        yAxisData = axisDataMaker.makeValueAxisData({
             values: convertData.values,
             seriesDimension: bounds.series.dimension,
             stacked: options.series && options.series.stacked || '',
             chartType: options.chartType,
             formatFunctions: convertData.formatFunctions,
-            options: options.hAxis,
+            options: options.xAxis,
             isVertical: true
         });
 
-        hAxisData = axisDataMaker.makeLabelAxisData({
+        xAxisData = axisDataMaker.makeLabelAxisData({
             labels: convertData.labels
         });
 
@@ -51,15 +51,15 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
         this.addAxisComponents({
             convertData: convertData,
             axes: {
-                vAxis: vAxisData,
-                hAxis: hAxisData
+                yAxis: yAxisData,
+                xAxis: xAxisData
             },
             plotData: {
-                vTickCount: vAxisData.validTickCount,
-                hTickCount: hAxisData.validTickCount
+                vTickCount: yAxisData.validTickCount,
+                hTickCount: xAxisData.validTickCount
             },
             Series: Series,
-            axisScale: vAxisData.scale,
+            axisScale: yAxisData.scale,
             isVertical: true,
             options: options
         });

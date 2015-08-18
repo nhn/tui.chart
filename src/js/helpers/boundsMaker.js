@@ -35,11 +35,11 @@ var boundsMaker = {
      *     dimension: {width: number, height: number},
      *     position: {top: number, right: number}
      *   },
-     *   vAxis: {
+     *   yAxis: {
      *     dimension: {width: (number), height: number},
      *     position: {top: number}
      *   },
-     *   hAxis: {
+     *   xAxis: {
      *     dimension: {width: number, height: (number)},
      *     position: {right: number}
      *   },
@@ -63,17 +63,17 @@ var boundsMaker = {
                 height: chartOptions.height || 400
             },
             convertData = params.convertData,
-            vAxisTitle = params.options.vAxis && params.options.vAxis.title,
-            hAxisTitle = params.options.hAxis && params.options.hAxis.title,
+            yAxisTitle = params.options.yAxis && params.options.yAxis.title,
+            xAxisTitle = params.options.xAxis && params.options.xAxis.title,
             maxLabel = this._getValueAxisMaxLabel(convertData.values, convertData.formatFunctions),
             vLabels = params.isVertical ? [maxLabel] : convertData.labels,
             hLabels = params.isVertical ? convertData.labels : [maxLabel],
             titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, params.theme.title) + TITLE_ADD_PADDING,
-            vAxisWidth = this._getVerticalAxisWidth(vAxisTitle, vLabels, params.theme.vAxis),
-            hAxisHeight = this._getHorizontalAxisHeight(hAxisTitle, hLabels, params.theme.hAxis),
+            yAxisWidth = this._getVerticalAxisWidth(yAxisTitle, vLabels, params.theme.yAxis),
+            xAxisHeight = this._getHorizontalAxisHeight(xAxisTitle, hLabels, params.theme.xAxis),
             legendWidth = this.getLegendAreaWidth(convertData.legendLabels, params.theme.legend.label),
-            plotWidth = chartDimension.width - (CHART_PADDING * 2) - vAxisWidth - legendWidth,
-            plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - hAxisHeight,
+            plotWidth = chartDimension.width - (CHART_PADDING * 2) - yAxisWidth - legendWidth,
+            plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - xAxisHeight,
             top = titleHeight + CHART_PADDING,
             right = legendWidth + CHART_PADDING,
             bounds = {
@@ -84,12 +84,12 @@ var boundsMaker = {
                     dimension: {width: plotWidth, height: plotHeight},
                     position: {top: top, right: right}
                 },
-                vAxis: {
-                    dimension: {width: vAxisWidth, height: plotHeight},
+                yAxis: {
+                    dimension: {width: yAxisWidth, height: plotHeight},
                     position: {top: top}
                 },
-                hAxis: {
-                    dimension: {width: plotWidth, height: hAxisHeight},
+                xAxis: {
+                    dimension: {width: plotWidth, height: xAxisHeight},
                     position: {top: top + plotHeight - HIDDEN_WIDTH, right: right}
                 },
                 series: {
@@ -101,7 +101,7 @@ var boundsMaker = {
                 },
                 tooltip: {
                     dimension: {width: plotWidth, height: plotHeight},
-                    position: {top: top, left: vAxisWidth + CHART_PADDING}
+                    position: {top: top, left: yAxisWidth + CHART_PADDING}
                 }
             };
         return bounds;
