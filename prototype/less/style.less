@@ -1,0 +1,97 @@
+.ne-chart-component {
+  * {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+  position: relative;
+
+  .series-area {
+    position:absolute;
+    right:0;
+    top:0;
+    background-color:yellow;
+  }
+  .axis-area {
+    position: absolute;
+    font-size:12px;
+    &.axis-vertical {
+      left:0;
+      top:0;
+      border-right:1px solid #000;
+      .axis-title {
+        position: absolute;
+        left:40px;
+        top:30%;
+        height: 100px;
+        text-align:center;
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        -o-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+        transform: rotate(-90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+      }
+
+      .axis-tick {
+        position: absolute;
+        right: 0;
+        width:50px;
+        div {
+          width:40px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+      .axis-tick:after {
+        content:'';
+        width:5px;
+        height:1px;
+        right:0px;
+        top:48%;
+        background-color:#000;
+        position:absolute;
+      }
+    }
+
+    &.axis-horizontal {
+      right:0;
+      bottom:1px;
+      border-top:1px solid #000;
+      li {
+        float: left;
+      }
+      .axis-title {
+        position: absolute;
+        bottom:0;
+        left:0;
+        width: 100%;
+        text-align:center;
+      }
+
+      .axis-tick {
+        position: absolute;
+        height: 20px;
+        line-height: 20px;
+        top:0;
+      }
+
+      .axis-tick:before, .axis-tick:last-child:after {
+        content:'';
+        width:1px;
+        height:5px;
+        top: 0;
+        background-color:#000;
+        position:absolute;
+      }
+
+      .axis-tick:before {
+        left: -1px;
+      }
+      .axis-tick:last-child:after {
+        right: 0;
+      }
+    }
+  }
+}
