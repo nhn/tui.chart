@@ -10,7 +10,7 @@ var AxisTypeBase = require('./axisTypeBase.js'),
     dataConverter = require('../helpers/dataConverter.js'),
     boundsMaker = require('../helpers/boundsMaker.js'),
     axisDataMaker = require('../helpers/axisDataMaker.js'),
-    Series = require('../series/ColumnChartSeries.js');
+    Series = require('../series/columnChartSeries.js');
 
 var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.prototype */ {
     /**
