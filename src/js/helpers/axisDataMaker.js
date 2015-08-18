@@ -189,15 +189,25 @@ var axisDataMaker = {
     _getTickInfo: function(params, options) {
         var min = ne.util.min(params.values),
             max = ne.util.max(params.values),
-            intTypeInfo = this._makeIntegerTypeInfo(min, max, options),
-            tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical),
-            candidates = this._getCandidateTickInfos({
-                min: intTypeInfo.min,
-                max: intTypeInfo.max,
-                tickCounts: tickCounts,
-                chartType: params.chartType
-            }, intTypeInfo.options),
-            tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
+            intTypeInfo, tickCounts, candidates, tickInfo;
+        // 01. min, max, options 정보를 정수형으로 변경
+        intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
+
+        // 02. tick count 후보군 얻기
+        tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical);
+
+        // 03. tick info 후보군 계산
+        candidates = this._getCandidateTickInfos({
+            min: intTypeInfo.min,
+            max: intTypeInfo.max,
+            tickCounts: tickCounts,
+            chartType: params.chartType
+        }, intTypeInfo.options);
+
+        // 04. tick info 후보군 중 하나 선택
+        tickInfo = this._selectTickInfo(intTypeInfo.min, intTypeInfo.max, candidates);
+
+        // 05. 정수형으로 변경했던 tick info를 원래 형태로 변경
         tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
         return tickInfo;
     },
@@ -298,15 +308,19 @@ var axisDataMaker = {
             var curStep = (step * tickIndex),
                 curMin = tickMin + curStep,
                 curMax = tickMax - curStep;
+
+            // 더이상 변경이 필요 없을 경우
             if (params.userMin <= curMin && params.userMax >= curMax) {
                 return false;
             }
 
+            // min 값에 변경 여유가 있을 경우
             if ((isUndefinedMin && params.userMin > curMin) ||
                 (!isUndefinedMin && options.min >= curMin)) {
                 scale.min = curMin;
             }
 
+            // max 값에 변경 여유가 있을 경우
             if ((isUndefinedMin && params.userMax < curMax) ||
                 (!isUndefinedMax && options.max <= curMax)) {
                 scale.max = curMax;
@@ -365,10 +379,16 @@ var axisDataMaker = {
         var scale = params.scale,
             step, tickInfo;
 
+        // 01. 기본 scale 정보로 step 얻기
         step = calculator.getScaleStep(scale, params.tickCount);
+
+        // 02. step 일반화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
         step = this._normalizeStep(step);
+
+        // 03. scale 일반화 시키기
         scale = this._normalizeScale(scale, step, params.tickCount);
 
+        // 04. line차트의 경우 사용자의 min값이 scale의 min값과 같을 경우, min값을 1 step 감소 시킴
         scale.min = this._addMinPadding({
             min: scale.min,
             step: step,
@@ -377,6 +397,7 @@ var axisDataMaker = {
             chartType: params.chartType
         });
 
+        // 05. 사용자의 max값이 scael max와 같을 경우, max값을 1 step 증가 시킴
         scale.max = this._addMaxPadding({
             max: scale.max,
             step: step,
@@ -384,6 +405,7 @@ var axisDataMaker = {
             maxOption: params.options.max
         });
 
+        // 06. axis scale이 사용자 min, max와 거리가 멀 경우 조절
         tickInfo = this._minimizeTickScale({
             userMin: params.userMin,
             userMax: params.userMax,
@@ -508,8 +530,10 @@ var axisDataMaker = {
             userMax = params.max,
             min = params.min,
             max = params.max,
-            scale = this._makeBaseScale(min, max, options),
-            candidates;
+            scale, candidates;
+
+        // min, max만으로 기본 scale 얻기
+        scale = this._makeBaseScale(min, max, options);
 
         candidates = ne.util.map(params.tickCounts, function(tickCount) {
             return this._makeTickInfo({
