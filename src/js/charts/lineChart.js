@@ -11,7 +11,7 @@ var AxisTypeBase = require('./axisTypeBase.js'),
     dataConverter = require('../helpers/dataConverter.js'),
     boundsMaker = require('../helpers/boundsMaker.js'),
     axisDataMaker = require('../helpers/axisDataMaker.js'),
-    Series = require('../series/LineChartSeries.js');
+    Series = require('../series/lineChartSeries.js');
 
 var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype */ {
     /**
