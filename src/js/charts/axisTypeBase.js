@@ -45,7 +45,9 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
 
         if (convertData.joinLegendLabels) {
             this.addComponent('legend', Legend, {
-                legendLabels: convertData.joinLegendLabels
+                joinLegendLabels: convertData.joinLegendLabels,
+                legendLabels: convertData.legendLabels,
+                chartType: params.chartType
             });
         }
 

@@ -9,99 +9,7 @@
 
 var chartConst = require('../const.js');
 
-var themes = {},
-    _initTheme, _copyColors, _extendTheme, _inheritThemeProperty;
-
-/**
- * To inherit theme property.
- * @param {object} theme theme
- * @private
- * @ignore
- */
-_inheritThemeProperty = function(theme) {
-    var baseFont = theme.chart.fontFamily,
-        items = [
-            theme.title,
-            theme.yAxis.title,
-            theme.yAxis.label,
-            theme.xAxis.title,
-            theme.xAxis.label,
-            theme.legend.label
-        ];
-    ne.util.forEachArray(items, function(item) {
-        if (!item.fontFamily) {
-            item.fontFamily = baseFont;
-        }
-    });
-    theme.legend.colors = theme.series.colors;
-    if (theme.series.borderColor) {
-        theme.legend.borderColor = theme.series.borderColor;
-    }
-};
-
-/**
- * Copy colors.
- * @param {string[]} from colors
- * @param {string[]} to colors
- * @private
- * @ignore
- */
-_copyColors = function(from, to) {
-    var fromLen = from.length,
-        diffLen = fromLen - to.length,
-        start,
-        i;
-    if (diffLen <= 0) {
-        return;
-    }
-
-    start = fromLen - diffLen;
-    for (i = start; i < fromLen; i += 1) {
-        to[i] = from[i];
-    }
-};
-
-_extendTheme = function(to, from) {
-    ne.util.forEach(to, function(item, key) {
-        var fromItem = from[key];
-        if (!fromItem) {
-            return;
-        }
-
-        if (ne.util.isArray(fromItem)) {
-            to[key] = fromItem.slice();
-        } else if (ne.util.isObject(fromItem)) {
-            _extendTheme(item, fromItem);
-        } else {
-            to[key] = fromItem;
-        }
-    });
-
-    return to;
-};
-
-/**
- * Init theme.
- * @param {object} theme theme
- * @returns {object} theme
- * @private
- * @ignore
- */
-_initTheme = function(theme) {
-    var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME],
-        cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
-        seriesColors = cloneTheme.series.colors;
-    if (theme.series && theme.series.colors) {
-        _copyColors(seriesColors, theme.series.colors);
-    }
-
-    if (theme.series && theme.series.singleColors) {
-        _copyColors(seriesColors, theme.series.singleColors);
-        theme.legend.singleColors = theme.series.singleColors;
-    }
-    theme = _extendTheme(cloneTheme, theme);
-    return theme;
-};
+var themes = {};
 
 module.exports = {
     /**
@@ -127,11 +35,152 @@ module.exports = {
     register: function(themeName, theme) {
         var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME];
         if (themeName !== chartConst.DEFAULT_THEME_NAME && defaultTheme) {
-            theme = _initTheme(theme);
+            theme = this._initTheme(theme);
         }
 
-        _inheritThemeProperty(theme);
+        this._inheritThemeProperty(theme);
 
         themes[themeName] = theme;
+    },
+
+    /**
+     * Init theme.
+     * @param {object} theme theme
+     * @returns {object} theme
+     * @private
+     * @ignore
+     */
+    _initTheme: function(theme) {
+        var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME],
+            cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
+            newTheme;
+
+        this._concatDefaultColors(theme, cloneTheme.series.colors)
+        newTheme = this._extendTheme(theme, cloneTheme);
+        newTheme = this._copyProperty('yAxis', theme, newTheme, chartConst.YAXIS_PROPS);
+        newTheme = this._copyProperty('series', theme, newTheme, chartConst.SERIES_PROPS);
+        return newTheme;
+    },
+
+    _concatColors: function(property, seriesColors) {
+        if (property.colors) {
+            property.colors = property.colors.concat(seriesColors);
+        }
+
+        if (property.singleColors) {
+            property.singleColors = property.singleColors.concat(seriesColors);
+            //theme.legend.singleColors = theme.series.singleColors;
+        }
+    },
+
+    _filterCharts: function(target, rejectProps) {
+        var result = ne.util.filter(target, function(item, name) {
+            return ne.util.inArray(name, rejectProps) === -1;
+        });
+        return result;
+    },
+
+    _concatDefaultColors: function(theme, seriesColors) {
+        var chartTypes;
+
+        if (!theme.series) {
+            return;
+        }
+
+        chartTypes = this._filterCharts(theme.series, chartConst.SERIES_PROPS);
+
+        if (!ne.util.keys(chartTypes).length) {
+            this._concatColors(theme.series, seriesColors);
+        } else {
+            ne.util.forEach(chartTypes, function(item) {
+                this._concatColors(item, seriesColors);
+            }, this);
+        }
+    },
+
+    /**
+     * Extend theme
+     * @param {object} from from theme property
+     * @param {object} to to theme property
+     * @returns {object} result property
+     * @private
+     */
+    _extendTheme: function(from, to) {
+        ne.util.forEach(to, function(item, key) {
+            var fromItem = from[key];
+            if (!fromItem) {
+                return;
+            }
+
+            if (ne.util.isArray(fromItem)) {
+                to[key] = fromItem.slice();
+            } else if (ne.util.isObject(fromItem)) {
+                this._extendTheme(fromItem, item);
+            } else {
+                to[key] = fromItem;
+            }
+        }, this);
+
+        return to;
+    },
+
+    _copyProperty: function(propName, from, to, rejectProps) {
+        var chartTypes = this._filterCharts(from[propName], rejectProps);
+        if (ne.util.keys(chartTypes).length) {
+            to[propName] = from[propName];
+        }
+
+        return to;
+    },
+    /**
+     * To inherit theme property.
+     * @param {object} theme theme
+     * @private
+     * @ignore
+     */
+    _inheritThemeProperty: function(theme) {
+        var baseFont = theme.chart.fontFamily,
+            items = [
+                theme.title,
+                theme.yAxis.title,
+                theme.yAxis.label,
+                theme.xAxis.title,
+                theme.xAxis.label,
+                theme.legend.label
+            ],
+            chartTypeSeries;
+
+        ne.util.forEachArray(items, function(item) {
+            if (!item.fontFamily) {
+                item.fontFamily = baseFont;
+            }
+        });
+
+        chartTypeSeries = this._filterCharts(theme.series, chartConst.SERIES_PROPS);
+
+        if (!ne.util.keys(chartTypeSeries).length) {
+            theme.legend.colors = theme.series.colors;
+
+            if (theme.series.singleColors) {
+                theme.legend.singleColors = theme.series.singleColors;
+            }
+
+            if (theme.series.borderColor) {
+                theme.legend.borderColor = theme.series.borderColor;
+            }
+        } else {
+            ne.util.forEach(chartTypeSeries, function(item, chartType) {
+                theme.legend[chartType] = {
+                    colors: item.colors || theme.legend.colors
+                };
+                if (item.singleColors) {
+                    theme.legend[chartType].singleColors = item.singleColors;
+                }
+                if (item.borderColor) {
+                    theme.legend[chartType].borderColor = item.borderColor;
+                }
+                delete theme.legend.colors;
+            });
+        }
     }
 };

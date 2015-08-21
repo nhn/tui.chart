@@ -115,6 +115,7 @@ var boundsMaker = {
                 position: {top: top, right: legendWidth + CHART_PADDING + HIDDEN_WIDTH}
             };
         }
+        console.log('bounds', bounds);
         return bounds;
     },
 
@@ -222,8 +223,11 @@ var boundsMaker = {
      * @returns {number} width
      * @private
      */
-    _getLegendAreaWidth: function(legendLabels, labelTheme) {
-        var maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme),
+    _getLegendAreaWidth: function(joinLegendLabels, labelTheme) {
+        var legendLabels = ne.util.map(joinLegendLabels, function(item) {
+                return item.label;
+            }),
+            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme),
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
                 LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
         return legendWidth;

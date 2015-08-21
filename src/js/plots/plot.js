@@ -23,7 +23,6 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      */
     init: function(params) {
         ne.util.extend(this, params);
-
         /**
          * Plot view className
          * @type {string}

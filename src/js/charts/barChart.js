@@ -65,7 +65,8 @@ var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype *
             plotData: {
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
-            }
+            },
+            chartType: options.chartType
         });
 
         this.addComponent('series', Series, {

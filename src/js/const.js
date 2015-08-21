@@ -19,5 +19,7 @@ module.exports = {
     CHART_TYPE_BAR: 'bar',
     CHART_TYPE_COLUMN: 'column',
     CHART_TYPE_LINE: 'line',
-    CHART_TYPE_COMBO: 'combo'
+    CHART_TYPE_COMBO: 'combo',
+    YAXIS_PROPS: ['tickColor', 'title', 'label'],
+    SERIES_PROPS: ['colors', 'borderColor', 'singleColors']
 };

@@ -61,10 +61,11 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
         this.addAxisComponents({
             convertData: convertData,
             axes: axesData,
-            plotData: !ne.util.isUndefined(convertData.plotData) || {
+            plotData: !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
-            }
+            },
+            chartType: options.chartType
         });
 
         this.addComponent('series', Series, {

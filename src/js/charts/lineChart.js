@@ -66,7 +66,8 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
             plotData: !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
-            }
+            },
+            chartType: options.chartType
         });
 
         this.addComponent('series', Series, {
