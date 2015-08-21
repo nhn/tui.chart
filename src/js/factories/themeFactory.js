@@ -22,10 +22,10 @@ _inheritThemeProperty = function(theme) {
     var baseFont = theme.chart.fontFamily,
         items = [
             theme.title,
-            theme.vAxis.title,
-            theme.vAxis.label,
-            theme.hAxis.title,
-            theme.hAxis.label,
+            theme.yAxis.title,
+            theme.yAxis.label,
+            theme.xAxis.title,
+            theme.xAxis.label,
             theme.legend.label
         ];
     ne.util.forEachArray(items, function(item) {

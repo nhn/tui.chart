@@ -9,8 +9,7 @@
 var HIDDEN_WIDTH = 1;
 
 var Raphael = window.Raphael,
-    browser = ne.util.browser,
-    isIE8 = browser.msie && browser.version === 8;
+    browser = ne.util.browser;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer.
@@ -25,34 +24,28 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @param {function} outCallback mouseout callback
      */
     render: function(container, data, inCallback, outCallback) {
-        var model = data.model,
-            theme = data.theme,
+        var groupBounds = data.groupBounds,
             dimension = data.dimension,
-            isColumn = model.isVertical,
-            paper = Raphael(container, dimension.width, dimension.height),
-            groupBounds, hiddenWidth;
+            paper;
 
-        if (isColumn) {
-            groupBounds = model.makeColumnBounds(dimension);
-        } else {
-            hiddenWidth = isIE8 ? 0 : HIDDEN_WIDTH;
-            groupBounds = model.makeBarBounds(dimension, hiddenWidth);
+        if (!groupBounds) {
+            return;
         }
 
-        this._renderBars(paper, model, theme, groupBounds, inCallback, outCallback);
+        paper = Raphael(container, dimension.width, dimension.height);
+        this._renderBars(paper, data.theme, groupBounds, inCallback, outCallback);
     },
 
     /**
      * Render bars.
      * @param {object} paper raphael paper
-     * @param {object} model bar chart data model
      * @param {{colors: string[], singleColors: string[], borderColor: string}} theme bar chart theme
      * @param {array.<array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
-    _renderBars: function(paper, model, theme, groupBounds, inCallback, outCallback) {
+    _renderBars: function(paper, theme, groupBounds, inCallback, outCallback) {
         var singleColors = (groupBounds[0].length === 1) && theme.singleColors || [],
             colors = theme.colors,
             borderColor = theme.borderColor || 'none';

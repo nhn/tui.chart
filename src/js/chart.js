@@ -14,7 +14,7 @@ var DEFAULT_THEME_NAME = 'default';
 
 var _createChart;
 
-require('./util.js');
+require('./code-snippet-util.js');
 require('./registerCharts.js');
 require('./registerThemes.js');
 
@@ -35,11 +35,11 @@ ne.util.defineNamespace('ne.application.chart');
  *     title: string,
  *     format: string
  *   },
- *   vAxis: {
+ *   yAxis: {
  *     title: string,
  *     min: number
  *   },
- *   hAxis: {
+ *   xAxis: {
  *     title: strig,
  *     min: number
  *   },
@@ -54,13 +54,12 @@ ne.util.defineNamespace('ne.application.chart');
  * @ignore
  */
 _createChart = function(container, data, options) {
-    var theme, chart;
-
+    var themeName, theme, chart;
     options = options || {};
-    theme = options.theme || DEFAULT_THEME_NAME;
-    options.theme = themeFactory.get(theme);
+    themeName = options.theme || DEFAULT_THEME_NAME;
+    theme = themeFactory.get(themeName);
 
-    chart = chartFactory.get(options.chartType, data, options);
+    chart = chartFactory.get(options.chartType, data, theme, options);
     container.appendChild(chart.render());
 
     return chart;
@@ -77,14 +76,14 @@ _createChart = function(container, data, options) {
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object} options.vAxis options of vertical axis
- *          @param {string} options.vAxis.title title of vertical axis
- *          @param {number} options.vAxis.min minimal value of vertical axis
- *          @param {number} options.vAxis.max maximum value of vertical axis
- *      @param {object} options.hAxis options of horizontal axis
- *          @param {string} options.hAxis.title title of horizontal axis
- *          @param {number} options.hAxis.min minimal value of horizontal axis
- *          @param {number} options.hAxis.max maximum value of horizontal axis
+ *      @param {object} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
+ *      @param {object} options.xAxis options of horizontal axis
+ *          @param {string} options.xAxis.title title of horizontal axis
+ *          @param {number} options.xAxis.min minimal value of horizontal axis
+ *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *      @param {object} options.tooltip options of tooltip
@@ -110,10 +109,10 @@ _createChart = function(container, data, options) {
  *       chart: {
  *         title: 'Bar Chart'
  *       },
- *       vAxis: {
+ *       yAxis: {
  *         title: 'Vertical Axis'
  *       },
- *       hAxis: {
+ *       xAxis: {
  *         title: 'Horizontal Axis'
  *       }
  *     };
@@ -122,7 +121,6 @@ _createChart = function(container, data, options) {
 ne.application.chart.barChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
-    options.barType = chartConst.BAR_TYPE_BAR;
     return _createChart(container, data, options);
 };
 
@@ -137,14 +135,14 @@ ne.application.chart.barChart = function(container, data, options) {
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object} options.vAxis options of vertical axis
- *          @param {string} options.vAxis.title title of vertical axis
- *          @param {number} options.vAxis.min minimal value of vertical axis
- *          @param {number} options.vAxis.max maximum value of vertical axis
- *      @param {object} options.hAxis options of horizontal axis
- *          @param {string} options.hAxis.title title of horizontal axis
- *          @param {number} options.hAxis.min minimal value of horizontal axis
- *          @param {number} options.hAxis.max maximum value of horizontal axis
+ *      @param {object} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
+ *      @param {object} options.xAxis options of horizontal axis
+ *          @param {string} options.xAxis.title title of horizontal axis
+ *          @param {number} options.xAxis.min minimal value of horizontal axis
+ *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *      @param {object} options.tooltip options of tooltip
@@ -170,10 +168,10 @@ ne.application.chart.barChart = function(container, data, options) {
  *       chart: {
  *         title: 'Column Chart'
  *       },
- *       vAxis: {
+ *       yAxis: {
  *         title: 'Vertical Axis'
  *       },
- *       hAxis: {
+ *       xAxis: {
  *         title: 'Horizontal Axis'
  *       }
  *     };
@@ -181,8 +179,7 @@ ne.application.chart.barChart = function(container, data, options) {
  */
 ne.application.chart.columnChart = function(container, data, options) {
     options = options || {};
-    options.chartType = chartConst.CHART_TYPE_BAR;
-    options.barType = chartConst.BAR_TYPE_COLUMN;
+    options.chartType = chartConst.CHART_TYPE_COLUMN;
     return _createChart(container, data, options);
 };
 
@@ -197,14 +194,14 @@ ne.application.chart.columnChart = function(container, data, options) {
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object} options.vAxis options of vertical axis
- *          @param {string} options.vAxis.title title of vertical axis
- *          @param {number} options.vAxis.min minimal value of vertical axis
- *          @param {number} options.vAxis.max maximum value of vertical axis
- *      @param {object} options.hAxis options of horizontal axis
- *          @param {string} options.hAxis.title title of horizontal axis
- *          @param {number} options.hAxis.min minimal value of horizontal axis
- *          @param {number} options.hAxis.max maximum value of horizontal axis
+ *      @param {object} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
+ *      @param {object} options.xAxis options of horizontal axis
+ *          @param {string} options.xAxis.title title of horizontal axis
+ *          @param {number} options.xAxis.min minimal value of horizontal axis
+ *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *      @param {object} options.tooltip options of tooltip
@@ -230,10 +227,10 @@ ne.application.chart.columnChart = function(container, data, options) {
  *       chart: {
  *         title: 'Line Chart'
  *       },
- *       vAxis: {
+ *       yAxis: {
  *         title: 'Vertical Axis'
  *       },
- *       hAxis: {
+ *       xAxis: {
  *         title: 'Horizontal Axis'
  *       },
  *       series: {
@@ -261,26 +258,26 @@ ne.application.chart.lineChart = function(container, data, options) {
  *          @param {string} theme.title.fontFamily font family of chart title
  *          @param {string} theme.title.color font color of chart title
  *          @param {string} theme.title.background background of chart title
- *      @param {object} theme.vAxis theme of vertical axis
- *          @param {object} theme.vAxis.title theme of vertical axis title
- *              @param {number} theme.vAxis.title.fontSize font size of vertical axis title
- *              @param {string} theme.vAxis.title.fontFamily font family of vertical axis title
- *              @param {string} theme.vAxis.title.color font color of vertical axis title
- *          @param {object} theme.vAxis.label theme of vertical axis label
- *              @param {number} theme.vAxis.label.fontSize font size of vertical axis label
- *              @param {string} theme.vAxis.label.fontFamily font family of vertical axis label
- *              @param {string} theme.vAxis.label.color font color of vertical axis label
- *          @param {string} theme.vAxis.tickcolor color of vertical axis tick
- *      @param {object} theme.hAxis theme of horizontal axis
- *          @param {object} theme.hAxis.title theme of horizontal axis title
- *              @param {number} theme.hAxis.title.fontSize font size of horizontal axis title
- *              @param {string} theme.hAxis.title.fontFamily font family of horizontal axis title
- *              @param {string} theme.hAxis.title.color font color of horizontal axis title
- *          @param {object} theme.hAxis.label theme of horizontal axis label
- *              @param {number} theme.hAxis.label.fontSize font size of horizontal axis label
- *              @param {string} theme.hAxis.label.fontFamily font family of horizontal axis label
- *              @param {string} theme.hAxis.label.color font color of horizontal axis label
- *          @param {string} theme.hAxis.tickcolor color of horizontal axis tick
+ *      @param {object} theme.yAxis theme of vertical axis
+ *          @param {object} theme.yAxis.title theme of vertical axis title
+ *              @param {number} theme.yAxis.title.fontSize font size of vertical axis title
+ *              @param {string} theme.yAxis.title.fontFamily font family of vertical axis title
+ *              @param {string} theme.yAxis.title.color font color of vertical axis title
+ *          @param {object} theme.yAxis.label theme of vertical axis label
+ *              @param {number} theme.yAxis.label.fontSize font size of vertical axis label
+ *              @param {string} theme.yAxis.label.fontFamily font family of vertical axis label
+ *              @param {string} theme.yAxis.label.color font color of vertical axis label
+ *          @param {string} theme.yAxis.tickcolor color of vertical axis tick
+ *      @param {object} theme.xAxis theme of horizontal axis
+ *          @param {object} theme.xAxis.title theme of horizontal axis title
+ *              @param {number} theme.xAxis.title.fontSize font size of horizontal axis title
+ *              @param {string} theme.xAxis.title.fontFamily font family of horizontal axis title
+ *              @param {string} theme.xAxis.title.color font color of horizontal axis title
+ *          @param {object} theme.xAxis.label theme of horizontal axis label
+ *              @param {number} theme.xAxis.label.fontSize font size of horizontal axis label
+ *              @param {string} theme.xAxis.label.fontFamily font family of horizontal axis label
+ *              @param {string} theme.xAxis.label.color font color of horizontal axis label
+ *          @param {string} theme.xAxis.tickcolor color of horizontal axis tick
  *      @param {object} theme.plot plot theme
  *          @param {string} theme.plot.lineColor plot line color
  *          @param {string} theme.plot.background plot background
@@ -294,7 +291,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *              @param {string} theme.legend.label.color font color of legend label
  * @example
  * var theme = {
- *   vAxis: {
+ *   yAxis: {
  *     tickColor: '#ccbd9a',
  *       title: {
  *         color: '#333333'
@@ -303,7 +300,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *         color: '#6f491d'
  *       }
  *     },
- *     hAxis: {
+ *     xAxis: {
  *       tickColor: '#ccbd9a',
  *       title: {
  *         color: '#333333'

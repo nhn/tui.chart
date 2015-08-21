@@ -17,7 +17,6 @@ module.exports = {
     STACKED_NORMAL_TYPE: 'normal',
     STACKED_PERCENT_TYPE: 'percent',
     CHART_TYPE_BAR: 'bar',
-    CHART_TYPE_LINE: 'line',
-    BAR_TYPE_BAR: 'bar',
-    BAR_TYPE_COLUMN: 'column'
+    CHART_TYPE_COLUMN: 'column',
+    CHART_TYPE_LINE: 'line'
 };
