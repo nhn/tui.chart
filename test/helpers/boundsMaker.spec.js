@@ -11,13 +11,43 @@ var maker = require('../../src/js/helpers/boundsMaker.js'),
 
 describe('test boundsMaker', function() {
     it('_getValueAxisMaxLabel()', function() {
-        var result = maker._getValueAxisMaxLabel([
-            [20, 30, 50],
-            [40, 40, 60],
-            [60, 50, 10],
-            [80, 10, 70]
-        ]);
+        var result = maker._getValueAxisMaxLabel({
+            values: [
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ],
+            joinValues: [
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]
+        });
         expect(result).toEqual(90);
+    });
+
+    it('_getValueAxisMaxLabel() for combo chart', function() {
+        var result = maker._getValueAxisMaxLabel({
+            values: {
+                column: [
+                    [20, 30, 50],
+                    [40, 40, 60]
+                ],
+                line: [
+                    [60, 50, 10],
+                    [80, 10, 70]
+                ]
+            },
+            joinValues: [
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]
+        }, ['column', 'index'], 0);
+        expect(result).toEqual(70);
     });
 
     it('_getRenderedLabelsMaxSize()', function() {
@@ -76,7 +106,7 @@ describe('test boundsMaker', function() {
     });
 
     it('getLegendAreaWidth()', function() {
-        var result = maker.getLegendAreaWidth(['label1', 'label12'], {
+        var result = maker._getLegendAreaWidth(['label1', 'label12'], {
             fontSize: 12,
             fontFamily: 'Verdana'
         });
@@ -94,7 +124,7 @@ describe('test boundsMaker', function() {
                    [80, 10, 70]
                ],
                labels: ['label1', 'label2', 'label3'],
-               legendLabels: ['label1', 'label2', 'label3'],
+               joinLegendLabels: ['label1', 'label2', 'label3'],
                formatValues: [
                    [20, 30, 50],
                    [40, 40, 60],
@@ -105,7 +135,6 @@ describe('test boundsMaker', function() {
            theme: defaultTheme,
            options: {}
        });
-
         expect(result.chart.dimension.width && result.chart.dimension.height).toBeTruthy();
         expect(result.plot.dimension.width && result.plot.dimension.height).toBeTruthy();
         expect(result.plot.position.top && result.plot.position.right).toBeTruthy();
@@ -115,7 +144,7 @@ describe('test boundsMaker', function() {
         expect(result.yAxis.position.top).toBeTruthy();
         expect(result.xAxis.dimension.width && result.xAxis.dimension.height).toBeTruthy();
         expect(result.xAxis.position.top).toBeTruthy();
-        expect(result.legend.position.top && result.legend.position.right).toBeTruthy();
+        expect(result.legend.position.top && result.legend.position.left).toBeTruthy();
         expect(result.tooltip.dimension.width && result.tooltip.dimension.height).toBeTruthy();
         expect(result.tooltip.position.top && result.tooltip.position.left).toBeTruthy();
     });

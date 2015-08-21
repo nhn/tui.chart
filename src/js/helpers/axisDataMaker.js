@@ -16,6 +16,7 @@ var MIN_PIXEL_STEP_SIZE = 40,
             min: 0,
             max: 100
         },
+        step: 25,
         tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     };
@@ -51,7 +52,7 @@ var axisDataMaker = {
     },
 
     /**
-     * Set value type axis data.
+     * To make data about value axis.
      * @param {object} params parameters
      *      @param {array.<array.<number>>} params.values chart values
      *      @param {{width:number, height:number}} params.seriesDimension series dimension
@@ -70,9 +71,9 @@ var axisDataMaker = {
     makeValueAxisData: function(params) {
         var options = params.options,
             isVertical = !!params.isVertical,
+            isPositionRight = !!params.isPositionRight,
             formatFunctions = params.formatFunctions,
             tickInfo;
-
         if (params.stacked === 'percent') {
             tickInfo = PERCENT_STACKED_TICK_INFO;
             formatFunctions = [];
@@ -81,6 +82,7 @@ var axisDataMaker = {
                 values: this._makeBaseValues(params.values, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
+                isPositionRight: isPositionRight,
                 chartType: params.chartType
             }, options);
         }
@@ -90,7 +92,9 @@ var axisDataMaker = {
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
-            isVertical: isVertical
+            step: tickInfo.step,
+            isVertical: isVertical,
+            isPositionRight: isPositionRight
         };
     },
 
@@ -194,7 +198,7 @@ var axisDataMaker = {
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
 
         // 02. tick count 후보군 얻기
-        tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical);
+        tickCounts = params.tickCount ? [params.tickCount] : this._getCandidateTickCounts(params.seriesDimension, params.isVertical);
 
         // 03. tick info 후보군 계산
         candidates = this._getCandidateTickInfos({
@@ -327,7 +331,7 @@ var axisDataMaker = {
             }
         });
 
-        labels = this._makeLabelsFromScale(scale, step);
+        labels = calculator.makeLabelsFromScale(scale, step);
         tickInfo.labels = labels;
         tickInfo.step = step;
         tickInfo.tickCount = labels.length;
@@ -349,7 +353,7 @@ var axisDataMaker = {
         if ((step % 2 === 0) &&
             abs(orgTickCount - ((tickCount * 2) - 1)) <= abs(orgTickCount - tickCount)) {
             step = step / 2;
-            tickInfo.labels = this._makeLabelsFromScale(scale, step);
+            tickInfo.labels = calculator.makeLabelsFromScale(scale, step);
             tickInfo.tickCount = tickInfo.labels.length;
             tickInfo.step = step;
         }
@@ -600,24 +604,6 @@ var axisDataMaker = {
             });
         });
         return result;
-    },
-
-    /**
-     * To make labels from scale.
-     * @param {{min: number, max: number}} scale axis scale
-     * @param {number} step step between max and min
-     * @returns {string[]} labels
-     * @private
-     */
-    _makeLabelsFromScale: function(scale, step) {
-        var multipleNum = ne.util.findMultipleNum(step),
-            min = scale.min * multipleNum,
-            max = scale.max * multipleNum,
-            labels = ne.util.range(min, max + 1, step * multipleNum);
-        labels = ne.util.map(labels, function(label) {
-            return label / multipleNum;
-        });
-        return labels;
     }
 };
 

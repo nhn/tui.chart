@@ -77,6 +77,14 @@ describe('test calculator', function() {
         expect(positions).toEqual([0, 80, 160, 239, 319, 399]);
     });
 
+    it('makeLabelsFromScale()', function() {
+        var tickCount = 5,
+            scale = {min: 20, max: 100},
+            step = calculator.getScaleStep(scale, tickCount),
+            result = calculator.makeLabelsFromScale(scale, step);
+        expect(result).toEqual([20, 40, 60, 80, 100]);
+    });
+
     it('getScaleStep', function() {
         var tickCount = 5,
             scale = {min: 20, max: 100},

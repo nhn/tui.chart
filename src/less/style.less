@@ -20,6 +20,7 @@
     padding: 10px 0;
   }
   .ne-chart-axis-area {
+    z-index: 200;
     position: absolute;
 
     .ne-chart-title-area {
@@ -46,7 +47,6 @@
     }
 
     &.vertical {
-      left: @chart-padding + 1;
       top: @chart-padding;
 
       .ne-chart-title-area {
@@ -54,7 +54,7 @@
         .rotate(-90deg);
         text-align: center;
         white-space: nowrap;
-        top: 0px;
+        top: 0;
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
       }
 
@@ -65,7 +65,7 @@
       .ne-chart-tick-area {
         border-right: 1px solid @axis-color;
         .ne-chart-tick {
-          right: 0px;
+          right: 0;
           width: 5px;
           height: 1px;
           height: 1px;
@@ -77,6 +77,37 @@
           width: 100%;
           text-align: right;
           padding-right: 10px;
+        }
+      }
+
+      &.right {
+        .ne-chart-title-area {
+          .transform-origin(top left);
+          .rotate(90deg);
+          text-align: center;
+          white-space: nowrap;
+          top: 0;
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        }
+
+        .ne-chart-tick-area, .ne-chart-label-area {
+          left: 0;
+        }
+
+        .ne-chart-tick-area {
+          border-right: none;
+          border-left: 1px solid @axis-color;
+          .ne-chart-tick {
+            left: 0;
+          }
+        }
+
+        .ne-chart-label-area {
+          .ne-chart-label {
+            text-align: left;
+            padding-right: 0;
+            padding-left: 10px;
+          }
         }
       }
     }
@@ -115,6 +146,7 @@
     position: absolute;
     right: @chart-padding;
     top: @chart-padding;
+    z-index: 100;
     .ne-chart-plot-line {
       background-color: #ccc;
       position: absolute;
@@ -131,11 +163,13 @@
   }
 
   .ne-chart-series-area {
+    z-index: 300;
     position: absolute;
     overflow: hidden;
   }
 
   .ne-chart-legend-area {
+    z-index: 400;
     position: absolute;
     padding: 10px;
     .ne-chart-legend {
@@ -147,7 +181,10 @@
       .ne-chart-legend-rect {
         margin-top:2px;
         width: @legend-rect-width;
-        height: @legend-rect-width
+        height: @legend-rect-width;
+        &.line {
+          height: 2px;
+        }
       }
       .ne-chart-legend-label {
         padding: 2px 0 2px 5px;
@@ -158,6 +195,7 @@
 
   .ne-chart-tooltip-area {
     position: absolute;
+    z-index: 500;
     .ne-chart-tooltip {
       position: absolute;
       display: none;

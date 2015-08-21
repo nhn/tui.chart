@@ -431,14 +431,6 @@ describe('test axisDataMaker', function() {
         expect(result).toEqual(['0001', '0002', '0003']);
     });
 
-    it('_makeLabelsFromScale()', function() {
-        var tickCount = 5,
-            scale = {min: 20, max: 100},
-            step = calculator.getScaleStep(scale, tickCount),
-            _labels = maker._makeLabelsFromScale(scale, step);
-        expect(_labels).toEqual([20, 40, 60, 80, 100]);
-    });
-
     it('makeValueAxisData() normal', function() {
         var result = maker.makeValueAxisData({
             values: groupValues,
@@ -457,7 +449,9 @@ describe('test axisDataMaker', function() {
                 min: 0,
                 max: 90
             },
-            isVertical: false
+            step: 30,
+            isVertical: false,
+            isPositionRight: false
         });
     });
 
@@ -480,7 +474,9 @@ describe('test axisDataMaker', function() {
                 min: 0,
                 max: 120
             },
-            isVertical: false
+            step: 30,
+            isVertical: false,
+            isPositionRight: false
         });
     });
 
@@ -503,7 +499,9 @@ describe('test axisDataMaker', function() {
                 min: 0,
                 max: 100
             },
-            isVertical: false
+            step: 25,
+            isVertical: false,
+            isPositionRight: false
         });
     });
 });

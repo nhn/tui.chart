@@ -11,7 +11,8 @@ var dom = require('../helpers/domHandler.js'),
     legendTemplate = require('./../legends/legendTemplate.js');
 
 var LEGEND_RECT_WIDTH = 12,
-    LABEL_PADDING_TOP = 2;
+    LABEL_PADDING_TOP = 2,
+    LINE_MARGIN_TOP = 5;
 
 var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -57,14 +58,22 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
             colors = theme.colors,
             borderColor = theme.borderColor,
             labelHeight = renderUtil.getRenderedLabelHeight(labels[0], theme.labels) + (LABEL_PADDING_TOP * 2),
+            baseMarginTop = parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1,
             borderCssText = borderColor ? renderUtil.concatStr(';border:1px solid ', borderColor) : '',
-            rectMargin = renderUtil.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
             singleColor = theme.singleColors && labels.length === 1 && 'transparent',
             html = ne.util.map(labels, function(label, index) {
-                var data = {
+                var rectMargin, marginTop, data;
+                if (label.chartType === 'line') {
+                    marginTop = baseMarginTop + LINE_MARGIN_TOP;
+                } else {
+                    marginTop = baseMarginTop;
+                }
+                rectMargin = renderUtil.concatStr(';margin-top:', marginTop, 'px');
+                data = {
                     cssText: renderUtil.concatStr('background-color:', singleColor || colors[index], borderCssText, rectMargin),
                     height: labelHeight,
-                    label: label
+                    chartType: label.chartType || 'rect',
+                    label: label.label
                 };
                 return template(data);
             }, this).join('');

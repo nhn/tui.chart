@@ -45,6 +45,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         var data = this.data,
             theme = this.theme,
             isVertical = !!data.isVertical,
+            isPositionRight = data.isPositionRight,
             options = this.options,
             bound = this.bound,
             dimension = bound.dimension,
@@ -54,14 +55,15 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 title: options.title,
                 theme: theme.title,
                 isVertical: isVertical,
+                isPositionRight: isPositionRight,
                 size: size
             }),
             elTickArea = this._renderTickArea(size),
             elLabelArea = this._renderLabelArea(size, dimension.width);
-
         renderUtil.renderDimension(el, dimension);
         renderUtil.renderPosition(el, bound.position);
-        dom.addClass(el, data.isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(el, isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(el, isPositionRight ? 'right' : '');
         dom.appends(el, [elTitleArea, elTickArea, elLabelArea]);
 
         return el;
@@ -83,12 +85,18 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
         if (elTitleArea && params.isVertical) {
             cssTexts = [
-                renderUtil.concatStr('width:', params.size, 'px'),
-                renderUtil.concatStr('left:', 0, 'px')
+                renderUtil.concatStr('width:', params.size, 'px')
             ];
-            if (!renderUtil.isIE8()) {
-                cssTexts.push(renderUtil.concatStr('top:', params.size, 'px'));
+            if (params.isPositionRight) {
+                cssTexts.push(renderUtil.concatStr('right:', -params.size, 'px'));
+                cssTexts.push(renderUtil.concatStr('top:', 0, 'px'));
+            } else {
+                cssTexts.push(renderUtil.concatStr('left:', 0, 'px'));
+                if (!renderUtil.isIE8()) {
+                    cssTexts.push(renderUtil.concatStr('top:', params.size, 'px'));
+                }
             }
+
             elTitleArea.style.cssText += ';' + cssTexts.join(';');
         }
         return elTitleArea;
@@ -139,31 +147,34 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             labels = data.labels,
             isVertical = data.isVertical,
             isLabelAxis = data.isLabelAxis,
-            posType = isVertical ? (isLabelAxis ? 'top' : 'bottom') : 'left',
+            posType = 'left',
             cssTexts = this._makeLabelCssTexts({
                 isVertical: isVertical,
                 isLabelAxis: isLabelAxis,
                 labelWidth: labelWidth
             }),
             elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
-            labelsHtml, titleAreaWidth, areaCssText;
+            areaCssText = renderUtil.makeFontCssText(theme.label),
+            labelsHtml, titleAreaWidth;
+
+        if (isVertical) {
+            posType = isLabelAxis ? 'top' : 'bottom';
+            titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
+            areaCssText = ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
+        }
 
         positions.length = labels.length;
+
         labelsHtml = this._makeLabelsHtml({
             positions: positions,
             labels: labels,
             posType: posType,
             cssTexts: cssTexts
         });
+
         elLabelArea.innerHTML = labelsHtml;
-        areaCssText = renderUtil.makeFontCssText(theme.label);
-
-        if (isVertical) {
-            titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
-            areaCssText += ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
-        }
-
         elLabelArea.style.cssText = areaCssText;
+
         this._changeLabelAreaPosition({
             elLabelArea: elLabelArea,
             isVertical: isVertical,

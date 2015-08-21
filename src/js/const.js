@@ -18,5 +18,6 @@ module.exports = {
     STACKED_PERCENT_TYPE: 'percent',
     CHART_TYPE_BAR: 'bar',
     CHART_TYPE_COLUMN: 'column',
-    CHART_TYPE_LINE: 'line'
+    CHART_TYPE_LINE: 'line',
+    CHART_TYPE_COMBO: 'combo'
 };
