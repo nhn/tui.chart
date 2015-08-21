@@ -122,7 +122,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         var elements = ne.util.map(components, function(component) {
             return component.render(paper);
         });
-        dom.appends(container, elements);
+        dom.append(container, elements);
     },
 
     /**

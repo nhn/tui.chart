@@ -64,7 +64,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         renderUtil.renderPosition(el, bound.position);
         dom.addClass(el, isVertical ? 'vertical' : 'horizontal');
         dom.addClass(el, isPositionRight ? 'right' : '');
-        dom.appends(el, [elTitleArea, elTickArea, elLabelArea]);
+        dom.append(el, [elTitleArea, elTickArea, elLabelArea]);
 
         return el;
     },

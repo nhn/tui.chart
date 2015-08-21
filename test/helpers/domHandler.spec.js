@@ -77,7 +77,7 @@ describe('tes domHandler', function() {
         expect(result).toEqual(elParent);
     });
 
-    it('append()', function() {
+    it('append() child', function() {
         var elParent = dom.create('DIV'),
             el = dom.create('SPAN');
 
@@ -85,13 +85,13 @@ describe('tes domHandler', function() {
         expect(elParent.firstChild).toEqual(el);
     });
 
-    it('appends()', function() {
+    it('append() children', function() {
         var elParent = dom.create('DIV'),
             el1 = dom.create('SPAN'),
             el2 = dom.create('SPAN'),
             el3 = dom.create('SPAN');
 
-        dom.appends(elParent, [el1, el2, el3]);
+        dom.append(elParent, [el1, el2, el3]);
         expect(elParent.childNodes[0]).toEqual(el1);
         expect(elParent.childNodes[1]).toEqual(el2);
         expect(elParent.childNodes[2]).toEqual(el3);
