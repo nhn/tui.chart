@@ -109,7 +109,6 @@ var boundsMaker = {
                     position: {top: top, left: yAxisWidth + CHART_PADDING}
                 }
             };
-
         if (yAxisChartTypes && yAxisChartTypes.length) {
             bounds.yrAxis = {
                 dimension: {width: yrAxisWidth, height: plotHeight},
@@ -132,13 +131,13 @@ var boundsMaker = {
             values = chartType ? convertData.values[chartType] : convertData.joinValues,
             formatFunctions = convertData.formatFunctions,
             flattenValues = concat.apply([], values),
-
             min = ne.util.min(flattenValues),
             max = ne.util.max(flattenValues),
             scale = calculator.calculateScale(min, max),
             minLabel = calculator.normalizeAxisNumber(scale.min),
             maxLabel = calculator.normalizeAxisNumber(scale.max),
             fns = formatFunctions && formatFunctions.slice() || [];
+
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
         fns.unshift(maxLabel);
         maxLabel = ne.util.reduce(fns, function(stored, fn) {

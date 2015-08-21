@@ -115,9 +115,15 @@ describe('test boundsMaker', function() {
     });
 
     it('make()', function() {
-       var result = maker.make({
+        var result = maker.make({
            convertData: {
                values: [
+                   [20, 30, 50],
+                   [40, 40, 60],
+                   [60, 50, 10],
+                   [80, 10, 70]
+               ],
+               joinValues: [
                    [20, 30, 50],
                    [40, 40, 60],
                    [60, 50, 10],
@@ -134,7 +140,7 @@ describe('test boundsMaker', function() {
            },
            theme: defaultTheme,
            options: {}
-       });
+        });
         expect(result.chart.dimension.width && result.chart.dimension.height).toBeTruthy();
         expect(result.plot.dimension.width && result.plot.dimension.height).toBeTruthy();
         expect(result.plot.position.top && result.plot.position.right).toBeTruthy();

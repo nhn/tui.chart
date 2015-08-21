@@ -160,7 +160,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         if (isVertical) {
             posType = isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
-            areaCssText = ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
+            areaCssText += ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
         }
 
         positions.length = labels.length;
