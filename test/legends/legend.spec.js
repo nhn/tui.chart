@@ -13,6 +13,14 @@ describe('test Legend', function() {
             'legend1',
             'legend2'
         ],
+        joinLegendLabels = [
+            {
+                label: 'legend1'
+            },
+            {
+                label: 'legend2'
+            }
+        ],
         theme = {
             label: {
                 fontSize: 12
@@ -38,6 +46,7 @@ describe('test Legend', function() {
     beforeEach(function() {
         legend = new Legend({
             legendLabels: legendLabels,
+            joinLegendLabels: joinLegendLabels,
             theme: theme,
             bound: bound
         });
@@ -63,6 +72,40 @@ describe('test Legend', function() {
             expect(child.firstChild.cssText).toEqual(elTempChild.firstChild.cssText);
             expect(child.lastChild.cssText).toEqual(elTempChild.lastChild.cssText);
         });
+    });
+
+    it('_setThemeToLabels()', function() {
+        var result = legend._setThemeToLabels([
+            {
+                label: 'label1'
+            },
+            {
+                label: 'label2'
+            }
+        ], {
+            colors: ['black', 'white'],
+            singleColors: ['red', 'orange'],
+            borderColor: 'blue'
+        });
+
+        expect(result).toEqual([
+            {
+                label: 'label1',
+                theme: {
+                    color: 'black',
+                    singleColor: 'red',
+                    borderColor: 'blue'
+                }
+            },
+            {
+                label: 'label2',
+                theme: {
+                    color: 'white',
+                    singleColor: 'orange',
+                    borderColor: 'blue'
+                }
+            }
+        ]);
     });
 
     it('renderLabelTheme()', function() {

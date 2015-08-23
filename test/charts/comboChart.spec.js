@@ -343,9 +343,11 @@ describe('test ComboChart', function() {
                 }
             },
             series: {
-                colors: {
-                    column: ['red', 'orange'],
-                    line: ['black', 'white', 'gray']
+                column: {
+                    colors: ['red', 'orange'],
+                },
+                line: {
+                    colors: ['black', 'white', 'gray']
                 }
             }
         }, {

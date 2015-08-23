@@ -34,52 +34,87 @@ module.exports = {
      */
     register: function(themeName, theme) {
         var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME];
-        if (themeName !== chartConst.DEFAULT_THEME_NAME && defaultTheme) {
-            theme = this._initTheme(theme);
+        if (themeName !== chartConst.DEFAULT_THEME_NAME) {
+            theme = this._initTheme(theme, defaultTheme);
         }
-
         this._inheritThemeProperty(theme);
-
         themes[themeName] = theme;
     },
 
     /**
      * Init theme.
      * @param {object} theme theme
+     * @param {object} defaultTheme default theme
      * @returns {object} theme
      * @private
      * @ignore
      */
-    _initTheme: function(theme) {
-        var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME],
-            cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
+    _initTheme: function(theme, defaultTheme) {
+        var cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
             newTheme;
 
         this._concatDefaultColors(theme, cloneTheme.series.colors)
         newTheme = this._extendTheme(theme, cloneTheme);
-        newTheme = this._copyProperty('yAxis', theme, newTheme, chartConst.YAXIS_PROPS);
-        newTheme = this._copyProperty('series', theme, newTheme, chartConst.SERIES_PROPS);
+
+        newTheme = this._copyProperty({
+            defaultTheme: defaultTheme,
+            propName: 'yAxis',
+            fromTheme: theme,
+            toTheme: newTheme,
+            rejectProps: chartConst.YAXIS_PROPS
+        });
+
+        newTheme = this._copyProperty({
+            defaultTheme: defaultTheme,
+            propName: 'series',
+            fromTheme: theme,
+            toTheme: newTheme,
+            rejectProps: chartConst.SERIES_PROPS
+        });
         return newTheme;
     },
 
-    _concatColors: function(property, seriesColors) {
-        if (property.colors) {
-            property.colors = property.colors.concat(seriesColors);
+    /**
+     * Filter chart types.
+     * @param {object} target target charts
+     * @param {array.<string>} rejectProps reject property
+     * @returns {Object} filtered charts.
+     * @private
+     */
+    _filterChartTypes: function(target, rejectProps) {
+        var result;
+        if (!target) {
+            return [];
         }
 
-        if (property.singleColors) {
-            property.singleColors = property.singleColors.concat(seriesColors);
-            //theme.legend.singleColors = theme.series.singleColors;
-        }
-    },
-
-    _filterCharts: function(target, rejectProps) {
-        var result = ne.util.filter(target, function(item, name) {
+        result = ne.util.filter(target, function(item, name) {
             return ne.util.inArray(name, rejectProps) === -1;
         });
         return result;
     },
 
+    /**
+     * Concat colors.
+     * @param {object} theme theme
+     * @param {array.<string>} seriesColors series colors
+     * @private
+     */
+    _concatColors: function(theme, seriesColors) {
+        if (theme.colors) {
+            theme.colors = theme.colors.concat(seriesColors);
+        }
+
+        if (theme.singleColors) {
+            theme.singleColors = theme.singleColors.concat(seriesColors);
+        }
+    },
+
+    /**
+     * Concat default colors.
+     * @param {object} theme theme
+     * @param {array.<string>} seriesColors series colors
+     * @private
+     */
     _concatDefaultColors: function(theme, seriesColors) {
         var chartTypes;
 
@@ -87,7 +122,7 @@ module.exports = {
             return;
         }
 
-        chartTypes = this._filterCharts(theme.series, chartConst.SERIES_PROPS);
+        chartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
         if (!ne.util.keys(chartTypes).length) {
             this._concatColors(theme.series, seriesColors);
@@ -124,14 +159,52 @@ module.exports = {
         return to;
     },
 
-    _copyProperty: function(propName, from, to, rejectProps) {
-        var chartTypes = this._filterCharts(from[propName], rejectProps);
-        if (ne.util.keys(chartTypes).length) {
-            to[propName] = from[propName];
+    /**
+     * Copy property.
+     * @param {object} params parameters
+     *      @param {object} params.defaultTheme default theme
+     *      @param {string} params.propName property name
+     *      @param {object} params.fromTheme from property
+     *      @param {object} params.toTheme tp property
+     *      @param {array.<string>} params.rejectProps reject property name
+     * @returns {object} copied property
+     * @private
+     */
+    _copyProperty: function(params) {
+        var chartTypes;
+
+        if (!params.toTheme[params.propName]) {
+            return params.toTheme;
         }
 
-        return to;
+        chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectProps);
+        if (ne.util.keys(chartTypes).length) {
+            ne.util.forEach(chartTypes, function(item, key) {
+                var cloneTheme = JSON.parse(JSON.stringify(params.defaultTheme[params.propName]));
+                params.fromTheme[params.propName][key] = this._extendTheme(item, cloneTheme);
+            }, this);
+
+            params.toTheme[params.propName] = params.fromTheme[params.propName];
+        }
+
+        return params.toTheme;
     },
+
+    /**
+     * Copy color info to legend
+     * @param {object} seriesTheme series theme
+     * @param {object} legendTheme legend theme
+     * @private
+     */
+    _copyColorInfoToLegend: function(seriesTheme, legendTheme) {
+        if (seriesTheme.singleColors) {
+            legendTheme.singleColors = seriesTheme.singleColors;
+        }
+        if (seriesTheme.borderColor) {
+            legendTheme.borderColor = seriesTheme.borderColor;
+        }
+    },
+
     /**
      * To inherit theme property.
      * @param {object} theme theme
@@ -142,13 +215,22 @@ module.exports = {
         var baseFont = theme.chart.fontFamily,
             items = [
                 theme.title,
-                theme.yAxis.title,
-                theme.yAxis.label,
                 theme.xAxis.title,
                 theme.xAxis.label,
                 theme.legend.label
             ],
-            chartTypeSeries;
+            yAxisChartTypes = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
+            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+
+        if (!ne.util.keys(yAxisChartTypes).length) {
+            items.push(theme.yAxis.title);
+            items.push(theme.yAxis.label);
+        } else {
+            ne.util.forEach(yAxisChartTypes, function(yAxisTheme) {
+                items.push(yAxisTheme.title);
+                items.push(yAxisTheme.label);
+            });
+        }
 
         ne.util.forEachArray(items, function(item) {
             if (!item.fontFamily) {
@@ -156,31 +238,17 @@ module.exports = {
             }
         });
 
-        chartTypeSeries = this._filterCharts(theme.series, chartConst.SERIES_PROPS);
-
-        if (!ne.util.keys(chartTypeSeries).length) {
+        if (!ne.util.keys(seriesChartTypes).length) {
             theme.legend.colors = theme.series.colors;
-
-            if (theme.series.singleColors) {
-                theme.legend.singleColors = theme.series.singleColors;
-            }
-
-            if (theme.series.borderColor) {
-                theme.legend.borderColor = theme.series.borderColor;
-            }
+            this._copyColorInfoToLegend(theme.series, theme.legend);
         } else {
-            ne.util.forEach(chartTypeSeries, function(item, chartType) {
+            ne.util.forEach(seriesChartTypes, function(item, chartType) {
                 theme.legend[chartType] = {
                     colors: item.colors || theme.legend.colors
                 };
-                if (item.singleColors) {
-                    theme.legend[chartType].singleColors = item.singleColors;
-                }
-                if (item.borderColor) {
-                    theme.legend[chartType].borderColor = item.borderColor;
-                }
+                this._copyColorInfoToLegend(item, theme.legend[chartType]);
                 delete theme.legend.colors;
-            });
+            }, this);
         }
     }
 };

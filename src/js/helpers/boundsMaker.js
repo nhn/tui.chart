@@ -115,7 +115,6 @@ var boundsMaker = {
                 position: {top: top, right: legendWidth + CHART_PADDING + HIDDEN_WIDTH}
             };
         }
-        console.log('bounds', bounds);
         return bounds;
     },
 

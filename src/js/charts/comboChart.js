@@ -66,7 +66,8 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             baseData: baseData,
             baseAxesData: baseAxesData,
             axesData: axesData,
-            chartTypes: seriesChartTypes
+            seriesChartTypes: seriesChartTypes,
+            chartTypes: chartTypes
         });
     },
 
@@ -223,6 +224,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             chartOptions.chartType = chartType;
             result[chartType] = chartOptions;
         });
+
         return result;
     },
 
@@ -284,6 +286,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      *      @param {object} params.options chart options
      *      @param {{yAxis: object, xAxis: object}} params.baseAxesData base axes data
      *      @param {object} params.axesData axes data
+     *      @param {array.<string>} params.seriesChartTypes series chart types
      *      @param {array.<string>} params.chartTypes chart types
      * @private
      */
@@ -297,16 +300,17 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             formattedValues = convertData.formattedValues,
             baseAxesData = params.baseAxesData,
             chartTypes = params.chartTypes,
+            seriesChartTypes = params.seriesChartTypes,
             orderInfo = this._makeChartTypeOrderInfo(chartTypes),
             remakeOptions = this._makeOptionsMap(chartTypes, params.options, orderInfo),
-            remakeTheme = this._makeThemeMap(chartTypes, params.theme, convertData.legendLabels),
+            remakeTheme = this._makeThemeMap(seriesChartTypes, params.theme, convertData.legendLabels),
             plotData = {
                 vTickCount: baseAxesData.yAxis.validTickCount,
                 hTickCount: baseAxesData.xAxis.validTickCount
             },
             joinLegendLabels = convertData.joinLegendLabels;
 
-        this.charts = ne.util.map(chartTypes, function(chartType) {
+        this.charts = ne.util.map(seriesChartTypes, function(chartType) {
             var legendLabels = convertData.legendLabels[chartType],
                 axes = params.axesData[chartType],
                 sendOptions = remakeOptions[chartType],

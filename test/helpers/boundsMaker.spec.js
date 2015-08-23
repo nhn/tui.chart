@@ -106,10 +106,18 @@ describe('test boundsMaker', function() {
     });
 
     it('getLegendAreaWidth()', function() {
-        var result = maker._getLegendAreaWidth(['label1', 'label12'], {
-            fontSize: 12,
-            fontFamily: 'Verdana'
-        });
+        var result = maker._getLegendAreaWidth([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ],
+            {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
         expect(result).toBeGreaterThan(79);
         expect(result).toBeLessThan(84);
     });
