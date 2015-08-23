@@ -18,6 +18,7 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
+     * @param {object} initedData initialized data from combo chart
      */
     init: function(userData, theme, options, initedData) {
         var baseData = initedData || this.makeBaseData(userData, theme, options, {

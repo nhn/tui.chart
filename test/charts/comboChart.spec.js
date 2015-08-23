@@ -6,22 +6,73 @@
 
 'use strict';
 
-var ComboChart = require('../../src/js/charts/ComboChart.js');
+var ComboChart = require('../../src/js/charts/ComboChart.js'),
+    defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
 describe('test ComboChart', function() {
+    var comboChart;
+
+    beforeEach(function() {
+        comboChart = new ComboChart({
+            categories: ['cate1', 'cate2', 'cate3'],
+            series: {
+                column: [
+                    ['Legend1', 20, 30, 50],
+                    ['Legend2', 40, 40, 60],
+                    ['Legend3', 60, 50, 10],
+                    ['Legend4', 80, 10, 70]
+                ],
+                line: [
+                    ['Legend2_1', 1, 2, 3]
+                ]
+            }
+        }, defaultTheme, {
+            chart: {
+                width: 500,
+                height: 400,
+                title: 'Stacked Bar Chart'
+            },
+            yAxis: [
+                {
+                    title: 'Y Axis',
+                    chartType: 'line'
+                },
+                {
+                    title: 'XX Axis'
+                }
+            ],
+            series: {
+                line: {
+                    hasDot: true,
+                }
+            },
+            xAxis: {
+                title: 'X Axis'
+            },
+            tooltip: {
+                line: {
+                    suffix: 'px'
+                },
+                column: {
+                    suffix: '%'
+                }
+            }
+        });
+    });
+
     it('_getYAxisChartTypes()', function() {
-        var result = ComboChart.prototype._getYAxisChartTypes(['column', 'line']);
+        var result = comboChart._getYAxisChartTypes(['column', 'line']);
         expect(result).toEqual(['column', 'line']);
     });
 
     it('_getYAxisChartTypes() contained object option', function() {
-        var result = ComboChart.prototype._getYAxisChartTypes(['column', 'line'], {
+        var result = comboChart._getYAxisChartTypes(['column', 'line'], {
             chartType: 'line'
         });
 
         expect(result).toEqual(['line', 'column']);
 
-        result = ComboChart.prototype._getYAxisChartTypes({
+        result = comboChart._getYAxisChartTypes({
             column: [
                 ['Legend1', 20, 30, 50]
             ],
@@ -36,13 +87,13 @@ describe('test ComboChart', function() {
     });
 
     it('_getYAxisChartTypes() contained array options', function() {
-        var result = ComboChart.prototype._getYAxisChartTypes(['column', 'line'], [{
+        var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
             chartType: 'line'
         }]);
 
         expect(result).toEqual(['line', 'column']);
 
-        result = ComboChart.prototype._getYAxisChartTypes(['column', 'line'], [{
+        result = comboChart._getYAxisChartTypes(['column', 'line'], [{
             title: 'test'
         }]);
 
@@ -50,7 +101,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeYAxisData() one yAxis', function() {
-        var result = ComboChart.prototype._makeYAxisData({
+        var result = comboChart._makeYAxisData({
             index: 0,
             convertData: {
                 joinValues: [
@@ -88,7 +139,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeYAxisData() two yAxis', function() {
-        var result = ComboChart.prototype._makeYAxisData({
+        var result = comboChart._makeYAxisData({
             index: 0,
             convertData: {
                 values: {
@@ -156,7 +207,7 @@ describe('test ComboChart', function() {
                 },
                 xAxis: {}
             },
-            result = ComboChart.prototype._makeAxesData(baseAxis, {
+            result = comboChart._makeAxesData(baseAxis, {
                 convertData: {
                     values: {
                         column: [
@@ -214,7 +265,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeChartTypeOrderInfo()', function() {
-        var result = ComboChart.prototype._makeChartTypeOrderInfo(['column', 'line']);
+        var result = comboChart._makeChartTypeOrderInfo(['column', 'line']);
         expect(result).toEqual({
             column: 0,
             line: 1
@@ -222,7 +273,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeOptionsMap()', function() {
-        var result = ComboChart.prototype._makeOptionsMap(['column', 'line'], {
+        var result = comboChart._makeOptionsMap(['column', 'line'], {
             yAxis: [
                 {
                     title: 'Y Axis'
@@ -281,7 +332,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeOptionsMap() no options', function() {
-        var result = ComboChart.prototype._makeOptionsMap(['column', 'line'], {}, {
+        var result = comboChart._makeOptionsMap(['column', 'line'], {}, {
             column: 0,
             line: 1
         });
@@ -296,7 +347,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeThemeMap() one colors', function() {
-        var result = ComboChart.prototype._makeThemeMap(['column', 'line'], {
+        var result = comboChart._makeThemeMap(['column', 'line'], {
             yAxis: {
                 title: {
                     fontSize: 12
@@ -334,7 +385,7 @@ describe('test ComboChart', function() {
     });
 
     it('_makeThemeMap() tow colors', function() {
-        var result = ComboChart.prototype._makeThemeMap(['column', 'line'], {
+        var result = comboChart._makeThemeMap(['column', 'line'], {
             yAxis: {
                 line: {
                     title: {
@@ -396,7 +447,7 @@ describe('test ComboChart', function() {
                 step: 20
             };
 
-        ComboChart.prototype._increaseYAxisScaleMax({
+        comboChart._increaseYAxisScaleMax({
             tickCount: 5
         }, targetTickInfo);
 
