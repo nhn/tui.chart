@@ -21,7 +21,7 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
      */
     init: function(userData, theme, options, initedData) {
         var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertica: true
+                isVertical: true
             }),
             convertData = baseData.convertData,
             bounds = baseData.bounds,
