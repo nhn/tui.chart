@@ -93,6 +93,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
             dom.addClass(el, 'ne-chart');
             this._renderTitle(el);
             renderUtil.renderDimension(el, this.bounds.chart.dimension);
+            renderUtil.renderBackground(el, this.theme.chart.background);
         }
 
         this._renderComponents(el, this.components, paper);

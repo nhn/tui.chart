@@ -7,7 +7,8 @@
 
 'use strict';
 
-var chartConst = require('../const.js');
+var chartConst = require('../const.js'),
+    defaultTheme = require('../themes/defaultTheme.js');
 
 var themes = {};
 
@@ -33,9 +34,9 @@ module.exports = {
      * @param {object} theme theme
      */
     register: function(themeName, theme) {
-        var defaultTheme = themes[chartConst.DEFAULT_THEME_NAME];
+        theme = JSON.parse(JSON.stringify(theme));
         if (themeName !== chartConst.DEFAULT_THEME_NAME) {
-            theme = this._initTheme(theme, defaultTheme);
+            theme = this._initTheme(theme);
         }
         this._inheritThemeProperty(theme);
         themes[themeName] = theme;
@@ -44,12 +45,11 @@ module.exports = {
     /**
      * Init theme.
      * @param {object} theme theme
-     * @param {object} defaultTheme default theme
      * @returns {object} theme
      * @private
      * @ignore
      */
-    _initTheme: function(theme, defaultTheme) {
+    _initTheme: function(theme) {
         var cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
             newTheme;
 
@@ -57,7 +57,6 @@ module.exports = {
         newTheme = this._extendTheme(theme, cloneTheme);
 
         newTheme = this._copyProperty({
-            defaultTheme: defaultTheme,
             propName: 'yAxis',
             fromTheme: theme,
             toTheme: newTheme,
@@ -65,7 +64,6 @@ module.exports = {
         });
 
         newTheme = this._copyProperty({
-            defaultTheme: defaultTheme,
             propName: 'series',
             fromTheme: theme,
             toTheme: newTheme,
@@ -162,7 +160,6 @@ module.exports = {
     /**
      * Copy property.
      * @param {object} params parameters
-     *      @param {object} params.defaultTheme default theme
      *      @param {string} params.propName property name
      *      @param {object} params.fromTheme from property
      *      @param {object} params.toTheme tp property
@@ -180,7 +177,7 @@ module.exports = {
         chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectProps);
         if (ne.util.keys(chartTypes).length) {
             ne.util.forEach(chartTypes, function(item, key) {
-                var cloneTheme = JSON.parse(JSON.stringify(params.defaultTheme[params.propName]));
+                var cloneTheme = JSON.parse(JSON.stringify(defaultTheme[params.propName]));
                 params.fromTheme[params.propName][key] = this._extendTheme(item, cloneTheme);
             }, this);
 
