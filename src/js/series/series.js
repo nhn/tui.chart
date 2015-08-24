@@ -74,8 +74,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {boolean} isVertical is vertical
      * @returns {HTMLElement} series element
      */
-    render: function() {
-        var el = dom.create('DIV', this.className),
+    render: function(paper) {
+        var  el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
             isVertical = !!this.isVertical,
@@ -86,12 +86,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH,
             data;
 
-        renderUtil.renderDimension(el, dimension);
+        if (!paper) {
+            renderUtil.renderDimension(el, dimension);
 
-        position.top = position.top + (isVertical ? -HIDDEN_WIDTH : -1);
-        position.right = position.right + (isVertical ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+            position.top = position.top + (isVertical ? -HIDDEN_WIDTH : -1);
+            position.right = position.right + (isVertical ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
 
-        renderUtil.renderPosition(el, position);
+            renderUtil.renderPosition(el, position);
+        }
 
         data = {
             dimension: dimension,
@@ -104,8 +106,12 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         } else if (this._makePositions) {
             data.groupPositions = this._makePositions(dimension);
         }
-        this.graphRenderer.render(el, data, inCallback, outCallback);
+        this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
         return el;
+    },
+
+    getPaper: function() {
+        return this.paper;
     },
 
     /**
@@ -133,7 +139,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     _makePercentValues: function(data, stacked) {
         var result;
-
         if (stacked === chartConst.STACKED_NORMAL_TYPE) {
             result = this._makeNormalStackedPercentValues(data);
         } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {

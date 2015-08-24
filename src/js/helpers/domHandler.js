@@ -114,23 +114,20 @@ var domHandler = {
     /**
      * Append child element.
      * @param {HTMLElement} container container element
-     * @param {HTMLElement} child child element
+     * @param {HTMLElement} children child element
      */
-    append: function(container, child) {
-        if (!container || !child) {
+    append: function(container, children) {
+        if (!container || !children) {
             return;
         }
-        container.appendChild(child);
-    },
+        children = ne.util.isArray(children) ? children : [children];
 
-    /**
-     * Append child elements.
-     * @param {HTMLElement} container container element
-     * @param {array.<HTMLElement>} children child elements
-     */
-    appends: function(container, children) {
-        var append = ne.util.bind(this.append, this, container);
-        ne.util.forEachArray(children, append, this);
+        ne.util.forEachArray(children, function(child) {
+            if (!child) {
+                return;
+            }
+            container.appendChild(child);
+        }, this);
     }
 };
 

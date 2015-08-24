@@ -6,12 +6,14 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
+var chartConst = require('../const.js'),
+    dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     legendTemplate = require('./../legends/legendTemplate.js');
 
 var LEGEND_RECT_WIDTH = 12,
-    LABEL_PADDING_TOP = 2;
+    LABEL_PADDING_TOP = 2,
+    LINE_MARGIN_TOP = 5;
 
 var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -46,25 +48,86 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
+     * Set theme to legend labels
+     * @param {array.<object>} labels labels
+     * @param {object} theme legend theme
+     * @returns {array.<object>} labels
+     * @private
+     */
+    _setThemeToLabels: function(labels, theme) {
+        var result = ne.util.map(labels, function(item, index) {
+            var itemTheme = {
+                color: theme.colors[index]
+            };
+
+            if (theme.singleColors) {
+                itemTheme.singleColor = theme.singleColors[index];
+            }
+            if (theme.borderColor) {
+                itemTheme.borderColor = theme.borderColor;
+            }
+            item.theme = itemTheme;
+            return item;
+        }, this);
+
+        return result;
+    },
+
+    /**
+     * To make legend labels.
+     * @returns {array.<object>} legend labels.
+     * @private
+     */
+    _makeLegendLabels: function() {
+        var chartType = this.chartType,
+            legendLabels = this.legendLabels,
+            joinLegendLabels = this.joinLegendLabels,
+            labelLen = legendLabels.length,
+            theme = this.theme,
+            chartLegendTheme = ne.util.filter(theme, function(item, name) {
+                return ne.util.inArray(name, chartConst.SERIES_PROPS) === -1 && name !== 'label';
+            }),
+            chartTypes = ne.util.keys(chartLegendTheme),
+            chartTheme,
+            result;
+
+        if (!chartTypes.length) {
+            result = this._setThemeToLabels(joinLegendLabels, theme);
+        } else {
+            result = this._setThemeToLabels(joinLegendLabels.slice(0, labelLen), theme[chartType]);
+            chartTheme = theme[ne.util.filter(chartTypes, function(propName) {
+                return propName !== chartType;
+            })[0]];
+            result = result.concat(this._setThemeToLabels(joinLegendLabels.slice(labelLen), chartTheme));
+        }
+        return result;
+    },
+
+    /**
      * To make legend html.
      * @returns {string} legend html
      * @private
      */
     _makeLegendHtml: function() {
-        var theme = this.theme,
-            labels = this.legendLabels,
+        var labels = this._makeLegendLabels(),
             template = legendTemplate.TPL_LEGEND,
-            colors = theme.colors,
-            borderColor = theme.borderColor,
-            labelHeight = renderUtil.getRenderedLabelHeight(labels[0], theme.labels) + (LABEL_PADDING_TOP * 2),
-            borderCssText = borderColor ? renderUtil.concatStr(';border:1px solid ', borderColor) : '',
-            rectMargin = renderUtil.concatStr(';margin-top:', parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1, 'px'),
-            singleColor = theme.singleColors && labels.length === 1 && 'transparent',
+            labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme) + (LABEL_PADDING_TOP * 2),
+            baseMarginTop = parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = ne.util.map(labels, function(label, index) {
-                var data = {
-                    cssText: renderUtil.concatStr('background-color:', singleColor || colors[index], borderCssText, rectMargin),
+                var borderCssText = label.borderColor ? renderUtil.concatStr(';border:1px solid ', label.borderColor) : '',
+                    rectMargin, marginTop, data;
+                if (label.chartType === 'line') {
+                    marginTop = baseMarginTop + LINE_MARGIN_TOP;
+                } else {
+                    marginTop = baseMarginTop;
+                }
+                rectMargin = renderUtil.concatStr(';margin-top:', marginTop, 'px');
+
+                data = {
+                    cssText: renderUtil.concatStr('background-color:', label.theme.singleColor || label.theme.color, borderCssText, rectMargin),
                     height: labelHeight,
-                    label: label
+                    chartType: label.chartType || 'rect',
+                    label: label.label
                 };
                 return template(data);
             }, this).join('');

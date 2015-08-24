@@ -22,20 +22,23 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      */
-    render: function(container, data, inCallback, outCallback) {
+    render: function(paper, container, data, inCallback, outCallback) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            paper = Raphael(container, dimension.width, dimension.height),
-
             groupPaths = this._getLinesPath(groupPositions),
-            //groupBgLines = this._renderBgLines(paper, groupPaths),
-            groupLines = this._renderLines(paper, groupPaths, colors),
             borderStyle = this._makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this._makeOutDotStyle(opacity, borderStyle),
-            groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
+            groupDots;
+
+        if (!paper) {
+            paper = Raphael(container, dimension.width, dimension.height);
+        }
+
+        this._renderLines(paper, groupPaths, colors);
+        groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
 
         this.outDotStyle = outDotStyle;
         this.groupDots = groupDots;

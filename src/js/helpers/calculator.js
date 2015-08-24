@@ -100,6 +100,24 @@ var calculator = {
     },
 
     /**
+     * To make labels from scale.
+     * @param {{min: number, max: number}} scale axis scale
+     * @param {number} step step between max and min
+     * @returns {string[]} labels
+     * @private
+     */
+    makeLabelsFromScale: function(scale, step) {
+        var multipleNum = ne.util.findMultipleNum(step),
+            min = scale.min * multipleNum,
+            max = scale.max * multipleNum,
+            labels = ne.util.range(min, max + 1, step * multipleNum);
+        labels = ne.util.map(labels, function(label) {
+            return label / multipleNum;
+        });
+        return labels;
+    },
+
+    /**
      * Get scale step.
      * @param {{min: number, max: number}} scale axis scale
      * @param {number} count value count

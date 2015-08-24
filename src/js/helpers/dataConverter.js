@@ -15,58 +15,151 @@ var concat = Array.prototype.concat;
  * @module dataConverter
  */
 var dataConverter = {
-    convert: function(userData, chartOptions) {
-        var axisData, labels, values, legendLabels, format, formatFunctions, formattedValues;
-
-        axisData = userData.slice(1);
-        labels = userData[0].slice(1);
-        values = this._pickValues(axisData);
-        legendLabels = this._pickLegendLabels(axisData);
-        format = chartOptions && chartOptions.format || '';
-        formatFunctions = this._findFormatFunctions(format);
-        formattedValues = format ? this._formatValues(values, formatFunctions) : values;
-
+    /**
+     * Convert user data.
+     * @param {array.<array>} userData
+     * @param {object} chartOptions chart option
+     * @returns {{
+     *      labels: array.<string>,
+     *      values: array.<number>,
+     *      legendLabels: array.<string>,
+     *      formatFunctions: array.<function>,
+     *      formattedValues: array.<string>
+     * }} converted data
+     */
+    convert: function(userData, chartOptions, chartType) {
+        var labels = userData.categories,
+            seriesData = userData.series,
+            values = this._pickValues(seriesData),
+            joinValues = this._joinValues(values),
+            legendLabels = this._pickLegendLabels(seriesData),
+            joinLegendLabels = this._joinLegendLabels(legendLabels, chartType),
+            format = chartOptions && chartOptions.format || '',
+            formatFunctions = this._findFormatFunctions(format),
+            formattedValues = format ? this._formatValues(values, formatFunctions) : values;
         return {
             labels: labels,
             values: values,
+            joinValues: joinValues,
             legendLabels: legendLabels,
+            joinLegendLabels: joinLegendLabels,
             formatFunctions: formatFunctions,
             formattedValues: formattedValues
         };
     },
 
     /**
+     * Separate label.
+     * @param {array.<array.<array>>} userData user data
+     * @returns {{labels: (array.<string>), sourceData: array.<array.<array>>}} result data
+     * @private
+     */
+    _separateLabel: function(userData) {
+        var labels = userData[0].pop();
+        return {
+            labels: labels,
+            sourceData: userData
+        };
+    },
+
+    /**
+     * Pick value.
+     * @param {array} items items
+     * @returns {array} picked value
+     * @private
+     */
+    _pickValue: function(items) {
+        return items.slice(1);
+    },
+
+    /**
      * Pick values from axis data.
-     * @param {array.<array>} axisData axis data
+     * @param {array.<array>} seriesData series data
      * @returns {string[]} values
      */
-    _pickValues: function(axisData) {
-        var result = ne.util.map(axisData, function(items) {
-            return items.slice(1);
-        });
-        return calculator.arrayPivot(result);
+    _pickValues: function(seriesData) {
+        var values, result;
+        if (ne.util.isArray(seriesData)) {
+            values = ne.util.map(seriesData, this._pickValue, this);
+            result = calculator.arrayPivot(values);
+        } else {
+            result = {};
+            ne.util.forEach(seriesData, function(groupValues, type) {
+                values = ne.util.map(groupValues, this._pickValue, this);
+                result[type] = calculator.arrayPivot(values);
+            }, this);
+        }
+        return result;
+    },
+
+    _joinValues: function(values) {
+        var joinValues;
+
+        if (ne.util.isArray(values)) {
+            return values;
+        }
+
+        joinValues = ne.util.map(values, function(groupValues) {
+            return groupValues;
+        }, this);
+
+        return concat.apply([], joinValues);
+    },
+
+    _pickLegendLabel: function(items) {
+        return items[0];
     },
 
     /**
      * Pick legend labels from axis data.
-     * @param {array.<array>} axisData axis data
+     * @param {array.<array>} seriesData series data
      * @returns {string[]} labels
      */
-    _pickLegendLabels: function(axisData) {
-        var labels = ne.util.map(axisData, function(items) {
-            return items[0];
-        });
-        return labels;
+    _pickLegendLabels: function(seriesData) {
+        var result;
+        if (ne.util.isArray(seriesData)) {
+            result = ne.util.map(seriesData, this._pickLegendLabel, this);
+        } else {
+            result = {};
+            ne.util.forEach(seriesData, function(groupValues, type) {
+                result[type] = ne.util.map(groupValues, this._pickLegendLabel, this);
+            }, this);
+        }
+        return result;
+    },
+
+    _joinLegendLabels: function(legendLabels, chartType) {
+        var result;
+        if (ne.util.isArray(legendLabels)) {
+            result = ne.util.map(legendLabels, function(label) {
+                return {
+                    chartType: chartType,
+                    label: label
+                };
+            });
+        } else {
+            result = ne.util.map(legendLabels, function(labels, _chartType) {
+                return ne.util.map(labels, function(label) {
+                    return {
+                        chartType: _chartType,
+                        label: label
+                    };
+                });
+            }, this);
+            result = concat.apply([], result);
+        }
+        return result;
     },
 
     /**
-     * Format values.
-     * @param {array.<array.<number>>} groupValues values
+     * To format group values.
+     * @param {array.<array>} groupValues group values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
+     * @private
      */
-    _formatValues: function(groupValues, formatFunctions) {
-        var result = ne.util.map(groupValues, function(values) {
+    _formatGroupValues: function(groupValues, formatFunctions) {
+        return ne.util.map(groupValues, function(values) {
             return ne.util.map(values, function(value) {
                 var fns = [value].concat(formatFunctions);
                 return ne.util.reduce(fns, function(stored, fn) {
@@ -74,6 +167,25 @@ var dataConverter = {
                 });
             });
         });
+    },
+
+    /**
+     * To format converted values.
+     * @param {array.<array>} chartValues chart values
+     * @param {function[]} formatFunctions format functions
+     * @returns {string[]} formatted values
+     * @private
+     */
+    _formatValues: function(chartValues, formatFunctions) {
+        var result;
+        if (ne.util.isArray(chartValues)) {
+            result = this._formatGroupValues(chartValues, formatFunctions);
+        } else {
+            result = {};
+            ne.util.forEach(chartValues, function(groupValues, chartType) {
+                result[chartType] = this._formatGroupValues(groupValues, formatFunctions);
+            }, this);
+        }
         return result;
     },
 

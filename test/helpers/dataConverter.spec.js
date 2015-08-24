@@ -107,25 +107,73 @@ describe('test dataConverter', function() {
         ]);
     });
 
+    it('_formatValues() for combo chart', function() {
+        var formatFunctions = converter._findFormatFunctions('0.0'),
+            result = converter._formatValues({
+                column: [
+                    [20, 40, 60, 80],
+                    [30, 40, 50, 10]
+                ],
+                line: [
+                    [50, 60, 10, 70]
+                ]
+            }, formatFunctions);
+        expect(result).toEqual({
+            column: [
+                ['20.0', '40.0', '60.0', '80.0'],
+                ['30.0', '40.0', '50.0', '10.0']
+
+            ],
+            line: [
+                ['50.0', '60.0', '10.0', '70.0']
+            ]
+        });
+    });
+
     it('convert()', function() {
-        var convertData = converter.convert([
-                ['Groups', 'Group1', 'Group2', 'Group3'],
-                ['Legend1', 20, 30, 50],
-                ['Legend2', 40, 40, 60],
-                ['Legend3', 60, 50, 10],
-                ['Legend4', 80, 10, 70]
-            ], {
+        var convertData = converter.convert({
+                categories: ['cate1', 'cate2', 'cate3'],
+                series: [
+                    ['Legend1', 20, 30, 50],
+                    ['Legend2', 40, 40, 60],
+                    ['Legend3', 60, 50, 10],
+                    ['Legend4', 80, 10, 70]
+                ]
+            }, {
                 format: '0.0'
-            });
+            }, 'column');
         delete convertData.formatFunctions;
         expect(convertData).toEqual({
-            labels: ['Group1', 'Group2', 'Group3'],
+            labels: ['cate1', 'cate2', 'cate3'],
             values: [
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
             ],
+            joinValues: [
+                [20, 40, 60, 80],
+                [30, 40, 50, 10],
+                [50, 60, 10, 70]
+            ],
             legendLabels: ['Legend1', 'Legend2', 'Legend3', 'Legend4'],
+            joinLegendLabels: [
+                {
+                    chartType: 'column',
+                    label: 'Legend1'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend2'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend3'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend4'
+                }
+            ],
             formattedValues: [
                 ['20.0', '40.0', '60.0', '80.0'],
                 ['30.0', '40.0', '50.0', '10.0'],

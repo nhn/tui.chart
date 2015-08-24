@@ -23,17 +23,20 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
      */
-    render: function(container, data, inCallback, outCallback) {
+    render: function(paper, container, data, inCallback, outCallback) {
         var groupBounds = data.groupBounds,
-            dimension = data.dimension,
-            paper;
+            dimension = data.dimension;
 
         if (!groupBounds) {
             return;
         }
 
-        paper = Raphael(container, dimension.width, dimension.height);
+        if (!paper) {
+            paper = Raphael(container, dimension.width, dimension.height);
+        }
         this._renderBars(paper, data.theme, groupBounds, inCallback, outCallback);
+
+        return paper;
     },
 
     /**

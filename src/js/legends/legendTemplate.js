@@ -8,7 +8,7 @@ var templateMaker = require('../helpers/templateMaker.js');
 
 var tags = {
     HTML_LEGEND: '<div class="ne-chart-legend">' +
-        '<div class="ne-chart-legend-rect" style="{{ cssText }}"></div>' +
+        '<div class="ne-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
         '<div class="ne-chart-legend-label" style="height:{{ height }}px">{{ label }}</div></div>'
 };
 

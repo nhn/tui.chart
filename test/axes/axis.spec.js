@@ -157,10 +157,10 @@ describe('test Axis', function() {
     });
 
     it('_renderLabelArea() label vertical', function() {
-        var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
+        var elLabelArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
         axis.data.isVertical = true;
-        elTickArea = axis._renderLabelArea(300, 100);
+        elLabelArea = axis._renderLabelArea(300, 100);
 
         compareHtml = '<div class="ne-chart-label-area" style="width: 75px;">' +
             '<div class="ne-chart-label" style="height:100px;line-height:100px;top: 0px">label1</div>' +
@@ -172,9 +172,9 @@ describe('test Axis', function() {
         elTemp.innerHTML = compareHtml;
         elTempArea = elTemp.firstChild;
 
-        expect(parseInt(elTickArea.style.width) / 10).toBeCloseTo(parseInt(elTempArea.style.width) / 10, 0);
+        expect(parseInt(elLabelArea.style.width, 10) / 10).toBeCloseTo(parseInt(elTempArea.style.width, 10) / 10, 0);
 
-        childNodes = elTickArea.childNodes;
+        childNodes = elLabelArea.childNodes;
         tmpChildNodes = elTempArea.childNodes;
 
         ne.util.forEachArray(childNodes, function(child, index) {
@@ -186,10 +186,10 @@ describe('test Axis', function() {
     });
 
     it('_renderLabelArea() value horizontal', function() {
-        var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
+        var eLabelArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
         axis.data = valueData;
-        elTickArea = axis._renderLabelArea(300);
+        eLabelArea = axis._renderLabelArea(300);
 
         compareHtml = '<div class="ne-chart-label-area" style="font-size:12px;left:-75px;">' +
             '<div class="ne-chart-label" style="width:150px;left:0px">0.00</div>' +
@@ -201,9 +201,9 @@ describe('test Axis', function() {
         elTemp.innerHTML = compareHtml;
         elTempArea = elTemp.firstChild;
 
-        expect(elTickArea.style.cssText).toEqual(elTempArea.style.cssText);
+        expect(eLabelArea.style.cssText).toEqual(elTempArea.style.cssText);
 
-        childNodes = elTickArea.childNodes;
+        childNodes = eLabelArea.childNodes;
         tmpChildNodes = elTempArea.childNodes;
 
         ne.util.forEachArray(childNodes, function(child, index) {

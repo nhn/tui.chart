@@ -7,8 +7,6 @@
 'use strict';
 
 var AxisTypeBase = require('./axisTypeBase.js'),
-    dataConverter = require('../helpers/dataConverter.js'),
-    boundsMaker = require('../helpers/boundsMaker.js'),
     axisDataMaker = require('../helpers/axisDataMaker.js'),
     Series = require('../series/columnChartSeries.js');
 
@@ -19,49 +17,68 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
+     * @param {object} initedData initialized data from combo chart
      */
-    init: function(userData, theme, options) {
-        var convertData = dataConverter.convert(userData, options.chart),
-            bounds = boundsMaker.make({
-                convertData: convertData,
-                theme: theme,
-                isVertical: true,
-                options: options
+    init: function(userData, theme, options, initedData) {
+        var baseData = initedData || this.makeBaseData(userData, theme, options, {
+                isVertical: true
             }),
-            yAxisData, xAxisData;
-
-        AxisTypeBase.call(this, bounds, theme, options);
-
-        yAxisData = axisDataMaker.makeValueAxisData({
-            values: convertData.values,
-            seriesDimension: bounds.series.dimension,
-            stacked: options.series && options.series.stacked || '',
-            chartType: options.chartType,
-            formatFunctions: convertData.formatFunctions,
-            options: options.xAxis,
-            isVertical: true
-        });
-
-        xAxisData = axisDataMaker.makeLabelAxisData({
-            labels: convertData.labels
-        });
+            convertData = baseData.convertData,
+            bounds = baseData.bounds,
+            axisData;
 
         this.className = 'ne-column-chart';
 
+        AxisTypeBase.call(this, bounds, theme, options, initedData);
+
+        axisData = this._makeAxesData(convertData, bounds, options, initedData);
+        this._addComponents(convertData, axisData, options);
+    },
+
+    _makeAxesData: function(convertData, bounds, options, initedData) {
+        var axesData = {};
+        if (initedData) {
+            axesData = initedData.axes;
+        } else {
+            axesData = {
+                yAxis: axisDataMaker.makeValueAxisData({
+                    values: convertData.values,
+                    seriesDimension: bounds.series.dimension,
+                    stacked: options.series && options.series.stacked || '',
+                    chartType: options.chartType,
+                    formatFunctions: convertData.formatFunctions,
+                    options: options.yAxis,
+                    isVertical: true
+                }),
+                xAxis: axisDataMaker.makeLabelAxisData({
+                    labels: convertData.labels
+                })
+            };
+        }
+        return axesData;
+    },
+
+    _addComponents: function(convertData, axesData, options) {
         this.addAxisComponents({
             convertData: convertData,
-            axes: {
-                yAxis: yAxisData,
-                xAxis: xAxisData
+            axes: axesData,
+            plotData: !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
+                vTickCount: axesData.yAxis.validTickCount,
+                hTickCount: axesData.xAxis.validTickCount
             },
-            plotData: {
-                vTickCount: yAxisData.validTickCount,
-                hTickCount: xAxisData.validTickCount
-            },
-            Series: Series,
-            axisScale: yAxisData.scale,
+            chartType: options.chartType
+        });
+
+        this.addComponent('series', Series, {
+            libType: options.libType,
+            chartType: options.chartType,
+            tooltipPrefix: this.tooltipPrefix,
             isVertical: true,
-            options: options
+            data: {
+                values: convertData.values,
+                formattedValues: convertData.formattedValues,
+                scale: axesData.yAxis.scale
+            }
         });
     }
 });
