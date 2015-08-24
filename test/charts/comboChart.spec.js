@@ -6,7 +6,7 @@
 
 'use strict';
 
-var ComboChart = require('../../src/js/charts/ComboChart.js'),
+var ComboChart = require('../../src/js/charts/comboChart.js'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
 describe('test ComboChart', function() {
