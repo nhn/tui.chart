@@ -79,10 +79,11 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @private
      */
     _getYAxisChartTypes: function(chartTypes, yAxisOptions) {
-        var defaultTypes = chartTypes,
-            optionChartTypes, firstType, secondType;
+        var resultChartTypes = chartTypes.slice(),
+            isReverse = false,
+            optionChartTypes;
         if (!yAxisOptions) {
-            return defaultTypes;
+            return resultChartTypes;
         }
 
         if (!ne.util.isArray(yAxisOptions)) {
@@ -93,18 +94,19 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             return [];
         }
 
-        optionChartTypes = ne.util.filter(yAxisOptions, function(option) {
-            return !!option.chartType;
+        optionChartTypes = ne.util.map(yAxisOptions, function(option) {
+            return option.chartType;
         });
 
-        if (!optionChartTypes.length) {
-            return defaultTypes;
+        ne.util.forEachArray(optionChartTypes, function(chartType, index) {
+            isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
+        });
+
+        if (isReverse) {
+            resultChartTypes.reverse();
         }
 
-        firstType = optionChartTypes[0].chartType;
-        secondType = defaultTypes[0] === firstType ? defaultTypes[1] : defaultTypes[0];
-
-        return [firstType, secondType];
+        return resultChartTypes;
     },
 
     /**
