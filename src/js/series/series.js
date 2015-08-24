@@ -69,13 +69,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series.
-     * @param {{width: number, height: number, top: number, right: number}} bound series bound
-     * @param {string} tooltipPrefix tooltip prefix
-     * @param {boolean} isVertical is vertical
+     * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      */
     render: function(paper) {
-        var  el = dom.create('DIV', this.className),
+        var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
             isVertical = !!this.isVertical,
@@ -110,6 +108,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         return el;
     },
 
+    /**
+     * Get paper.
+     * @returns {object} object for graph drawing
+     */
     getPaper: function() {
         return this.paper;
     },

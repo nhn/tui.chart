@@ -32,29 +32,27 @@ describe('test themeFactory', function() {
 
     it('_initTheme()', function() {
         var result = themeFactory._initTheme({
-                series: {
-                    colors: ['gray']
-                }
-            }, {
-            yAxis: {
-                title: {
-                    fontSize: 12
-                }
-            },
             series: {
-                colors: ['red', 'orange', 'green']
+                colors: ['gray']
             }
         });
 
-        expect(result).toEqual( {
+        expect(result).toEqual({
+            chart: {background: '#ffffff', fontFamily: 'Verdana'},
+            title: {fontSize: 18, fontFamily: '', color: '#000000'},
             yAxis: {
-                title: {
-                    fontSize: 12
-                }
+                tickColor: '#000000',
+                title: {fontSize: 12, fontFamily: '', color: '#000000'},
+                label: {fontSize: 12, fontFamily: '', color: '#000000'}
             },
-            series: {
-                colors: ['gray', 'red', 'orange', 'green']
-            }
+            xAxis: {
+                tickColor: '#000000',
+                title: {fontSize: 12, fontFamily: '', color: '#000000'},
+                label: {fontSize: 12, fontFamily: '', color: '#000000'}
+            },
+            plot: {lineColor: '#dddddd', background: '#ffffff'},
+            series: {colors: ['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']},
+            legend: {label: {'fontSize': 12, fontFamily: '', color: '#000000'}}
         });
     });
 

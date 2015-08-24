@@ -13,7 +13,8 @@ var CHART_PADDING = 10,
     TITLE_ADD_PADDING = 20,
     LEGEND_AREA_PADDING = 10,
     LEGEND_RECT_WIDTH = 12,
-    LABEL_PADDING_LEFT = 5,
+    LEGEND_LABEL_PADDING_LEFT = 5,
+    AXIS_LABEL_PADDING = 7,
     HIDDEN_WIDTH = 1;
 
 var concat = Array.prototype.concat;
@@ -26,10 +27,10 @@ var boundsMaker = {
     /**
      * To make bounds about chart components.
      * @param {object} params parameters
-     *      @param {object} convertData converted data
-     *      @param {object} theme chart theme
-     *      @param {boolean} isVertical whether vertical or not
-     *      @param {object} options chart options
+     *      @param {object} params.convertData converted data
+     *      @param {object} params.theme chart theme
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {object} params.options chart options
      * @returns {{
      *   plot: {
      *     dimension: {width: number, height: number},
@@ -57,64 +58,42 @@ var boundsMaker = {
      * }} bounds
      */
     make: function(params) {
-        var options = params.options,
-            theme = params.theme,
-            yAxisChartTypes = params.yAxisChartTypes,
-            chartOptions = options.chart || {},
-            chartDimension = {
-                width: chartOptions.width || 500,
-                height: chartOptions.height || 400
-            },
-            convertData = params.convertData,
-            yAxisTitle = options.yAxis && options.yAxis.title,
-            xAxisTitle = options.xAxis && options.xAxis.title,
-            maxLabel = this._getValueAxisMaxLabel(convertData, yAxisChartTypes),
-            vLabels = params.isVertical ? [maxLabel] : convertData.labels,
-            hLabels = params.isVertical ? convertData.labels : [maxLabel],
-            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING,
-            yAxisWidth = this._getVerticalAxisWidth(yAxisTitle, vLabels, theme.yAxis),
-            xAxisHeight = this._getHorizontalAxisHeight(xAxisTitle, hLabels, theme.xAxis),
-            legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label),
-            yrAxisWidth = this._getYRAxisWidth(convertData, yAxisChartTypes, theme, options),
-            rightAreaWidth = legendWidth + yrAxisWidth,
-            plotWidth = chartDimension.width - (CHART_PADDING * 2) - yAxisWidth - rightAreaWidth,
-            plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - xAxisHeight,
-            top = titleHeight + CHART_PADDING,
-            right = rightAreaWidth + CHART_PADDING,
-            bounds = {
+        var dimensions = this._getComponentsDimensions(params),
+            yAxisWidth = dimensions.yAxis.width,
+            top = dimensions.title.height + CHART_PADDING,
+            right = dimensions.legend.width + dimensions.yrAxis.width + CHART_PADDING,
+            axesBounds = this._makeAxesBounds({
+                hasAxes: params.hasAxes,
+                yAxisChartTypes: params.yAxisChartTypes,
+                dimensions: dimensions,
+                top: top,
+                right: right
+            }),
+            bounds = ne.util.extend({
                 chart: {
-                    dimension: chartDimension
-                },
-                plot: {
-                    dimension: {width: plotWidth, height: plotHeight},
-                    position: {top: top, right: right}
-                },
-                yAxis: {
-                    dimension: {width: yAxisWidth, height: plotHeight},
-                    position: {top: top, left: CHART_PADDING + HIDDEN_WIDTH}
-                },
-                xAxis: {
-                    dimension: {width: plotWidth, height: xAxisHeight},
-                    position: {top: top + plotHeight - HIDDEN_WIDTH, right: right}
+                    dimension: dimensions.chart
                 },
                 series: {
-                    dimension: {width: plotWidth, height: plotHeight},
-                    position: {top: top, right: right}
+                    dimension: dimensions.series,
+                    position: {
+                        top: top,
+                        right: right
+                    }
                 },
                 legend: {
-                    position: {top: titleHeight, left: yAxisWidth + plotWidth + yrAxisWidth + CHART_PADDING}
+                    position: {
+                        top: dimensions.title.height,
+                        left: yAxisWidth + dimensions.plot.width + dimensions.yrAxis.width + CHART_PADDING
+                    }
                 },
                 tooltip: {
-                    dimension: {width: plotWidth, height: plotHeight},
-                    position: {top: top, left: yAxisWidth + CHART_PADDING}
+                    dimension: dimensions.tooltip,
+                    position: {
+                        top: top,
+                        left: yAxisWidth + CHART_PADDING
+                    }
                 }
-            };
-        if (yAxisChartTypes && yAxisChartTypes.length) {
-            bounds.yrAxis = {
-                dimension: {width: yrAxisWidth, height: plotHeight},
-                position: {top: top, right: legendWidth + CHART_PADDING + HIDDEN_WIDTH}
-            };
-        }
+            }, axesBounds);
         return bounds;
     },
 
@@ -128,7 +107,7 @@ var boundsMaker = {
      */
     _getValueAxisMaxLabel: function(convertData, chartTypes, index) {
         var chartType = chartTypes && chartTypes[index || 0] || '',
-            values = chartType ? convertData.values[chartType] : convertData.joinValues,
+            values = chartType && convertData.values[chartType] ? convertData.values[chartType] : convertData.joinValues,
             formatFunctions = convertData.formatFunctions,
             flattenValues = concat.apply([], values),
             min = ne.util.min(flattenValues),
@@ -137,7 +116,6 @@ var boundsMaker = {
             minLabel = calculator.normalizeAxisNumber(scale.min),
             maxLabel = calculator.normalizeAxisNumber(scale.max),
             fns = formatFunctions && formatFunctions.slice() || [];
-
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
         fns.unshift(maxLabel);
         maxLabel = ne.util.reduce(fns, function(stored, fn) {
@@ -197,7 +175,7 @@ var boundsMaker = {
      */
     _getVerticalAxisWidth: function(title, labels, theme) {
         var titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING,
-            width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth;
+            width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + AXIS_LABEL_PADDING;
         return width;
     },
 
@@ -216,8 +194,95 @@ var boundsMaker = {
     },
 
     /**
+     * Get width about y right axis
+     * @param {object} params parameters
+     *      @param {array.<string>} params.yAxisChartTypes chart types
+     *      @param {object} params.theme chart theme
+     *      @param {object} params.options chart options
+     * @returns {number} y right axis width
+     * @private
+     */
+    _getYRAxisWidth: function(params) {
+        var yAxisChartTypes = params.yAxisChartTypes || [],
+            rightYAxisWidth = 0,
+            yAxisTheme, yAxisOptions, index, labels, title;
+        index = yAxisChartTypes.length - 1;
+        if (index > -1) {
+            yAxisTheme = [].concat(params.theme.yAxis);
+            yAxisOptions = [].concat(params.options.yAxis);
+            title = yAxisOptions[index] && yAxisOptions[index].title;
+            labels = [this._getValueAxisMaxLabel(params.convertData, yAxisChartTypes, index)];
+            rightYAxisWidth = this._getVerticalAxisWidth(title, labels, yAxisTheme.length === 1 ? yAxisTheme[0] : yAxisTheme[index]);
+        }
+        return rightYAxisWidth;
+    },
+
+    /**
+     * To make axes dimension.
+     * @param {object} params parameters
+     *      @param {object} params.convertData converted data
+     *      @param {object} params.theme chart theme
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {object} params.options chart options
+     * @returns {{
+     *      yAxis: {width: number},
+     *      yrAxis: {width: number},
+     *      xAxis: {height: number}
+     * }} axes dimension
+     * @private
+     */
+    _makeAxesDimension: function(params) {
+        var theme, options, convertData, yAxisChartTypes,
+            yAxisTitle, xAxisTitle, maxLabel, vLabels, hLabels,
+            yAxisWidth, xAxisHeight, yrAxisWidth;
+        if (!params.hasAxes) {
+            return {
+                yAxis: {
+                    width: 0
+                },
+                yrAxis: {
+                    width: 0
+                },
+                xAxis: {
+                    height: 0
+                }
+            };
+        }
+
+        theme = params.theme;
+        options = params.options;
+        convertData = params.convertData;
+        yAxisChartTypes = params.yAxisChartTypes;
+        yAxisTitle = options.yAxis && options.yAxis.title;
+        xAxisTitle = options.xAxis && options.xAxis.title;
+        maxLabel = this._getValueAxisMaxLabel(convertData, yAxisChartTypes);
+        vLabels = params.isVertical ? [maxLabel] : convertData.labels;
+        hLabels = params.isVertical ? convertData.labels : [maxLabel];
+        yAxisWidth = this._getVerticalAxisWidth(yAxisTitle, vLabels, theme.yAxis);
+        xAxisHeight = this._getHorizontalAxisHeight(xAxisTitle, hLabels, theme.xAxis);
+        yrAxisWidth = this._getYRAxisWidth({
+            convertData: convertData,
+            yAxisChartTypes: yAxisChartTypes,
+            theme: theme,
+            options: options
+        });
+
+        return {
+            yAxis: {
+                width: yAxisWidth
+            },
+            yrAxis: {
+                width: yrAxisWidth
+            },
+            xAxis: {
+                height: xAxisHeight
+            }
+        };
+    },
+
+    /**
      * Get width of legend area.
-     * @param {array.<string>} legendLabels legend labels
+     * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @returns {number} width
      * @private
@@ -228,32 +293,125 @@ var boundsMaker = {
             }),
             maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme),
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
-                LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
+                LEGEND_LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
         return legendWidth;
     },
 
     /**
-     * Get width about y right axis
-     * @param {object} convertData converted data
-     * @param {array.<string>} yAxisChartTypes chart types
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @returns {number} y right axis width
+     * Get components dimension
+     * @param {object} params parameters
+     *      @param {object} params.convertData converted data
+     *      @param {object} params.theme chart theme
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {object} params.options chart options
+     * @returns {Object} components dimensions
      * @private
      */
-    _getYRAxisWidth: function(convertData, yAxisChartTypes, theme, options) {
-        var yAxisTheme = ne.util.isArray(theme.yAxis) ? theme.yAxis : [theme.yAxis],
-            yAxisOptions = ne.util.isArray(options.yAxis) ? options.yAxis : [options.yAxis],
-            rightYAxisWidth = 0,
-            index, labels, title;
-        yAxisChartTypes = yAxisChartTypes || [];
-        index = yAxisChartTypes.length - 1;
-        if (index > -1) {
-            title = yAxisOptions[index] && yAxisOptions[index].title;
-            labels = [this._getValueAxisMaxLabel(convertData, yAxisChartTypes, index)];
-            rightYAxisWidth = this._getVerticalAxisWidth(title, labels, yAxisTheme.length === 1 ? yAxisTheme[0] : yAxisTheme[index]);
+    _getComponentsDimensions: function(params) {
+        var theme = params.theme,
+            options = params.options,
+            convertData = params.convertData,
+            chartOptions = options.chart || {},
+            chartDimension = {
+                width: chartOptions.width || 500,
+                height: chartOptions.height || 400
+            },
+            axesDimension = this._makeAxesDimension(params),
+            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING,
+            legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label),
+            rightAreaWidth = legendWidth + axesDimension.yrAxis.width,
+            plotWidth = chartDimension.width - (CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
+            plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - axesDimension.xAxis.height,
+            dimensions = ne.util.extend({
+                chart: chartDimension,
+                title: {
+                    height: titleHeight
+                },
+                plot: {
+                    width: plotWidth,
+                    height: plotHeight
+                },
+                series: {
+                    width: plotWidth,
+                    height: plotHeight
+                },
+                legend: {
+                    width: legendWidth
+                },
+                tooltip: {
+                    width: plotWidth,
+                    height: plotHeight
+                }
+            }, axesDimension);
+        return dimensions;
+    },
+
+    /**
+     * To make axes bounds.
+     * @param {object} params parameters
+     *      @param {boolean} params.hasAxes whether has axed or not
+     *      @param {array.<string>} params.yAxisChartTypes y axis chart types
+     *      @param {{width: number, height: number}} params.dimension chart dimension
+     *      @param {number} params.top top position
+     *      @param {number} params.right right position
+     * @returns {object} axes bounds
+     * @private
+     */
+    _makeAxesBounds: function(params) {
+        var bounds, dimensions, yAxisChartTypes, top, right;
+
+        if (!params.hasAxes) {
+            return {};
         }
-        return rightYAxisWidth;
+
+        dimensions = params.dimensions;
+        yAxisChartTypes = params.yAxisChartTypes;
+        top = params.top;
+        right = params.right;
+        bounds = {
+            plot: {
+                dimension: dimensions.plot,
+                position: {
+                    top: top,
+                    right: right
+                }
+            },
+            yAxis: {
+                dimension: {
+                    width: dimensions.yAxis.width,
+                    height: dimensions.plot.height
+                },
+                position: {
+                    top: top,
+                    left: CHART_PADDING + HIDDEN_WIDTH
+                }
+            },
+            xAxis: {
+                dimension: {
+                    width: dimensions.plot.width,
+                    height: dimensions.xAxis.height
+                },
+                position: {
+                    top: top + dimensions.plot.height - HIDDEN_WIDTH,
+                    right: right
+                }
+            }
+        };
+
+        if (yAxisChartTypes && yAxisChartTypes.length) {
+            bounds.yrAxis = {
+                dimension: {
+                    width: dimensions.yrAxis.width,
+                    height: dimensions.plot.height
+                },
+                position: {
+                    top: top,
+                    right: dimensions.legend.width + CHART_PADDING + HIDDEN_WIDTH
+                }
+            };
+        }
+
+        return bounds;
     }
 };
 

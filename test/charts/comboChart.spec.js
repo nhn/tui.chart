@@ -72,14 +72,7 @@ describe('test ComboChart', function() {
 
         expect(result).toEqual(['line', 'column']);
 
-        result = comboChart._getYAxisChartTypes({
-            column: [
-                ['Legend1', 20, 30, 50]
-            ],
-            line: [
-                ['Legend2_1', 1, 2, 3]
-            ]
-        }, {
+        result = comboChart._getYAxisChartTypes(['column', 'line'], {
             title: 'test'
         });
 
@@ -92,6 +85,12 @@ describe('test ComboChart', function() {
         }]);
 
         expect(result).toEqual(['line', 'column']);
+
+        result = comboChart._getYAxisChartTypes(['column', 'line'], [{}, {
+            chartType: 'line'
+        }]);
+
+        expect(result).toEqual(['column', 'line']);
 
         result = comboChart._getYAxisChartTypes(['column', 'line'], [{
             title: 'test'
@@ -395,7 +394,7 @@ describe('test ComboChart', function() {
             },
             series: {
                 column: {
-                    colors: ['red', 'orange'],
+                    colors: ['red', 'orange']
                 },
                 line: {
                     colors: ['black', 'white', 'gray']
@@ -405,6 +404,7 @@ describe('test ComboChart', function() {
             column: ['Legend1', 'Legend2'],
             line: ['Legend1', 'Legend2', 'Legend3']
         });
+
         expect(result).toEqual({
             column: {
                 yAxis: {
@@ -412,12 +412,12 @@ describe('test ComboChart', function() {
                     title: {
                         fontSize: 12,
                         color: '#000000',
-                        fontFamily: 'Verdana'
+                        fontFamily: ''
                     },
                     label: {
                         fontSize: 12,
                         color: '#000000',
-                        fontFamily: 'Verdana'
+                        fontFamily: ''
                     }
                 },
                 series: {

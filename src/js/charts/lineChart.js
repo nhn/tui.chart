@@ -22,7 +22,8 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
      */
     init: function(userData, theme, options, initedData) {
         var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true
+                isVertical: true,
+                hasAxes: true
             }),
             convertData = baseData.convertData,
             bounds = baseData.bounds,
@@ -37,6 +38,15 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
         this._addComponents(convertData, axisData, options);
     },
 
+    /**
+     * To make axes data
+     * @param {object} convertData converted data
+     * @param {object} bounds chart bounds
+     * @param {object} options chart options
+     * @param {object} initedData initialized data from combo chart
+     * @returns {object} axes data
+     * @private
+     */
     _makeAxesData: function(convertData, bounds, options, initedData) {
         var axesData = {};
         if (initedData) {
@@ -60,6 +70,13 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
         return axesData;
     },
 
+    /**
+     * Add components
+     * @param {object} convertData converted data
+     * @param {object} axesData axes data
+     * @param {object} options chart options
+     * @private
+     */
     _addComponents: function(convertData, axesData, options) {
         this.addAxisComponents({
             convertData: convertData,

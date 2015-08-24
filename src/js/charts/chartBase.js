@@ -67,12 +67,13 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         var bound = this.bounds[name],
             theme = this.theme[name],
             options = this.options[name],
+            index = params.index || 0,
             commonParams = {},
             component;
 
-        commonParams.bound = ne.util.isArray(bound) ? bound[params.index || 0] : bound;
-        commonParams.theme = ne.util.isArray(theme) ? theme[params.index || 0] : theme;
-        commonParams.options = ne.util.isArray(options) ? options[params.index || 0] : options || {};
+        commonParams.bound = ne.util.isArray(bound) ? bound[index] : bound;
+        commonParams.theme = ne.util.isArray(theme) ? theme[index] : theme;
+        commonParams.options = ne.util.isArray(options) ? options[index] : options || {};
 
         params = ne.util.extend(commonParams, params);
         component = new Component(params);

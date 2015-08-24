@@ -28,6 +28,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             isOneYAxis = !yAxisChartTypes.length,
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
+                hasAxes: true,
                 yAxisChartTypes: yAxisChartTypes
             }),
             convertData = baseData.convertData,
@@ -226,7 +227,6 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             chartOptions.chartType = chartType;
             result[chartType] = chartOptions;
         });
-
         return result;
     },
 
