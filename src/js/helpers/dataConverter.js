@@ -69,7 +69,7 @@ var dataConverter = {
      * @private
      */
     _pickValue: function(items) {
-        return items.slice(1);
+        return [].concat(items.data);
     },
 
     /**
@@ -107,7 +107,7 @@ var dataConverter = {
     },
 
     _pickLegendLabel: function(items) {
-        return items[0];
+        return items.name;
     },
 
     /**

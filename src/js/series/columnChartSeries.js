@@ -53,7 +53,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                     var barHeight = value * dimension.height;
                     return {
                         top: dimension.height - barHeight + HIDDEN_WIDTH,
-                        left: paddingLeft + (barWidth * index),
+                        left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
                         width: barWidth,
                         height: barHeight
                     };
