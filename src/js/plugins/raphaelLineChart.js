@@ -17,10 +17,12 @@ var Raphael = window.Raphael,
 var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype */ {
     /**
      * Render function or line chart.
+     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
-     * @param {{model: object, dimestion: object, theme: object}} data render data
+     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
+     * @return {object} paper raphael paper
      */
     render: function(paper, container, data, inCallback, outCallback) {
         var dimension = data.dimension,
@@ -44,6 +46,8 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
         this.groupDots = groupDots;
 
         this._attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
+
+        return paper;
     },
 
     /**
@@ -258,15 +262,13 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     /**
      * Bind hover event.
      * @param {object} target raphael item
-     * @param {object} dot raphael dot
-     * @param {object} outDotStyle mouseout dot style
      * @param {{left: number, top: number}} position position
      * @param {string} id id
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(target, dot, outDotStyle, position, id, inCallback, outCallback) {
+    _bindHoverEvent: function(target, position, id, inCallback, outCallback) {
         var that = this;
         target.hover(function() {
             that.showedId = id;
@@ -291,7 +293,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
                 var position = groupPositions[groupIndex][index],
                     id = index + '-' + groupIndex;
                     //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
-                this._bindHoverEvent(dot, dot, outDotStyle, position, id, inCallback, outCallback);
+                this._bindHoverEvent(dot, position, id, inCallback, outCallback);
                 //if (index > 0) {
                 //    prevIndex = index - 1;
                 //    prevDot = scope[prevIndex];
@@ -309,10 +311,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Show dot.
+     * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
-    showDot: function(data) {
+    showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
@@ -326,10 +328,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Hide dot.
+     * Hide animation.
      * @param {{groupIndex: number, index:number}} data hide info
      */
-    hideDot: function(data) {
+    hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];

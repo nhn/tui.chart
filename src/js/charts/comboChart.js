@@ -135,7 +135,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             yAxisOptions = [options.yAxis];
         } else {
             yAxisValues = convertData.values[chartType];
-            yAxisOptions = options.yAxis;
+            yAxisOptions = options.yAxis || [];
         }
 
         seriesOption = options.series && options.series[chartType] || options.series;

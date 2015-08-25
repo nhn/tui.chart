@@ -339,6 +339,51 @@ ne.application.chart.comboChart = function(container, data, options) {
 };
 
 /**
+ * Pie chart creator.
+ * @memberOf ne.application.chart
+ * @param {HTMLElement} container chart container
+ * @param {object} data chart data
+ *      @param {array.<array>} data.series series data
+ * @param {object} options chart options
+ *      @param {object} options.chart chart options
+ *          @param {number} options.chart.width chart width
+ *          @param {number} options.chart.height chart height
+ *          @param {string} options.chart.title chart title
+ *          @param {string} options.chart.format value format
+ *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
+ *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
+ *      @param {string} options.theme theme name
+ *      @param {string} options.libType graph library type
+ * @returns {object} bar chart
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     data = {
+ *       series: [
+ *         ['Legend1', 20],
+ *         ['Legend2', 40],
+ *         ['Legend3', 60],
+ *         ['Legend4', 80]
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Pie Chart'
+ *       }
+ *     };
+ * ne.application.chart.pieChart(container, data, options);
+ */
+ne.application.chart.pieChart = function(container, data, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_PIE;
+    return _createChart(container, data, options);
+};
+
+/**
  * Register theme.
  * @memberOf ne.application.chart
  * @param {string} themeName theme name

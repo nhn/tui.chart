@@ -90,7 +90,7 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isVertical: true,
+            isPointPosition: true,
             data: {
                 values: convertData.values,
                 formattedValues: convertData.formattedValues,

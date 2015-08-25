@@ -92,25 +92,13 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isVertical: true,
+            isPointPosition: true,
             data: {
                 values: calculator.arrayPivot(convertData.values),
                 formattedValues: calculator.arrayPivot(convertData.formattedValues),
                 scale: axesData.yAxis.scale
             }
         });
-    },
-
-    /**
-     * Attach custom event
-     * @private
-     */
-    _attachCustomEvent: function() {
-        var tooltip = this.componentMap.tooltip,
-            series = this.componentMap.series;
-        tooltip.on('showDot', series.onShowDot, series);
-        tooltip.on('hideDot', series.onHideDot, series);
-        AxisTypeBase.prototype._attachCustomEvent.apply(this);
     }
 });
 

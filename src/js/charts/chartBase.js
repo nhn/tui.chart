@@ -154,6 +154,13 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         }
         series.on('showTooltip', tooltip.onShow, tooltip);
         series.on('hideTooltip', tooltip.onHide, tooltip);
+
+        if (!series.onShowAnimation) {
+            return;
+        }
+
+        tooltip.on('showAnimation', series.onShowAnimation, series);
+        tooltip.on('hideAnimation', series.onHideAnimation, series);
     }
 });
 

@@ -20,6 +20,7 @@ module.exports = {
     CHART_TYPE_COLUMN: 'column',
     CHART_TYPE_LINE: 'line',
     CHART_TYPE_COMBO: 'combo',
+    CHART_TYPE_PIE: 'pie',
     YAXIS_PROPS: ['tickColor', 'title', 'label'],
     SERIES_PROPS: ['colors', 'borderColor', 'singleColors']
 };

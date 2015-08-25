@@ -18,10 +18,12 @@ var Raphael = window.Raphael,
 var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
      * Render function of bar chart
+     * @param {object} paper raphael paper
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
      * @param {function} inCallback mouseover callback
      * @param {function} outCallback mouseout callback
+     * @return {object} paper raphael paper
      */
     render: function(paper, container, data, inCallback, outCallback) {
         var groupBounds = data.groupBounds,
