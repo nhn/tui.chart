@@ -41,5 +41,5 @@ describe('test PieChartSeries', function() {
             cy: 150,
             r: 120
         });
-    })
+    });
 });

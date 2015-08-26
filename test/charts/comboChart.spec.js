@@ -43,7 +43,7 @@ describe('test ComboChart', function() {
             ],
             series: {
                 line: {
-                    hasDot: true,
+                    hasDot: true
                 }
             },
             xAxis: {
@@ -460,6 +460,6 @@ describe('test ComboChart', function() {
                 max: 80
             },
             step: 20
-        })
+        });
     });
 });
