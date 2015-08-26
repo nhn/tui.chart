@@ -48,10 +48,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(prefix, isVertical, bound, id) {
+    showTooltip: function(prefix, isPointPosition, bound, id) {
         this.fire('showTooltip', {
             id: prefix + id,
-            isVertical: isVertical,
+            isPointPosition: isPointPosition,
             bound: bound
         });
     },
@@ -69,19 +69,17 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series.
-     * @param {{width: number, height: number, top: number, right: number}} bound series bound
-     * @param {string} tooltipPrefix tooltip prefix
-     * @param {boolean} isVertical is vertical
+     * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      */
     render: function(paper) {
-        var  el = dom.create('DIV', this.className),
+        var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            isVertical = !!this.isVertical,
+            isPointPosition = !!this.isPointPosition,
             dimension = bound.dimension,
             position = bound.position,
-            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isVertical),
+            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isPointPosition),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH,
             data;
@@ -89,8 +87,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         if (!paper) {
             renderUtil.renderDimension(el, dimension);
 
-            position.top = position.top + (isVertical ? -HIDDEN_WIDTH : -1);
-            position.right = position.right + (isVertical ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+            position.top = position.top + (isPointPosition ? -HIDDEN_WIDTH : -1);
+            position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
 
             renderUtil.renderPosition(el, position);
         }
@@ -105,29 +103,23 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             data.groupBounds = this._makeBounds(dimension);
         } else if (this._makePositions) {
             data.groupPositions = this._makePositions(dimension);
+        } else if (this._makeCircleBounds) {
+            data.percentValues = this.percentValues;
+            data.formattedValues = this.data.formattedValues;
+            data.chartBackground = this.chartBackground;
+            data.circleBounds = this._makeCircleBounds(dimension);
         }
+
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
         return el;
     },
 
+    /**
+     * Get paper.
+     * @returns {object} object for graph drawing
+     */
     getPaper: function() {
         return this.paper;
-    },
-
-    /**
-     * Call showDot function of graphRenderer.
-     * @param {{groupIndex: number, index: number}} data data
-     */
-    onShowDot: function(data) {
-        this.graphRenderer.showDot.call(this.graphRenderer, data);
-    },
-
-    /**
-     * Call hideDot function of graphRenderer.
-     * @param {{groupIndex: number, index: number}} data data
-     */
-    onHideDot: function(data) {
-        this.graphRenderer.hideDot.call(this.graphRenderer, data);
     },
 
     /**
@@ -208,6 +200,28 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 });
             });
         return percentValues;
+    },
+
+    /**
+     * Call showDot function of graphRenderer.
+     * @param {{groupIndex: number, index: number}} data data
+     */
+    onShowAnimation: function(data) {
+        if (!this.graphRenderer.showAnimation) {
+            return;
+        }
+        this.graphRenderer.showAnimation.call(this.graphRenderer, data);
+    },
+
+    /**
+     * Call hideDot function of graphRenderer.
+     * @param {{groupIndex: number, index: number}} data data
+     */
+    onHideAnimation: function(data) {
+        if (!this.graphRenderer.hideAnimation) {
+            return;
+        }
+        this.graphRenderer.hideAnimation.call(this.graphRenderer, data);
     }
 });
 

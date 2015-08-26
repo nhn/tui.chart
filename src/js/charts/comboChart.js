@@ -28,6 +28,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             isOneYAxis = !yAxisChartTypes.length,
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
+                hasAxes: true,
                 yAxisChartTypes: yAxisChartTypes
             }),
             convertData = baseData.convertData,
@@ -82,28 +83,23 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         var resultChartTypes = chartTypes.slice(),
             isReverse = false,
             optionChartTypes;
-        if (!yAxisOptions) {
-            return resultChartTypes;
-        }
 
-        if (!ne.util.isArray(yAxisOptions)) {
-            yAxisOptions = [yAxisOptions];
-        }
+        yAxisOptions = yAxisOptions ? [].concat(yAxisOptions) : [];
 
         if (yAxisOptions.length === 1 && !yAxisOptions[0].chartType) {
-            return [];
-        }
+            resultChartTypes = [];
+        } else if (yAxisOptions.length) {
+            optionChartTypes = ne.util.map(yAxisOptions, function(option) {
+                return option.chartType;
+            });
 
-        optionChartTypes = ne.util.map(yAxisOptions, function(option) {
-            return option.chartType;
-        });
+            ne.util.forEachArray(optionChartTypes, function(chartType, index) {
+                isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
+            });
 
-        ne.util.forEachArray(optionChartTypes, function(chartType, index) {
-            isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
-        });
-
-        if (isReverse) {
-            resultChartTypes.reverse();
+            if (isReverse) {
+                resultChartTypes.reverse();
+            }
         }
 
         return resultChartTypes;
@@ -134,7 +130,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             yAxisOptions = [options.yAxis];
         } else {
             yAxisValues = convertData.values[chartType];
-            yAxisOptions = options.yAxis;
+            yAxisOptions = options.yAxis || [];
         }
 
         seriesOption = options.series && options.series[chartType] || options.series;
@@ -226,7 +222,6 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             chartOptions.chartType = chartType;
             result[chartType] = chartOptions;
         });
-
         return result;
     },
 

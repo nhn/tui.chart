@@ -68,12 +68,13 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             legendLabels = this.legendLabels,
             tooltipData = ne.util.map(groupValues, function(values, groupIndex) {
                 var items = ne.util.map(values, function(value, index) {
-                    var item = {
-                        label: labels[groupIndex],
-                        value: value,
+                    var item = {value: value,
                         legendLabel: legendLabels[index],
                         id: groupIndex + '-' + index
                     };
+                    if (labels) {
+                        item.label = labels[groupIndex];
+                    }
                     return item;
                 });
 
@@ -129,26 +130,27 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Fire custom event showDot.
+     * Fire custom event showAnimation.
      * @param {string} id tooltip id
      * @private
      */
-    _fireShowDot: function(id) {
+    _fireShowAnimation: function(id) {
         var indexes = this._getIndexFromId(id);
-        this.fire('showDot', {
+        this.fire('showAnimation', {
             groupIndex: indexes[0],
             index: indexes[1]
         });
     },
 
     /**
-     * Fire custom event hideDot.
+     * Fire custom event hideAnimation.
      * @param {string} id tooltip id
      * @private
      */
-    _fireHideDot: function(id) {
+    _fireHideAnimation: function(id) {
+        console.log('_fireHideAnimation');
         var indexes = this._getIndexFromId(id);
-        this.fire('hideDot', {
+        this.fire('hideAnimation', {
             groupIndex: indexes[0],
             index: indexes[1]
         });
@@ -167,7 +169,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         }
 
         this.showedId = id = elTarget.id;
-        this._fireShowDot(id);
+        this._fireShowAnimation(id);
     },
 
     /**
@@ -186,7 +188,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         indexes = this._getIndexFromId(elTarget.id);
 
         this._hideTooltip(elTarget, function() {
-            that.fire('hideDot', {
+            that.fire('hideAnimation', {
                 groupIndex: indexes[0],
                 index: indexes[1]
             });
@@ -194,15 +196,15 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Calculate tooltip position of vertical type chart
+     * Calculate tooltip point position
      * @param {object} params parameters
-     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
      *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateVerticalPosition: function(params) {
+    _calculatePointPosition: function(params) {
         var bound = params.data.bound,
             minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : TOOLTIP_GAP,
@@ -233,15 +235,15 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Calculate tooltip position of bar chart
+     * Calculate tooltip rect position
      * @param {object} params parameters
-     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
      *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateBarPosition: function(params) {
+    _calculateRectPosition: function(params) {
         var bound = params.data.bound,
             minusHeight = params.dimension.height - (bound.height || 0),
             positionOption = params.positionOption || '',
@@ -250,7 +252,6 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
 
         result.left = bound.left + bound.width;
         result.top = bound.top;
-
         if (positionOption.indexOf('left') > -1) {
             result.left -= tooltipWidth;
         } else if (positionOption.indexOf('center') > -1) {
@@ -272,7 +273,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     /**
      * Calculate tooltip position.
      * @param {object} params parameters
-     *      @param {{bound: object, isVertical: boolean}} params.data graph information
+     *      @param {{bound: object, isPointPosition: boolean}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
      *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
@@ -280,10 +281,10 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      */
     _calculatePosition: function(params) {
         var result = {};
-        if (params.data.isVertical) {
-            result = this._calculateVerticalPosition(params);
+        if (params.data.isPointPosition) {
+            result = this._calculatePointPosition(params);
         } else {
-            result = this._calculateBarPosition(params);
+            result = this._calculateRectPosition(params);
         }
         return result;
     },
@@ -303,7 +304,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
 
         if (this.showedId) {
             dom.removeClass(elTooltip, 'show');
-            this._fireHideDot(this.showedId);
+            this._fireHideAnimation(this.showedId);
         }
 
         this.showedId = data.id;
@@ -323,7 +324,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             renderUtil.concatStr('top:', position.top + addPosition.top, 'px')
         ].join(';');
 
-        this._fireShowDot(data.id);
+        this._fireShowAnimation(data.id);
     },
 
     /**
@@ -337,7 +338,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         this._hideTooltip(elTooltip, function() {
             var indexes = that._getIndexFromId(data.id);
 
-            that.fire('hideDot', {
+            that.fire('hideAnimation', {
                 groupIndex: indexes[0],
                 index: indexes[1]
             });

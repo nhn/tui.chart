@@ -72,7 +72,7 @@ describe('test Tooltip', function() {
     });
 
     it('_calculateVerticalPosition()', function() {
-        var result = tooltip._calculateVerticalPosition({
+        var result = tooltip._calculatePointPosition({
             data: {
                 bound: {
                     width: 25,
@@ -95,7 +95,7 @@ describe('test Tooltip', function() {
     });
 
     it('_calculateBarPosition()', function() {
-        var result = tooltip._calculateBarPosition({
+        var result = tooltip._calculateRectPosition({
             data: {
                 bound: {
                     width: 50,
@@ -126,7 +126,7 @@ describe('test Tooltip', function() {
                     top: 50,
                     left: 10
                 },
-                isVertical: true
+                isPointPosition: true
             },
             dimension: {
                 width: 50,

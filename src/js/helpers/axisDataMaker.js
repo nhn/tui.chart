@@ -69,7 +69,7 @@ var axisDataMaker = {
      * }} axis data
      */
     makeValueAxisData: function(params) {
-        var options = params.options,
+        var options = params.options || {},
             isVertical = !!params.isVertical,
             isPositionRight = !!params.isPositionRight,
             formatFunctions = params.formatFunctions,

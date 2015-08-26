@@ -57,7 +57,6 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
             legendLabels: convertData.legendLabels,
             prefix: this.tooltipPrefix
         });
-
     }
 });
 

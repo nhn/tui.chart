@@ -34,13 +34,13 @@ describe('test ColumnChartSeries', function() {
         expect(bounds).toEqual([
             [{
                 top: 301,
-                left: 25,
+                left: 24,
                 width: 50,
                 height: 100
             }],
             [{
                 top: 201,
-                left: 125,
+                left: 124,
                 width: 50,
                 height: 200
             }]
@@ -86,13 +86,13 @@ describe('test ColumnChartSeries', function() {
         expect(bounds).toEqual([
             [{
                 top: 301,
-                left: 25,
+                left: 24,
                 width: 50,
                 height: 100
             }],
             [{
                 top: 201,
-                left: 125,
+                left: 124,
                 width: 50,
                 height: 200
             }]

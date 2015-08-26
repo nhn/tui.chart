@@ -38,15 +38,24 @@
             <div>data</div>
             <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
-    "series": {
-        "column": [
-            ["Legend1", 20, 30, 50],
-            ["Legend2", 40, 40, 60],
-            ["Legend3", 60, 50, 10],
-            ["Legend4", 80, 10, 70]],
-        "line": [["Legend2_1", 1, 2, 3]]
-    }
+    "series":  [
+        {
+            "name": "Legend1",
+            "data": 20
+        },
+        {
+            "name": "Legend2",
+            "data": 40
+        },
+        {
+            "name": "Legend3",
+            "data": 60
+        },
+        {
+            "name": "Legend4",
+            "data": 80
+        }
+    ]
 }
             </textarea>
         </div>
@@ -59,30 +68,8 @@
         "height": 400,
         "title": "Stacked Bar Chart"
     },
-    "yAxis": [
-        {
-            "title": "Y Axis",
-            "chartType": "line"
-        },
-        {
-            "title": "XX Axis"
-        }
-    ],
-    "series": {
-        "line": {
-            "hasDot": true
-        }
-    },
     "xAxis": {
         "title": "X Axis"
-    },
-    "tooltip": {
-        "line": {
-            "suffix": "px"
-        },
-        "column": {
-            "suffix": "%"
-        }
     },
     "theme": "newTheme"
 }
@@ -100,38 +87,13 @@
     "title": {
         "color": "#000000"
     },
-    "yAxis": {
-        "column": {
-            "tickColor": "#ccbd9a",
-            "title": {
-                "color": "#333333"
-            },
-            "label": {
-                "color": "#6f491d"
-            }
-        }
-    },
-    "xAxis": {
-        "tickColor": "#ccbd9a",
-        "title": {
-            "color": "#333333"
-        },
-        "label": {
-            "color": "#6f491d"
-        }
-    },
     "plot": {
         "lineColor": "#e5dbc4",
         "background": "#f6f1e5"
     },
     "series": {
-        "column": {
-            "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
-            "borderColor": "#8e6535"
-        },
-        "line": {
-            "colors": ["red", "orange", "blue", "green"]
-        }
+        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
+        "borderColor": "#8e6535"
     },
     "legend": {
         "label": {
@@ -153,24 +115,71 @@
         elBtn = document.getElementById('btn'),
         data = {
             categories: ['cate1', 'cate2', 'cate3'],
-            series: [
-                ['Legend1', 20, 30, 50],
-                ['Legend2', 40, 40, 60],
-                ['Legend3', 60, 50, 10],
-                ['Legend4', 80, 10, 70]
-            ],
+//            series: [
+//                {
+//                    name: 'Legend1',
+//                    data: [20, 30, 50]
+//                },
+//                {
+//                    name: 'Legend2',
+//                    data: [40, 40, 60]
+//                },
+//                {
+//                    name: 'Legend3',
+//                    data: [60, 50, 10]
+//                },
+//                {
+//                    name: 'Legend4',
+//                    data: [80, 10, 70]
+//                }
+//            ],
             series: {
                 column: [
-                    ['Legend1', 20, 30, 50],
-                    ['Legend2', 40, 40, 60],
-                    ['Legend3', 60, 50, 10],
-                    ['Legend4', 80, 10, 70]
+                    {
+                        name: 'Legend1',
+                        data: [20, 30, 50]
+                    },
+                    {
+                        name: 'Legend2',
+                        data: [40, 40, 60]
+                    },
+                    {
+                        name: 'Legend3',
+                        data: [60, 50, 10]
+                    },
+                    {
+                        name: 'Legend4',
+                        data: [80, 10, 70]
+                    }
                 ],
                 line: [
-                    ['Legend2_1', 1, 2, 3]
+                    {
+                        name: 'Legend2_1',
+                        data: [1, 2, 3]
+                    }
                 ]
             }
         },
+//        data = {
+//            series: [
+//                {
+//                    name: 'Legend1',
+//                    data: 20
+//                },
+//                {
+//                    name: 'Legend2',
+//                    data: 40
+//                },
+//                {
+//                    name: 'Legend3',
+//                    data: 60
+//                },
+//                {
+//                    name: 'Legend4',
+//                    data: 80
+//                }
+//            ]
+//        },
         options = {
             chart: {
                 width: 500,
@@ -208,10 +217,13 @@
         };
 
     chart.comboChart(elChartArea, data, options);
+//    chart.pieChart(elChartArea, data, options);
 //    chart.barChart(elChartArea, data, options);
+//    chart.lineChart(elChartArea, data, options);
+//    chart.columnChart(elChartArea, data, options);
 
     var onClick = function() {
-        var type = 'comboChart',
+        var type = 'pieChart',
 //          type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
             options = JSON.parse(document.getElementById('options').value),
