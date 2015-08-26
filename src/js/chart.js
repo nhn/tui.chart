@@ -80,8 +80,6 @@ _createChart = function(container, data, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of horizontal axis
@@ -147,8 +145,6 @@ ne.application.chart.barChart = function(container, data, options) {
  *          @param {number} options.yAxis.max maximum value of vertical axis
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.min minimal value of horizontal axis
- *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *      @param {object} options.tooltip options of tooltip
@@ -210,8 +206,6 @@ ne.application.chart.columnChart = function(container, data, options) {
  *          @param {number} options.yAxis.max maximum value of vertical axis
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.min minimal value of horizontal axis
- *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *      @param {object} options.tooltip options of tooltip

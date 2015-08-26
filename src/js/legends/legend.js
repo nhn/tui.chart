@@ -9,6 +9,7 @@
 var chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js'),
+    defaultTheme = require('../themes/defaultTheme.js'),
     legendTemplate = require('./../legends/legendTemplate.js');
 
 var LEGEND_RECT_WIDTH = 12,
@@ -26,7 +27,6 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
      */
     init: function(params) {
         ne.util.extend(this, params);
-
         /**
          * Legend view className
          */
@@ -88,16 +88,19 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
                 return ne.util.inArray(name, chartConst.SERIES_PROPS) === -1 && name !== 'label';
             }),
             chartTypes = ne.util.keys(chartLegendTheme),
-            chartTheme,
-            result;
+            defaultLegendTheme = {
+                colors: defaultTheme.series.colors
+            },
+            chartTheme, result;
 
         if (!chartTypes.length) {
             result = this._setThemeToLabels(joinLegendLabels, theme);
         } else {
-            result = this._setThemeToLabels(joinLegendLabels.slice(0, labelLen), theme[chartType]);
+            chartTheme = theme[chartType] || defaultLegendTheme;
+            result = this._setThemeToLabels(joinLegendLabels.slice(0, labelLen), chartTheme);
             chartTheme = theme[ne.util.filter(chartTypes, function(propName) {
                 return propName !== chartType;
-            })[0]];
+            })[0]] || defaultLegendTheme;
             result = result.concat(this._setThemeToLabels(joinLegendLabels.slice(labelLen), chartTheme));
         }
         return result;

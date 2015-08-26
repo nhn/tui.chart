@@ -3,34 +3,42 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Bar Chart Sample</title>
+    <title>Pie Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
 <div id="chart-area"></div>
 <div class="custom-area">
-    <input type="hidden" id="type" value="barChart" />
+    <input type="hidden" id="type" value="pieChart" />
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
     "series": [
         {
             "name": "Legend1",
-            "data": [20, 30, 50]},
+            "data": 20
+        },
         {
             "name": "Legend2",
-            "data": [40, 40, 60]
+            "data": 50
         },
         {
             "name": "Legend3",
-            "data": [60, 50, 10]
+            "data": 60
         },
         {
             "name": "Legend4",
-            "data": [80, 10, 70]
+            "data": 80
+        },
+        {
+            "name": "Legend5",
+            "data": 10
+        },
+        {
+            "name": "Legend6",
+            "data": 30
         }
     ]
 }
@@ -43,17 +51,10 @@
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "Normal Stacked Bar Chart",
-        "format": "0.0"
-    },
-    "yAxis": {
-        "title": "Y Axis"
-    },
-    "xAxis": {
-        "title": "X Axis"
+        "title": "Pie Chart"
     },
     "series": {
-        "stacked": "normal"
+        "hasDot": true
     },
     "theme": "newTheme"
 }
@@ -65,18 +66,14 @@
         <textarea id="theme">
 {
     "chart": {
-        "background": "#ffffff",
+        "background": "#e5dbc4",
         "fontFamily": "Verdana"
     },
     "title": {
         "color": "#000000"
     },
-    "plot": {
-        "lineColor": "#e5dbc4",
-        "background": "#f6f1e5"
-    },
     "series": {
-        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
+        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#555555"],
         "borderColor": "#8e6535"
     },
     "legend": {
@@ -96,27 +93,34 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3'],
             series: [
                 {
                     name: 'Legend1',
-                    data: [20, 30, 50]
+                    data: 20
                 },
                 {
                     name: 'Legend2',
-                    data: [40, 40, 60]
+                    data: 50
                 },
                 {
                     name: 'Legend3',
-                    data: [60, 50, 10]
+                    data: 60
                 },
                 {
                     name: 'Legend4',
-                    data: [80, 10, 70]
+                    data: 80
+                },
+                {
+                    name: 'Legend5',
+                    data: 10
+                },
+                {
+                    name: 'Legend6',
+                    data: 30
                 }
             ]
         };
-    ne.application.chart.barChart(container, data);
+    ne.application.chart.pieChart(container, data);
 </script>
 </body>
 </html>
