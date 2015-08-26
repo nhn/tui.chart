@@ -8,10 +8,15 @@
 
 var AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10];
 
+/**
+ * Calculator.
+ * @module calculator
+ */
 var calculator = {
     /**
      * Calculate scale from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
+     * @memberOf module:calculator
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
@@ -41,6 +46,7 @@ var calculator = {
 
     /**
      * To normalize number.
+     * @memberOf module:calculator
      * @param {number} value target value
      * @returns {number} normalized number
      */
@@ -80,6 +86,7 @@ var calculator = {
 
     /**
      * To Make tick positions of pixel type.
+     * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
      * @returns {array.<number>} positions
@@ -101,6 +108,7 @@ var calculator = {
 
     /**
      * To make labels from scale.
+     * @memberOf module:calculator
      * @param {{min: number, max: number}} scale axis scale
      * @param {number} step step between max and min
      * @returns {string[]} labels
@@ -119,6 +127,7 @@ var calculator = {
 
     /**
      * Get scale step.
+     * @memberOf module:calculator
      * @param {{min: number, max: number}} scale axis scale
      * @param {number} count value count
      * @returns {number} scale step
@@ -129,6 +138,7 @@ var calculator = {
 
     /**
      * Array pivot.
+     * @memberOf module:calculator
      * @param {array.<array>} arr2d target 2d array
      * @returns {array.<array>} pivoted 2d array
      */

@@ -101,10 +101,22 @@ _createChart = function(container, data, options) {
  *     data = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
- *         ['Legend1', 20, 30, 50],
- *         ['Legend2', 40, 40, 60],
- *         ['Legend3', 60, 50, 10],
- *         ['Legend4', 80, 10, 70]
+ *         {
+ *           name: 'Legend1',
+ *           data: [20, 30, 50]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [40, 40, 60]
+ *         },
+ *         {
+ *           name: 'Legend3',
+ *           data: [60, 50, 10]
+ *         },
+ *         {
+ *           name: 'Legend4',
+ *           data: [80, 10, 70]
+ *         }
  *       ]
  *     },
  *     options = {
@@ -112,10 +124,10 @@ _createChart = function(container, data, options) {
  *         title: 'Bar Chart'
  *       },
  *       yAxis: {
- *         title: 'Vertical Axis'
+ *         title: 'Y Axis'
  *       },
  *       xAxis: {
- *         title: 'Horizontal Axis'
+ *         title: 'X Axis'
  *       }
  *     };
  * ne.application.chart.barChart(container, data, options);
@@ -162,10 +174,22 @@ ne.application.chart.barChart = function(container, data, options) {
  *     data = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
- *         ['Legend1', 20, 30, 50],
- *         ['Legend2', 40, 40, 60],
- *         ['Legend3', 60, 50, 10],
- *         ['Legend4', 80, 10, 70]
+ *         {
+ *           name: 'Legend1',
+ *           data: [20, 30, 50]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [40, 40, 60]
+ *         },
+ *         {
+ *           name: 'Legend3',
+ *           data: [60, 50, 10]
+ *         },
+ *         {
+ *           name: 'Legend4',
+ *           data: [80, 10, 70]
+ *         }
  *       ]
  *     },
  *     options = {
@@ -173,10 +197,10 @@ ne.application.chart.barChart = function(container, data, options) {
  *         title: 'Column Chart'
  *       },
  *       yAxis: {
- *         title: 'Vertical Axis'
+ *         title: 'Y Axis'
  *       },
  *       xAxis: {
- *         title: 'Horizontal Axis'
+ *         title: 'X Axis'
  *       }
  *     };
  * ne.application.chart.columnChart(container, data, options);
@@ -223,10 +247,22 @@ ne.application.chart.columnChart = function(container, data, options) {
  *     data = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
- *         ['Legend1', 20, 30, 50],
- *         ['Legend2', 40, 40, 60],
- *         ['Legend3', 60, 50, 10],
- *         ['Legend4', 80, 10, 70]
+ *         {
+ *           name: 'Legend1',
+ *           data: [20, 30, 50]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [40, 40, 60]
+ *         },
+ *         {
+ *           name: 'Legend3',
+ *           data: [60, 50, 10]
+ *         },
+ *         {
+ *           name: 'Legend4',
+ *           data: [80, 10, 70]
+ *         }
  *       ]
  *     },
  *     options = {
@@ -234,10 +270,10 @@ ne.application.chart.columnChart = function(container, data, options) {
  *         title: 'Line Chart'
  *       },
  *       yAxis: {
- *         title: 'Vertical Axis'
+ *         title: 'Y Axis'
  *       },
  *       xAxis: {
- *         title: 'Horizontal Axis'
+ *         title: 'X Axis'
  *       },
  *       series: {
  *         hasDot: true
@@ -292,21 +328,36 @@ ne.application.chart.lineChart = function(container, data, options) {
  * var container = document.getElementById('container-id'),
  *     data = {
  *       categories: ['cate1', 'cate2', 'cate3'],
- *       series: [
+ *       series: {
  *         column: [
-*            ['Legend1', 20, 30, 50],
- *           ['Legend2', 40, 40, 60],
- *           ['Legend3', 60, 50, 10],
- *           ['Legend4', 80, 10, 70]
- *         ],
+ *           {
+ *             name: 'Legend1',
+ *             data: [20, 30, 50]]
+ *           },
+ *           {
+ *             name: 'Legend2',
+ *             data: [40, 40, 60]
+ *           },
+ *           {
+ *             name: 'Legend3',
+ *             data: [60, 50, 10]
+ *           },
+ *           {
+ *             name: 'Legend4',
+ *             data: [80, 10, 70]
+ *           }
+ *         },
  *         line: [
- *           ['Legend2_1', 1, 2, 3]
+ *           {
+ *             name: 'Legend5',
+ *             data: [1, 2, 3]
+ *           }
  *         ]
- *       ]
+ *       }
  *     },
  *     options = {
  *       chart: {
- *         title: 'Line Chart'
+ *         title: 'Combo Chart'
  *       },
  *       yAxis:[
  *         {
@@ -318,7 +369,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *         }
  *       ],
  *       xAxis: {
- *         title: 'Horizontal Axis'
+ *         title: 'X Axis'
  *       },
  *       series: {
  *         hasDot: true
@@ -358,10 +409,22 @@ ne.application.chart.comboChart = function(container, data, options) {
  * var container = document.getElementById('container-id'),
  *     data = {
  *       series: [
- *         ['Legend1', 20],
- *         ['Legend2', 40],
- *         ['Legend3', 60],
- *         ['Legend4', 80]
+ *         {
+ *           name: 'Legend1',
+ *           data: 20
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: 40
+ *         },
+ *         {
+ *           name: 'Legend3',
+ *           data: 60
+ *         },
+ *         {
+ *           name: 'Legend4',
+ *           data: 80
+ *         }
  *       ]
  *     },
  *     options = {

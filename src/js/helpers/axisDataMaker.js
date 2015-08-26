@@ -23,6 +23,7 @@ var MIN_PIXEL_STEP_SIZE = 40,
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
+
 /**
  * Axis data maker.
  * @module axisDataMaker
@@ -30,6 +31,7 @@ var abs = Math.abs,
 var axisDataMaker = {
     /**
      * To make data about label axis.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {array.<string>} labels chart labels
      *      @param {boolean} isVertical whether vertical or not
@@ -53,6 +55,7 @@ var axisDataMaker = {
 
     /**
      * To make data about value axis.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {array.<array.<number>>} params.values chart values
      *      @param {{width:number, height:number}} params.seriesDimension series dimension
@@ -100,6 +103,7 @@ var axisDataMaker = {
 
     /**
      * To make base values.
+     * @memberOf module:axisDataMaker
      * @param {array.<number>} groupValues group values
      * @param {string} stacked stacked option.
      * @returns {array.<number>} base values
@@ -120,6 +124,7 @@ var axisDataMaker = {
 
     /**
      * Get base size for get candidate tick counts.
+     * @memberOf module:axisDataMaker
      * @param {{width: number, height: number}} dimension chat dimension
      * @param {boolean} isVertical whether vertical or not
      * @returns {number} base size
@@ -137,6 +142,7 @@ var axisDataMaker = {
 
     /**
      * Get candidate tick counts.
+     * @memberOf module:axisDataMaker
      * @param {{width: number, height: number}} chartDimension chat dimension
      * @param {boolean} isVertical whether vertical or not
      * @returns {array.<number>} tick counts
@@ -152,6 +158,7 @@ var axisDataMaker = {
 
     /**
      * Get comparing value.
+     * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {{scale: {min: number, max: number}, step: number}} tickInfo tick info
@@ -167,6 +174,7 @@ var axisDataMaker = {
 
     /**
      * Select tick info.
+     * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {array.<object>} candidates tick info candidates
@@ -181,6 +189,7 @@ var axisDataMaker = {
 
     /**
      * Get tick count and scale.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.values base values
      *      @param {{width: number, height: number}} params.seriesDimension chat dimension
@@ -218,6 +227,7 @@ var axisDataMaker = {
 
     /**
      * To make integer type info
+     * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {{min: number, max: number}} options axis options
@@ -257,6 +267,7 @@ var axisDataMaker = {
 
     /**
      * Revert tick info to original type.
+     * @memberOf module:axisDataMaker
      * @param {{step: number, scale: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
      * @param {number} divideNum divide num
      * @returns {{step: number, scale: {min: number, max: number}, labels: array.<number>}} divided tick info
@@ -279,6 +290,7 @@ var axisDataMaker = {
 
     /**
      * Normalize step.
+     * @memberOf module:axisDataMaker
      * @param {number} step original step
      * @returns {number} normalized step
      * @private
@@ -289,6 +301,7 @@ var axisDataMaker = {
 
     /**
      * To minimize tick scale.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.userMin user min
      *      @param {number} params.userMax user max
@@ -340,6 +353,7 @@ var axisDataMaker = {
 
     /**
      * To divide tick step.
+     * @memberOf module:axisDataMaker
      * @param {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
      * @param {number} orgTickCount original tickCount
      * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
@@ -362,6 +376,7 @@ var axisDataMaker = {
 
     /**
      * To make tick info
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.tickCount tick count
      *      @param {number} params.min scale min
@@ -423,6 +438,7 @@ var axisDataMaker = {
 
     /**
      * Add scale min padding.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @prams {number} params.min scale min
      *      @param {number} params.userMin minimum value of user data
@@ -446,6 +462,7 @@ var axisDataMaker = {
 
     /**
      * Add scale max padding.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @prams {number} params.max scale max
      *      @param {number} params.userMax maximum value of user data
@@ -465,6 +482,7 @@ var axisDataMaker = {
 
     /**
      * To normalize min.
+     * @memberOf module:axisDataMaker
      * @param {number} min original min
      * @param {number} step tick step
      * @returns {number} normalized min
@@ -483,7 +501,8 @@ var axisDataMaker = {
     },
 
     /**
-     * To make normalized max
+     * To make normalized max.
+     * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} scale scale
      * @param {number} step tick step
      * @param {number} tickCount tick count
@@ -505,7 +524,8 @@ var axisDataMaker = {
     },
 
     /**
-     * To normalize scale
+     * To normalize scale.
+     * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} scale base scale
      * @param {number} step tick step
      * @param {number} tickCount tick count
@@ -520,6 +540,7 @@ var axisDataMaker = {
 
     /**
      * Get candidates about tick info.
+     * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.min minimum value of user data
      *      @param {number} params.max maximum value of user data
@@ -554,6 +575,7 @@ var axisDataMaker = {
 
     /**
      * To make base scale
+     * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {{min: number, max: number}} options axis options
@@ -587,6 +609,7 @@ var axisDataMaker = {
 
     /**
      * Format labels.
+     * @memberOf module:axisDataMaker
      * @param {string[]} labels target labels
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted labels

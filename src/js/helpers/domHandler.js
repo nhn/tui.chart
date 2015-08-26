@@ -113,6 +113,7 @@ var domHandler = {
 
     /**
      * Append child element.
+     * @memberOf module:domHandler
      * @param {HTMLElement} container container element
      * @param {HTMLElement} children child element
      */
