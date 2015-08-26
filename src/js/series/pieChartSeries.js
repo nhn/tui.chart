@@ -38,6 +38,12 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         return result;
     },
 
+    /**
+     * To make circle bounds
+     * @param {{width: number, height:number}} dimension chart dimension
+     * @returns {{cx: number, cy: number, r: number}} circle bounds
+     * @private
+     */
     _makeCircleBounds: function(dimension) {
         var width = dimension.width,
             height = dimension.height,
