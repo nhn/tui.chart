@@ -11,10 +11,22 @@ var converter = require('../../src/js/helpers/dataConverter.js');
 describe('test dataConverter', function() {
     it('_pickValues()', function() {
         var result = converter._pickValues([
-            ['Legend1', 20, 30, 50],
-            ['Legend2', 40, 40, 60],
-            ['Legend3', 60, 50, 10],
-            ['Legend4', 80, 10, 70]
+            {
+                name: 'Legend1',
+                data: [20, 30, 50]
+            },
+            {
+                name: 'Legend2',
+                data: [40, 40, 60]
+            },
+            {
+                name: 'Legend3',
+                data: [60, 50, 10]
+            },
+            {
+                name: 'Legend4',
+                data: [80, 10, 70]
+            }
         ]);
         expect(result).toEqual([
             [20, 40, 60, 80],
@@ -25,10 +37,22 @@ describe('test dataConverter', function() {
 
     it('_pickLegendLabels()', function() {
         var labels = converter._pickLegendLabels([
-            ['Legend1', 20, 30, 50],
-            ['Legend2', 40, 40, 60],
-            ['Legend3', 60, 50, 10],
-            ['Legend4', 80, 10, 70]
+            {
+                name: 'Legend1',
+                data: [20, 30, 50]
+            },
+            {
+                name: 'Legend2',
+                data: [40, 40, 60]
+            },
+            {
+                name: 'Legend3',
+                data: [60, 50, 10]
+            },
+            {
+                name: 'Legend4',
+                data: [80, 10, 70]
+            }
         ]);
         expect(labels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
     });
@@ -134,10 +158,22 @@ describe('test dataConverter', function() {
         var convertData = converter.convert({
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
-                    ['Legend1', 20, 30, 50],
-                    ['Legend2', 40, 40, 60],
-                    ['Legend3', 60, 50, 10],
-                    ['Legend4', 80, 10, 70]
+                    {
+                        name: 'Legend1',
+                        data: [20, 30, 50]
+                    },
+                    {
+                        name: 'Legend2',
+                        data: [40, 40, 60]
+                    },
+                    {
+                        name: 'Legend3',
+                        data: [60, 50, 10]
+                    },
+                    {
+                        name: 'Legend4',
+                        data: [80, 10, 70]
+                    }
                 ]
             }, {
                 format: '0.0'
