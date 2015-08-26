@@ -38,6 +38,13 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
         this._addComponents(convertData, theme.chart.background, options);
     },
 
+    /**
+     * Add components
+     * @param {object} convertData converted data
+     * @param {object} chartBackground chart ㅠackground
+     * @param {object} options chart options
+     * @private
+     */
     _addComponents: function(convertData, chartBackground, options) {
         if (convertData.joinLegendLabels) {
             this.addComponent('legend', Legend, {
