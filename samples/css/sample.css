@@ -22,8 +22,7 @@ textarea {
     height: 400px;
 }
 
-#btn {
-    position: absolute;
-    right: 10px;
-    top: 0;
+.btn-area {
+    width: 100%;
+    height: 25px;
 }

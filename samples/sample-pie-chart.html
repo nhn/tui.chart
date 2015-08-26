@@ -13,6 +13,9 @@
     <input type="hidden" id="type" value="pieChart" />
     <div>
         <div>Chart Data</div>
+        <div class="btn-area">
+            <button id="btn" onclick="onClick();">Apply Custom Data</button>
+        </div>
         <textarea id="data">
 {
     "series": [
@@ -46,6 +49,9 @@
     </div>
     <div>
         <div>Chart Options</div>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
+        </div>
         <textarea id="options">
 {
     "chart": {
@@ -62,7 +68,9 @@
     </div>
     <div>
         <div>Chart Theme</div>
-        <button id="btn" onclick="onClick();">Confirm</button>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+        </div>
         <textarea id="theme">
 {
     "chart": {

@@ -19,5 +19,11 @@
         container.innerHTML = '';
         chart[type](container, data, options);
     };
+
+    var openWindow = function(url) {
+        window.open(url, '_blank');
+    };
+
     root.onClick = onClick;
+    root.openWindow = openWindow;
 })(window);
