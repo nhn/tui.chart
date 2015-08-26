@@ -14,7 +14,7 @@ var ChartBase = require('./chartBase.js'),
 var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * Column chart.
-     * * @constructs PieChart
+     * @constructs PieChart
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

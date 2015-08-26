@@ -83,28 +83,23 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         var resultChartTypes = chartTypes.slice(),
             isReverse = false,
             optionChartTypes;
-        if (!yAxisOptions) {
-            return resultChartTypes;
-        }
 
-        if (!ne.util.isArray(yAxisOptions)) {
-            yAxisOptions = [yAxisOptions];
-        }
+        yAxisOptions = yAxisOptions ? [].concat(yAxisOptions) : [];
 
         if (yAxisOptions.length === 1 && !yAxisOptions[0].chartType) {
-            return [];
-        }
+            resultChartTypes = [];
+        } else if (yAxisOptions.length) {
+            optionChartTypes = ne.util.map(yAxisOptions, function(option) {
+                return option.chartType;
+            });
 
-        optionChartTypes = ne.util.map(yAxisOptions, function(option) {
-            return option.chartType;
-        });
+            ne.util.forEachArray(optionChartTypes, function(chartType, index) {
+                isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
+            });
 
-        ne.util.forEachArray(optionChartTypes, function(chartType, index) {
-            isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
-        });
-
-        if (isReverse) {
-            resultChartTypes.reverse();
+            if (isReverse) {
+                resultChartTypes.reverse();
+            }
         }
 
         return resultChartTypes;

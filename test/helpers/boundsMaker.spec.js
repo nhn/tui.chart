@@ -377,7 +377,7 @@ describe('test boundsMaker', function() {
         });
     });
 
-    it('getLegendAreaWidth()', function() {
+    it('_getLegendAreaWidth()', function() {
         var result = maker._getLegendAreaWidth([
                 {
                     label: 'label1'
@@ -392,6 +392,32 @@ describe('test boundsMaker', function() {
             });
         expect(result).toBeGreaterThan(79);
         expect(result).toBeLessThan(84);
+    })
+
+    it('_makeSeriesDimension()', function() {
+        var result = maker._makeSeriesDimension({
+            chartDimension: {
+                width: 500,
+                height: 400
+            },
+            axesDimension: {
+                yAxis: {
+                    width: 50
+                },
+                yrAxis: {
+                    width: 0
+                },
+                xAxis: {
+                    height: 50
+                }
+            },
+            legendWidth: 50,
+            titleHeight: 50
+        });
+        expect(result).toEqual({
+            width: 380,
+            height: 280
+        });
     });
 
     it('make()', function() {

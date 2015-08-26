@@ -52,8 +52,9 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             x1 = cx + r * Math.cos(-params.startAngle * RAD),
             x2 = cx + r * Math.cos(-params.endAngle * RAD),
             y1 = cy + r * Math.sin(-params.startAngle * RAD),
-            y2 = cy + r * Math.sin(-params.endAngle * RAD);
-        return params.paper.path(["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(params.endAngle - params.startAngle > 180), 0, x2, y2, "z"]).attr(params.attrs);
+            y2 = cy + r * Math.sin(-params.endAngle * RAD),
+            pathParam = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(params.endAngle - params.startAngle > 180), 0, x2, y2, "z"];
+        return params.paper.path(pathParam).attr(params.attrs);
     },
 
     /**
@@ -79,7 +80,6 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         ne.util.forEachArray(percentValues, function(percentValue, index) {
             var anglePlus = 360 * percentValue,
                 popAngle = angle + (anglePlus / 2),
-                bcolor = colors[index],
                 color = colors[index],
                 p = this._renderSector({
                     paper: paper,
@@ -87,7 +87,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
                     startAngle: angle,
                     endAngle: angle + anglePlus,
                     attrs: {
-                        fill: "90-" + bcolor + "-" + color,
+                        fill: "90-" + color + "-" + color,
                         stroke: chartBackground,
                         'stroke-width': 1
                     }

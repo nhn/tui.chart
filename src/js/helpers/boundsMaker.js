@@ -205,14 +205,15 @@ var boundsMaker = {
     _getYRAxisWidth: function(params) {
         var yAxisChartTypes = params.yAxisChartTypes || [],
             rightYAxisWidth = 0,
-            yAxisTheme, yAxisOptions, index, labels, title;
+            yAxisThemes, yAxisTheme, yAxisOptions, index, labels, title;
         index = yAxisChartTypes.length - 1;
         if (index > -1) {
-            yAxisTheme = [].concat(params.theme.yAxis);
+            yAxisThemes = [].concat(params.theme.yAxis);
             yAxisOptions = [].concat(params.options.yAxis);
             title = yAxisOptions[index] && yAxisOptions[index].title;
             labels = [this._getValueAxisMaxLabel(params.convertData, yAxisChartTypes, index)];
-            rightYAxisWidth = this._getVerticalAxisWidth(title, labels, yAxisTheme.length === 1 ? yAxisTheme[0] : yAxisTheme[index]);
+            yAxisTheme = yAxisThemes.length === 1 ? yAxisThemes[0] : yAxisThemes[index];
+            rightYAxisWidth = this._getVerticalAxisWidth(title, labels, yAxisTheme);
         }
         return rightYAxisWidth;
     },
@@ -298,6 +299,31 @@ var boundsMaker = {
     },
 
     /**
+     * To make series dimension.
+     * @param {object} params parameters
+     *      @param {{width: number, height: number}} params.chartDimension chart dimension
+     *      @param {{
+     *          yAxis: {width: number, height:number},
+     *          xAxis: {width: number, height:number},
+     *          yrAxis: {width: number, height:number}
+     *      }} params.axesDimension axes dimension
+     *      @param {number} params.legendWidth legend width
+     *      @param {number} params.titleHeight title height
+     * @returns {{width: number, height: number}} series dimension
+     * @private
+     */
+    _makeSeriesDimension: function(params) {
+        var axesDimension = params.axesDimension,
+            rightAreaWidth = params.legendWidth + axesDimension.yrAxis.width,
+            width = params.chartDimension.width - (CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
+            height = params.chartDimension.height - (CHART_PADDING * 2) - params.titleHeight - axesDimension.xAxis.height;
+        return {
+            width: width,
+            height: height
+        };
+    },
+
+    /**
      * Get components dimension
      * @param {object} params parameters
      *      @param {object} params.convertData converted data
@@ -316,33 +342,29 @@ var boundsMaker = {
                 width: chartOptions.width || 500,
                 height: chartOptions.height || 400
             },
-            axesDimension = this._makeAxesDimension(params),
-            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING,
-            legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label),
-            rightAreaWidth = legendWidth + axesDimension.yrAxis.width,
-            plotWidth = chartDimension.width - (CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
-            plotHeight = chartDimension.height - (CHART_PADDING * 2) - titleHeight - axesDimension.xAxis.height,
-            dimensions = ne.util.extend({
-                chart: chartDimension,
-                title: {
-                    height: titleHeight
-                },
-                plot: {
-                    width: plotWidth,
-                    height: plotHeight
-                },
-                series: {
-                    width: plotWidth,
-                    height: plotHeight
-                },
-                legend: {
-                    width: legendWidth
-                },
-                tooltip: {
-                    width: plotWidth,
-                    height: plotHeight
-                }
-            }, axesDimension);
+            axesDimension, titleHeight, legendWidth, seriesDimension, dimensions;
+
+        axesDimension = this._makeAxesDimension(params);
+        titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING;
+        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label);
+        seriesDimension = this._makeSeriesDimension({
+            chartDimension: chartDimension,
+            axesDimension: axesDimension,
+            legendWidth: legendWidth,
+            titleHeight: titleHeight
+        });
+        dimensions = ne.util.extend({
+            chart: chartDimension,
+            title: {
+                height: titleHeight
+            },
+            plot: seriesDimension,
+            series: seriesDimension,
+            legend: {
+                width: legendWidth
+            },
+            tooltip: seriesDimension
+        }, axesDimension);
         return dimensions;
     },
 
