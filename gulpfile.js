@@ -90,7 +90,9 @@ gulp.task('clean-samples', function(callback) {
 });
 
 gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], function() {
-    gulp.src('dist/*.min.*')
+    gulp.src('dist/application-chart.min.css')
+        .pipe(gulp.dest('./samples/dist'));
+    gulp.src('dist/application-chart.min.js')
         .pipe(gulp.dest('./samples/dist'));
     gulp.src('lib/ne-code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));

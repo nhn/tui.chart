@@ -13,7 +13,8 @@ var AxisTypeBase = require('./axisTypeBase.js'),
 var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype */ {
     /**
      * Bar chart.
-     * * @constructs BarChart
+     * @constructs BarChart
+     * @extends AxisTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

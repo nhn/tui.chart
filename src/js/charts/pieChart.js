@@ -15,6 +15,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * Column chart.
      * @constructs PieChart
+     * @extends ChartBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
