@@ -57,7 +57,7 @@ Currently it supports Bar Chart, Column Chart, Line Chart, Combo Chart and Pie C
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| <a href="https://nhnent.github.io/fe.application-chart/1.1.0">1.1.0</a> | Change insert data structure.<br> Add Combo Chart.<br> Add Pie Chart.<br> Add stacked option.(Bar, Column) | 2015.08 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.application-chart/1.1.0">1.1.0</a> | Change insert data structure.<br> Add Combo Chart.<br> Add Pie Chart.<br> Add stacked option.(Bar, Column)<br> Add tooltip position options.<br> Add axis min, max options. | 2015.08 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-chart/1.0.0">1.0.0</a> | First deploy. | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 
 ## License
