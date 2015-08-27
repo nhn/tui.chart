@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Plot</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-sample-bar-chart.html">Bar Chart Sample</a></li><li class="item"><a href="tutorial-sample-column-chart.html">Column Chart Sample</a></li><li class="item"><a href="tutorial-sample-combo-chart.html">Combo Chart Sample</a></li><li class="item"><a href="tutorial-sample-line-chart.html">Line Chart Sample</a></li><li class="item"><a href="tutorial-sample-pie-chart.html">Pie Chart Sample</a></li></ul><h3>Modules</h3><ul class="list modules"><li class="item" id="module:axisDataMaker"><span class="title"><a href="module-axisDataMaker.html">axisDataMaker</a></span><ul class="sublist methods module:axisDataMaker"><span class="subtitle">Methods</span><li><a href="module-axisDataMaker.html#.makeLabelAxisData">makeLabelAxisData</a></li><li><a href="module-axisDataMaker.html#.makeValueAxisData">makeValueAxisData</a></li></ul></li><li class="item" id="module:boundsMaker"><span class="title"><a href="module-boundsMaker.html">boundsMaker</a></span><ul class="sublist methods module:boundsMaker"><span class="subtitle">Methods</span><li><a href="module-boundsMaker.html#._getRenderedLabelsMaxHeight">_getRenderedLabelsMaxHeight</a></li><li><a href="module-boundsMaker.html#.make">make</a></li></ul></li><li class="item" id="module:calculator"><span class="title"><a href="module-calculator.html">calculator</a></span><ul class="sublist methods module:calculator"><span class="subtitle">Methods</span><li><a href="module-calculator.html#.arrayPivot">arrayPivot</a></li><li><a href="module-calculator.html#.calculateScale">calculateScale</a></li><li><a href="module-calculator.html#.getScaleStep">getScaleStep</a></li><li><a href="module-calculator.html#.makePixelPositions">makePixelPositions</a></li><li><a href="module-calculator.html#.normalizeAxisNumber">normalizeAxisNumber</a></li></ul></li><li class="item" id="module:dataConverter"><span class="title"><a href="module-dataConverter.html">dataConverter</a></span><ul class="sublist methods module:dataConverter"><span class="subtitle">Methods</span><li><a href="module-dataConverter.html#._findFormatFunctions">_findFormatFunctions</a></li><li><a href="module-dataConverter.html#._pickLegendLabels">_pickLegendLabels</a></li><li><a href="module-dataConverter.html#._pickValues">_pickValues</a></li><li><a href="module-dataConverter.html#.convert">convert</a></li></ul></li><li class="item" id="module:domHandler"><span class="title"><a href="module-domHandler.html">domHandler</a></span><ul class="sublist methods module:domHandler"><span class="subtitle">Methods</span><li><a href="module-domHandler.html#.addClass">addClass</a></li><li><a href="module-domHandler.html#.append">append</a></li><li><a href="module-domHandler.html#.create">create</a></li><li><a href="module-domHandler.html#.findParentByClass">findParentByClass</a></li><li><a href="module-domHandler.html#.hasClass">hasClass</a></li><li><a href="module-domHandler.html#.removeClass">removeClass</a></li></ul></li><li class="item" id="module:eventListener"><span class="title"><a href="module-eventListener.html">eventListener</a></span><ul class="sublist methods module:eventListener"><span class="subtitle">Methods</span><li><a href="module-eventListener.html#.bindEvent">bindEvent</a></li></ul></li><li class="item" id="module:renderUtil"><span class="title"><a href="module-renderUtil.html">renderUtil</a></span><ul class="sublist methods module:renderUtil"><span class="subtitle">Methods</span><li><a href="module-renderUtil.html#.concatStr">concatStr</a></li><li><a href="module-renderUtil.html#.getRenderedLabelHeight">getRenderedLabelHeight</a></li><li><a href="module-renderUtil.html#.getRenderedLabelWidth">getRenderedLabelWidth</a></li><li><a href="module-renderUtil.html#.isIE8">isIE8</a></li><li><a href="module-renderUtil.html#.makeFontCssText">makeFontCssText</a></li><li><a href="module-renderUtil.html#.renderBackground">renderBackground</a></li><li><a href="module-renderUtil.html#.renderDimension">renderDimension</a></li><li><a href="module-renderUtil.html#.renderPosition">renderPosition</a></li><li><a href="module-renderUtil.html#.renderTitle">renderTitle</a></li></ul></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="Axis"><span class="title"><a href="Axis.html">Axis</a></span><ul class="sublist members Axis"><span class="subtitle">Members</span><li><a href="Axis.html#className">className</a></li></ul><ul class="sublist division Axis"><li></li></ul><ul class="sublist methods Axis"><span class="subtitle">Methods</span><li><a href="Axis.html#render">render</a></li></ul></li><li class="item" id="AxisTypeBase"><span class="title"><a href="AxisTypeBase.html">AxisTypeBase</a></span><ul class="sublist methods AxisTypeBase"><span class="subtitle">Methods</span><li><a href="AxisTypeBase.html#addAxisComponents">addAxisComponents</a></li><li><a href="AxisTypeBase.html#addComponent">addComponent</a></li><li><a href="AxisTypeBase.html#getPaper">getPaper</a></li><li><a href="AxisTypeBase.html#makeBaseData">makeBaseData</a></li><li><a href="AxisTypeBase.html#render">render</a></li></ul></li><li class="item" id="BarChart"><span class="title"><a href="BarChart.html">BarChart</a></span><ul class="sublist methods BarChart"><span class="subtitle">Methods</span><li><a href="BarChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="BarChart.html#addComponent">addComponent</a></li><li><a href="BarChart.html#getPaper">getPaper</a></li><li><a href="BarChart.html#makeBaseData">makeBaseData</a></li><li><a href="BarChart.html#render">render</a></li></ul></li><li class="item" id="BarChartSeries"><span class="title"><a href="BarChartSeries.html">BarChartSeries</a></span><ul class="sublist members BarChartSeries"><span class="subtitle">Members</span><li><a href="BarChartSeries.html#className">className</a></li><li><a href="BarChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division BarChartSeries"><li></li></ul><ul class="sublist methods BarChartSeries"><span class="subtitle">Methods</span><li><a href="BarChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="BarChartSeries.html#_makePositions">_makePositions</a></li><li><a href="BarChartSeries.html#getPaper">getPaper</a></li><li><a href="BarChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="BarChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="BarChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="BarChartSeries.html#render">render</a></li><li><a href="BarChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="ChartBase"><span class="title"><a href="ChartBase.html">ChartBase</a></span><ul class="sublist methods ChartBase"><span class="subtitle">Methods</span><li><a href="ChartBase.html#addComponent">addComponent</a></li><li><a href="ChartBase.html#getPaper">getPaper</a></li><li><a href="ChartBase.html#makeBaseData">makeBaseData</a></li><li><a href="ChartBase.html#render">render</a></li></ul></li><li class="item" id="ColumnChart"><span class="title"><a href="ColumnChart.html">ColumnChart</a></span><ul class="sublist methods ColumnChart"><span class="subtitle">Methods</span><li><a href="ColumnChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="ColumnChart.html#addComponent">addComponent</a></li><li><a href="ColumnChart.html#getPaper">getPaper</a></li><li><a href="ColumnChart.html#makeBaseData">makeBaseData</a></li><li><a href="ColumnChart.html#render">render</a></li></ul></li><li class="item" id="ColumnChartSeries"><span class="title"><a href="ColumnChartSeries.html">ColumnChartSeries</a></span><ul class="sublist members ColumnChartSeries"><span class="subtitle">Members</span><li><a href="ColumnChartSeries.html#className">className</a></li><li><a href="ColumnChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division ColumnChartSeries"><li></li></ul><ul class="sublist methods ColumnChartSeries"><span class="subtitle">Methods</span><li><a href="ColumnChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="ColumnChartSeries.html#_makePositions">_makePositions</a></li><li><a href="ColumnChartSeries.html#getPaper">getPaper</a></li><li><a href="ColumnChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="ColumnChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="ColumnChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="ColumnChartSeries.html#render">render</a></li><li><a href="ColumnChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="ComboChart"><span class="title"><a href="ComboChart.html">ComboChart</a></span><ul class="sublist methods ComboChart"><span class="subtitle">Methods</span><li><a href="ComboChart.html#addComponent">addComponent</a></li><li><a href="ComboChart.html#getPaper">getPaper</a></li><li><a href="ComboChart.html#makeBaseData">makeBaseData</a></li><li><a href="ComboChart.html#render">render</a></li></ul></li><li class="item" id="Legend"><span class="title"><a href="Legend.html">Legend</a></span><ul class="sublist members Legend"><span class="subtitle">Members</span><li><a href="Legend.html#className">className</a></li></ul><ul class="sublist division Legend"><li></li></ul><ul class="sublist methods Legend"><span class="subtitle">Methods</span><li><a href="Legend.html#render">render</a></li></ul></li><li class="item" id="LineChart"><span class="title"><a href="LineChart.html">LineChart</a></span><ul class="sublist methods LineChart"><span class="subtitle">Methods</span><li><a href="LineChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="LineChart.html#addComponent">addComponent</a></li><li><a href="LineChart.html#getPaper">getPaper</a></li><li><a href="LineChart.html#makeBaseData">makeBaseData</a></li><li><a href="LineChart.html#render">render</a></li></ul></li><li class="item" id="LineChartSeries"><span class="title"><a href="LineChartSeries.html">LineChartSeries</a></span><ul class="sublist members LineChartSeries"><span class="subtitle">Members</span><li><a href="LineChartSeries.html#className">className</a></li><li><a href="LineChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division LineChartSeries"><li></li></ul><ul class="sublist methods LineChartSeries"><span class="subtitle">Methods</span><li><a href="LineChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="LineChartSeries.html#_makePositions">_makePositions</a></li><li><a href="LineChartSeries.html#getPaper">getPaper</a></li><li><a href="LineChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="LineChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="LineChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="LineChartSeries.html#render">render</a></li><li><a href="LineChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="PieChart"><span class="title"><a href="PieChart.html">PieChart</a></span><ul class="sublist methods PieChart"><span class="subtitle">Methods</span><li><a href="PieChart.html#addComponent">addComponent</a></li><li><a href="PieChart.html#getPaper">getPaper</a></li><li><a href="PieChart.html#makeBaseData">makeBaseData</a></li><li><a href="PieChart.html#render">render</a></li></ul></li><li class="item" id="PieChartSeries"><span class="title"><a href="PieChartSeries.html">PieChartSeries</a></span><ul class="sublist members PieChartSeries"><span class="subtitle">Members</span><li><a href="PieChartSeries.html#className">className</a></li><li><a href="PieChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division PieChartSeries"><li></li></ul><ul class="sublist methods PieChartSeries"><span class="subtitle">Methods</span><li><a href="PieChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="PieChartSeries.html#_makePositions">_makePositions</a></li><li><a href="PieChartSeries.html#getPaper">getPaper</a></li><li><a href="PieChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="PieChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="PieChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="PieChartSeries.html#render">render</a></li><li><a href="PieChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="Plot"><span class="title"><a href="Plot.html">Plot</a></span><ul class="sublist members Plot"><span class="subtitle">Members</span><li><a href="Plot.html#className">className</a></li></ul><ul class="sublist division Plot"><li></li></ul><ul class="sublist methods Plot"><span class="subtitle">Methods</span><li><a href="Plot.html#makeHorizontalPixelPositions">makeHorizontalPixelPositions</a></li><li><a href="Plot.html#makeVerticalPixelPositions">makeVerticalPixelPositions</a></li><li><a href="Plot.html#render">render</a></li></ul></li><li class="item" id="RaphaelBarChart"><span class="title"><a href="RaphaelBarChart.html">RaphaelBarChart</a></span><ul class="sublist methods RaphaelBarChart"><span class="subtitle">Methods</span><li><a href="RaphaelBarChart.html#render">render</a></li></ul></li><li class="item" id="RaphaelLineChart"><span class="title"><a href="RaphaelLineChart.html">RaphaelLineChart</a></span><ul class="sublist methods RaphaelLineChart"><span class="subtitle">Methods</span><li><a href="RaphaelLineChart.html#hideAnimation">hideAnimation</a></li><li><a href="RaphaelLineChart.html#render">render</a></li><li><a href="RaphaelLineChart.html#showAnimation">showAnimation</a></li></ul></li><li class="item" id="RaphaelPieChart"><span class="title"><a href="RaphaelPieChart.html">RaphaelPieChart</a></span><ul class="sublist methods RaphaelPieChart"><span class="subtitle">Methods</span><li><a href="RaphaelPieChart.html#hideAnimation">hideAnimation</a></li><li><a href="RaphaelPieChart.html#render">render</a></li><li><a href="RaphaelPieChart.html#showAnimation">showAnimation</a></li></ul></li><li class="item" id="Series"><span class="title"><a href="Series.html">Series</a></span><ul class="sublist members Series"><span class="subtitle">Members</span><li><a href="Series.html#className">className</a></li><li><a href="Series.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division Series"><li></li></ul><ul class="sublist methods Series"><span class="subtitle">Methods</span><li><a href="Series.html#_makeBounds">_makeBounds</a></li><li><a href="Series.html#_makeBounds">_makeBounds</a></li><li><a href="Series.html#_makePositions">_makePositions</a></li><li><a href="Series.html#getPaper">getPaper</a></li><li><a href="Series.html#hideTooltip">hideTooltip</a></li><li><a href="Series.html#onHideAnimation">onHideAnimation</a></li><li><a href="Series.html#onShowAnimation">onShowAnimation</a></li><li><a href="Series.html#render">render</a></li><li><a href="Series.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="Tooltip"><span class="title"><a href="Tooltip.html">Tooltip</a></span><ul class="sublist members Tooltip"><span class="subtitle">Members</span><li><a href="Tooltip.html#className">className</a></li></ul><ul class="sublist division Tooltip"><li></li></ul><ul class="sublist methods Tooltip"><span class="subtitle">Methods</span><li><a href="Tooltip.html#attachEvent">attachEvent</a></li><li><a href="Tooltip.html#onHide">onHide</a></li><li><a href="Tooltip.html#onMouseout">onMouseout</a></li><li><a href="Tooltip.html#onMouseover">onMouseover</a></li><li><a href="Tooltip.html#onShow">onShow</a></li><li><a href="Tooltip.html#render">render</a></li></ul></li></ul><h3>Namespaces</h3><ul class="list namespaces"><li class="item" id="ne.application.chart"><span class="icon blue static">static</span><span class="title"><a href="ne.application.chart.html">chart</a></span><ul class="sublist methods ne.application.chart"><span class="subtitle">Methods</span><li><a href="ne.application.chart.html#.barChart">barChart</a></li><li><a href="ne.application.chart.html#.columnChart">columnChart</a></li><li><a href="ne.application.chart.html#.comboChart">comboChart</a></li><li><a href="ne.application.chart.html#.lineChart">lineChart</a></li><li><a href="ne.application.chart.html#.pieChart">pieChart</a></li><li><a href="ne.application.chart.html#.registerPlugin">registerPlugin</a></li><li><a href="ne.application.chart.html#.registerTheme">registerTheme</a></li></ul></li></ul></div>
+        <div id="main" class="main">
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        Plot
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+<dt>
+    
+        <h4 class="name" id="Plot">
+            <span class="type-signature"></span>new Plot<span class="signature">(params)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line24">line 24</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Plot component.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>parameters</p>
+                <h6>Properties:</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>vTickCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>vertical tick count</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>hTickCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>horizontal tick count</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>bound</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>axis bound</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>theme</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>axis theme</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+    <div class="container-members">
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="className">
+        <span class="type-signature"></span>className<span class="type-signature"> :string</span>
+        
+        <div class="container-source members">
+            <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+            <code><a href="plots_plot.js.html#line30">line 30</a></code>
+        </div>
+        
+    </h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Plot view className</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    </div>
+    
+
+    
+    <div class="container-methods">
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    
+        <h4 class="name" id="_makeLineHtml">
+            <span class="type-signature"><span class="icon green">private</span> </span>_makeLineHtml<span class="signature">(params)</span><span class="type-signature"> &rarr; {string}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line94">line 94</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>To make html of plot line.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>parameters</p>
+                <h6>Properties:</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>positions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array.&lt;object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>positions</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>width or height</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>className</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>line className</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>positionType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>position type (left or bottom)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>sizeType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>size type (size or height)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>lineColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>line color</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>html</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="_renderLines">
+            <span class="type-signature"><span class="icon green">private</span> </span>_renderLines<span class="signature">(el, dimension)</span><span class="type-signature"></span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line54">line 54</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render plot lines.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>el</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>element</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name first"><code>dimension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>plot area dimension</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="makeHorizontalPixelPositions">
+            <span class="type-signature"></span>makeHorizontalPixelPositions<span class="signature">(width)</span><span class="type-signature"> &rarr; {array.&lt;number>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line128">line 128</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>To make pixel value of horizontal positions.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>plot width</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>positions</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="makeVerticalPixelPositions">
+            <span class="type-signature"></span>makeVerticalPixelPositions<span class="signature">(height)</span><span class="type-signature"> &rarr; {array.&lt;number>}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line117">line 117</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>To make pixel value of vertical positions</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>plot height</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>positions</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
+        <h4 class="name" id="render">
+            <span class="type-signature"></span>render<span class="signature">(bound)</span><span class="type-signature"> &rarr; {HTMLElement}</span>
+            
+                <div class="container-source method">
+                    <code><a href="plots_plot.js.html">plots/plot.js</a></code>,
+                    <code><a href="plots_plot.js.html#line38">line 38</a></code>
+                </div>
+            
+        </h4>
+
+
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Render plot.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <div class="params">
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name first"><code>bound</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>plot area bound</p></td>
+        </tr>
+
+    
+    </tbody>
+</table></div>
+    </div>
+    
+
+    
+    <div class="container-returns">
+        <div class="returns">
+        <h5>Returns:</h5>
+        <div class="details">
+        
+                
+<div class="param-desc">
+    <p>plot element</p>
+</div>
+
+            
+        </div>
+        </div>
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    <!--
+    
+    -->
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    </div>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>

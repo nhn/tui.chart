@@ -1,0 +1,28 @@
+body {
+    min-width: 650px;
+    min-height: 850px;
+}
+
+#chart-area, .custom-area {
+    float: left;
+}
+
+.custom-area {
+    margin-top: 5px;
+    position:relative;
+}
+
+.custom-area > div {
+    float: left;
+    margin-left: 10px;
+}
+
+textarea {
+    width: 200px;
+    height: 400px;
+}
+
+.btn-area {
+    width: 100%;
+    height: 25px;
+}

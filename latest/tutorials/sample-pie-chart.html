@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Pie Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <input type="hidden" id="type" value="pieChart" />
+    <div>
+        <div>Chart Data</div>
+        <div class="btn-area">
+            <button id="btn" onclick="onClick();">Apply Custom Data</button>
+        </div>
+        <textarea id="data">
+{
+    "series": [
+        {
+            "name": "Legend1",
+            "data": 20
+        },
+        {
+            "name": "Legend2",
+            "data": 50
+        },
+        {
+            "name": "Legend3",
+            "data": 60
+        },
+        {
+            "name": "Legend4",
+            "data": 80
+        },
+        {
+            "name": "Legend5",
+            "data": 10
+        },
+        {
+            "name": "Legend6",
+            "data": 30
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
+        </div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 500,
+        "height": 400,
+        "title": "Pie Chart"
+    },
+    "series": {
+        "hasDot": true
+    },
+    "theme": "newTheme"
+}
+     </textarea>
+    </div>
+    <div>
+        <div>Chart Theme</div>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+        </div>
+        <textarea id="theme">
+{
+    "chart": {
+        "background": "#e5dbc4",
+        "fontFamily": "Verdana"
+    },
+    "title": {
+        "color": "#000000"
+    },
+    "series": {
+        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#555555"],
+        "borderColor": "#8e6535"
+    },
+    "legend": {
+        "label": {
+            "color": "#6f491d"
+        }
+    }
+}
+        </textarea>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/application-chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            series: [
+                {
+                    name: 'Legend1',
+                    data: 20
+                },
+                {
+                    name: 'Legend2',
+                    data: 50
+                },
+                {
+                    name: 'Legend3',
+                    data: 60
+                },
+                {
+                    name: 'Legend4',
+                    data: 80
+                },
+                {
+                    name: 'Legend5',
+                    data: 10
+                },
+                {
+                    name: 'Legend6',
+                    data: 30
+                }
+            ]
+        };
+    ne.application.chart.pieChart(container, data);
+</script>
+</body>
+</html>
