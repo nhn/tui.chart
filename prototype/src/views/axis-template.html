@@ -1,6 +1,0 @@
-<div class="axis-title"><%= title %></div>
-<% _.each(ticks, function(tick) {%>
-<div class="axis-tick" style="<%= posType %>:<%= tick[1] %>px;<%= widthType %>:<%= apart %>px;<%= isVertical ? 'line-height:' + apart + 'px' : 'text-align:center' %>">
-    <div><%= tick[0] %></div>
-</div>
-<% }); %>
