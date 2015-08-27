@@ -13,7 +13,8 @@ var AxisTypeBase = require('./axisTypeBase.js'),
 var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.prototype */ {
     /**
      * Column chart.
-     * * @constructs ColumnChart
+     * @constructs ColumnChart
+     * @extends AxisTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

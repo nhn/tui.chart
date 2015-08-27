@@ -26,6 +26,7 @@ var concat = Array.prototype.concat;
 var boundsMaker = {
     /**
      * To make bounds about chart components.
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.convertData converted data
      *      @param {object} params.theme chart theme
@@ -99,6 +100,7 @@ var boundsMaker = {
 
     /**
      * Get max label of value axis.
+     * @memberOf module:boundsMaker
      * @param {object} convertData convert data
      * @param {array.<string>} chartTypes chart types
      * @param {number} index chart type index
@@ -125,7 +127,8 @@ var boundsMaker = {
     },
 
     /**
-     * Get Rendered Labels Max Size(width or height)
+     * Get Rendered Labels Max Size(width or height).
+     * @memberOf module:boundsMaker
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @param {function} iteratee iteratee
@@ -142,6 +145,7 @@ var boundsMaker = {
 
     /**
      * Get rendered labels max width.
+     * @memberOf module:boundsMaker
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max width
@@ -155,6 +159,7 @@ var boundsMaker = {
 
     /**
      * Get rendered labels max height.
+     * @memberOf module:boundsMaker
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} max height
@@ -167,6 +172,7 @@ var boundsMaker = {
 
     /**
      * Get width of vertical axis area.
+     * @memberOf module:boundsMaker
      * @param {string} title axis title,
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis theme
@@ -181,6 +187,7 @@ var boundsMaker = {
 
     /**
      * Get height of horizontal axis area.
+     * @memberOf module:boundsMaker
      * @param {string} title axis title,
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis theme
@@ -194,7 +201,8 @@ var boundsMaker = {
     },
 
     /**
-     * Get width about y right axis
+     * Get width about y right axis.
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {array.<string>} params.yAxisChartTypes chart types
      *      @param {object} params.theme chart theme
@@ -220,6 +228,7 @@ var boundsMaker = {
 
     /**
      * To make axes dimension.
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.convertData converted data
      *      @param {object} params.theme chart theme
@@ -283,6 +292,7 @@ var boundsMaker = {
 
     /**
      * Get width of legend area.
+     * @memberOf module:boundsMaker
      * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @returns {number} width
@@ -300,6 +310,7 @@ var boundsMaker = {
 
     /**
      * To make series dimension.
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {{width: number, height: number}} params.chartDimension chart dimension
      *      @param {{
@@ -325,6 +336,7 @@ var boundsMaker = {
 
     /**
      * Get components dimension
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.convertData converted data
      *      @param {object} params.theme chart theme
@@ -370,6 +382,7 @@ var boundsMaker = {
 
     /**
      * To make axes bounds.
+     * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axed or not
      *      @param {array.<string>} params.yAxisChartTypes y axis chart types

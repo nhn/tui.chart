@@ -1,5 +1,5 @@
 /**
- * @fileoverview RenderUtil.
+ * @fileoverview Util for rendering.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,9 +12,14 @@ var dom = require('./domHandler'),
 var browser = ne.util.browser,
     isIE8 = browser.msie && browser.version === 8;
 
+/**
+ * Util for rendering.
+ * @module renderUtil
+ */
 var renderUtil = {
     /**
-     * Concat string
+     * Concat string.
+     * @memberOf module:renderUtil
      * @params {...string} target strings
      * @returns {string} concat string
      */
@@ -24,6 +29,7 @@ var renderUtil = {
 
     /**
      * To make cssText for font.
+     * @memberOf module:renderUtil
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
      */
@@ -51,6 +57,7 @@ var renderUtil = {
 
     /**
      * Create element for size check.
+     * @memberOf module:renderUtil
      * @returns {HTMLElement} element
      * @private
      */
@@ -65,6 +72,7 @@ var renderUtil = {
 
     /**
      * Get rendered label size (width or height).
+     * @memberOf module:renderUtil
      * @param {string} label label
      * @param {object} theme theme
      * @param {string} property element property
@@ -92,6 +100,7 @@ var renderUtil = {
 
     /**
      * Get rendered label width.
+     * @memberOf module:renderUtil
      * @param {string} label label
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} width
@@ -103,6 +112,7 @@ var renderUtil = {
 
     /**
      * Get rendered label height.
+     * @memberOf module:renderUtil
      * @param {string} label label
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
      * @returns {number} height
@@ -113,7 +123,8 @@ var renderUtil = {
     },
 
     /**
-     * Renderer dimension
+     * Render dimension.
+     * @memberOf module:renderUtil
      * @param {HTMLElement} el target element
      * @param {{width: number, height: number}} dimension dimension
      */
@@ -125,7 +136,8 @@ var renderUtil = {
     },
 
     /**
-     * Render position(top, right)
+     * Render position(top, right).
+     * @memberOf module:renderUtil
      * @param {HTMLElement} el target element
      * @param {{top: number, left: number, right: number}} position position
      */
@@ -149,6 +161,7 @@ var renderUtil = {
 
     /**
      * Render background.
+     * @memberOf module:renderUtil
      * @param {HTMLElement} el target element
      * @param {string} background background option
      */
@@ -162,6 +175,7 @@ var renderUtil = {
 
     /**
      * Render title.
+     * @memberOf module:renderUtil
      * @param {string} title title
      * @param {{fontSize: number, color: string, background: string}} theme title theme
      * @param {string} className css class name
@@ -190,6 +204,7 @@ var renderUtil = {
 
     /**
      * Whether IE8 or not.
+     * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */
     isIE8: function() {

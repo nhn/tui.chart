@@ -16,7 +16,8 @@ var calculator = require('../helpers/calculator.js'),
 var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
     /**
      * Combo chart.
-     * * @constructs ComboChart
+     * @constructs ComboChart
+     * @extends ChartBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

@@ -6,10 +6,7 @@
 
 'use strict';
 
-var HIDDEN_WIDTH = 1;
-
-var Raphael = window.Raphael,
-    browser = ne.util.browser;
+var Raphael = window.Raphael;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer.

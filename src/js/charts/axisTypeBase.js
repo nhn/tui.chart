@@ -16,6 +16,7 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
     /**
      * Axis type chart base
      * @constructs AxisTypeBase
+     * @extends ChartBase
      */
     init: function() {
         var args = [].slice.call(arguments);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Application Chart</title>
-    <link rel="stylesheet" type="text/css" href="dist/style.css" />
+    <link rel="stylesheet" type="text/css" href="dist/application-chart.css" />
     <style>
         textarea {
             width: 200px;
@@ -38,24 +38,33 @@
             <div>data</div>
             <textarea id="data">
 {
-    "series":  [
-        {
-            "name": "Legend1",
-            "data": 20
-        },
-        {
-            "name": "Legend2",
-            "data": 40
-        },
-        {
-            "name": "Legend3",
-            "data": 60
-        },
-        {
-            "name": "Legend4",
-            "data": 80
-        }
-    ]
+    "categories": ["cate1", "cate2", "cate3"],
+    "series": {
+        "column": [
+            {
+                "name": "Legend1",
+                "data": [20, 30, 50]},
+            {
+                "name": "Legend2",
+                "data": [40, 40, 60]
+            },
+            {
+                "name": "Legend3",
+                "data": [60, 50, 10]
+            },
+            {
+                "name": "Legend4",
+                "data": [80, 10, 70]
+            }
+        ],
+        "line" : [
+            {
+                "name": "Legend",
+                "data": [1, 2, 3]
+            }
+        ]
+
+    }
 }
             </textarea>
         </div>
@@ -66,10 +75,17 @@
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "Stacked Bar Chart"
+        "title": "Combo Chart",
+        "format": "0010"
+    },
+    "yAxis": {
+        "title": "Y Axis"
     },
     "xAxis": {
         "title": "X Axis"
+    },
+    "series": {
+        "hasDot": true
     },
     "theme": "newTheme"
 }
@@ -92,8 +108,10 @@
         "background": "#f6f1e5"
     },
     "series": {
-        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
-        "borderColor": "#8e6535"
+            "column": {
+                "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
+                "borderColor": "#8e6535"
+            }
     },
     "legend": {
         "label": {
@@ -184,7 +202,7 @@
             chart: {
                 width: 500,
                 height: 400,
-                title: 'Stacked Bar Chart'
+                title: 'Combo Chart'
             },
             yAxis:{
                 title: 'Y Axis'
@@ -223,7 +241,7 @@
 //    chart.columnChart(elChartArea, data, options);
 
     var onClick = function() {
-        var type = 'pieChart',
+        var type = 'comboChart',
 //          type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
             options = JSON.parse(document.getElementById('options').value),

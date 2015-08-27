@@ -17,6 +17,7 @@ var concat = Array.prototype.concat;
 var dataConverter = {
     /**
      * Convert user data.
+     * @memberOf module:dataConverter
      * @param {array.<array>} userData
      * @param {object} chartOptions chart option
      * @returns {{
@@ -50,6 +51,7 @@ var dataConverter = {
 
     /**
      * Separate label.
+     * @memberOf module:dataConverter
      * @param {array.<array.<array>>} userData user data
      * @returns {{labels: (array.<string>), sourceData: array.<array.<array>>}} result data
      * @private
@@ -64,6 +66,7 @@ var dataConverter = {
 
     /**
      * Pick value.
+     * @memberOf module:dataConverter
      * @param {array} items items
      * @returns {array} picked value
      * @private
@@ -74,6 +77,7 @@ var dataConverter = {
 
     /**
      * Pick values from axis data.
+     * @memberOf module:dataConverter
      * @param {array.<array>} seriesData series data
      * @returns {string[]} values
      */
@@ -92,6 +96,13 @@ var dataConverter = {
         return result;
     },
 
+    /**
+     * Join values.
+     * @memberOf module:dataConverter
+     * @param {array.<array>} values values
+     * @returns {array.<number>} join values
+     * @private
+     */
     _joinValues: function(values) {
         var joinValues;
 
@@ -106,12 +117,20 @@ var dataConverter = {
         return concat.apply([], joinValues);
     },
 
-    _pickLegendLabel: function(items) {
-        return items.name;
+    /**
+     * Pick legend label.
+     * @memberOf module:dataConverter
+     * @param {object} item item
+     * @returns {string} label
+     * @private
+     */
+    _pickLegendLabel: function(item) {
+        return item.name;
     },
 
     /**
      * Pick legend labels from axis data.
+     * @memberOf module:dataConverter
      * @param {array.<array>} seriesData series data
      * @returns {string[]} labels
      */
@@ -128,6 +147,14 @@ var dataConverter = {
         return result;
     },
 
+    /**
+     * Join legend labels.
+     * @memberOf module:dataConverter
+     * @param {array} legendLabels legend labels
+     * @param {string} chartType chart type
+     * @returns {array} labels
+     * @private
+     */
     _joinLegendLabels: function(legendLabels, chartType) {
         var result;
         if (ne.util.isArray(legendLabels)) {
@@ -153,6 +180,7 @@ var dataConverter = {
 
     /**
      * To format group values.
+     * @memberOf module:dataConverter
      * @param {array.<array>} groupValues group values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
@@ -171,6 +199,7 @@ var dataConverter = {
 
     /**
      * To format converted values.
+     * @memberOf module:dataConverter
      * @param {array.<array>} chartValues chart values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
@@ -191,6 +220,7 @@ var dataConverter = {
 
     /**
      * Pick max length under point.
+     * @memberOf module:dataConverter
      * @param {string[]} values chart values
      * @returns {number} max length under point
      * @private
@@ -210,6 +240,7 @@ var dataConverter = {
 
     /**
      * Whether zero fill format or not.
+     * @memberOf module:dataConverter
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -220,6 +251,7 @@ var dataConverter = {
 
     /**
      * Whether decimal format or not.
+     * @memberOf module:dataConverter
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -231,6 +263,7 @@ var dataConverter = {
 
     /**
      * Whether comma format or not.
+     * @memberOf module:dataConverter
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -241,6 +274,7 @@ var dataConverter = {
 
     /**
      * Format zero fill.
+     * @memberOf module:dataConverter
      * @param {number} len length of result
      * @param {string} value target value
      * @returns {string} formatted value
@@ -264,6 +298,7 @@ var dataConverter = {
 
     /**
      * Format Decimal.
+     * @memberOf module:dataConverter
      * @param {number} len length of under decimal point
      * @param {string} value target value
      * @returns {string} formatted value
@@ -284,6 +319,7 @@ var dataConverter = {
 
     /**
      * Format Comma.
+     * @memberOf module:dataConverter
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
@@ -319,6 +355,7 @@ var dataConverter = {
 
     /**
      * Find format functions.
+     * @memberOf module:dataConverter
      * @param {string} format format
      * @param {string[]} values chart values
      * @returns {function[]} functions

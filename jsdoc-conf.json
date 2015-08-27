@@ -1,7 +1,7 @@
 {
     "source": {
         "include": ["src/js", "README.md"],
-        "exclude": ["src/js/util.js"],
+        "exclude": ["src/js/code-snippet-util.js"],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },

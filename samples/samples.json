@@ -8,10 +8,10 @@
   "sample-line-chart": {
     "title": "Line Chart Sample"
   },
-  "sample-options": {
-    "title": "Option Sample"
+  "sample-combo-chart": {
+    "title": "Combo Chart Sample"
   },
-  "sample-theme": {
-    "title": "Theme Sample"
+  "sample-pie-chart": {
+    "title": "Pie Chart Sample"
   }
 }

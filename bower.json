@@ -5,7 +5,7 @@
     "jiung"
   ],
   "devDependencies": {
-    "ne-code-snippet": "~1.0.3",
+    "ne-code-snippet": "~1.0.4",
     "raphael": "~2.1.4"
   },
   "license": "MIT"
