@@ -35,7 +35,6 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
         AxisTypeBase.call(this, bounds, theme, options, initedData);
 
         axisData = this._makeAxesData(convertData, bounds, options, initedData);
-
         this._addComponents(convertData, axisData, options);
     },
 
@@ -60,7 +59,7 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
                     stacked: options.series && options.series.stacked || '',
                     chartType: options.chartType,
                     formatFunctions: convertData.formatFunctions,
-                    options: options.xAxis,
+                    options: options.yAxis,
                     isVertical: true
                 }),
                 xAxis: axisDataMaker.makeLabelAxisData({
