@@ -1,13 +1,16 @@
 var DEFAULT_COLOR = '#000000',
     DEFAULT_BACKGROUND = '#ffffff',
+    EMPTY_FONT = '',
     DEFAULT_AXIS = {
         tickColor: DEFAULT_COLOR,
         title: {
             fontSize: 12,
+            fontFamily: EMPTY_FONT,
             color: DEFAULT_COLOR
         },
         label: {
             fontSize: 12,
+            fontFamily: EMPTY_FONT,
             color: DEFAULT_COLOR
         }
     };
@@ -19,10 +22,11 @@ var defaultTheme = {
     },
     title: {
         fontSize: 18,
+        fontFamily: EMPTY_FONT,
         color: DEFAULT_COLOR
     },
-    vAxis: DEFAULT_AXIS,
-    hAxis: DEFAULT_AXIS,
+    yAxis: DEFAULT_AXIS,
+    xAxis: DEFAULT_AXIS,
     plot: {
         lineColor: '#dddddd',
         background: '#ffffff'
@@ -33,6 +37,7 @@ var defaultTheme = {
     legend: {
         label: {
             fontSize: 12,
+            fontFamily: EMPTY_FONT,
             color: DEFAULT_COLOR
         }
     }

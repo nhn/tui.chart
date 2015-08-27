@@ -17,30 +17,37 @@ var Raphael = window.Raphael,
 var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype */ {
     /**
      * Render function or line chart.
+     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
-     * @param {{model: object, dimestion: object, theme: object}} data render data
+     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
+     * @return {object} paper raphael paper
      */
-    render: function(container, data, inCallback, outCallback) {
-        var model = data.model,
-            dimension = data.dimension,
+    render: function(paper, container, data, inCallback, outCallback) {
+        var dimension = data.dimension,
+            groupPositions = data.groupPositions,
             theme = data.theme,
             colors = theme.colors,
-            opacity = model.options.hasDot ? 1 : 0,
-            paper = Raphael(container, dimension.width, dimension.height),
-            groupPositions = model.makeLinePositions(data.dimension),
+            opacity = data.options.hasDot ? 1 : 0,
             groupPaths = this._getLinesPath(groupPositions),
-            //groupBgLines = this._renderBgLines(paper, groupPaths),
-            groupLines = this._renderLines(paper, groupPaths, colors),
             borderStyle = this._makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this._makeOutDotStyle(opacity, borderStyle),
-            groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
+            groupDots;
+
+        if (!paper) {
+            paper = Raphael(container, dimension.width, dimension.height);
+        }
+
+        this._renderLines(paper, groupPaths, colors);
+        groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
 
         this.outDotStyle = outDotStyle;
         this.groupDots = groupDots;
 
         this._attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
+
+        return paper;
     },
 
     /**
@@ -255,15 +262,13 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     /**
      * Bind hover event.
      * @param {object} target raphael item
-     * @param {object} dot raphael dot
-     * @param {object} outDotStyle mouseout dot style
      * @param {{left: number, top: number}} position position
      * @param {string} id id
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(target, dot, outDotStyle, position, id, inCallback, outCallback) {
+    _bindHoverEvent: function(target, position, id, inCallback, outCallback) {
         var that = this;
         target.hover(function() {
             that.showedId = id;
@@ -288,7 +293,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
                 var position = groupPositions[groupIndex][index],
                     id = index + '-' + groupIndex;
                     //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
-                this._bindHoverEvent(dot, dot, outDotStyle, position, id, inCallback, outCallback);
+                this._bindHoverEvent(dot, position, id, inCallback, outCallback);
                 //if (index > 0) {
                 //    prevIndex = index - 1;
                 //    prevDot = scope[prevIndex];
@@ -306,10 +311,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Show dot.
+     * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
-    showDot: function(data) {
+    showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
@@ -323,10 +328,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Hide dot.
+     * Hide animation.
      * @param {{groupIndex: number, index:number}} data hide info
      */
-    hideDot: function(data) {
+    hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];

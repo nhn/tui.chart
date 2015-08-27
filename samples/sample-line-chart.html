@@ -4,24 +4,127 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Line Chart Sample</title>
-    <link rel="stylesheet" type="text/css" href="dist/style.min.css" />
+    <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
-<body style="width:500px;min-height:400px;">
+<body>
 <div id="chart-area"></div>
+<div class="custom-area">
+    <input type="hidden" id="type" value="lineChart" />
+    <div>
+        <div>Chart Data</div>
+        <div class="btn-area">
+            <button id="btn" onclick="onClick();">Apply Custom Data</button>
+        </div>
+        <textarea id="data">
+{
+    "categories": ["cate1", "cate2", "cate3"],
+    "series": [
+        {
+            "name": "Legend1",
+            "data": [20, 30, 50]},
+        {
+            "name": "Legend2",
+            "data": [40, 40, 60]
+        },
+        {
+            "name": "Legend3",
+            "data": [60, 50, 10]
+        },
+        {
+            "name": "Legend4",
+            "data": [80, 10, 70]
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
+        </div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 500,
+        "height": 400,
+        "title": "Line Chart",
+        "format": "0010"
+    },
+    "yAxis": {
+        "title": "Y Axis"
+    },
+    "xAxis": {
+        "title": "X Axis"
+    },
+    "series": {
+        "hasDot": true
+    },
+    "theme": "newTheme"
+}
+     </textarea>
+    </div>
+    <div>
+        <div>Chart Theme</div>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+        </div>
+        <textarea id="theme">
+{
+    "chart": {
+        "background": "#ffffff",
+        "fontFamily": "Verdana"
+    },
+    "title": {
+        "color": "#000000"
+    },
+    "plot": {
+        "lineColor": "#e5dbc4",
+        "background": "#f6f1e5"
+    },
+    "series": {
+        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
+        "borderColor": "#8e6535"
+    },
+    "legend": {
+        "label": {
+            "color": "#6f491d"
+        }
+    }
+}
+        </textarea>
+    </div>
+
+</div>
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/raphael-min.js"></script>
 <script src="dist/application-chart.min.js"></script>
+<script src="js/sample.js"></script>
 <script>
-    var chart = ne.application.chart,
-        container = document.getElementById('chart-area'),
-        data = [
-            ['Groups', 'Group1', 'Group2', 'Group3'],
-            ['Legend1', 20, 30, 50],
-            ['Legend2', 40, 40, 60],
-            ['Legend3', 60, 50, 10],
-            ['Legend4', 80, 10, 70]
-        ];
-    chart.lineChart(container, data);
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['cate1', 'cate2', 'cate3'],
+            series: [
+                {
+                    name: 'Legend1',
+                    data: [20, 30, 50]
+                },
+                {
+                    name: 'Legend2',
+                    data: [40, 40, 60]
+                },
+                {
+                    name: 'Legend3',
+                    data: [60, 50, 10]
+                },
+                {
+                    name: 'Legend4',
+                    data: [80, 10, 70]
+                }
+            ]
+        };
+    ne.application.chart.lineChart(container, data);
 </script>
 </body>
 </html>

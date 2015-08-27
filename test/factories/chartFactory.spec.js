@@ -7,7 +7,7 @@ describe('test chartFactory', function() {
 
     chartFactory.register('barChart', TempClass);
 
-    it('test get', function() {
+    it('get()', function() {
         var chart = chartFactory.get('barChart');
 
         expect(!!chart).toBeTruthy();

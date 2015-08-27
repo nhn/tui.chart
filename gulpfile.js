@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
     source = require('vinyl-source-stream'),
@@ -48,11 +50,12 @@ gulp.task('compress-js', ['browserify'], function() {
 gulp.task('compile-less', function() {
     return gulp.src('src/less/style.less')
         .pipe(less())
+        .pipe(rename('application-chart.css'))
         .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('minify-css', ['compile-less'], function() {
-    return gulp.src('dist/style.css')
+    return gulp.src('dist/application-chart.css')
         .pipe(minifiyCss())
         .pipe(rename({
             extname: '.min.css'
@@ -87,7 +90,9 @@ gulp.task('clean-samples', function(callback) {
 });
 
 gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], function() {
-    gulp.src('dist/*.min.*')
+    gulp.src('dist/application-chart.min.css')
+        .pipe(gulp.dest('./samples/dist'));
+    gulp.src('dist/application-chart.min.js')
         .pipe(gulp.dest('./samples/dist'));
     gulp.src('lib/ne-code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));
@@ -96,6 +101,5 @@ gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], functi
 });
 
 gulp.task('deploy', ['copy-samples'], function() {
-
     process.exit(0);
 });

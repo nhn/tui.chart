@@ -7,14 +7,17 @@
 'use strict';
 
 var BarChart = require('./raphaelBarChart.js'),
-    LineChart = require('./raphaelLineChart.js');
+    LineChart = require('./raphaelLineChart.js'),
+    PieChart = require('./raphaelPieChart.js');
 
 var pluginName = 'raphael',
     pluginRaphael;
 
 pluginRaphael = {
     bar: BarChart,
-    line: LineChart
+    column: BarChart,
+    line: LineChart,
+    pie: PieChart
 };
 
 ne.application.chart.registerPlugin(pluginName, pluginRaphael);

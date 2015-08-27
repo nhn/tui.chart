@@ -8,19 +8,19 @@ describe('test pluginFactory', function() {
         bar: BarChart
     });
 
-    it('test get', function() {
+    it('get()', function() {
         var graphRenderer = pluginFactory.get('testRaphael', 'bar');
 
         expect(!!graphRenderer).toBeTruthy();
         expect(graphRenderer instanceof BarChart).toBeTruthy();
 
-        try{
+        try {
             pluginFactory.get('d3', 'bar');
         } catch(e) {
             expect(e.message).toEqual('Not exist d3 plugin.');
         }
 
-        try{
+        try {
             pluginFactory.get('raphael', 'line');
         } catch(e) {
             expect(e.message).toEqual('Not exist line chart renderer.');

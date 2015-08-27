@@ -16,7 +16,7 @@ var charts = {},
          * @param {object} options chart options
          * @returns {object} chart instance;
          */
-        get: function(chartType, data, options) {
+        get: function(chartType, data, theme, options) {
             var Chart = charts[chartType],
                 chart;
 
@@ -24,7 +24,7 @@ var charts = {},
                 throw new Error('Not exist ' + chartType + ' chart.');
             }
 
-            chart = new Chart(data, options);
+            chart = new Chart(data, theme, options);
 
             return chart;
         },
