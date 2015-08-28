@@ -10,12 +10,14 @@
 <body>
 <div id="chart-area"></div>
 <div class="custom-area">
-    <input type="hidden" id="type" value="comboChart" />
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="comboChart" />
+    </div>
     <div>
         <div>Chart Data</div>
-        <div class="btn-area">
-            <button id="btn" onclick="onClick();">Apply Custom Data</button>
-        </div>
         <textarea id="data">
 {
     "categories": ["cate1", "cate2", "cate3"],
@@ -50,9 +52,6 @@
     </div>
     <div>
         <div>Chart Options</div>
-        <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-options')">More Options</button>
-        </div>
         <textarea id="options">
 {
     "chart": {
@@ -69,17 +68,18 @@
         "title": "X Axis"
     },
     "series": {
-        "hasDot": true
-    },
-    "theme": "newTheme"
+        "line": {
+            "hasDot": true
+        }
+    }
 }
-     </textarea>
-    </div>
-    <div>
-        <div>Chart Theme</div>
+        </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-theme')">More Theme</button>
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-options')">More Options</button>
         </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
         <textarea id="theme">
 {
     "chart": {
@@ -106,6 +106,9 @@
     }
 }
         </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-theme')">More Theme</button>
+        </div>
     </div>
 
 </div>
@@ -138,14 +141,33 @@
                 ],
                 line: [
                     {
-                        name: 'Legend2_1',
+                        name: 'Legend',
                         data: [1, 2, 3]
                     }
                 ]
             }
+        },
+        options = {
+            chart: {
+                width: 500,
+                height: 400,
+                title: 'Combo Chart'
+            },
+            yAxis: [{
+                title: 'Y Axis'
+            }, {
+                title: 'YR Axis'
+            }],
+            xAxis: {
+                title: 'X Axis'
+            },
+            series: {
+                line: {
+                    hasDot: true
+                }
+            }
         };
-
-    ne.application.chart.comboChart(container, data);
+    ne.application.chart.comboChart(container, data, options);
 </script>
 </body>
 </html>

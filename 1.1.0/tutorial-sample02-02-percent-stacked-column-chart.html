@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Tutorial: Percent Stacked Column Chart Sample</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-sample01-01-bar-chart.html">Bar Chart Sample</a></li><li class="item"><a href="tutorial-sample01-02-normal-stacked-bar-chart.html">Normal Stacked Bar Chart Sample</a></li><li class="item"><a href="tutorial-sample02-01-column-chart.html">Column Chart Sample</a></li><li class="item"><a href="tutorial-sample02-02-percent-stacked-column-chart.html">Percent Stacked Column Chart Sample</a></li><li class="item"><a href="tutorial-sample03-01-line-chart.html">Line Chart Sample</a></li><li class="item"><a href="tutorial-sample04-01-combo-chart.html">Combo Chart Sample</a></li><li class="item"><a href="tutorial-sample05-01-pie-chart.html">Pie Chart Sample</a></li></ul><h3>Modules</h3><ul class="list modules"><li class="item" id="module:axisDataMaker"><span class="title"><a href="module-axisDataMaker.html">axisDataMaker</a></span><ul class="sublist methods module:axisDataMaker"><span class="subtitle">Methods</span><li><a href="module-axisDataMaker.html#.makeLabelAxisData">makeLabelAxisData</a></li><li><a href="module-axisDataMaker.html#.makeValueAxisData">makeValueAxisData</a></li></ul></li><li class="item" id="module:boundsMaker"><span class="title"><a href="module-boundsMaker.html">boundsMaker</a></span><ul class="sublist methods module:boundsMaker"><span class="subtitle">Methods</span><li><a href="module-boundsMaker.html#._getRenderedLabelsMaxHeight">_getRenderedLabelsMaxHeight</a></li><li><a href="module-boundsMaker.html#.make">make</a></li></ul></li><li class="item" id="module:calculator"><span class="title"><a href="module-calculator.html">calculator</a></span><ul class="sublist methods module:calculator"><span class="subtitle">Methods</span><li><a href="module-calculator.html#.arrayPivot">arrayPivot</a></li><li><a href="module-calculator.html#.calculateScale">calculateScale</a></li><li><a href="module-calculator.html#.getScaleStep">getScaleStep</a></li><li><a href="module-calculator.html#.makePixelPositions">makePixelPositions</a></li><li><a href="module-calculator.html#.normalizeAxisNumber">normalizeAxisNumber</a></li></ul></li><li class="item" id="module:dataConverter"><span class="title"><a href="module-dataConverter.html">dataConverter</a></span><ul class="sublist methods module:dataConverter"><span class="subtitle">Methods</span><li><a href="module-dataConverter.html#._findFormatFunctions">_findFormatFunctions</a></li><li><a href="module-dataConverter.html#._pickLegendLabels">_pickLegendLabels</a></li><li><a href="module-dataConverter.html#._pickValues">_pickValues</a></li><li><a href="module-dataConverter.html#.convert">convert</a></li></ul></li><li class="item" id="module:domHandler"><span class="title"><a href="module-domHandler.html">domHandler</a></span><ul class="sublist methods module:domHandler"><span class="subtitle">Methods</span><li><a href="module-domHandler.html#.addClass">addClass</a></li><li><a href="module-domHandler.html#.append">append</a></li><li><a href="module-domHandler.html#.create">create</a></li><li><a href="module-domHandler.html#.findParentByClass">findParentByClass</a></li><li><a href="module-domHandler.html#.hasClass">hasClass</a></li><li><a href="module-domHandler.html#.removeClass">removeClass</a></li></ul></li><li class="item" id="module:eventListener"><span class="title"><a href="module-eventListener.html">eventListener</a></span><ul class="sublist methods module:eventListener"><span class="subtitle">Methods</span><li><a href="module-eventListener.html#.bindEvent">bindEvent</a></li></ul></li><li class="item" id="module:renderUtil"><span class="title"><a href="module-renderUtil.html">renderUtil</a></span><ul class="sublist methods module:renderUtil"><span class="subtitle">Methods</span><li><a href="module-renderUtil.html#.concatStr">concatStr</a></li><li><a href="module-renderUtil.html#.getRenderedLabelHeight">getRenderedLabelHeight</a></li><li><a href="module-renderUtil.html#.getRenderedLabelWidth">getRenderedLabelWidth</a></li><li><a href="module-renderUtil.html#.isIE8">isIE8</a></li><li><a href="module-renderUtil.html#.makeFontCssText">makeFontCssText</a></li><li><a href="module-renderUtil.html#.renderBackground">renderBackground</a></li><li><a href="module-renderUtil.html#.renderDimension">renderDimension</a></li><li><a href="module-renderUtil.html#.renderPosition">renderPosition</a></li><li><a href="module-renderUtil.html#.renderTitle">renderTitle</a></li></ul></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="Axis"><span class="title"><a href="Axis.html">Axis</a></span><ul class="sublist members Axis"><span class="subtitle">Members</span><li><a href="Axis.html#className">className</a></li></ul><ul class="sublist division Axis"><li></li></ul><ul class="sublist methods Axis"><span class="subtitle">Methods</span><li><a href="Axis.html#render">render</a></li></ul></li><li class="item" id="AxisTypeBase"><span class="title"><a href="AxisTypeBase.html">AxisTypeBase</a></span><ul class="sublist methods AxisTypeBase"><span class="subtitle">Methods</span><li><a href="AxisTypeBase.html#addAxisComponents">addAxisComponents</a></li><li><a href="AxisTypeBase.html#addComponent">addComponent</a></li><li><a href="AxisTypeBase.html#getPaper">getPaper</a></li><li><a href="AxisTypeBase.html#makeBaseData">makeBaseData</a></li><li><a href="AxisTypeBase.html#render">render</a></li></ul></li><li class="item" id="BarChart"><span class="title"><a href="BarChart.html">BarChart</a></span><ul class="sublist methods BarChart"><span class="subtitle">Methods</span><li><a href="BarChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="BarChart.html#addComponent">addComponent</a></li><li><a href="BarChart.html#getPaper">getPaper</a></li><li><a href="BarChart.html#makeBaseData">makeBaseData</a></li><li><a href="BarChart.html#render">render</a></li></ul></li><li class="item" id="BarChartSeries"><span class="title"><a href="BarChartSeries.html">BarChartSeries</a></span><ul class="sublist members BarChartSeries"><span class="subtitle">Members</span><li><a href="BarChartSeries.html#className">className</a></li><li><a href="BarChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division BarChartSeries"><li></li></ul><ul class="sublist methods BarChartSeries"><span class="subtitle">Methods</span><li><a href="BarChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="BarChartSeries.html#_makePositions">_makePositions</a></li><li><a href="BarChartSeries.html#getPaper">getPaper</a></li><li><a href="BarChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="BarChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="BarChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="BarChartSeries.html#render">render</a></li><li><a href="BarChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="ChartBase"><span class="title"><a href="ChartBase.html">ChartBase</a></span><ul class="sublist methods ChartBase"><span class="subtitle">Methods</span><li><a href="ChartBase.html#addComponent">addComponent</a></li><li><a href="ChartBase.html#getPaper">getPaper</a></li><li><a href="ChartBase.html#makeBaseData">makeBaseData</a></li><li><a href="ChartBase.html#render">render</a></li></ul></li><li class="item" id="ColumnChart"><span class="title"><a href="ColumnChart.html">ColumnChart</a></span><ul class="sublist methods ColumnChart"><span class="subtitle">Methods</span><li><a href="ColumnChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="ColumnChart.html#addComponent">addComponent</a></li><li><a href="ColumnChart.html#getPaper">getPaper</a></li><li><a href="ColumnChart.html#makeBaseData">makeBaseData</a></li><li><a href="ColumnChart.html#render">render</a></li></ul></li><li class="item" id="ColumnChartSeries"><span class="title"><a href="ColumnChartSeries.html">ColumnChartSeries</a></span><ul class="sublist members ColumnChartSeries"><span class="subtitle">Members</span><li><a href="ColumnChartSeries.html#className">className</a></li><li><a href="ColumnChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division ColumnChartSeries"><li></li></ul><ul class="sublist methods ColumnChartSeries"><span class="subtitle">Methods</span><li><a href="ColumnChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="ColumnChartSeries.html#_makePositions">_makePositions</a></li><li><a href="ColumnChartSeries.html#getPaper">getPaper</a></li><li><a href="ColumnChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="ColumnChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="ColumnChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="ColumnChartSeries.html#render">render</a></li><li><a href="ColumnChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="ComboChart"><span class="title"><a href="ComboChart.html">ComboChart</a></span><ul class="sublist methods ComboChart"><span class="subtitle">Methods</span><li><a href="ComboChart.html#addComponent">addComponent</a></li><li><a href="ComboChart.html#getPaper">getPaper</a></li><li><a href="ComboChart.html#makeBaseData">makeBaseData</a></li><li><a href="ComboChart.html#render">render</a></li></ul></li><li class="item" id="Legend"><span class="title"><a href="Legend.html">Legend</a></span><ul class="sublist members Legend"><span class="subtitle">Members</span><li><a href="Legend.html#className">className</a></li></ul><ul class="sublist division Legend"><li></li></ul><ul class="sublist methods Legend"><span class="subtitle">Methods</span><li><a href="Legend.html#render">render</a></li></ul></li><li class="item" id="LineChart"><span class="title"><a href="LineChart.html">LineChart</a></span><ul class="sublist methods LineChart"><span class="subtitle">Methods</span><li><a href="LineChart.html#addAxisComponents">addAxisComponents</a></li><li><a href="LineChart.html#addComponent">addComponent</a></li><li><a href="LineChart.html#getPaper">getPaper</a></li><li><a href="LineChart.html#makeBaseData">makeBaseData</a></li><li><a href="LineChart.html#render">render</a></li></ul></li><li class="item" id="LineChartSeries"><span class="title"><a href="LineChartSeries.html">LineChartSeries</a></span><ul class="sublist members LineChartSeries"><span class="subtitle">Members</span><li><a href="LineChartSeries.html#className">className</a></li><li><a href="LineChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division LineChartSeries"><li></li></ul><ul class="sublist methods LineChartSeries"><span class="subtitle">Methods</span><li><a href="LineChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="LineChartSeries.html#_makePositions">_makePositions</a></li><li><a href="LineChartSeries.html#getPaper">getPaper</a></li><li><a href="LineChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="LineChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="LineChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="LineChartSeries.html#render">render</a></li><li><a href="LineChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="PieChart"><span class="title"><a href="PieChart.html">PieChart</a></span><ul class="sublist methods PieChart"><span class="subtitle">Methods</span><li><a href="PieChart.html#addComponent">addComponent</a></li><li><a href="PieChart.html#getPaper">getPaper</a></li><li><a href="PieChart.html#makeBaseData">makeBaseData</a></li><li><a href="PieChart.html#render">render</a></li></ul></li><li class="item" id="PieChartSeries"><span class="title"><a href="PieChartSeries.html">PieChartSeries</a></span><ul class="sublist members PieChartSeries"><span class="subtitle">Members</span><li><a href="PieChartSeries.html#className">className</a></li><li><a href="PieChartSeries.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division PieChartSeries"><li></li></ul><ul class="sublist methods PieChartSeries"><span class="subtitle">Methods</span><li><a href="PieChartSeries.html#_makeBounds">_makeBounds</a></li><li><a href="PieChartSeries.html#_makePositions">_makePositions</a></li><li><a href="PieChartSeries.html#getPaper">getPaper</a></li><li><a href="PieChartSeries.html#hideTooltip">hideTooltip</a></li><li><a href="PieChartSeries.html#onHideAnimation">onHideAnimation</a></li><li><a href="PieChartSeries.html#onShowAnimation">onShowAnimation</a></li><li><a href="PieChartSeries.html#render">render</a></li><li><a href="PieChartSeries.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="Plot"><span class="title"><a href="Plot.html">Plot</a></span><ul class="sublist members Plot"><span class="subtitle">Members</span><li><a href="Plot.html#className">className</a></li></ul><ul class="sublist division Plot"><li></li></ul><ul class="sublist methods Plot"><span class="subtitle">Methods</span><li><a href="Plot.html#makeHorizontalPixelPositions">makeHorizontalPixelPositions</a></li><li><a href="Plot.html#makeVerticalPixelPositions">makeVerticalPixelPositions</a></li><li><a href="Plot.html#render">render</a></li></ul></li><li class="item" id="RaphaelBarChart"><span class="title"><a href="RaphaelBarChart.html">RaphaelBarChart</a></span><ul class="sublist methods RaphaelBarChart"><span class="subtitle">Methods</span><li><a href="RaphaelBarChart.html#render">render</a></li></ul></li><li class="item" id="RaphaelLineChart"><span class="title"><a href="RaphaelLineChart.html">RaphaelLineChart</a></span><ul class="sublist methods RaphaelLineChart"><span class="subtitle">Methods</span><li><a href="RaphaelLineChart.html#hideAnimation">hideAnimation</a></li><li><a href="RaphaelLineChart.html#render">render</a></li><li><a href="RaphaelLineChart.html#showAnimation">showAnimation</a></li></ul></li><li class="item" id="RaphaelPieChart"><span class="title"><a href="RaphaelPieChart.html">RaphaelPieChart</a></span><ul class="sublist methods RaphaelPieChart"><span class="subtitle">Methods</span><li><a href="RaphaelPieChart.html#hideAnimation">hideAnimation</a></li><li><a href="RaphaelPieChart.html#render">render</a></li><li><a href="RaphaelPieChart.html#showAnimation">showAnimation</a></li></ul></li><li class="item" id="Series"><span class="title"><a href="Series.html">Series</a></span><ul class="sublist members Series"><span class="subtitle">Members</span><li><a href="Series.html#className">className</a></li><li><a href="Series.html#graphRenderer">graphRenderer</a></li></ul><ul class="sublist division Series"><li></li></ul><ul class="sublist methods Series"><span class="subtitle">Methods</span><li><a href="Series.html#_makeBounds">_makeBounds</a></li><li><a href="Series.html#_makeBounds">_makeBounds</a></li><li><a href="Series.html#_makePositions">_makePositions</a></li><li><a href="Series.html#getPaper">getPaper</a></li><li><a href="Series.html#hideTooltip">hideTooltip</a></li><li><a href="Series.html#onHideAnimation">onHideAnimation</a></li><li><a href="Series.html#onShowAnimation">onShowAnimation</a></li><li><a href="Series.html#render">render</a></li><li><a href="Series.html#showTooltip">showTooltip</a></li></ul></li><li class="item" id="Tooltip"><span class="title"><a href="Tooltip.html">Tooltip</a></span><ul class="sublist members Tooltip"><span class="subtitle">Members</span><li><a href="Tooltip.html#className">className</a></li></ul><ul class="sublist division Tooltip"><li></li></ul><ul class="sublist methods Tooltip"><span class="subtitle">Methods</span><li><a href="Tooltip.html#attachEvent">attachEvent</a></li><li><a href="Tooltip.html#onHide">onHide</a></li><li><a href="Tooltip.html#onMouseout">onMouseout</a></li><li><a href="Tooltip.html#onMouseover">onMouseover</a></li><li><a href="Tooltip.html#onShow">onShow</a></li><li><a href="Tooltip.html#render">render</a></li></ul></li></ul><h3>Namespaces</h3><ul class="list namespaces"><li class="item" id="ne.application.chart"><span class="icon blue static">static</span><span class="title"><a href="ne.application.chart.html">chart</a></span><ul class="sublist methods ne.application.chart"><span class="subtitle">Methods</span><li><a href="ne.application.chart.html#.barChart">barChart</a></li><li><a href="ne.application.chart.html#.columnChart">columnChart</a></li><li><a href="ne.application.chart.html#.comboChart">comboChart</a></li><li><a href="ne.application.chart.html#.lineChart">lineChart</a></li><li><a href="ne.application.chart.html#.pieChart">pieChart</a></li><li><a href="ne.application.chart.html#.registerPlugin">registerPlugin</a></li><li><a href="ne.application.chart.html#.registerTheme">registerTheme</a></li></ul></li></ul></div>
+        <div id="main" class="main"><section>
+<header>
+    
+
+    <h2>Percent Stacked Column Chart Sample</h2>
+</header>
+
+<article>
+	
+    <a href="tutorials/sample02-02-percent-stacked-column-chart.html" target="_blank">Open this sample in New Tab</a><br/>
+    <iframe id="exampleFrame" width="500" height="700" frameborder="0" src=tutorials/sample02-02-percent-stacked-column-chart.html onload="onIframeLoad()"></iframe>
+    <br/>
+    <div id='codeArea'></div>
+</article>
+<script>
+/**
+ * iframe load 이벤트 핸들러
+ */
+function onIframeLoad() {
+    generateCode();
+    autoResize();
+}
+
+/**
+ * iframe 의 너비/높이를 resize 한다.
+ */
+function autoResize() {
+    var ef = document.getElementById('exampleFrame');
+    ef.width = document.getElementById('main').clientWidth - 40;
+    ef.height = getIframeDocument().body.clientHeight + 40;
+}
+
+/**
+ * iframe 의 document 를 반환한다.
+ * @returns {HTMLDocument|Document}
+ */
+function getIframeDocument() {
+    var ef = document.getElementById('exampleFrame');
+    return ef.contentDocument || ef.contentWindow.document;
+}
+
+/**
+ * iframe 마지막 script code 를 div 에 할당한다.
+ */
+function generateCode() {
+    var codeArea = document.getElementById('codeArea'),
+        doc = getIframeDocument(),
+        scripts;
+
+    if (doc) {
+        scripts = doc.getElementsByTagName('script');
+        codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerHTML) + '</pre>';
+    }
+}
+
+/**
+ * html entity 로 인코딩한다.
+ * @param html
+ * @returns {XML|string|void}
+ */
+function encodeHTMLEntity(html) {
+    var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
+    return html.replace(/[<>&"']/g, function(m0) {
+        return entities[m0] ? '&' + entities[m0] + ';' : m0;
+    });
+}
+</script>
+
+</section>
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
