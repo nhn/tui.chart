@@ -1,13 +1,15 @@
 'use strict';
 
 (function(root) {
-    var onClick = function() {
+    var container = document.getElementById('chart-area'),
+        type = document.getElementById('type').value,
+        elData = document.getElementById('data'),
+        elOptions = document.getElementById('options'),
+        elThemeArea = document.getElementById('theme-area'),
+        elUseTheme = document.getElementById('use-theme'),
+        elTheme = document.getElementById('theme');
+    var onBtnClick = function() {
         var chart = root.ne.application.chart,
-            container = document.getElementById('chart-area'),
-            type = document.getElementById('type').value,
-            elData = document.getElementById('data'),
-            elOptions = document.getElementById('options'),
-            elTheme = document.getElementById('theme'),
             data = elData ? JSON.parse(elData.value) : {},
             options = elOptions ? JSON.parse(elOptions.value) : null,
             theme = elOptions ? JSON.parse(elTheme.value) : null;
@@ -16,14 +18,31 @@
             chart.registerTheme(options.theme, theme);
         }
 
+        if (!elUseTheme.checked) {
+            delete options.theme;
+        }
+
         container.innerHTML = '';
         chart[type](container, data, options);
+    };
+
+    var onCheckboxClick = function(elTarget) {
+        var objOptions = JSON.parse(elOptions.value);
+        if (elTarget.checked) {
+            elThemeArea.className = 'show';
+            objOptions.theme = 'newTheme';
+        } else {
+            elThemeArea.className = '';
+            delete objOptions.theme;
+        }
+        elOptions.value = JSON.stringify(objOptions, null, 4);
     };
 
     var openWindow = function(url) {
         window.open(url, '_blank');
     };
 
-    root.onClick = onClick;
+    root.onBtnClick = onBtnClick;
     root.openWindow = openWindow;
+    root.onCheckboxClick = onCheckboxClick;
 })(window);

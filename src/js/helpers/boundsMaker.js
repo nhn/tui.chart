@@ -201,6 +201,26 @@ var boundsMaker = {
     },
 
     /**
+     * Get width about y axis.
+     * @param {object} yAxisOption y axis option
+     * @param {array.<string>} labels labels
+     * @param {object} theme yAxis theme
+     * @returns {number} y axis width
+     * @private
+     */
+    _getYAxisWidth: function(yAxisOption, labels, theme) {
+        var yAxisOptions,
+            title = '';
+
+        if (yAxisOption) {
+            yAxisOptions = [].concat(yAxisOption);
+            title = yAxisOptions[0].title;
+        }
+
+        return this._getVerticalAxisWidth(title, labels, theme);
+    },
+
+    /**
      * Get width about y right axis.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
@@ -263,12 +283,11 @@ var boundsMaker = {
         options = params.options;
         convertData = params.convertData;
         yAxisChartTypes = params.yAxisChartTypes;
-        yAxisTitle = options.yAxis && options.yAxis.title;
         xAxisTitle = options.xAxis && options.xAxis.title;
         maxLabel = this._getValueAxisMaxLabel(convertData, yAxisChartTypes);
         vLabels = params.isVertical ? [maxLabel] : convertData.labels;
         hLabels = params.isVertical ? convertData.labels : [maxLabel];
-        yAxisWidth = this._getVerticalAxisWidth(yAxisTitle, vLabels, theme.yAxis);
+        yAxisWidth = this._getYAxisWidth(options.yAxis, vLabels, theme.yAxis);
         xAxisHeight = this._getHorizontalAxisHeight(xAxisTitle, hLabels, theme.xAxis);
         yrAxisWidth = this._getYRAxisWidth({
             convertData: convertData,

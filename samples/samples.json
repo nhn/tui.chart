@@ -1,17 +1,23 @@
 {
-  "sample-bar-chart": {
+  "sample01-01-bar-chart": {
     "title": "Bar Chart Sample"
   },
-  "sample-column-chart": {
+  "sample01-02-normal-stacked-bar-chart": {
+    "title": "Normal Stacked Bar Chart Sample"
+  },
+  "sample02-01-column-chart": {
     "title": "Column Chart Sample"
   },
-  "sample-line-chart": {
+  "sample02-02-percent-stacked-column-chart": {
+    "title": "Percent Stacked Column Chart Sample"
+  },
+  "sample03-01-line-chart": {
     "title": "Line Chart Sample"
   },
-  "sample-combo-chart": {
+  "sample04-01-combo-chart": {
     "title": "Combo Chart Sample"
   },
-  "sample-pie-chart": {
+  "sample05-01-pie-chart": {
     "title": "Pie Chart Sample"
   }
 }

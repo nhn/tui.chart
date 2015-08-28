@@ -32,7 +32,7 @@ describe('test renderUtil', function() {
         var result = renderUtil._createSizeCheckEl(),
             elCompare = dom.create('DIV');
 
-        elCompare.style.cssText = 'position:relative;top:10000px;left:10000px;line-height:1';
+        elCompare.style.cssText = 'position:relative;top:10000px;left:10000px;width:1000px;height:100;line-height:1';
         expect(result.firstChild.nodeName).toEqual('SPAN');
         expect(result.style.cssText).toEqual(elCompare.style.cssText);
     });

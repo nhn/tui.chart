@@ -55,6 +55,7 @@ var renderUtil = {
         return cssTexts.join(';');
     },
 
+    checkEl: null,
     /**
      * Create element for size check.
      * @memberOf module:renderUtil
@@ -62,11 +63,18 @@ var renderUtil = {
      * @private
      */
     _createSizeCheckEl: function() {
-        var elDiv = dom.create('DIV'),
-            elSpan = dom.create('SPAN');
+        var elDiv, elSpan;
+        if (this.checkEl) {
+            return this.checkEl;
+        }
+
+        elDiv = dom.create('DIV');
+        elSpan = dom.create('SPAN');
 
         elDiv.appendChild(elSpan);
-        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px;line-height:1';
+        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px;width:1000px;height:100;line-height:1';
+
+        this.checkEl = elDiv;
         return elDiv;
     },
 
@@ -80,9 +88,14 @@ var renderUtil = {
      * @private
      */
     _getRenderedLabelSize: function(label, theme, property) {
-        var elDiv = this._createSizeCheckEl(),
-            elSpan = elDiv.firstChild,
-            labelSize;
+        var elDiv, elSpan, labelSize;
+
+        if (!label) {
+            return 0;
+        }
+
+        elDiv = this._createSizeCheckEl();
+        elSpan = elDiv.firstChild;
 
         theme = theme || {};
         elSpan.innerHTML = label;

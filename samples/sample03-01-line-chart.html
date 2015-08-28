@@ -10,12 +10,14 @@
 <body>
 <div id="chart-area"></div>
 <div class="custom-area">
-    <input type="hidden" id="type" value="lineChart" />
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="lineChart" />
+    </div>
     <div>
         <div>Chart Data</div>
-        <div class="btn-area">
-            <button id="btn" onclick="onClick();">Apply Custom Data</button>
-        </div>
         <textarea id="data">
 {
     "categories": ["cate1", "cate2", "cate3"],
@@ -41,16 +43,12 @@
     </div>
     <div>
         <div>Chart Options</div>
-        <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
-        </div>
         <textarea id="options">
 {
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "Line Chart",
-        "format": "0010"
+        "title": "Line Chart"
     },
     "yAxis": {
         "title": "Y Axis"
@@ -60,16 +58,15 @@
     },
     "series": {
         "hasDot": true
-    },
-    "theme": "newTheme"
+    }
 }
-     </textarea>
-    </div>
-    <div>
-        <div>Chart Theme</div>
+        </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
         </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
         <textarea id="theme">
 {
     "chart": {
@@ -94,6 +91,9 @@
     }
 }
         </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+        </div>
     </div>
 
 </div>
@@ -123,8 +123,24 @@
                     data: [80, 10, 70]
                 }
             ]
-        };
-    ne.application.chart.lineChart(container, data);
+        },
+            options = {
+                chart: {
+                    width: 500,
+                    height: 400,
+                    title: 'Line Chart'
+                },
+                yAxis: {
+                    title: 'Y Axis'
+                },
+                xAxis: {
+                    title: 'X Axis'
+                },
+                series: {
+                    hasDot: true
+                }
+            };
+    ne.application.chart.lineChart(container, data, options);
 </script>
 </body>
 </html>

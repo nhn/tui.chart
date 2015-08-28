@@ -149,9 +149,14 @@ describe('test boundsMaker', function() {
                 }
             },
             options: {
-                yAxis: {
-                    title: 'YAxis title'
-                },
+                yAxis: [
+                    {
+                        title: 'YAxis title'
+                    },
+                    {
+                        title: 'YRAxis title'
+                    }
+                ],
                 xAxis: {
                     title: 'XAxis title'
                 }
@@ -287,15 +292,15 @@ describe('test boundsMaker', function() {
             height: 400
         });
 
-        expect(result.title.height).toBeGreaterThan(32);
-        expect(result.title.height).toBeLessThan(37);
+        expect(result.title.height).toBeGreaterThan(19);
+        expect(result.title.height).toBeLessThan(21);
         expect(result.plot.width).toBeGreaterThan(321);
-        expect(result.plot.width).toBeLessThan(350);
-        expect(result.plot.height).toBeGreaterThan(291);
-        expect(result.plot.height).toBeLessThan(299);
+        expect(result.plot.width).toBeLessThan(351);
+        expect(result.plot.height).toBeGreaterThan(309);
+        expect(result.plot.height).toBeLessThan(313);
 
-        expect(result.legend.width).toBeGreaterThan(84);
-        expect(result.legend.width).toBeLessThan(101);
+        expect(result.legend.width).toBeGreaterThan(71);
+        expect(result.legend.width).toBeLessThan(76);
 
         expect(result.yAxis.width).toBeGreaterThan(49);
         expect(result.yAxis.width).toBeLessThan(59);
