@@ -225,10 +225,12 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Loading animation
+     * First animation
      */
-    loadingAnimation: function() {
-        this.graphRenderer.loadingAnimation();
+    firstAnimation: function() {
+        if (this.graphRenderer.firstAnimation) {
+            this.graphRenderer.firstAnimation();
+        }
     }
 });
 

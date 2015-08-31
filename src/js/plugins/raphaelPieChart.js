@@ -8,7 +8,8 @@
 
 var Raphael = window.Raphael,
     RAD = Math.PI / 180,
-    ANIMATION_TIME = 500;
+    ANIMATION_TIME = 500,
+    LOADING_ANIMATION_TIME = 700;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer.
@@ -25,13 +26,43 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @return {object} paper raphael paper
      */
     render: function(paper, container, data, inCallback, outCallback) {
-        var dimension = data.dimension;
+        var dimension = data.dimension,
+            that = this;
         if (!paper) {
             paper = Raphael(container, dimension.width, dimension.height);
         }
+
+        if (!paper.customAttributes.sector) {
+            // 객체를 인자로 받게되면 오동작 함
+            paper.customAttributes.sector = function(cx, cy, r, startAngle, endAngle) {
+                var path = that._makeSectorPath(cx, cy, r, startAngle, endAngle);
+                return {path: path};
+            };
+        }
+
+        this.circleBounds = data.circleBounds;
         this._renderPie(paper, data, inCallback, outCallback);
 
         return paper;
+    },
+
+    /**
+     * To make sector path.
+     * @param {number} cx center x
+     * @param {number} cy center y
+     * @param {number} r round
+     * @param {number} startAngle start angle
+     * @param {number} endAngle end angel
+     * @returns {string[]} sector path
+     * @private
+     */
+    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
+        var x1 = cx + r * Math.cos(-startAngle * RAD),
+            x2 = cx + r * Math.cos(-endAngle * RAD),
+            y1 = cy + r * Math.sin(-startAngle * RAD),
+            y2 = cy + r * Math.sin(-endAngle * RAD),
+            path = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 0, x2, y2, "z"];
+        return path;
     },
 
     /**
@@ -46,15 +77,10 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _renderSector: function (params) {
-        var cx = params.circleBounds.cx,
-            cy = params.circleBounds.cy,
-            r = params.circleBounds.r,
-            x1 = cx + r * Math.cos(-params.startAngle * RAD),
-            x2 = cx + r * Math.cos(-params.endAngle * RAD),
-            y1 = cy + r * Math.sin(-params.startAngle * RAD),
-            y2 = cy + r * Math.sin(-params.endAngle * RAD),
-            pathParam = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(params.endAngle - params.startAngle > 180), 0, x2, y2, "z"];
-        return params.paper.path(pathParam).attr(params.attrs);
+        var circleBounds = params.circleBounds;
+        return params.paper.path().attr({
+            sector: [circleBounds.cx, circleBounds.cy, circleBounds.r, params.startAngle, params.endAngle]
+        }).attr(params.attrs);
     },
 
     /**
@@ -75,7 +101,8 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             r = circleBounds.r,
             angle = 0,
             delta = 10,
-            pies = paper.set();
+            sectors = paper.set(),
+            angles = [];
 
         ne.util.forEachArray(percentValues, function(percentValue, index) {
             var anglePlus = 360 * percentValue,
@@ -85,31 +112,36 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
                     paper: paper,
                     circleBounds: circleBounds,
                     startAngle: angle,
-                    endAngle: angle + anglePlus,
+                    endAngle: angle,
                     attrs: {
                         fill: "90-" + color + "-" + color,
                         stroke: chartBackground,
-                        'stroke-width': 1/**/
+                        'stroke-width': 1
                     }
-                }),
-                position = {
-                    left: cx + (r + delta) * Math.cos(-popAngle * RAD),
-                    top: cy + (r + delta) * Math.sin(-popAngle * RAD)
-                };
+                });
+
+            sectors.push(p);
+            angles.push({
+                startAngle: angle,
+                endAngle: angle + anglePlus,
+                percentValue: percentValue
+            });
+            angle += anglePlus;
 
             this._bindHoverEvent({
                 target: p,
-                position: position,
+                position: {
+                    left: cx + (r + delta) * Math.cos(-popAngle * RAD),
+                    top: cy + (r + delta) * Math.sin(-popAngle * RAD)
+                },
                 id: '0-' + index,
                 inCallback: inCallback,
                 outCallback: outCallback
             });
-            pies.push(p);
-            angle += anglePlus;
         }, this);
 
-        this.circleBounds = circleBounds;
-        this.pies = pies;
+        this.sectors = sectors;
+        this.angles = angles;
     },
 
     /**
@@ -137,10 +169,12 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        var target = this.pies[data.index],
+        var target = this.sectors[data.index],
             cx = this.circleBounds.cx,
             cy = this.circleBounds.cy;
-        target.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ANIMATION_TIME, "elastic");
+        target.animate({
+            transform: "s1.1 1.1 " + cx + " " + cy
+        }, ANIMATION_TIME, "elastic");
     },
 
     /**
@@ -148,8 +182,26 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation: function(data) {
-        var target = this.pies[data.index];
-        target.stop().animate({transform: ""}, ANIMATION_TIME, "elastic");
+        var target = this.sectors[data.index];
+        target.animate({transform: ""}, ANIMATION_TIME, "elastic");
+    },
+
+    /**
+     * First animation.
+     */
+    firstAnimation: function() {
+        var circleBounds = this.circleBounds,
+            angles = this.angles,
+            time = 0;
+        ne.util.forEachArray(this.sectors, function(sector, index) {
+            var angle = angles[index],
+                animationTime = LOADING_ANIMATION_TIME * angle.percentValue,
+                anim = Raphael.animation({
+                    sector: [circleBounds.cx, circleBounds.cy, circleBounds.r, angle.startAngle, angle.endAngle]
+                }, animationTime);
+            sector.animate(anim.delay(time));
+            time += animationTime;
+        }, this);
     }
 });
 

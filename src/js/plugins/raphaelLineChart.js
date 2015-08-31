@@ -358,9 +358,9 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     },
 
     /**
-     * Loading animation
+     * First animation
      */
-    loadingAnimation: function() {
+    firstAnimation: function() {
         var groupLines = this.groupLines,
             groupPaths = this.groupPaths,
             opacity = this.dotOpacity,

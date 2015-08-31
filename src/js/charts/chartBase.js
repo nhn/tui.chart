@@ -177,8 +177,8 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _componentsAnimation: function(components) {
         ne.util.forEachArray(components, function(component) {
-            if (component.loadingAnimation) {
-                component.loadingAnimation();
+            if (component.firstAnimation) {
+                component.firstAnimation();
             }
         });
     }
