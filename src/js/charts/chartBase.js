@@ -161,6 +161,26 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
         tooltip.on('showAnimation', series.onShowAnimation, series);
         tooltip.on('hideAnimation', series.onHideAnimation, series);
+    },
+
+    /**
+     * Animation.
+     */
+    animation: function() {
+        this._componentsAnimation(this.components);
+    },
+
+    /**
+     * Components animation
+     * @param {array.<object>} components components
+     * @private
+     */
+    _componentsAnimation: function(components) {
+        ne.util.forEachArray(components, function(component) {
+            if (component.loadingAnimation) {
+                component.loadingAnimation();
+            }
+        });
     }
 });
 

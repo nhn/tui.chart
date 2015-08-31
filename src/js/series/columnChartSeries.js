@@ -50,12 +50,21 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
-                    var barHeight = value * dimension.height;
+                    var barHeight = value * dimension.height,
+                        top = dimension.height - barHeight + HIDDEN_WIDTH;
                     return {
-                        top: dimension.height - barHeight + HIDDEN_WIDTH,
-                        left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
-                        width: barWidth,
-                        height: barHeight
+                        start: {
+                            top: top + barHeight,
+                            left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
+                            width: barWidth,
+                            height: 0
+                        },
+                        end: {
+                            top: dimension.height - barHeight + HIDDEN_WIDTH,
+                            left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
+                            width: barWidth,
+                            height: barHeight
+                        }
                     };
                 }, this);
             });
@@ -78,10 +87,18 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                 return ne.util.map(values, function (value) {
                     var height = value * dimension.height,
                         bound = {
-                            top: dimension.height - height - top,
-                            left: paddingLeft,
-                            width: barWidth,
-                            height: height
+                            start: {
+                                top: dimension.height,
+                                left: paddingLeft,
+                                width: barWidth,
+                                height: 0
+                            },
+                            end: {
+                                top: dimension.height - height - top,
+                                left: paddingLeft,
+                                width: barWidth,
+                                height: height
+                            }
                         };
                     top += height;
                     return bound;

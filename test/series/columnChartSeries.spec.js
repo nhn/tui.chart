@@ -33,16 +33,32 @@ describe('test ColumnChartSeries', function() {
         });
         expect(bounds).toEqual([
             [{
-                top: 301,
-                left: 24,
-                width: 50,
-                height: 100
+                start: {
+                    top: 401,
+                    left: 24,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 301,
+                    left: 24,
+                    width: 50,
+                    height: 100
+                }
             }],
             [{
-                top: 201,
-                left: 124,
-                width: 50,
-                height: 200
+                start: {
+                    top: 401,
+                    left: 124,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 201,
+                    left: 124,
+                    width: 50,
+                    height: 200
+                }
             }]
         ]);
     });
@@ -56,23 +72,47 @@ describe('test ColumnChartSeries', function() {
         }, 1);
         expect(bounds).toEqual([
             [{
-                top: 320,
-                left: 25,
-                width: 50,
-                height: 80
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 320,
+                    left: 25,
+                    width: 50,
+                    height: 80
+                }
             },
-                {
+            {
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
+                },
+                end: {
                     top: 200,
                     left: 25,
                     width: 50,
                     height: 120
+                }
+            },
+            {
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
                 },
-                {
+                end: {
                     top: 0,
                     left: 25,
                     width: 50,
                     height: 200
-                }]
+                }
+            }]
         ]);
     });
 
@@ -85,16 +125,32 @@ describe('test ColumnChartSeries', function() {
         });
         expect(bounds).toEqual([
             [{
-                top: 301,
-                left: 24,
-                width: 50,
-                height: 100
+                start: {
+                    top: 401,
+                    left: 24,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 301,
+                    left: 24,
+                    width: 50,
+                    height: 100
+                }
             }],
             [{
-                top: 201,
-                left: 124,
-                width: 50,
-                height: 200
+                start: {
+                    top: 401,
+                    left: 124,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 201,
+                    left: 124,
+                    width: 50,
+                    height: 200
+                }
             }]
         ]);
     });
@@ -109,23 +165,47 @@ describe('test ColumnChartSeries', function() {
         }, 1);
         expect(bounds).toEqual([
             [{
-                top: 320,
-                left: 25,
-                width: 50,
-                height: 80
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
+                },
+                end: {
+                    top: 320,
+                    left: 25,
+                    width: 50,
+                    height: 80
+                }
             },
-                {
+            {
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
+                },
+                end: {
                     top: 200,
                     left: 25,
                     width: 50,
                     height: 120
+                }
+            },
+            {
+                start: {
+                    top: 400,
+                    left: 25,
+                    width: 50,
+                    height: 0
                 },
-                {
+                end: {
                     top: 0,
                     left: 25,
                     width: 50,
                     height: 200
-                }]
+                }
+            }]
         ]);
     });
 });

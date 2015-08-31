@@ -44,7 +44,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Show tooltip (mouseover callback).
      * @param {string} prefix tooltip id prefix
-     * @param {boolean} isVertical whether vertical or not
+     * @param {boolean} isPointPosition whether point position or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
@@ -222,6 +222,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
         this.graphRenderer.hideAnimation.call(this.graphRenderer, data);
+    },
+
+    /**
+     * Loading animation
+     */
+    loadingAnimation: function() {
+        this.graphRenderer.loadingAnimation();
     }
 });
 
