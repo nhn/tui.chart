@@ -8,6 +8,8 @@
 
 var Raphael = window.Raphael;
 
+var ANIMATION_TIME = 700;
+
 /**
  * @classdesc RaphaelBarChart is graph renderer.
  * @class RaphaelBarChart
@@ -122,7 +124,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
                 y: bound.top,
                 width: bound.width,
                 height: bound.height
-            }, 700);
+            }, ANIMATION_TIME);
         });
     }
 });

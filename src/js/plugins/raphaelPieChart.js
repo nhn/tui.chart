@@ -75,7 +75,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             r = circleBounds.r,
             angle = 0,
             delta = 10,
-            chart = paper.set();
+            pies = paper.set();
 
         ne.util.forEachArray(percentValues, function(percentValue, index) {
             var anglePlus = 360 * percentValue,
@@ -89,7 +89,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
                     attrs: {
                         fill: "90-" + color + "-" + color,
                         stroke: chartBackground,
-                        'stroke-width': 1
+                        'stroke-width': 1/**/
                     }
                 }),
                 position = {
@@ -104,12 +104,12 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
                 inCallback: inCallback,
                 outCallback: outCallback
             });
-            chart.push(p);
+            pies.push(p);
             angle += anglePlus;
         }, this);
 
         this.circleBounds = circleBounds;
-        this.chart = chart;
+        this.pies = pies;
     },
 
     /**
@@ -137,7 +137,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        var target = this.chart[data.index],
+        var target = this.pies[data.index],
             cx = this.circleBounds.cx,
             cy = this.circleBounds.cy;
         target.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ANIMATION_TIME, "elastic");
@@ -148,7 +148,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation: function(data) {
-        var target = this.chart[data.index];
+        var target = this.pies[data.index];
         target.stop().animate({transform: ""}, ANIMATION_TIME, "elastic");
     }
 });
