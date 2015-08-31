@@ -192,15 +192,15 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     firstAnimation: function() {
         var circleBounds = this.circleBounds,
             angles = this.angles,
-            time = 0;
+            delayTime = 0;
         ne.util.forEachArray(this.sectors, function(sector, index) {
             var angle = angles[index],
                 animationTime = LOADING_ANIMATION_TIME * angle.percentValue,
                 anim = Raphael.animation({
                     sector: [circleBounds.cx, circleBounds.cy, circleBounds.r, angle.startAngle, angle.endAngle]
                 }, animationTime);
-            sector.animate(anim.delay(time));
-            time += animationTime;
+            sector.animate(anim.delay(delayTime));
+            delayTime += animationTime;
         }, this);
     }
 });
