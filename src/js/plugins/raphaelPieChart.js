@@ -52,12 +52,16 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @returns {{path: array}} sector path
      * @private
      */
-    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) { // 객체를 인자로 받게되면 오동작 하기에 하나하나 따로 전달 받음
-        var x1 = cx + r * Math.cos(-startAngle * RAD),
-            x2 = cx + r * Math.cos(-endAngle * RAD),
-            y1 = cy + r * Math.sin(-startAngle * RAD),
-            y2 = cy + r * Math.sin(-endAngle * RAD),
-            path = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 0, x2, y2, "z"];
+    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
+        var x1 = cx + r * Math.sin(startAngle * RAD),
+            x2 = cx + r * Math.sin(endAngle * RAD),
+            y1 = cy - r * Math.cos(startAngle * RAD),
+            y2 = cy - r * Math.cos(endAngle * RAD),
+            big = endAngle - startAngle > 180 ? 1 : 0,
+            path = ["M", cx, cy,
+                "L", x2, y2,
+                "A", r, r, 0, big, 0, x1, y1,
+                "Z"];
         return {path: path};
     },
 
@@ -101,7 +105,8 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             angles = [];
 
         ne.util.forEachArray(percentValues, function(percentValue, index) {
-            var anglePlus = 360 * percentValue,
+            var anglePlus2 = (Math.PI * 1.999999) * percentValue,
+                anglePlus = 360 * percentValue,
                 popAngle = angle + (anglePlus / 2),
                 color = colors[index],
                 p = this._renderSector({
@@ -127,8 +132,8 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             this._bindHoverEvent({
                 target: p,
                 position: {
-                    left: cx + (r + delta) * Math.cos(-popAngle * RAD),
-                    top: cy + (r + delta) * Math.sin(-popAngle * RAD)
+                    left: cx + (r + delta) * Math.sin(popAngle * RAD),
+                    top: cy - (r + delta) * Math.cos(popAngle * RAD)
                 },
                 id: '0-' + index,
                 inCallback: inCallback,
