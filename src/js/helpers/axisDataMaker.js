@@ -450,11 +450,8 @@ var axisDataMaker = {
     _addMinPadding: function(params) {
         var min = params.min;
 
-        if (params.chartType !== chartConst.CHART_TYPE_LINE || !ne.util.isUndefined(params.minOption)) {
-            return min;
-        }
         // normalize된 scale min값이 user min값과 같을 경우 step 감소
-        if (params.min === params.userMin) {
+        if ((params.chartType === chartConst.CHART_TYPE_LINE || min) && min === params.userMin) {
             min -= params.step;
         }
         return min;

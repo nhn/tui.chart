@@ -194,12 +194,49 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(data.values, function(values) {
-                return ne.util.map(values, function(value) {
-                    return (value - min) / distance;
-                });
+            flag = 1,
+            subValue = 0,
+            percentValues;
+
+        if (this.chartType !== chartConst.CHART_TYPE_LINE && min < 0 && max <= 0) {
+            flag = -1;
+            subValue = max;
+            distance = min - max;
+        } else if (this.chartType === chartConst.CHART_TYPE_LINE || min >= 0) {
+            subValue = min;
+        }
+
+        percentValues = ne.util.map(data.values, function(values) {
+            return ne.util.map(values, function(value) {
+                return (value - subValue) * flag / distance;
             });
+        });
+
         return percentValues;
+    },
+
+    /**
+     * Get scale distance.
+     * @param {number} size chart size (width or height)
+     * @param {{min: number, max: number}} scale scale
+     * @returns {{toMax: number, toMin: number}} pixel distance
+     */
+    getScaleDistance: function(size, scale) {
+        var min = scale.min,
+            max = scale.max,
+            distance = max - min,
+            toMax = 0,
+            toMin = 0;
+
+        if (min < 0 && max > 0) {
+            toMax = (distance - max) / distance * size;
+            toMin = (distance + min) / distance * size;
+        }
+
+        return {
+            toMax: toMax,
+            toMin: toMin
+        };
     },
 
     /**

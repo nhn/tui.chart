@@ -51,21 +51,34 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         var groupValues = this.percentValues,
             groupHeight = (dimension.height / groupValues.length),
             barHeight = groupHeight / (groupValues[0].length + 1),
+            scaleDistance = this.getScaleDistance(dimension.width, this.data.scale),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
-                    var top = paddingTop + (barHeight * index);
+                    var top = paddingTop + (barHeight * index),
+                        startLeft = -HIDDEN_WIDTH,
+                        endLeft = startLeft,
+                        barWidth = value * dimension.width;
+                    if (value < 0) {
+                        barWidth *= -1;
+                        startLeft += dimension.width - scaleDistance.toMin;
+                        endLeft += dimension.width - barWidth - scaleDistance.toMin;
+                    } else {
+                        startLeft += scaleDistance.toMax;
+                        endLeft += scaleDistance.toMax;
+                    }
+
                     return {
                         start: {
                             top: top,
-                            left: -HIDDEN_WIDTH,
+                            left: startLeft,
                             width: 0,
                             height: barHeight
                         },
                         end: {
                             top: top,
-                            left: -HIDDEN_WIDTH,
-                            width: value * dimension.width,
+                            left: endLeft,
+                            width: barWidth,
                             height: barHeight
                         }
                     };

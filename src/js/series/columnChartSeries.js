@@ -47,27 +47,44 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
         var groupValues = this.percentValues,
             groupWidth = (dimension.width / groupValues.length),
             barWidth = groupWidth / (groupValues[0].length + 1),
+            isMinus = this.data.scale.min < 0 && this.data.scale.max <= 0,
+            scaleDistance = this.getScaleDistance(dimension.height, this.data.scale),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
                     var barHeight = value * dimension.height,
-                        top = dimension.height - barHeight + HIDDEN_WIDTH;
+                        endTop = dimension.height - barHeight + HIDDEN_WIDTH,
+                        startTop = endTop + barHeight,
+                        left = paddingLeft + (barWidth * index) - HIDDEN_WIDTH;
+
+                    if (isMinus) {
+                        barHeight *= -1;
+                        startTop = 0;
+                        endTop = 0;
+                    } else if (value < 0) {
+                        barHeight *= -1;
+                        startTop = endTop = dimension.height - scaleDistance.toMax;
+                    } else {
+                        startTop -= scaleDistance.toMax;
+                        endTop -= scaleDistance.toMax;
+                    }
+
                     return {
                         start: {
-                            top: top + barHeight,
-                            left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
+                            top: startTop,
+                            left: left,
                             width: barWidth,
                             height: 0
                         },
                         end: {
-                            top: dimension.height - barHeight + HIDDEN_WIDTH,
-                            left: paddingLeft + (barWidth * index) - HIDDEN_WIDTH,
+                            top: endTop,
+                            left: left,
                             width: barWidth,
                             height: barHeight
                         }
                     };
                 }, this);
-            });
+            }, this);
         return bounds;
     },
 

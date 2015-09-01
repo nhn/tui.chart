@@ -281,9 +281,10 @@ var dataConverter = {
      * @private
      */
     _formatZeroFill: function(len, value) {
-        var zero = '0';
+        var zero = '0',
+            isMinus = value < 0;
 
-        value += '';
+        value = Math.abs(value) + '';
 
         if (value.length >= len) {
             return value;
@@ -293,7 +294,7 @@ var dataConverter = {
             value = zero + value;
         }
 
-        return value;
+        return (isMinus ? '-' : '') + value;
     },
 
     /**
