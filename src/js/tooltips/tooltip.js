@@ -148,7 +148,6 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @private
      */
     _fireHideAnimation: function(id) {
-        console.log('_fireHideAnimation');
         var indexes = this._getIndexFromId(id);
         this.fire('hideAnimation', {
             groupIndex: indexes[0],
