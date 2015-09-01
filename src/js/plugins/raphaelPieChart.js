@@ -33,11 +33,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         }
 
         if (!paper.customAttributes.sector) {
-            // 객체를 인자로 받게되면 오동작 함
-            paper.customAttributes.sector = function(cx, cy, r, startAngle, endAngle) {
-                var path = that._makeSectorPath(cx, cy, r, startAngle, endAngle);
-                return {path: path};
-            };
+            paper.customAttributes.sector = ne.util.bind(this._makeSectorPath, this);
         }
 
         this.circleBounds = data.circleBounds;
@@ -53,16 +49,16 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {number} r round
      * @param {number} startAngle start angle
      * @param {number} endAngle end angel
-     * @returns {string[]} sector path
+     * @returns {{path: array}} sector path
      * @private
      */
-    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
+    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) { // 객체를 인자로 받게되면 오동작 하기에 하나하나 따로 전달 받음
         var x1 = cx + r * Math.cos(-startAngle * RAD),
             x2 = cx + r * Math.cos(-endAngle * RAD),
             y1 = cy + r * Math.sin(-startAngle * RAD),
             y2 = cy + r * Math.sin(-endAngle * RAD),
             path = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 0, x2, y2, "z"];
-        return path;
+        return {path: path};
     },
 
     /**
