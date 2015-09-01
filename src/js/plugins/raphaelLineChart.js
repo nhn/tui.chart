@@ -262,20 +262,6 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
         }, this);
         return groupPaths;
     },
-    _getLinesPath_old: function(groupPositions) {
-        var groupPaths = ne.util.map(groupPositions, function(positions) {
-            var fromPos = positions[0],
-                rest = positions.slice(1);
-            return ne.util.map(rest, function(position) {
-                var centerPos = this._getCenter(fromPos, position),
-                    firstPath = this._makeLinePath(fromPos.left, fromPos.top, centerPos.left, centerPos.top),
-                    secondPath = this._makeLinePath(centerPos.left, centerPos.top, position.left, position.top);
-                fromPos = position;
-                return [firstPath, secondPath];
-            }, this);
-        }, this);
-        return groupPaths;
-    },
 
     /**
      * Bind hover event.
@@ -310,7 +296,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             ne.util.forEach(dots, function(dot, index) {
                 var position = groupPositions[groupIndex][index],
                     id = index + '-' + groupIndex;
-                    //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
+                //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
                 this._bindHoverEvent(dot, position, id, inCallback, outCallback);
                 //if (index > 0) {
                 //    prevIndex = index - 1;
@@ -368,24 +354,20 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
         ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
             var startTime = 0;
             ne.util.forEachArray(dots, function(dot, index) {
-                var line, path, addTime = 0;
+                var line, path;
                 if (index) {
                     line = groupLines[groupIndex][index - 1];
                     path = groupPaths[groupIndex][index - 1].end;
                     setTimeout(function() {
                         line.animate({path: path}, time);
                     }, startTime);
-                    addTime = time;
+                    startTime += time;
                 }
 
                 if (opacity) {
                     setTimeout(function() {
                         dot.attr({'fill-opacity': opacity});
-                    }, startTime + addTime);
-                }
-
-                if (index) {
-                    startTime += time;
+                    }, startTime);
                 }
             });
         });
