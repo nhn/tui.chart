@@ -263,7 +263,7 @@ var boundsMaker = {
      */
     _makeAxesDimension: function(params) {
         var theme, options, convertData, yAxisChartTypes,
-            yAxisTitle, xAxisTitle, maxLabel, vLabels, hLabels,
+            xAxisTitle, maxLabel, vLabels, hLabels,
             yAxisWidth, xAxisHeight, yrAxisWidth;
         if (!params.hasAxes) {
             return {

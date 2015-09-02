@@ -17,7 +17,7 @@ var Raphael = window.Raphael,
  */
 var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype */ {
     /**
-     * Render function or line chart.
+     * Render function of line chart.
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data

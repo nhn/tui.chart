@@ -19,7 +19,7 @@ var Raphael = window.Raphael,
  */
 var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
-     * Render function or line chart.
+     * Render function of pie chart.
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{percentValues: array.<number>, circleBounds: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
