@@ -126,7 +126,6 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * @param {object} paper raphael paper
      * @param {array.<array.<object>>} groupPositions positions
      * @param {string[]} colors colors
-     * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {array.<object>} dots
      * @private
@@ -145,26 +144,23 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
 
     /**
      * To make line path.
-     * @param {number} fx from x
-     * @param {number} fy from y
-     * @param {number} tx to x
-     * @param {number} ty to y
+     * @param {{top: number, left: number}} fromPos from position
+     * @param {{top: number, left: number}} toPos to position
      * @param {number} width width
      * @returns {string} path
      * @private
      */
-    _makeLinePath: function(fx, fy, tx, ty, width) {
-        var fromPoint = [fx, fy];
-        var toPoint = [tx, ty];
+    _makeLinePath: function(fromPos, toPos, width) {
+        var fromPoint = [fromPos.left, fromPos.top],
+            toPoint = [toPos.left, toPos.top];
 
         width = width || 1;
 
-        if (fromPoint[0] === toPoint[0]) {
-            fromPoint[0] = toPoint[0] = Math.round(fromPoint[0]) - (width % 2 / 2);
-        }
-        if (fromPoint[1] === toPoint[1]) {
-            fromPoint[1] = toPoint[1] = Math.round(fromPoint[1]) + (width % 2 / 2);
-        }
+        ne.util.forEachArray(fromPoint, function(from, index) {
+            if (from === toPoint[index]) {
+                fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
+            }
+        });
 
         return 'M' + fromPoint.join(' ') + 'L' + toPoint.join(' ');
     },
@@ -251,8 +247,8 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             var fromPos = positions[0],
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
-                var startPath = this._makeLinePath(fromPos.left, fromPos.top, fromPos.left, fromPos.top),
-                    endPath = this._makeLinePath(fromPos.left, fromPos.top, position.left, position.top);
+                var startPath = this._makeLinePath(fromPos, fromPos),
+                    endPath = this._makeLinePath(fromPos, position);
                 fromPos = position;
                 return {
                     start: startPath,
