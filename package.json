@@ -1,7 +1,7 @@
 {
-  "name": "component-chart",
-  "version": "0.0.1",
-  "description": "ne chart component",
+  "name": "application-chart",
+  "version": "1.1.0",
+  "description": "NHN Ent. Chart",
   "main": "index.js",
   "scripts": {
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/"
@@ -13,7 +13,7 @@
   "keywords": [
     "chart"
   ],
-  "author": "extremeFE",
+  "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
   "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.7.12",
