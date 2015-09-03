@@ -38,6 +38,16 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
     },
 
     /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {
+            groupBounds: this._makeBounds(this.bound.dimension)
+        };
+    },
+
+    /**
      * To make bounds of normal column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds

@@ -41,6 +41,16 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {
+            groupBounds: this._makeBounds(this.bound.dimension)
+        };
+    },
+
+    /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width

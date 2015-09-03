@@ -186,9 +186,9 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     },
 
     /**
-     * First animation.
+     * Animate.
      */
-    firstAnimation: function() {
+    animate: function() {
         var circleBounds = this.circleBounds,
             delayTime = 0;
         ne.util.forEachArray(this.sectors, function(item) {

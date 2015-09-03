@@ -6,9 +6,9 @@
 
 'use strict';
 
-var Series = require('../../src/js/series/series.js');
-
-var isIE8 = window.navigator.userAgent.indexOf('MSIE 8.0') > -1;
+var Series = require('../../src/js/series/series.js'),
+    dom = require('../../src/js/helpers/domHandler.js'),
+    renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('test Series', function() {
     var groupValues = [[20], [40], [80], [120]],
@@ -96,6 +96,27 @@ describe('test Series', function() {
         });
     });
 
+    describe('renderBounds()', function() {
+        it('series 영역 너비, 높이, 위치 렌더링', function() {
+            var elSeries = dom.create('DIV');
+            series._renderBounds(elSeries, {
+                    width: 200,
+                    height: 100
+                },
+                {
+                    top: 20,
+                    right: 20
+                },
+                true
+            );
+
+            expect(elSeries.style.width).toEqual('200px');
+            expect(elSeries.style.height).toEqual('100px');
+            expect(elSeries.style.top).toEqual('19px');
+            expect(elSeries.style.right).toEqual('18px');
+        });
+    });
+
     describe('render()', function() {
         it('series 영역 렌더링', function () {
             var elSeries = series.render();
@@ -106,7 +127,7 @@ describe('test Series', function() {
 
             expect(elSeries.style.top).toEqual('49px');
 
-            if (isIE8) {
+            if (renderUtil.isIE8()) {
                 expect(elSeries.style.right).toEqual('50px');
             } else {
                 expect(elSeries.style.right).toEqual('49px');

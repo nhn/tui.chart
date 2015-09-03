@@ -9,17 +9,16 @@
 var BarChartSeries = require('../../src/js/series/barChartSeries.js');
 
 describe('test BarChartSeries', function() {
-    var data = {
-            values: [[20], [40]],
-            formattedValues: [[20], [40]],
-            scale: {min: 0, max: 160}
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new BarChartSeries({
             chartType: 'bar',
-            data: data,
+            data: {
+                values: [],
+                formattedValues: [],
+                scale: {min: 0, max: 0}
+            },
             options: {}
         });
     });
@@ -33,20 +32,21 @@ describe('test BarChartSeries', function() {
                 height: 200
             }, 1);
             expect(result).toEqual([
-                [{
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                [
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: -1,
+                            width: 80,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 26,
-                        left: -1,
-                        width: 80,
-                        height: 50
-                    }
-                },
                     {
                         start: {
                             top: 76,
@@ -74,7 +74,8 @@ describe('test BarChartSeries', function() {
                             width: 40,
                             height: 50
                         }
-                    }]
+                    }
+                ]
             ]);
         });
     });
@@ -88,20 +89,21 @@ describe('test BarChartSeries', function() {
                 height: 100
             }, 1);
             expect(bounds).toEqual([
-                [{
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                [
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: -1,
+                            width: 80,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 26,
-                        left: -1,
-                        width: 80,
-                        height: 50
-                    }
-                },
                     {
                         start: {
                             top: 26,
@@ -129,7 +131,8 @@ describe('test BarChartSeries', function() {
                             width: 200,
                             height: 50
                         }
-                    }]
+                    }
+                ]
             ]);
         });
     });
@@ -143,48 +146,50 @@ describe('test BarChartSeries', function() {
                 height: 200
             }, 1);
             expect(result).toEqual([
-                [{
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                [
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: -1,
+                            width: 80,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 26,
-                        left: -1,
-                        width: 80,
-                        height: 50
-                    }
-                },
-                {
-                    start: {
-                        top: 76,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                    {
+                        start: {
+                            top: 76,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 76,
+                            left: -1,
+                            width: 160,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 76,
-                        left: -1,
-                        width: 160,
-                        height: 50
+                    {
+                        start: {
+                            top: 126,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 126,
+                            left: -1,
+                            width: 40,
+                            height: 50
+                        }
                     }
-                },
-                {
-                    start: {
-                        top: 126,
-                        left: -1,
-                        width: 0,
-                        height: 50
-                    },
-                    end: {
-                        top: 126,
-                        left: -1,
-                        width: 40,
-                        height: 50
-                    }
-                }]
+                ]
             ]);
         });
 
@@ -197,48 +202,50 @@ describe('test BarChartSeries', function() {
                 height: 100
             }, 1);
             expect(bounds).toEqual([
-                [{
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                [
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: -1,
+                            width: 80,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 26,
-                        left: -1,
-                        width: 80,
-                        height: 50
-                    }
-                },
-                {
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: 79,
+                            width: 120,
+                            height: 50
+                        }
                     },
-                    end: {
-                        top: 26,
-                        left: 79,
-                        width: 120,
-                        height: 50
+                    {
+                        start: {
+                            top: 26,
+                            left: -1,
+                            width: 0,
+                            height: 50
+                        },
+                        end: {
+                            top: 26,
+                            left: 199,
+                            width: 200,
+                            height: 50
+                        }
                     }
-                },
-                {
-                    start: {
-                        top: 26,
-                        left: -1,
-                        width: 0,
-                        height: 50
-                    },
-                    end: {
-                        top: 26,
-                        left: 199,
-                        width: 200,
-                        height: 50
-                    }
-                }]
+                ]
             ]);
         });
     });
