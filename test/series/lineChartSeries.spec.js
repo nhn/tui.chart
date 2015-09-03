@@ -24,22 +24,24 @@ describe('test LineChartSeries', function() {
         });
     });
 
-    it('_makePositions()', function() {
-        var bounds;
-        series.percentValues = [[0.25], [0.5]];
-        bounds = series._makePositions({
-            width: 200,
-            height: 400
+    describe('_makePositions()', function() {
+        it('라인차트 position 정보 생성', function () {
+            var bounds;
+            series.percentValues = [[0.25], [0.5]];
+            bounds = series._makePositions({
+                width: 200,
+                height: 400
+            });
+            expect(bounds).toEqual([
+                [{
+                    top: 300,
+                    left: 100
+                }],
+                [{
+                    top: 200,
+                    left: 100
+                }]
+            ]);
         });
-        expect(bounds).toEqual([
-            [{
-                top: 300,
-                left: 100
-            }],
-            [{
-                top: 200,
-                left: 100
-            }]
-        ]);
     });
 });

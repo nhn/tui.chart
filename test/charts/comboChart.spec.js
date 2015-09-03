@@ -9,7 +9,7 @@
 var ComboChart = require('../../src/js/charts/comboChart.js'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js');
 
-describe('test ComboChart', function() {
+describe('ComboChart', function() {
     var comboChart;
 
     beforeEach(function() {
@@ -60,153 +60,92 @@ describe('test ComboChart', function() {
         });
     });
 
-    it('_getYAxisChartTypes()', function() {
-        var result = comboChart._getYAxisChartTypes(['column', 'line']);
-        expect(result).toEqual(['column', 'line']);
-    });
-
-    it('_getYAxisChartTypes() contained object option', function() {
-        var result = comboChart._getYAxisChartTypes(['column', 'line'], {
-            chartType: 'line'
+    describe('_getYAxisChartTypes() - y axis 영역 옵션이 기준으로 차트 타입을 정렬하여 반환', function() {
+        it('옵션이 아예 없을 경우의 차트 타입들 반환', function () {
+            var result = comboChart._getYAxisChartTypes(['column', 'line']);
+            expect(result).toEqual(['column', 'line']);
         });
 
-        expect(result).toEqual(['line', 'column']);
-
-        result = comboChart._getYAxisChartTypes(['column', 'line'], {
-            title: 'test'
+        it('chartType 옵션이 있을 경우의 반환', function() {
+            var result = comboChart._getYAxisChartTypes(['column', 'line'], {
+                chartType: 'line'
+            });
+            expect(result).toEqual(['line', 'column']);
         });
 
-        expect(result).toEqual([]);
-    });
+        it('y axis 옵션이 하나만 있는데 chartType 옵션이 포함되지 않았을 경우의 빈 배열 반환', function() {
+            var result = comboChart._getYAxisChartTypes(['column', 'line'], {
+                title: 'test'
+            });
 
-    it('_getYAxisChartTypes() contained array options', function() {
-        var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
-            chartType: 'line'
-        }]);
-
-        expect(result).toEqual(['line', 'column']);
-
-        result = comboChart._getYAxisChartTypes(['column', 'line'], [{}, {
-            chartType: 'line'
-        }]);
-
-        expect(result).toEqual(['column', 'line']);
-
-        result = comboChart._getYAxisChartTypes(['column', 'line'], [{
-            title: 'test'
-        }]);
-
-        expect(result).toEqual([]);
-    });
-
-    it('_makeYAxisData() one yAxis', function() {
-        var result = comboChart._makeYAxisData({
-            index: 0,
-            convertData: {
-                joinValues: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ],
-                formatFunctions: []
-            },
-            seriesDimension: {
-                width: 300,
-                height: 300
-            },
-            chartTypes: ['column', 'line'],
-            isOneYAxis: true,
-            options: {
-                yAxis: {
-                    title: 'Y Axis'
-                }
-            }
+            expect(result).toEqual([]);
         });
-        expect(result).toEqual({
-            labels: [0, 30, 60, 90],
-            tickCount: 4,
-            validTickCount: 4,
-            scale: {
-                min: 0,
-                max: 90
-            },
-            step: 30,
-            isVertical: true,
-            isPositionRight: false
+
+        it('y axis 옵션이 배열의 첫번째 요소에만 포함되어있고 chartType 값을 갖고 있는 경우의 반환', function() {
+            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
+                chartType: 'line'
+            }]);
+            expect(result).toEqual(['line', 'column']);
+        });
+
+        it('y axis 옵션에 두가지 옵션이 배열로 포함되어있고 두번째 배열에 chartType 값을 갖고 있는 경우의 반환', function() {
+            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{}, {
+                chartType: 'line'
+            }]);
+            expect(result).toEqual(['column', 'line']);
+        });
+
+        it('y axis 옵션에 배열의 첫번째 요소에만 포함되어있는데 chartType 옵션이 포함되지 않았을 경우의 빈 배열 반환', function() {
+            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
+                title: 'test'
+            }]);
+            expect(result).toEqual([]);
         });
     });
 
-    it('_makeYAxisData() two yAxis', function() {
-        var result = comboChart._makeYAxisData({
-            index: 0,
-            convertData: {
-                values: {
-                    column: [
+
+    describe('_makeYAxisData()', function() {
+        it('y axis 영역이 하나일 경우의 axis data 생성', function () {
+            var result = comboChart._makeYAxisData({
+                index: 0,
+                convertData: {
+                    joinValues: [
                         [20, 30, 50],
-                        [40, 40, 60]
-                    ],
-                    line: [
+                        [40, 40, 60],
                         [60, 50, 10],
                         [80, 10, 70]
-                    ]
+                    ],
+                    formatFunctions: []
                 },
-                joinValues: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ],
-                formatFunctions: []
-            },
-            seriesDimension: {
-                width: 300,
-                height: 300
-            },
-            chartTypes: ['column', 'line'],
-            isOneYAxis: false,
-            options: {
-                yAxis: [
-                    {
+                seriesDimension: {
+                    width: 300,
+                    height: 300
+                },
+                chartTypes: ['column', 'line'],
+                isOneYAxis: true,
+                options: {
+                    yAxis: {
                         title: 'Y Axis'
-                    },
-                    {
-                        title: 'Y Right Axis'
                     }
-                ]
-            }
-        });
-        expect(result).toEqual({
-            labels: [10, 20, 30, 40, 50, 60, 70],
-            tickCount: 7,
-            validTickCount: 7,
-            scale: {
-                min: 10,
-                max: 70
-            },
-            step: 10,
-            isVertical: true,
-            isPositionRight: false
-        });
-    });
-
-    it('_makeAxesData()', function() {
-        var baseAxis = {
-                yAxis: {
-                    labels: [10, 20, 30, 40, 50, 60, 70],
-                    tickCount: 7,
-                    validTickCount: 7,
-                    scale: {
-                        min: 10,
-                        max: 70
-                    },
-                    step: 10,
-                    isVertical: true,
-                    isPositionRight: false
+                }
+            });
+            expect(result).toEqual({
+                labels: [0, 30, 60, 90],
+                tickCount: 4,
+                validTickCount: 4,
+                scale: {
+                    min: 0,
+                    max: 90
                 },
-                xAxis: {}
-            },
-            result = comboChart._makeAxesData(baseAxis, {
+                step: 30,
+                isVertical: true,
+                isPositionRight: false
+            });
+        });
+
+        it('y axis 영역이 두개일 경우의 axis data 생성', function () {
+            var result = comboChart._makeYAxisData({
+                index: 0,
                 convertData: {
                     values: {
                         column: [
@@ -243,124 +182,185 @@ describe('test ComboChart', function() {
                     ]
                 }
             });
+            expect(result).toEqual({
+                labels: [10, 20, 30, 40, 50, 60, 70],
+                tickCount: 7,
+                validTickCount: 7,
+                scale: {
+                    min: 10,
+                    max: 70
+                },
+                step: 10,
+                isVertical: true,
+                isPositionRight: false
+            });
+        });
+    });
 
-        expect(result).toEqual({
-            column: baseAxis,
-            line: {
-                yAxis: {
-                    labels: [0, 30, 60, 90, 120, 150, 180],
-                    tickCount: 7,
-                    validTickCount: 7,
-                    scale: {
-                        min: 0,
-                        max: 180
+    describe('_makeAxesData()', function() {
+        it('y axis 영역이 하나일 경우의 axis data 생성', function () {
+            var baseAxis = {
+                    yAxis: {
+                        labels: [10, 20, 30, 40, 50, 60, 70],
+                        tickCount: 7,
+                        validTickCount: 7,
+                        scale: {
+                            min: 10,
+                            max: 70
+                        },
+                        step: 10,
+                        isVertical: true,
+                        isPositionRight: false
                     },
-                    step: 30,
-                    isVertical: true,
-                    isPositionRight: true
+                    xAxis: {}
+                },
+                result = comboChart._makeAxesData(baseAxis, {
+                    convertData: {
+                        values: {
+                            column: [
+                                [20, 30, 50],
+                                [40, 40, 60]
+                            ],
+                            line: [
+                                [60, 50, 10],
+                                [80, 10, 70]
+                            ]
+                        },
+                        joinValues: [
+                            [20, 30, 50],
+                            [40, 40, 60],
+                            [60, 50, 10],
+                            [80, 10, 70]
+                        ],
+                        formatFunctions: []
+                    },
+                    seriesDimension: {
+                        width: 300,
+                        height: 300
+                    },
+                    chartTypes: ['column', 'line'],
+                    isOneYAxis: false,
+                    options: {
+                        yAxis: [
+                            {
+                                title: 'Y Axis'
+                            },
+                            {
+                                title: 'Y Right Axis'
+                            }
+                        ]
+                    }
+                });
+
+            expect(result).toEqual({
+                column: baseAxis,
+                line: {
+                    yAxis: {
+                        labels: [0, 30, 60, 90, 120, 150, 180],
+                        tickCount: 7,
+                        validTickCount: 7,
+                        scale: {
+                            min: 0,
+                            max: 180
+                        },
+                        step: 30,
+                        isVertical: true,
+                        isPositionRight: true
+                    }
                 }
-            }
+            });
         });
     });
 
-    it('_makeChartTypeOrderInfo()', function() {
-        var result = comboChart._makeChartTypeOrderInfo(['column', 'line']);
-        expect(result).toEqual({
-            column: 0,
-            line: 1
+    describe('_makeChartTypeOrderInfo()', function() {
+        it('chartType 순서 정보 생성 결과 생성', function () {
+            var result = comboChart._makeChartTypeOrderInfo(['column', 'line']);
+            expect(result).toEqual({
+                column: 0,
+                line: 1
+            });
         });
     });
 
-    it('_makeOptionsMap()', function() {
-        var result = comboChart._makeOptionsMap(['column', 'line'], {
-            yAxis: [
-                {
-                    title: 'Y Axis'
-                },
-                {
-                    title: 'Y Right Axis'
-                }
-            ],
-            series: {
-                column: {
-                    stacked: 'normal'
-                },
-                line: {
-                    hasDot: true
-                }
-            },
-            tooltip: {
-                column: {
-                    suffix: '%'
-                },
-                line: {
-                    position: 'left top'
-                }
-            }
-        }, {
-            column: 0,
-            line: 1
-        });
-
-        expect(result).toEqual({
-            column: {
-                chartType: 'column',
-                yAxis: {
-                    title: 'Y Axis'
-                },
+    describe('_makeOptionsMap()', function() {
+        it('옵션이 있을 경우의 chartType별 y축 옵션 정보 맵 생성', function () {
+            var result = comboChart._makeOptionsMap(['column', 'line'], {
+                yAxis: [
+                    {
+                        title: 'Y Axis'
+                    },
+                    {
+                        title: 'Y Right Axis'
+                    }
+                ],
                 series: {
-                    stacked: 'normal'
+                    column: {
+                        stacked: 'normal'
+                    },
+                    line: {
+                        hasDot: true
+                    }
                 },
                 tooltip: {
-                    suffix: '%'
+                    column: {
+                        suffix: '%'
+                    },
+                    line: {
+                        position: 'left top'
+                    }
                 }
-            },
-            line: {
-                chartType: 'line',
-                yAxis: {
-                    title: 'Y Right Axis'
+            }, {
+                column: 0,
+                line: 1
+            });
+
+            expect(result).toEqual({
+                column: {
+                    chartType: 'column',
+                    yAxis: {
+                        title: 'Y Axis'
+                    },
+                    series: {
+                        stacked: 'normal'
+                    },
+                    tooltip: {
+                        suffix: '%'
+                    }
                 },
-                series: {
-                    hasDot: true
-                },
-                tooltip: {
-                    position: 'left top'
+                line: {
+                    chartType: 'line',
+                    yAxis: {
+                        title: 'Y Right Axis'
+                    },
+                    series: {
+                        hasDot: true
+                    },
+                    tooltip: {
+                        position: 'left top'
+                    }
                 }
-            }
+            });
+        });
+
+        it('옵션이 없을 경우의 chartType별 y축 옵션 정보 맵 생성', function() {
+            var result = comboChart._makeOptionsMap(['column', 'line'], {}, {
+                column: 0,
+                line: 1
+            });
+            expect(result).toEqual({
+                column: {
+                    chartType: 'column'
+                },
+                line: {
+                    chartType: 'line'
+                }
+            });
         });
     });
 
-    it('_makeOptionsMap() no options', function() {
-        var result = comboChart._makeOptionsMap(['column', 'line'], {}, {
-            column: 0,
-            line: 1
-        });
-        expect(result).toEqual({
-            column: {
-                chartType: 'column'
-            },
-            line: {
-                chartType: 'line'
-            }
-        });
-    });
-
-    it('_makeThemeMap() one colors', function() {
-        var result = comboChart._makeThemeMap(['column', 'line'], {
-            yAxis: {
-                title: {
-                    fontSize: 12
-                }
-            },
-            series: {
-                colors: ['red', 'orange', 'green', 'blue', 'green']
-            }
-        }, {
-            column: ['Legend1', 'Legend2'],
-            line: ['Legend1', 'Legend2', 'Legend3']
-        });
-        expect(result).toEqual({
-            column: {
+    describe('_makeThemeMap()', function() {
+        it('colors가 하나 일 경우의 chartType별 테마 맵 생성', function () {
+            var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
                     title: {
                         fontSize: 12
@@ -369,76 +369,92 @@ describe('test ComboChart', function() {
                 series: {
                     colors: ['red', 'orange', 'green', 'blue', 'green']
                 }
-            },
-            line: {
-                yAxis: {
-                    title: {
-                        fontSize: 12
-                    }
-                },
-                series: {
-                    colors: ['green', 'blue', 'green', 'red', 'orange']
-                }
-            }
-        });
-    });
-
-    it('_makeThemeMap() tow colors', function() {
-        var result = comboChart._makeThemeMap(['column', 'line'], {
-            yAxis: {
-                line: {
-                    title: {
-                        fontSize: 14
-                    }
-                }
-            },
-            series: {
+            }, {
+                column: ['Legend1', 'Legend2'],
+                line: ['Legend1', 'Legend2', 'Legend3']
+            });
+            expect(result).toEqual({
                 column: {
-                    colors: ['red', 'orange']
+                    yAxis: {
+                        title: {
+                            fontSize: 12
+                        }
+                    },
+                    series: {
+                        colors: ['red', 'orange', 'green', 'blue', 'green']
+                    }
                 },
                 line: {
-                    colors: ['black', 'white', 'gray']
+                    yAxis: {
+                        title: {
+                            fontSize: 12
+                        }
+                    },
+                    series: {
+                        colors: ['green', 'blue', 'green', 'red', 'orange']
+                    }
                 }
-            }
-        }, {
-            column: ['Legend1', 'Legend2'],
-            line: ['Legend1', 'Legend2', 'Legend3']
+            });
         });
 
-        expect(result).toEqual({
-            column: {
+        it('colors가 두개 일 경우의 chartType별 테마 맵 생성', function () {
+            var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
-                    tickColor: '#000000',
-                    title: {
-                        fontSize: 12,
-                        color: '#000000',
-                        fontFamily: ''
+                    line: {
+                        title: {
+                            fontSize: 14
+                        }
+                    }
+                },
+                series: {
+                    column: {
+                        colors: ['red', 'orange']
                     },
-                    label: {
-                        fontSize: 12,
-                        color: '#000000',
-                        fontFamily: ''
+                    line: {
+                        colors: ['black', 'white', 'gray']
+                    }
+                }
+            }, {
+                column: ['Legend1', 'Legend2'],
+                line: ['Legend1', 'Legend2', 'Legend3']
+            });
+
+            expect(result).toEqual({
+                column: {
+                    yAxis: {
+                        tickColor: '#000000',
+                        title: {
+                            fontSize: 12,
+                            color: '#000000',
+                            fontFamily: ''
+                        },
+                        label: {
+                            fontSize: 12,
+                            color: '#000000',
+                            fontFamily: ''
+                        }
+                    },
+                    series: {
+                        colors: ['red', 'orange']
                     }
                 },
-                series: {
-                    colors: ['red', 'orange']
-                }
-            },
-            line: {
-                yAxis: {
-                    title: {
-                        fontSize: 14
+                line: {
+                    yAxis: {
+                        title: {
+                            fontSize: 14
+                        }
+                    },
+                    series: {
+                        colors: ['black', 'white', 'gray']
                     }
-                },
-                series: {
-                    colors: ['black', 'white', 'gray']
                 }
-            }
+            });
         });
     });
 
-    it('_increaseYAxisScaleMax()', function() {
-        var targetTickInfo = {
+    describe('_increaseYAxisScaleMax()', function() {
+        it('y axis scale 최대값 증가 결과 확인', function () {
+            var targetTickInfo = {
                 tickCount: 4,
                 scale: {
                     min: 0,
@@ -447,19 +463,20 @@ describe('test ComboChart', function() {
                 step: 20
             };
 
-        comboChart._increaseYAxisScaleMax({
-            tickCount: 5
-        }, targetTickInfo);
+            comboChart._increaseYAxisScaleMax({
+                tickCount: 5
+            }, targetTickInfo);
 
-        expect(targetTickInfo).toEqual({
-            labels: [0, 20, 40, 60, 80],
-            tickCount: 5,
-            validTickCount: 5,
-            scale: {
-                min: 0,
-                max: 80
-            },
-            step: 20
+            expect(targetTickInfo).toEqual({
+                labels: [0, 20, 40, 60, 80],
+                tickCount: 5,
+                validTickCount: 5,
+                scale: {
+                    min: 0,
+                    max: 80
+                },
+                step: 20
+            });
         });
     });
 });

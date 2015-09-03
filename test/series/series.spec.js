@@ -40,67 +40,77 @@ describe('test Series', function() {
         });
     });
 
-    it('_makePercentValues() normal', function() {
-        var result = series._makePercentValues({
-            values: groupValues,
-            scale: data.scale
+    describe('_makePercentValues()', function() {
+        it('stacked 옵션이 없는 percent타입의 values 생성', function () {
+            var result = series._makePercentValues({
+                values: groupValues,
+                scale: data.scale
+            });
+            expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
-        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-    });
 
-    it('_makePercentValues() normal stacked', function() {
-        var result = series._makePercentValues({
-            values: groupValues2,
-            scale: data.scale
-        }, 'normal');
-        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
-    });
-
-    it('_makePercentValues() stacked', function() {
-        var result = series._makePercentValues({
-            values: groupValues2,
-            scale: data.scale
-        }, 'percent');
-        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
-    });
-
-    it('_makeNormalPercentValues', function() {
-        var result = series._makeNormalPercentValues({
-            values: groupValues,
-            scale: data.scale
+        it('stacked 옵션이 "normal"인 percent타입의 values 생성', function () {
+            var result = series._makePercentValues({
+                values: groupValues2,
+                scale: data.scale
+            }, 'normal');
+            expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
-        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-    });
 
-    it('_makeNormalStackedPercentValues', function() {
-        var result = series._makeNormalStackedPercentValues({
-            values: groupValues2,
-            scale: data.scale
+        it('stacked 옵션이 "percent"인 percent타입의 values 생성', function () {
+            var result = series._makePercentValues({
+                values: groupValues2,
+                scale: data.scale
+            }, 'percent');
+            expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
-        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
     });
 
-    it('_makePercentStackedPercentValues', function() {
-        var result = series._makePercentStackedPercentValues({
-            values: groupValues2,
-            scale: data.scale
+    describe('_makeNormalPercentValues()', function() {
+        it('stacked 옵션이 없는 percent타입의 values 생성', function () {
+            var result = series._makeNormalPercentValues({
+                values: groupValues,
+                scale: data.scale
+            });
+            expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
-        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
     });
 
-    it('render()', function() {
-        var elSeries = series.render();
+    describe('_makeNormalStackedPercentValues()', function() {
+        it('stacked 옵션이 "normal"인 percent타입의 values 생성', function () {
+            var result = series._makeNormalStackedPercentValues({
+                values: groupValues2,
+                scale: data.scale
+            });
+            expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+        });
+    });
 
-        expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
-        expect(elSeries.style.width).toEqual('200px');
-        expect(elSeries.style.height).toEqual('100px');
+    describe('_makeNormalStackedPercentValues()', function() {
+        it('stacked 옵션이 "percent"인 percent타입의 values 생성', function () {
+            var result = series._makePercentStackedPercentValues({
+                values: groupValues2,
+                scale: data.scale
+            });
+            expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+        });
+    });
 
-        expect(elSeries.style.top).toEqual('49px');
+    describe('render()', function() {
+        it('series 영역 렌더링', function () {
+            var elSeries = series.render();
 
-        if (isIE8) {
-            expect(elSeries.style.right).toEqual('50px');
-        } else {
-            expect(elSeries.style.right).toEqual('49px');
-        }
+            expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
+            expect(elSeries.style.width).toEqual('200px');
+            expect(elSeries.style.height).toEqual('100px');
+
+            expect(elSeries.style.top).toEqual('49px');
+
+            if (isIE8) {
+                expect(elSeries.style.right).toEqual('50px');
+            } else {
+                expect(elSeries.style.right).toEqual('49px');
+            }
+        });
     });
 });
