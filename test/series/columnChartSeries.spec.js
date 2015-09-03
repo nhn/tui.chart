@@ -9,17 +9,16 @@
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js');
 
 describe('test ColumnChartSeries', function() {
-    var data = {
-            values: [[20], [40]],
-            formattedValues: [[20], [40]],
-            scale: {min: 0, max: 160}
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new ColumnChartSeries({
             chartType: 'column',
-            data: data,
+            data: {
+                values: [],
+                formattedValues: [],
+                scale: {min: 0, max: 0}
+            },
             options: {}
         });
     });
@@ -74,20 +73,21 @@ describe('test ColumnChartSeries', function() {
                 height: 400
             }, 1);
             expect(bounds).toEqual([
-                [{
-                    start: {
-                        top: 400,
-                        left: 25,
-                        width: 50,
-                        height: 0
+                [
+                    {
+                        start: {
+                            top: 400,
+                            left: 25,
+                            width: 50,
+                            height: 0
+                        },
+                        end: {
+                            top: 320,
+                            left: 25,
+                            width: 50,
+                            height: 80
+                        }
                     },
-                    end: {
-                        top: 320,
-                        left: 25,
-                        width: 50,
-                        height: 80
-                    }
-                },
                     {
                         start: {
                             top: 400,
@@ -115,7 +115,8 @@ describe('test ColumnChartSeries', function() {
                             width: 50,
                             height: 200
                         }
-                    }]
+                    }
+                ]
             ]);
         });
     });
@@ -169,20 +170,21 @@ describe('test ColumnChartSeries', function() {
                 height: 400
             }, 1);
             expect(bounds).toEqual([
-                [{
-                    start: {
-                        top: 400,
-                        left: 25,
-                        width: 50,
-                        height: 0
+                [
+                    {
+                        start: {
+                            top: 400,
+                            left: 25,
+                            width: 50,
+                            height: 0
+                        },
+                        end: {
+                            top: 320,
+                            left: 25,
+                            width: 50,
+                            height: 80
+                        }
                     },
-                    end: {
-                        top: 320,
-                        left: 25,
-                        width: 50,
-                        height: 80
-                    }
-                },
                     {
                         start: {
                             top: 400,
@@ -210,7 +212,8 @@ describe('test ColumnChartSeries', function() {
                             width: 50,
                             height: 200
                         }
-                    }]
+                    }
+                ]
             ]);
         });
     });

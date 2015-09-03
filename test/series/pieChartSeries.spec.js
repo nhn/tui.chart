@@ -9,16 +9,15 @@
 var PieChartSeries = require('../../src/js/series/pieChartSeries.js');
 
 describe('PieChartSeries', function() {
-    var data = {
-            values: [[20, 30, 50]],
-            formattedValues: [[20, 30, 50]]
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new PieChartSeries({
             chartType: 'pie',
-            data: data,
+            data: {
+                values: [],
+                formatttedValues: []
+            },
             options: {}
         });
     });

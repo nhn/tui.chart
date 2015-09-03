@@ -9,17 +9,16 @@
 var LineChartSeries = require('../../src/js/series/lineChartSeries.js');
 
 describe('test LineChartSeries', function() {
-    var data = {
-            values: [[20], [40]],
-            formattedValues: [[20], [40]],
-            scale: {min: 0, max: 160}
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new LineChartSeries({
             chartType: 'line',
-            data: data,
+            data: {
+                values: [],
+                formattedValues: [],
+                scale: {min: 0, max: 0}
+            },
             options: {}
         });
     });
