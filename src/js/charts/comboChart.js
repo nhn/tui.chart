@@ -26,7 +26,6 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         var seriesChartTypes = ne.util.keys(userData.series).sort(),
             yAxisChartTypes = this._getYAxisChartTypes(seriesChartTypes, options.yAxis),
             chartTypes = yAxisChartTypes.length ? yAxisChartTypes : seriesChartTypes,
-            isOneYAxis = !yAxisChartTypes.length,
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
                 hasAxes: true,
@@ -34,20 +33,18 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             }),
             convertData = baseData.convertData,
             bounds = baseData.bounds,
-            seriesDimension = bounds.series.dimension,
-            axesData = {},
-            baseAxesData = {},
-            yAxisParams;
+            optionsMap = this._makeOptionsMap(chartTypes, options),
+            themeMap = this._makeThemeMap(seriesChartTypes, theme, convertData.legendLabels),
+            yAxisParams = {
+                convertData: convertData,
+                seriesDimension: bounds.series.dimension,
+                chartTypes: chartTypes,
+                isOneYAxis: !yAxisChartTypes.length,
+                options: options
+            },
+            baseAxesData = {};
 
         this.className = 'ne-combo-chart';
-
-        yAxisParams = {
-            convertData: convertData,
-            seriesDimension: seriesDimension,
-            chartTypes: chartTypes,
-            isOneYAxis: isOneYAxis,
-            options: options
-        };
 
         ChartBase.call(this, bounds, theme, options);
 
@@ -59,17 +56,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             labels: convertData.labels
         });
 
-        axesData = this._makeAxesData(baseAxesData, yAxisParams);
-
         this._installCharts({
             userData: userData,
-            theme: theme,
-            options: options,
             baseData: baseData,
             baseAxesData: baseAxesData,
-            axesData: axesData,
+            axesData: this._makeAxesData(baseAxesData, yAxisParams),
             seriesChartTypes: seriesChartTypes,
-            chartTypes: chartTypes
+            optionsMap: optionsMap,
+            themeMap: themeMap
         });
     },
 
@@ -203,8 +197,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @returns {object} options map
      * @private
      */
-    _makeOptionsMap: function(chartTypes, options, orderInfo) {
-        var result = {};
+    _makeOptionsMap: function(chartTypes, options) {
+        var orderInfo = this._makeChartTypeOrderInfo(chartTypes),
+            result = {};
         ne.util.forEachArray(chartTypes, function(chartType) {
             var chartOptions = JSON.parse(JSON.stringify(options)),
                 index = orderInfo[chartType];
@@ -297,11 +292,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             convertData = baseData.convertData,
             formattedValues = convertData.formattedValues,
             baseAxesData = params.baseAxesData,
-            chartTypes = params.chartTypes,
             seriesChartTypes = params.seriesChartTypes,
-            orderInfo = this._makeChartTypeOrderInfo(chartTypes),
-            remakeOptions = this._makeOptionsMap(chartTypes, params.options, orderInfo),
-            remakeTheme = this._makeThemeMap(seriesChartTypes, params.theme, convertData.legendLabels),
+            optionsMap = params.optionsMap,
+            themeMap = params.themeMap,
             plotData = {
                 vTickCount: baseAxesData.yAxis.validTickCount,
                 hTickCount: baseAxesData.xAxis.validTickCount
@@ -311,8 +304,8 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         this.charts = ne.util.map(seriesChartTypes, function(chartType) {
             var legendLabels = convertData.legendLabels[chartType],
                 axes = params.axesData[chartType],
-                sendOptions = remakeOptions[chartType],
-                sendTheme = remakeTheme[chartType],
+                sendOptions = optionsMap[chartType],
+                sendTheme = themeMap[chartType],
                 sendBounds = JSON.parse(JSON.stringify(baseData.bounds)),
                 chart;
 
