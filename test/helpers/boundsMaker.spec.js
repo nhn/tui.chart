@@ -35,19 +35,9 @@ describe('boundsMaker', function() {
                     column: [
                         [20, 30, 50],
                         [40, 40, 60]
-                    ],
-                    line: [
-                        [60, 50, 10],
-                        [80, 10, 70]
                     ]
-                },
-                joinValues: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ]
-            }, ['column', 'index'], 0);
+                }
+            }, 'column');
             expect(result).toEqual(70);
         });
     });
@@ -83,9 +73,11 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getVerticalAxisWidth()', function() {
-        it('세로축 너비 반환', function () {
-            var result = maker._getVerticalAxisWidth('title', ['label1', 'label12'], {
+    describe('_getXAxisHeight()', function() {
+        it('x축 높이 반환', function () {
+            var result = maker._getXAxisHeight({
+                title: 'title'
+            }, ['label1', 'label12'], {
                 title: {
                     fontSize: 12,
                     fontFamily: 'Verdana'
@@ -95,39 +87,17 @@ describe('boundsMaker', function() {
                     fontFamily: 'Verdana'
                 }
             });
-            expect(result).toBeGreaterThan(77);
-            expect(result).toBeLessThan(89);
-        });
-    });
-
-    describe('_getHorizontalAxisHeight()', function() {
-        it('가로축 높이 반환', function () {
-            var result = maker._getVerticalAxisWidth('title', ['label1', 'label12'], {
-                title: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana'
-                },
-                label: {
-                    fontSize: 12,
-                    fontFamily: 'Verdana'
-                }
-            });
-            expect(result).toBeGreaterThan(77);
-            expect(result).toBeLessThan(89);
+            expect(result).toBeGreaterThan(47);
+            expect(result).toBeLessThan(51);
         });
     });
 
     describe('_getYAxisWidth()', function() {
         it('y축 너비 반환', function() {
-            var result = maker._getYAxisWidth([
-                    {
-                        title: 'YAxis title'
-                    },
-                    {
-                        title: 'YRAxis title'
-                    }
-                ],
-                [100],
+            var result = maker._getYAxisWidth({
+                    title: 'YAxis title'
+                },
+                ['label1', 'label12'],
                 {
                     title: {
                         fontSize: 12,
@@ -140,8 +110,8 @@ describe('boundsMaker', function() {
                 }
             );
 
-            expect(result).toBeGreaterThan(64);
-            expect(result).toBeLessThan(67);
+            expect(result).toBeGreaterThan(84);
+            expect(result).toBeLessThan(89);
         });
     });
 
@@ -150,58 +120,31 @@ describe('boundsMaker', function() {
             var result = maker._getYRAxisWidth({
                 convertData: {
                     values: {
-                        column: [
-                            [20, 30, 50],
-                            [40, 40, 60]
-                        ],
                         line: [
                             [60, 50, 10],
                             [80, 10, 70]
                         ]
-                    },
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
+                    }
                 },
-                yAxisChartTypes: ['column', 'index'],
+                chartTypes: ['column', 'line'],
                 theme: {
-                    yAxis: {
-                        title: {
-                            fontSize: 12,
-                            fontFamily: 'Verdana'
-                        },
-                        label: {
-                            fontSize: 12,
-                            fontFamily: 'Verdana'
-                        }
+                    title: {
+                        fontSize: 12,
+                        fontFamily: 'Verdana'
                     },
-                    xAxis: {
-                        title: {
-                            fontSize: 12,
-                            fontFamily: 'Verdana'
-                        },
-                        label: {
-                            fontSize: 12,
-                            fontFamily: 'Verdana'
-                        }
+                    label: {
+                        fontSize: 12,
+                        fontFamily: 'Verdana'
                     }
                 },
-                options: {
-                    yAxis: [
-                        {
-                            title: 'YAxis title'
-                        },
-                        {
-                            title: 'YRAxis title'
-                        }
-                    ],
-                    xAxis: {
-                        title: 'XAxis title'
+                options: [
+                    {
+                        title: 'YAxis title'
+                    },
+                    {
+                        title: 'YRAxis title'
                     }
-                }
+                ]
             });
 
             expect(result).toBeGreaterThan(56);
@@ -339,10 +282,10 @@ describe('boundsMaker', function() {
 
             expect(result.title.height).toBeGreaterThan(19);
             expect(result.title.height).toBeLessThan(21);
-            expect(result.plot.width).toBeGreaterThan(321);
-            expect(result.plot.width).toBeLessThan(351);
-            expect(result.plot.height).toBeGreaterThan(309);
-            expect(result.plot.height).toBeLessThan(313);
+            expect(result.series.width).toBeGreaterThan(321);
+            expect(result.series.width).toBeLessThan(351);
+            expect(result.series.height).toBeGreaterThan(309);
+            expect(result.series.height).toBeLessThan(313);
 
             expect(result.legend.width).toBeGreaterThan(71);
             expect(result.legend.width).toBeLessThan(76);
