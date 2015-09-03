@@ -114,9 +114,9 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     },
 
     /**
-     * First animation
+     * Animate.
      */
-    firstAnimation: function() {
+    animate: function() {
         ne.util.forEach(this.bars, function(bar) {
             var bound = bar.bound;
             bar.rect.animate({

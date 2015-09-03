@@ -344,7 +344,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             if (!paper) {
                 paper = chart.getPaper();
             }
-            chart.animation();
+            chart.animateChart();
         });
         return el;
     }

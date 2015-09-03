@@ -61,7 +61,7 @@ _createChart = function(container, data, options) {
 
     chart = chartFactory.get(options.chartType, data, theme, options);
     container.appendChild(chart.render());
-    chart.animation();
+    chart.animateChart();
 
     return chart;
 };
