@@ -18,8 +18,9 @@ var dataConverter = {
     /**
      * Convert user data.
      * @memberOf module:dataConverter
-     * @param {array.<array>} userData
+     * @param {array.<array>} userData user data
      * @param {object} chartOptions chart option
+     * @param {string} chartType chart type
      * @returns {{
      *      labels: array.<string>,
      *      values: array.<number>,

@@ -179,7 +179,7 @@ describe('boundsMaker', function() {
                         [80, 10, 70]
                     ]
                 },
-                yAxisChartTypes: [],
+                optionChartTypes: [],
                 isVertical: true,
                 hasAxes: true,
                 theme: {
@@ -234,7 +234,7 @@ describe('boundsMaker', function() {
                         [80, 10, 70]
                     ]
                 },
-                yAxisChartTypes: [],
+                optionChartTypes: [],
                 isVertical: true,
                 hasAxes: true,
                 theme: {
@@ -311,7 +311,7 @@ describe('boundsMaker', function() {
                         [80, 10, 70]
                     ]
                 },
-                yAxisChartTypes: [],
+                optionChartTypes: [],
                 isVertical: true,
                 hasAxes: true,
                 theme: {

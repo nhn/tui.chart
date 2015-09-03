@@ -78,40 +78,47 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             bound = this.bound,
             isPointPosition = !!this.isPointPosition,
             dimension = bound.dimension,
-            position = bound.position,
             inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isPointPosition),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
-            hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH,
-            data;
+            data = {
+                dimension: dimension,
+                theme: this.theme,
+                options: this.options
+            };
 
         if (!paper) {
-            renderUtil.renderDimension(el, dimension);
-
-            position.top = position.top + (isPointPosition ? -HIDDEN_WIDTH : -1);
-            position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
-
-            renderUtil.renderPosition(el, position);
+            this._renderBounds(el, dimension, bound.position, isPointPosition);
         }
 
-        data = {
-            dimension: dimension,
-            theme: this.theme,
-            options: this.options
-        };
-
-        if (this._makeBounds) {
-            data.groupBounds = this._makeBounds(dimension);
-        } else if (this._makePositions) {
-            data.groupPositions = this._makePositions(dimension);
-        } else if (this._makeCircleBounds) {
-            data.percentValues = this.percentValues;
-            data.formattedValues = this.data.formattedValues;
-            data.chartBackground = this.chartBackground;
-            data.circleBounds = this._makeCircleBounds(dimension);
-        }
-
+        data = ne.util.extend(data, this.makeAddData());
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
         return el;
+    },
+
+    /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {};
+    },
+
+    /**
+     * Render bounds
+     * @param {HTMLElement} el series element
+     * @param {{width: number, height: number}} dimension series dimension
+     * @param {{top: number, right: number}} position series position
+     * @param {boolean} isPointPosition whether point position or not
+     * @private
+     */
+    _renderBounds: function(el, dimension, position, isPointPosition) {
+        var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
+        renderUtil.renderDimension(el, dimension);
+
+        position.top = position.top - HIDDEN_WIDTH;
+        position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+
+        renderUtil.renderPosition(el, position);
     },
 
     /**

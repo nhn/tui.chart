@@ -32,6 +32,8 @@ var boundsMaker = {
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
+     *      @param {boolean} params.hasAxes whether has axes area or not
+     *      @param {array} params.optionChartTypes y axis option chart types
      * @returns {{
      *   plot: {
      *     dimension: {width: number, height: number},
@@ -65,7 +67,7 @@ var boundsMaker = {
             right = dimensions.legend.width + dimensions.yrAxis.width + CHART_PADDING,
             axesBounds = this._makeAxesBounds({
                 hasAxes: params.hasAxes,
-                yAxisChartTypes: params.yAxisChartTypes,
+                optionChartTypes: params.optionChartTypes,
                 dimensions: dimensions,
                 top: top,
                 right: right
@@ -249,8 +251,10 @@ var boundsMaker = {
      * @private
      */
     _makeAxesDimension: function(params) {
-        var theme, options, convertData, yAxisChartTypes, maxLabel, yLabels,
+        var theme, options, convertData, optionChartTypes, maxValueLabel, yLabels,
             xLabels, yAxisWidth, xAxisHeight, yrAxisWidth, chartType;
+
+        // pie차트와 같이 axis 영역이 필요 없는 경우에는 모두 0으로 반환
         if (!params.hasAxes) {
             return {
                 yAxis: {
@@ -268,18 +272,22 @@ var boundsMaker = {
         theme = params.theme;
         options = params.options;
         convertData = params.convertData;
-        yAxisChartTypes = params.yAxisChartTypes;
+        optionChartTypes = params.optionChartTypes;
 
-        chartType = yAxisChartTypes && yAxisChartTypes[0] || '';
-        maxLabel = this._getValueAxisMaxLabel(convertData, chartType);
-        yLabels = params.isVertical ? [maxLabel] : convertData.labels;
-        xLabels = params.isVertical ? convertData.labels : [maxLabel];
+        chartType = optionChartTypes && optionChartTypes[0] || '';
+
+        // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
+        maxValueLabel = this._getValueAxisMaxLabel(convertData, chartType);
+
+        // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
+        yLabels = params.isVertical ? [maxValueLabel] : convertData.labels;
+        xLabels = params.isVertical ? convertData.labels : [maxValueLabel];
 
         yAxisWidth = this._getYAxisWidth(options.yAxis, yLabels, theme.yAxis[chartType] || theme.yAxis);
         xAxisHeight = this._getXAxisHeight(options.xAxis, xLabels, theme.xAxis);
         yrAxisWidth = this._getYRAxisWidth({
             convertData: convertData,
-            chartTypes: yAxisChartTypes,
+            chartTypes: optionChartTypes,
             theme: theme.yAxis,
             options: options.yAxis
         });
@@ -363,15 +371,19 @@ var boundsMaker = {
             },
             axesDimension, titleHeight, legendWidth, seriesDimension, dimensions;
 
+        // axis 영역에 필요한 요소들의 너비 높이를 얻어옴
         axesDimension = this._makeAxesDimension(params);
         titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING;
         legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label);
+
+        // series 너비, 높이 값은 차트 bounds를 구성하는 가장 중요한 요소다
         seriesDimension = this._makeSeriesDimension({
             chartDimension: chartDimension,
             axesDimension: axesDimension,
             legendWidth: legendWidth,
             titleHeight: titleHeight
         });
+
         dimensions = ne.util.extend({
             chart: chartDimension,
             title: {
@@ -390,7 +402,7 @@ var boundsMaker = {
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axed or not
-     *      @param {array.<string>} params.yAxisChartTypes y axis chart types
+     *      @param {array.<string>} params.optionChartTypes y axis chart types
      *      @param {{width: number, height: number}} params.dimension chart dimension
      *      @param {number} params.top top position
      *      @param {number} params.right right position
@@ -398,14 +410,15 @@ var boundsMaker = {
      * @private
      */
     _makeAxesBounds: function(params) {
-        var bounds, dimensions, yAxisChartTypes, top, right;
+        var bounds, dimensions, optionChartTypes, top, right;
 
+        // pie차트와 같이 axis 영역이 필요 없는 경우에는 빈 값을 반환 함
         if (!params.hasAxes) {
             return {};
         }
 
         dimensions = params.dimensions;
-        yAxisChartTypes = params.yAxisChartTypes;
+        optionChartTypes = params.optionChartTypes;
         top = params.top;
         right = params.right;
         bounds = {
@@ -438,7 +451,8 @@ var boundsMaker = {
             }
         };
 
-        if (yAxisChartTypes && yAxisChartTypes.length) {
+        // 우측 y axis 영역 bounds 정보 추가
+        if (optionChartTypes && optionChartTypes.length) {
             bounds.yrAxis = {
                 dimension: {
                     width: dimensions.yrAxis.width,

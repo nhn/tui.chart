@@ -24,12 +24,12 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      */
     init: function(userData, theme, options) {
         var seriesChartTypes = ne.util.keys(userData.series).sort(),
-            yAxisChartTypes = this._getYAxisChartTypes(seriesChartTypes, options.yAxis),
-            chartTypes = yAxisChartTypes.length ? yAxisChartTypes : seriesChartTypes,
+            optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, options.yAxis),
+            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes,
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
                 hasAxes: true,
-                yAxisChartTypes: yAxisChartTypes
+                optionChartTypes: optionChartTypes
             }),
             convertData = baseData.convertData,
             bounds = baseData.bounds,
@@ -39,7 +39,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 convertData: convertData,
                 seriesDimension: bounds.series.dimension,
                 chartTypes: chartTypes,
-                isOneYAxis: !yAxisChartTypes.length,
+                isOneYAxis: !optionChartTypes.length,
                 options: options
             },
             baseAxesData = {};
@@ -68,13 +68,13 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     },
 
     /**
-     * Get y axis chart types.
+     * Get y axis option chart types.
      * @param {array.<string>} chartTypes chart types
      * @param {object} yAxisOptions y axis options
      * @returns {array.<string>} chart types
      * @private
      */
-    _getYAxisChartTypes: function(chartTypes, yAxisOptions) {
+    _getYAxisOptionChartTypes: function(chartTypes, yAxisOptions) {
         var resultChartTypes = chartTypes.slice(),
             isReverse = false,
             optionChartTypes;

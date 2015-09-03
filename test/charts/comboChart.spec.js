@@ -62,12 +62,12 @@ describe('ComboChart', function() {
 
     describe('_getYAxisChartTypes() - y axis 영역 옵션이 기준으로 차트 타입을 정렬하여 반환', function() {
         it('옵션이 없을 경우에는 인자로 받은 차트 타입들을 그대로 반환 함', function () {
-            var result = comboChart._getYAxisChartTypes(['column', 'line']);
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line']);
             expect(result).toEqual(['column', 'line']);
         });
 
         it('옵션이 하나만 있고, chartType 옵션이 포함되지 않았을 경우에는 빈 배열 반환', function() {
-            var result = comboChart._getYAxisChartTypes(['column', 'line'], {
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], {
                 title: 'test'
             });
 
@@ -75,28 +75,28 @@ describe('ComboChart', function() {
         });
 
         it('옵션이 하나만 있고, chartType 옵션이 있을 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
-            var result = comboChart._getYAxisChartTypes(['column', 'line'], {
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], {
                 chartType: 'line'
             });
             expect(result).toEqual(['line', 'column']);
         });
 
         it('옵션이 배열 형태로 첫번째 요소에만 존재하며, chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
-            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{
                 chartType: 'line'
             }]);
             expect(result).toEqual(['line', 'column']);
         });
 
         it('옵션에 두가지 차트의 옵션이 배열로 포함되어있고 두번째 배열에 chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
-            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{}, {
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{}, {
                 chartType: 'line'
             }]);
             expect(result).toEqual(['column', 'line']);
         });
 
         it('옵션에 배열의 첫번째 요소에만 포함되어있는데 chartType 옵션이 포함되지 않았을 경우에는 빈 배열 반환', function() {
-            var result = comboChart._getYAxisChartTypes(['column', 'line'], [{
+            var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{
                 title: 'test'
             }]);
             expect(result).toEqual([]);

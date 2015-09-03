@@ -116,7 +116,7 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeVerticalPixelPositions: function(height) {
-        var positions = calculator.makePixelPositions(height, this.vTickCount);
+        var positions = calculator.makeTickPixelPositions(height, this.vTickCount);
         positions.shift();
         return positions;
     },
@@ -128,7 +128,7 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeHorizontalPixelPositions: function(width) {
-        var positions = calculator.makePixelPositions(width, this.hTickCount);
+        var positions = calculator.makeTickPixelPositions(width, this.hTickCount);
         positions.shift();
         return positions;
     }

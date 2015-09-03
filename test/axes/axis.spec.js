@@ -7,7 +7,8 @@
 'use strict';
 
 var Axis = require('../../src/js/axes/axis.js'),
-    dom = require('../../src/js/helpers/domHandler.js');
+    dom = require('../../src/js/helpers/domHandler.js'),
+    renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Axis', function() {
     var labelData = {
@@ -47,6 +48,26 @@ describe('Axis', function() {
             options: {
                 title: 'Axis Title'
             }
+        });
+    });
+
+    describe('_renderTitleAreaStyle()', function() {
+        it('좌측 y axis의 타이틀일 경우의 css style 렌더링', function() {
+            var elTitle = dom.create('DIV');
+            axis._renderTitleAreaStyle(elTitle, 50);
+            expect(elTitle.style.width).toEqual('50px');
+            expect(elTitle.style.left).toEqual('0px');
+            if (!renderUtil.isIE8()) {
+                expect(elTitle.style.top).toEqual('50px');
+            }
+        });
+
+        it('우측 y axis의 타이틀일 경우의 css style 렌더링', function() {
+            var elTitle = dom.create('DIV');
+            axis._renderTitleAreaStyle(elTitle, 50, true);
+            expect(elTitle.style.width).toEqual('50px');
+            expect(elTitle.style.right).toEqual('-50px');
+            expect(elTitle.style.top).toEqual('0px');
         });
     });
 

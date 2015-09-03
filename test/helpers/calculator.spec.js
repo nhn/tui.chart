@@ -73,12 +73,12 @@ describe('calculator', function() {
 
     describe('makePixelPositions()', function() {
         it('size=300, count=5인 경우의 pixel 타입의 position정보 반환', function () {
-            var positions = calculator.makePixelPositions(300, 5);
+            var positions = calculator.makeTickPixelPositions(300, 5);
             expect(positions).toEqual([0, 75, 150, 224, 299]);
         });
 
         it('size=400, count=6인 경우의 pixel 타입의 position정보 반환', function() {
-            var positions = calculator.makePixelPositions(400, 6);
+            var positions = calculator.makeTickPixelPositions(400, 6);
             expect(positions).toEqual([0, 80, 160, 239, 319, 399]);
         });
     });

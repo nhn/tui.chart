@@ -38,6 +38,15 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         return result;
     },
 
+    makeAddData: function() {
+        return {
+            percentValues: this.percentValues,
+            formattedValues: this.data.formattedValues,
+            chartBackground: this.chartBackground,
+            circleBounds: this._makeCircleBounds(this.bound.dimension)
+        };
+    },
+
     /**
      * To make circle bounds
      * @param {{width: number, height:number}} dimension chart dimension
