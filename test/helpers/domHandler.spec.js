@@ -90,7 +90,7 @@ describe('domHandler', function() {
     });
 
     describe('append()', function() {
-        it('차식 하나만 추가 할 경우', function () {
+        it('자식 하나만 추가 할 경우', function () {
             var elParent = dom.create('DIV'),
                 el = dom.create('SPAN');
 

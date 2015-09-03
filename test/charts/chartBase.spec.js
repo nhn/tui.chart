@@ -26,7 +26,7 @@ describe('ChartBase', function() {
     });
 
     describe('addComponent()', function() {
-        it('legend 추가 후 추가 확인', function () {
+        it('legend 추가 후, 정상 추가 되었는지 확인', function () {
             chartBase.addComponent('legend', Legend, {});
             expect(!!chartBase.componentMap.legend).toBeTruthy();
         });
@@ -37,7 +37,7 @@ describe('ChartBase', function() {
     });
 
     describe('_renderTitle()', function() {
-        it('타이틀 렌더링 확인', function () {
+        it('타이틀 렌더링', function () {
             var el = dom.create('DIV');
             chartBase._renderTitle(el);
             expect(el.firstChild.innerHTML).toEqual('Chart Title');

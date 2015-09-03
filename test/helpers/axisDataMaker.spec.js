@@ -465,7 +465,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('makeValueAxisData()', function() {
-        it('stacked 옵션이 없는 값 타입 axis data 생성 결과', function () {
+        it('stacked 옵션이 없는 값 타입 axis data 생성', function () {
             var result = maker.makeValueAxisData({
                 values: groupValues,
                 seriesDimension: {
@@ -489,7 +489,7 @@ describe('axisDataMaker', function() {
             });
         });
 
-        it('makeValueAxisData() normal stacked', function () {
+        it('stacked 옵션이 "normal"인 값 타입의 axis data 생성', function () {
             var result = maker.makeValueAxisData({
                 values: groupValues,
                 seriesDimension: {
@@ -514,7 +514,7 @@ describe('axisDataMaker', function() {
             });
         });
 
-        it('makeValueAxisData() percent stacked', function () {
+        it('stacked 옵션이 "percent"인 값 타입의 axis data 생성', function () {
             var result = maker.makeValueAxisData({
                 values: groupValues,
                 seriesDimension: {

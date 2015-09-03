@@ -82,7 +82,7 @@ describe('Axis', function() {
 
 
     describe('_renderTickArea()', function() {
-        it('너비가 300인 경우의 가로축 tick영역 렌더링 결과 확인', function() {
+        it('너비가 300인 경우의 가로축 tick 영역 렌더링', function() {
             var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             axis.data.isVertical = false;
@@ -109,7 +109,7 @@ describe('Axis', function() {
             });
         });
 
-        it('높이가 300인 경우의 세로축 tick영역 렌더링 결과 확인', function() {
+        it('높이가 300인 경우의 세로축 tick 영역 렌더링', function() {
             var elTickArea, compareHtml, elTemp, elCompare, children, compareChildren;
 
             axis.data.isVertical = true;
@@ -139,7 +139,7 @@ describe('Axis', function() {
     });
 
     describe('_renderLabelArea()', function() {
-        it('너비가 300인 레이블 타입 가로축의 레이블 영역 렌더링 결과 확인', function() {
+        it('너비가 300인 레이블 타입 가로축의 레이블 영역 렌더링', function() {
             var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
             axis.data.isVertical = false;
@@ -165,7 +165,7 @@ describe('Axis', function() {
             });
         });
 
-        it('높이가 300이고 너비가 100인 레이블 타입 세로축의 레이블 영역 렌더링 결과 확인', function() {
+        it('높이가 300이고 너비가 100인 레이블 타입 세로축의 레이블 영역 렌더링', function() {
             var elLabelArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
             axis.data.isVertical = true;
@@ -194,7 +194,7 @@ describe('Axis', function() {
             });
         });
 
-        it('너비가 300인 값 타입 가로축의 레이블 영역 렌더링 결과 확인', function() {
+        it('너비가 300인 값 타입 가로축의 레이블 영역 렌더링', function() {
             var eLabelArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
             axis.data = valueData;
@@ -222,7 +222,7 @@ describe('Axis', function() {
             });
         });
 
-        it('높이가 300이고 너비가 100인 값 타입 세로축의 레이블 영역 렌더링 확인', function() {
+        it('높이가 300이고 너비가 100인 값 타입 세로축의 레이블 영역 렌더링', function() {
             var elTickArea, elTemp, compareHtml, elTempArea, childNodes, tmpChildNodes;
 
             axis.data = valueData;
@@ -263,7 +263,7 @@ describe('Axis', function() {
     });
 
     describe('_makeLabelCssTexts()', function() {
-        it('레이블 타입 세로축의 cssText 배열 값 생성', function() {
+        it('레이블 타입 세로축의 css 배열 생성', function() {
             var cssTexts = axis._makeLabelCssTexts({
                 isVertical: true,
                 isLabelAxis: true,
@@ -272,7 +272,7 @@ describe('Axis', function() {
             expect(cssTexts).toEqual(['height:100px', 'line-height:100px']);
         });
 
-        it('레이블 타입 가로축의 cssText 배열 값 생성', function() {
+        it('레이블 타입 가로축의 css 배열 생성', function() {
             var cssTexts = axis._makeLabelCssTexts({
                 isVertical: false,
                 isLabelAxis: true,
@@ -281,7 +281,7 @@ describe('Axis', function() {
             expect(cssTexts).toEqual(['width:100px']);
         });
 
-        it('값 타입 세로축의 cssText 배열 값 생성', function() {
+        it('값 타입 세로축의 경우는 빈 css 배열이 생성됨', function() {
             var cssTexts = axis._makeLabelCssTexts({
                 isVertical: true,
                 isLabelAxis: false,
@@ -290,7 +290,7 @@ describe('Axis', function() {
             expect(cssTexts).toEqual([]);
         });
 
-        it('값 타입 가로축의 cssText 배열 값 생성', function() {
+        it('값 타입 가로축의 css 배열 생성', function() {
             var cssTexts = axis._makeLabelCssTexts({
                 isVertical: false,
                 isLabelAxis: false,
@@ -357,7 +357,7 @@ describe('Axis', function() {
     });
 
     describe('render()', function() {
-        it('axis 영역 전체 렌더링 결과 확인', function() {
+        it('axis 영역 전체 렌더링', function() {
             var el;
             axis.data.isVertical = false;
             el = axis.render();
