@@ -83,6 +83,7 @@ var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype *
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
+            allowNegativeTooltip: true,
             data: {
                 values: convertData.values,
                 formattedValues: convertData.formattedValues,

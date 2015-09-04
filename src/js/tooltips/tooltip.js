@@ -203,16 +203,16 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculatePointPosition: function(params) {
-        var bound = params.data.bound,
+    _calculatePositionOfVerticalTypeChart: function(params) {
+        var bound = params.bound,
+            addPosition = params.addPosition,
             minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : TOOLTIP_GAP,
             positionOption = params.positionOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
-
-        result.left = bound.left + (HIDDEN_WIDTH * 2);
-        result.top = bound.top - tooltipHeight;
+        result.left = bound.left + (HIDDEN_WIDTH * 2) + addPosition.left;
+        result.top = bound.top - tooltipHeight + addPosition.top;
 
         if (positionOption.indexOf('left') > -1) {
             result.left -= minusWidth + lineGap;
@@ -242,15 +242,17 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateRectPosition: function(params) {
-        var bound = params.data.bound,
+    _calculatePositionOfHorizontalTypeChart: function(params) {
+        var bound = params.bound,
+            addPosition = params.addPosition,
             minusHeight = params.dimension.height - (bound.height || 0),
             positionOption = params.positionOption || '',
             tooltipWidth = params.dimension.width,
             result = {};
 
-        result.left = bound.left + bound.width;
-        result.top = bound.top;
+        result.left = bound.left + bound.width + addPosition.left;
+        result.top = bound.top + addPosition.top;
+
         if (positionOption.indexOf('left') > -1) {
             result.left -= tooltipWidth;
         } else if (positionOption.indexOf('center') > -1) {
@@ -266,34 +268,95 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         } else {
             result.top -= HIDDEN_WIDTH * 2;
         }
+
         return result;
     },
 
     /**
      * Calculate tooltip position.
      * @param {object} params parameters
-     *      @param {{bound: object, isPointPosition: boolean}} params.data graph information
+     *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
+     *      @param {boolean} params.isVerticalTypeChart whether point position or not
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
      *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
     _calculatePosition: function(params) {
-        var result = {};
-        if (params.data.isPointPosition) {
-            result = this._calculatePointPosition(params);
+        var result = {},
+            sizeType, positionType, addPadding;
+        if (params.isVerticalTypeChart) {
+            result = this._calculatePositionOfVerticalTypeChart(params);
+            sizeType = 'height';
+            positionType = 'top';
+            addPadding = -1;
         } else {
-            result = this._calculateRectPosition(params);
+            result = this._calculatePositionOfHorizontalTypeChart(params);
+            sizeType = 'width';
+            positionType = 'left';
+            addPadding = 1;
+        }
+
+        if (params.allowNegativeTooltip) {
+            result = this._moveSymmetry(result, {
+                bound: params.bound,
+                id: params.id,
+                dimension: params.dimension,
+                sizeType: sizeType,
+                positionType: positionType,
+                addPadding: addPadding
+            });
         }
         return result;
     },
 
     /**
-     * onShow is callback of custom event showTooltip for SeriesView.
-     * @param {{id: string, bound: object}} data tooltip data
+     * Get value by id.
+     * @param {string} id tooltip id
+     * @returns {number} result value
+     * @private
      */
-    onShow: function(data) {
-        var elTooltip = document.getElementById(data.id),
+    _getValueById: function(id) {
+        var indexes = this._getIndexFromId(id),
+            value = this.values[indexes[0]][indexes[1]];
+        return value;
+    },
+
+    /**
+     * Move symmetry.
+     * @param {{left: number, top: number}} position tooltip position
+     * @param {object} params parameters
+     *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
+     *      @param {string} params.id tooltip id
+     *      @param {{width: number, height: number}} params.dimension tooltip dimension
+     *      @param {string} params.sizeType size type (width or height)
+     *      @param {string} params.positionType position type (left or top)
+     *      @param {number} params.addPadding add padding
+     * @returns {{left: number, top: number}} moved position
+     * @private
+     */
+    _moveSymmetry: function(position, params) {
+        var bound = params.bound,
+            sizeType = params.sizeType,
+            positionType = params.positionType,
+            value = this._getValueById(params.id),
+            center;
+
+        if (value < 0) {
+            center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
+            position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
+        }
+
+        return position;
+    },
+
+    /**
+     * onShow is callback of custom event showTooltip for SeriesView.
+     * @param {{id: string, bound: object}} params tooltip data
+     */
+    onShow: function(params) {
+        var elTooltip = document.getElementById(params.id),
             addPosition = ne.util.extend({
                 left: 0,
                 top: 0
@@ -306,24 +369,24 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             this._fireHideAnimation(this.showedId);
         }
 
-        this.showedId = data.id;
+        this.showedId = params.id;
         dom.addClass(elTooltip, 'show');
 
-        position = this._calculatePosition({
-            data: data,
+        position = this._calculatePosition(ne.util.extend({
             dimension: {
                 width: elTooltip.offsetWidth,
                 height: elTooltip.offsetHeight
             },
+            addPosition: addPosition,
             positionOption: positionOption || ''
-        });
+        }, params));
 
         elTooltip.style.cssText = [
-            renderUtil.concatStr('left:', position.left + addPosition.left, 'px'),
-            renderUtil.concatStr('top:', position.top + addPosition.top, 'px')
+            renderUtil.concatStr('left:', position.left, 'px'),
+            renderUtil.concatStr('top:', position.top, 'px')
         ].join(';');
 
-        this._fireShowAnimation(data.id);
+        this._fireShowAnimation(params.id);
     },
 
     /**

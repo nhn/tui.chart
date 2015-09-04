@@ -43,17 +43,18 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Show tooltip (mouseover callback).
-     * @param {string} prefix tooltip id prefix
-     * @param {boolean} isPointPosition whether point position or not
+     * @param {object} params parameters
+     *      @param {string} params.prefix tooltip id prefix
+     *      @param {boolean} params.isVerticalTypeChart whether vertical type chart or not
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(prefix, isPointPosition, bound, id) {
-        this.fire('showTooltip', {
-            id: prefix + id,
-            isPointPosition: isPointPosition,
+    showTooltip: function(params, bound, id) {
+        this.fire('showTooltip', ne.util.extend({
+            id: params.prefix + id,
             bound: bound
-        });
+        }, params));
     },
 
     /**
@@ -76,9 +77,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            isPointPosition = !!this.isPointPosition,
+            isVerticalTypeChart = !!this.isVerticalTypeChart,
             dimension = bound.dimension,
-            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isPointPosition),
+            inCallback = ne.util.bind(this.showTooltip, this, {
+                prefix: tooltipPrefix,
+                allowNegativeTooltip: !!this.allowNegativeTooltip,
+                isVerticalTypeChart: isVerticalTypeChart
+            }),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             data = {
                 dimension: dimension,
@@ -87,7 +92,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             };
 
         if (!paper) {
-            this._renderBounds(el, dimension, bound.position, isPointPosition);
+            this._renderBounds(el, dimension, bound.position, isVerticalTypeChart);
         }
 
         data = ne.util.extend(data, this.makeAddData());
@@ -108,15 +113,15 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, right: number}} position series position
-     * @param {boolean} isPointPosition whether point position or not
+     * @param {boolean} isVerticalTypeChart whether point position or not
      * @private
      */
-    _renderBounds: function(el, dimension, position, isPointPosition) {
+    _renderBounds: function(el, dimension, position, isVerticalTypeChart) {
         var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
         renderUtil.renderDimension(el, dimension);
 
         position.top = position.top - HIDDEN_WIDTH;
-        position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+        position.right = position.right + (isVerticalTypeChart ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
 
         renderUtil.renderPosition(el, position);
     },

@@ -8,7 +8,7 @@
 
 var Tooltip = require('../../src/js/tooltips/tooltip.js');
 
-describe('test Tooltip', function() {
+describe('Tooltip', function() {
     var data = {
             labels: [
                 'Silver',
@@ -77,22 +77,24 @@ describe('test Tooltip', function() {
         });
     });
 
-    describe('_calculateVerticalPosition()', function() {
+    describe('_calculatePositionOfVerticalTypeChart()', function() {
         it('포인트 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
-            var result = tooltip._calculatePointPosition({
-                data: {
-                    bound: {
-                        width: 25,
-                        height: 50,
-                        top: 50,
-                        left: 10
-                    }
+            var result = tooltip._calculatePositionOfVerticalTypeChart({
+                bound: {
+                    width: 25,
+                    height: 50,
+                    top: 50,
+                    left: 10
                 },
                 dimension: {
                     width: 50,
                     height: 30
                 },
-                positionOption: ''
+                positionOption: '',
+                addPosition: {
+                    left: 0,
+                    top: 0
+                }
             });
 
             expect(result).toEqual({
@@ -102,22 +104,25 @@ describe('test Tooltip', function() {
         });
     });
 
-    describe('_calculateRectPosition()', function() {
+    describe('_calculatePositionOfHorizontalTypeChart()', function() {
         it('Rect 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
-            var result = tooltip._calculateRectPosition({
-                data: {
-                    bound: {
-                        width: 50,
-                        height: 25,
-                        top: 10,
-                        left: 0
-                    }
+            var result = tooltip._calculatePositionOfHorizontalTypeChart({
+                bound: {
+                    width: 50,
+                    height: 25,
+                    top: 10,
+                    left: 0
                 },
+                id: 'id-0-0',
                 dimension: {
                     width: 50,
                     height: 30
                 },
-                positionOption: ''
+                positionOption: '',
+                addPosition: {
+                    left: 0,
+                    top: 0
+                }
             });
 
             expect(result).toEqual({
@@ -127,23 +132,69 @@ describe('test Tooltip', function() {
         });
     });
 
+    describe('_getValueById', function() {
+        it('tooltip id를 통해서 value값을 얻어낸다', function() {
+            var result;
+            tooltip.values = [
+                [1, 2, 3],
+                [4, 5, 6]
+            ];
+            result = tooltip._getValueById('id-0-2');
+            expect(result).toEqual(3);
+        });
+    });
+
+    describe('_moveSymmetry', function() {
+        it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킨다.', function() {
+            var result;
+            tooltip.values = [
+                [1, 2, -3],
+                [4, 5, 6]
+            ];
+            result = tooltip._moveSymmetry(
+                {
+                    left: 120
+                },
+                {
+                    bound: {
+                        left: 60,
+                        width: 60
+                    },
+                    sizeType: 'width',
+                    positionType: 'left',
+                    id: 'id-0-2',
+                    dimension: {
+                        width: 50
+                    },
+                    addPadding: 0
+                }
+            );
+
+            expect(result).toEqual({
+                left: 10
+            });
+        });
+    });
+
     describe('_calculatePosition()', function() {
         it('포인트 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
             var result = tooltip._calculatePosition({
-                data: {
-                    bound: {
-                        width: 25,
-                        height: 50,
-                        top: 50,
-                        left: 10
-                    },
-                    isPointPosition: true
+                bound: {
+                    width: 25,
+                    height: 50,
+                    top: 50,
+                    left: 10
                 },
+                isVerticalTypeChart: true,
                 dimension: {
                     width: 50,
                     height: 30
                 },
-                positionOption: ''
+                positionOption: '',
+                addPosition: {
+                    left: 0,
+                    top: 0
+                }
             });
 
             expect(result).toEqual({
@@ -154,19 +205,22 @@ describe('test Tooltip', function() {
 
         it('Rect 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
             var result = tooltip._calculatePosition({
-                data: {
-                    bound: {
-                        width: 50,
-                        height: 25,
-                        top: 10,
-                        left: 0
-                    }
+                bound: {
+                    width: 50,
+                    height: 25,
+                    top: 10,
+                    left: 0
                 },
+                id: 'id-0-0',
                 dimension: {
                     width: 50,
                     height: 30
                 },
-                positionOption: ''
+                positionOption: '',
+                addPosition: {
+                    left: 0,
+                    top: 0
+                }
             });
 
             expect(result).toEqual({
