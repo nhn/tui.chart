@@ -98,7 +98,7 @@ describe('test dataConverter', function() {
     });
 
     describe('_pickMaxLenUnderPoint()', function() {
-        it('전달된 소수 중 소수점 이하의 길이제 제일 긴 길이 값 반환', function () {
+        it('전달된 소수들의 소수점 이하의 길이를 비교하여 제일 긴 길이 값 반환', function () {
             var point = converter._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
             expect(point).toEqual(3);
         });
@@ -131,7 +131,7 @@ describe('test dataConverter', function() {
     });
 
     describe('_formatValues()', function() {
-        it('단일 차트일 경우의 formatting된 value 반환', function () {
+        it('단일 차트일 경우의 포맷팅된 value 반환', function () {
             var formatFunctions = converter._findFormatFunctions('0.0'),
                 result = converter._formatValues([
                     [20, 40, 60, 80],
@@ -145,7 +145,7 @@ describe('test dataConverter', function() {
             ]);
         });
 
-        it('Combo 차트일 경우의 formatting된 value 반환_formatValues() for combo chart', function () {
+        it('Combo 차트일 경우의 포맷팅된 value 반환', function () {
             var formatFunctions = converter._findFormatFunctions('0.0'),
                 result = converter._formatValues({
                     column: [
