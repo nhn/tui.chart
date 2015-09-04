@@ -9,37 +9,38 @@
 var LineChartSeries = require('../../src/js/series/lineChartSeries.js');
 
 describe('test LineChartSeries', function() {
-    var data = {
-            values: [[20], [40]],
-            formattedValues: [[20], [40]],
-            scale: {min: 0, max: 160}
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new LineChartSeries({
             chartType: 'line',
-            data: data,
+            data: {
+                values: [],
+                formattedValues: [],
+                scale: {min: 0, max: 0}
+            },
             options: {}
         });
     });
 
-    it('_makePositions()', function() {
-        var bounds;
-        series.percentValues = [[0.25], [0.5]];
-        bounds = series._makePositions({
-            width: 200,
-            height: 400
+    describe('_makePositions()', function() {
+        it('라인차트 position 정보 생성', function () {
+            var bounds;
+            series.percentValues = [[0.25], [0.5]];
+            bounds = series._makePositions({
+                width: 200,
+                height: 400
+            });
+            expect(bounds).toEqual([
+                [{
+                    top: 300,
+                    left: 100
+                }],
+                [{
+                    top: 200,
+                    left: 100
+                }]
+            ]);
         });
-        expect(bounds).toEqual([
-            [{
-                top: 300,
-                left: 100
-            }],
-            [{
-                top: 200,
-                left: 100
-            }]
-        ]);
     });
 });

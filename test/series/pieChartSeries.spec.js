@@ -8,38 +8,41 @@
 
 var PieChartSeries = require('../../src/js/series/pieChartSeries.js');
 
-describe('test PieChartSeries', function() {
-    var data = {
-            values: [[20, 30, 50]],
-            formattedValues: [[20, 30, 50]]
-        },
-        series;
+describe('PieChartSeries', function() {
+    var series;
 
     beforeEach(function() {
         series = new PieChartSeries({
             chartType: 'pie',
-            data: data,
+            data: {
+                values: [],
+                formatttedValues: []
+            },
             options: {}
         });
     });
 
-    it('_makePercentValues()', function() {
-        var result = series._makePercentValues({
-            values: [[20, 30, 50]]
+    describe('_makePercentValues()', function() {
+        it('pie차트의 percent타입 value 생성', function () {
+            var result = series._makePercentValues({
+                values: [[20, 30, 50]]
+            });
+            expect(result).toEqual([[0.2, 0.3, 0.5]]);
         });
-        expect(result).toEqual([[0.2, 0.3, 0.5]]);
     });
 
-    it('_makeCircleBounds()', function() {
-        var result = series._makeCircleBounds({
-            width: 400,
-            height: 300
-        });
+    describe('_makeCircleBounds()', function() {
+        it('pie차트의 circle bounds정보 생성', function () {
+            var result = series._makeCircleBounds({
+                width: 400,
+                height: 300
+            });
 
-        expect(result).toEqual({
-            cx: 200,
-            cy: 150,
-            r: 120
+            expect(result).toEqual({
+                cx: 200,
+                cy: 150,
+                r: 120
+            });
         });
     });
 });

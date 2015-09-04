@@ -41,6 +41,16 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {
+            groupBounds: this._makeBounds(this.bound.dimension)
+        };
+    },
+
+    /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
@@ -54,11 +64,20 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
+                    var top = paddingTop + (barHeight * index);
                     return {
-                        top: paddingTop + (barHeight * index),
-                        left: -HIDDEN_WIDTH,
-                        width: value * dimension.width,
-                        height: barHeight
+                        start: {
+                            top: top,
+                            left: -HIDDEN_WIDTH,
+                            width: 0,
+                            height: barHeight
+                        },
+                        end: {
+                            top: top,
+                            left: -HIDDEN_WIDTH,
+                            width: value * dimension.width,
+                            height: barHeight
+                        }
                     };
                 }, this);
             });
@@ -82,10 +101,18 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 return ne.util.map(values, function (value) {
                     var width = value * dimension.width,
                         bound = {
-                            top: paddingTop,
-                            left: left,
-                            width: width,
-                            height: barHeight
+                            start: {
+                                top: paddingTop,
+                                left: -HIDDEN_WIDTH,
+                                width: 0,
+                                height: barHeight
+                            },
+                            end: {
+                                top: paddingTop,
+                                left: left,
+                                width: width,
+                                height: barHeight
+                            }
                         };
                     left = left + width;
                     return bound;

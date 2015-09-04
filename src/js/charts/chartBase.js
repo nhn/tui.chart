@@ -44,7 +44,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {{convertData: object, bounds: object}} base data
      */
     makeBaseData: function(userData, theme, options, boundParams) {
-        var convertData = dataConverter.convert(userData, options.chart, options.chartType, boundParams && boundParams.yAxisChartTypes),
+        var convertData = dataConverter.convert(userData, options.chart, options.chartType),
             bounds = boundsMaker.make(ne.util.extend({
                 convertData: convertData,
                 theme: theme,
@@ -161,7 +161,18 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
         tooltip.on('showAnimation', series.onShowAnimation, series);
         tooltip.on('hideAnimation', series.onHideAnimation, series);
-    }
+    },
+
+    /**
+     * Animate chart.
+     */
+    animateChart: function() {
+        ne.util.forEachArray(this.components, function(component) {
+            if (component.animateComponent) {
+                component.animateComponent();
+            }
+        });
+    },
 });
 
 module.exports = ChartBase;

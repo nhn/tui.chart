@@ -8,7 +8,8 @@
 
 var Raphael = window.Raphael,
     DEFAULT_DOT_WIDTH = 4,
-    HOVER_DOT_WIDTH = 5;
+    HOVER_DOT_WIDTH = 5,
+    ANIMATION_TIME = 700;
 
 /**
  * @classdesc RaphaelLineCharts is graph renderer.
@@ -33,17 +34,20 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             groupPaths = this._getLinesPath(groupPositions),
             borderStyle = this._makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this._makeOutDotStyle(opacity, borderStyle),
-            groupDots;
+            groupLines, groupDots;
 
         if (!paper) {
             paper = Raphael(container, dimension.width, dimension.height);
         }
 
-        this._renderLines(paper, groupPaths, colors);
-        groupDots = this._renderDots(paper, groupPositions, colors, opacity, borderStyle);
+        groupLines = this._renderLines(paper, groupPaths, colors);
+        groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
 
         this.outDotStyle = outDotStyle;
+        this.groupPaths = groupPaths;
+        this.groupLines = groupLines;
         this.groupDots = groupDots;
+        this.dotOpacity = opacity;
 
         this._attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
 
@@ -104,7 +108,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
         var dot = paper.circle(position.left, position.top, DEFAULT_DOT_WIDTH),
             dotStyle = {
                 fill: color,
-                'fill-opacity': opacity,
+                'fill-opacity': 0,
                 'stroke-opacity': 0
             };
 
@@ -127,11 +131,11 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
      * @returns {array.<object>} dots
      * @private
      */
-    _renderDots: function(paper, groupPositions, colors, opacity, borderStyle) {
+    _renderDots: function(paper, groupPositions, colors, borderStyle) {
         var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
             return ne.util.map(positions, function(position) {
-                var dot = this._renderDot(paper, position, color, opacity, borderStyle);
+                var dot = this._renderDot(paper, position, color, borderStyle);
                 return dot;
             }, this);
         }, this);
@@ -229,9 +233,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
         var groupLines = ne.util.map(groupPaths, function(paths, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
             return ne.util.map(paths, function(path) {
-                var firstLine = this._renderLine(paper, path[0], color, strokeWidth),
-                    secondLine = this._renderLine(paper, path[1], color, strokeWidth);
-                return [firstLine, secondLine];
+                return this._renderLine(paper, path.start, color, strokeWidth);
             }, this);
         }, this);
 
@@ -249,11 +251,13 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             var fromPos = positions[0],
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
-                var centerPos = this._getCenter(fromPos, position),
-                    firstPath = this._makeLinePath(fromPos.left, fromPos.top, centerPos.left, centerPos.top),
-                    secondPath = this._makeLinePath(centerPos.left, centerPos.top, position.left, position.top);
+                var startPath = this._makeLinePath(fromPos.left, fromPos.top, fromPos.left, fromPos.top),
+                    endPath = this._makeLinePath(fromPos.left, fromPos.top, position.left, position.top);
                 fromPos = position;
-                return [firstPath, secondPath];
+                return {
+                    start: startPath,
+                    end: endPath
+                };
             }, this);
         }, this);
         return groupPaths;
@@ -292,7 +296,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             ne.util.forEach(dots, function(dot, index) {
                 var position = groupPositions[groupIndex][index],
                     id = index + '-' + groupIndex;
-                    //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
+                //prevIndex, prevDot, prevPositon, prevId, bgLines, lines;
                 this._bindHoverEvent(dot, position, id, inCallback, outCallback);
                 //if (index > 0) {
                 //    prevIndex = index - 1;
@@ -337,6 +341,36 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             dot = this.groupDots[groupIndex][index];
 
         dot.attr(this.outDotStyle);
+    },
+
+    /**
+     * Animate.
+     */
+    animate: function() {
+        var groupLines = this.groupLines,
+            groupPaths = this.groupPaths,
+            opacity = this.dotOpacity,
+            time = ANIMATION_TIME / groupLines[0].length;
+        ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
+            var startTime = 0;
+            ne.util.forEachArray(dots, function(dot, index) {
+                var line, path;
+                if (index) {
+                    line = groupLines[groupIndex][index - 1];
+                    path = groupPaths[groupIndex][index - 1].end;
+                    setTimeout(function() {
+                        line.animate({path: path}, time);
+                    }, startTime);
+                    startTime += time;
+                }
+
+                if (opacity) {
+                    setTimeout(function() {
+                        dot.attr({'fill-opacity': opacity});
+                    }, startTime);
+                }
+            });
+        });
     }
 });
 

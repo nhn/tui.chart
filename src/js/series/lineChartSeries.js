@@ -42,6 +42,16 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
                 });
             });
         return result;
+    },
+
+    /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {
+            groupPositions: this._makePositions(this.bound.dimension)
+        };
     }
 });
 

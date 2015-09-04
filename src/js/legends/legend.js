@@ -48,13 +48,13 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Set theme to legend labels
+     * Set theme for legend labels
      * @param {array.<object>} labels labels
      * @param {object} theme legend theme
      * @returns {array.<object>} labels
      * @private
      */
-    _setThemeToLabels: function(labels, theme) {
+    _setThemeForLabels: function(labels, theme) {
         var result = ne.util.map(labels, function(item, index) {
             var itemTheme = {
                 color: theme.colors[index]
@@ -94,14 +94,14 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
             chartTheme, result;
 
         if (!chartTypes.length) {
-            result = this._setThemeToLabels(joinLegendLabels, theme);
+            result = this._setThemeForLabels(joinLegendLabels, theme);
         } else {
             chartTheme = theme[chartType] || defaultLegendTheme;
-            result = this._setThemeToLabels(joinLegendLabels.slice(0, labelLen), chartTheme);
+            result = this._setThemeForLabels(joinLegendLabels.slice(0, labelLen), chartTheme);
             chartTheme = theme[ne.util.filter(chartTypes, function(propName) {
                 return propName !== chartType;
             })[0]] || defaultLegendTheme;
-            result = result.concat(this._setThemeToLabels(joinLegendLabels.slice(labelLen), chartTheme));
+            result = result.concat(this._setThemeForLabels(joinLegendLabels.slice(labelLen), chartTheme));
         }
         return result;
     },
@@ -116,7 +116,7 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
             template = legendTemplate.TPL_LEGEND,
             labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme) + (LABEL_PADDING_TOP * 2),
             baseMarginTop = parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1,
-            html = ne.util.map(labels, function(label, index) {
+            html = ne.util.map(labels, function(label) {
                 var borderCssText = label.borderColor ? renderUtil.concatStr(';border:1px solid ', label.borderColor) : '',
                     rectMargin, marginTop, data;
                 if (label.chartType === 'line') {

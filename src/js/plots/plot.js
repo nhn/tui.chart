@@ -52,8 +52,8 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _renderLines: function(el, dimension) {
-        var hPositions = this.makeHorizontalPixelPositions(dimension.width),
-            vPositions = this.makeVerticalPixelPositions(dimension.height),
+        var hPositions = this._makeHorizontalPixelPositions(dimension.width),
+            vPositions = this._makeVerticalPixelPositions(dimension.height),
             theme = this.theme,
             lineHtml = '';
 
@@ -113,9 +113,10 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * To make pixel value of vertical positions
      * @param {number} height plot height
      * @returns {array.<number>} positions
+     * @private
      */
-    makeVerticalPixelPositions: function(height) {
-        var positions = calculator.makePixelPositions(height, this.vTickCount);
+    _makeVerticalPixelPositions: function(height) {
+        var positions = calculator.makeTickPixelPositions(height, this.vTickCount);
         positions.shift();
         return positions;
     },
@@ -124,9 +125,10 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * To make pixel value of horizontal positions.
      * @param {number} width plot width
      * @returns {array.<number>} positions
+     * @private
      */
-    makeHorizontalPixelPositions: function(width) {
-        var positions = calculator.makePixelPositions(width, this.hTickCount);
+    _makeHorizontalPixelPositions: function(width) {
+        var positions = calculator.makeTickPixelPositions(width, this.hTickCount);
         positions.shift();
         return positions;
     }
