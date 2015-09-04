@@ -44,7 +44,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('_getBaseSize()', function() {
-        it('가로축일 경우의 기본 사이즈 정보 반환', function () {
+        it('x축일 경우의 기본 사이즈 정보 반환', function () {
             var baseSize = maker._getBaseSize({
                 width: 400,
                 height: 300
@@ -53,7 +53,7 @@ describe('axisDataMaker', function() {
             expect(baseSize).toEqual(400);
         });
 
-        it('세로축일 경우의 기본 사이즈 정보 반환', function () {
+        it('y축일 경우의 기본 사이즈 정보 반환', function () {
             var baseSize = maker._getBaseSize({
                 width: 400,
                 height: 300
@@ -93,7 +93,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('_selectTickInfo()', function() {
-        it('후보군 중 tick info 선정', function () {
+        it('후보군 중 tick info를 선정하여 반환', function () {
             var tickInfo = maker._selectTickInfo(10, 90, [
                 {
                     scale: {min: 0, max: 105},
@@ -209,7 +209,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('_minimizeTickScale()', function() {
-        it('사용자 값 범위를 넘어서는 scale에 대해 조절된 결과값 반환', function () {
+        it('사용자 값 범위를 넘어서는 scale에 대해 범위를 넘어서지 않게 조절된 결과값 반환', function () {
             var tickInfo = maker._minimizeTickScale({
                 userMin: 10,
                 userMax: 90,
@@ -451,13 +451,13 @@ describe('axisDataMaker', function() {
 
 
     describe('_formatLabels()', function() {
-        it('"1,000.00"타입의 formatting된 label 반환', function () {
+        it('"1,000.00"타입의 포맷팅된 label 반환', function () {
             var fns = converter._findFormatFunctions('1,000.00'),
                 result = maker._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
             expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
         });
 
-        it('"0001"타입의 formatting된 label 반환', function () {
+        it('"0001"타입의 포맷팅된 label 반환', function () {
             var fns = converter._findFormatFunctions('0001'),
                 result = maker._formatLabels([1, 2, 3], fns);
             expect(result).toEqual(['0001', '0002', '0003']);

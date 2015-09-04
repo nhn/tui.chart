@@ -14,7 +14,7 @@ describe('test themeFactory', function() {
     });
 
     describe('get()', function() {
-        it('등록된 테마를 요청했을 경우의 결과 확인', function () {
+        it('등록된 테마를 요청했을 경우에는 테마를 반환함', function () {
             var theme = themeFactory.get('newTheme');
 
             expect(theme.plot).toEqual({
@@ -23,7 +23,7 @@ describe('test themeFactory', function() {
             });
         });
 
-        it('등록되지 않은 테마를 요청했을 경우의 결과 확인', function () {
+        it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킴', function () {
             try {
                 themeFactory.get('newTheme1', 'line');
             } catch (e) {
@@ -77,7 +77,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_concatColors()', function() {
-        it('기존 colors값에 인자로 넘기는 colors값이 정상적으로 붙여졌는지 결과 확인', function () {
+        it('기존 colors값 뒤에 인자로 넘기는 colors값이 붙인 후 결과를 반환', function () {
             var theme = {
                 colors: ['gray'],
                 singleColors: ['blue']
@@ -92,7 +92,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_concatDefaultColors()', function() {
-        it('단일 차트에서 series.colors에 인자로 넘기는 colors값이 정상적으로 붙여졌는지 결과 확인', function () {
+        it('단일 차트에서 series.colors 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환', function () {
             var theme = {
                 series: {
                     colors: ['gray']
