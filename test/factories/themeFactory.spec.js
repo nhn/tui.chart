@@ -24,11 +24,9 @@ describe('test themeFactory', function() {
         });
 
         it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킴', function () {
-            try {
+            expect(function() {
                 themeFactory.get('newTheme1', 'line');
-            } catch (e) {
-                expect(e.message).toEqual('Not exist newTheme1 theme.');
-            }
+            }).toThrowError('Not exist newTheme1 theme.');
         });
     });
 

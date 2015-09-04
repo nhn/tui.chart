@@ -122,6 +122,7 @@ describe('test dataConverter', function() {
         it("포맷이 '1,000.00'인 경우에는 [_formatDecimal, _formatComma] 반환", function() {
             var result = converter._findFormatFunctions('1,000.00');
             expect(result.length).toEqual(2);
+            expect(result[1](result[0](1000))).toEqual('1,000.00');
         });
 
         it("포맷이 '0001'인 경우에는 [_formatZeroFill] 반환", function() {

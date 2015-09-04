@@ -62,10 +62,10 @@ describe('domHandler', function() {
         it('class 존재 여부 결과 반환', function () {
             var el = dom.create('DIV', 'test1 test2'),
                 result = dom.hasClass(el, 'test1');
-            expect(result).toBeTruthy();
+            expect(result).toBe(true);
 
             result = dom.hasClass(el, 'test3');
-            expect(result).toBeFalsy();
+            expect(result).toBe(false);
         });
     });
 

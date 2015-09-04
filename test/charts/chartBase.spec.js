@@ -28,11 +28,11 @@ describe('ChartBase', function() {
     describe('addComponent()', function() {
         it('legend component 추가 후, 정상 추가 되었는지 확인', function () {
             chartBase.addComponent('legend', Legend, {});
-            expect(!!chartBase.componentMap.legend).toBeTruthy();
+            expect(chartBase.componentMap.legend).toBeTruthy();
         });
 
         it('추가되지 않은 plot 확인', function () {
-            expect(!!chartBase.componentMap.plot).toBeFalsy();
+            expect(chartBase.componentMap.plot).toBeFalsy();
         });
     });
 

@@ -16,11 +16,9 @@ describe('chartFactory', function() {
         });
 
         it('등록되지 않은 차트를 요청했을 경우에는 예외를 발생시킴', function() {
-            try {
+            expect(function() {
                 chartFactory.get('lineChart');
-            } catch(e) {
-                expect(e.message).toEqual('Not exist lineChart chart.');
-            }
+            }).toThrowError('Not exist lineChart chart.');
         });
     });
 });
