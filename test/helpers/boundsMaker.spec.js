@@ -11,7 +11,7 @@ var maker = require('../../src/js/helpers/boundsMaker.js'),
 
 describe('boundsMaker', function() {
     describe('_getValueAxisMaxLabel()', function() {
-        it('단일 차트 value axis의 label 최대값 반환', function () {
+        it('단일 차트 value axis의 label 최대값을 반환합니다.', function () {
             var result = maker._getValueAxisMaxLabel({
                 values: [
                     [20, 30, 50],
@@ -29,7 +29,7 @@ describe('boundsMaker', function() {
             expect(result).toEqual(90);
         });
 
-        it('Combo 차트 value axis의 label 최대값 반환', function () {
+        it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
             var result = maker._getValueAxisMaxLabel({
                 values: {
                     column: [
@@ -43,7 +43,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getRenderedLabelsMaxSize()', function() {
-        it('렌더링된 레이블의 최대 사이즈(너비 or 높이) 반환', function () {
+        it('인자로 전달하는 레이블들을 보이지 않는 영역에 렌더링 하고 렌더링된 레이블의 사이즈(너비 or 높이)를 구해 레이블들 중 최대 사이즈를 선택하여 반환합니다.', function () {
             var result = maker._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
                 return label.length;
             });
@@ -52,7 +52,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getRenderedLabelsMaxWidth()', function() {
-        it('렌더링된 레이블의 최대 너비 반환', function () {
+        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
             var result = maker._getRenderedLabelsMaxWidth(['label1', 'label12'], {
                 fontSize: 12,
                 fontFamily: 'Verdana'
@@ -63,7 +63,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getRenderedLabelsMaxHeight()', function() {
-        it('렌더링된 레이블의 최대 높이 반환', function () {
+        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
             var result = maker._getRenderedLabelsMaxHeight(['label1', 'label12'], {
                 fontSize: 12,
                 fontFamily: 'Verdana'
@@ -74,7 +74,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getXAxisHeight()', function() {
-        it('x축 높이 반환', function () {
+        it('x축 영역의 높이를 계산하여 반환합니다.', function () {
             var result = maker._getXAxisHeight({
                 title: 'title'
             }, ['label1', 'label12'], {
@@ -93,7 +93,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getYAxisWidth()', function() {
-        it('y축 너비 반환', function() {
+        it('y축 영역의 너비를 계산하여 반환합니다.', function() {
             var result = maker._getYAxisWidth({
                     title: 'YAxis title'
                 },
@@ -116,7 +116,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getYRAxisWidth()', function() {
-        it('y right 축 너비 반환', function () {
+        it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
             var result = maker._getYRAxisWidth({
                 convertData: {
                     values: {
@@ -153,7 +153,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeAxesDimension()', function() {
-        it('axis영역이 없는 차트의 경우의 axes 너비, 높이 값은 0으로 반환됨', function () {
+        it('axis영역이 없는 차트의 경우에는 axis들의 너비, 높이 값을 0으로 설정하여 반환합니다.', function () {
             var result = maker._makeAxesDimension({});
             expect(result).toEqual({
                 yAxis: {
@@ -168,7 +168,7 @@ describe('boundsMaker', function() {
             });
         });
 
-        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, yrAxis의 너비 값을 계산하여 반환함', function() {
+        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, yrAxis의 너비 값을 계산하여 반환합니다.', function() {
             var result = maker._makeAxesDimension({
                 convertData: {
                     labels: ['label1', 'label12'],
@@ -222,7 +222,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getComponentsDimension()', function() {
-        it('컴포넌트들의 너비,높이 값 반환', function () {
+        it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다. (렌더링된 값으로 계산하기 때문에 브라우저마다 약간의 차이가 있어 범위로 결과 값을 비교합니다)', function () {
             var result = maker._getComponentsDimensions({
                 convertData: {
                     labels: ['label1', 'label12'],
@@ -299,7 +299,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeAxesBounds()', function() {
-        it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보 반환', function () {
+        it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보를 계산하여 반환합니다.', function () {
             var result = maker._makeAxesBounds({
                 convertData: {
                     labels: ['label1', 'label12'],
@@ -374,7 +374,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_getLegendAreaWidth()', function() {
-        it('legend 영역 너비 반환', function () {
+        it('legend 영역의 너비를 계산하여 반환합니다.', function () {
             var result = maker._getLegendAreaWidth([
                     {
                         label: 'label1'
@@ -393,7 +393,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('series 영역 너비, 높이 반환', function () {
+        it('series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
             var result = maker._makeSeriesDimension({
                 chartDimension: {
                     width: 500,
@@ -421,7 +421,7 @@ describe('boundsMaker', function() {
     });
 
     describe('make()', function() {
-        it('차트를 구성하는 컴포넌트들의 bounds 정보 반환', function () {
+        it('차트를 구성하는 컴포넌트들의 bounds 정보를 계산하여 반환합니다.', function () {
             var result = maker.make({
                 convertData: {
                     values: [

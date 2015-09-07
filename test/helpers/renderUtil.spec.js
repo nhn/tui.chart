@@ -11,7 +11,7 @@ var renderUtil = require('../../src/js/helpers/renderUtil.js'),
 
 describe('renderUtil', function() {
     describe('concatStr()', function() {
-        it('문자들을 인자로 전달하면 붙여진 결과를 반환함 ex) concatStr("a", "b", "c") ---> "abc"', function () {
+        it('문자들을 인자로 전달하면 붙여진 결과를 반환합니다. ex) concatStr("a", "b", "c") ---> "abc"', function () {
             var result = renderUtil.concatStr();
             expect(result).toEqual('');
 
@@ -21,7 +21,7 @@ describe('renderUtil', function() {
     });
 
     describe('makeFontCssText()', function() {
-        it('객체로 전달받은 css 속성들을 cssText 문자열로 반환', function () {
+        it('객체로 전달받은 css 속성들을 cssText 문자열로 변환하여 반환합니다.', function () {
             var result = renderUtil.makeFontCssText({
                 fontSize: 12,
                 fontFamily: 'Verdana',
@@ -33,7 +33,7 @@ describe('renderUtil', function() {
     });
 
     describe('_createSizeCheckEl()', function() {
-        it('동적인 폰트 크기를 체크할 수 있는 HTML Element 반환', function () {
+        it('동적인 폰트 크기를 체크할 수 있는 HTML Element를 반환합니다.', function () {
             var result = renderUtil._createSizeCheckEl(),
                 elCompare = dom.create('DIV');
 
@@ -44,30 +44,37 @@ describe('renderUtil', function() {
     });
 
     describe('_getRenderedLabelSize()', function() {
-        it('전달받은 레이블을 css속성을 포함하여 렌더링하여 사이즈 계산 후 결과 반환', function () {
-            var labelWidth = renderUtil._getRenderedLabelSize('Label1', {
+        it('전달받은 레이블을 테마 속성을 포함하여 렌더링하여 사이즈 계산 후 결과를 반환합니다.', function () {
+            var labelSize = renderUtil._getRenderedLabelSize('Label1', {
                 fontFamily: 'Verdana'
             }, 'offsetWidth');
-            expect(labelWidth).toBeGreaterThan(30);
+            expect(labelSize).toBeGreaterThan(30);
+            expect(labelSize).toBeLessThan(43);
         });
     });
 
     describe('getRenderedLabelWidth()', function() {
-        it('렌더링된 레이블의 너비값 반환', function () {
-            var labelWidth = renderUtil.getRenderedLabelWidth('Label1');
+        it('렌더링된 레이블의 너비값을 반환합니다.', function () {
+            var labelWidth = renderUtil.getRenderedLabelWidth('Label1', {
+                fontFamily: 'Verdana'
+            });
             expect(labelWidth).toBeGreaterThan(30);
+            expect(labelWidth).toBeLessThan(43);
         });
     });
 
     describe('getRenderedLabelWidth()', function() {
-        it('렌더링된 레이블의 높이값 반환', function () {
-            var labelHeight = renderUtil.getRenderedLabelHeight('Label2');
+        it('렌더링된 레이블의 높이값을 반환합니다.', function () {
+            var labelHeight = renderUtil.getRenderedLabelHeight('Label2', {
+                fontFamily: 'Verdana'
+            });
             expect(labelHeight).toBeGreaterThan(12);
+            expect(labelHeight).toBeLessThan(16);
         });
     });
 
     describe('renderDimension()', function() {
-        it('전달 받은 Element에 전달 받은 너비, 높이값 설정', function () {
+        it('전달 받은 Element css에 전달 받은 너비, 높이 값을 설정합니다.', function () {
             var el = dom.create('DIV'),
                 size = {width: 500, height: 300};
             renderUtil.renderDimension(el, size);
@@ -77,7 +84,7 @@ describe('renderUtil', function() {
     });
 
     describe('renderPosition()', function() {
-        it('전달 받은 Element에 전달 받은 위치(top, left) 설정', function () {
+        it('전달 받은 Element style에 전달 받은 위치(top, left)값을 설정합니다.', function () {
             var el = dom.create('DIV'),
                 position = {top: 50, right: 50};
             renderUtil.renderPosition(el, position);
@@ -87,7 +94,7 @@ describe('renderUtil', function() {
     });
 
     describe('renderBackground()', function() {
-        it('전달 받은 Element에 전달 받은 배경 정보 설정', function () {
+        it('전달 받은 Element style에 전달 받은 배경 정보를 설정합니다.', function () {
             var el = dom.create('DIV');
             renderUtil.renderBackground(el, 'red');
             expect(el.style.backgroundColor).toEqual('red');
@@ -95,7 +102,7 @@ describe('renderUtil', function() {
     });
 
     describe('renderTitle()', function() {
-        it('타이틀 영역 설정 후 생성된 HTML Element 반환', function () {
+        it('전달된 title, 테마, className 정보로 타이틀 영역 설정한 후 생성된 HTML Element을 반환합니다.', function () {
             var elTitle = renderUtil.renderTitle('Test title', {fontSize: 12, background: 'orange'}, 'test-title');
             expect(elTitle.innerHTML).toEqual('Test title');
             expect(elTitle.style.fontSize).toEqual('12px');

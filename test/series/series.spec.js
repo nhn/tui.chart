@@ -10,7 +10,7 @@ var Series = require('../../src/js/series/series.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
-describe('test Series', function() {
+describe('Series', function() {
     var groupValues = [[20], [40], [80], [120]],
         groupValues2 = [
             [20, 80], [40, 60], [60, 40], [80, 20]
@@ -41,7 +41,7 @@ describe('test Series', function() {
     });
 
     describe('_makePercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values 생성', function () {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
                 values: groupValues,
                 scale: data.scale
@@ -49,7 +49,7 @@ describe('test Series', function() {
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
-        it('stacked 옵션이 "normal"인 percent타입의 values 생성', function () {
+        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
                 values: groupValues2,
                 scale: data.scale
@@ -57,7 +57,7 @@ describe('test Series', function() {
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
 
-        it('stacked 옵션이 "percent"인 percent타입의 values 생성', function () {
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
                 values: groupValues2,
                 scale: data.scale
@@ -67,7 +67,7 @@ describe('test Series', function() {
     });
 
     describe('_makeNormalPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values 생성', function () {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makeNormalPercentValues({
                 values: groupValues,
                 scale: data.scale
@@ -77,7 +77,7 @@ describe('test Series', function() {
     });
 
     describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "normal"인 percent타입의 values 생성', function () {
+        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makeNormalStackedPercentValues({
                 values: groupValues2,
                 scale: data.scale
@@ -87,7 +87,7 @@ describe('test Series', function() {
     });
 
     describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "percent"인 percent타입의 values 생성', function () {
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentStackedPercentValues({
                 values: groupValues2,
                 scale: data.scale
@@ -97,7 +97,7 @@ describe('test Series', function() {
     });
 
     describe('renderBounds()', function() {
-        it('series 영역 너비, 높이, 위치 렌더링', function() {
+        it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
             var elSeries = dom.create('DIV');
             series._renderBounds(elSeries, {
                     width: 200,
@@ -118,7 +118,7 @@ describe('test Series', function() {
     });
 
     describe('render()', function() {
-        it('series 영역 렌더링', function () {
+        it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
             var elSeries = series.render();
 
             expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();

@@ -14,7 +14,7 @@ describe('test themeFactory', function() {
     });
 
     describe('get()', function() {
-        it('등록된 테마를 요청했을 경우에는 테마를 반환함', function () {
+        it('등록된 테마를 요청했을 경우에는 테마를 반환합니다.', function () {
             var theme = themeFactory.get('newTheme');
 
             expect(theme.plot).toEqual({
@@ -23,7 +23,7 @@ describe('test themeFactory', function() {
             });
         });
 
-        it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킴', function () {
+        it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킵니다.', function () {
             expect(function() {
                 themeFactory.get('newTheme1', 'line');
             }).toThrowError('Not exist newTheme1 theme.');
@@ -31,7 +31,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_initTheme()', function() {
-        it('테마 초기화 결과 반환', function () {
+        it('기본 테마 정보에 신규 테마 정보를 병합하여 반환합니다.', function () {
             var result = themeFactory._initTheme({
                 series: {
                     colors: ['gray']
@@ -59,7 +59,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_filterChartTypes()', function() {
-        it('chartType에 해당하는 값들만 걸러낸 결과 반환', function () {
+        it('chartType을 key로 하는 값들만 걸러낸 결과를 반환합니다.(두번째 인자인 rejectProps에 해당하는 속성을 걸러내면 chartTyep 속성만 남게됩니다.)', function () {
             var result = themeFactory._filterChartTypes({
                 column: {},
                 line: {},
@@ -75,7 +75,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_concatColors()', function() {
-        it('기존 colors값 뒤에 인자로 넘기는 colors값이 붙인 후 결과를 반환', function () {
+        it('테마의 colors값 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환합니다.', function () {
             var theme = {
                 colors: ['gray'],
                 singleColors: ['blue']
@@ -90,7 +90,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_concatDefaultColors()', function() {
-        it('단일 차트에서 series.colors 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환', function () {
+        it('단일 차트 테마의 series.colors 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환합니다.', function () {
             var theme = {
                 series: {
                     colors: ['gray']
@@ -104,7 +104,7 @@ describe('test themeFactory', function() {
             });
         });
 
-        it('combo 차트에서 인자로 넘기는 colors값이 정상적으로 붙여졌는지 결과 확인', function () {
+        it('combo 차트 테마의 series.colors값 뒤에 인자로 엄기는 colors값을 붙인 후 결과를 반환합니다.', function () {
             var theme = {
                 series: {
                     column: {
@@ -130,7 +130,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_extendTheme()', function() {
-        it('extend된 테마 반환', function () {
+        it('두번째 인자 테마에 첫번째 인자 테마 속성 중 key가 같은 속성을 덮어씌웁니다.', function () {
             var result = themeFactory._extendTheme(
                 {
                     series: {
@@ -140,29 +140,22 @@ describe('test themeFactory', function() {
                 },
                 {
                     series: {
-                        color: ['red'],
-                        borderColor: 'yellow'
+                        color: ['red']
                     }
                 }
             );
 
             expect(result).toEqual({
                 series: {
-                    color: ['blue'],
-                    borderColor: 'black'
+                    color: ['blue']
                 }
             });
         });
     });
 
     describe('_copyProperty()', function() {
-        it('속성이 복사된 결과 반환', function () {
+        it('promName에 해당하는 속성을 fromTheme으로 부터 toTheme으로 복사합니다. (rejectProps는 차트 이외의 속성을 필터링하는데 사용됩니다.)', function () {
             var result = themeFactory._copyProperty({
-                defaultTheme: {
-                    series: {
-                        colors: ['red', 'orange']
-                    }
-                },
                 propName: 'series',
                 fromTheme: {
                     series: {
@@ -190,7 +183,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_copyColorInfoToLegend()', function() {
-        it('인자로 넘긴 color 속성들이 legend 테마로 복사가 잘 되었는지 확인', function () {
+        it('인자로 넘긴 color 속성들을 legend 테마로 복사합니다.', function () {
             var legendTheme = {};
             themeFactory._copyColorInfoToLegend({
                 singleColors: ['red', 'orange'],
@@ -204,7 +197,7 @@ describe('test themeFactory', function() {
     });
 
     describe('_inheritThemeProperty()', function() {
-        it('단일 차트에서 테마 상속(fontFamily, colors)이 잘 이루어졌는지 확인', function () {
+        it('단일 차트에서 chart.fontFamily를 다른 속성의 fontFamily로 복사하고 seires.colors속성은 legend.colors로 복사 합니다.', function () {
             var theme = {
                 chart: {
                     fontFamily: 'Verdana'
@@ -263,7 +256,7 @@ describe('test themeFactory', function() {
             });
         });
 
-        it('Combo 차트에서 테마 상속(fontFamily, colors)이 잘 이루어졌는지 확인', function () {
+        it('Combo 차트에서 chart.fontFamily를 다른 속성의 fontFamily로 복사하고 seires.colors속성은 legend.colors로 복사 합니다.', function () {
             var theme = {
                 chart: {
                     fontFamily: 'Verdana'

@@ -10,100 +10,113 @@ var calculator = require('../../src/js/helpers/calculator.js');
 
 describe('calculator', function() {
     describe('calculateScale()', function() {
-        it('min=10, max=100의 scale 계산 결과 반환', function () {
+        it('userMin=10, userMax=100의 기본 scale 계산 결과는 min=0, max=104.5입니다.', function () {
             var scale = calculator.calculateScale(10, 100);
-            expect(scale.max).toEqual(104.5);
             expect(scale.min).toEqual(0);
+            expect(scale.max).toEqual(104.5);
         });
 
-        it('min=20, max=100의 scale 계산 결과 반환', function () {
+        it('userMin=20, userMax=100의 기본 scale 계산 결과는 min=16, max=104입니다.', function () {
             var scale = calculator.calculateScale(20, 100);
-            expect(scale.max).toEqual(104);
             expect(scale.min).toEqual(16);
+            expect(scale.max).toEqual(104);
         });
 
-        it('min=-100, max=-20의 scale 계산 결과 반환', function () {
+        it('userMin=-100, userMax=-20의 기본 scale 계산 결과는 min=-100, max=-16입니다.', function () {
             var scale = calculator.calculateScale(-100, -20);
-            expect(scale.max).toEqual(-16);
             expect(scale.min).toEqual(-100);
+            expect(scale.max).toEqual(-16);
         });
     });
 
     describe('normalizeAxisNumber()', function() {
-        it('0에 대한 일반화 결과는 0', function () {
+        it('0에 대한 일반화 결과는 0입니다.', function () {
             var result = calculator.normalizeAxisNumber(0);
             expect(result).toEqual(0);
         });
 
-        it('1.6에 대한 일반화 결과는 2', function () {
+        it('1.6에 대한 일반화 결과는 2입니다.', function () {
             var result = calculator.normalizeAxisNumber(1.6);
             expect(result).toEqual(2);
         });
 
-        it('4에 대한 일반화 결과는 5', function () {
+        it('4에 대한 일반화 결과는 5입니다.', function () {
             var result = calculator.normalizeAxisNumber(4);
             expect(result).toEqual(5);
         });
 
-        it('6에 대한 일반화 결과는 10', function () {
+        it('6에 대한 일반화 결과는 10입니다.', function () {
             var result = calculator.normalizeAxisNumber(6);
             expect(result).toEqual(10);
         });
 
-        it('40에 대한 일반화 결과는 40', function () {
+        it('40에 대한 일반화 결과는 40입니다.', function () {
             var result = calculator.normalizeAxisNumber(40);
             expect(result).toEqual(40);
         });
 
-        it('1005에 대한 일반화 결과는 1010', function () {
+        it('1005에 대한 일반화 결과는 1010입니다.', function () {
             var result = calculator.normalizeAxisNumber(1005);
             expect(result).toEqual(1010);
         });
 
-        it('0.4에 대한 일반화 결과는 0.5', function () {
+        it('0.4에 대한 일반화 결과는 0.5입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.4);
             expect(result).toEqual(0.5);
         });
 
-        it('0.07에 대한 일반화 결과는 0.1', function () {
+        it('0.07에 대한 일반화 결과는 0.1입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.07);
             expect(result).toEqual(0.1);
         });
     });
 
     describe('makePixelPositions()', function() {
-        it('size=300, count=5인 경우의 pixel 타입의 position정보 반환', function () {
+        it('size=300, count=5인 경우의 pixel 타입의 position정보를 반환합니다.', function () {
             var positions = calculator.makeTickPixelPositions(300, 5);
             expect(positions).toEqual([0, 75, 150, 224, 299]);
         });
 
-        it('size=400, count=6인 경우의 pixel 타입의 position정보 반환', function() {
+        it('size=400, count=6인 경우의 pixel 타입의 position정보를 반환합니다.', function() {
             var positions = calculator.makeTickPixelPositions(400, 6);
             expect(positions).toEqual([0, 80, 160, 239, 319, 399]);
         });
     });
 
     describe('getScaleStep()', function() {
-        it('scale step 정보 반환', function () {
+        it('scale.min=20, scale.max=100, tickCount=5 의 scale step은 20입니다.', function () {
             var tickCount = 5,
                 scale = {min: 20, max: 100},
                 step = calculator.getScaleStep(scale, tickCount);
             expect(step).toEqual(20);
         });
+
+        it('scale.min=10, scale.max=130 tickCount=4의 scale step은 30입니다.', function () {
+            var tickCount = 4,
+                scale = {min: 10, max: 130},
+                step = calculator.getScaleStep(scale, tickCount);
+            expect(step).toEqual(40);
+        });
     });
 
     describe('makeLabelsFromScale()', function() {
-        it('scale 정보로부터 labels 생성', function () {
-            var tickCount = 5,
-                scale = {min: 20, max: 100},
-                step = calculator.getScaleStep(scale, tickCount),
+        it('min=20, max=100, step=20일 때의 labels는 [20, 40, 60, 80, 100] 입니다.', function () {
+            var scale = {min: 20, max: 100},
+                step = 20,
                 result = calculator.makeLabelsFromScale(scale, step);
             expect(result).toEqual([20, 40, 60, 80, 100]);
+        });
+
+        it('min=10, max=130, step=40일 때의 labels는 [10, 50, 90, 130] 입니다.', function () {
+            var scale = {min: 10, max: 130},
+                step = 40,
+                result = calculator.makeLabelsFromScale(scale, step);
+            expect(result).toEqual([10, 50, 90, 130]);
         });
     });
 
     describe('arrayPivot()', function() {
-        it('배열 회전 결과 반환', function () {
+        it('배열 회전된 결과를 반환합니다.', function () {
             var result = calculator.arrayPivot([
                 [1, 2, 3],
                 [4, 5, 6],

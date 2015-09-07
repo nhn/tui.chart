@@ -23,7 +23,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makePercentValues()', function() {
-        it('pie차트의 percent타입 value 생성', function () {
+        it('pie차트의 percent타입 value를 생성합니다.', function () {
             var result = series._makePercentValues({
                 values: [[20, 30, 50]]
             });
@@ -32,7 +32,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeCircleBounds()', function() {
-        it('pie차트의 circle bounds정보 생성', function () {
+        it('pie차트의 circle bounds정보를 생성합니다.(cx: center x, cy: center y, r: radius)', function () {
             var result = series._makeCircleBounds({
                 width: 400,
                 height: 300

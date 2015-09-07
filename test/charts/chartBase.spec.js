@@ -26,18 +26,18 @@ describe('ChartBase', function() {
     });
 
     describe('addComponent()', function() {
-        it('legend component 추가 후, 정상 추가 되었는지 확인', function () {
+        it('legend component를 추가 후, componentMap에 legend가 존재하는지 체크하여 정상 추가 되었는지 확인합니다.', function () {
             chartBase.addComponent('legend', Legend, {});
             expect(chartBase.componentMap.legend).toBeTruthy();
         });
 
-        it('추가되지 않은 plot 확인', function () {
+        it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {
             expect(chartBase.componentMap.plot).toBeFalsy();
         });
     });
 
     describe('_renderTitle()', function() {
-        it('차트 타이틀 렌더링', function () {
+        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function () {
             var el = dom.create('DIV');
             chartBase._renderTitle(el);
             expect(el.firstChild.innerHTML).toEqual('Chart Title');

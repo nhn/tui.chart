@@ -320,7 +320,7 @@ describe('Axis', function() {
             expect(top).toBeLessThan(9);
         });
 
-        it('벨류 타입 x축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 left 이동 됩니다.', function() {
+        it('벨류 타입 x축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 left -25px 이동 됩니다.', function() {
             var elLabelArea = dom.create('DIV');
             axis._changeLabelAreaPosition({
                 elLabelArea: elLabelArea,
@@ -333,9 +333,8 @@ describe('Axis', function() {
         });
     });
 
-    // 여기부터
     describe('render()', function() {
-        it('axis 영역 전체 렌더링', function() {
+        it('레이블 타입 axis의 전체 영역을 렌더링 합니다.', function() {
             var el;
             axis.data.isVertical = false;
             el = axis.render();

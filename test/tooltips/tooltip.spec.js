@@ -44,7 +44,7 @@ describe('Tooltip', function() {
     });
 
     describe('_makeTooltipData()', function() {
-        it('툴팁 렌더링에 사용될 data 생성', function () {
+        it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
             var result = tooltip._makeTooltipData();
             expect(result).toEqual([
                 {label: 'Silver', value: 10, legendLabel: 'Density1', id: '0-0'},
@@ -54,7 +54,7 @@ describe('Tooltip', function() {
     });
 
     describe('_makeTooltipsHtml()', function() {
-        it('툴팁 html 생성', function () {
+        it('툴팁 html을 생성합니다.', function () {
             var resultHtml = tooltip._makeTooltipsHtml(),
                 compareHtml = '<div class="ne-chart-tooltip" id="ne-chart-tooltip-0-0"><div class="ne-chart-default-tooltip">' +
                     '<div>Silver</div>' +
@@ -71,14 +71,14 @@ describe('Tooltip', function() {
     });
 
     describe('_getIndexFromId()', function() {
-        it('id로부터 index 정보 반환', function () {
+        it('id로부터 index 정보를 추출하여 반환합니다.', function () {
             var result = tooltip._getIndexFromId('ne-chart-tooltip-0-0');
             expect(result).toEqual(['0', '0']);
         });
     });
 
     describe('_calculatePositionOfVerticalTypeChart()', function() {
-        it('포인트 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
+        it('세로 타입 차트(column, line, pie)의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var result = tooltip._calculatePositionOfVerticalTypeChart({
                 bound: {
                     width: 25,
@@ -105,7 +105,7 @@ describe('Tooltip', function() {
     });
 
     describe('_calculatePositionOfHorizontalTypeChart()', function() {
-        it('Rect 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
+        it('가로 타입 차트(bar)의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var result = tooltip._calculatePositionOfHorizontalTypeChart({
                 bound: {
                     width: 50,
@@ -133,7 +133,7 @@ describe('Tooltip', function() {
     });
 
     describe('_getValueById', function() {
-        it('tooltip id를 통해서 value값을 얻어낸다', function() {
+        it('tooltip id를 통해서 value값을 얻어내어 반환합니다.', function() {
             var result;
             tooltip.values = [
                 [1, 2, 3],
@@ -145,7 +145,7 @@ describe('Tooltip', function() {
     });
 
     describe('_moveSymmetry', function() {
-        it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킨다.', function() {
+        it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var result;
             tooltip.values = [
                 [1, 2, -3],
@@ -177,7 +177,7 @@ describe('Tooltip', function() {
     });
 
     describe('_calculatePosition()', function() {
-        it('포인트 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
+        it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var result = tooltip._calculatePosition({
                 bound: {
                     width: 25,
@@ -203,7 +203,7 @@ describe('Tooltip', function() {
             });
         });
 
-        it('Rect 타입의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환', function () {
+        it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var result = tooltip._calculatePosition({
                 bound: {
                     width: 50,

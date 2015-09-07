@@ -161,9 +161,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 }
             }, yAxisParams));
             if (yAxisData.tickCount < yrAxisData.tickCount) {
-                this._increaseYAxisScaleMax(yrAxisData, yAxisData);
+                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData);
             } else if (yAxisData.tickCount > yrAxisData.tickCount) {
-                this._increaseYAxisScaleMax(yAxisData, yrAxisData);
+                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData);
             }
         }
 
@@ -257,17 +257,16 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     },
 
     /**
-     * Increase y axis scale max.
-     * @param {object} fromData from tick info
+     * Increase y axis tick count.
+     * @param {number} increaseTickCount increase tick count
      * @param {object} toData to tick info
      * @private
      */
-    _increaseYAxisScaleMax: function(fromData, toData) {
-        var diff = fromData.tickCount - toData.tickCount;
-        toData.scale.max += toData.step * diff;
+    _increaseYAxisTickCount: function(increaseTickCount, toData) {
+        toData.scale.max += toData.step * increaseTickCount;
         toData.labels = calculator.makeLabelsFromScale(toData.scale, toData.step);
-        toData.tickCount = fromData.tickCount;
-        toData.validTickCount = fromData.tickCount;
+        toData.tickCount += increaseTickCount;
+        toData.validTickCount += increaseTickCount;
     },
 
     /**

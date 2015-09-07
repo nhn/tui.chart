@@ -61,12 +61,12 @@ describe('ComboChart', function() {
     });
 
     describe('_getYAxisOptionChartTypes() - y axis 영역 옵션에 설정된 차트 타입을 정렬하여 반환', function() {
-        it('옵션이 없을 경우에는 인자로 받은 차트 타입들(data 영역에서 사용하는)을 그대로 반환 함', function () {
+        it('옵션이 없을 경우에는 인자로 받은 차트 타입들(data 영역에서 사용하는)을 그대로 반환 합니다.', function () {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line']);
             expect(result).toEqual(['column', 'line']);
         });
 
-        it('옵션이 하나만 있고, chartType 옵션이 포함되지 않았을 경우에는 빈 배열 반환', function() {
+        it('옵션이 하나만 있고, chartType 옵션이 포함되지 않았을 경우에는 빈 배열을 반환합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], {
                 title: 'test'
             });
@@ -74,28 +74,28 @@ describe('ComboChart', function() {
             expect(result).toEqual([]);
         });
 
-        it('옵션이 하나만 있고, chartType 옵션이 있을 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
+        it('옵션이 하나만 있고, chartType 옵션이 있을 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], {
                 chartType: 'line'
             });
             expect(result).toEqual(['line', 'column']);
         });
 
-        it('옵션이 배열 형태로 첫번째 요소에만 존재하며, chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
+        it('옵션이 배열 형태로 첫번째 요소에만 존재하며, chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{
                 chartType: 'line'
             }]);
             expect(result).toEqual(['line', 'column']);
         });
 
-        it('옵션에 두가지 차트의 옵션이 배열로 포함되어있고 두번째 배열에 chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환', function() {
+        it('옵션에 두가지 차트의 옵션이 배열로 포함되어있고 두번째 배열에 chartType 값을 갖고 있는 경우에는 chartType을 기준으로 인자로 받은 차트 타이틀을 정렬하여 반환합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{}, {
                 chartType: 'line'
             }]);
             expect(result).toEqual(['column', 'line']);
         });
 
-        it('옵션이 배열 형태로 첫번째 요소에만 존재하며, chartType 옵션이 포함되지 않았을 경우에는 빈 배열 반환', function() {
+        it('옵션이 배열 형태로 첫번째 요소에만 존재하며, chartType 옵션이 포함되지 않았을 경우에는 빈 배열을 반환합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line'], [{
                 title: 'test'
             }]);
@@ -105,7 +105,7 @@ describe('ComboChart', function() {
 
 
     describe('_makeYAxisData()', function() {
-        it('y axis 영역이 하나일 경우의 axis data 생성', function () {
+        it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
                 convertData: {
@@ -143,7 +143,7 @@ describe('ComboChart', function() {
             });
         });
 
-        it('y axis 영역이 두개일 경우의 axis data 생성', function () {
+        it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
                 convertData: {
@@ -198,7 +198,8 @@ describe('ComboChart', function() {
     });
 
     describe('_makeAxesData()', function() {
-        it('y axis 영역이 하나일 경우의 axis data 생성', function () {
+        it('y axis가 두개인 Combo차트에서 정렬 순서가 빠른 column차트에는 x axis data를 포함한 기본 axes data를 할당하고,\n' +
+            'line차트에는 line차트 y axis data만 생성하여 chartType을 key로 하는 객체를 반환합니다.', function () {
             var baseAxis = {
                     yAxis: {
                         labels: [10, 20, 30, 40, 50, 60, 70],
@@ -217,21 +218,11 @@ describe('ComboChart', function() {
                 result = comboChart._makeAxesData(baseAxis, {
                     convertData: {
                         values: {
-                            column: [
-                                [20, 30, 50],
-                                [40, 40, 60]
-                            ],
                             line: [
                                 [60, 50, 10],
                                 [80, 10, 70]
                             ]
                         },
-                        joinValues: [
-                            [20, 30, 50],
-                            [40, 40, 60],
-                            [60, 50, 10],
-                            [80, 10, 70]
-                        ],
                         formatFunctions: []
                     },
                     seriesDimension: {
@@ -273,7 +264,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeChartTypeOrderInfo()', function() {
-        it('chartType 순서 정보 생성', function () {
+        it('전달 인자 배열의 index(0, 1)를 값으로, value(chart type)를 key로 하는 chartType 순서 정보 객체를 생성합니다.', function () {
             var result = comboChart._makeChartTypeOrderInfo(['column', 'line']);
             expect(result).toEqual({
                 column: 0,
@@ -283,7 +274,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeOptionsMap()', function() {
-        it('옵션이 있을 경우의 chartType별 y축 옵션 정보 맵 생성', function () {
+        it('옵션이 있을 경우에는 각 chartType에 맞는 옵션을 추출하여 chartType을 key로 하는 y축 옵션 정보 맵을 생성합니다.', function () {
             var result = comboChart._makeOptionsMap(['column', 'line'], {
                 yAxis: [
                     {
@@ -342,7 +333,7 @@ describe('ComboChart', function() {
             });
         });
 
-        it('옵션이 없을 경우의 chartType별 y축 옵션 정보 맵 생성', function() {
+        it('옵션이 없을 경우에는 chartType 정보만을 담은 y축 옵션 정보 맵을 생성합니다.', function() {
             var result = comboChart._makeOptionsMap(['column', 'line'], {}, {
                 column: 0,
                 line: 1
@@ -359,7 +350,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeThemeMap()', function() {
-        it('colors가 하나 일 경우의 chartType별 테마 맵 생성', function () {
+        it('colors가 하나 일 경우에는 순서가 빠른 column차트의 colors테마를 설정한뒤 colors순서를 이어 line 차트 colors테마를 설정합니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
                     title: {
@@ -367,7 +358,7 @@ describe('ComboChart', function() {
                     }
                 },
                 series: {
-                    colors: ['red', 'orange', 'green', 'blue', 'green']
+                    colors: ['red', 'orange', 'green', 'blue', 'gray']
                 }
             }, {
                 column: ['Legend1', 'Legend2'],
@@ -381,7 +372,7 @@ describe('ComboChart', function() {
                         }
                     },
                     series: {
-                        colors: ['red', 'orange', 'green', 'blue', 'green']
+                        colors: ['red', 'orange', 'green', 'blue', 'gray']
                     }
                 },
                 line: {
@@ -391,13 +382,13 @@ describe('ComboChart', function() {
                         }
                     },
                     series: {
-                        colors: ['green', 'blue', 'green', 'red', 'orange']
+                        colors: ['green', 'blue', 'gray', 'red', 'orange']
                     }
                 }
             });
         });
 
-        it('colors가 두개 일 경우의 chartType별 테마 맵 생성', function () {
+        it('colors가 두개 일 경우의 chartType별로 colors 정보를 추출하여 테마 맵을 생성합니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
                     line: {
@@ -453,9 +444,10 @@ describe('ComboChart', function() {
     });
 
     describe('_increaseYAxisScaleMax()', function() {
-        it('y axis scale의 최대값을 증가시킴', function () {
+        it('전달 인자 만큼의 tick count를 증가시킵니다.(label, scale.max 정보도 동시에 업데이트합니다)', function () {
             var targetTickInfo = {
                 tickCount: 4,
+                validTickCount: 4,
                 scale: {
                     min: 0,
                     max: 60
@@ -463,9 +455,7 @@ describe('ComboChart', function() {
                 step: 20
             };
 
-            comboChart._increaseYAxisScaleMax({
-                tickCount: 5
-            }, targetTickInfo);
+            comboChart._increaseYAxisTickCount(1, targetTickInfo);
 
             expect(targetTickInfo).toEqual({
                 labels: [0, 20, 40, 60, 80],
