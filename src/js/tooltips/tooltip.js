@@ -300,7 +300,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         }
 
         if (params.allowNegativeTooltip) {
-            result = this._moveSymmetry(result, {
+            result = this._moveToSymmetry(result, {
                 bound: params.bound,
                 id: params.id,
                 dimension: params.dimension,
@@ -325,7 +325,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Move symmetry.
+     * Move to symmetry.
      * @param {{left: number, top: number}} position tooltip position
      * @param {object} params parameters
      *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
@@ -337,7 +337,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @returns {{left: number, top: number}} moved position
      * @private
      */
-    _moveSymmetry: function(position, params) {
+    _moveToSymmetry: function(position, params) {
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,

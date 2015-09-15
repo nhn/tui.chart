@@ -145,14 +145,14 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_moveSymmetry', function() {
+    describe('_moveToSymmetry', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var result;
             tooltip.values = [
                 [1, 2, -3],
                 [4, 5, 6]
             ];
-            result = tooltip._moveSymmetry(
+            result = tooltip._moveToSymmetry(
                 {
                     left: 120
                 },
