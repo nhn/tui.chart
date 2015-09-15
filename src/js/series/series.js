@@ -224,12 +224,12 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Get scale distance.
+     * Get scale distance from zero point.
      * @param {number} size chart size (width or height)
      * @param {{min: number, max: number}} scale scale
      * @returns {{toMax: number, toMin: number}} pixel distance
      */
-    getScaleDistance: function(size, scale) {
+    getScaleDistanceFromZeroPoint: function(size, scale) {
         var min = scale.min,
             max = scale.max,
             distance = max - min,
@@ -237,8 +237,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             toMin = 0;
 
         if (min < 0 && max > 0) {
-            toMax = (distance - max) / distance * size;
-            toMin = (distance + min) / distance * size;
+            toMax = (distance + min) / distance * size;
+            toMin = (distance - max) / distance * size;
         }
 
         return {

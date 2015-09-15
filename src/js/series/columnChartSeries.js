@@ -58,7 +58,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
             groupWidth = (dimension.width / groupValues.length),
             barWidth = groupWidth / (groupValues[0].length + 1),
             isMinus = this.data.scale.min < 0 && this.data.scale.max <= 0,
-            scaleDistance = this.getScaleDistance(dimension.height, this.data.scale),
+            scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
@@ -73,10 +73,10 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                         endTop = 0;
                     } else if (value < 0) {
                         barHeight *= -1;
-                        startTop = endTop = dimension.height - scaleDistance.toMax;
+                        startTop = endTop = dimension.height - scaleDistance.toMin;
                     } else {
-                        startTop -= scaleDistance.toMax;
-                        endTop -= scaleDistance.toMax;
+                        startTop -= scaleDistance.toMin;
+                        endTop -= scaleDistance.toMin;
                     }
 
                     return {

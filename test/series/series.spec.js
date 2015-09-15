@@ -97,6 +97,41 @@ describe('Series', function() {
         });
     });
 
+    describe('getScaleDistanceFromZeroPoint()', function() {
+        it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 scale min, max까지의 거리를 구합니다.', function() {
+            var result = series.getScaleDistanceFromZeroPoint(100, {
+                min: -20,
+                max: 80
+            });
+            expect(result).toEqual({
+                toMax: 80,
+                toMin: 20
+            })
+        });
+
+        it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
+            var result = series.getScaleDistanceFromZeroPoint(100, {
+                min: 20,
+                max: 80
+            });
+            expect(result).toEqual({
+                toMax: 0,
+                toMin: 0
+            })
+        });
+
+        it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
+            var result = series.getScaleDistanceFromZeroPoint(100, {
+                min: -80,
+                max: -20
+            });
+            expect(result).toEqual({
+                toMax: 0,
+                toMin: 0
+            })
+        });
+    });
+
     describe('renderBounds()', function() {
         it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
             var elSeries = dom.create('DIV');
