@@ -6,7 +6,8 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
+var chartConst = require('../const.js'),
+    dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     event = require('../helpers/eventListener.js'),
     templateMaker = require('../helpers/templateMaker.js'),
@@ -195,7 +196,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Calculate tooltip point position
+     * Calculate tooltip position abou not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -203,7 +204,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculatePositionOfVerticalTypeChart: function(params) {
+    _calculateTooltipPositionAboutNotBarChart: function(params) {
         var bound = params.bound,
             addPosition = params.addPosition,
             minusWidth = params.dimension.width - (bound.width || 0),
@@ -242,7 +243,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculatePositionOfHorizontalTypeChart: function(params) {
+    _calculateTooltipPositionAboutBarChart: function(params) {
         var bound = params.bound,
             addPosition = params.addPosition,
             minusHeight = params.dimension.height - (bound.height || 0),
@@ -276,26 +277,26 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * Calculate tooltip position.
      * @param {object} params parameters
      *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
-     *      @param {boolean} params.isVerticalTypeChart whether point position or not
+     *      @param {string} params.chartType chart type
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
      *      @param {string} params.positionOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculatePosition: function(params) {
+    _calculateTooltipPosition: function(params) {
         var result = {},
             sizeType, positionType, addPadding;
-        if (params.isVerticalTypeChart) {
-            result = this._calculatePositionOfVerticalTypeChart(params);
-            sizeType = 'height';
-            positionType = 'top';
-            addPadding = -1;
-        } else {
-            result = this._calculatePositionOfHorizontalTypeChart(params);
+        if (params.chartType === chartConst.CHART_TYPE_BAR) {
+            result = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
             positionType = 'left';
             addPadding = 1;
+        } else {
+            result = this._calculateTooltipPositionAboutNotBarChart(params);
+            sizeType = 'height';
+            positionType = 'top';
+            addPadding = -1;
         }
 
         if (params.allowNegativeTooltip) {
@@ -372,7 +373,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         this.showedId = params.id;
         dom.addClass(elTooltip, 'show');
 
-        position = this._calculatePosition(ne.util.extend({
+        position = this._calculateTooltipPosition(ne.util.extend({
             dimension: {
                 width: elTooltip.offsetWidth,
                 height: elTooltip.offsetHeight

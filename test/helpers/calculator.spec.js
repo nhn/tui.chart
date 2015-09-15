@@ -30,42 +30,42 @@ describe('calculator', function() {
     });
 
     describe('normalizeAxisNumber()', function() {
-        it('0에 대한 일반화 결과는 0입니다.', function () {
+        it('0에 대한 정규화 결과는 0입니다.', function () {
             var result = calculator.normalizeAxisNumber(0);
             expect(result).toEqual(0);
         });
 
-        it('1.6에 대한 일반화 결과는 2입니다.', function () {
+        it('1.6에 대한 정규화 결과는 2입니다.', function () {
             var result = calculator.normalizeAxisNumber(1.6);
             expect(result).toEqual(2);
         });
 
-        it('4에 대한 일반화 결과는 5입니다.', function () {
+        it('4에 대한 정규화 결과는 5입니다.', function () {
             var result = calculator.normalizeAxisNumber(4);
             expect(result).toEqual(5);
         });
 
-        it('6에 대한 일반화 결과는 10입니다.', function () {
+        it('6에 대한 정규화 결과는 10입니다.', function () {
             var result = calculator.normalizeAxisNumber(6);
             expect(result).toEqual(10);
         });
 
-        it('40에 대한 일반화 결과는 40입니다.', function () {
+        it('40에 대한 정규화 결과는 40입니다.', function () {
             var result = calculator.normalizeAxisNumber(40);
             expect(result).toEqual(40);
         });
 
-        it('1005에 대한 일반화 결과는 1010입니다.', function () {
+        it('1005에 대한 정규화 결과는 1010입니다.', function () {
             var result = calculator.normalizeAxisNumber(1005);
             expect(result).toEqual(1010);
         });
 
-        it('0.4에 대한 일반화 결과는 0.5입니다.', function () {
+        it('0.4에 대한 정규화 결과는 0.5입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.4);
             expect(result).toEqual(0.5);
         });
 
-        it('0.07에 대한 일반화 결과는 0.1입니다.', function () {
+        it('0.07에 대한 정규화 결과는 0.1입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.07);
             expect(result).toEqual(0.1);
         });

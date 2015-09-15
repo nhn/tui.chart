@@ -350,7 +350,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeThemeMap()', function() {
-        it('colors가 하나 일 경우에는 순서가 빠른 column차트의 colors테마를 설정한뒤 colors순서를 이어 line 차트 colors테마를 설정합니다.', function () {
+        it('chartType을 key로 하는 테마 맵을 생성합니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
                     title: {
@@ -364,31 +364,47 @@ describe('ComboChart', function() {
                 column: ['Legend1', 'Legend2'],
                 line: ['Legend1', 'Legend2', 'Legend3']
             });
-            expect(result).toEqual({
-                column: {
-                    yAxis: {
+
+            expect(result.column).toBeTruthy();
+            expect(result.line).toBeTruthy();
+        });
+
+        it('yAxis 테마는 차트별로 정의하면 그대로 할당됩니다.', function () {
+            var result = comboChart._makeThemeMap(['column', 'line'], {
+                yAxis: {
+                    column: {
                         title: {
-                            fontSize: 12
+                            fontSize: 16
                         }
                     },
-                    series: {
-                        colors: ['red', 'orange', 'green', 'blue', 'gray']
+                    line: {
+                        title: {
+                            fontSize: 14
+                        }
                     }
                 },
-                line: {
-                    yAxis: {
-                        title: {
-                            fontSize: 12
-                        }
-                    },
-                    series: {
-                        colors: ['green', 'blue', 'gray', 'red', 'orange']
-                    }
+                series: {
+                    colors: ['green', 'blue', 'gray', 'red', 'orange']
+                }
+            }, {
+                column: ['Legend1', 'Legend2'],
+                line: ['Legend1', 'Legend2', 'Legend3']
+            });
+
+            expect(result.column.yAxis).toEqual({
+                title: {
+                    fontSize: 16
+                }
+            });
+
+            expect(result.line.yAxis).toEqual({
+                title: {
+                    fontSize: 14
                 }
             });
         });
 
-        it('colors가 두개 일 경우의 chartType별로 colors 정보를 추출하여 테마 맵을 생성합니다.', function () {
+        it('테마 정의가 없는 경우에는 기본 테마를 따라갑니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
                 yAxis: {
                     line: {
@@ -398,11 +414,68 @@ describe('ComboChart', function() {
                     }
                 },
                 series: {
+                    colors: ['green', 'blue', 'gray', 'red', 'orange']
+                }
+            }, {
+                column: ['Legend1', 'Legend2'],
+                line: ['Legend1', 'Legend2', 'Legend3']
+            });
+
+            // column의 경우에는 yAxis에 대한 테마 설정이 없기 때문에 기본 테마 속성을 복사했습니다.
+            expect(result.column.yAxis).toEqual({
+                tickColor: '#000000',
+                title: {
+                    fontSize: 12,
+                    color: '#000000',
+                    fontFamily: ''
+                },
+                label: {
+                    fontSize: 12,
+                    color: '#000000',
+                    fontFamily: ''
+                }
+            });
+
+            // line 설정된 yAxis 테마가 그대로 할당됩니다.
+            expect(result.line.yAxis).toEqual({
+                title: {
+                    fontSize: 14
+                }
+            });
+        });
+
+        it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
+            var result = comboChart._makeThemeMap(['column', 'line'], {
+                yAxis: {
+                    title: {
+                        fontSize: 12
+                    }
+                },
+                series: {
+                    colors: ['green', 'blue', 'gray', 'red', 'orange']
+                }
+            }, {
+                column: ['Legend1', 'Legend2'],
+                line: ['Legend1', 'Legend2', 'Legend3']
+            });
+
+            expect(result.column.series.colors).toEqual(['green', 'blue', 'gray', 'red', 'orange']);
+            expect(result.line.series.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
+        });
+
+        it('series의 colors는 차트별로 설정하게 되면 그대로 할당되게 됩니다.', function () {
+            var result = comboChart._makeThemeMap(['column', 'line'], {
+                yAxis: {
+                    title: {
+                        fontSize: 12
+                    }
+                },
+                series: {
                     column: {
-                        colors: ['red', 'orange']
+                        colors: ['green', 'blue']
                     },
                     line: {
-                        colors: ['black', 'white', 'gray']
+                        colors: ['blue', 'gray', 'red']
                     }
                 }
             }, {
@@ -410,36 +483,8 @@ describe('ComboChart', function() {
                 line: ['Legend1', 'Legend2', 'Legend3']
             });
 
-            expect(result).toEqual({
-                column: {
-                    yAxis: {
-                        tickColor: '#000000',
-                        title: {
-                            fontSize: 12,
-                            color: '#000000',
-                            fontFamily: ''
-                        },
-                        label: {
-                            fontSize: 12,
-                            color: '#000000',
-                            fontFamily: ''
-                        }
-                    },
-                    series: {
-                        colors: ['red', 'orange']
-                    }
-                },
-                line: {
-                    yAxis: {
-                        title: {
-                            fontSize: 14
-                        }
-                    },
-                    series: {
-                        colors: ['black', 'white', 'gray']
-                    }
-                }
-            });
+            expect(result.column.series.colors).toEqual(['green', 'blue']);
+            expect(result.line.series.colors).toEqual(['blue', 'gray', 'red']);
         });
     });
 

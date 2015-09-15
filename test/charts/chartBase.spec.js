@@ -26,9 +26,14 @@ describe('ChartBase', function() {
     });
 
     describe('addComponent()', function() {
-        it('legend component를 추가 후, componentMap에 legend가 존재하는지 체크하여 정상 추가 되었는지 확인합니다.', function () {
+        it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
+            var legend;
             chartBase.addComponent('legend', Legend, {});
-            expect(chartBase.componentMap.legend).toBeTruthy();
+
+            legend = chartBase.componentMap.legend;
+            expect(legend).toBeTruthy();
+            expect(legend.constructor).toEqual(Legend);
+            expect(ne.util.inArray(legend, chartBase.components)).toBeGreaterThan(-1);
         });
 
         it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {

@@ -7,7 +7,12 @@
 'use strict';
 
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
-    dom = require('../../src/js/helpers/domHandler.js');
+    dom = require('../../src/js/helpers/domHandler.js'),
+    isMac = navigator.userAgent.indexOf('Mac') > -1,
+    browser = ne.util.browser,
+    isIE8 = browser.msie && browser.version === 8,
+    isFirefox = browser.firefox,
+    isChrome = browser.chrome;
 
 describe('renderUtil', function() {
     describe('concatStr()', function() {
@@ -46,30 +51,49 @@ describe('renderUtil', function() {
     describe('_getRenderedLabelSize()', function() {
         it('전달받은 레이블을 테마 속성을 포함하여 렌더링하여 사이즈 계산 후 결과를 반환합니다.', function () {
             var labelSize = renderUtil._getRenderedLabelSize('Label1', {
-                fontFamily: 'Verdana'
+                fontFamily: 'Verdana',
+                fontSize: 12
             }, 'offsetWidth');
-            expect(labelSize).toBeGreaterThan(30);
-            expect(labelSize).toBeLessThan(43);
+
+            if (isIE8 || isFirefox) {
+                expect(labelSize).toEqual(42);
+            } else if (isMac && isChrome) {
+                expect(labelSize).toEqual(40);
+            } else {
+                expect(labelSize).toEqual(39);
+            }
         });
     });
 
     describe('getRenderedLabelWidth()', function() {
         it('렌더링된 레이블의 너비값을 반환합니다.', function () {
             var labelWidth = renderUtil.getRenderedLabelWidth('Label1', {
-                fontFamily: 'Verdana'
+                fontFamily: 'Verdana',
+                fontSize: 12
             });
-            expect(labelWidth).toBeGreaterThan(30);
-            expect(labelWidth).toBeLessThan(43);
+
+            if (isIE8 || isFirefox) {
+                expect(labelWidth).toEqual(42);
+            } else if (isMac && isChrome) {
+                expect(labelWidth).toEqual(40);
+            } else {
+                expect(labelWidth).toEqual(39);
+            }
         });
     });
 
     describe('getRenderedLabelWidth()', function() {
         it('렌더링된 레이블의 높이값을 반환합니다.', function () {
             var labelHeight = renderUtil.getRenderedLabelHeight('Label2', {
-                fontFamily: 'Verdana'
+                fontFamily: 'Verdana',
+                fontSize: 12
             });
-            expect(labelHeight).toBeGreaterThan(12);
-            expect(labelHeight).toBeLessThan(16);
+
+            if (isIE8) {
+                expect(labelHeight).toEqual(14);
+            } else {
+                expect(labelHeight).toEqual(15);
+            }
         });
     });
 

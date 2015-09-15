@@ -195,6 +195,8 @@ describe('test dataConverter', function() {
             }, {
                 format: '0.0'
             }, 'column');
+
+            // formatFunctions는 currying된 functions들로 구성되어있어 function 비교가 불가하여 삭제합니다.
             delete convertData.formatFunctions;
             expect(convertData).toEqual({
                 labels: ['cate1', 'cate2', 'cate3'],

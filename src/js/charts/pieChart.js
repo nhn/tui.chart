@@ -66,7 +66,6 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isVerticalTypeChart: true,
             chartBackground: chartBackground,
             data: {
                 values: convertData.values,

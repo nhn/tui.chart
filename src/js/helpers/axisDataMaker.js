@@ -401,10 +401,10 @@ var axisDataMaker = {
         // 01. 기본 scale 정보로 step 얻기
         step = calculator.getScaleStep(scale, params.tickCount);
 
-        // 02. step 일반화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
+        // 02. step 정규화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
         step = this._normalizeStep(step);
 
-        // 03. scale 일반화 시키기
+        // 03. scale 정규화 시키기
         scale = this._normalizeScale(scale, step, params.tickCount);
 
         // 04. line차트의 경우 사용자의 min값이 scale의 min값과 같을 경우, min값을 1 step 감소 시킴

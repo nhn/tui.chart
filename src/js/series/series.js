@@ -45,7 +45,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * Show tooltip (mouseover callback).
      * @param {object} params parameters
      *      @param {string} params.prefix tooltip id prefix
-     *      @param {boolean} params.isVerticalTypeChart whether vertical type chart or not
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
@@ -77,12 +76,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            isVerticalTypeChart = !!this.isVerticalTypeChart,
             dimension = bound.dimension,
             inCallback = ne.util.bind(this.showTooltip, this, {
                 prefix: tooltipPrefix,
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
-                isVerticalTypeChart: isVerticalTypeChart
+                chartType: this.chartType
             }),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             data = {
@@ -92,7 +90,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             };
 
         if (!paper) {
-            this._renderBounds(el, dimension, bound.position, isVerticalTypeChart);
+            this._renderBounds(el, dimension, bound.position, this.chartType);
         }
 
         data = ne.util.extend(data, this.makeAddData());
@@ -113,15 +111,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, right: number}} position series position
-     * @param {boolean} isVerticalTypeChart whether point position or not
      * @private
      */
-    _renderBounds: function(el, dimension, position, isVerticalTypeChart) {
+    _renderBounds: function(el, dimension, position, chartType) {
         var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
         renderUtil.renderDimension(el, dimension);
 
         position.top = position.top - HIDDEN_WIDTH;
-        position.right = position.right + (isVerticalTypeChart ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+        position.right = position.right + (chartType === chartConst.CHART_TYPE_BAR ? -hiddenWidth : -(HIDDEN_WIDTH * 2));
 
         renderUtil.renderPosition(el, position);
     },
@@ -223,7 +220,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 return (value - subValue) * flag / distance;
             });
         });
-
         return percentValues;
     },
 

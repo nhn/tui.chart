@@ -92,7 +92,6 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isVerticalTypeChart: true,
             data: {
                 values: calculator.arrayPivot(convertData.values),
                 formattedValues: calculator.arrayPivot(convertData.formattedValues),

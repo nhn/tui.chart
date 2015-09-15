@@ -11,7 +11,19 @@ var Axis = require('../../src/js/axes/axis.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Axis', function() {
-    var axis;
+    var axis, getRenderedLabelHeight;
+
+    beforeAll(function() {
+        // 브라우저마다 렌더된 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
+        renderUtil.getRenderedLabelHeight = function() {
+            return 20;
+        };
+    });
+
+    afterAll(function() {
+        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+    });
 
     beforeEach(function() {
         axis = new Axis({
@@ -45,11 +57,15 @@ describe('Axis', function() {
     });
 
     describe('_renderTitleAreaStyle()', function() {
-        it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.(세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.)', function() {
+        it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.', function() {
             var elTitle = dom.create('DIV');
             axis._renderTitleAreaStyle(elTitle, 50);
+
+            // 세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.
             expect(elTitle.style.width).toEqual('50px');
             expect(elTitle.style.left).toEqual('0px');
+
+            // IE8에서는 회전 방법 이슈로 인해 top값을 설정하지 않습니다.
             if (!renderUtil.isIE8()) {
                 expect(elTitle.style.top).toEqual('50px');
             }
@@ -121,6 +137,7 @@ describe('Axis', function() {
 
             axis.data = {
                 tickCount: 5,
+                isLabelAxis: false,
                 isVertical: true
             };
             elTickArea = axis._renderTickArea(300);
@@ -183,8 +200,7 @@ describe('Axis', function() {
             expect(childNodes[2].innerHTML).toEqual('label3');
         });
 
-        it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.' +
-            '벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.', function() {
+        it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
             axis.data = {
@@ -196,6 +212,8 @@ describe('Axis', function() {
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toEqual(3);
+
+            // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
             expect(childNodes[0].style.left).toEqual('0px');
             expect(childNodes[1].style.left).toEqual('150px');
             expect(childNodes[2].style.left).toEqual('299px');
@@ -230,10 +248,9 @@ describe('Axis', function() {
     });
 
     describe('_getRenderedTitleHeight()', function() {
-        it('렌더링된 타이틀 높이를 반환합니다. (브라우저별로 수치가 약간씩 다름으로 범위 비교를 합니다.)', function() {
+        it('렌더링된 타이틀 높이를 반환합니다.', function() {
             var result = axis._getRenderedTitleHeight();
-            expect(result).toBeGreaterThan(12);
-            expect(result).toBeLessThan(17);
+            expect(result).toEqual(20);
         });
     });
 
@@ -293,31 +310,30 @@ describe('Axis', function() {
     });
 
     describe('_changeLabelAreaPosition()', function() {
-        it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다. (레이블이 타입의 경우 기본 설정이 가운데 배치되기 때문에 위치 이동 필요 없습니다.)', function() {
+        it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var elLabelArea = dom.create('DIV');
             axis._changeLabelAreaPosition({
                 elLabelArea: elLabelArea,
                 isLabelAxis: true
             });
+
+            // 레이블이 타입의 경우 기본 설정이 가운데 배치되기 때문에 위치 이동 필요 없습니다.
             expect(elLabelArea.style.top).toEqual('');
             expect(elLabelArea.style.left).toEqual('');
         });
 
-        it('벨류 타입 y축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 top 이동 됩니다. (브라우저별로 수치가 약간씩 다름으로 범위 비교를 합니다.)', function() {
+        it('벨류 타입 y축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 top 이동 됩니다.', function() {
             var elLabelArea = dom.create('DIV'),
                 top;
             axis._changeLabelAreaPosition({
                 elLabelArea: elLabelArea,
-                theme: {
-                    fontSize: 12
-                },
+                theme: {},
                 isVertical: true
             });
 
             top = parseInt(elLabelArea.style.top, 10);
 
-            expect(top).toBeGreaterThan(5);
-            expect(top).toBeLessThan(9);
+            expect(top).toEqual(10);
         });
 
         it('벨류 타입 x축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 left -25px 이동 됩니다.', function() {

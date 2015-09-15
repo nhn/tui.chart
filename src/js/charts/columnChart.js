@@ -91,7 +91,6 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isVerticalTypeChart: true,
             allowNegativeTooltip: true,
             data: {
                 values: convertData.values,

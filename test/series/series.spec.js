@@ -7,6 +7,7 @@
 'use strict';
 
 var Series = require('../../src/js/series/series.js'),
+    chartConst = require('../../src/js/const.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -106,8 +107,7 @@ describe('Series', function() {
                 {
                     top: 20,
                     right: 20
-                },
-                true
+                }
             );
 
             expect(elSeries.style.width).toEqual('200px');

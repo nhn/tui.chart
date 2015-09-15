@@ -6,7 +6,8 @@
 
 'use strict';
 
-var Tooltip = require('../../src/js/tooltips/tooltip.js');
+var Tooltip = require('../../src/js/tooltips/tooltip.js'),
+    chartConst = require('../../src/js/const.js');
 
 describe('Tooltip', function() {
     var data = {
@@ -77,9 +78,9 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculatePositionOfVerticalTypeChart()', function() {
-        it('세로 타입 차트(column, line, pie)의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculatePositionOfVerticalTypeChart({
+    describe('_calculateTooltipPositionAboutNotBarChart()', function() {
+        it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
+            var result = tooltip._calculateTooltipPositionAboutNotBarChart({
                 bound: {
                     width: 25,
                     height: 50,
@@ -104,9 +105,9 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculatePositionOfHorizontalTypeChart()', function() {
-        it('가로 타입 차트(bar)의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculatePositionOfHorizontalTypeChart({
+    describe('_calculateTooltipPositionAboutBarChart()', function() {
+        it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
+            var result = tooltip._calculateTooltipPositionAboutBarChart({
                 bound: {
                     width: 50,
                     height: 25,
@@ -176,16 +177,15 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculatePosition()', function() {
+    describe('_calculateTooltipPosition()', function() {
         it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculatePosition({
+            var result = tooltip._calculateTooltipPosition({
                 bound: {
                     width: 25,
                     height: 50,
                     top: 50,
                     left: 10
                 },
-                isVerticalTypeChart: true,
                 dimension: {
                     width: 50,
                     height: 30
@@ -204,13 +204,14 @@ describe('Tooltip', function() {
         });
 
         it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculatePosition({
+            var result = tooltip._calculateTooltipPosition({
                 bound: {
                     width: 50,
                     height: 25,
                     top: 10,
                     left: 0
                 },
+                chartType: chartConst.CHART_TYPE_BAR,
                 id: 'id-0-0',
                 dimension: {
                     width: 50,

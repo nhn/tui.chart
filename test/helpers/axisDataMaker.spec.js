@@ -338,59 +338,59 @@ describe('axisDataMaker', function() {
     });
 
     describe('_normalizeMin()', function() {
-        it('step이 2일때 min 1.6에 대한 일반화 결과는 0입니다.', function () {
+        it('step이 2일때 min 1.6에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(1.6, 2);
             expect(result).toEqual(0);
         });
 
-        it('step이 1일때 min 1.6에 대한 일반화 결과는 1입니다.', function () {
+        it('step이 1일때 min 1.6에 대한 정규화 결과는 1입니다.', function () {
             var result = maker._normalizeMin(1.6, 1);
             expect(result).toEqual(1);
         });
 
-        it('step이 2일때 min 2.3에 대한 일반화 결과는 2입니다.', function () {
+        it('step이 2일때 min 2.3에 대한 정규화 결과는 2입니다.', function () {
             var result = maker._normalizeMin(2.3, 2);
             expect(result).toEqual(2);
         });
 
-        it('step이 2일때 min 3.3에 대한 일반화 결과는 2입니다.', function () {
+        it('step이 2일때 min 3.3에 대한 정규화 결과는 2입니다.', function () {
             var result = maker._normalizeMin(3.3, 2);
             expect(result).toEqual(2);
         });
 
-        it('step이 5일때 min 3.3에 대한 일반화 결과는 0입니다.', function () {
+        it('step이 5일때 min 3.3에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(3.3, 5);
             expect(result).toEqual(0);
         });
 
-        it('step이 5일때 min 7.3에 대한 일반화 결과는 5입니다.', function () {
+        it('step이 5일때 min 7.3에 대한 정규화 결과는 5입니다.', function () {
             var result = maker._normalizeMin(7.3, 5);
             expect(result).toEqual(5);
         });
 
-        it('step이 10일때 min 7.3에 대한 일반화 결과는 0입니다.', function () {
+        it('step이 10일때 min 7.3에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(7.3, 10);
             expect(result).toEqual(0);
         });
 
-        it('step이 30일때 min -100에 대한 일반화 결과는 -120입니다.', function () {
+        it('step이 30일때 min -100에 대한 정규화 결과는 -120입니다.', function () {
             var result = maker._normalizeMin(-100, 30);
             expect(result).toEqual(-120);
         });
 
-        it('step이 30일때 min -10에 대한 일반화 결과는 -30입니다.', function () {
+        it('step이 30일때 min -10에 대한 정규화 결과는 -30입니다.', function () {
             var result = maker._normalizeMin(-10, 30);
             expect(result).toEqual(-30);
         });
 
-        it('step이 5일때 min -10에 대한 일반화 결과는 -10입니다.', function () {
+        it('step이 5일때 min -10에 대한 정규화 결과는 -10입니다.', function () {
             var result = maker._normalizeMin(-10, 5);
             expect(result).toEqual(-10);
         });
     });
 
     describe('_makeNormalizedMax()', function() {
-        it('일반화된 max 결과 값을 반환합니다.', function () {
+        it('정규화된 max 결과 값을 반환합니다.', function () {
             var result = maker._makeNormalizedMax({
                 min: 0,
                 max: 110
@@ -401,7 +401,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('_normalizeScale()', function() {
-        it('일반화된 scale 값을 반환합니다.', function () {
+        it('정규화된 scale 값을 반환합니다.', function () {
             var result = maker._makeNormalizedMax({
                 min: 0,
                 max: 110
