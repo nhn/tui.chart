@@ -12,31 +12,24 @@ var Series = require('../../src/js/series/series.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Series', function() {
-    var groupValues = [[20], [40], [80], [120]],
-        groupValues2 = [
-            [20, 80], [40, 60], [60, 40], [80, 20]
-        ],
-        data = {
-            values: [[20], [40]],
-            formattedValues: [[20], [40]],
-            scale: {min: 0, max: 160}
-        },
-        bound = {
-            dimension: {width: 200, height: 100},
-            position: {top: 50, right: 50}
-        },
-        theme = {
-            colors: ['blue']
-        },
-        series;
+    var series;
 
     beforeEach(function() {
         series = new Series({
             chartType: 'bar',
             tooltipPrefix: 'tooltip-prefix-',
-            data: data,
-            bound: bound,
-            theme: theme,
+            data: {
+                values: [[20], [40]],
+                formattedValues: [[20], [40]],
+                scale: {min: 0, max: 160}
+            },
+            bound: {
+                dimension: {width: 200, height: 100},
+                position: {top: 50, right: 50}
+            },
+            theme: {
+                colors: ['blue']
+            },
             options: {}
         });
     });
@@ -44,24 +37,28 @@ describe('Series', function() {
     describe('_makePercentValues()', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
-                values: groupValues,
-                scale: data.scale
+                values: [[20], [40], [80], [120]],
+                scale: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
         it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
-                values: groupValues2,
-                scale: data.scale
+                values: [
+                    [20, 80], [40, 60], [60, 40], [80, 20]
+                ],
+                scale: {min: 0, max: 160}
             }, 'normal');
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
 
         it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
-                values: groupValues2,
-                scale: data.scale
+                values: [
+                    [20, 80], [40, 60], [60, 40], [80, 20]
+                ],
+                scale: {min: 0, max: 160}
             }, 'percent');
             expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
@@ -70,18 +67,38 @@ describe('Series', function() {
     describe('_makeNormalPercentValues()', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makeNormalPercentValues({
-                values: groupValues,
-                scale: data.scale
+                values: [[20], [40], [80], [120]],
+                scale: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+        });
+
+        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
+            var result = series._makeNormalPercentValues({
+                values: [[-20], [-40], [-80], [-120]],
+                scale: {min: 0, max: 160}
+            });
+            expect(result).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
+        });
+
+        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 scale 최소값을 빼고 계산합니다.', function () {
+            var result;
+            series.chartType = 'line';
+            result = series._makeNormalPercentValues({
+                values: [[60], [40], [80], [120]],
+                scale: {min: 20, max: 180}
+            });
+            expect(result).toEqual([[0.25], [0.125], [0.375], [0.625]]);
         });
     });
 
     describe('_makeNormalStackedPercentValues()', function() {
         it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makeNormalStackedPercentValues({
-                values: groupValues2,
-                scale: data.scale
+                values: [
+                    [20, 80], [40, 60], [60, 40], [80, 20]
+                ],
+                scale: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
@@ -90,8 +107,10 @@ describe('Series', function() {
     describe('_makeNormalStackedPercentValues()', function() {
         it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentStackedPercentValues({
-                values: groupValues2,
-                scale: data.scale
+                values: [
+                    [20, 80], [40, 60], [60, 40], [80, 20]
+                ],
+                scale: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
