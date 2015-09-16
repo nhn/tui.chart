@@ -339,11 +339,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabel, this));
+            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
         }
     },
 
-    showSeriesLabel: function() {
+    /**
+     * Show series label area.
+     */
+    showSeriesLabelArea: function() {
         if (!this.options.showLabel) {
             return;
         }
