@@ -7,11 +7,13 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
     dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
+    event = require('../helpers/eventListener.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
-var HIDDEN_WIDTH = 1;
+var HIDDEN_WIDTH = 1,
+    SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
 
 var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -87,14 +89,31 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 dimension: dimension,
                 theme: this.theme,
                 options: this.options
-            };
+            },
+            addData = this.makeAddData();
 
         if (!paper) {
-            this._renderBounds(el, dimension, bound.position, this.chartType);
+            renderUtil.renderDimension(el, dimension);
         }
 
-        data = ne.util.extend(data, this.makeAddData());
+        this._renderPosition(el, bound.position, this.chartType);
+
+        data = ne.util.extend(data, addData);
+
+        if (this.options.showLabel) {
+            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend({
+                container: el,
+                values: this.data.values,
+                formattedValues: this.data.formattedValues,
+                dimension: dimension
+            }, addData));
+        }
+
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+        this.attachEvent(el);
+
+        this.inCallback = inCallback;
+        this.outCallback = outCallback;
         return el;
     },
 
@@ -107,19 +126,22 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Render series label.
+     * @private
+     */
+    _renderSeriesLabel: function() {},
+
+    /**
      * Render bounds
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
-     * @param {{top: number, right: number}} position series position
+     * @param {{top: number, left: number}} position series position
      * @private
      */
-    _renderBounds: function(el, dimension, position, chartType) {
+    _renderPosition: function(el, position, chartType) {
         var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
-        renderUtil.renderDimension(el, dimension);
-
         position.top = position.top - HIDDEN_WIDTH;
-        position.right = position.right + (chartType === chartConst.CHART_TYPE_BAR ? -hiddenWidth : -(HIDDEN_WIDTH * 2));
-
+        position.left = position.left + (chartType === chartConst.CHART_TYPE_BAR ? hiddenWidth : HIDDEN_WIDTH * 2);
         renderUtil.renderPosition(el, position);
     },
 
@@ -248,6 +270,49 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * On mouseover event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+        this.inCallback(this._getBound(index, groupIndex), groupIndex + '-' + index);
+    },
+
+    /**
+     * On mouseout event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+        this.outCallback(groupIndex + '-' + index);
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+    },
+
+    /**
      * Call showDot function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
@@ -274,8 +339,24 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate();
+            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabel, this));
         }
+    },
+
+    showSeriesLabel: function() {
+        if (!this.options.showLabel) {
+            return;
+        }
+        dom.addClass(this.elSeriesLabelArea, 'show');
+
+        (new ne.component.Effects.Fade({
+            element: this.elSeriesLabelArea,
+            duration: 300
+        })).action({
+            start: 0,
+            end: 1,
+            complete: function() {}
+        });
     }
 });
 

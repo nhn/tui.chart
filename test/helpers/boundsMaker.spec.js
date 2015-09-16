@@ -393,7 +393,7 @@ describe('boundsMaker', function() {
             expect(result.series.dimension.width).toEqual(296);
             expect(result.series.dimension.height).toEqual(280);
             expect(result.series.position.top).toEqual(50);
-            expect(result.series.position.right).toEqual(97);
+            expect(result.series.position.left).toEqual(107);
             expect(result.yAxis.dimension.width).toEqual(97);
             expect(result.yAxis.dimension.height).toEqual(280);
             expect(result.yAxis.position.top).toEqual(50);

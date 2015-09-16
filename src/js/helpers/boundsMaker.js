@@ -64,6 +64,7 @@ var boundsMaker = {
         var dimensions = this._getComponentsDimensions(params),
             yAxisWidth = dimensions.yAxis.width,
             top = dimensions.title.height + CHART_PADDING,
+            left = yAxisWidth + CHART_PADDING,
             right = dimensions.legend.width + dimensions.yrAxis.width + CHART_PADDING,
             axesBounds = this._makeAxesBounds({
                 hasAxes: params.hasAxes,
@@ -80,7 +81,7 @@ var boundsMaker = {
                     dimension: dimensions.series,
                     position: {
                         top: top,
-                        right: right
+                        left: left
                     }
                 },
                 legend: {
@@ -93,7 +94,7 @@ var boundsMaker = {
                     dimension: dimensions.series,
                     position: {
                         top: top,
-                        left: yAxisWidth + CHART_PADDING
+                        left: left
                     }
                 }
             }, axesBounds);

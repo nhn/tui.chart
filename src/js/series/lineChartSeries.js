@@ -6,7 +6,9 @@
 
 'use strict';
 
-var Series = require('./series.js');
+var Series = require('./series.js'),
+    seriesTemplate = require('./seriesTemplate.js'),
+    renderUtil = require('../helpers/renderUtil.js');
 
 var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -52,6 +54,77 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
         return {
             groupPositions: this._makePositions(this.bound.dimension)
         };
+    },
+
+    /**
+     * To make html about series label
+     * @param {left: number, top: number} position position
+     * @param {string} value value
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {string} html string
+     * @private
+     */
+    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+        var cssText = renderUtil.concatStr('left:', position.left, 'px;',
+            'top:', position.top, 'px');
+        return seriesTemplate.TPL_SERIES_LABEL({
+            cssText: cssText,
+            value: value,
+            groupIndex: groupIndex,
+            index: index
+        });
+    },
+
+    /**
+     * Render series label.
+     * @param {object} params parameters
+     *      @param {HTMLElement} params.container container
+     *      @param {array<array>} params.groupPositions group positions
+     *      @param {array<array>} params.formattedValues formatted values
+     * @private
+     */
+    _renderSeriesLabel: function(params) {
+        var groupPositions = params.groupPositions,
+            labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], {
+                fontSize: 12
+            }),
+            html;
+        html = ne.util.map(params.formattedValues, function(values, groupIndex) {
+            var left = 0;
+            return ne.util.map(values, function(value, index) {
+                var position = groupPositions[groupIndex][index],
+                    labelWidth = renderUtil.getRenderedLabelWidth(value, {
+                        fontSize: 12
+                    }),
+                    labelHtml = this._makeSeriesLabelHtml({
+                        left: position.left - (labelWidth/2),
+                        top: position.top - labelHeight
+                    }, value, index, groupIndex);
+                left += labelWidth;
+                return labelHtml;
+            }, this).join('');
+        }, this).join('');
+
+        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
+            html: html
+        });
+
+        // bound 정보를 얻어올 때 사용
+        this.groupPositions = groupPositions;
+
+        return params.container.firstChild;
+    },
+
+    /**
+     * Get bound.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {left: number, top: number}
+     * @private
+     */
+    _getBound: function(groupIndex, index) {
+        return this.groupPositions[groupIndex][index];
     }
 });
 

@@ -342,13 +342,14 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
     /**
      * Animate.
      */
-    animate: function() {
+    animate: function(callback) {
         var groupLines = this.groupLines,
             groupPaths = this.groupPaths,
             opacity = this.dotOpacity,
-            time = ANIMATION_TIME / groupLines[0].length;
+            time = ANIMATION_TIME / groupLines[0].length,
+            startTime;
         ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            var startTime = 0;
+            startTime = 0;
             ne.util.forEachArray(dots, function(dot, index) {
                 var line, path;
                 if (index) {
@@ -367,6 +368,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
                 }
             });
         });
+
+        if (callback) {
+            setTimeout(callback, startTime);
+        }
     }
 });
 

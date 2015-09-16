@@ -1,5 +1,5 @@
 /**
- * @fileoverview This is templates of tooltip view.
+ * @fileoverview This is templates of tooltip.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

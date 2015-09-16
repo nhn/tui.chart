@@ -165,7 +165,21 @@
   .ne-chart-series-area {
     z-index: 300;
     position: absolute;
-    overflow: hidden;
+    .ne-chart-series-label-area {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      display: none;
+      .opacity(0);
+      .ne-chart-series-label {
+        position: absolute;
+        font-size: 12px;
+        cursor: default;
+      }
+      &.show {
+        display: block;
+      }
+    }
   }
 
   .ne-chart-legend-area {

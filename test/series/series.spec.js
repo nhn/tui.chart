@@ -25,7 +25,7 @@ describe('Series', function() {
             },
             bound: {
                 dimension: {width: 200, height: 100},
-                position: {top: 50, right: 50}
+                position: {top: 50, left: 50}
             },
             theme: {
                 colors: ['blue']
@@ -154,20 +154,14 @@ describe('Series', function() {
     describe('renderBounds()', function() {
         it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
             var elSeries = dom.create('DIV');
-            series._renderBounds(elSeries, {
-                    width: 200,
-                    height: 100
-                },
-                {
+            series._renderPosition(elSeries, {
                     top: 20,
-                    right: 20
+                    left: 20
                 }
             );
 
-            expect(elSeries.style.width).toEqual('200px');
-            expect(elSeries.style.height).toEqual('100px');
             expect(elSeries.style.top).toEqual('19px');
-            expect(elSeries.style.right).toEqual('18px');
+            expect(elSeries.style.left).toEqual('22px');
         });
     });
 
@@ -175,16 +169,16 @@ describe('Series', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
             var elSeries = series.render();
 
-            expect(elSeries.className.indexOf('series-area') > -1).toBeTruthy();
+            expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
             expect(elSeries.style.width).toEqual('200px');
             expect(elSeries.style.height).toEqual('100px');
 
             expect(elSeries.style.top).toEqual('49px');
 
             if (renderUtil.isIE8()) {
-                expect(elSeries.style.right).toEqual('50px');
+                expect(elSeries.style.left).toEqual('50px');
             } else {
-                expect(elSeries.style.right).toEqual('49px');
+                expect(elSeries.style.left).toEqual('51px');
             }
         });
     });

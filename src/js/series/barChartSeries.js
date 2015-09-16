@@ -108,7 +108,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         var groupValues = this.percentValues,
             groupHeight = (dimension.height / groupValues.length),
             barHeight = groupHeight / 2,
-            bounds = ne.util.map(groupValues, function(values, groupIndex) {
+            bounds = ne.util.map(groupValues, function (values, groupIndex) {
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
                     left = -HIDDEN_WIDTH;
                 return ne.util.map(values, function (value) {
