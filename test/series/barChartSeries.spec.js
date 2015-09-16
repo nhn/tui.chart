@@ -6,10 +6,31 @@
 
 'use strict';
 
-var BarChartSeries = require('../../src/js/series/barChartSeries.js');
+var BarChartSeries = require('../../src/js/series/barChartSeries.js'),
+    dom = require('../../src/js/helpers/domHandler.js'),
+    renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('test BarChartSeries', function() {
-    var series;
+    var getRenderedLabelWidth, getRenderedLabelHeight, series;
+
+    beforeAll(function() {
+        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        getRenderedLabelWidth  = renderUtil.getRenderedLabelWidth;
+        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
+
+        renderUtil.getRenderedLabelWidth = function() {
+            return 40;
+        };
+
+        renderUtil.getRenderedLabelHeight = function() {
+            return 20;
+        };
+    });
+
+    afterAll(function() {
+        renderUtil.getRenderedLabelWidth = getRenderedLabelWidth;
+        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+    });
 
     beforeEach(function() {
         series = new BarChartSeries({
@@ -273,6 +294,202 @@ describe('test BarChartSeries', function() {
                     }
                 ]
             ]);
+        });
+    });
+
+    describe('_renderNormalSeriesLabel()', function() {
+        it('container, bounds, dimension, values, formattedValues정보를 전달하여 일반 series label을 렌더링 합니다.', function() {
+            var container = dom.create('div'),
+                children;
+            series._renderNormalSeriesLabel({
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 0,
+                                width: 70,
+                                height: 30
+                            }
+                        },
+                        {
+                            end: {
+                                top: 20,
+                                left: 0,
+                                width: 100,
+                                height: 30
+                            }
+                        }
+                    ]
+                ],
+                dimension: {
+                    width: 140,
+                    height: 50
+                },
+                formattedValues: [
+                    ['1.5', '2.2']
+                ],
+                values: [
+                    [1.5, 2.2]
+                ]
+            });
+            children = container.firstChild.childNodes;
+            expect(children[0].style.left).toEqual('75px');
+            expect(children[0].style.top).toEqual('29px');
+            expect(children[0].innerHTML).toEqual('1.5');
+
+            expect(children[1].style.left).toEqual('105px');
+            expect(children[1].style.top).toEqual('29px');
+            expect(children[1].innerHTML).toEqual('2.2');
+        });
+
+        it('data가 음수인 경우 series label은 그래프 좌측에 위치합니다.', function() {
+            var container = dom.create('div'),
+                children;
+            series._renderNormalSeriesLabel({
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 70,
+                                width: 70,
+                                height: 30
+                            }
+                        },
+                        {
+                            end: {
+                                top: 20,
+                                left: 50,
+                                width: 90,
+                                height: 30
+                            }
+                        }
+                    ]
+                ],
+                dimension: {
+                    width: 140,
+                    height: 50
+                },
+                formattedValues: [
+                    ['-1.5', '-2.2']
+                ],
+                values: [
+                    [-1.5, -2.2]
+                ]
+            });
+            children = container.firstChild.childNodes;
+            expect(children[0].style.left).toEqual('27px');
+            expect(children[0].style.top).toEqual('29px');
+            expect(children[0].innerHTML).toEqual('-1.5');
+
+            expect(children[1].style.left).toEqual('7px');
+            expect(children[1].style.top).toEqual('29px');
+            expect(children[1].innerHTML).toEqual('-2.2');
+        });
+    });
+
+    describe('_renderStackedSeriesLabel()', function() {
+        it('container, bounds, dimension, values formattedValues정보를 전달하여 stacked series label을 렌더링 합니다.', function() {
+            var container = dom.create('div'),
+                children;
+            series.options.stacked = 'normal';
+            series._renderStackedSeriesLabel({
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 0,
+                                width: 40,
+                                height: 30
+                            }
+                        },
+                        {
+                            end: {
+                                top: 20,
+                                left: 40,
+                                width: 60,
+                                height: 30
+                            }
+                        }
+                    ]
+                ],
+                dimension: {
+                    width: 120,
+                    height: 50
+                },
+                formattedValues: [
+                    ['1.5', '2.2']
+                ],
+                values: [
+                    [1.5, 2.2]
+                ]
+            });
+            children = container.firstChild.childNodes;
+            expect(children[0].style.left).toEqual('0px');
+            expect(children[0].style.top).toEqual('29px');
+            expect(children[0].innerHTML).toEqual('1.5');
+
+            expect(children[1].style.left).toEqual('50px');
+            expect(children[1].style.top).toEqual('29px');
+            expect(children[1].innerHTML).toEqual('2.2');
+
+            expect(children[2].style.left).toEqual('105px');
+            expect(children[2].style.top).toEqual('29px');
+            expect(children[2].innerHTML).toEqual('3.7');
+        });
+
+        it('stacked=percent일 경우에는 토탈 label은 표시하지 않습니다.', function() {
+            var container = dom.create('div'),
+                children;
+            series.options.stacked = 'percent';
+            series._renderStackedSeriesLabel({
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 0,
+                                width: 40,
+                                height: 30
+                            }
+                        },
+                        {
+                            end: {
+                                top: 20,
+                                left: 40,
+                                width: 60,
+                                height: 30
+                            }
+                        }
+                    ]
+                ],
+                dimension: {
+                    width: 120,
+                    height: 50
+                },
+                formattedValues: [
+                    ['1.5', '2.2']
+                ],
+                values: [
+                    [1.5, 2.2]
+                ]
+            });
+            children = container.firstChild.childNodes;
+            expect(children[0].style.left).toEqual('0px');
+            expect(children[0].style.top).toEqual('29px');
+            expect(children[0].innerHTML).toEqual('1.5');
+
+            expect(children[1].style.left).toEqual('50px');
+            expect(children[1].style.top).toEqual('29px');
+            expect(children[1].innerHTML).toEqual('2.2');
+
+            expect(children[2]).toBeUndefined();
         });
     });
 });

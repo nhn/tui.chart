@@ -165,6 +165,17 @@ describe('Series', function() {
         });
     });
 
+    describe('_makeSeriesLabelHtml()', function() {
+        it('position, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
+            var result = series._makeSeriesLabelHtml({
+                left: 10,
+                top: 10
+            }, 'label1', 0, 0);
+
+            expect(result).toEqual('<div class="ne-chart-series-label" style="left:10px;top:10px" data-group-index="0" data-index="0">label1</div>');
+        });
+    });
+
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
             var elSeries = series.render();

@@ -7,9 +7,13 @@
 'use strict';
 
 var Series = require('./series.js'),
+    seriesTemplate = require('./seriesTemplate.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
-var HIDDEN_WIDTH = 1;
+var HIDDEN_WIDTH = 1,
+    LABEL_FONT_SIZE = 12,
+    PLUS_PADDING = 5,
+    MINUS_PADDING = 3;
 
 var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -112,6 +116,9 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
                     left = -HIDDEN_WIDTH;
                 return ne.util.map(values, function (value) {
+                    if (value < 0) {
+                        return;
+                    }
                     var width = value * dimension.width,
                         bound = {
                             start: {
@@ -132,6 +139,136 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 }, this);
             });
         return bounds;
+    },
+
+    /**
+     * Render normal series label.
+     * @param {object} params parameters
+     *      @param {HTMLElement} params.container container
+     *      @param {array<array>} params.groupBounds group bounds
+     *      @param {array<array>} params.formattedValues formatted values
+     * @returns {HTMLElement} series label area
+     * @private
+     */
+    _renderNormalSeriesLabel: function(params) {
+        var groupBounds = params.groupBounds,
+            formattedValues = params.formattedValues,
+            html;
+        html = ne.util.map(params.values, function(values, groupIndex) {
+            return ne.util.map(values, function(value, index) {
+                var bound = groupBounds[groupIndex][index].end,
+                    formattedValue = formattedValues[groupIndex][index],
+                    labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
+                        fontSize: LABEL_FONT_SIZE
+                    }),
+                    left = value >= 0 ? bound.left + bound.width + PLUS_PADDING : bound.left - labelWidth - MINUS_PADDING,
+                    labelHtml = this._makeSeriesLabelHtml({
+                        left: left,
+                        top: bound.top + (bound.height - LABEL_FONT_SIZE) / 2
+                    }, formattedValue, groupIndex, index);
+                return labelHtml;
+            }, this).join('');
+        }, this).join('');
+
+        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
+            html: html
+        });
+
+        return params.container.firstChild;
+    },
+
+
+    /**
+     * Render stacked series label.
+     * @param {object} params parameters
+     *      @param {HTMLElement} params.container container
+     *      @param {array<array>} params.groupBounds group bounds
+     *      @param {array<array>} params.formattedValues formatted values
+     * @returns {HTMLElement} series label area
+     * @private
+     */
+    _renderStackedSeriesLabel: function(params) {
+        var groupBounds = params.groupBounds,
+            formattedValues = params.formattedValues,
+            html;
+        html = ne.util.map(params.values, function(values, groupIndex) {
+            var total = 0,
+                labelHtmls, lastLeft, lastTop;
+            labelHtmls = ne.util.map(values, function(value, index) {
+                var bound, formattedValue, labelWidth, left, top, labelHtml;
+
+                if (value < 0) {
+                    return '';
+                }
+
+                bound = groupBounds[groupIndex][index].end;
+                formattedValue = formattedValues[groupIndex][index];
+                labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
+                    fontSize: LABEL_FONT_SIZE
+                });
+                left = bound.left + (bound.width - labelWidth) / 2;
+                top = bound.top + (bound.height - LABEL_FONT_SIZE) / 2;
+
+                labelHtml = this._makeSeriesLabelHtml({
+                    left: left,
+                    top: top
+                }, formattedValue, groupIndex, index);
+                lastLeft = bound.left + bound.width;
+                lastTop = top;
+                total += value;
+                return labelHtml;
+            }, this);
+
+            if (this.options.stacked === 'normal') {
+                labelHtmls.push(this._makeSeriesLabelHtml({
+                    left: lastLeft + PLUS_PADDING,
+                    top: lastTop
+                }, total, -1, -1))
+            }
+            return labelHtmls.join('');
+        }, this).join('');
+
+        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
+            html: html
+        });
+
+        return params.container.firstChild;
+    },
+
+    /**
+     * Render series label.
+     * @param {object} params parameters
+     *      @param {HTMLElement} params.container container
+     *      @param {array<array>} params.groupBounds group bounds
+     *      @param {array<array>} params.formattedValues formatted values
+     * @returns {HTMLElement} series label area
+     * @private
+     */
+    _renderSeriesLabel: function(params) {
+        var elSeriesLabelArea;
+        if (this.options.stacked) {
+            elSeriesLabelArea = this._renderStackedSeriesLabel(params);
+        } else {
+            elSeriesLabelArea = this._renderNormalSeriesLabel(params);
+        }
+
+        // bound 정보를 얻어올 때 사용
+        this.groupBounds = params.groupBounds;
+        return elSeriesLabelArea;
+    },
+
+    /**
+     * Get bound.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {left: number, top: number}
+     * @private
+     */
+    _getBound: function(groupIndex, index) {
+        if (groupIndex === -1 || index === -1) {
+            return null;
+        }
+        return this.groupBounds[groupIndex][index].end;
     }
 });
 

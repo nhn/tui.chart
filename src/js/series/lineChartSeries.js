@@ -57,26 +57,6 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
     },
 
     /**
-     * To make html about series label
-     * @param {left: number, top: number} position position
-     * @param {string} value value
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {string} html string
-     * @private
-     */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
-        var cssText = renderUtil.concatStr('left:', position.left, 'px;',
-            'top:', position.top, 'px');
-        return seriesTemplate.TPL_SERIES_LABEL({
-            cssText: cssText,
-            value: value,
-            groupIndex: groupIndex,
-            index: index
-        });
-    },
-
-    /**
      * Render series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
@@ -91,7 +71,6 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
             }),
             html;
         html = ne.util.map(params.formattedValues, function(values, groupIndex) {
-            var left = 0;
             return ne.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
                     labelWidth = renderUtil.getRenderedLabelWidth(value, {
@@ -101,7 +80,6 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
                         left: position.left - (labelWidth/2),
                         top: position.top - labelHeight
                     }, value, index, groupIndex);
-                left += labelWidth;
                 return labelHtml;
             }, this).join('');
         }, this).join('');
@@ -124,7 +102,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * @private
      */
     _getBound: function(groupIndex, index) {
-        return this.groupPositions[groupIndex][index];
+        return this.groupPositions[index][groupIndex];
     }
 });
 

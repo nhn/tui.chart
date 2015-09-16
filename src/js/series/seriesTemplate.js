@@ -8,7 +8,7 @@ var templateMaker = require('../helpers/templateMaker.js');
 
 var tags = {
     HTML_SERIES_LABEL_AREA: '<div class="ne-chart-series-label-area">{{ html }}</div>',
-    HTML_SERIES_LABEL: '<span class="ne-chart-series-label" style="{{ cssText }}" data-group-index="{{ groupIndex }}" data-index="{{ index }}">{{ value }}</span>'
+    HTML_SERIES_LABEL: '<div class="ne-chart-series-label" style="{{ cssText }}" data-group-index="{{ groupIndex }}" data-index="{{ index }}">{{ value }}</div>'
 };
 
 module.exports = {

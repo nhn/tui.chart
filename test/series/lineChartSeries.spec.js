@@ -65,19 +65,8 @@ describe('test LineChartSeries', function() {
         });
     });
 
-    describe('_makeSeriesLabelHtml()', function() {
-        it('position, width, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
-            var result = series._makeSeriesLabelHtml({
-                left: 10,
-                top: 10
-            }, 'label1', 0, 0);
-
-            expect(result).toEqual('<span class="ne-chart-series-label" style="left:10px;top:10px" data-group-index="0" data-index="0">label1</span>');
-        });
-    });
-
     describe('_renderSeriesLabel()', function() {
-        it('container, position, dimesion, formattedValues정보를 전달하여 series label을 렌더링 한다.', function() {
+        it('container, position, dimesion, formattedValues정보를 전달하여 series label을 렌더링 합니다.', function() {
             var container = dom.create('div'),
                 children;
             series._renderSeriesLabel({
@@ -94,16 +83,13 @@ describe('test LineChartSeries', function() {
                         }
                     ]
                 ],
-                values: [
-                    [1.5, 2.2]
-                ],
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
                 dimension: {
                     width: 100,
                     height: 100
-                }
+                },
+                formattedValues: [
+                    ['1.5', '2.2']
+                ]
             });
             children = container.firstChild.childNodes;
             expect(children[0].style.left).toEqual('25px');

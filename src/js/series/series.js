@@ -6,7 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
+var seriesTemplate = require('./seriesTemplate.js'),
+    chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     event = require('../helpers/eventListener.js'),
@@ -99,7 +100,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         this._renderPosition(el, bound.position, this.chartType);
 
         data = ne.util.extend(data, addData);
-
         if (this.options.showLabel) {
             this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend({
                 container: el,
@@ -112,8 +112,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
         this.attachEvent(el);
 
+        // series label mouse event 동작 시 사용
         this.inCallback = inCallback;
         this.outCallback = outCallback;
+
         return el;
     },
 
@@ -275,7 +277,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            groupIndex, index;
+            groupIndex, index, bound;
 
         if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
             return;
@@ -283,7 +285,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         groupIndex = elTarget.getAttribute('data-group-index');
         index = elTarget.getAttribute('data-index');
-        this.inCallback(this._getBound(index, groupIndex), groupIndex + '-' + index);
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+        this.inCallback(this._getBound(groupIndex, index), groupIndex + '-' + index);
     },
 
     /**
@@ -300,6 +305,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         groupIndex = elTarget.getAttribute('data-group-index');
         index = elTarget.getAttribute('data-index');
+
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+
         this.outCallback(groupIndex + '-' + index);
     },
 
@@ -341,6 +351,26 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         if (this.graphRenderer.animate) {
             this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
         }
+    },
+
+    /**
+     * To make html about series label
+     * @param {left: number, top: number} position position
+     * @param {string} value value
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {string} html string
+     * @private
+     */
+    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+        var cssText = renderUtil.concatStr('left:', position.left, 'px;',
+            'top:', position.top, 'px');
+        return seriesTemplate.TPL_SERIES_LABEL({
+            cssText: cssText,
+            value: value,
+            groupIndex: groupIndex,
+            index: index
+        });
     },
 
     /**
