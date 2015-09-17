@@ -173,7 +173,7 @@ describe('test ColumnChartSeries', function() {
                             end: {
                                 top: 70,
                                 left: 20,
-                                width: 35,
+                                width: 30,
                                 height: 70
                             }
                         },
@@ -181,7 +181,7 @@ describe('test ColumnChartSeries', function() {
                             end: {
                                 top: 40,
                                 left: 55,
-                                width: 35,
+                                width: 30,
                                 height: 100
                             }
                         }
@@ -200,11 +200,11 @@ describe('test ColumnChartSeries', function() {
             });
             children = container.firstChild.childNodes;
             expect(children[0].style.top).toEqual('45px');
-            expect(children[0].style.left).toEqual('19px');
+            expect(children[0].style.left).toEqual('15px');
             expect(children[0].innerHTML).toEqual('1.5');
 
             expect(children[1].style.top).toEqual('15px');
-            expect(children[1].style.left).toEqual('54px');
+            expect(children[1].style.left).toEqual('50px');
             expect(children[1].innerHTML).toEqual('2.2');
         });
 
@@ -219,7 +219,7 @@ describe('test ColumnChartSeries', function() {
                             end: {
                                 top: 0,
                                 left: 20,
-                                width: 35,
+                                width: 30,
                                 height: 70
                             }
                         },
@@ -227,7 +227,7 @@ describe('test ColumnChartSeries', function() {
                             end: {
                                 top: 0,
                                 left: 55,
-                                width: 35,
+                                width: 30,
                                 height: 100
                             }
                         }
@@ -246,11 +246,11 @@ describe('test ColumnChartSeries', function() {
             });
             children = container.firstChild.childNodes;
             expect(children[0].style.top).toEqual('75px');
-            expect(children[0].style.left).toEqual('19px');
+            expect(children[0].style.left).toEqual('15px');
             expect(children[0].innerHTML).toEqual('-1.5');
 
             expect(children[1].style.top).toEqual('105px');
-            expect(children[1].style.left).toEqual('54px');
+            expect(children[1].style.left).toEqual('50px');
             expect(children[1].innerHTML).toEqual('-2.2');
         });
     });

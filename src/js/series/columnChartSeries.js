@@ -171,7 +171,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                 }
 
                 labelHtml = this._makeSeriesLabelHtml({
-                    left: bound.left + (bound.width - labelWidth + chartConst.TEXT_PADDING) / 2,
+                    left: bound.left + (bound.width - labelWidth) / 2,
                     top: top
                 }, formattedValue, groupIndex, index);
                 return labelHtml;
