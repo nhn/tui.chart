@@ -56,11 +56,11 @@ describe('renderUtil', function() {
             }, 'offsetWidth');
 
             if (isIE8 || isFirefox) {
-                expect(labelSize).toEqual(42);
-            } else if (isMac && isChrome) {
-                expect(labelSize).toEqual(40);
-            } else {
                 expect(labelSize).toEqual(39);
+            } else if (isMac && isChrome) {
+                expect(labelSize).toEqual(37);
+            } else {
+                expect(labelSize).toEqual(36);
             }
         });
     });
@@ -73,11 +73,11 @@ describe('renderUtil', function() {
             });
 
             if (isIE8 || isFirefox) {
-                expect(labelWidth).toEqual(42);
-            } else if (isMac && isChrome) {
-                expect(labelWidth).toEqual(40);
-            } else {
                 expect(labelWidth).toEqual(39);
+            } else if (isMac && isChrome) {
+                expect(labelWidth).toEqual(37);
+            } else {
+                expect(labelWidth).toEqual(36);
             }
         });
     });
@@ -90,9 +90,9 @@ describe('renderUtil', function() {
             });
 
             if (isIE8) {
-                expect(labelHeight).toEqual(14);
+                expect(labelHeight).toEqual(11);
             } else {
-                expect(labelHeight).toEqual(15);
+                expect(labelHeight).toEqual(12);
             }
         });
     });

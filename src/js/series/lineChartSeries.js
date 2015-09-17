@@ -8,6 +8,7 @@
 
 var Series = require('./series.js'),
     seriesTemplate = require('./seriesTemplate.js'),
+    chartConst = require('../const.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
 var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
@@ -78,7 +79,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
                     }),
                     labelHtml = this._makeSeriesLabelHtml({
                         left: position.left - (labelWidth/2),
-                        top: position.top - labelHeight
+                        top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
                     }, value, index, groupIndex);
                 return labelHtml;
             }, this).join('');

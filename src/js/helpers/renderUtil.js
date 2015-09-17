@@ -83,11 +83,11 @@ var renderUtil = {
      * @memberOf module:renderUtil
      * @param {string} label label
      * @param {object} theme theme
-     * @param {string} property element property
+     * @param {string} offsetSize element property
      * @returns {number} size
      * @private
      */
-    _getRenderedLabelSize: function(label, theme, property) {
+    _getRenderedLabelSize: function(label, theme, offsetSize) {
         var elDiv, elSpan, labelSize;
 
         if (!label) {
@@ -106,7 +106,7 @@ var renderUtil = {
         }
 
         document.body.appendChild(elDiv);
-        labelSize = elSpan[property];
+        labelSize = elSpan[offsetSize] - chartConst.TEXT_PADDING;
         document.body.removeChild(elDiv);
         return labelSize;
     },

@@ -66,7 +66,7 @@ describe('test LineChartSeries', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('container, position, dimesion, formattedValues정보를 전달하여 series label을 렌더링 합니다.', function() {
+        it('라인차트에서 series label을 렌더링 하면 label은 dot위치 상단에 중앙(상하,좌우)정렬하여 위치하게 됩니다.', function() {
             var container = dom.create('div'),
                 children;
             series._renderSeriesLabel({
@@ -93,11 +93,11 @@ describe('test LineChartSeries', function() {
             });
             children = container.firstChild.childNodes;
             expect(children[0].style.left).toEqual('25px');
-            expect(children[0].style.top).toEqual('30px');
+            expect(children[0].style.top).toEqual('35px');
             expect(children[0].innerHTML).toEqual('1.5');
 
             expect(children[1].style.left).toEqual('125px');
-            expect(children[1].style.top).toEqual('50px');
+            expect(children[1].style.top).toEqual('55px');
             expect(children[1].innerHTML).toEqual('2.2');
         });
     });

@@ -377,9 +377,10 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * Show series label area.
      */
     showSeriesLabelArea: function() {
-        if (!this.options.showLabel) {
+        if (!this.options.showLabel || !this.elSeriesLabelArea) {
             return;
         }
+
         dom.addClass(this.elSeriesLabelArea, 'show');
 
         (new ne.component.Effects.Fade({

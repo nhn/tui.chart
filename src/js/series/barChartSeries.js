@@ -8,12 +8,8 @@
 
 var Series = require('./series.js'),
     seriesTemplate = require('./seriesTemplate.js'),
+    chartConst = require('../const.js'),
     renderUtil = require('../helpers/renderUtil.js');
-
-var HIDDEN_WIDTH = 1,
-    LABEL_FONT_SIZE = 12,
-    PLUS_PADDING = 5,
-    MINUS_PADDING = 3;
 
 var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -36,7 +32,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * @returns {array.<array.<object>>} bounds
      */
     _makeBounds: function(dimension, hiddenWidth) {
-        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : HIDDEN_WIDTH);
+        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : chartConst.HIDDEN_WIDTH);
         if (!this.options.stacked) {
             return this._makeNormalBarBounds(dimension, hiddenWidth);
         } else {
@@ -70,7 +66,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
                 return ne.util.map(values, function (value, index) {
                     var top = paddingTop + (barHeight * index),
-                        startLeft = -HIDDEN_WIDTH,
+                        startLeft = -chartConst.HIDDEN_WIDTH,
                         endLeft = startLeft,
                         barWidth = value * dimension.width;
                     if (value < 0) {
@@ -114,7 +110,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             barHeight = groupHeight / 2,
             bounds = ne.util.map(groupValues, function (values, groupIndex) {
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
-                    left = -HIDDEN_WIDTH;
+                    left = -chartConst.HIDDEN_WIDTH;
                 return ne.util.map(values, function (value) {
                     if (value < 0) {
                         return;
@@ -123,7 +119,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                         bound = {
                             start: {
                                 top: paddingTop,
-                                left: -HIDDEN_WIDTH,
+                                left: -chartConst.HIDDEN_WIDTH,
                                 width: 0,
                                 height: barHeight
                             },
@@ -153,19 +149,29 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     _renderNormalSeriesLabel: function(params) {
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
+            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], {
+                fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
+            }),
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             return ne.util.map(values, function(value, index) {
                 var bound = groupBounds[groupIndex][index].end,
                     formattedValue = formattedValues[groupIndex][index],
                     labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
-                        fontSize: LABEL_FONT_SIZE
+                        fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
                     }),
-                    left = value >= 0 ? bound.left + bound.width + PLUS_PADDING : bound.left - labelWidth - MINUS_PADDING,
-                    labelHtml = this._makeSeriesLabelHtml({
-                        left: left,
-                        top: bound.top + (bound.height - LABEL_FONT_SIZE) / 2
-                    }, formattedValue, groupIndex, index);
+                    left = bound.left,
+                    labelHtml;
+
+                if (value >= 0) {
+                    left += bound.width + chartConst.SERIES_LABEL_PADDING;
+                } else {
+                    left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
+                }
+                labelHtml = this._makeSeriesLabelHtml({
+                    left: left,
+                    top: bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2
+                }, formattedValue, groupIndex, index);
                 return labelHtml;
             }, this).join('');
         }, this).join('');
@@ -193,6 +199,9 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             var total = 0,
+                labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], {
+                    fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
+                }),
                 labelHtmls, lastLeft, lastTop;
             labelHtmls = ne.util.map(values, function(value, index) {
                 var bound, formattedValue, labelWidth, left, top, labelHtml;
@@ -204,11 +213,10 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 bound = groupBounds[groupIndex][index].end;
                 formattedValue = formattedValues[groupIndex][index];
                 labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
-                    fontSize: LABEL_FONT_SIZE
+                    fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
                 });
                 left = bound.left + (bound.width - labelWidth) / 2;
-                top = bound.top + (bound.height - LABEL_FONT_SIZE) / 2;
-
+                top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
                 labelHtml = this._makeSeriesLabelHtml({
                     left: left,
                     top: top
@@ -221,7 +229,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
 
             if (this.options.stacked === 'normal') {
                 labelHtmls.push(this._makeSeriesLabelHtml({
-                    left: lastLeft + PLUS_PADDING,
+                    left: lastLeft + chartConst.SERIES_LABEL_PADDING,
                     top: lastTop
                 }, total, -1, -1))
             }

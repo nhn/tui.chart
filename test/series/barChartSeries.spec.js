@@ -298,7 +298,7 @@ describe('test BarChartSeries', function() {
     });
 
     describe('_renderNormalSeriesLabel()', function() {
-        it('container, bounds, dimension, values, formattedValues정보를 전달하여 일반 series label을 렌더링 합니다.', function() {
+        it('일반 series label을 렌더링 하면 label은 막대 그래프 우측 편에 5px 간격을 두고 상하 정렬하여 위치하게 됩니다.', function() {
             var container = dom.create('div'),
                 children;
             series._renderNormalSeriesLabel({
@@ -310,7 +310,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 70,
-                                height: 30
+                                height: 35
                             }
                         },
                         {
@@ -318,7 +318,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 100,
-                                height: 30
+                                height: 35
                             }
                         }
                     ]
@@ -344,7 +344,7 @@ describe('test BarChartSeries', function() {
             expect(children[1].innerHTML).toEqual('2.2');
         });
 
-        it('data가 음수인 경우 series label은 그래프 좌측에 위치합니다.', function() {
+        it('series의 data가 음수인 경우 series label은 막대 그래프 좌측에 위치하게 됩니다.', function() {
             var container = dom.create('div'),
                 children;
             series._renderNormalSeriesLabel({
@@ -356,7 +356,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 70,
                                 width: 70,
-                                height: 30
+                                height: 35
                             }
                         },
                         {
@@ -364,7 +364,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 50,
                                 width: 90,
-                                height: 30
+                                height: 35
                             }
                         }
                     ]
@@ -381,18 +381,18 @@ describe('test BarChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('27px');
+            expect(children[0].style.left).toEqual('25px');
             expect(children[0].style.top).toEqual('29px');
             expect(children[0].innerHTML).toEqual('-1.5');
 
-            expect(children[1].style.left).toEqual('7px');
+            expect(children[1].style.left).toEqual('5px');
             expect(children[1].style.top).toEqual('29px');
             expect(children[1].innerHTML).toEqual('-2.2');
         });
     });
 
     describe('_renderStackedSeriesLabel()', function() {
-        it('container, bounds, dimension, values formattedValues정보를 전달하여 stacked series label을 렌더링 합니다.', function() {
+        it('stacked=normal인 series label을 렌더링 하면 label은 각 막대의 중앙에 위치하게 되며, 합산된 label은 5px 간격을 두고 마지막 막대 우측에 위치하게 됩니다..', function() {
             var container = dom.create('div'),
                 children;
             series.options.stacked = 'normal';
@@ -405,7 +405,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 40,
-                                height: 30
+                                height: 35
                             }
                         },
                         {
@@ -413,7 +413,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 40,
                                 width: 60,
-                                height: 30
+                                height: 35
                             }
                         }
                     ]
@@ -443,7 +443,7 @@ describe('test BarChartSeries', function() {
             expect(children[2].innerHTML).toEqual('3.7');
         });
 
-        it('stacked=percent일 경우에는 토탈 label은 표시하지 않습니다.', function() {
+        it('stacked=percent일 경우에는 합산 label은 표시하지 않습니다.', function() {
             var container = dom.create('div'),
                 children;
             series.options.stacked = 'percent';
@@ -456,7 +456,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 40,
-                                height: 30
+                                height: 35
                             }
                         },
                         {
@@ -464,7 +464,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 40,
                                 width: 60,
-                                height: 30
+                                height: 35
                             }
                         }
                     ]
