@@ -105,6 +105,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 container: el,
                 values: this.data.values,
                 formattedValues: this.data.formattedValues,
+                formatFunctions: this.data.formatFunctions,
                 dimension: dimension
             }, addData));
         }

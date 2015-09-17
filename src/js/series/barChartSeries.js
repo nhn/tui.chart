@@ -196,13 +196,14 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     _renderStackedSeriesLabel: function(params) {
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
+            formatFunctions = params.formatFunctions || [],
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             var total = 0,
                 labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], {
                     fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
                 }),
-                labelHtmls, lastLeft, lastTop;
+                labelHtmls, lastLeft, lastTop, fns;
             labelHtmls = ne.util.map(values, function(value, index) {
                 var bound, formattedValue, labelWidth, left, top, labelHtml;
 
@@ -228,6 +229,10 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             }, this);
 
             if (this.options.stacked === 'normal') {
+                fns = [total].concat(formatFunctions);
+                total = ne.util.reduce(fns, function(stored, fn) {
+                    return fn(stored);
+                });
                 labelHtmls.push(this._makeSeriesLabelHtml({
                     left: lastLeft + chartConst.SERIES_LABEL_PADDING,
                     top: lastTop

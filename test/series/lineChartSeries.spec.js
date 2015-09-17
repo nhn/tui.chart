@@ -93,11 +93,11 @@ describe('test LineChartSeries', function() {
             });
             children = container.firstChild.childNodes;
             expect(children[0].style.left).toEqual('25px');
-            expect(children[0].style.top).toEqual('35px');
+            expect(children[0].style.top).toEqual('25px');
             expect(children[0].innerHTML).toEqual('1.5');
 
             expect(children[1].style.left).toEqual('125px');
-            expect(children[1].style.top).toEqual('55px');
+            expect(children[1].style.top).toEqual('45px');
             expect(children[1].innerHTML).toEqual('2.2');
         });
     });
