@@ -43,17 +43,17 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Show tooltip (mouseover callback).
-     * @param {string} prefix tooltip id prefix
-     * @param {boolean} isPointPosition whether point position or not
+     * @param {object} params parameters
+     *      @param {string} params.prefix tooltip id prefix
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(prefix, isPointPosition, bound, id) {
-        this.fire('showTooltip', {
-            id: prefix + id,
-            isPointPosition: isPointPosition,
+    showTooltip: function(params, bound, id) {
+        this.fire('showTooltip', ne.util.extend({
+            id: params.prefix + id,
             bound: bound
-        });
+        }, params));
     },
 
     /**
@@ -76,9 +76,12 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            isPointPosition = !!this.isPointPosition,
             dimension = bound.dimension,
-            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isPointPosition),
+            inCallback = ne.util.bind(this.showTooltip, this, {
+                prefix: tooltipPrefix,
+                allowNegativeTooltip: !!this.allowNegativeTooltip,
+                chartType: this.chartType
+            }),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             data = {
                 dimension: dimension,
@@ -87,7 +90,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             };
 
         if (!paper) {
-            this._renderBounds(el, dimension, bound.position, isPointPosition);
+            this._renderBounds(el, dimension, bound.position, this.chartType);
         }
 
         data = ne.util.extend(data, this.makeAddData());
@@ -108,15 +111,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, right: number}} position series position
-     * @param {boolean} isPointPosition whether point position or not
      * @private
      */
-    _renderBounds: function(el, dimension, position, isPointPosition) {
+    _renderBounds: function(el, dimension, position, chartType) {
         var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
         renderUtil.renderDimension(el, dimension);
 
         position.top = position.top - HIDDEN_WIDTH;
-        position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
+        position.right = position.right + (chartType === chartConst.CHART_TYPE_BAR ? -hiddenWidth : -(HIDDEN_WIDTH * 2));
 
         renderUtil.renderPosition(el, position);
     },
@@ -201,12 +203,48 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(data.values, function(values) {
-                return ne.util.map(values, function(value) {
-                    return (value - min) / distance;
-                });
+            flag = 1,
+            subValue = 0,
+            percentValues;
+
+        if (this.chartType !== chartConst.CHART_TYPE_LINE && min < 0 && max <= 0) {
+            flag = -1;
+            subValue = max;
+            distance = min - max;
+        } else if (this.chartType === chartConst.CHART_TYPE_LINE || min >= 0) {
+            subValue = min;
+        }
+
+        percentValues = ne.util.map(data.values, function(values) {
+            return ne.util.map(values, function(value) {
+                return (value - subValue) * flag / distance;
             });
+        });
         return percentValues;
+    },
+
+    /**
+     * Get scale distance from zero point.
+     * @param {number} size chart size (width or height)
+     * @param {{min: number, max: number}} scale scale
+     * @returns {{toMax: number, toMin: number}} pixel distance
+     */
+    getScaleDistanceFromZeroPoint: function(size, scale) {
+        var min = scale.min,
+            max = scale.max,
+            distance = max - min,
+            toMax = 0,
+            toMin = 0;
+
+        if (min < 0 && max > 0) {
+            toMax = (distance + min) / distance * size;
+            toMin = (distance - max) / distance * size;
+        }
+
+        return {
+            toMax: toMax,
+            toMin: toMin
+        };
     },
 
     /**

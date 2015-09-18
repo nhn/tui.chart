@@ -24,7 +24,7 @@ describe('test LineChartSeries', function() {
     });
 
     describe('_makePositions()', function() {
-        it('라인차트 position 정보 생성', function () {
+        it('라인차트의 position 정보를 생성합니다.', function () {
             var bounds;
             series.percentValues = [[0.25], [0.5]];
             bounds = series._makePositions({

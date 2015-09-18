@@ -401,10 +401,10 @@ var axisDataMaker = {
         // 01. 기본 scale 정보로 step 얻기
         step = calculator.getScaleStep(scale, params.tickCount);
 
-        // 02. step 일반화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
+        // 02. step 정규화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
         step = this._normalizeStep(step);
 
-        // 03. scale 일반화 시키기
+        // 03. scale 정규화 시키기
         scale = this._normalizeScale(scale, step, params.tickCount);
 
         // 04. line차트의 경우 사용자의 min값이 scale의 min값과 같을 경우, min값을 1 step 감소 시킴
@@ -450,11 +450,8 @@ var axisDataMaker = {
     _addMinPadding: function(params) {
         var min = params.min;
 
-        if (params.chartType !== chartConst.CHART_TYPE_LINE || !ne.util.isUndefined(params.minOption)) {
-            return min;
-        }
         // normalize된 scale min값이 user min값과 같을 경우 step 감소
-        if (params.min === params.userMin) {
+        if ((params.chartType === chartConst.CHART_TYPE_LINE || min) && min === params.userMin) {
             min -= params.step;
         }
         return min;

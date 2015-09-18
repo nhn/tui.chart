@@ -9,6 +9,7 @@
 var Raphael = window.Raphael,
     ANGLE_360 = 360,
     ANGLE_180 = 180,
+    ANGLE_90 = 90,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700;
@@ -19,7 +20,7 @@ var Raphael = window.Raphael,
  */
 var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
-     * Render function or line chart.
+     * Render function of pie chart.
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{percentValues: array.<number>, circleBounds: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
@@ -55,14 +56,15 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
-        var x1 = cx + r * Math.sin(startAngle * RAD),
-            x2 = cx + r * Math.sin(endAngle * RAD),
-            y1 = cy - r * Math.cos(startAngle * RAD),
-            y2 = cy - r * Math.cos(endAngle * RAD),
-            big = endAngle - startAngle > ANGLE_180 ? 1 : 0,
+        var x1 = cx + r * Math.cos(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 x 좌표
+            // x+ 축 부터 반시계 방향으로 각도 계산이 이루어지기 때문에, 가운데부터 시계방향으로 회전 시키기 위해 해당 각도에서 90도를 뺀 후 음수 처리 함
+            x2 = cx + r * Math.cos(-(endAngle - ANGLE_90) * RAD), // 원 호의 종료 x 좌표
+            y1 = cy - r * Math.sin(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 y 좌표
+            y2 = cy - r * Math.sin(-(endAngle - ANGLE_90) * RAD), // 원 호의 종료 y 좌표
+            largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
             path = ["M", cx, cy,
                 "L", x2, y2,
-                "A", r, r, 0, big, 0, x1, y1,
+                "A", r, r, 0, largeArcFlag, 0, x1, y1,
                 "Z"];
         return {path: path};
     },

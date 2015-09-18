@@ -53,7 +53,8 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
         }
 
         this.addComponent('tooltip', Tooltip, {
-            values: convertData.formattedValues,
+            values: convertData.values,
+            formattedValues: convertData.formattedValues,
             labels: convertData.labels,
             legendLabels: convertData.legendLabels,
             prefix: this.tooltipPrefix

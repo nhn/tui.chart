@@ -77,7 +77,7 @@ describe('test Legend', function() {
     });
 
     describe('_setThemeForLabels()', function() {
-        it('레이블을 위한 테마 정보 설정', function () {
+        it('레이블 렌더링을 위한 위한 테마 정보를 설정합니다.', function () {
             var result = legend._setThemeForLabels([
                 {
                     label: 'label1'
@@ -113,7 +113,7 @@ describe('test Legend', function() {
     });
 
     describe('renderLabelTheme()', function() {
-        it('레이블 테마 렌더링', function () {
+        it('레이블 테마를 렌더링합니다.', function () {
             var el = document.createElement('DIV');
             legend._renderLabelTheme(el, {
                 fontSize: 14,
