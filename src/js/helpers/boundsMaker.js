@@ -314,13 +314,21 @@ var boundsMaker = {
      * @returns {number} width
      * @private
      */
-    _getLegendAreaWidth: function(joinLegendLabels, labelTheme) {
-        var legendLabels = ne.util.map(joinLegendLabels, function(item) {
+    _getLegendAreaWidth: function(joinLegendLabels, labelTheme, seriesOption) {
+        var legendWidth = 0,
+            legendLabels, maxLabelWidth;
+
+        seriesOption = seriesOption || {};
+
+        if (!seriesOption.showLegend) {
+            legendLabels = ne.util.map(joinLegendLabels, function(item) {
                 return item.label;
-            }),
-            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme),
+            });
+            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme);
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
                 LEGEND_LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
+        }
+
         return legendWidth;
     },
 
@@ -375,7 +383,7 @@ var boundsMaker = {
         // axis 영역에 필요한 요소들의 너비 높이를 얻어옴
         axesDimension = this._makeAxesDimension(params);
         titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING;
-        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label);
+        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label, options.series);
 
         // series 너비, 높이 값은 차트 bounds를 구성하는 가장 중요한 요소다
         seriesDimension = this._makeSeriesDimension({

@@ -45,8 +45,12 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * @returns {object} add data
      */
     makeAddData: function() {
+        var groupBounds = this._makeBounds(this.bound.dimension);
+
+        this.groupBounds = groupBounds;
+
         return {
-            groupBounds: this._makeBounds(this.bound.dimension)
+            groupBounds: groupBounds
         };
     },
 
@@ -264,9 +268,6 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         } else {
             elSeriesLabelArea = this._renderNormalSeriesLabel(params);
         }
-
-        // bound 정보를 얻어올 때 사용
-        this.groupBounds = params.groupBounds;
         return elSeriesLabelArea;
     },
 

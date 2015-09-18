@@ -43,8 +43,12 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      * @returns {object} add data
      */
     makeAddData: function() {
+        var gropuBounds = this._makeBounds(this.bound.dimension);
+
+        this.groupBounds = gropuBounds;
+
         return {
-            groupBounds: this._makeBounds(this.bound.dimension)
+            groupBounds: gropuBounds
         };
     },
 
@@ -269,9 +273,6 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
         } else {
             elSeriesLabelArea = this._renderNormalSeriesLabel(params);
         }
-
-        // bound 정보를 얻어올 때 사용
-        this.groupBounds = params.groupBounds;
         return elSeriesLabelArea;
     },
 

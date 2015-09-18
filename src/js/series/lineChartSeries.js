@@ -52,8 +52,12 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * @returns {object} add data
      */
     makeAddData: function() {
+        var groupPositions = this._makePositions(this.bound.dimension);
+
+        this.groupPositions = groupPositions;
+
         return {
-            groupPositions: this._makePositions(this.bound.dimension)
+            groupPositions: groupPositions
         };
     },
 
@@ -88,9 +92,6 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
         params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
             html: html
         });
-
-        // bound 정보를 얻어올 때 사용
-        this.groupPositions = groupPositions;
 
         return params.container.firstChild;
     },

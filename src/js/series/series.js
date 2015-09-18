@@ -100,7 +100,17 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         this._renderPosition(el, bound.position, this.chartType);
 
         data = ne.util.extend(data, addData);
-        if (this.options.showLabel) {
+
+        if (this.options.showLegend && this._renderLegend) {
+            this.elSeriesLabelArea = this._renderLegend(ne.util.extend({
+                container: el,
+                legendLabels: this.data.legendLabels,
+                options: {
+                    showLegend: this.options.showLegend,
+                    showLabel: this.options.showLabel
+                }
+            },addData));
+        } else if (this.options.showLabel && this._renderSeriesLabel) {
             this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend({
                 container: el,
                 values: this.data.values,
@@ -127,12 +137,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     makeAddData: function() {
         return {};
     },
-
-    /**
-     * Render series label.
-     * @private
-     */
-    _renderSeriesLabel: function() {},
 
     /**
      * Render bounds
@@ -378,7 +382,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * Show series label area.
      */
     showSeriesLabelArea: function() {
-        if (!this.options.showLabel || !this.elSeriesLabelArea) {
+        if ((!this.options.showLabel && !this.options.showLegend) || !this.elSeriesLabelArea) {
             return;
         }
 

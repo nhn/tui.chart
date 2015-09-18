@@ -47,7 +47,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
      * @private
      */
     _addComponents: function(convertData, chartBackground, options) {
-        if (convertData.joinLegendLabels) {
+        if (convertData.joinLegendLabels && !options.series.showLegend) {
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertData.joinLegendLabels,
                 legendLabels: convertData.legendLabels,
@@ -69,7 +69,8 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             chartBackground: chartBackground,
             data: {
                 values: convertData.values,
-                formattedValues: convertData.formattedValues
+                formattedValues: convertData.formattedValues,
+                legendLabels: convertData.legendLabels
             }
         });
     }
