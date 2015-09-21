@@ -81,11 +81,11 @@ var renderUtil = {
      * @memberOf module:renderUtil
      * @param {string} label label
      * @param {object} theme theme
-     * @param {string} offsetSize element property
+     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
      * @returns {number} size
      * @private
      */
-    _getRenderedLabelSize: function(label, theme, offsetSize) {
+    _getRenderedLabelSize: function(label, theme, offsetType) {
         var elDiv, elSpan, labelSize;
 
         if (!label) {
@@ -105,7 +105,7 @@ var renderUtil = {
         }
 
         document.body.appendChild(elDiv);
-        labelSize = elSpan[offsetSize];
+        labelSize = elSpan[offsetType];
         document.body.removeChild(elDiv);
         return labelSize;
     },
