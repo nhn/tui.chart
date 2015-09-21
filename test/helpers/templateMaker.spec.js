@@ -14,7 +14,7 @@ describe('templateMaker', function() {
             var tag = '<a>{{ key1 }}<span>{{ key2 }}</span></a>{{ key1 }}',
                 template = templateMaker.template(tag),
                 result = template({key1: 'ABC', key2: 'DEF'});
-            expect(result).toEqual('<a>ABC<span>DEF</span></a>ABC');
+            expect(result).toBe('<a>ABC<span>DEF</span></a>ABC');
         });
     });
 });

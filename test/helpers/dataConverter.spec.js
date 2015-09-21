@@ -64,43 +64,43 @@ describe('test dataConverter', function() {
     describe('_formatZeroFill()', function() {
         it('1을 길이 3으로 zero fill하면 "001"이 반환됩니다.', function () {
             var result = converter._formatZeroFill(3, 1);
-            expect(result).toEqual('001');
+            expect(result).toBe('001');
         });
 
         it('22을 길이 4로 zero fill하면 "0022"가 반환됩니다.', function () {
             var result = converter._formatZeroFill(4, 22);
-            expect(result).toEqual('0022');
+            expect(result).toBe('0022');
         });
     });
 
     describe('_formatDecimal()', function() {
         it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function () {
             var result = converter._formatDecimal(2, 1.1111);
-            expect(result).toEqual('1.11');
+            expect(result).toBe('1.11');
         });
 
         it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function () {
             var result = converter._formatDecimal(1, 1);
-            expect(result).toEqual('1.0');
+            expect(result).toBe('1.0');
         });
     });
 
     describe('_formatComma()', function() {
         it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function () {
             var result = converter._formatComma(1000);
-            expect(result).toEqual('1,000');
+            expect(result).toBe('1,000');
         });
 
         it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function () {
             var result = converter._formatComma(1000000);
-            expect(result).toEqual('1,000,000');
+            expect(result).toBe('1,000,000');
         });
     });
 
     describe('_pickMaxLenUnderPoint()', function() {
         it('입력받은 인자 [1.12, 2.2, 3.33, 4.456]중에 소수점 이하의 길이를 비교하여 제일 긴 길이 3(4.456의 소수점 이하 길이)을 반환합니다.', function () {
             var point = converter._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
-            expect(point).toEqual(3);
+            expect(point).toBe(3);
         });
     });
 
@@ -111,23 +111,23 @@ describe('test dataConverter', function() {
         });
         it("포맷이 '0.000'인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)", function() {
             var result = converter._findFormatFunctions('0.000');
-            expect(result[0](1000)).toEqual('1000.000');
+            expect(result[0](1000)).toBe('1000.000');
         });
 
         it("포맷이 '1,000'인 경우에는 [_formatComma] 반환합니다.", function() {
             var result = converter._findFormatFunctions('1,000');
-            expect(result[0](1000)).toEqual('1,000');
+            expect(result[0](1000)).toBe('1,000');
         });
 
         it("포맷이 '1,000.00'인 경우에는 [_formatDecimal, _formatComma] 반환합니다.", function() {
             var result = converter._findFormatFunctions('1,000.00');
-            expect(result.length).toEqual(2);
-            expect(result[1](result[0](1000))).toEqual('1,000.00');
+            expect(result.length).toBe(2);
+            expect(result[1](result[0](1000))).toBe('1,000.00');
         });
 
         it("포맷이 '0001'인 경우에는 [_formatZeroFill] 반환합니다.", function() {
             var result = converter._findFormatFunctions('0001');
-            expect(result[0](11)).toEqual('0011');
+            expect(result[0](11)).toBe('0011');
         });
     });
 

@@ -65,13 +65,13 @@ describe('test Legend', function() {
 
             tempChildren = elTemp.childNodes;
 
-            expect(elLegend.className).toEqual('ne-chart-legend-area');
-            expect(elLegend.style.cssText).toEqual(elTemp.style.cssText);
+            expect(elLegend.className).toBe('ne-chart-legend-area');
+            expect(elLegend.style.cssText).toBe(elTemp.style.cssText);
 
             ne.util.forEachArray(elLegend.childNodes, function (child, index) {
                 var elTempChild = tempChildren[index];
-                expect(child.firstChild.cssText).toEqual(elTempChild.firstChild.cssText);
-                expect(child.lastChild.cssText).toEqual(elTempChild.lastChild.cssText);
+                expect(child.firstChild.cssText).toBe(elTempChild.firstChild.cssText);
+                expect(child.lastChild.cssText).toBe(elTempChild.lastChild.cssText);
             });
         });
     });
@@ -119,8 +119,8 @@ describe('test Legend', function() {
                 fontSize: 14,
                 color: 'red'
             });
-            expect(el.style.fontSize).toEqual('14px');
-            expect(el.style.color).toEqual('red');
+            expect(el.style.fontSize).toBe('14px');
+            expect(el.style.color).toBe('red');
         });
     });
 });

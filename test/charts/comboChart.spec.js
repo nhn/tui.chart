@@ -391,17 +391,8 @@ describe('ComboChart', function() {
                 line: ['Legend1', 'Legend2', 'Legend3']
             });
 
-            expect(result.column.yAxis).toEqual({
-                title: {
-                    fontSize: 16
-                }
-            });
-
-            expect(result.line.yAxis).toEqual({
-                title: {
-                    fontSize: 14
-                }
-            });
+            expect(result.column.yAxis.title.fontSize).toBe(16);
+            expect(result.line.yAxis.title.fontSize).toBe(14);
         });
 
         it('테마 정의가 없는 경우에는 기본 테마를 따라갑니다.', function () {
@@ -437,11 +428,7 @@ describe('ComboChart', function() {
             });
 
             // line 설정된 yAxis 테마가 그대로 할당됩니다.
-            expect(result.line.yAxis).toEqual({
-                title: {
-                    fontSize: 14
-                }
-            });
+            expect(result.line.yAxis.title.fontSize).toBe(14);
         });
 
         it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
