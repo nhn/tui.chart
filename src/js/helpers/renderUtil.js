@@ -68,12 +68,10 @@ var renderUtil = {
             return this.checkEl;
         }
 
-        elDiv = dom.create('DIV');
+        elDiv = dom.create('DIV', 'ne-chart-size-check-element');
         elSpan = dom.create('SPAN');
 
         elDiv.appendChild(elSpan);
-        elDiv.style.cssText = 'position:relative;top:10000px;left:10000px;width:1000px;height:100;line-height:1';
-
         this.checkEl = elDiv;
         return elDiv;
     },
@@ -102,11 +100,12 @@ var renderUtil = {
         elSpan.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
 
         if (theme.fontFamily) {
+            elSpan.style.padding = 0;
             elSpan.style.fontFamily = theme.fontFamily;
         }
 
         document.body.appendChild(elDiv);
-        labelSize = elSpan[offsetSize] - chartConst.TEXT_PADDING;
+        labelSize = elSpan[offsetSize];
         document.body.removeChild(elDiv);
         return labelSize;
     },
@@ -184,6 +183,20 @@ var renderUtil = {
         }
 
         el.style.background = background;
+    },
+
+    /**
+     * Render font family.
+     * @memberOf module:renderUtil
+     * @param {HTMLElement} el target element
+     * @param {string} fontFamily font family option
+     */
+    renderFontFamily: function(el, fontFamily) {
+        if (!fontFamily) {
+            return;
+        }
+
+        el.style.fontFamily = fontFamily;
     },
 
     /**

@@ -10,26 +10,13 @@ var BarChartSeries = require('../../src/js/series/barChartSeries.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
-describe('test BarChartSeries', function() {
-    var getRenderedLabelWidth, getRenderedLabelHeight, series;
+describe('BarChartSeries', function() {
+    var series;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
-        getRenderedLabelWidth  = renderUtil.getRenderedLabelWidth;
-        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
-
-        renderUtil.getRenderedLabelWidth = function() {
-            return 40;
-        };
-
-        renderUtil.getRenderedLabelHeight = function() {
-            return 20;
-        };
-    });
-
-    afterAll(function() {
-        renderUtil.getRenderedLabelWidth = getRenderedLabelWidth;
-        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+        spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     beforeEach(function() {
@@ -39,6 +26,12 @@ describe('test BarChartSeries', function() {
                 values: [],
                 formattedValues: [],
                 scale: {min: 0, max: 0}
+            },
+            theme: {
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11
+                }
             },
             options: {}
         });
@@ -114,16 +107,16 @@ describe('test BarChartSeries', function() {
 
             // 0점의 위치가 left 159임
             // 음수의 경우 left, width 값이 같이 변함
-            expect(result[0][0].start.left).toEqual(159);
-            expect(result[0][0].start.width).toEqual(0);
-            expect(result[0][0].end.left).toEqual(79);
-            expect(result[0][0].end.width).toEqual(80);
+            expect(result[0][0].start.left).toBe(159);
+            expect(result[0][0].start.width).toBe(0);
+            expect(result[0][0].end.left).toBe(79);
+            expect(result[0][0].end.width).toBe(80);
 
             // 양수의 경우는 width만 변화됨
-            expect(result[0][1].start.left).toEqual(159);
-            expect(result[0][1].start.width).toEqual(0);
-            expect(result[0][1].end.left).toEqual(159);
-            expect(result[0][1].end.width).toEqual(160);
+            expect(result[0][1].start.left).toBe(159);
+            expect(result[0][1].start.width).toBe(0);
+            expect(result[0][1].end.left).toBe(159);
+            expect(result[0][1].end.width).toBe(160);
         });
     });
 
@@ -136,14 +129,14 @@ describe('test BarChartSeries', function() {
                 height: 100
             }, 1);
 
-            expect(bounds[0][0].end.left).toEqual(-1);
-            expect(bounds[0][0].end.width).toEqual(80);
+            expect(bounds[0][0].end.left).toBe(-1);
+            expect(bounds[0][0].end.width).toBe(80);
 
-            expect(bounds[0][1].end.left).toEqual(79);
-            expect(bounds[0][1].end.width).toEqual(120);
+            expect(bounds[0][1].end.left).toBe(79);
+            expect(bounds[0][1].end.width).toBe(120);
 
-            expect(bounds[0][2].end.left).toEqual(199);
-            expect(bounds[0][2].end.width).toEqual(200);
+            expect(bounds[0][2].end.left).toBe(199);
+            expect(bounds[0][2].end.width).toBe(200);
         });
     });
 
@@ -190,7 +183,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 70,
-                                height: 35
+                                height: 30
                             }
                         },
                         {
@@ -198,7 +191,7 @@ describe('test BarChartSeries', function() {
                                 top: 55,
                                 left: 0,
                                 width: 100,
-                                height: 35
+                                height: 30
                             }
                         }
                     ]
@@ -215,13 +208,13 @@ describe('test BarChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('75px');
-            expect(children[0].style.top).toEqual('29px');
-            expect(children[0].innerHTML).toEqual('1.5');
+            expect(children[0].style.left).toBe('75px');
+            expect(children[0].style.top).toBe('26px');
+            expect(children[0].innerHTML).toBe('1.5');
 
-            expect(children[1].style.left).toEqual('105px');
-            expect(children[1].style.top).toEqual('64px');
-            expect(children[1].innerHTML).toEqual('2.2');
+            expect(children[1].style.left).toBe('105px');
+            expect(children[1].style.top).toBe('61px');
+            expect(children[1].innerHTML).toBe('2.2');
         });
 
         it('series의 data가 음수인 경우 series label은 막대 그래프 좌측에 위치하게 됩니다.', function() {
@@ -236,7 +229,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 70,
                                 width: 70,
-                                height: 35
+                                height: 30
                             }
                         },
                         {
@@ -244,7 +237,7 @@ describe('test BarChartSeries', function() {
                                 top: 55,
                                 left: 50,
                                 width: 90,
-                                height: 35
+                                height: 30
                             }
                         }
                     ]
@@ -261,13 +254,13 @@ describe('test BarChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('25px');
-            expect(children[0].style.top).toEqual('29px');
-            expect(children[0].innerHTML).toEqual('-1.5');
+            expect(children[0].style.left).toBe('25px');
+            expect(children[0].style.top).toBe('26px');
+            expect(children[0].innerHTML).toBe('-1.5');
 
-            expect(children[1].style.left).toEqual('5px');
-            expect(children[1].style.top).toEqual('64px');
-            expect(children[1].innerHTML).toEqual('-2.2');
+            expect(children[1].style.left).toBe('5px');
+            expect(children[1].style.top).toBe('61px');
+            expect(children[1].innerHTML).toBe('-2.2');
         });
     });
 
@@ -285,7 +278,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 40,
-                                height: 35
+                                height: 30
                             }
                         },
                         {
@@ -293,7 +286,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 40,
                                 width: 60,
-                                height: 35
+                                height: 30
                             }
                         }
                     ]
@@ -310,23 +303,25 @@ describe('test BarChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('0px');
-            expect(children[0].style.top).toEqual('29px');
-            expect(children[0].innerHTML).toEqual('1.5');
+            expect(children[0].style.left).toBe('0px');
+            expect(children[0].style.top).toBe('26px');
+            expect(children[0].innerHTML).toBe('1.5');
 
-            expect(children[1].style.left).toEqual('50px');
-            expect(children[1].style.top).toEqual('29px');
-            expect(children[1].innerHTML).toEqual('2.2');
+            expect(children[1].style.left).toBe('50px');
+            expect(children[1].style.top).toBe('26px');
+            expect(children[1].innerHTML).toBe('2.2');
 
-            expect(children[2].style.left).toEqual('105px');
-            expect(children[2].style.top).toEqual('29px');
-            expect(children[2].innerHTML).toEqual('3.7');
+            expect(children[2].style.left).toBe('105px');
+            expect(children[2].style.top).toBe('26px');
+            expect(children[2].innerHTML).toBe('3.7');
         });
 
         it('stacked=percent일 경우에는 합산 label은 표시하지 않습니다.', function() {
             var container = dom.create('div'),
                 children;
+
             series.options.stacked = 'percent';
+
             series._renderStackedSeriesLabel({
                 container: container,
                 groupBounds: [
@@ -336,7 +331,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 0,
                                 width: 40,
-                                height: 35
+                                height: 30
                             }
                         },
                         {
@@ -344,7 +339,7 @@ describe('test BarChartSeries', function() {
                                 top: 20,
                                 left: 40,
                                 width: 60,
-                                height: 35
+                                height: 30
                             }
                         }
                     ]
@@ -361,95 +356,103 @@ describe('test BarChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('0px');
-            expect(children[0].style.top).toEqual('29px');
-            expect(children[0].innerHTML).toEqual('1.5');
+            expect(children[0].style.left).toBe('0px');
+            expect(children[0].style.top).toBe('26px');
+            expect(children[0].innerHTML).toBe('1.5');
 
-            expect(children[1].style.left).toEqual('50px');
-            expect(children[1].style.top).toEqual('29px');
-            expect(children[1].innerHTML).toEqual('2.2');
+            expect(children[1].style.left).toBe('50px');
+            expect(children[1].style.top).toBe('26px');
+            expect(children[1].innerHTML).toBe('2.2');
 
             expect(children[2]).toBeUndefined();
         });
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()가 수행됩니다.', function () {
+        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function () {
             var container = dom.create('div'),
-                params = {
-                    container: container,
-                    groupBounds: [
-                        [
-                            {
-                                end: {
-                                    top: 20,
-                                    left: 70,
-                                    width: 70,
-                                    height: 35
-                                }
-                            },
-                            {
-                                end: {
-                                    top: 55,
-                                    left: 50,
-                                    width: 90,
-                                    height: 35
-                                }
+                params, actual, expected;
+
+            params = {
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 70,
+                                width: 70,
+                                height: 30
                             }
-                        ]
-                    ],
-                    dimension: {
-                        width: 140,
-                        height: 100
-                    },
-                    formattedValues: [
-                        ['-1.5', '-2.2']
-                    ],
-                    values: [
-                        [-1.5, -2.2]
+                        },
+                        {
+                            end: {
+                                top: 55,
+                                left: 50,
+                                width: 90,
+                                height: 30
+                            }
+                        }
                     ]
+                ],
+                dimension: {
+                    width: 140,
+                    height: 100
                 },
-                actual = series._renderSeriesLabel(params),
-                expected = series._renderNormalSeriesLabel(params);
+                formattedValues: [
+                    ['-1.5', '-2.2']
+                ],
+                values: [
+                    [-1.5, -2.2]
+                ]
+            };
+
+            series.options.shownLabel = true;
+
+            actual = series._renderSeriesLabel(params);
+            expected = series._renderNormalSeriesLabel(params);
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()가 수행됩니다.', function () {
+        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function () {
             var container = dom.create('div'),
-                params = {
-                    container: container,
-                    groupBounds: [
-                        [
-                            {
-                                end: {
-                                    top: 20,
-                                    left: 0,
-                                    width: 40,
-                                    height: 35
-                                }
-                            },
-                            {
-                                end: {
-                                    top: 20,
-                                    left: 40,
-                                    width: 60,
-                                    height: 35
-                                }
+                params, actual, expected;
+
+            params = {
+                container: container,
+                groupBounds: [
+                    [
+                        {
+                            end: {
+                                top: 20,
+                                left: 0,
+                                width: 40,
+                                height: 30
                             }
-                        ]
-                    ],
-                    dimension: {
-                        width: 120,
-                        height: 50
-                    },
-                    formattedValues: [
-                        ['1.5', '2.2']
-                    ],
-                    values: [
-                        [1.5, 2.2]
+                        },
+                        {
+                            end: {
+                                top: 20,
+                                left: 40,
+                                width: 60,
+                                height: 30
+                            }
+                        }
                     ]
+                ],
+                dimension: {
+                    width: 120,
+                    height: 50
                 },
-                actual, expected;
+                formattedValues: [
+                    ['1.5', '2.2']
+                ],
+                values: [
+                    [1.5, 2.2]
+                ]
+            };
+
+            series.options.shownLabel = true;
             series.options.stacked = 'normal';
             actual = series._renderSeriesLabel(params);
             expected = series._renderStackedSeriesLabel(params);

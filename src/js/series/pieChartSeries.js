@@ -6,12 +6,11 @@
 
 'use strict';
 
-var Series = require('./series.js'),
-    seriesTemplate = require('./seriesTemplate.js'),
-    renderUtil = require('../helpers/renderUtil.js');
-
-var ANGLE_360 = 360,
-    RAD = Math.PI / 180;
+var Series = require('./series'),
+    seriesTemplate = require('./seriesTemplate'),
+    chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -44,63 +43,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
-     * To make add data.
-     * @returns {{
-     *      formattedValues: array,
-     *      chartBackground: string,
-     *      circleBound: ({cx: number, cy: number, r: number}),
-     *      sectorsInfo: array<object>
-     * }}
-     */
-    makeAddData: function() {
-        var circleBound = this._makeCircleBound(this.bound.dimension),
-            sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
-
-        this.popupPositions = ne.util.pluck(sectorsInfo, 'popupPosition');
-        return {
-            formattedValues: this.data.formattedValues[0],
-            chartBackground: this.chartBackground,
-            circleBound: circleBound,
-            sectorsInfo: sectorsInfo
-        };
-    },
-
-    /**
-     * To make circle bound
-     * @param {{width: number, height:number}} dimension chart dimension
-     * @returns {{cx: number, cy: number, r: number}} circle bounds
-     * @private
-     */
-    _makeCircleBound: function(dimension) {
-        var width = dimension.width,
-            height = dimension.height,
-            stdSize = ne.util.multiplication(ne.util.min([width, height]), 0.8);
-        return {
-            cx: ne.util.division(width, 2),
-            cy: ne.util.division(height, 2),
-            r: ne.util.division(stdSize, 2)
-        };
-    },
-
-    /**
-     *
-     * @param {object} params parameters
-     *      @param {number} params.cx center x
-     *      @param {number} params.cy center y
-     *      @param {number} params.r radius
-     *      @param {number} params.angle angle(degree)
-     * @returns {{left: number, top: number}}
-     * @private
-     */
-    _getArcPosition: function(params) {
-        return {
-            left: params.cx + params.r * Math.sin(params.angle * RAD),
-            top: params.cy - params.r * Math.cos(params.angle * RAD)
-        };
-    },
-
-    /**
-     * To make sectors infomation.
+     * To make sectors information.
      * @param percentValues
      * @param circleBound
      * @returns {Array|*}
@@ -115,7 +58,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             paths;
 
         paths = ne.util.map(percentValues, function(percentValue, index) {
-            var addAngle = ANGLE_360 * percentValue,
+            var addAngle = chartConst.ANGLE_360 * percentValue,
                 endAngle = angle + addAngle,
                 popupAngle = angle + (addAngle / 2),
                 angles = {
@@ -143,11 +86,159 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                     cy: cy,
                     r: r / 2 + delta,
                     angle: popupAngle
-                })
+                }),
+                outerPosition: {
+                    start: this._getArcPosition({
+                        cx: cx,
+                        cy: cy,
+                        r: r,
+                        angle: popupAngle
+                    }),
+                    middle: this._getArcPosition({
+                        cx: cx,
+                        cy: cy,
+                        r: r + 10,
+                        angle: popupAngle
+                    })
+                }
             };
         }, this);
 
         return paths;
+    },
+
+    /**
+     * To make add data.
+     * @returns {{
+     *      formattedValues: array,
+     *      chartBackground: string,
+     *      circleBound: ({cx: number, cy: number, r: number}),
+     *      sectorsInfo: array<object>
+     * }}
+     */
+    makeAddData: function() {
+        var circleBound = this._makeCircleBound(this.bound.dimension, {
+                shownLabel: this.options.shownLabel,
+                legendType: this.options.legendType
+            }),
+            sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
+
+        this.popupPositions = ne.util.pluck(sectorsInfo, 'popupPosition');
+        return {
+            chartBackground: this.chartBackground,
+            circleBound: circleBound,
+            sectorsInfo: sectorsInfo
+        };
+    },
+
+    /**
+     * To make circle bound
+     * @param {{width: number, height:number}} dimension chart dimension
+     * @returns {{cx: number, cy: number, r: number}} circle bounds
+     * @private
+     */
+    _makeCircleBound: function(dimension, options) {
+        var width = dimension.width,
+            height = dimension.height,
+            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.shownLabel,
+            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
+            diameter = ne.util.multiplication(ne.util.min([width, height]), radiusRate);
+        return {
+            cx: ne.util.division(width, 2),
+            cy: ne.util.division(height, 2),
+            r: ne.util.division(diameter, 2)
+        };
+    },
+
+    /**
+     *
+     * @param {object} params parameters
+     *      @param {number} params.cx center x
+     *      @param {number} params.cy center y
+     *      @param {number} params.r radius
+     *      @param {number} params.angle angle(degree)
+     * @returns {{left: number, top: number}}
+     * @private
+     */
+    _getArcPosition: function(params) {
+        return {
+            left: params.cx + params.r * Math.sin(params.angle * chartConst.RAD),
+            top: params.cy - params.r * Math.cos(params.angle * chartConst.RAD)
+        };
+    },
+
+
+    /**
+     * To make add data for series label.
+     * @param {HTMLElement} el container
+     * @returns {{container: *, legendLabels: *, options: {legendType: (*|string|boolean), shownLabel: (*|boolean)}, chartWidth: (*|number), formattedValues: *}}
+     * @private
+     */
+    _makeAddDataForSeriesLabel: function(container) {
+        return {
+            container: container,
+            legendLabels: this.data.legendLabels,
+            options: {
+                legendType: this.options.legendType,
+                shownLabel: this.options.shownLabel
+            },
+            chartWidth: this.data.chartWidth,
+            formattedValues: this.data.formattedValues[0],
+        };
+    },
+
+    /**
+     * Get series label.
+     * @param {object} params
+     *      @param {string} params.legend
+     *      @param {string} params.lable
+     *      @param {string} params.separator
+     *      @param {{legendType: boolean, shownLabel: boolean}} params.options
+     * @returns {string}
+     * @private
+     */
+    _getSeriesLabel: function(params) {
+        var seriesLabel = '';
+        if (params.options.legendType) {
+            seriesLabel = params.legend;
+        }
+
+        if (params.options.shownLabel) {
+            seriesLabel += (seriesLabel ? params.separator : '') + params.label;
+        }
+
+        return seriesLabel
+    },
+
+    /**
+     * Render center legend.
+     * @param {object} params parameters
+     *      @param {HTMLElement} container container
+     *      @param {array<string>} legends legends
+     *      @param {array<object>} centerPositions center positions
+     * @private
+     */
+    _renderLegendLabel: function(params) {
+        var positions = params.positions,
+            formattedValues = params.formattedValues,
+            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            html;
+
+        html = ne.util.map(params.legendLabels, function(legend, index) {
+            var label = this._getSeriesLabel({
+                    legend: legend,
+                    label: formattedValues[index],
+                    separator: params.separator,
+                    options: params.options
+                }),
+                position = params.moveToPosition(positions[index], label);
+            return this._makeSeriesLabelHtml(position, label, 0, index);
+        }, this).join('');
+
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
+
+        return elSeriesLabelArea;
     },
 
     /**
@@ -158,8 +249,8 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * @private
      */
     _moveToCenterPosition: function(position, label) {
-        var left = position.left - (renderUtil.getRenderedLabelWidth(label) / 2),
-            top = position.top - (renderUtil.getRenderedLabelHeight(label) / 2);
+        var left = position.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
+            top = position.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
         return {
             left: left,
             top: top
@@ -175,42 +266,98 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * @private
      */
     _renderCenterLegend: function(params) {
-        var centerPositions = params.centerPositions,
-            formattedValues = params.formattedValues,
-            showLabel = params.showLabel,
-            html;
-        html = ne.util.map(params.legendLabels, function(legend, index) {
-            var label = legend + (showLabel ? '<br>' + formattedValues[index] : ''),
-                position = this._moveToCenterPosition(centerPositions[index], label);
-            return seriesTemplate.TPL_SERIES_LABEL({
-                cssText: seriesTemplate.TPL_CSS_POSITION(position),
-                groupIndex: 0,
-                index: index,
-                value: label
-            })
-        }, this).join('');
-        html = seriesTemplate.TPL_SERIES_LABEL_AREA({
-            html: html
-        });
-        params.container.innerHTML = html;
+        var elArea = this._renderLegendLabel(ne.util.extend({
+            positions: ne.util.pluck(params.sectorsInfo, 'centerPosition'),
+            moveToPosition: ne.util.bind(this._moveToCenterPosition, this),
+            separator: '<br>'
+        }, params));
 
-        return params.container.firstChild;
+        return elArea;
     },
 
-    _renderLegend: function(params) {
-        var elArea;
-        if (params.options.showLegend === 'outer') {
+    /**
+     * Add end position.
+     * @param {number} centerLeft center left
+     * @param {array<object>} positions positions
+     * @private
+     */
+    _addEndPosition: function(centerLeft, positions) {
+        ne.util.forEach(positions, function(position) {
+            var end = ne.util.extend({}, position.middle);
+            if (end.left < centerLeft) {
+                end.left -= chartConst.SERIES_OUTER_LABEL_PADDING;
+            } else {
+                end.left += chartConst.SERIES_OUTER_LABEL_PADDING;
+            }
+            position.end = end;
+        });
+    },
 
+    /**
+     * Mode to outer position.
+     * @param {number} centerLeft center left
+     * @param {array<object>} positions positions
+     * @param {string} label label
+     * @returns {{left: number, top: number}}
+     * @private
+     */
+    _moveToOuterPosition: function(centerLeft, position , label) {
+        var positionEnd = position.end,
+            left = positionEnd.left,
+            top = positionEnd.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+
+        if (left < centerLeft) {
+            left -= renderUtil.getRenderedLabelWidth(label, this.theme.label) + 5;
         } else {
-            elArea = this._renderCenterLegend({
-                container: params.container,
-                legendLabels: params.legendLabels,
-                centerPositions: ne.util.pluck(params.sectorsInfo, 'centerPosition'),
-                formattedValues: params.formattedValues,
-                showLabel: params.options.showLabel
-            });
+            left += 5;
         }
 
+        return {
+            left: left,
+            top: top
+        };
+    },
+
+    /**
+     * Render center legend.
+     * @param {object} params parameters
+     *      @param {HTMLElement} container container
+     *      @param {array<string>} legends legends
+     *      @param {array<object>} centerPositions center positions
+     * @private
+     */
+    _renderOuterLegend: function(params) {
+        var outerPositions = ne.util.pluck(params.sectorsInfo, 'outerPosition'),
+            centerLeft = params.chartWidth / 2,
+            elArea;
+
+        this._addEndPosition(centerLeft, outerPositions);
+        elArea = this._renderLegendLabel(ne.util.extend({
+            positions: outerPositions,
+            moveToPosition: ne.util.bind(this._moveToOuterPosition, this, centerLeft),
+            separator: ':&nbsp;'
+        }, params));
+
+        if (this.paper) {
+            this.graphRenderer.renderLegendLines(this.paper, outerPositions);
+        }
+
+        return elArea;
+    },
+
+    /**
+     * Render series label.
+     * @param params
+     * @returns {*}
+     * @private
+     */
+    _renderSeriesLabel: function(params) {
+        var elArea;
+        if (params.options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER) {
+            elArea = this._renderOuterLegend(params);
+        } else {
+            elArea = this._renderCenterLegend(params);
+        }
         return elArea;
     },
 
@@ -226,6 +373,14 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             return null;
         }
         return this.popupPositions[index];
+    },
+
+    /**
+     * Show series label area.
+     */
+    showSeriesLabelArea: function() {
+        this.graphRenderer.animateLegendLines();
+        Series.prototype.showSeriesLabelArea.call(this);
     }
 });
 

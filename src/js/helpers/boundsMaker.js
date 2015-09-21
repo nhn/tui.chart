@@ -6,8 +6,9 @@
 
 'use strict';
 
-var calculator = require('./calculator.js'),
-    renderUtil = require('./renderUtil.js');
+var calculator = require('./calculator'),
+    chartConst = require('../const'),
+    renderUtil = require('./renderUtil');
 
 var CHART_PADDING = 10,
     TITLE_ADD_PADDING = 20,
@@ -314,13 +315,13 @@ var boundsMaker = {
      * @returns {number} width
      * @private
      */
-    _getLegendAreaWidth: function(joinLegendLabels, labelTheme, seriesOption) {
+    _getLegendAreaWidth: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
         seriesOption = seriesOption || {};
 
-        if (!seriesOption.showLegend) {
+        if (chartType !== chartConst.CHART_TYPE_PIE || !seriesOption.legendType) {
             legendLabels = ne.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });
@@ -383,7 +384,7 @@ var boundsMaker = {
         // axis 영역에 필요한 요소들의 너비 높이를 얻어옴
         axesDimension = this._makeAxesDimension(params);
         titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING;
-        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label, options.series);
+        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label, params.chartType, options.series);
 
         // series 너비, 높이 값은 차트 bounds를 구성하는 가장 중요한 요소다
         seriesDimension = this._makeSeriesDimension({

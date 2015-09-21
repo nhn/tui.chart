@@ -6,6 +6,8 @@
 
 'use strict';
 
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+
 var Raphael = window.Raphael,
     DEFAULT_DOT_WIDTH = 4,
     HOVER_DOT_WIDTH = 5,
@@ -247,8 +249,8 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             var fromPos = positions[0],
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
-                var startPath = this._makeLinePath(fromPos, fromPos),
-                    endPath = this._makeLinePath(fromPos, position);
+                var startPath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
+                    endPath = raphaelRenderUtil.makeLinePath(fromPos, position);
                 fromPos = position;
                 return {
                     start: startPath,

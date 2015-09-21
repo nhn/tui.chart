@@ -28,6 +28,10 @@ describe('Series', function() {
                 position: {top: 50, left: 50}
             },
             theme: {
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11
+                },
                 colors: ['blue']
             },
             options: {}
@@ -160,8 +164,8 @@ describe('Series', function() {
                 }
             );
 
-            expect(elSeries.style.top).toEqual('19px');
-            expect(elSeries.style.left).toEqual('22px');
+            expect(elSeries.style.top).toBe('19px');
+            expect(elSeries.style.left).toBe('22px');
         });
     });
 
@@ -172,7 +176,7 @@ describe('Series', function() {
                 top: 10
             }, 'label1', 0, 0);
 
-            expect(result).toEqual('<div class="ne-chart-series-label" style="left:10px;top:10px" data-group-index="0" data-index="0">label1</div>');
+            expect(result).toBe('<div class="ne-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
         });
     });
 
@@ -181,15 +185,15 @@ describe('Series', function() {
             var elSeries = series.render();
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
-            expect(elSeries.style.width).toEqual('200px');
-            expect(elSeries.style.height).toEqual('100px');
+            expect(elSeries.style.width).toBe('200px');
+            expect(elSeries.style.height).toBe('100px');
 
-            expect(elSeries.style.top).toEqual('49px');
+            expect(elSeries.style.top).toBe('49px');
 
             if (renderUtil.isIE8()) {
-                expect(elSeries.style.left).toEqual('50px');
+                expect(elSeries.style.left).toBe('50px');
             } else {
-                expect(elSeries.style.left).toEqual('51px');
+                expect(elSeries.style.left).toBe('51px');
             }
         });
     });

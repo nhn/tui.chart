@@ -9,6 +9,7 @@
 var Series = require('./series.js'),
     seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
+    dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
 var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
@@ -70,11 +71,18 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * @private
      */
     _renderSeriesLabel: function(params) {
-        var groupPositions = params.groupPositions,
-            labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], {
-                fontSize: 12
-            }),
-            html;
+        var groupPositions, labelHeight, elSeriesLabelArea, html;
+
+        if (!this.options.shownLabel) {
+            return;
+        }
+
+        groupPositions = params.groupPositions;
+        labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], {
+            fontSize: 12
+        });
+        elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area');
+
         html = ne.util.map(params.formattedValues, function(values, groupIndex) {
             return ne.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
@@ -89,11 +97,10 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
             }, this).join('');
         }, this).join('');
 
-        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
-            html: html
-        });
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
 
-        return params.container.firstChild;
+        return elSeriesLabelArea;
     },
 
     /**

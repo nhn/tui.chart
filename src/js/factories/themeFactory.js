@@ -36,11 +36,13 @@ module.exports = {
     register: function(themeName, theme) {
         var targetItems;
         theme = JSON.parse(JSON.stringify(theme));
+
         if (themeName !== chartConst.DEFAULT_THEME_NAME) {
             theme = this._initTheme(theme);
         }
 
         targetItems = this._getInheritTargetThemeItems(theme);
+
         this._inheritThemeFont(theme, targetItems);
         this._copyColorInfo(theme);
         themes[themeName] = theme;
@@ -73,6 +75,7 @@ module.exports = {
             toTheme: newTheme,
             rejectionProps: chartConst.SERIES_PROPS
         });
+
         return newTheme;
     },
 
@@ -221,18 +224,26 @@ module.exports = {
                 theme.xAxis.label,
                 theme.legend.label
             ],
-            yAxisChartTypes = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS);
+            yAxisChartTypes = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
+            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
         if (!ne.util.keys(yAxisChartTypes).length) {
             items.push(theme.yAxis.title);
             items.push(theme.yAxis.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(yAxisTheme) {
-                items.push(yAxisTheme.title);
-                items.push(yAxisTheme.label);
+            ne.util.forEach(yAxisChartTypes, function(chatType) {
+                items.push(chatType.title);
+                items.push(chatType.label);
             });
         }
 
+        if (!ne.util.keys(seriesChartTypes).length) {
+            items.push(theme.series.label);
+        } else {
+            ne.util.forEach(yAxisChartTypes, function(chatType) {
+                items.push(chatType.label);
+            });
+        }
         return items;
     },
 

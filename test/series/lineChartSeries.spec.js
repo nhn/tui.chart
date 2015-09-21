@@ -11,25 +11,12 @@ var LineChartSeries = require('../../src/js/series/lineChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('test LineChartSeries', function() {
-    var getRenderedLabelWidth, getRenderedLabelHeight, series;
+    var series;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
-        getRenderedLabelWidth  = renderUtil.getRenderedLabelWidth;
-        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
-
-        renderUtil.getRenderedLabelWidth = function() {
-            return 50;
-        };
-
-        renderUtil.getRenderedLabelHeight = function() {
-            return 20;
-        };
-    });
-
-    afterAll(function() {
-        renderUtil.getRenderedLabelWidth = getRenderedLabelWidth;
-        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+        spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     beforeEach(function() {
@@ -39,6 +26,12 @@ describe('test LineChartSeries', function() {
                 values: [],
                 formattedValues: [],
                 scale: {min: 0, max: 0}
+            },
+            theme: {
+                label: {
+                    fontFamily: 'Verdana',
+                    fontSize: 11
+                }
             },
             options: {}
         });
@@ -69,6 +62,9 @@ describe('test LineChartSeries', function() {
         it('라인차트에서 series label을 렌더링 하면 label은 dot위치 상단에 중앙(상하,좌우)정렬하여 위치하게 됩니다.', function() {
             var container = dom.create('div'),
                 children;
+
+            series.options.shownLabel = true;
+
             series._renderSeriesLabel({
                 container: container,
                 groupPositions: [
@@ -92,13 +88,13 @@ describe('test LineChartSeries', function() {
                 ]
             });
             children = container.firstChild.childNodes;
-            expect(children[0].style.left).toEqual('25px');
-            expect(children[0].style.top).toEqual('25px');
-            expect(children[0].innerHTML).toEqual('1.5');
+            expect(children[0].style.left).toBe('25px');
+            expect(children[0].style.top).toBe('25px');
+            expect(children[0].innerHTML).toBe('1.5');
 
-            expect(children[1].style.left).toEqual('125px');
-            expect(children[1].style.top).toEqual('45px');
-            expect(children[1].innerHTML).toEqual('2.2');
+            expect(children[1].style.left).toBe('125px');
+            expect(children[1].style.top).toBe('45px');
+            expect(children[1].innerHTML).toBe('2.2');
         });
     });
 });

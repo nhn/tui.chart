@@ -9,6 +9,7 @@
 var Series = require('./series.js'),
     seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
+    dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
 var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
@@ -154,17 +155,14 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
     _renderNormalSeriesLabel: function(params) {
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
-            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], {
-                fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-            }),
+            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
+            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             return ne.util.map(values, function(value, index) {
                 var bound = groupBounds[groupIndex][index].end,
                     formattedValue = formattedValues[groupIndex][index],
-                    labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
-                        fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-                    }),
+                    labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
                     top = bound.top,
                     labelHtml;
 
@@ -182,11 +180,10 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
             }, this).join('');
         }, this).join('');
 
-        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
-            html: html
-        });
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
 
-        return params.container.firstChild;
+        return elSeriesLabelArea;
     },
 
     /**
@@ -202,12 +199,11 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
             formatFunctions = params.formatFunctions || [],
+            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             var total = 0,
-                labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], {
-                    fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-                }),
+                labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
                 labelHtmls, lastLeft, lastTop, fns, totalLabelWidth;
             labelHtmls = ne.util.map(values, function(value, index) {
                 var bound, formattedValue, labelWidth, left, top, labelHtml;
@@ -218,9 +214,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
 
                 bound = groupBounds[groupIndex][index].end;
                 formattedValue = formattedValues[groupIndex][index];
-                labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, {
-                    fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-                });
+                labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
                 left = bound.left + (bound.width - labelWidth + chartConst.TEXT_PADDING) / 2;
                 top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
                 labelHtml = this._makeSeriesLabelHtml({
@@ -238,9 +232,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                 total = ne.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });
-                totalLabelWidth = renderUtil.getRenderedLabelWidth(total, {
-                    fontSize: chartConst.DEFAULT_LABEL_FONT_SIZE
-                });
+                totalLabelWidth = renderUtil.getRenderedLabelWidth(total, this.theme.label);
 
                 labelHtmls.push(this._makeSeriesLabelHtml({
                     left: lastLeft - (totalLabelWidth - chartConst.TEXT_PADDING) / 2,
@@ -250,11 +242,10 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
             return labelHtmls.join('');
         }, this).join('');
 
-        params.container.innerHTML = seriesTemplate.TPL_SERIES_LABEL_AREA({
-            html: html
-        });
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
 
-        return params.container.firstChild;
+        return elSeriesLabelArea;
     },
 
     /**
@@ -268,6 +259,10 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      */
     _renderSeriesLabel: function(params) {
         var elSeriesLabelArea;
+        if (!this.options.shownLabel) {
+            return;
+        }
+
         if (this.options.stacked) {
             elSeriesLabelArea = this._renderStackedSeriesLabel(params);
         } else {

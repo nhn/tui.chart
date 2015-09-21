@@ -6,12 +6,16 @@
 
 'use strict';
 
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+
 var Raphael = window.Raphael,
     ANGLE_180 = 180,
     ANGLE_90 = 90,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700;
+
+var concat = Array.prototype.concat;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer.
@@ -135,6 +139,35 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     },
 
     /**
+     * Render legend lines.
+     * @param {object} paper paper
+     * @param {array<object>} outerPositions outer position
+     */
+    renderLegendLines: function(paper, outerPositions) {
+        var paths = this._makeLinePaths(outerPositions),
+            legendLines = ne.util.map(paths, function(path) {
+                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
+            });
+        this.legendLines = legendLines;
+    },
+
+    /**
+     * To make line paths.
+     * @param {array<object>} outerPositions outer positions
+     * @returns {Array} line paths.
+     * @private
+     */
+    _makeLinePaths: function(outerPositions) {
+        var paths = ne.util.map(outerPositions, function(positions, type) {
+            return [
+                raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
+                raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
+            ].join('');
+        }, this);
+        return paths;
+    },
+
+    /**
      * Bind hover event.
      * @param {object} params parameters
      *      @param {object} params.target raphael item
@@ -193,6 +226,21 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         if (callback) {
             setTimeout(callback, delayTime);
         }
+    },
+
+    /**
+     * Animate legend lines.
+     */
+    animateLegendLines: function() {
+        if (!this.legendLines) {
+            return;
+        }
+        ne.util.forEachArray(this.legendLines, function(line) {
+            line.animate({
+                'stroke': 'black',
+                'stroke-opacity': 1
+            });
+        });
     }
 });
 

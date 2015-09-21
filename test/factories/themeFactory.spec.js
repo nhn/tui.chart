@@ -194,6 +194,9 @@ describe('test themeFactory', function() {
                         title: {},
                         label: {}
                     },
+                    series: {
+                        label: {}
+                    },
                     legend: {
                         label: {}
                     }
@@ -206,7 +209,8 @@ describe('test themeFactory', function() {
                 theme.xAxis.label,
                 theme.legend.label,
                 theme.yAxis.title,
-                theme.yAxis.label
+                theme.yAxis.label,
+                theme.series.label
             ]);
         });
 
@@ -227,6 +231,9 @@ describe('test themeFactory', function() {
                             label: {}
                         }
                     },
+                    series: {
+                        label: {}
+                    },
                     legend: {
                         label: {}
                     }
@@ -241,7 +248,8 @@ describe('test themeFactory', function() {
                 theme.yAxis.column.title,
                 theme.yAxis.column.label,
                 theme.yAxis.line.title,
-                theme.yAxis.line.label
+                theme.yAxis.line.label,
+                theme.series.label
             ]);
         });
     });

@@ -173,9 +173,9 @@
       .opacity(0);
       .ne-chart-series-label {
         position: absolute;
-        font-size: 12px;
         cursor: default;
         text-align:center;
+        .text-shadow(#fff 0px 0px 3px);
       }
       &.show {
         display: block;
@@ -233,6 +233,17 @@
       }
     }
   }
+}
+
+.ne-chart-size-check-element {
+  clear:both;
+  position:absolute;
+  top:100000px;
+  left:100000px;
+  width:1000px;
+  height:100px;
+  line-height:1;
+  z-index: 10000000;
 }
 
 :root .ne-chart .ne-chart-axis-area.vertical .ne-chart-title-area {

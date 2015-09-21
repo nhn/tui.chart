@@ -91,7 +91,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 theme: this.theme,
                 options: this.options
             },
-            addData = this.makeAddData();
+            addData = this.makeAddData(),
+            addDataForSeriesLabel;
 
         if (!paper) {
             renderUtil.renderDimension(el, dimension);
@@ -101,26 +102,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         data = ne.util.extend(data, addData);
 
-        if (this.options.showLegend && this._renderLegend) {
-            this.elSeriesLabelArea = this._renderLegend(ne.util.extend({
-                container: el,
-                legendLabels: this.data.legendLabels,
-                options: {
-                    showLegend: this.options.showLegend,
-                    showLabel: this.options.showLabel
-                }
-            },addData));
-        } else if (this.options.showLabel && this._renderSeriesLabel) {
-            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend({
-                container: el,
-                values: this.data.values,
-                formattedValues: this.data.formattedValues,
-                formatFunctions: this.data.formatFunctions,
-                dimension: dimension
-            }, addData));
+        this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+
+        if (this._renderSeriesLabel) {
+            addDataForSeriesLabel = this._makeAddDataForSeriesLabel(el, dimension);
+            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, addData));
         }
 
-        this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
         this.attachEvent(el);
 
         // series label mouse event 동작 시 사용
@@ -136,6 +124,29 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     makeAddData: function() {
         return {};
+    },
+
+    /**
+     * To make add data for series label.
+     * @param {HTMLElement} container container
+     * @param {{width: number, height: number}}dimension
+     * @returns {{
+     *      container: HTMLElement,
+     *      values: array<array>,
+     *      formattedValues: array<array>,
+     *      formatFunctions: array<function>,
+     *      dimension: {width: number, height: number}
+     * }}
+     * @private
+     */
+    _makeAddDataForSeriesLabel: function(container, dimension) {
+        return {
+            container: container,
+            values: this.data.values,
+            formattedValues: this.data.formattedValues,
+            formatFunctions: this.data.formatFunctions,
+            dimension: dimension
+        };
     },
 
     /**
@@ -368,10 +379,9 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
-        var cssText = renderUtil.concatStr('left:', position.left, 'px;',
-            'top:', position.top, 'px');
+        var cssObj = ne.util.extend(position, this.theme.label);
         return seriesTemplate.TPL_SERIES_LABEL({
-            cssText: cssText,
+            cssText: seriesTemplate.TPL_CSS_POSITION(cssObj),
             value: value,
             groupIndex: groupIndex,
             index: index
@@ -382,7 +392,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * Show series label area.
      */
     showSeriesLabelArea: function() {
-        if ((!this.options.showLabel && !this.options.showLegend) || !this.elSeriesLabelArea) {
+        if ((!this.options.shownLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
             return;
         }
 
