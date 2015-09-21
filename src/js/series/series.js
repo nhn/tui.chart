@@ -381,7 +381,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = ne.util.extend(position, this.theme.label);
         return seriesTemplate.TPL_SERIES_LABEL({
-            cssText: seriesTemplate.TPL_CSS_POSITION(cssObj),
+            cssText: seriesTemplate.TPL_CSS_TEXT(cssObj),
             value: value,
             groupIndex: groupIndex,
             index: index

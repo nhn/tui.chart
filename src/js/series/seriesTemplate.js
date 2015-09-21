@@ -8,10 +8,10 @@ var templateMaker = require('../helpers/templateMaker.js');
 
 var tags = {
     HTML_SERIES_LABEL: '<div class="ne-chart-series-label" style="{{ cssText }}" data-group-index="{{ groupIndex }}" data-index="{{ index }}">{{ value }}</div>',
-    TEXT_CSS_POSITION: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};font-size:{{ fontSize }}px'
+    TEXT_CSS_TEXT: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};font-size:{{ fontSize }}px'
 };
 
 module.exports = {
     TPL_SERIES_LABEL: templateMaker.template(tags.HTML_SERIES_LABEL),
-    TPL_CSS_POSITION: templateMaker.template(tags.TEXT_CSS_POSITION)
+    TPL_CSS_TEXT: templateMaker.template(tags.TEXT_CSS_TEXT)
 };
