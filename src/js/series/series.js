@@ -132,11 +132,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {{width: number, height: number}}dimension
      * @returns {{
      *      container: HTMLElement,
-     *      values: array<array>,
-     *      formattedValues: array<array>,
-     *      formatFunctions: array<function>,
+     *      values: array.<array>,
+     *      formattedValues: array.<array>,
+     *      formatFunctions: array.<function>,
      *      dimension: {width: number, height: number}
-     * }}
+     * }} add data for series label
      * @private
      */
     _makeAddDataForSeriesLabel: function(container, dimension) {
@@ -154,6 +154,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, left: number}} position series position
+     * @param {string} chartType chart type
      * @private
      */
     _renderPosition: function(el, position, chartType) {
@@ -293,7 +294,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            groupIndex, index, bound;
+            groupIndex, index;
 
         if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
             return;
@@ -371,7 +372,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To make html about series label
-     * @param {left: number, top: number} position position
+     * @param {{left: number, top: number}} position position
      * @param {string} value value
      * @param {number} groupIndex group index
      * @param {number} index index
@@ -380,8 +381,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = ne.util.extend(position, this.theme.label);
-        return seriesTemplate.TPL_SERIES_LABEL({
-            cssText: seriesTemplate.TPL_CSS_TEXT(cssObj),
+        return seriesTemplate.tplSeriesLabel({
+            cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
             groupIndex: groupIndex,
             index: index
@@ -392,7 +393,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * Show series label area.
      */
     showSeriesLabelArea: function() {
-        if ((!this.options.shownLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
+        if ((!this.options.showLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
             return;
         }
 

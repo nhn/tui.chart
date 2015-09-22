@@ -198,7 +198,7 @@ module.exports = {
      * Copy color info to legend
      * @param {object} seriesTheme series theme
      * @param {object} legendTheme legend theme
-     * @param {array<string>} colors colors
+     * @param {array.<string>} colors colors
      * @private
      */
     _copyColorInfoToLegend: function(seriesTheme, legendTheme, colors) {
@@ -214,7 +214,7 @@ module.exports = {
     /**
      * Get target items about font inherit.
      * @param {object} theme theme
-     * @returns {array<object>} target items
+     * @returns {array.<object>} target items
      * @private
      */
     _getInheritTargetThemeItems: function(theme) {
@@ -250,7 +250,7 @@ module.exports = {
     /**
      * Inherit theme font.
      * @param {object} theme theme
-     * @param {array<object>} targetItems target theme items
+     * @param {array.<object>} targetItems target theme items
      * @private
      */
     _inheritThemeFont: function(theme, targetItems) {

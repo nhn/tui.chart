@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('./series.js'),
-    seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
@@ -118,24 +117,25 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2),
                     top = 0;
                 return ne.util.map(values, function (value) {
+                    var height, bound;
                     if (value < 0) {
-                        return;
+                        return null;
                     }
-                    var height = value * dimension.height,
-                        bound = {
-                            start: {
-                                top: dimension.height,
-                                left: paddingLeft,
-                                width: barWidth,
-                                height: 0
-                            },
-                            end: {
-                                top: dimension.height - height - top,
-                                left: paddingLeft,
-                                width: barWidth,
-                                height: height
-                            }
-                        };
+                    height = value * dimension.height;
+                    bound = {
+                        start: {
+                            top: dimension.height,
+                            left: paddingLeft,
+                            width: barWidth,
+                            height: 0
+                        },
+                        end: {
+                            top: dimension.height - height - top,
+                            left: paddingLeft,
+                            width: barWidth,
+                            height: height
+                        }
+                    };
                     top += height;
                     return bound;
                 }, this);
@@ -147,8 +147,8 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      * Render normal series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
@@ -187,11 +187,86 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
     },
 
     /**
+     * To make sum label html.
+     * @param {object} params parameters
+     *      @param {array.<number>} params.values values
+     *      @param {array.<function>} params.formatFunctions formatting functions
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {number} params.labelHeight label height
+     * @returns {string} sum label html
+     * @private
+     */
+    _makeSumLabelHtml: function(params) {
+        var sum = ne.util.sum(params.values),
+            fns = [sum].concat(params.formatFunctions),
+            bound = params.bound,
+            left = bound.left + (bound.width / 2),
+            totalLabelWidth;
+
+        sum = ne.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
+
+        totalLabelWidth = renderUtil.getRenderedLabelWidth(sum, this.theme.label);
+
+        return this._makeSeriesLabelHtml({
+            left: left - (totalLabelWidth - chartConst.TEXT_PADDING) / 2,
+            top: bound.top - params.labelHeight - chartConst.SERIES_LABEL_PADDING
+        }, sum, -1, -1);
+    },
+
+    /**
+     * To make stacked labels html.
+     * @param {object} params parameters
+     *      @param {number} params.groupIndex group index
+     *      @param {array.<number>} params.values values,
+     *      @param {array.<function>} params.formatFunctions formatting functions,
+     *      @param {array.<object>} params.bounds bounds,
+     *      @param {array} params.formattedValues formatted values,
+     *      @param {number} params.labelHeight label height
+     * @returns {string} labels html
+     * @private
+     */
+    _makeStackedLabelsHtml: function(params) {
+        var values = params.values,
+            bound, htmls;
+
+        htmls = ne.util.map(params.values, function(value, index) {
+            var labelWidth, left, top, labelHtml, formattedValue;
+
+            if (value < 0) {
+                return '';
+            }
+
+            bound = params.bounds[index].end;
+            formattedValue = params.formattedValues[index];
+            labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
+            left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
+            top = bound.top + ((bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2);
+            labelHtml = this._makeSeriesLabelHtml({
+                left: left,
+                top: top
+            }, formattedValue, params.groupIndex, index);
+            return labelHtml;
+        }, this);
+
+        if (this.options.stacked === 'normal') {
+            htmls.push(this._makeSumLabelHtml({
+                values: values,
+                formatFunctions: params.formatFunctions,
+                bound: bound,
+                labelHeight: params.labelHeight
+            }));
+        }
+        return htmls.join('');
+    },
+
+    /**
      * Render stacked series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
@@ -200,46 +275,19 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
             formattedValues = params.formattedValues,
             formatFunctions = params.formatFunctions || [],
             elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
             html;
-        html = ne.util.map(params.values, function(values, groupIndex) {
-            var total = 0,
-                labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
-                labelHtmls, lastLeft, lastTop, fns, totalLabelWidth;
-            labelHtmls = ne.util.map(values, function(value, index) {
-                var bound, formattedValue, labelWidth, left, top, labelHtml;
 
-                if (value < 0) {
-                    return '';
-                }
-
-                bound = groupBounds[groupIndex][index].end;
-                formattedValue = formattedValues[groupIndex][index];
-                labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
-                left = bound.left + (bound.width - labelWidth + chartConst.TEXT_PADDING) / 2;
-                top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
-                labelHtml = this._makeSeriesLabelHtml({
-                    left: left,
-                    top: top
-                }, formattedValue, groupIndex, index);
-                lastLeft = bound.left + (bound.width / 2);
-                lastTop = bound.top;
-                total += value;
-                return labelHtml;
-            }, this);
-
-            if (this.options.stacked === 'normal') {
-                fns = [total].concat(formatFunctions);
-                total = ne.util.reduce(fns, function(stored, fn) {
-                    return fn(stored);
+        html = ne.util.map(params.values, function(values, index) {
+            var labelsHtml = this._makeStackedLabelsHtml({
+                    groupIndex: index,
+                    values: values,
+                    formatFunctions: formatFunctions,
+                    bounds: groupBounds[index],
+                    formattedValues: formattedValues[index],
+                    labelHeight: labelHeight
                 });
-                totalLabelWidth = renderUtil.getRenderedLabelWidth(total, this.theme.label);
-
-                labelHtmls.push(this._makeSeriesLabelHtml({
-                    left: lastLeft - (totalLabelWidth - chartConst.TEXT_PADDING) / 2,
-                    top: lastTop - labelHeight - chartConst.SERIES_LABEL_PADDING
-                }, total, -1, -1))
-            }
-            return labelHtmls.join('');
+            return labelsHtml;
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
@@ -252,15 +300,15 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      * Render series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
     _renderSeriesLabel: function(params) {
         var elSeriesLabelArea;
-        if (!this.options.shownLabel) {
-            return;
+        if (!this.options.showLabel) {
+            return null;
         }
 
         if (this.options.stacked) {
@@ -275,7 +323,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      * Get bound.
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @returns {left: number, top: number}
+     * @returns {{left: number, top: number}} bound
      * @private
      */
     _getBound: function(groupIndex, index) {

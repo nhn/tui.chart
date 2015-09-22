@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('./series.js'),
-    seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
@@ -66,15 +65,16 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * Render series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupPositions group positions
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupPositions group positions
+     *      @param {array.<array>} params.formattedValues formatted values
+     * @return {HTMLElement} series area element
      * @private
      */
     _renderSeriesLabel: function(params) {
         var groupPositions, labelHeight, elSeriesLabelArea, html;
 
-        if (!this.options.shownLabel) {
-            return;
+        if (!this.options.showLabel) {
+            return null;
         }
 
         groupPositions = params.groupPositions;
@@ -90,7 +90,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
                         fontSize: 12
                     }),
                     labelHtml = this._makeSeriesLabelHtml({
-                        left: position.left - (labelWidth/2),
+                        left: position.left - (labelWidth / 2),
                         top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
                     }, value, index, groupIndex);
                 return labelHtml;
@@ -107,7 +107,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * Get bound.
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @returns {left: number, top: number}
+     * @returns {{left: number, top: number}} bound
      * @private
      */
     _getBound: function(groupIndex, index) {

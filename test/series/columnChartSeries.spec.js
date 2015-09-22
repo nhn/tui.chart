@@ -391,7 +391,7 @@ describe('test ColumnChartSeries', function() {
                 ]
             };
 
-            series.options.shownLabel = true;
+            series.options.showLabel = true;
             actual = series._renderSeriesLabel(params);
             expected = series._renderNormalSeriesLabel(params);
             expect(actual).toEqual(expected);
@@ -435,7 +435,7 @@ describe('test ColumnChartSeries', function() {
                 ]
             };
 
-            series.options.shownLabel = true;
+            series.options.showLabel = true;
             series.options.stacked = 'normal';
             actual = series._renderSeriesLabel(params);
             expected = series._renderStackedSeriesLabel(params);

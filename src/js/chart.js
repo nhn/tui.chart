@@ -233,7 +233,7 @@ ne.application.chart.columnChart = function(container, data, options) {
  *          @param {string} options.xAxis.title title of horizontal axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
- *          @param {boolean} options.series.shownLabel whether show label or not
+ *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -315,7 +315,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *              @param {string} options.series.column.stacked stacked type
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
- *              @param {boolean} options.series.line.shownLabel whether show label or not
+ *              @param {boolean} options.series.line.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
  *              @param {string} options.tooltip.column.suffix suffix of tooltip

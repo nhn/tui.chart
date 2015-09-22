@@ -15,8 +15,6 @@ var Raphael = window.Raphael,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700;
 
-var concat = Array.prototype.concat;
-
 /**
  * @classdesc RaphaelPieCharts is graph renderer.
  * @class RaphaelPieChart
@@ -52,7 +50,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * To make sector path.
      * @param {number} cx center x
      * @param {number} cy center y
-     * @param {number} r round
+     * @param {number} r radius
      * @param {number} startAngle start angle
      * @param {number} endAngle end angel
      * @returns {{path: array}} sector path
@@ -103,7 +101,6 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         var circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
-            angle = 0,
             sectors = [];
 
         ne.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
@@ -141,7 +138,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     /**
      * Render legend lines.
      * @param {object} paper paper
-     * @param {array<object>} outerPositions outer position
+     * @param {array.<object>} outerPositions outer position
      */
     renderLegendLines: function(paper, outerPositions) {
         var paths = this._makeLinePaths(outerPositions),
@@ -153,12 +150,12 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
 
     /**
      * To make line paths.
-     * @param {array<object>} outerPositions outer positions
+     * @param {array.<object>} outerPositions outer positions
      * @returns {Array} line paths.
      * @private
      */
     _makeLinePaths: function(outerPositions) {
-        var paths = ne.util.map(outerPositions, function(positions, type) {
+        var paths = ne.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
@@ -209,6 +206,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
 
     /**
      * Animate.
+     * @param {function} callback callback
      */
     animate: function(callback) {
         var delayTime = 0,

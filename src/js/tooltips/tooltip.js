@@ -96,8 +96,8 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             prefix = this.prefix,
             data = this._makeTooltipData(),
             optionTemplate = options.template ? options.template : '',
-            tplOuter = tooltipTemplate.TPL_TOOLTIP,
-            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.TPL_DEFAULT_TEMPLATE,
+            tplOuter = tooltipTemplate.tplTooltip,
+            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefaultTemplate,
             suffix = options.suffix ? '&nbsp;' + options.suffix : '',
             html = ne.util.map(data, function(tooltipData) {
                 var id = prefix + tooltipData.id,
@@ -235,7 +235,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Calculate tooltip position abount bar chart.
+     * Calculate tooltip position about bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension

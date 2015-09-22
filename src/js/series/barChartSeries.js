@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('./series.js'),
-    seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
@@ -117,24 +116,25 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
                     left = -chartConst.HIDDEN_WIDTH;
                 return ne.util.map(values, function (value) {
+                    var width, bound;
                     if (value < 0) {
-                        return;
+                        return null;
                     }
-                    var width = value * dimension.width,
-                        bound = {
-                            start: {
-                                top: paddingTop,
-                                left: -chartConst.HIDDEN_WIDTH,
-                                width: 0,
-                                height: barHeight
-                            },
-                            end: {
-                                top: paddingTop,
-                                left: left,
-                                width: width,
-                                height: barHeight
-                            }
-                        };
+                    width = value * dimension.width;
+                    bound = {
+                        start: {
+                            top: paddingTop,
+                            left: -chartConst.HIDDEN_WIDTH,
+                            width: 0,
+                            height: barHeight
+                        },
+                        end: {
+                            top: paddingTop,
+                            left: left,
+                            width: width,
+                            height: barHeight
+                        }
+                    };
                     left = left + width;
                     return bound;
                 }, this);
@@ -146,8 +146,8 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Render normal series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
@@ -189,8 +189,8 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Render stacked series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
@@ -234,7 +234,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                 labelHtmls.push(this._makeSeriesLabelHtml({
                     left: lastLeft + chartConst.SERIES_LABEL_PADDING,
                     top: lastTop
-                }, total, -1, -1))
+                }, total, -1, -1));
             }
             return labelHtmls.join('');
         }, this).join('');
@@ -249,16 +249,16 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Render series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array<array>} params.groupBounds group bounds
-     *      @param {array<array>} params.formattedValues formatted values
+     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {array.<array>} params.formattedValues formatted values
      * @returns {HTMLElement} series label area
      * @private
      */
     _renderSeriesLabel: function(params) {
         var elSeriesLabelArea;
 
-        if (!this.options.shownLabel) {
-            return;
+        if (!this.options.showLabel) {
+            return null;
         }
 
         if (this.options.stacked) {
@@ -273,7 +273,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Get bound.
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @returns {left: number, top: number}
+     * @returns {{left: number, top: number}} bound
      * @private
      */
     _getBound: function(groupIndex, index) {

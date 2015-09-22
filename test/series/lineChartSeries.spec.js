@@ -63,7 +63,7 @@ describe('test LineChartSeries', function() {
             var container = dom.create('div'),
                 children;
 
-            series.options.shownLabel = true;
+            series.options.showLabel = true;
 
             series._renderSeriesLabel({
                 container: container,

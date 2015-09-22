@@ -11,5 +11,5 @@ var tags = {
 };
 
 module.exports = {
-    TPL_PLOT_LINE: templateMaker.template(tags.HTML_PLOT_LINE)
+    tplPlotLine: templateMaker.template(tags.HTML_PLOT_LINE)
 };

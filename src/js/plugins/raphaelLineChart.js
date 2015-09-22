@@ -343,6 +343,7 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
 
     /**
      * Animate.
+     * @param {function} callback callback
      */
     animate: function(callback) {
         var groupLines = this.groupLines,

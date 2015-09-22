@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('./series'),
-    seriesTemplate = require('./seriesTemplate'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
@@ -44,9 +43,9 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
 
     /**
      * To make sectors information.
-     * @param percentValues
-     * @param circleBound
-     * @returns {Array|*}
+     * @param {array.<number>} percentValues percent values
+     * @param {{cx: number, cy: number, r: number}} circleBound circle bound
+     * @returns {array.<object>} sectors information
      * @private
      */
     _makeSectorsInfo: function(percentValues, circleBound) {
@@ -57,7 +56,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             delta = 10,
             paths;
 
-        paths = ne.util.map(percentValues, function(percentValue, index) {
+        paths = ne.util.map(percentValues, function(percentValue) {
             var addAngle = chartConst.ANGLE_360 * percentValue,
                 endAngle = angle + addAngle,
                 popupAngle = angle + (addAngle / 2),
@@ -70,36 +69,29 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
                         startAngle: angle,
                         endAngle: endAngle
                     }
+                },
+                positionData = {
+                    cx: cx,
+                    cy: cy,
+                    angle: popupAngle
                 };
             angle = endAngle;
             return {
                 percentValue: percentValue,
                 angles: angles,
-                popupPosition: this._getArcPosition({
-                    cx: cx,
-                    cy: cy,
-                    r: r + delta,
-                    angle: popupAngle
-                }),
-                centerPosition: this._getArcPosition({
-                    cx: cx,
-                    cy: cy,
-                    r: r / 2 + delta,
-                    angle: popupAngle
-                }),
+                popupPosition: this._getArcPosition(ne.util.extend({
+                    r: r + delta
+                }, positionData)),
+                centerPosition: this._getArcPosition(ne.util.extend({
+                    r: (r / 2) + delta
+                }, positionData)),
                 outerPosition: {
-                    start: this._getArcPosition({
-                        cx: cx,
-                        cy: cy,
-                        r: r,
-                        angle: popupAngle
-                    }),
-                    middle: this._getArcPosition({
-                        cx: cx,
-                        cy: cy,
-                        r: r + 10,
-                        angle: popupAngle
-                    })
+                    start: this._getArcPosition(ne.util.extend({
+                        r: r
+                    }, positionData)),
+                    middle: this._getArcPosition(ne.util.extend({
+                        r: r + delta
+                    }, positionData))
                 }
             };
         }, this);
@@ -113,12 +105,12 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      *      formattedValues: array,
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
-     *      sectorsInfo: array<object>
-     * }}
+     *      sectorsInfo: array.<object>
+     * }} add data for graph rendering
      */
     makeAddData: function() {
         var circleBound = this._makeCircleBound(this.bound.dimension, {
-                shownLabel: this.options.shownLabel,
+                showLabel: this.options.showLabel,
                 legendType: this.options.legendType
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
@@ -134,13 +126,14 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     /**
      * To make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
+     * @param {{showLabel: boolean, legendType: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
      * @private
      */
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.shownLabel,
+            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = ne.util.multiplication(ne.util.min([width, height]), radiusRate);
         return {
@@ -151,27 +144,33 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
-     *
+     * Get arc position.
      * @param {object} params parameters
      *      @param {number} params.cx center x
      *      @param {number} params.cy center y
      *      @param {number} params.r radius
      *      @param {number} params.angle angle(degree)
-     * @returns {{left: number, top: number}}
+     * @returns {{left: number, top: number}} arc position
      * @private
      */
     _getArcPosition: function(params) {
         return {
-            left: params.cx + params.r * Math.sin(params.angle * chartConst.RAD),
-            top: params.cy - params.r * Math.cos(params.angle * chartConst.RAD)
+            left: params.cx + (params.r * Math.sin(params.angle * chartConst.RAD)),
+            top: params.cy - (params.r * Math.cos(params.angle * chartConst.RAD))
         };
     },
 
 
     /**
      * To make add data for series label.
-     * @param {HTMLElement} el container
-     * @returns {{container: *, legendLabels: *, options: {legendType: (*|string|boolean), shownLabel: (*|boolean)}, chartWidth: (*|number), formattedValues: *}}
+     * @param {HTMLElement} container container
+     * @returns {{
+     *      container: HTMLElement,
+     *      legendLabels: array.<string>,
+     *      options: {legendType: string, showLabel: boolean},
+     *      chartWidth: number,
+     *      formattedValues: array
+     * }} add data for make series label
      * @private
      */
     _makeAddDataForSeriesLabel: function(container) {
@@ -180,21 +179,21 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             legendLabels: this.data.legendLabels,
             options: {
                 legendType: this.options.legendType,
-                shownLabel: this.options.shownLabel
+                showLabel: this.options.showLabel
             },
             chartWidth: this.data.chartWidth,
-            formattedValues: this.data.formattedValues[0],
+            formattedValues: this.data.formattedValues[0]
         };
     },
 
     /**
      * Get series label.
-     * @param {object} params
-     *      @param {string} params.legend
-     *      @param {string} params.lable
-     *      @param {string} params.separator
-     *      @param {{legendType: boolean, shownLabel: boolean}} params.options
-     * @returns {string}
+     * @param {object} params parameters
+     *      @param {string} params.legend legend
+     *      @param {string} params.label label
+     *      @param {string} params.separator separator
+     *      @param {{legendType: boolean, showLabel: boolean}} params.options options
+     * @returns {string} series label
      * @private
      */
     _getSeriesLabel: function(params) {
@@ -203,19 +202,20 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
             seriesLabel = params.legend;
         }
 
-        if (params.options.shownLabel) {
+        if (params.options.showLabel) {
             seriesLabel += (seriesLabel ? params.separator : '') + params.label;
         }
 
-        return seriesLabel
+        return seriesLabel;
     },
 
     /**
      * Render center legend.
      * @param {object} params parameters
      *      @param {HTMLElement} container container
-     *      @param {array<string>} legends legends
-     *      @param {array<object>} centerPositions center positions
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} series area element
      * @private
      */
     _renderLegendLabel: function(params) {
@@ -245,7 +245,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Move to center position.
      * @param {{left: number, top: number}} position position
      * @param {string} label label
-     * @returns {{left: number, top: number}}
+     * @returns {{left: number, top: number}} center position
      * @private
      */
     _moveToCenterPosition: function(position, label) {
@@ -261,8 +261,9 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Render center legend.
      * @param {object} params parameters
      *      @param {HTMLElement} container container
-     *      @param {array<string>} legends legends
-     *      @param {array<object>} centerPositions center positions
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} area element
      * @private
      */
     _renderCenterLegend: function(params) {
@@ -278,7 +279,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     /**
      * Add end position.
      * @param {number} centerLeft center left
-     * @param {array<object>} positions positions
+     * @param {array.<object>} positions positions
      * @private
      */
     _addEndPosition: function(centerLeft, positions) {
@@ -294,22 +295,22 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
-     * Mode to outer position.
+     * Move to outer position.
      * @param {number} centerLeft center left
-     * @param {array<object>} positions positions
+     * @param {object} position position
      * @param {string} label label
-     * @returns {{left: number, top: number}}
+     * @returns {{left: number, top: number}} outer position
      * @private
      */
-    _moveToOuterPosition: function(centerLeft, position , label) {
+    _moveToOuterPosition: function(centerLeft, position, label) {
         var positionEnd = position.end,
             left = positionEnd.left,
             top = positionEnd.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
 
         if (left < centerLeft) {
-            left -= renderUtil.getRenderedLabelWidth(label, this.theme.label) + 5;
+            left -= renderUtil.getRenderedLabelWidth(label, this.theme.label) + chartConst.SERIES_LABEL_PADDING;
         } else {
-            left += 5;
+            left += chartConst.SERIES_LABEL_PADDING;
         }
 
         return {
@@ -319,11 +320,12 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
     },
 
     /**
-     * Render center legend.
+     * Render outer legend.
      * @param {object} params parameters
      *      @param {HTMLElement} container container
-     *      @param {array<string>} legends legends
-     *      @param {array<object>} centerPositions center positions
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} area element
      * @private
      */
     _renderOuterLegend: function(params) {
@@ -347,8 +349,8 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
 
     /**
      * Render series label.
-     * @param params
-     * @returns {*}
+     * @param {object} params parameters
+     * @returns {HTMLElement} area element
      * @private
      */
     _renderSeriesLabel: function(params) {
@@ -365,7 +367,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * Get bound.
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @returns {left: number, top: number}
+     * @returns {{left: number, top: number}} bound
      * @private
      */
     _getBound: function(groupIndex, index) {

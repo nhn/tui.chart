@@ -407,7 +407,7 @@ describe('BarChartSeries', function() {
                 ]
             };
 
-            series.options.shownLabel = true;
+            series.options.showLabel = true;
 
             actual = series._renderSeriesLabel(params);
             expected = series._renderNormalSeriesLabel(params);
@@ -452,7 +452,7 @@ describe('BarChartSeries', function() {
                 ]
             };
 
-            series.options.shownLabel = true;
+            series.options.showLabel = true;
             series.options.stacked = 'normal';
             actual = series._renderSeriesLabel(params);
             expected = series._renderStackedSeriesLabel(params);

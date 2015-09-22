@@ -19,6 +19,6 @@ var tags = {
 };
 
 module.exports = {
-    TPL_TOOLTIP: templateMaker.template(tags.HTML_TOOLTIP),
-    TPL_DEFAULT_TEMPLATE: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE)
+    tplTooltip: templateMaker.template(tags.HTML_TOOLTIP),
+    tplDefaultTemplate: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE)
 };

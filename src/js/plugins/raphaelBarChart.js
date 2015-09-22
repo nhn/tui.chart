@@ -29,7 +29,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             dimension = data.dimension;
 
         if (!groupBounds) {
-            return;
+            return null;
         }
 
         if (!paper) {
@@ -55,17 +55,21 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             borderColor = theme.borderColor || 'none',
             bars = [];
         ne.util.forEachArray(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
+            var singleColor = singleColors[groupIndex],
+                color, id, rect;
             ne.util.forEachArray(bounds, function(bound, index) {
                 if (!bound) {
                     return;
                 }
-                var color = singleColor || colors[index],
-                    id = groupIndex + '-' + index,
-                    rect = this._renderBar(paper, color, borderColor, bound.start);
+
+                color = singleColor || colors[index];
+                id = groupIndex + '-' + index;
+                rect = this._renderBar(paper, color, borderColor, bound.start);
+
                 if (rect) {
                     this._bindHoverEvent(rect, bound.end, id, inCallback, outCallback);
                 }
+
                 bars.push({
                     rect: rect,
                     bound: bound.end
@@ -118,6 +122,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
 
     /**
      * Animate.
+     * @param {function} callback callback
      */
     animate: function(callback) {
         ne.util.forEach(this.bars, function(bar) {

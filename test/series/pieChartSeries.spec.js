@@ -84,12 +84,12 @@ describe('PieChartSeries', function() {
             });
         });
 
-        it('shownLabel=true, legendType=outer일 때에는 pie차트의 circle bounds의 반지름을(r) 작은 크기로 생성합니다.', function () {
+        it('showLabel=true, legendType=outer일 때에는 pie차트의 circle bounds의 반지름을(r) 작은 크기로 생성합니다.', function () {
             var actual = series._makeCircleBound({
                 width: 400,
                 height: 300
             }, {
-                shownLabel: true,
+                showLabel: true,
                 legendType: 'outer'
             });
 
@@ -126,25 +126,25 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('shownLabel 옵션만 있을 경우에는 label만 반환한다.', function() {
+        it('showLabel 옵션만 있을 경우에는 label만 반환한다.', function() {
             var actual = series._getSeriesLabel({
                     label: 'label',
                     options: {
-                        shownLabel: true
+                        showLabel: true
                     }
                 }),
                 expected = 'label';
             expect(actual).toBe(expected);
         });
 
-        it('legendType, shownLabel 옵션이 있을 경우에는 legend + separator + label 형태로 반환합니다.', function() {
+        it('legendType, showLabel 옵션이 있을 경우에는 legend + separator + label 형태로 반환합니다.', function() {
             var actual = series._getSeriesLabel({
                     legend: 'legend',
                     label: 'label',
                     separator: ':&nbsp;',
                     options: {
                         legendType: 'outer',
-                        shownLabel: true
+                        showLabel: true
                     }
                 }),
                 expected = 'legend:&nbsp;label';

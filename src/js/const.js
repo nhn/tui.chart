@@ -30,6 +30,6 @@ module.exports = {
     CHART_TYPE_LINE: 'line',
     CHART_TYPE_COMBO: 'combo',
     CHART_TYPE_PIE: 'pie',
-    YAXIS_PROPS: ['tickColor', 'title', 'label'],
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors']
+    YAXIS_PROPS: ['tickColor', 'title', 'label'], // yaxis theme의 속성 - chart type filtering할 때 사용됨
+    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors'] // series theme의 속성 - chart type filtering할 때 사용됨
 };

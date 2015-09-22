@@ -12,6 +12,6 @@ var tags = {
 };
 
 module.exports = {
-    TPL_SERIES_LABEL: templateMaker.template(tags.HTML_SERIES_LABEL),
-    TPL_CSS_TEXT: templateMaker.template(tags.TEXT_CSS_TEXT)
+    tplSeriesLabel: templateMaker.template(tags.HTML_SERIES_LABEL),
+    tplCssText: templateMaker.template(tags.TEXT_CSS_TEXT)
 };
