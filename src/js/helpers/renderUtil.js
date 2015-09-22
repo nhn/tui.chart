@@ -88,7 +88,7 @@ var renderUtil = {
     _getRenderedLabelSize: function(label, theme, offsetType) {
         var elDiv, elSpan, labelSize;
 
-        if (!label) {
+        if (ne.util.isUndefined(label) || label === '') {
             return 0;
         }
 

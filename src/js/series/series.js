@@ -248,11 +248,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             subValue = 0,
             percentValues;
 
-        if (this.chartType !== chartConst.CHART_TYPE_LINE && min < 0 && max <= 0) {
+        if (this.chartType !== chartConst.CHART_TYPE_LINE && this.chartType !== chartConst.CHART_TYPE_AREA && min < 0 && max <= 0) {
             flag = -1;
             subValue = max;
             distance = min - max;
-        } else if (this.chartType === chartConst.CHART_TYPE_LINE || min >= 0) {
+        } else if (this.chartType === chartConst.CHART_TYPE_LINE || this.chartType === chartConst.CHART_TYPE_AREA || min >= 0) {
             subValue = min;
         }
 

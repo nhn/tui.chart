@@ -6,14 +6,16 @@
 
 'use strict';
 
-var AxisTypeBase = require('./axisTypeBase.js'),
-    axisDataMaker = require('../helpers/axisDataMaker.js'),
-    Series = require('../series/barChartSeries.js');
+var ChartBase = require('./chartBase'),
+    AxisTypeBase = require('./axisTypeBase'),
+    axisDataMaker = require('../helpers/axisDataMaker'),
+    Series = require('../series/barChartSeries');
 
-var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype */ {
+var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**
      * Bar chart.
      * @constructs BarChart
+     * @extends ChartBase
      * @extends AxisTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
@@ -29,7 +31,7 @@ var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype *
 
         this.className = 'ne-bar-chart';
 
-        AxisTypeBase.call(this, bounds, theme, options);
+        ChartBase.call(this, bounds, theme, options);
 
         axisData = this._makeAxesData(convertData, bounds, options);
         this._addComponents(convertData, axisData, options);
@@ -76,22 +78,21 @@ var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype *
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
             },
-            chartType: options.chartType
-        });
-
-        this.addComponent('series', Series, {
-            libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
-            allowNegativeTooltip: true,
-            data: {
-                values: convertData.values,
-                formattedValues: convertData.formattedValues,
-                formatFunctions: convertData.formatFunctions,
-                scale: axesData.xAxis.scale
+            Series: Series,
+            seriesData: {
+                allowNegativeTooltip: true,
+                data: {
+                    values: convertData.values,
+                    formattedValues: convertData.formattedValues,
+                    formatFunctions: convertData.formatFunctions,
+                    scale: axesData.xAxis.scale
+                }
             }
         });
     }
 });
+
+AxisTypeBase.mixin(BarChart);
 
 module.exports = BarChart;

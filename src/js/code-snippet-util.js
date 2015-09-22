@@ -134,6 +134,23 @@ var any = function(arr, condition) {
 };
 
 /**
+ * All of them is true or not.
+ * @param {array} arr target array
+ * @param {function} condition condition function
+ * @returns {boolean} result boolean
+ */
+var all = function(arr, condition) {
+    var result = true;
+    ne.util.forEachArray(arr, function(item) {
+        if (!condition(item)) {
+            result = false;
+            return false;
+        }
+    });
+    return result;
+};
+
+/**
  * Get after point length.
  * @param {string | number} value target value
  * @returns {number} result length
@@ -232,6 +249,7 @@ ne.util.zip = zip;
 ne.util.min = min;
 ne.util.max = max;
 ne.util.any = any;
+ne.util.all = all;
 ne.util.lengthAfterPoint = lengthAfterPoint;
 ne.util.mod = mod;
 ne.util.findMultipleNum = findMultipleNum;

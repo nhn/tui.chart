@@ -25,7 +25,6 @@ var raphaelRenderUtil = {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }
         });
-
         return 'M' + fromPoint.join(' ') + 'L' + toPoint.join(' ');
     },
 

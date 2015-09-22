@@ -6,23 +6,12 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase.js'),
-    Axis = require('../axes/axis.js'),
+var Axis = require('../axes/axis.js'),
     Plot = require('../plots/plot.js'),
     Legend = require('../legends/legend.js'),
     Tooltip = require('../tooltips/tooltip.js');
 
-var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.prototype */ {
-    /**
-     * Axis type chart base
-     * @constructs AxisTypeBase
-     * @extends ChartBase
-     */
-    init: function() {
-        var args = [].slice.call(arguments);
-        ChartBase.apply(this, args);
-    },
-
+var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
     /**
      * Add axis components
      * @param {object} params parameters
@@ -32,7 +21,8 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
      *      @param {function} params.Series series class
      */
     addAxisComponents: function(params) {
-        var convertData = params.convertData;
+        var convertData = params.convertData,
+            options = this.options;
 
         if (params.plotData) {
             this.addComponent('plot', Plot, params.plotData);
@@ -52,6 +42,12 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
             });
         }
 
+        this.addComponent('series', params.Series, ne.util.extend({
+            libType: options.libType,
+            chartType: options.chartType,
+            tooltipPrefix: this.tooltipPrefix,
+        }, params.seriesData));
+
         this.addComponent('tooltip', Tooltip, {
             values: convertData.values,
             formattedValues: convertData.formattedValues,
@@ -61,5 +57,9 @@ var AxisTypeBase = ne.util.defineClass(ChartBase, /** @lends AxisTypeBase.protot
         });
     }
 });
+
+AxisTypeBase.mixin = function(func) {
+    ne.util.extend(func.prototype, AxisTypeBase.prototype);
+};
 
 module.exports = AxisTypeBase;
