@@ -53,7 +53,7 @@ describe('axisDataMaker', function() {
                 height: 300
             });
 
-            expect(baseSize).toEqual(400);
+            expect(baseSize).toBe(400);
         });
 
         it('y축일 경우에는 height를 기본 사이즈 정보로 반환합니다.', function () {
@@ -62,7 +62,7 @@ describe('axisDataMaker', function() {
                 height: 300
             }, true);
 
-            expect(baseSize).toEqual(300);
+            expect(baseSize).toBe(300);
         });
     });
 
@@ -91,7 +91,7 @@ describe('axisDataMaker', function() {
                 },
                 step: 20
             });
-            expect(value).toEqual(20);
+            expect(value).toBe(20);
         });
     });
 
@@ -321,7 +321,7 @@ describe('axisDataMaker', function() {
                 chartType: 'bar'
             });
 
-            expect(result).toEqual(0);
+            expect(result).toBe(0);
         });
     });
 
@@ -333,59 +333,59 @@ describe('axisDataMaker', function() {
                 step: 20
             });
 
-            expect(result).toEqual(110);
+            expect(result).toBe(110);
         });
     });
 
     describe('_normalizeMin()', function() {
         it('step이 2일때 min 1.6에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(1.6, 2);
-            expect(result).toEqual(0);
+            expect(result).toBe(0);
         });
 
         it('step이 1일때 min 1.6에 대한 정규화 결과는 1입니다.', function () {
             var result = maker._normalizeMin(1.6, 1);
-            expect(result).toEqual(1);
+            expect(result).toBe(1);
         });
 
         it('step이 2일때 min 2.3에 대한 정규화 결과는 2입니다.', function () {
             var result = maker._normalizeMin(2.3, 2);
-            expect(result).toEqual(2);
+            expect(result).toBe(2);
         });
 
         it('step이 2일때 min 3.3에 대한 정규화 결과는 2입니다.', function () {
             var result = maker._normalizeMin(3.3, 2);
-            expect(result).toEqual(2);
+            expect(result).toBe(2);
         });
 
         it('step이 5일때 min 3.3에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(3.3, 5);
-            expect(result).toEqual(0);
+            expect(result).toBe(0);
         });
 
         it('step이 5일때 min 7.3에 대한 정규화 결과는 5입니다.', function () {
             var result = maker._normalizeMin(7.3, 5);
-            expect(result).toEqual(5);
+            expect(result).toBe(5);
         });
 
         it('step이 10일때 min 7.3에 대한 정규화 결과는 0입니다.', function () {
             var result = maker._normalizeMin(7.3, 10);
-            expect(result).toEqual(0);
+            expect(result).toBe(0);
         });
 
         it('step이 30일때 min -100에 대한 정규화 결과는 -120입니다.', function () {
             var result = maker._normalizeMin(-100, 30);
-            expect(result).toEqual(-120);
+            expect(result).toBe(-120);
         });
 
         it('step이 30일때 min -10에 대한 정규화 결과는 -30입니다.', function () {
             var result = maker._normalizeMin(-10, 30);
-            expect(result).toEqual(-30);
+            expect(result).toBe(-30);
         });
 
         it('step이 5일때 min -10에 대한 정규화 결과는 -10입니다.', function () {
             var result = maker._normalizeMin(-10, 5);
-            expect(result).toEqual(-10);
+            expect(result).toBe(-10);
         });
     });
 
@@ -396,7 +396,7 @@ describe('axisDataMaker', function() {
                 max: 110
             }, 20, 5);
 
-            expect(result).toEqual(120);
+            expect(result).toBe(120);
         });
     });
 
@@ -406,7 +406,7 @@ describe('axisDataMaker', function() {
                 min: 0,
                 max: 110
             }, 20, 5);
-            expect(result).toEqual(120);
+            expect(result).toBe(120);
         });
     });
 

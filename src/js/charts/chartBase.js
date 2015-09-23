@@ -46,6 +46,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
     makeBaseData: function(userData, theme, options, boundParams) {
         var convertData = dataConverter.convert(userData, options.chart, options.chartType),
             bounds = boundsMaker.make(ne.util.extend({
+                chartType: options.chartType,
                 convertData: convertData,
                 theme: theme,
                 options: options
@@ -95,6 +96,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
             this._renderTitle(el);
             renderUtil.renderDimension(el, this.bounds.chart.dimension);
             renderUtil.renderBackground(el, this.theme.chart.background);
+            renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
         }
 
         this._renderComponents(el, this.components, paper);

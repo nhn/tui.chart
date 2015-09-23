@@ -92,7 +92,7 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeLineHtml: function(params) {
-        var template = plotTemplate.TPL_PLOT_LINE,
+        var template = plotTemplate.tplPlotLine,
             lineHtml = ne.util.map(params.positions, function(position) {
                 var cssTexts = [
                         renderUtil.concatStr(params.positionType, ':', position, 'px'),

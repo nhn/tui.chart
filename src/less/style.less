@@ -163,13 +163,28 @@
   }
 
   .ne-chart-series-area {
-    z-index: 300;
+    z-index: 400;
     position: absolute;
-    overflow: hidden;
+    .ne-chart-series-label-area {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      display: none;
+      .opacity(0);
+      .ne-chart-series-label {
+        position: absolute;
+        cursor: default;
+        text-align:center;
+        .text-shadow(#fff 0px 0px 3px);
+      }
+      &.show {
+        display: block;
+      }
+    }
   }
 
   .ne-chart-legend-area {
-    z-index: 400;
+    z-index: 300;
     position: absolute;
     padding: 10px;
     .ne-chart-legend {
@@ -218,6 +233,17 @@
       }
     }
   }
+}
+
+.ne-chart-size-check-element {
+  clear:both;
+  position:absolute;
+  top:100000px;
+  left:100000px;
+  width:1000px;
+  height:100px;
+  line-height:1;
+  z-index: 10000000;
 }
 
 :root .ne-chart .ne-chart-axis-area.vertical .ne-chart-title-area {

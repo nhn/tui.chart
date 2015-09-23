@@ -95,6 +95,7 @@ var ColumnChart = ne.util.defineClass(AxisTypeBase, /** @lends ColumnChart.proto
             data: {
                 values: convertData.values,
                 formattedValues: convertData.formattedValues,
+                formatFunctions: convertData.formatFunctions,
                 scale: axesData.yAxis.scale
             }
         });

@@ -113,7 +113,7 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
      */
     _makeLegendHtml: function() {
         var labels = this._makeLegendLabels(),
-            template = legendTemplate.TPL_LEGEND,
+            template = legendTemplate.tplLegend,
             labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme) + (LABEL_PADDING_TOP * 2),
             baseMarginTop = parseInt((labelHeight - LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = ne.util.map(labels, function(label) {

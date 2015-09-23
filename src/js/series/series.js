@@ -6,12 +6,15 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
+var seriesTemplate = require('./seriesTemplate.js'),
+    chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
+    event = require('../helpers/eventListener.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
-var HIDDEN_WIDTH = 1;
+var HIDDEN_WIDTH = 1,
+    SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
 
 var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -87,14 +90,31 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 dimension: dimension,
                 theme: this.theme,
                 options: this.options
-            };
+            },
+            addData = this.makeAddData(),
+            addDataForSeriesLabel;
 
         if (!paper) {
-            this._renderBounds(el, dimension, bound.position, this.chartType);
+            renderUtil.renderDimension(el, dimension);
         }
 
-        data = ne.util.extend(data, this.makeAddData());
+        this._renderPosition(el, bound.position, this.chartType);
+
+        data = ne.util.extend(data, addData);
+
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+
+        if (this._renderSeriesLabel) {
+            addDataForSeriesLabel = this._makeAddDataForSeriesLabel(el, dimension);
+            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, addData));
+        }
+
+        this.attachEvent(el);
+
+        // series label mouse event 동작 시 사용
+        this.inCallback = inCallback;
+        this.outCallback = outCallback;
+
         return el;
     },
 
@@ -107,19 +127,40 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * To make add data for series label.
+     * @param {HTMLElement} container container
+     * @param {{width: number, height: number}}dimension
+     * @returns {{
+     *      container: HTMLElement,
+     *      values: array.<array>,
+     *      formattedValues: array.<array>,
+     *      formatFunctions: array.<function>,
+     *      dimension: {width: number, height: number}
+     * }} add data for series label
+     * @private
+     */
+    _makeAddDataForSeriesLabel: function(container, dimension) {
+        return {
+            container: container,
+            values: this.data.values,
+            formattedValues: this.data.formattedValues,
+            formatFunctions: this.data.formatFunctions,
+            dimension: dimension
+        };
+    },
+
+    /**
      * Render bounds
      * @param {HTMLElement} el series element
      * @param {{width: number, height: number}} dimension series dimension
-     * @param {{top: number, right: number}} position series position
+     * @param {{top: number, left: number}} position series position
+     * @param {string} chartType chart type
      * @private
      */
-    _renderBounds: function(el, dimension, position, chartType) {
+    _renderPosition: function(el, position, chartType) {
         var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
-        renderUtil.renderDimension(el, dimension);
-
         position.top = position.top - HIDDEN_WIDTH;
-        position.right = position.right + (chartType === chartConst.CHART_TYPE_BAR ? -hiddenWidth : -(HIDDEN_WIDTH * 2));
-
+        position.left = position.left + (chartType === chartConst.CHART_TYPE_BAR ? hiddenWidth : HIDDEN_WIDTH * 2);
         renderUtil.renderPosition(el, position);
     },
 
@@ -248,6 +289,57 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * On mouseover event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+        this.inCallback(this._getBound(groupIndex, index), groupIndex + '-' + index);
+    },
+
+    /**
+     * On mouseout event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+
+        this.outCallback(groupIndex + '-' + index);
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+    },
+
+    /**
      * Call showDot function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
@@ -274,8 +366,47 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate();
+            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
         }
+    },
+
+    /**
+     * To make html about series label
+     * @param {{left: number, top: number}} position position
+     * @param {string} value value
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {string} html string
+     * @private
+     */
+    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+        var cssObj = ne.util.extend(position, this.theme.label);
+        return seriesTemplate.tplSeriesLabel({
+            cssText: seriesTemplate.tplCssText(cssObj),
+            value: value,
+            groupIndex: groupIndex,
+            index: index
+        });
+    },
+
+    /**
+     * Show series label area.
+     */
+    showSeriesLabelArea: function() {
+        if ((!this.options.showLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
+            return;
+        }
+
+        dom.addClass(this.elSeriesLabelArea, 'show');
+
+        (new ne.component.Effects.Fade({
+            element: this.elSeriesLabelArea,
+            duration: 300
+        })).action({
+            start: 0,
+            end: 1,
+            complete: function() {}
+        });
     }
 });
 

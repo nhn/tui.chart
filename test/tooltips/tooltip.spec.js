@@ -141,7 +141,7 @@ describe('Tooltip', function() {
                 [4, 5, 6]
             ];
             result = tooltip._getValueById('id-0-2');
-            expect(result).toEqual(3);
+            expect(result).toBe(3);
         });
     });
 

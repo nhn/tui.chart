@@ -12,13 +12,13 @@ describe('domHandler', function() {
     describe('create()', function() {
         it('Element를 생성합니다.', function () {
             var el = dom.create('DIV');
-            expect(el.nodeName).toEqual('DIV');
+            expect(el.nodeName).toBe('DIV');
         });
 
         it('ClassName을 포함한 Element 생성합니다.', function () {
             var el = dom.create('SPAN', 'test1');
-            expect(el.nodeName).toEqual('SPAN');
-            expect(el.className).toEqual('test1');
+            expect(el.nodeName).toBe('SPAN');
+            expect(el.className).toBe('test1');
         });
     });
 
@@ -39,9 +39,9 @@ describe('domHandler', function() {
             var el = document.createElement('DIV');
             el.className = 'test1';
             dom.addClass(el, 'test1');
-            expect(el.className).toEqual('test1');
+            expect(el.className).toBe('test1');
             dom.addClass(el, 'test2');
-            expect(el.className).toEqual('test1 test2');
+            expect(el.className).toBe('test1 test2');
         });
     });
 
@@ -50,11 +50,11 @@ describe('domHandler', function() {
             var el = document.createElement('DIV');
             el.className = 'test1';
             dom.removeClass(el, 'test1');
-            expect(el.className).toEqual('');
+            expect(el.className).toBe('');
             dom.addClass(el, 'test2');
             dom.addClass(el, 'test1');
             dom.removeClass(el, 'test1');
-            expect(el.className).toEqual('test2');
+            expect(el.className).toBe('test2');
         });
     });
 
@@ -85,7 +85,7 @@ describe('domHandler', function() {
                 result;
             elParent.appendChild(el);
             result = dom.findParentByClass(el, 'test1', 'test1');
-            expect(result).toEqual(elParent);
+            expect(result).toBe(elParent);
         });
     });
 
@@ -95,7 +95,7 @@ describe('domHandler', function() {
                 el = dom.create('SPAN');
 
             dom.append(elParent, el);
-            expect(elParent.firstChild).toEqual(el);
+            expect(elParent.firstChild).toBe(el);
         });
 
         it('배열로 자식 엘리먼트 정보를 전달하면 여러개의 자식 엘리먼트를 순차적으로 추가합니다.', function () {
@@ -105,9 +105,9 @@ describe('domHandler', function() {
                 el3 = dom.create('SPAN');
 
             dom.append(elParent, [el1, el2, el3]);
-            expect(elParent.childNodes[0]).toEqual(el1);
-            expect(elParent.childNodes[1]).toEqual(el2);
-            expect(elParent.childNodes[2]).toEqual(el3);
+            expect(elParent.childNodes[0]).toBe(el1);
+            expect(elParent.childNodes[1]).toBe(el2);
+            expect(elParent.childNodes[2]).toBe(el3);
         });
     });
 });

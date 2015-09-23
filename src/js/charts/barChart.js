@@ -87,6 +87,7 @@ var BarChart = ne.util.defineClass(AxisTypeBase, /** @lends BarChart.prototype *
             data: {
                 values: convertData.values,
                 formattedValues: convertData.formattedValues,
+                formatFunctions: convertData.formatFunctions,
                 scale: axesData.xAxis.scale
             }
         });

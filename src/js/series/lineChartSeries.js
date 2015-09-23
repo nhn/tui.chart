@@ -6,7 +6,10 @@
 
 'use strict';
 
-var Series = require('./series.js');
+var Series = require('./series.js'),
+    chartConst = require('../const.js'),
+    dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js');
 
 var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -49,9 +52,66 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      * @returns {object} add data
      */
     makeAddData: function() {
+        var groupPositions = this._makePositions(this.bound.dimension);
+
+        this.groupPositions = groupPositions;
+
         return {
-            groupPositions: this._makePositions(this.bound.dimension)
+            groupPositions: groupPositions
         };
+    },
+
+    /**
+     * Render series label.
+     * @param {object} params parameters
+     *      @param {HTMLElement} params.container container
+     *      @param {array.<array>} params.groupPositions group positions
+     *      @param {array.<array>} params.formattedValues formatted values
+     * @return {HTMLElement} series area element
+     * @private
+     */
+    _renderSeriesLabel: function(params) {
+        var groupPositions, labelHeight, elSeriesLabelArea, html;
+
+        if (!this.options.showLabel) {
+            return null;
+        }
+
+        groupPositions = params.groupPositions;
+        labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], {
+            fontSize: 12
+        });
+        elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area');
+
+        html = ne.util.map(params.formattedValues, function(values, groupIndex) {
+            return ne.util.map(values, function(value, index) {
+                var position = groupPositions[groupIndex][index],
+                    labelWidth = renderUtil.getRenderedLabelWidth(value, {
+                        fontSize: 12
+                    }),
+                    labelHtml = this._makeSeriesLabelHtml({
+                        left: position.left - (labelWidth / 2),
+                        top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
+                    }, value, index, groupIndex);
+                return labelHtml;
+            }, this).join('');
+        }, this).join('');
+
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
+
+        return elSeriesLabelArea;
+    },
+
+    /**
+     * Get bound.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {{left: number, top: number}} bound
+     * @private
+     */
+    _getBound: function(groupIndex, index) {
+        return this.groupPositions[index][groupIndex];
     }
 });
 

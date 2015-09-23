@@ -11,25 +11,10 @@ var maker = require('../../src/js/helpers/boundsMaker.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('boundsMaker', function() {
-    var getRenderedLabelWidth, getRenderedLabelHeight;
-
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
-        getRenderedLabelWidth  = renderUtil.getRenderedLabelWidth;
-        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
-
-        renderUtil.getRenderedLabelWidth = function() {
-            return 50;
-        };
-
-        renderUtil.getRenderedLabelHeight = function() {
-            return 20;
-        };
-    });
-
-    afterAll(function() {
-        renderUtil.getRenderedLabelWidth = getRenderedLabelWidth;
-        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+        spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     describe('_getValueAxisMaxLabel()', function() {
@@ -48,7 +33,7 @@ describe('boundsMaker', function() {
                     [80, 10, 70]
                 ]
             });
-            expect(result).toEqual(90);
+            expect(result).toBe(90);
         });
 
         it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
@@ -60,7 +45,7 @@ describe('boundsMaker', function() {
                     ]
                 }
             }, 'column');
-            expect(result).toEqual(70);
+            expect(result).toBe(70);
         });
     });
 
@@ -69,21 +54,21 @@ describe('boundsMaker', function() {
             var result = maker._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
                 return label.length;
             });
-            expect(result).toEqual(7);
+            expect(result).toBe(7);
         });
     });
 
     describe('_getRenderedLabelsMaxWidth()', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
             var result = maker._getRenderedLabelsMaxWidth(['label1', 'label12']);
-            expect(result).toEqual(50);
+            expect(result).toBe(50);
         });
     });
 
     describe('_getRenderedLabelsMaxHeight()', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
             var result = maker._getRenderedLabelsMaxHeight(['label1', 'label12']);
-            expect(result).toEqual(20);
+            expect(result).toBe(20);
         });
     });
 
@@ -95,7 +80,7 @@ describe('boundsMaker', function() {
                 title: {},
                 label: {}
             });
-            expect(result).toEqual(60);
+            expect(result).toBe(60);
         });
     });
 
@@ -111,7 +96,7 @@ describe('boundsMaker', function() {
                 }
             );
 
-            expect(result).toEqual(97);
+            expect(result).toBe(97);
         });
     });
 
@@ -141,7 +126,7 @@ describe('boundsMaker', function() {
                 ]
             });
 
-            expect(result).toEqual(97);
+            expect(result).toBe(97);
         });
     });
 
@@ -194,9 +179,9 @@ describe('boundsMaker', function() {
                     }
                 }
             });
-            expect(result.yAxis.width).toEqual(97);
-            expect(result.yrAxis.width).toEqual(0);
-            expect(result.xAxis.height).toEqual(60);
+            expect(result.yAxis.width).toBe(97);
+            expect(result.yrAxis.width).toBe(0);
+            expect(result.xAxis.height).toBe(60);
         });
     });
 
@@ -244,15 +229,15 @@ describe('boundsMaker', function() {
                 height: 400
             });
 
-            expect(result.title.height).toEqual(40);
-            expect(result.series.width).toEqual(296);
-            expect(result.series.height).toEqual(280);
+            expect(result.title.height).toBe(40);
+            expect(result.series.width).toBe(296);
+            expect(result.series.height).toBe(280);
 
-            expect(result.legend.width).toEqual(87);
+            expect(result.legend.width).toBe(87);
 
-            expect(result.yAxis.width).toEqual(97);
-            expect(result.yrAxis.width).toEqual(0);
-            expect(result.xAxis.height).toEqual(60);
+            expect(result.yAxis.width).toBe(97);
+            expect(result.yrAxis.width).toBe(0);
+            expect(result.xAxis.height).toBe(60);
         });
     });
 
@@ -327,7 +312,7 @@ describe('boundsMaker', function() {
                     }
                 ],
                 {});
-            expect(result).toEqual(87);
+            expect(result).toBe(87);
         });
     });
 
@@ -388,22 +373,22 @@ describe('boundsMaker', function() {
                 hasAxes: true,
                 options: {}
             });
-            expect(result.chart.dimension.width).toEqual(500);
-            expect(result.chart.dimension.height).toEqual(400);
-            expect(result.series.dimension.width).toEqual(296);
-            expect(result.series.dimension.height).toEqual(280);
-            expect(result.series.position.top).toEqual(50);
-            expect(result.series.position.right).toEqual(97);
-            expect(result.yAxis.dimension.width).toEqual(97);
-            expect(result.yAxis.dimension.height).toEqual(280);
-            expect(result.yAxis.position.top).toEqual(50);
-            expect(result.xAxis.dimension.width).toEqual(296);
-            expect(result.xAxis.dimension.height).toEqual(60);
-            expect(result.xAxis.position.top).toEqual(329);
-            expect(result.legend.position.top).toEqual(40);
-            expect(result.legend.position.left).toEqual(403);
-            expect(result.tooltip.position.top).toEqual(50);
-            expect(result.tooltip.position.left).toEqual(107);
+            expect(result.chart.dimension.width).toBe(500);
+            expect(result.chart.dimension.height).toBe(400);
+            expect(result.series.dimension.width).toBe(296);
+            expect(result.series.dimension.height).toBe(280);
+            expect(result.series.position.top).toBe(50);
+            expect(result.series.position.left).toBe(107);
+            expect(result.yAxis.dimension.width).toBe(97);
+            expect(result.yAxis.dimension.height).toBe(280);
+            expect(result.yAxis.position.top).toBe(50);
+            expect(result.xAxis.dimension.width).toBe(296);
+            expect(result.xAxis.dimension.height).toBe(60);
+            expect(result.xAxis.position.top).toBe(329);
+            expect(result.legend.position.top).toBe(40);
+            expect(result.legend.position.left).toBe(403);
+            expect(result.tooltip.position.top).toBe(50);
+            expect(result.tooltip.position.left).toBe(107);
         });
     });
 });

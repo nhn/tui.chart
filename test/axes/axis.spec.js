@@ -11,18 +11,11 @@ var Axis = require('../../src/js/axes/axis.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Axis', function() {
-    var axis, getRenderedLabelHeight;
+    var axis;
 
     beforeAll(function() {
-        // 브라우저마다 렌더된 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
-        getRenderedLabelHeight  = renderUtil.getRenderedLabelHeight;
-        renderUtil.getRenderedLabelHeight = function() {
-            return 20;
-        };
-    });
-
-    afterAll(function() {
-        renderUtil.getRenderedLabelHeight = getRenderedLabelHeight;
+        // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     beforeEach(function() {
@@ -62,21 +55,21 @@ describe('Axis', function() {
             axis._renderTitleAreaStyle(elTitle, 50);
 
             // 세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.
-            expect(elTitle.style.width).toEqual('50px');
-            expect(elTitle.style.left).toEqual('0px');
+            expect(elTitle.style.width).toBe('50px');
+            expect(elTitle.style.left).toBe('0px');
 
             // IE8에서는 회전 방법 이슈로 인해 top값을 설정하지 않습니다.
             if (!renderUtil.isIE8()) {
-                expect(elTitle.style.top).toEqual('50px');
+                expect(elTitle.style.top).toBe('50px');
             }
         });
 
         it('우측 y axis 타이틀 영역의 css style을 렌더링합니다. 우측에 배치되기 때문에 right값으로 설정됩니다.', function() {
             var elTitle = dom.create('DIV');
             axis._renderTitleAreaStyle(elTitle, 50, true);
-            expect(elTitle.style.width).toEqual('50px');
-            expect(elTitle.style.right).toEqual('-50px');
-            expect(elTitle.style.top).toEqual('0px');
+            expect(elTitle.style.width).toBe('50px');
+            expect(elTitle.style.right).toBe('-50px');
+            expect(elTitle.style.top).toBe('0px');
         });
     });
 
@@ -91,8 +84,8 @@ describe('Axis', function() {
                 size: 200
             });
 
-            expect(elTitle.innerHTML).toEqual('Axis Title');
-            expect(elTitle.style.width).toEqual('200px');
+            expect(elTitle.innerHTML).toBe('Axis Title');
+            expect(elTitle.style.width).toBe('200px');
         });
         it('타이틀이 없을 경우에는 타이틀 영역이 렌더링 되지 않고 null을 반환합니다.', function() {
             var elTitle;
@@ -124,12 +117,12 @@ describe('Axis', function() {
             elTickArea = axis._renderTickArea(300);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toEqual(5);
-            expect(childNodes[0].style.left).toEqual('0px');
-            expect(childNodes[1].style.left).toEqual('75px');
-            expect(childNodes[2].style.left).toEqual('150px');
-            expect(childNodes[3].style.left).toEqual('224px');
-            expect(childNodes[4].style.left).toEqual('299px');
+            expect(childNodes.length).toBe(5);
+            expect(childNodes[0].style.left).toBe('0px');
+            expect(childNodes[1].style.left).toBe('75px');
+            expect(childNodes[2].style.left).toBe('150px');
+            expect(childNodes[3].style.left).toBe('224px');
+            expect(childNodes[4].style.left).toBe('299px');
         });
 
         it('axis 영역의 높이가 300이고 tick count가 5인 y축(벨류 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 밑에서 부터 렌더링 됩니다.', function() {
@@ -143,12 +136,12 @@ describe('Axis', function() {
             elTickArea = axis._renderTickArea(300);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toEqual(5);
-            expect(childNodes[0].style.bottom).toEqual('0px');
-            expect(childNodes[1].style.bottom).toEqual('75px');
-            expect(childNodes[2].style.bottom).toEqual('150px');
-            expect(childNodes[3].style.bottom).toEqual('224px');
-            expect(childNodes[4].style.bottom).toEqual('299px');
+            expect(childNodes.length).toBe(5);
+            expect(childNodes[0].style.bottom).toBe('0px');
+            expect(childNodes[1].style.bottom).toBe('75px');
+            expect(childNodes[2].style.bottom).toBe('150px');
+            expect(childNodes[3].style.bottom).toBe('224px');
+            expect(childNodes[4].style.bottom).toBe('299px');
         });
     });
 
@@ -166,16 +159,16 @@ describe('Axis', function() {
             elLabelArea = axis._renderLabelArea(300);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toEqual(3);
-            expect(childNodes[0].style.left).toEqual('0px');
-            expect(childNodes[1].style.left).toEqual('100px');
-            expect(childNodes[2].style.left).toEqual('199px');
-            expect(childNodes[0].style.width).toEqual('100px');
-            expect(childNodes[1].style.width).toEqual('100px');
-            expect(childNodes[2].style.width).toEqual('100px');
-            expect(childNodes[0].innerHTML).toEqual('label1');
-            expect(childNodes[1].innerHTML).toEqual('label2');
-            expect(childNodes[2].innerHTML).toEqual('label3');
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.left).toBe('0px');
+            expect(childNodes[1].style.left).toBe('100px');
+            expect(childNodes[2].style.left).toBe('199px');
+            expect(childNodes[0].style.width).toBe('100px');
+            expect(childNodes[1].style.width).toBe('100px');
+            expect(childNodes[2].style.width).toBe('100px');
+            expect(childNodes[0].innerHTML).toBe('label1');
+            expect(childNodes[1].innerHTML).toBe('label2');
+            expect(childNodes[2].innerHTML).toBe('label3');
         });
 
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
@@ -185,19 +178,19 @@ describe('Axis', function() {
             elLabelArea = axis._renderLabelArea(300, 100);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toEqual(3);
-            expect(childNodes[0].style.top).toEqual('0px');
-            expect(childNodes[1].style.top).toEqual('100px');
-            expect(childNodes[2].style.top).toEqual('199px');
-            expect(childNodes[0].style.height).toEqual('100px');
-            expect(childNodes[1].style.height).toEqual('100px');
-            expect(childNodes[2].style.height).toEqual('100px');
-            expect(childNodes[0].style.lineHeight).toEqual('100px');
-            expect(childNodes[1].style.lineHeight).toEqual('100px');
-            expect(childNodes[2].style.lineHeight).toEqual('100px');
-            expect(childNodes[0].innerHTML).toEqual('label1');
-            expect(childNodes[1].innerHTML).toEqual('label2');
-            expect(childNodes[2].innerHTML).toEqual('label3');
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.top).toBe('0px');
+            expect(childNodes[1].style.top).toBe('100px');
+            expect(childNodes[2].style.top).toBe('199px');
+            expect(childNodes[0].style.height).toBe('100px');
+            expect(childNodes[1].style.height).toBe('100px');
+            expect(childNodes[2].style.height).toBe('100px');
+            expect(childNodes[0].style.lineHeight).toBe('100px');
+            expect(childNodes[1].style.lineHeight).toBe('100px');
+            expect(childNodes[2].style.lineHeight).toBe('100px');
+            expect(childNodes[0].innerHTML).toBe('label1');
+            expect(childNodes[1].innerHTML).toBe('label2');
+            expect(childNodes[2].innerHTML).toBe('label3');
         });
 
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -211,18 +204,18 @@ describe('Axis', function() {
             elLabelArea = axis._renderLabelArea(300);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toEqual(3);
+            expect(childNodes.length).toBe(3);
 
             // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
-            expect(childNodes[0].style.left).toEqual('0px');
-            expect(childNodes[1].style.left).toEqual('150px');
-            expect(childNodes[2].style.left).toEqual('299px');
-            expect(childNodes[0].style.width).toEqual('150px');
-            expect(childNodes[1].style.width).toEqual('150px');
-            expect(childNodes[2].style.width).toEqual('150px');
-            expect(childNodes[0].innerHTML).toEqual('0.00');
-            expect(childNodes[1].innerHTML).toEqual('30.00');
-            expect(childNodes[2].innerHTML).toEqual('60.00');
+            expect(childNodes[0].style.left).toBe('0px');
+            expect(childNodes[1].style.left).toBe('150px');
+            expect(childNodes[2].style.left).toBe('299px');
+            expect(childNodes[0].style.width).toBe('150px');
+            expect(childNodes[1].style.width).toBe('150px');
+            expect(childNodes[2].style.width).toBe('150px');
+            expect(childNodes[0].innerHTML).toBe('0.00');
+            expect(childNodes[1].innerHTML).toBe('30.00');
+            expect(childNodes[2].innerHTML).toBe('60.00');
         });
 
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -237,20 +230,20 @@ describe('Axis', function() {
             elLabelArea = axis._renderLabelArea(300, 100);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toEqual(3);
-            expect(childNodes[0].style.bottom).toEqual('0px');
-            expect(childNodes[1].style.bottom).toEqual('150px');
-            expect(childNodes[2].style.bottom).toEqual('299px');
-            expect(childNodes[0].innerHTML).toEqual('0.00');
-            expect(childNodes[1].innerHTML).toEqual('30.00');
-            expect(childNodes[2].innerHTML).toEqual('60.00');
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.bottom).toBe('0px');
+            expect(childNodes[1].style.bottom).toBe('150px');
+            expect(childNodes[2].style.bottom).toBe('299px');
+            expect(childNodes[0].innerHTML).toBe('0.00');
+            expect(childNodes[1].innerHTML).toBe('30.00');
+            expect(childNodes[2].innerHTML).toBe('60.00');
         });
     });
 
     describe('_getRenderedTitleHeight()', function() {
         it('렌더링된 타이틀 높이를 반환합니다.', function() {
             var result = axis._getRenderedTitleHeight();
-            expect(result).toEqual(20);
+            expect(result).toBe(20);
         });
     });
 
@@ -305,7 +298,7 @@ describe('Axis', function() {
                     '<div class="ne-chart-label" style="left:20px">label2</div>' +
                     '<div class="ne-chart-label" style="left:30px">label3</div>';
 
-            expect(labelsHtml).toEqual(compareHtml);
+            expect(labelsHtml).toBe(compareHtml);
         });
     });
 
@@ -318,8 +311,8 @@ describe('Axis', function() {
             });
 
             // 레이블이 타입의 경우 기본 설정이 가운데 배치되기 때문에 위치 이동 필요 없습니다.
-            expect(elLabelArea.style.top).toEqual('');
-            expect(elLabelArea.style.left).toEqual('');
+            expect(elLabelArea.style.top).toBe('');
+            expect(elLabelArea.style.left).toBe('');
         });
 
         it('벨류 타입 y축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 top 이동 됩니다.', function() {
@@ -333,7 +326,7 @@ describe('Axis', function() {
 
             top = parseInt(elLabelArea.style.top, 10);
 
-            expect(top).toEqual(10);
+            expect(top).toBe(10);
         });
 
         it('벨류 타입 x축의 경우는 레이블을 tick의 중앙에 위치 시키기 위해 영역이 left -25px 이동 됩니다.', function() {
@@ -345,7 +338,7 @@ describe('Axis', function() {
                 },
                 labelSize: 50
             });
-            expect(elLabelArea.style.left).toEqual('-25px');
+            expect(elLabelArea.style.left).toBe('-25px');
         });
     });
 
@@ -355,13 +348,13 @@ describe('Axis', function() {
             axis.data.isVertical = false;
             el = axis.render();
 
-            expect(el.style.width).toEqual('100px');
-            expect(el.style.height).toEqual('200px');
-            expect(el.style.top).toEqual('20px');
+            expect(el.style.width).toBe('100px');
+            expect(el.style.height).toBe('200px');
+            expect(el.style.top).toBe('20px');
             expect(dom.hasClass(el, 'horizontal')).toBeTruthy();
-            expect(el.childNodes[0].className).toEqual('ne-chart-title-area');
-            expect(el.childNodes[1].className).toEqual('ne-chart-tick-area');
-            expect(el.childNodes[2].className).toEqual('ne-chart-label-area');
+            expect(el.childNodes[0].className).toBe('ne-chart-title-area');
+            expect(el.childNodes[1].className).toBe('ne-chart-tick-area');
+            expect(el.childNodes[2].className).toBe('ne-chart-label-area');
         });
     });
 });

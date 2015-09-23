@@ -35,15 +35,15 @@ describe('test Plot', function() {
             plot._renderLines(el, bound.dimension);
             childNodes = el.childNodes;
 
-            expect(childNodes.length).toEqual(4);
+            expect(childNodes.length).toBe(4);
             expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
             expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toEqual('50px');
-            expect(childNodes[1].style.bottom).toEqual('100px');
-            expect(childNodes[2].style.bottom).toEqual('149px');
-            expect(childNodes[3].style.bottom).toEqual('199px');
-            expect(childNodes[0].style.width).toEqual('400px');
-            expect(childNodes[3].style.width).toEqual('400px');
+            expect(childNodes[0].style.bottom).toBe('50px');
+            expect(childNodes[1].style.bottom).toBe('100px');
+            expect(childNodes[2].style.bottom).toBe('149px');
+            expect(childNodes[3].style.bottom).toBe('199px');
+            expect(childNodes[0].style.width).toBe('400px');
+            expect(childNodes[3].style.width).toBe('400px');
         });
     });
 
@@ -65,7 +65,7 @@ describe('test Plot', function() {
                     '<div class="ne-chart-plot-line vertical" style="left:20px;height:200px"></div>' +
                     '<div class="ne-chart-plot-line vertical" style="left:30px;height:200px"></div>' +
                     '<div class="ne-chart-plot-line vertical" style="left:40px;height:200px"></div>';
-            expect(resultHtml).toEqual(compareHtml);
+            expect(resultHtml).toBe(compareHtml);
         });
     });
 
@@ -106,23 +106,23 @@ describe('test Plot', function() {
             var el = plot.render(),
                 childNodes;
 
-            expect(el.style.width).toEqual('400px');
-            expect(el.style.height).toEqual('200px');
-            expect(el.style.top).toEqual('5px');
-            expect(el.style.right).toEqual('5px');
-            expect(el.className).toEqual('ne-chart-plot-area');
+            expect(el.style.width).toBe('400px');
+            expect(el.style.height).toBe('200px');
+            expect(el.style.top).toBe('5px');
+            expect(el.style.right).toBe('5px');
+            expect(el.className).toBe('ne-chart-plot-area');
 
             childNodes = el.childNodes;
 
-            expect(childNodes.length).toEqual(4);
+            expect(childNodes.length).toBe(4);
             expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
             expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toEqual('50px');
-            expect(childNodes[1].style.bottom).toEqual('100px');
-            expect(childNodes[2].style.bottom).toEqual('149px');
-            expect(childNodes[3].style.bottom).toEqual('199px');
-            expect(childNodes[0].style.width).toEqual('400px');
-            expect(childNodes[3].style.width).toEqual('400px');
+            expect(childNodes[0].style.bottom).toBe('50px');
+            expect(childNodes[1].style.bottom).toBe('100px');
+            expect(childNodes[2].style.bottom).toBe('149px');
+            expect(childNodes[3].style.bottom).toBe('199px');
+            expect(childNodes[0].style.width).toBe('400px');
+            expect(childNodes[3].style.width).toBe('400px');
         });
     });
 });

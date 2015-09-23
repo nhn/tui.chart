@@ -12,62 +12,62 @@ describe('calculator', function() {
     describe('calculateScale()', function() {
         it('userMin=10, userMax=100의 기본 scale 계산 결과는 min=0, max=104.5입니다.', function () {
             var scale = calculator.calculateScale(10, 100);
-            expect(scale.min).toEqual(0);
-            expect(scale.max).toEqual(104.5);
+            expect(scale.min).toBe(0);
+            expect(scale.max).toBe(104.5);
         });
 
         it('userMin=20, userMax=100의 기본 scale 계산 결과는 min=16, max=104입니다.', function () {
             var scale = calculator.calculateScale(20, 100);
-            expect(scale.min).toEqual(16);
-            expect(scale.max).toEqual(104);
+            expect(scale.min).toBe(16);
+            expect(scale.max).toBe(104);
         });
 
         it('userMin=-100, userMax=-20의 기본 scale 계산 결과는 min=-100, max=-16입니다.', function () {
             var scale = calculator.calculateScale(-100, -20);
-            expect(scale.min).toEqual(-100);
-            expect(scale.max).toEqual(-16);
+            expect(scale.min).toBe(-100);
+            expect(scale.max).toBe(-16);
         });
     });
 
     describe('normalizeAxisNumber()', function() {
         it('0에 대한 정규화 결과는 0입니다.', function () {
             var result = calculator.normalizeAxisNumber(0);
-            expect(result).toEqual(0);
+            expect(result).toBe(0);
         });
 
         it('1.6에 대한 정규화 결과는 2입니다.', function () {
             var result = calculator.normalizeAxisNumber(1.6);
-            expect(result).toEqual(2);
+            expect(result).toBe(2);
         });
 
         it('4에 대한 정규화 결과는 5입니다.', function () {
             var result = calculator.normalizeAxisNumber(4);
-            expect(result).toEqual(5);
+            expect(result).toBe(5);
         });
 
         it('6에 대한 정규화 결과는 10입니다.', function () {
             var result = calculator.normalizeAxisNumber(6);
-            expect(result).toEqual(10);
+            expect(result).toBe(10);
         });
 
         it('40에 대한 정규화 결과는 40입니다.', function () {
             var result = calculator.normalizeAxisNumber(40);
-            expect(result).toEqual(40);
+            expect(result).toBe(40);
         });
 
         it('1005에 대한 정규화 결과는 1010입니다.', function () {
             var result = calculator.normalizeAxisNumber(1005);
-            expect(result).toEqual(1010);
+            expect(result).toBe(1010);
         });
 
         it('0.4에 대한 정규화 결과는 0.5입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.4);
-            expect(result).toEqual(0.5);
+            expect(result).toBe(0.5);
         });
 
         it('0.07에 대한 정규화 결과는 0.1입니다.', function () {
             var result = calculator.normalizeAxisNumber(0.07);
-            expect(result).toEqual(0.1);
+            expect(result).toBe(0.1);
         });
     });
 
@@ -88,14 +88,14 @@ describe('calculator', function() {
             var tickCount = 5,
                 scale = {min: 20, max: 100},
                 step = calculator.getScaleStep(scale, tickCount);
-            expect(step).toEqual(20);
+            expect(step).toBe(20);
         });
 
         it('scale.min=10, scale.max=130 tickCount=4의 scale step은 30입니다.', function () {
             var tickCount = 4,
                 scale = {min: 10, max: 130},
                 step = calculator.getScaleStep(scale, tickCount);
-            expect(step).toEqual(40);
+            expect(step).toBe(40);
         });
     });
 

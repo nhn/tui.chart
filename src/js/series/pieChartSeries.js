@@ -6,7 +6,10 @@
 
 'use strict';
 
-var Series = require('./series.js');
+var Series = require('./series'),
+    chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
     /**
@@ -38,30 +41,348 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
         return result;
     },
 
+    /**
+     * To make sectors information.
+     * @param {array.<number>} percentValues percent values
+     * @param {{cx: number, cy: number, r: number}} circleBound circle bound
+     * @returns {array.<object>} sectors information
+     * @private
+     */
+    _makeSectorsInfo: function(percentValues, circleBound) {
+        var cx = circleBound.cx,
+            cy = circleBound.cy,
+            r = circleBound.r,
+            angle = 0,
+            delta = 10,
+            paths;
+
+        paths = ne.util.map(percentValues, function(percentValue) {
+            var addAngle = chartConst.ANGLE_360 * percentValue,
+                endAngle = angle + addAngle,
+                popupAngle = angle + (addAngle / 2),
+                angles = {
+                    start: {
+                        startAngle: angle,
+                        endAngle: angle
+                    },
+                    end: {
+                        startAngle: angle,
+                        endAngle: endAngle
+                    }
+                },
+                positionData = {
+                    cx: cx,
+                    cy: cy,
+                    angle: popupAngle
+                };
+            angle = endAngle;
+            return {
+                percentValue: percentValue,
+                angles: angles,
+                popupPosition: this._getArcPosition(ne.util.extend({
+                    r: r + delta
+                }, positionData)),
+                centerPosition: this._getArcPosition(ne.util.extend({
+                    r: (r / 2) + delta
+                }, positionData)),
+                outerPosition: {
+                    start: this._getArcPosition(ne.util.extend({
+                        r: r
+                    }, positionData)),
+                    middle: this._getArcPosition(ne.util.extend({
+                        r: r + delta
+                    }, positionData))
+                }
+            };
+        }, this);
+
+        return paths;
+    },
+
+    /**
+     * To make add data.
+     * @returns {{
+     *      formattedValues: array,
+     *      chartBackground: string,
+     *      circleBound: ({cx: number, cy: number, r: number}),
+     *      sectorsInfo: array.<object>
+     * }} add data for graph rendering
+     */
     makeAddData: function() {
+        var circleBound = this._makeCircleBound(this.bound.dimension, {
+                showLabel: this.options.showLabel,
+                legendType: this.options.legendType
+            }),
+            sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
+
+        this.popupPositions = ne.util.pluck(sectorsInfo, 'popupPosition');
         return {
-            percentValues: this.percentValues,
-            formattedValues: this.data.formattedValues,
             chartBackground: this.chartBackground,
-            circleBounds: this._makeCircleBounds(this.bound.dimension)
+            circleBound: circleBound,
+            sectorsInfo: sectorsInfo
         };
     },
 
     /**
-     * To make circle bounds
+     * To make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
+     * @param {{showLabel: boolean, legendType: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
      * @private
      */
-    _makeCircleBounds: function(dimension) {
+    _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            stdSize = ne.util.multiplication(ne.util.min([width, height]), 0.8);
+            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.showLabel,
+            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
+            diameter = ne.util.multiplication(ne.util.min([width, height]), radiusRate);
         return {
             cx: ne.util.division(width, 2),
             cy: ne.util.division(height, 2),
-            r: ne.util.division(stdSize, 2)
+            r: ne.util.division(diameter, 2)
         };
+    },
+
+    /**
+     * Get arc position.
+     * @param {object} params parameters
+     *      @param {number} params.cx center x
+     *      @param {number} params.cy center y
+     *      @param {number} params.r radius
+     *      @param {number} params.angle angle(degree)
+     * @returns {{left: number, top: number}} arc position
+     * @private
+     */
+    _getArcPosition: function(params) {
+        return {
+            left: params.cx + (params.r * Math.sin(params.angle * chartConst.RAD)),
+            top: params.cy - (params.r * Math.cos(params.angle * chartConst.RAD))
+        };
+    },
+
+
+    /**
+     * To make add data for series label.
+     * @param {HTMLElement} container container
+     * @returns {{
+     *      container: HTMLElement,
+     *      legendLabels: array.<string>,
+     *      options: {legendType: string, showLabel: boolean},
+     *      chartWidth: number,
+     *      formattedValues: array
+     * }} add data for make series label
+     * @private
+     */
+    _makeAddDataForSeriesLabel: function(container) {
+        return {
+            container: container,
+            legendLabels: this.data.legendLabels,
+            options: {
+                legendType: this.options.legendType,
+                showLabel: this.options.showLabel
+            },
+            chartWidth: this.data.chartWidth,
+            formattedValues: this.data.formattedValues[0]
+        };
+    },
+
+    /**
+     * Get series label.
+     * @param {object} params parameters
+     *      @param {string} params.legend legend
+     *      @param {string} params.label label
+     *      @param {string} params.separator separator
+     *      @param {{legendType: boolean, showLabel: boolean}} params.options options
+     * @returns {string} series label
+     * @private
+     */
+    _getSeriesLabel: function(params) {
+        var seriesLabel = '';
+        if (params.options.legendType) {
+            seriesLabel = params.legend;
+        }
+
+        if (params.options.showLabel) {
+            seriesLabel += (seriesLabel ? params.separator : '') + params.label;
+        }
+
+        return seriesLabel;
+    },
+
+    /**
+     * Render center legend.
+     * @param {object} params parameters
+     *      @param {HTMLElement} container container
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} series area element
+     * @private
+     */
+    _renderLegendLabel: function(params) {
+        var positions = params.positions,
+            formattedValues = params.formattedValues,
+            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            html;
+
+        html = ne.util.map(params.legendLabels, function(legend, index) {
+            var label = this._getSeriesLabel({
+                    legend: legend,
+                    label: formattedValues[index],
+                    separator: params.separator,
+                    options: params.options
+                }),
+                position = params.moveToPosition(positions[index], label);
+            return this._makeSeriesLabelHtml(position, label, 0, index);
+        }, this).join('');
+
+        elSeriesLabelArea.innerHTML = html;
+        params.container.appendChild(elSeriesLabelArea);
+
+        return elSeriesLabelArea;
+    },
+
+    /**
+     * Move to center position.
+     * @param {{left: number, top: number}} position position
+     * @param {string} label label
+     * @returns {{left: number, top: number}} center position
+     * @private
+     */
+    _moveToCenterPosition: function(position, label) {
+        var left = position.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
+            top = position.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+        return {
+            left: left,
+            top: top
+        };
+    },
+
+    /**
+     * Render center legend.
+     * @param {object} params parameters
+     *      @param {HTMLElement} container container
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} area element
+     * @private
+     */
+    _renderCenterLegend: function(params) {
+        var elArea = this._renderLegendLabel(ne.util.extend({
+            positions: ne.util.pluck(params.sectorsInfo, 'centerPosition'),
+            moveToPosition: ne.util.bind(this._moveToCenterPosition, this),
+            separator: '<br>'
+        }, params));
+
+        return elArea;
+    },
+
+    /**
+     * Add end position.
+     * @param {number} centerLeft center left
+     * @param {array.<object>} positions positions
+     * @private
+     */
+    _addEndPosition: function(centerLeft, positions) {
+        ne.util.forEach(positions, function(position) {
+            var end = ne.util.extend({}, position.middle);
+            if (end.left < centerLeft) {
+                end.left -= chartConst.SERIES_OUTER_LABEL_PADDING;
+            } else {
+                end.left += chartConst.SERIES_OUTER_LABEL_PADDING;
+            }
+            position.end = end;
+        });
+    },
+
+    /**
+     * Move to outer position.
+     * @param {number} centerLeft center left
+     * @param {object} position position
+     * @param {string} label label
+     * @returns {{left: number, top: number}} outer position
+     * @private
+     */
+    _moveToOuterPosition: function(centerLeft, position, label) {
+        var positionEnd = position.end,
+            left = positionEnd.left,
+            top = positionEnd.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+
+        if (left < centerLeft) {
+            left -= renderUtil.getRenderedLabelWidth(label, this.theme.label) + chartConst.SERIES_LABEL_PADDING;
+        } else {
+            left += chartConst.SERIES_LABEL_PADDING;
+        }
+
+        return {
+            left: left,
+            top: top
+        };
+    },
+
+    /**
+     * Render outer legend.
+     * @param {object} params parameters
+     *      @param {HTMLElement} container container
+     *      @param {array.<string>} legends legends
+     *      @param {array.<object>} centerPositions center positions
+     * @return {HTMLElement} area element
+     * @private
+     */
+    _renderOuterLegend: function(params) {
+        var outerPositions = ne.util.pluck(params.sectorsInfo, 'outerPosition'),
+            centerLeft = params.chartWidth / 2,
+            elArea;
+
+        this._addEndPosition(centerLeft, outerPositions);
+        elArea = this._renderLegendLabel(ne.util.extend({
+            positions: outerPositions,
+            moveToPosition: ne.util.bind(this._moveToOuterPosition, this, centerLeft),
+            separator: ':&nbsp;'
+        }, params));
+
+        if (this.paper) {
+            this.graphRenderer.renderLegendLines(this.paper, outerPositions);
+        }
+
+        return elArea;
+    },
+
+    /**
+     * Render series label.
+     * @param {object} params parameters
+     * @returns {HTMLElement} area element
+     * @private
+     */
+    _renderSeriesLabel: function(params) {
+        var elArea;
+        if (params.options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER) {
+            elArea = this._renderOuterLegend(params);
+        } else {
+            elArea = this._renderCenterLegend(params);
+        }
+        return elArea;
+    },
+
+    /**
+     * Get bound.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {{left: number, top: number}} bound
+     * @private
+     */
+    _getBound: function(groupIndex, index) {
+        if (groupIndex === -1 || index === -1) {
+            return null;
+        }
+        return this.popupPositions[index];
+    },
+
+    /**
+     * Show series label area.
+     */
+    showSeriesLabelArea: function() {
+        this.graphRenderer.animateLegendLines();
+        Series.prototype.showSeriesLabelArea.call(this);
     }
 });
 

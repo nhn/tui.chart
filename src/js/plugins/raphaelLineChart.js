@@ -6,6 +6,8 @@
 
 'use strict';
 
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+
 var Raphael = window.Raphael,
     DEFAULT_DOT_WIDTH = 4,
     HOVER_DOT_WIDTH = 5,
@@ -247,8 +249,8 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
             var fromPos = positions[0],
                 rest = positions.slice(1);
             return ne.util.map(rest, function(position) {
-                var startPath = this._makeLinePath(fromPos, fromPos),
-                    endPath = this._makeLinePath(fromPos, position);
+                var startPath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
+                    endPath = raphaelRenderUtil.makeLinePath(fromPos, position);
                 fromPos = position;
                 return {
                     start: startPath,
@@ -341,14 +343,16 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
 
     /**
      * Animate.
+     * @param {function} callback callback
      */
-    animate: function() {
+    animate: function(callback) {
         var groupLines = this.groupLines,
             groupPaths = this.groupPaths,
             opacity = this.dotOpacity,
-            time = ANIMATION_TIME / groupLines[0].length;
+            time = ANIMATION_TIME / groupLines[0].length,
+            startTime;
         ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            var startTime = 0;
+            startTime = 0;
             ne.util.forEachArray(dots, function(dot, index) {
                 var line, path;
                 if (index) {
@@ -367,6 +371,10 @@ var RaphaelLineChart = ne.util.defineClass(/** @lends RaphaelLineChart.prototype
                 }
             });
         });
+
+        if (callback) {
+            setTimeout(callback, startTime);
+        }
     }
 });
 

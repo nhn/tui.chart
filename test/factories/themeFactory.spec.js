@@ -32,29 +32,13 @@ describe('test themeFactory', function() {
 
     describe('_initTheme()', function() {
         it('기본 테마 정보에 신규 테마 정보를 병합하여 반환합니다.', function () {
-            var result = themeFactory._initTheme({
+            var actual = themeFactory._initTheme({
                 series: {
                     colors: ['gray']
                 }
             });
 
-            expect(result).toEqual({
-                chart: {background: '#ffffff', fontFamily: 'Verdana'},
-                title: {fontSize: 18, fontFamily: '', color: '#000000'},
-                yAxis: {
-                    tickColor: '#000000',
-                    title: {fontSize: 12, fontFamily: '', color: '#000000'},
-                    label: {fontSize: 12, fontFamily: '', color: '#000000'}
-                },
-                xAxis: {
-                    tickColor: '#000000',
-                    title: {fontSize: 12, fontFamily: '', color: '#000000'},
-                    label: {fontSize: 12, fontFamily: '', color: '#000000'}
-                },
-                plot: {lineColor: '#dddddd', background: '#ffffff'},
-                series: {colors: ['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']},
-                legend: {label: {'fontSize': 12, fontFamily: '', color: '#000000'}}
-            });
+            expect(actual.series.colors).toEqual(['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']);
         });
     });
 
@@ -155,7 +139,7 @@ describe('test themeFactory', function() {
 
     describe('_copyProperty()', function() {
         it('promName에 해당하는 속성을 fromTheme으로 부터 toTheme으로 복사합니다.', function () {
-            var result = themeFactory._copyProperty({
+            var actual = themeFactory._copyProperty({
                 propName: 'series',
                 fromTheme: {
                     series: {
@@ -172,13 +156,7 @@ describe('test themeFactory', function() {
                 rejectionProps: ['colors'] // rejectionProps는 차트 이외의 속성을 필터링하는데 사용됩니다.
             });
 
-            expect(result).toEqual({
-                series: {
-                    column: {
-                        colors: ['blue', 'red', 'orange']
-                    }
-                }
-            });
+            expect(actual.series.column.colors).toEqual(['blue', 'red', 'orange']);
         });
     });
 
@@ -194,6 +172,9 @@ describe('test themeFactory', function() {
                         title: {},
                         label: {}
                     },
+                    series: {
+                        label: {}
+                    },
                     legend: {
                         label: {}
                     }
@@ -206,7 +187,8 @@ describe('test themeFactory', function() {
                 theme.xAxis.label,
                 theme.legend.label,
                 theme.yAxis.title,
-                theme.yAxis.label
+                theme.yAxis.label,
+                theme.series.label
             ]);
         });
 
@@ -227,6 +209,9 @@ describe('test themeFactory', function() {
                             label: {}
                         }
                     },
+                    series: {
+                        label: {}
+                    },
                     legend: {
                         label: {}
                     }
@@ -241,7 +226,8 @@ describe('test themeFactory', function() {
                 theme.yAxis.column.title,
                 theme.yAxis.column.label,
                 theme.yAxis.line.title,
-                theme.yAxis.line.label
+                theme.yAxis.line.label,
+                theme.series.label
             ]);
         });
     });
@@ -262,30 +248,21 @@ describe('test themeFactory', function() {
                 theme.xAxis.title
             ]);
 
-            expect(theme).toEqual({
-                chart: {
-                    fontFamily: 'Verdana'
-                },
-                title: {
-                    fontFamily: 'Verdana'
-                },
-                xAxis: {
-                    title: {
-                        fontFamily: 'Verdana'
-                    }
-                }
-            });
+            expect(theme.title.fontFamily).toBe('Verdana');
+            expect(theme.xAxis.title.fontFamily).toBe('Verdana');
         })
     });
 
     describe('_copyColorInfoToLegend()', function() {
         it('series 테마의 color 속성들을 legend 테마로 복사합니다.', function () {
             var legendTheme = {};
+
             themeFactory._copyColorInfoToLegend({
                 colors: ['red', 'orange'],
                 singleColors: ['red', 'orange'],
                 borderColor: 'blue'
             }, legendTheme);
+
             expect(legendTheme).toEqual({
                 colors: ['red', 'orange'],
                 singleColors: ['red', 'orange'],
@@ -295,10 +272,10 @@ describe('test themeFactory', function() {
 
         it('3번째 인자로 colors를 넘기게 되면 인자로 넘긴 colors를 legend의 colors로 복사합니다..', function () {
             var legendTheme = {};
+
             themeFactory._copyColorInfoToLegend({}, legendTheme, ['black', 'gray']);
-            expect(legendTheme).toEqual({
-                colors: ['black', 'gray']
-            });
+
+            expect(legendTheme.colors).toEqual(['black', 'gray']);
         });
     });
 
@@ -310,15 +287,10 @@ describe('test themeFactory', function() {
                 },
                 legend: {}
             };
+
             themeFactory._copyColorInfo(theme);
-            expect(theme).toEqual({
-                series: {
-                    colors: ['red', 'orange']
-                },
-                legend: {
-                    colors: ['red', 'orange']
-                }
-            });
+
+            expect(theme.legend.colors).toEqual(['red', 'orange']);
         });
 
         it('콤보 차트에서 series color속성을 legend color 속성으로 복사합니다.', function() {
@@ -333,23 +305,15 @@ describe('test themeFactory', function() {
                 },
                 legend: {}
             };
+
             themeFactory._copyColorInfo(theme);
-            expect(theme).toEqual({
-                series: {
-                    column: {
-                        colors: ['red', 'orange']
-                    },
-                    line: {
-                        colors: ['blue', 'green']
-                    }
+
+            expect(theme.legend).toEqual({
+                column: {
+                    colors: ['red', 'orange']
                 },
-                legend: {
-                    column: {
-                        colors: ['red', 'orange']
-                    },
-                    line: {
-                        colors: ['blue', 'green']
-                    }
+                line: {
+                    colors: ['blue', 'green']
                 }
             });
         });
