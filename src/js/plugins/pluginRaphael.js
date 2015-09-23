@@ -8,6 +8,7 @@
 
 var BarChart = require('./raphaelBarChart.js'),
     LineChart = require('./raphaelLineChart.js'),
+    AreaChart = require('./raphaelAreaChart.js'),
     PieChart = require('./raphaelPieChart.js');
 
 var pluginName = 'raphael',
@@ -17,6 +18,7 @@ pluginRaphael = {
     bar: BarChart,
     column: BarChart,
     line: LineChart,
+    area: AreaChart,
     pie: PieChart
 };
 

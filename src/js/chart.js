@@ -87,6 +87,7 @@ _createChart = function(container, data, options) {
  *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
+ *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -160,6 +161,7 @@ ne.application.chart.barChart = function(container, data, options) {
  *          @param {string} options.xAxis.title title of horizontal axis
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
+ *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -290,6 +292,83 @@ ne.application.chart.lineChart = function(container, data, options) {
 };
 
 /**
+ * Area chart creator.
+ * @memberOf ne.application.chart
+ * @param {HTMLElement} container chart container
+ * @param {object} data chart data
+ *      @param {array.<string>} data.categories categories
+ *      @param {array.<array>} data.series series data
+ * @param {object} options chart options
+ *      @param {object} options.chart chart options
+ *          @param {number} options.chart.width chart width
+ *          @param {number} options.chart.height chart height
+ *          @param {string} options.chart.title chart title
+ *          @param {string} options.chart.format value format
+ *      @param {object} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
+ *      @param {object} options.xAxis options of horizontal axis
+ *          @param {string} options.xAxis.title title of horizontal axis
+ *      @param {object} options.series options of series
+ *          @param {boolean} options.series.hasDot whether has dot or not
+ *          @param {boolean} options.series.showLabel whether show label or not
+ *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
+ *          @param {string} options.tooltip.template template of tooltip
+ *          @param {string} options.tooltip.position tooltip position type
+ *          @param {object} options.tooltip.addPosition add position
+ *              @param {number} options.tooltip.addPosition.left add left position
+ *              @param {number} options.tooltip.addPosition.top add top position
+ *      @param {string} options.theme theme name
+ *      @param {string} options.libType graph library type
+ * @returns {object} bar chart
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     data = {
+ *       categories: ['cate1', 'cate2', 'cate3'],
+ *       series: [
+ *         {
+ *           name: 'Legend1',
+ *           data: [20, 30, 50]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [40, 40, 60]
+ *         },
+ *         {
+ *           name: 'Legend3',
+ *           data: [60, 50, 10]
+ *         },
+ *         {
+ *           name: 'Legend4',
+ *           data: [80, 10, 70]
+ *         }
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Area Chart'
+ *       },
+ *       yAxis: {
+ *         title: 'Y Axis'
+ *       },
+ *       xAxis: {
+ *         title: 'X Axis'
+ *       },
+ *       series: {
+ *         hasDot: true
+ *       }
+ *     };
+ * ne.application.chart.areaChart(container, data, options);
+ */
+ne.application.chart.areaChart = function(container, data, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_AREA;
+    return _createChart(container, data, options);
+};
+
+/**
  * Combo chart creator.
  * @memberOf ne.application.chart
  * @param {HTMLElement} container chart container
@@ -313,6 +392,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {object} options.series.column options of column series
  *              @param {string} options.series.column.stacked stacked type
+ *              @param {boolean} options.series.column.showLabel whether show label or not
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
@@ -398,6 +478,9 @@ ne.application.chart.comboChart = function(container, data, options) {
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
+ *      @param {object} options.series options of series
+ *          @param {string} options.series.legendType legend type
+ *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip

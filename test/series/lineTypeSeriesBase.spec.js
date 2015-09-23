@@ -1,16 +1,16 @@
 /**
- * @fileoverview test line chart series
+ * @fileoverview Test for LineTypeSeriesBase.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var LineChartSeries = require('../../src/js/series/lineChartSeries.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('test LineChartSeries', function() {
+describe('LineTypeSeriesBase', function() {
     var series;
 
     beforeAll(function() {
@@ -20,21 +20,7 @@ describe('test LineChartSeries', function() {
     });
 
     beforeEach(function() {
-        series = new LineChartSeries({
-            chartType: 'line',
-            data: {
-                values: [],
-                formattedValues: [],
-                scale: {min: 0, max: 0}
-            },
-            theme: {
-                label: {
-                    fontFamily: 'Verdana',
-                    fontSize: 11
-                }
-            },
-            options: {}
-        });
+        series = new LineTypeSeriesBase();
     });
 
     describe('_makePositions()', function() {
@@ -63,8 +49,12 @@ describe('test LineChartSeries', function() {
             var container = dom.create('div'),
                 children;
 
-            series.options.showLabel = true;
-
+            series.options = {
+                showLabel: true
+            };
+            series.theme = {
+                label: {}
+            };
             series._renderSeriesLabel({
                 container: container,
                 groupPositions: [

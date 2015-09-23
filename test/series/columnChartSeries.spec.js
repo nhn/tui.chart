@@ -10,7 +10,7 @@ var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
-describe('test ColumnChartSeries', function() {
+describe('ColumnChartSeries', function() {
     var series;
 
     beforeAll(function() {

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Line chart
+ * @fileoverview Area chart
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,12 +10,12 @@ var ChartBase = require('./chartBase'),
     AxisTypeBase = require('./axisTypeBase'),
     VerticalTypeBase = require('./verticalTypeBase'),
     calculator = require('../helpers/calculator'),
-    Series = require('../series/lineChartSeries');
+    Series = require('../series/areaChartSeries');
 
-var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
+var AreaChart = ne.util.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
     /**
      * Line chart.
-     * @constructs LineChart
+     * @constructs AreaChart
      * @extends ChartBase
      * @extends AxisTypeBase
      * @extends VerticalTypeBase
@@ -33,7 +33,7 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             bounds = baseData.bounds,
             axisData;
 
-        this.className = 'ne-line-chart';
+        this.className = 'ne-line-area';
 
         ChartBase.call(this, bounds, theme, options, initedData);
 
@@ -59,6 +59,7 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             chartType: options.chartType,
             Series: Series,
             seriesData: {
+                allowNegativeTooltip: true,
                 data: {
                     values: calculator.arrayPivot(convertData.values),
                     formattedValues: calculator.arrayPivot(convertData.formattedValues),
@@ -69,7 +70,7 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
     }
 });
 
-AxisTypeBase.mixin(LineChart);
-VerticalTypeBase.mixin(LineChart);
+AxisTypeBase.mixin(AreaChart);
+VerticalTypeBase.mixin(AreaChart);
 
-module.exports = LineChart;
+module.exports = AreaChart;
