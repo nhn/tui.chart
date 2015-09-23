@@ -27,7 +27,7 @@
     "title": "Column Chart Sample(showLabel=true)"
   },
   "sample02-05-percent-stacked-show-label-column-chart": {
-    "title": "Column Chart Sample(stacked=normal, showLabel=true)"
+    "title": "Column Chart Sample(stacked=percent, showLabel=true)"
   },
   "sample03-01-line-chart": {
     "title": "Line Chart Sample"
