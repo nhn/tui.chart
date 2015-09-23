@@ -202,7 +202,7 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             },
             middlePos;
 
-        if (middleLeft > -1) {
+        if (this._isPlus(middleLeft)) {
             middlePos = {left: middleLeft, top: zeroTop};
             result.end = this._makeAreaPath(fromPos, middlePos, zeroTop);
             result.addStart = this._makeAreaPath(middlePos, middlePos, zeroTop);
@@ -237,6 +237,14 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         return groupPaths;
     },
 
+    /**
+     * Animate area chart.
+     * @param {object} area raphael object
+     * @param {string} areaPath path
+     * @param {number} time play time
+     * @param {number} startTime start time
+     * @private
+     */
     _animateArea: function(area, areaPath, time, startTime) {
         var areaAddEndPath = areaPath.addEnd,
             areaEndPath = areaPath.end;
