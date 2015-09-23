@@ -14,7 +14,7 @@ var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.pro
      * Area chart series component.
      * @constructs AreaChartSeries
      * @extends Series
-     * @extends LineTypeSeriesBase
+     * @mixes LineTypeSeriesBase
      * @param {object} params parameters
      *      @param {object} params.model series model
      *      @param {object} params.options series options

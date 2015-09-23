@@ -11,6 +11,7 @@ var axisDataMaker = require('../helpers/axisDataMaker');
 /**
  * @classdesc VerticalTypeBase is base class of vertical type chart(column, line, area).
  * @class VerticalTypeBase
+ * @mixin
  */
 var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype */ {
     /**

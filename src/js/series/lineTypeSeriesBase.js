@@ -10,7 +10,11 @@ var Series = require('./series.js'),
     chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
-
+/**
+ * @classdesc LineTypeSeriesBase is base class for line type series.
+ * @class LineTypeSeriesBase
+ * @mixin
+ */
 var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBase.prototype */ {
     /**
      * To make positions of line chart.

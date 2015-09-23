@@ -17,8 +17,8 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
      * Line chart.
      * @constructs LineChart
      * @extends ChartBase
-     * @extends AxisTypeBase
-     * @extends VerticalTypeBase
+     * @mixes AxisTypeBase
+     * @mixes VerticalTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

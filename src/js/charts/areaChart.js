@@ -17,8 +17,8 @@ var AreaChart = ne.util.defineClass(ChartBase, /** @lends AreaChart.prototype */
      * Line chart.
      * @constructs AreaChart
      * @extends ChartBase
-     * @extends AxisTypeBase
-     * @extends VerticalTypeBase
+     * @mixes AxisTypeBase
+     * @mixes VerticalTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

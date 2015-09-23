@@ -14,6 +14,7 @@ var Axis = require('../axes/axis.js'),
 /**
  * @classdesc AxisTypeBase is base class of axis type chart(bar, column, line, area).
  * @class AxisTypeBase
+ * @mixin
  */
 var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
     /**

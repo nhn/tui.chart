@@ -14,7 +14,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.pro
      * Line chart series component.
      * @constructs LineChartSeries
      * @extends Series
-     * @extends LineTypeSeriesBase
+     * @mixes LineTypeSeriesBase
      * @param {object} params parameters
      *      @param {object} params.model series model
      *      @param {object} params.options series options
