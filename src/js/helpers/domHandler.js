@@ -36,7 +36,7 @@ var domHandler = {
      * @private
      */
     _getClassNames: function(el) {
-        var className = el.className ? el.className : '',
+        var className = el.className || '',
             classNames = className ? className.split(' ') : [];
         return classNames;
     },

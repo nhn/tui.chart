@@ -2,28 +2,31 @@
 
 var pluginFactory = require('../../src/js/factories/pluginFactory.js');
 
-describe('test pluginFactory', function() {
+describe('pluginFactory', function() {
     var BarChart = function() {};
     pluginFactory.register('testRaphael', {
         bar: BarChart
     });
 
-    it('get()', function() {
-        var graphRenderer = pluginFactory.get('testRaphael', 'bar');
+    describe('get()', function() {
+        it('등록된 플러그인을 요청했을 경우에는 플러그인을 반환합니다.', function () {
+            var graphRenderer = pluginFactory.get('testRaphael', 'bar');
 
-        expect(!!graphRenderer).toBeTruthy();
-        expect(graphRenderer instanceof BarChart).toBeTruthy();
+            expect(!!graphRenderer).toBeTruthy();
+            expect(graphRenderer instanceof BarChart).toBeTruthy();
+        });
 
-        try {
-            pluginFactory.get('d3', 'bar');
-        } catch(e) {
-            expect(e.message).toEqual('Not exist d3 plugin.');
-        }
+        it('등록되지 않은 플러그인을 요청했을 경우에는 예외를 발생시킵니다.', function () {
+            expect(function() {
+                pluginFactory.get('d3', 'bar');
+            }).toThrowError('Not exist d3 plugin.');
+        });
 
-        try {
-            pluginFactory.get('raphael', 'line');
-        } catch(e) {
-            expect(e.message).toEqual('Not exist line chart renderer.');
-        }
+
+        it('등록되지 않은 차트 렌더러를 요청했을 경우에는 예외를 발생시킵니다.', function () {
+            expect(function() {
+                pluginFactory.get('testRaphael', 'line');
+            }).toThrowError('Not exist line chart renderer.');
+        });
     });
 });

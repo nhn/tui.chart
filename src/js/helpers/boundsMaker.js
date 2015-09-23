@@ -6,8 +6,9 @@
 
 'use strict';
 
-var calculator = require('./calculator.js'),
-    renderUtil = require('./renderUtil.js');
+var calculator = require('./calculator'),
+    chartConst = require('../const'),
+    renderUtil = require('./renderUtil');
 
 var CHART_PADDING = 10,
     TITLE_ADD_PADDING = 20,
@@ -32,6 +33,8 @@ var boundsMaker = {
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
+     *      @param {boolean} params.hasAxes whether has axes area or not
+     *      @param {array} params.optionChartTypes y axis option chart types
      * @returns {{
      *   plot: {
      *     dimension: {width: number, height: number},
@@ -62,10 +65,11 @@ var boundsMaker = {
         var dimensions = this._getComponentsDimensions(params),
             yAxisWidth = dimensions.yAxis.width,
             top = dimensions.title.height + CHART_PADDING,
+            left = yAxisWidth + CHART_PADDING,
             right = dimensions.legend.width + dimensions.yrAxis.width + CHART_PADDING,
             axesBounds = this._makeAxesBounds({
                 hasAxes: params.hasAxes,
-                yAxisChartTypes: params.yAxisChartTypes,
+                optionChartTypes: params.optionChartTypes,
                 dimensions: dimensions,
                 top: top,
                 right: right
@@ -78,20 +82,20 @@ var boundsMaker = {
                     dimension: dimensions.series,
                     position: {
                         top: top,
-                        right: right
+                        left: left
                     }
                 },
                 legend: {
                     position: {
                         top: dimensions.title.height,
-                        left: yAxisWidth + dimensions.plot.width + dimensions.yrAxis.width + CHART_PADDING
+                        left: yAxisWidth + dimensions.series.width + dimensions.yrAxis.width + CHART_PADDING
                     }
                 },
                 tooltip: {
-                    dimension: dimensions.tooltip,
+                    dimension: dimensions.series,
                     position: {
                         top: top,
-                        left: yAxisWidth + CHART_PADDING
+                        left: left
                     }
                 }
             }, axesBounds);
@@ -102,14 +106,12 @@ var boundsMaker = {
      * Get max label of value axis.
      * @memberOf module:boundsMaker
      * @param {object} convertData convert data
-     * @param {array.<string>} chartTypes chart types
-     * @param {number} index chart type index
+     * @param {string} chartType chart type
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(convertData, chartTypes, index) {
-        var chartType = chartTypes && chartTypes[index || 0] || '',
-            values = chartType && convertData.values[chartType] ? convertData.values[chartType] : convertData.joinValues,
+    _getValueAxisMaxLabel: function(convertData, chartType) {
+        var values = chartType && convertData.values[chartType] || convertData.joinValues,
             formatFunctions = convertData.formatFunctions,
             flattenValues = concat.apply([], values),
             min = ne.util.min(flattenValues),
@@ -171,79 +173,68 @@ var boundsMaker = {
     },
 
     /**
-     * Get width of vertical axis area.
+     * Get height of x axis area.
      * @memberOf module:boundsMaker
-     * @param {string} title axis title,
-     * @param {array.<string>} labels axis labels
-     * @param {object} theme axis theme
-     * @returns {number} width
-     * @private
-     */
-    _getVerticalAxisWidth: function(title, labels, theme) {
-        var titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING,
-            width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + AXIS_LABEL_PADDING;
-        return width;
-    },
-
-    /**
-     * Get height of horizontal axis area.
-     * @memberOf module:boundsMaker
-     * @param {string} title axis title,
+     * @param {object} options x axis options,
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis theme
      * @returns {number} height
      * @private
      */
-    _getHorizontalAxisHeight: function(title, labels, theme) {
-        var titleAreaHeight = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING,
+    _getXAxisHeight: function(options, labels, theme) {
+        var title = options && options.title,
+            titleAreaHeight = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING,
             height = this._getRenderedLabelsMaxHeight(labels, theme.label) + titleAreaHeight;
         return height;
     },
 
     /**
      * Get width about y axis.
-     * @param {object} yAxisOption y axis option
+     * @param {object} options y axis options
      * @param {array.<string>} labels labels
      * @param {object} theme yAxis theme
+     * @param {number} index options index
      * @returns {number} y axis width
      * @private
      */
-    _getYAxisWidth: function(yAxisOption, labels, theme) {
-        var yAxisOptions,
-            title = '';
+    _getYAxisWidth: function(options, labels, theme, index) {
+        var title = '',
+            titleAreaWidth, width;
 
-        if (yAxisOption) {
-            yAxisOptions = [].concat(yAxisOption);
-            title = yAxisOptions[0].title;
+        if (options) {
+            options = [].concat(options);
+            title = options[index || 0].title;
         }
 
-        return this._getVerticalAxisWidth(title, labels, theme);
+        titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING;
+        width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + AXIS_LABEL_PADDING;
+
+        return width;
     },
 
     /**
      * Get width about y right axis.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {array.<string>} params.yAxisChartTypes chart types
-     *      @param {object} params.theme chart theme
-     *      @param {object} params.options chart options
+     *      @param {array.<string>} params.chartTypes y axis chart types
+     *      @param {object} params.theme y axis theme
+     *      @param {object} params.options y axis options
      * @returns {number} y right axis width
      * @private
      */
     _getYRAxisWidth: function(params) {
-        var yAxisChartTypes = params.yAxisChartTypes || [],
-            rightYAxisWidth = 0,
-            yAxisThemes, yAxisTheme, yAxisOptions, index, labels, title;
-        index = yAxisChartTypes.length - 1;
-        if (index > -1) {
-            yAxisThemes = [].concat(params.theme.yAxis);
-            yAxisOptions = [].concat(params.options.yAxis);
-            title = yAxisOptions[index] && yAxisOptions[index].title;
-            labels = [this._getValueAxisMaxLabel(params.convertData, yAxisChartTypes, index)];
-            yAxisTheme = yAxisThemes.length === 1 ? yAxisThemes[0] : yAxisThemes[index];
-            rightYAxisWidth = this._getVerticalAxisWidth(title, labels, yAxisTheme);
+        var chartTypes = params.chartTypes || [],
+            len = chartTypes.length,
+            width = 0,
+            index, chartType, theme, label;
+        if (len > 0) {
+            index = len - 1;
+            chartType = chartTypes[index];
+            theme = params.theme[chartType] || params.theme;
+            label = this._getValueAxisMaxLabel(params.convertData, chartType);
+            width = this._getYAxisWidth(params.options, [label], theme, index);
         }
-        return rightYAxisWidth;
+        return width;
     },
 
     /**
@@ -262,9 +253,10 @@ var boundsMaker = {
      * @private
      */
     _makeAxesDimension: function(params) {
-        var theme, options, convertData, yAxisChartTypes,
-            yAxisTitle, xAxisTitle, maxLabel, vLabels, hLabels,
-            yAxisWidth, xAxisHeight, yrAxisWidth;
+        var theme, options, convertData, optionChartTypes, maxValueLabel, yLabels,
+            xLabels, yAxisWidth, xAxisHeight, yrAxisWidth, chartType;
+
+        // pie차트와 같이 axis 영역이 필요 없는 경우에는 모두 0으로 반환
         if (!params.hasAxes) {
             return {
                 yAxis: {
@@ -282,18 +274,24 @@ var boundsMaker = {
         theme = params.theme;
         options = params.options;
         convertData = params.convertData;
-        yAxisChartTypes = params.yAxisChartTypes;
-        xAxisTitle = options.xAxis && options.xAxis.title;
-        maxLabel = this._getValueAxisMaxLabel(convertData, yAxisChartTypes);
-        vLabels = params.isVertical ? [maxLabel] : convertData.labels;
-        hLabels = params.isVertical ? convertData.labels : [maxLabel];
-        yAxisWidth = this._getYAxisWidth(options.yAxis, vLabels, theme.yAxis);
-        xAxisHeight = this._getHorizontalAxisHeight(xAxisTitle, hLabels, theme.xAxis);
+        optionChartTypes = params.optionChartTypes;
+
+        chartType = optionChartTypes && optionChartTypes[0] || '';
+
+        // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
+        maxValueLabel = this._getValueAxisMaxLabel(convertData, chartType);
+
+        // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
+        yLabels = params.isVertical ? [maxValueLabel] : convertData.labels;
+        xLabels = params.isVertical ? convertData.labels : [maxValueLabel];
+
+        yAxisWidth = this._getYAxisWidth(options.yAxis, yLabels, theme.yAxis[chartType] || theme.yAxis);
+        xAxisHeight = this._getXAxisHeight(options.xAxis, xLabels, theme.xAxis);
         yrAxisWidth = this._getYRAxisWidth({
             convertData: convertData,
-            yAxisChartTypes: yAxisChartTypes,
-            theme: theme,
-            options: options
+            chartTypes: optionChartTypes,
+            theme: theme.yAxis,
+            options: options.yAxis
         });
 
         return {
@@ -317,13 +315,21 @@ var boundsMaker = {
      * @returns {number} width
      * @private
      */
-    _getLegendAreaWidth: function(joinLegendLabels, labelTheme) {
-        var legendLabels = ne.util.map(joinLegendLabels, function(item) {
+    _getLegendAreaWidth: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
+        var legendWidth = 0,
+            legendLabels, maxLabelWidth;
+
+        seriesOption = seriesOption || {};
+
+        if (chartType !== chartConst.CHART_TYPE_PIE || !seriesOption.legendType) {
+            legendLabels = ne.util.map(joinLegendLabels, function(item) {
                 return item.label;
-            }),
-            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme),
+            });
+            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme);
             legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
                 LEGEND_LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
+        }
+
         return legendWidth;
     },
 
@@ -375,26 +381,28 @@ var boundsMaker = {
             },
             axesDimension, titleHeight, legendWidth, seriesDimension, dimensions;
 
+        // axis 영역에 필요한 요소들의 너비 높이를 얻어옴
         axesDimension = this._makeAxesDimension(params);
         titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, theme.title) + TITLE_ADD_PADDING;
-        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label);
+        legendWidth = this._getLegendAreaWidth(convertData.joinLegendLabels, theme.legend.label, params.chartType, options.series);
+
+        // series 너비, 높이 값은 차트 bounds를 구성하는 가장 중요한 요소다
         seriesDimension = this._makeSeriesDimension({
             chartDimension: chartDimension,
             axesDimension: axesDimension,
             legendWidth: legendWidth,
             titleHeight: titleHeight
         });
+
         dimensions = ne.util.extend({
             chart: chartDimension,
             title: {
                 height: titleHeight
             },
-            plot: seriesDimension,
             series: seriesDimension,
             legend: {
                 width: legendWidth
-            },
-            tooltip: seriesDimension
+            }
         }, axesDimension);
         return dimensions;
     },
@@ -404,7 +412,7 @@ var boundsMaker = {
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axed or not
-     *      @param {array.<string>} params.yAxisChartTypes y axis chart types
+     *      @param {array.<string>} params.optionChartTypes y axis chart types
      *      @param {{width: number, height: number}} params.dimension chart dimension
      *      @param {number} params.top top position
      *      @param {number} params.right right position
@@ -412,19 +420,20 @@ var boundsMaker = {
      * @private
      */
     _makeAxesBounds: function(params) {
-        var bounds, dimensions, yAxisChartTypes, top, right;
+        var bounds, dimensions, optionChartTypes, top, right;
 
+        // pie차트와 같이 axis 영역이 필요 없는 경우에는 빈 값을 반환 함
         if (!params.hasAxes) {
             return {};
         }
 
         dimensions = params.dimensions;
-        yAxisChartTypes = params.yAxisChartTypes;
+        optionChartTypes = params.optionChartTypes;
         top = params.top;
         right = params.right;
         bounds = {
             plot: {
-                dimension: dimensions.plot,
+                dimension: dimensions.series,
                 position: {
                     top: top,
                     right: right
@@ -433,7 +442,7 @@ var boundsMaker = {
             yAxis: {
                 dimension: {
                     width: dimensions.yAxis.width,
-                    height: dimensions.plot.height
+                    height: dimensions.series.height
                 },
                 position: {
                     top: top,
@@ -442,21 +451,22 @@ var boundsMaker = {
             },
             xAxis: {
                 dimension: {
-                    width: dimensions.plot.width,
+                    width: dimensions.series.width,
                     height: dimensions.xAxis.height
                 },
                 position: {
-                    top: top + dimensions.plot.height - HIDDEN_WIDTH,
+                    top: top + dimensions.series.height - HIDDEN_WIDTH,
                     right: right
                 }
             }
         };
 
-        if (yAxisChartTypes && yAxisChartTypes.length) {
+        // 우측 y axis 영역 bounds 정보 추가
+        if (optionChartTypes && optionChartTypes.length) {
             bounds.yrAxis = {
                 dimension: {
                     width: dimensions.yrAxis.width,
-                    height: dimensions.plot.height
+                    height: dimensions.series.height
                 },
                 position: {
                     top: top,

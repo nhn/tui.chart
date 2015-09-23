@@ -5,6 +5,7 @@
     "NHN Ent. FE Development Team <dl_javascript@nhnent.com>"
   ],
   "dependencies": {
+    "component-effect-slide": "ne-component-effects#~1.1.0",
     "ne-code-snippet": "~1.0.4",
     "raphael": "~2.1.4"
   },

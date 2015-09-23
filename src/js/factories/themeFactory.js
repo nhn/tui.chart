@@ -34,11 +34,17 @@ module.exports = {
      * @param {object} theme theme
      */
     register: function(themeName, theme) {
+        var targetItems;
         theme = JSON.parse(JSON.stringify(theme));
+
         if (themeName !== chartConst.DEFAULT_THEME_NAME) {
             theme = this._initTheme(theme);
         }
-        this._inheritThemeProperty(theme);
+
+        targetItems = this._getInheritTargetThemeItems(theme);
+
+        this._inheritThemeFont(theme, targetItems);
+        this._copyColorInfo(theme);
         themes[themeName] = theme;
     },
 
@@ -54,39 +60,40 @@ module.exports = {
             newTheme;
 
         this._concatDefaultColors(theme, cloneTheme.series.colors)
-        newTheme = this._extendTheme(theme, cloneTheme);
+        newTheme = this._overwriteTheme(theme, cloneTheme);
 
         newTheme = this._copyProperty({
             propName: 'yAxis',
             fromTheme: theme,
             toTheme: newTheme,
-            rejectProps: chartConst.YAXIS_PROPS
+            rejectionProps: chartConst.YAXIS_PROPS
         });
 
         newTheme = this._copyProperty({
             propName: 'series',
             fromTheme: theme,
             toTheme: newTheme,
-            rejectProps: chartConst.SERIES_PROPS
+            rejectionProps: chartConst.SERIES_PROPS
         });
+
         return newTheme;
     },
 
     /**
      * Filter chart types.
      * @param {object} target target charts
-     * @param {array.<string>} rejectProps reject property
+     * @param {array.<string>} rejectionProps reject property
      * @returns {Object} filtered charts.
      * @private
      */
-    _filterChartTypes: function(target, rejectProps) {
+    _filterChartTypes: function(target, rejectionProps) {
         var result;
         if (!target) {
             return [];
         }
 
         result = ne.util.filter(target, function(item, name) {
-            return ne.util.inArray(name, rejectProps) === -1;
+            return ne.util.inArray(name, rejectionProps) === -1;
         });
         return result;
     },
@@ -132,13 +139,13 @@ module.exports = {
     },
 
     /**
-     * Extend theme
+     * Overwrite theme
      * @param {object} from from theme property
      * @param {object} to to theme property
      * @returns {object} result property
      * @private
      */
-    _extendTheme: function(from, to) {
+    _overwriteTheme: function(from, to) {
         ne.util.forEach(to, function(item, key) {
             var fromItem = from[key];
             if (!fromItem) {
@@ -148,7 +155,7 @@ module.exports = {
             if (ne.util.isArray(fromItem)) {
                 to[key] = fromItem.slice();
             } else if (ne.util.isObject(fromItem)) {
-                this._extendTheme(fromItem, item);
+                this._overwriteTheme(fromItem, item);
             } else {
                 to[key] = fromItem;
             }
@@ -163,7 +170,7 @@ module.exports = {
      *      @param {string} params.propName property name
      *      @param {object} params.fromTheme from property
      *      @param {object} params.toTheme tp property
-     *      @param {array.<string>} params.rejectProps reject property name
+     *      @param {array.<string>} params.rejectionProps reject property name
      * @returns {object} copied property
      * @private
      */
@@ -174,11 +181,11 @@ module.exports = {
             return params.toTheme;
         }
 
-        chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectProps);
+        chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectionProps);
         if (ne.util.keys(chartTypes).length) {
             ne.util.forEach(chartTypes, function(item, key) {
                 var cloneTheme = JSON.parse(JSON.stringify(defaultTheme[params.propName]));
-                params.fromTheme[params.propName][key] = this._extendTheme(item, cloneTheme);
+                params.fromTheme[params.propName][key] = this._overwriteTheme(item, cloneTheme);
             }, this);
 
             params.toTheme[params.propName] = params.fromTheme[params.propName];
@@ -191,9 +198,11 @@ module.exports = {
      * Copy color info to legend
      * @param {object} seriesTheme series theme
      * @param {object} legendTheme legend theme
+     * @param {array.<string>} colors colors
      * @private
      */
-    _copyColorInfoToLegend: function(seriesTheme, legendTheme) {
+    _copyColorInfoToLegend: function(seriesTheme, legendTheme, colors) {
+        legendTheme.colors = colors || seriesTheme.colors;
         if (seriesTheme.singleColors) {
             legendTheme.singleColors = seriesTheme.singleColors;
         }
@@ -203,14 +212,13 @@ module.exports = {
     },
 
     /**
-     * To inherit theme property.
+     * Get target items about font inherit.
      * @param {object} theme theme
+     * @returns {array.<object>} target items
      * @private
-     * @ignore
      */
-    _inheritThemeProperty: function(theme) {
-        var baseFont = theme.chart.fontFamily,
-            items = [
+    _getInheritTargetThemeItems: function(theme) {
+        var items = [
                 theme.title,
                 theme.xAxis.title,
                 theme.xAxis.label,
@@ -223,27 +231,52 @@ module.exports = {
             items.push(theme.yAxis.title);
             items.push(theme.yAxis.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(yAxisTheme) {
-                items.push(yAxisTheme.title);
-                items.push(yAxisTheme.label);
+            ne.util.forEach(yAxisChartTypes, function(chatType) {
+                items.push(chatType.title);
+                items.push(chatType.label);
             });
         }
 
-        ne.util.forEachArray(items, function(item) {
+        if (!ne.util.keys(seriesChartTypes).length) {
+            items.push(theme.series.label);
+        } else {
+            ne.util.forEach(yAxisChartTypes, function(chatType) {
+                items.push(chatType.label);
+            });
+        }
+        return items;
+    },
+
+    /**
+     * Inherit theme font.
+     * @param {object} theme theme
+     * @param {array.<object>} targetItems target theme items
+     * @private
+     */
+    _inheritThemeFont: function(theme, targetItems) {
+        var baseFont = theme.chart.fontFamily;
+
+        ne.util.forEachArray(targetItems, function(item) {
             if (!item.fontFamily) {
                 item.fontFamily = baseFont;
             }
         });
+    },
 
+    /**
+     * Copy color info.
+     * @param {object} theme theme
+     * @private
+     * @ignore
+     */
+    _copyColorInfo: function(theme) {
+        var seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
         if (!ne.util.keys(seriesChartTypes).length) {
-            theme.legend.colors = theme.series.colors;
             this._copyColorInfoToLegend(theme.series, theme.legend);
         } else {
             ne.util.forEach(seriesChartTypes, function(item, chartType) {
-                theme.legend[chartType] = {
-                    colors: item.colors || theme.legend.colors
-                };
-                this._copyColorInfoToLegend(item, theme.legend[chartType]);
+                theme.legend[chartType] = {};
+                this._copyColorInfoToLegend(item, theme.legend[chartType], item.colors || theme.legend.colors);
                 delete theme.legend.colors;
             }, this);
         }

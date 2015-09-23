@@ -13,316 +13,309 @@ describe('test themeFactory', function() {
         }
     });
 
-    it('get()', function() {
-        var theme = themeFactory.get('newTheme');
+    describe('get()', function() {
+        it('등록된 테마를 요청했을 경우에는 테마를 반환합니다.', function () {
+            var theme = themeFactory.get('newTheme');
 
-        expect(theme.plot).toEqual({
-            lineColor: '#e5dbc4',
-            background: '#f6f1e5'
+            expect(theme.plot).toEqual({
+                lineColor: '#e5dbc4',
+                background: '#f6f1e5'
+            });
+        });
+
+        it('등록되지 않은 테마를 요청했을 경우에는 예외를 발생시킵니다.', function () {
+            expect(function() {
+                themeFactory.get('newTheme1', 'line');
+            }).toThrowError('Not exist newTheme1 theme.');
         });
     });
 
-    it('get() not exist', function() {
-        try {
-            themeFactory.get('newTheme1', 'line');
-        } catch(e) {
-            expect(e.message).toEqual('Not exist newTheme1 theme.');
-        }
-    });
+    describe('_initTheme()', function() {
+        it('기본 테마 정보에 신규 테마 정보를 병합하여 반환합니다.', function () {
+            var actual = themeFactory._initTheme({
+                series: {
+                    colors: ['gray']
+                }
+            });
 
-    it('_initTheme()', function() {
-        var result = themeFactory._initTheme({
-            series: {
-                colors: ['gray']
-            }
-        });
-
-        expect(result).toEqual({
-            chart: {background: '#ffffff', fontFamily: 'Verdana'},
-            title: {fontSize: 18, fontFamily: '', color: '#000000'},
-            yAxis: {
-                tickColor: '#000000',
-                title: {fontSize: 12, fontFamily: '', color: '#000000'},
-                label: {fontSize: 12, fontFamily: '', color: '#000000'}
-            },
-            xAxis: {
-                tickColor: '#000000',
-                title: {fontSize: 12, fontFamily: '', color: '#000000'},
-                label: {fontSize: 12, fontFamily: '', color: '#000000'}
-            },
-            plot: {lineColor: '#dddddd', background: '#ffffff'},
-            series: {colors: ['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']},
-            legend: {label: {'fontSize': 12, fontFamily: '', color: '#000000'}}
+            expect(actual.series.colors).toEqual(['gray', '#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']);
         });
     });
 
-    it('_filterChartTypes()', function() {
-        var result = themeFactory._filterChartTypes({
-            column: {},
-            line: {},
-            colors: [],
-            fontSize: 12
-        }, ['colors', 'fontSize']);
+    describe('_filterChartTypes()', function() {
+        it('chartType을 key로 하는 값들만 걸러낸 결과를 반환합니다.', function () {
+            var result = themeFactory._filterChartTypes({
+                column: {},
+                line: {},
+                colors: [],
+                fontSize: 12
+            }, ['colors', 'fontSize']);
 
-        expect(result).toEqual({
-            column: {},
-            line: {}
+            expect(result).toEqual({
+                column: {},
+                line: {}
+            });
         });
     });
 
-    it('_concatColors()', function() {
-        var theme = {
+    describe('_concatColors()', function() {
+        it('테마의 colors값 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환합니다.', function () {
+            var theme = {
                 colors: ['gray'],
                 singleColors: ['blue']
             };
-        themeFactory._concatColors(theme, ['black', 'white']);
+            themeFactory._concatColors(theme, ['black', 'white']);
 
-        expect(theme).toEqual({
-            colors: ['gray', 'black', 'white'],
-            singleColors: ['blue', 'black', 'white']
+            expect(theme).toEqual({
+                colors: ['gray', 'black', 'white'],
+                singleColors: ['blue', 'black', 'white']
+            });
         });
     });
 
-    it('_concatDefaultColors() not exist series', function() {
-        var theme = {};
-        themeFactory._concatDefaultColors(theme, ['red', 'orange']);
-        expect(theme).toBeDefined();
-    });
-
-    it('_concatDefaultColors() normal', function() {
-        var theme = {
-            series: {
-                colors: ['gray']
-            }
-        };
-        themeFactory._concatDefaultColors(theme, ['red', 'orange']);
-        expect(theme).toEqual({
-            series: {
-                colors: ['gray', 'red', 'orange']
-            }
-        });
-    });
-
-    it('_concatDefaultColors() combo chart', function() {
-        var theme = {
-            series: {
-                column: {
+    describe('_concatDefaultColors()', function() {
+        it('단일 차트 테마의 series.colors 뒤에 인자로 넘기는 colors값을 붙인 후 결과를 반환합니다.', function () {
+            var theme = {
+                series: {
                     colors: ['gray']
-                },
-                line: {
-                    colors: ['blue']
                 }
-            }
-        };
-        themeFactory._concatDefaultColors(theme, ['red', 'orange']);
-        expect(theme).toEqual({
-            series: {
-                column: {
+            };
+            themeFactory._concatDefaultColors(theme, ['red', 'orange']);
+            expect(theme).toEqual({
+                series: {
                     colors: ['gray', 'red', 'orange']
-                },
-                line: {
-                    colors: ['blue', 'red', 'orange']
                 }
-            }
+            });
         });
-    });
 
-    it('_extendTheme()', function() {
-        var result = themeFactory._extendTheme(
-            {
-                series: {
-                    color: ['blue'],
-                    borderColor: 'black'
-                },
-                plot: {
-                    lineColor: 'orange'
-                }
-            },
-            {
-                series: {
-                    color: ['red'],
-                    borderColor: 'yellow'
-                }
-            }
-        );
-
-        expect(result).toEqual({
-            series: {
-                color: ['blue'],
-                borderColor: 'black'
-            }
-        });
-    });
-
-    it('_copyProperty()', function() {
-        var result = themeFactory._copyProperty({
-            defaultTheme: {
-                series: {
-                    colors: ['red', 'orange']
-                }
-            },
-            propName: 'series',
-            fromTheme: {
+        it('combo 차트 테마의 series.colors값 뒤에 인자로 엄기는 colors값을 붙인 후 결과를 반환합니다.', function () {
+            var theme = {
                 series: {
                     column: {
+                        colors: ['gray']
+                    },
+                    line: {
+                        colors: ['blue']
+                    }
+                }
+            };
+            themeFactory._concatDefaultColors(theme, ['red', 'orange']);
+            expect(theme).toEqual({
+                series: {
+                    column: {
+                        colors: ['gray', 'red', 'orange']
+                    },
+                    line: {
                         colors: ['blue', 'red', 'orange']
                     }
                 }
-            },
-            toTheme: {
-                series: {
-                    colors: ['red', 'orange']
-                }
-            },
-            rejectProps: ['colors']
-        });
-
-        expect(result).toEqual({
-            series: {
-                column: {
-                    colors: ['blue', 'red', 'orange']
-                }
-            }
+            });
         });
     });
 
-    it('_copyColorInfoToLegend()', function() {
-        var legendTheme = {};
-        themeFactory._copyColorInfoToLegend({
-            singleColors: ['red', 'orange'],
-            borderColor: 'blue'
-        }, legendTheme);
-        expect(legendTheme).toEqual({
-            singleColors: ['red', 'orange'],
-            borderColor: 'blue'
-        });
-    });
-
-    it('_inheritThemeProperty() normal', function() {
-        var theme = {
-            chart: {
-                fontFamily: 'Verdana'
-            },
-            title: {},
-            yAxis: {
-                title: {},
-                label: {}
-            },
-            xAxis: {
-                title: {},
-                label: {}
-            },
-            legend: {
-                label: {}
-            },
-            series: {
-                colors: ['red', 'orange']
-            }
-        };
-
-        themeFactory._inheritThemeProperty(theme);
-
-        expect(theme).toEqual({
-            chart: {
-                fontFamily: 'Verdana'
-            },
-            title: {
-                fontFamily: 'Verdana'
-            },
-            yAxis: {
-                title: {
-                    fontFamily: 'Verdana'
+    describe('_overwriteTheme()', function() {
+        it('두번째 인자 테마에 첫번째 인자 테마 속성 중 key가 같은 속성을 덮어씌웁니다.', function () {
+            var result = themeFactory._overwriteTheme(
+                {
+                    series: {
+                        color: ['blue'],
+                        borderColor: 'black'
+                    }
                 },
-                label: {
-                    fontFamily: 'Verdana'
-                }
-            },
-            xAxis: {
-                title: {
-                    fontFamily: 'Verdana'
-                },
-                label: {
-                    fontFamily: 'Verdana'
-                }
-            },
-            legend: {
-                label: {
-                    fontFamily: 'Verdana'
-                },
-                colors: ['red', 'orange']
-            },
-            series: {
-                colors: ['red', 'orange']
-            }
-        });
-    });
-
-    it('_inheritThemeProperty() combo chart', function() {
-        var theme = {
-            chart: {
-                fontFamily: 'Verdana'
-            },
-            title: {},
-            yAxis: {
-                column: {
-                    title: {},
-                    label: {}
-                }
-            },
-            xAxis: {
-                title: {},
-                label: {}
-            },
-            legend: {
-                label: {}
-            },
-            series: {
-                column: {
-                    colors: ['red', 'orange']
-                }
-            }
-        };
-
-        themeFactory._inheritThemeProperty(theme);
-
-        expect(theme).toEqual({
-            chart: {
-                fontFamily: 'Verdana'
-            },
-            title: {
-                fontFamily: 'Verdana'
-            },
-            yAxis: {
-                column: {
-                    title: {
-                        fontFamily: 'Verdana'
-                    },
-                    label: {
-                        fontFamily: 'Verdana'
+                {
+                    series: {
+                        color: ['red']
                     }
                 }
-            },
-            xAxis: {
-                title: {
-                    fontFamily: 'Verdana'
-                },
-                label: {
-                    fontFamily: 'Verdana'
+            );
+
+            expect(result).toEqual({
+                series: {
+                    color: ['blue']
                 }
-            },
-            legend: {
-                label: {
-                    fontFamily: 'Verdana'
+            });
+        });
+    });
+
+    describe('_copyProperty()', function() {
+        it('promName에 해당하는 속성을 fromTheme으로 부터 toTheme으로 복사합니다.', function () {
+            var actual = themeFactory._copyProperty({
+                propName: 'series',
+                fromTheme: {
+                    series: {
+                        column: {
+                            colors: ['blue', 'red', 'orange']
+                        }
+                    }
                 },
+                toTheme: {
+                    series: {
+                        colors: ['red', 'orange']
+                    }
+                },
+                rejectionProps: ['colors'] // rejectionProps는 차트 이외의 속성을 필터링하는데 사용됩니다.
+            });
+
+            expect(actual.series.column.colors).toEqual(['blue', 'red', 'orange']);
+        });
+    });
+
+    describe('_getInheritTargetThemeItems()', function() {
+        it('단일차트 테마에서 폰트를 상속 받을 대상 테마 아이템을 얻습니다.', function() {
+            var theme = {
+                    title: {},
+                    xAxis: {
+                        title: {},
+                        label: {}
+                    },
+                    yAxis: {
+                        title: {},
+                        label: {}
+                    },
+                    series: {
+                        label: {}
+                    },
+                    legend: {
+                        label: {}
+                    }
+                },
+                result = themeFactory._getInheritTargetThemeItems(theme);
+
+            expect(result).toEqual([
+                theme.title,
+                theme.xAxis.title,
+                theme.xAxis.label,
+                theme.legend.label,
+                theme.yAxis.title,
+                theme.yAxis.label,
+                theme.series.label
+            ]);
+        });
+
+        it('콤보차트 테마에서 폰트를 상속 받을 대상 테마 아이템을 얻습니다.', function() {
+            var theme = {
+                    title: {},
+                    xAxis: {
+                        title: {},
+                        label: {}
+                    },
+                    yAxis: {
+                        column: {
+                            title: {},
+                            label: {}
+                        },
+                        line: {
+                            title: {},
+                            label: {}
+                        }
+                    },
+                    series: {
+                        label: {}
+                    },
+                    legend: {
+                        label: {}
+                    }
+                },
+                result = themeFactory._getInheritTargetThemeItems(theme);
+
+            expect(result).toEqual([
+                theme.title,
+                theme.xAxis.title,
+                theme.xAxis.label,
+                theme.legend.label,
+                theme.yAxis.column.title,
+                theme.yAxis.column.label,
+                theme.yAxis.line.title,
+                theme.yAxis.line.label,
+                theme.series.label
+            ]);
+        });
+    });
+
+    describe('_inheritThemeFont', function() {
+        it('폰트속성이 없는 테마 아이템에 기본 폰트를 상속합니다.', function() {
+            var theme = {
+                    chart: {
+                        fontFamily: 'Verdana'
+                    },
+                    title: {},
+                    xAxis: {
+                        title: {}
+                    }
+                };
+            themeFactory._inheritThemeFont(theme, [
+                theme.title,
+                theme.xAxis.title
+            ]);
+
+            expect(theme.title.fontFamily).toBe('Verdana');
+            expect(theme.xAxis.title.fontFamily).toBe('Verdana');
+        })
+    });
+
+    describe('_copyColorInfoToLegend()', function() {
+        it('series 테마의 color 속성들을 legend 테마로 복사합니다.', function () {
+            var legendTheme = {};
+
+            themeFactory._copyColorInfoToLegend({
+                colors: ['red', 'orange'],
+                singleColors: ['red', 'orange'],
+                borderColor: 'blue'
+            }, legendTheme);
+
+            expect(legendTheme).toEqual({
+                colors: ['red', 'orange'],
+                singleColors: ['red', 'orange'],
+                borderColor: 'blue'
+            });
+        });
+
+        it('3번째 인자로 colors를 넘기게 되면 인자로 넘긴 colors를 legend의 colors로 복사합니다..', function () {
+            var legendTheme = {};
+
+            themeFactory._copyColorInfoToLegend({}, legendTheme, ['black', 'gray']);
+
+            expect(legendTheme.colors).toEqual(['black', 'gray']);
+        });
+    });
+
+    describe('_copyColorInfo()', function() {
+        it('단일 차트에서 series color속성을 legend color 속성으로 복사합니다.', function() {
+            var theme = {
+                series: {
+                    colors: ['red', 'orange']
+                },
+                legend: {}
+            };
+
+            themeFactory._copyColorInfo(theme);
+
+            expect(theme.legend.colors).toEqual(['red', 'orange']);
+        });
+
+        it('콤보 차트에서 series color속성을 legend color 속성으로 복사합니다.', function() {
+            var theme = {
+                series: {
+                    column: {
+                        colors: ['red', 'orange']
+                    },
+                    line: {
+                        colors: ['blue', 'green']
+                    }
+                },
+                legend: {}
+            };
+
+            themeFactory._copyColorInfo(theme);
+
+            expect(theme.legend).toEqual({
                 column: {
                     colors: ['red', 'orange']
+                },
+                line: {
+                    colors: ['blue', 'green']
                 }
-            },
-            series: {
-                column: {
-                    colors: ['red', 'orange']
-                }
-            }
+            });
         });
     });
 });

@@ -52,69 +52,75 @@ describe('test Legend', function() {
         });
     });
 
-    it('render()', function() {
-        var elLegend = legend.render(),
-            elTemp = document.createElement('DIV'),
-            tempChildren;
+    describe('render()', function() {
+        it('legend 영역 렌더링', function () {
+            var elLegend = legend.render(),
+                elTemp = document.createElement('DIV'),
+                tempChildren;
 
-        elTemp.innerHTML = compareHtml;
-        elTemp.style.top = '20px';
-        elTemp.style.right = '10px';
-        elTemp.style.fontSize = '12px';
+            elTemp.innerHTML = compareHtml;
+            elTemp.style.top = '20px';
+            elTemp.style.right = '10px';
+            elTemp.style.fontSize = '12px';
 
-        tempChildren = elTemp.childNodes;
+            tempChildren = elTemp.childNodes;
 
-        expect(elLegend.className).toEqual('ne-chart-legend-area');
-        expect(elLegend.style.cssText).toEqual(elTemp.style.cssText);
+            expect(elLegend.className).toBe('ne-chart-legend-area');
+            expect(elLegend.style.cssText).toBe(elTemp.style.cssText);
 
-        ne.util.forEachArray(elLegend.childNodes, function(child, index) {
-            var elTempChild = tempChildren[index];
-            expect(child.firstChild.cssText).toEqual(elTempChild.firstChild.cssText);
-            expect(child.lastChild.cssText).toEqual(elTempChild.lastChild.cssText);
+            ne.util.forEachArray(elLegend.childNodes, function (child, index) {
+                var elTempChild = tempChildren[index];
+                expect(child.firstChild.cssText).toBe(elTempChild.firstChild.cssText);
+                expect(child.lastChild.cssText).toBe(elTempChild.lastChild.cssText);
+            });
         });
     });
 
-    it('_setThemeToLabels()', function() {
-        var result = legend._setThemeToLabels([
-            {
-                label: 'label1'
-            },
-            {
-                label: 'label2'
-            }
-        ], {
-            colors: ['black', 'white'],
-            singleColors: ['red', 'orange'],
-            borderColor: 'blue'
-        });
+    describe('_setThemeForLabels()', function() {
+        it('레이블 렌더링을 위한 위한 테마 정보를 설정합니다.', function () {
+            var result = legend._setThemeForLabels([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label2'
+                }
+            ], {
+                colors: ['black', 'white'],
+                singleColors: ['red', 'orange'],
+                borderColor: 'blue'
+            });
 
-        expect(result).toEqual([
-            {
-                label: 'label1',
-                theme: {
-                    color: 'black',
-                    singleColor: 'red',
-                    borderColor: 'blue'
+            expect(result).toEqual([
+                {
+                    label: 'label1',
+                    theme: {
+                        color: 'black',
+                        singleColor: 'red',
+                        borderColor: 'blue'
+                    }
+                },
+                {
+                    label: 'label2',
+                    theme: {
+                        color: 'white',
+                        singleColor: 'orange',
+                        borderColor: 'blue'
+                    }
                 }
-            },
-            {
-                label: 'label2',
-                theme: {
-                    color: 'white',
-                    singleColor: 'orange',
-                    borderColor: 'blue'
-                }
-            }
-        ]);
+            ]);
+        });
     });
 
-    it('renderLabelTheme()', function() {
-        var el = document.createElement('DIV');
-        legend._renderLabelTheme(el, {
-            fontSize: 14,
-            color: 'red'
+    describe('renderLabelTheme()', function() {
+        it('레이블 테마를 렌더링합니다.', function () {
+            var el = document.createElement('DIV');
+            legend._renderLabelTheme(el, {
+                fontSize: 14,
+                color: 'red'
+            });
+            expect(el.style.fontSize).toBe('14px');
+            expect(el.style.color).toBe('red');
         });
-        expect(el.style.fontSize).toEqual('14px');
-        expect(el.style.color).toEqual('red');
     });
 });

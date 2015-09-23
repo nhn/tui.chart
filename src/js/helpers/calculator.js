@@ -85,13 +85,13 @@ var calculator = {
     },
 
     /**
-     * To Make tick positions of pixel type.
+     * To make tick positions of pixel type.
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
      * @returns {array.<number>} positions
      */
-    makePixelPositions: function(size, count) {
+    makeTickPixelPositions: function(size, count) {
         var positions = [],
             pxScale, pxStep;
 

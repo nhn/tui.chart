@@ -6,16 +6,19 @@
 
 'use strict';
 
-var AxisTypeBase = require('./axisTypeBase.js'),
-    calculator = require('../helpers/calculator.js'),
-    axisDataMaker = require('../helpers/axisDataMaker.js'),
-    Series = require('../series/lineChartSeries.js');
+var ChartBase = require('./chartBase'),
+    AxisTypeBase = require('./axisTypeBase'),
+    VerticalTypeBase = require('./verticalTypeBase'),
+    calculator = require('../helpers/calculator'),
+    Series = require('../series/lineChartSeries');
 
-var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype */ {
+var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
      * Line chart.
      * @constructs LineChart
-     * @extends AxisTypeBase
+     * @extends ChartBase
+     * @mixes AxisTypeBase
+     * @mixes VerticalTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
@@ -32,42 +35,10 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
 
         this.className = 'ne-line-chart';
 
-        AxisTypeBase.call(this, bounds, theme, options, initedData);
+        ChartBase.call(this, bounds, theme, options, initedData);
 
         axisData = this._makeAxesData(convertData, bounds, options, initedData);
         this._addComponents(convertData, axisData, options);
-    },
-
-    /**
-     * To make axes data
-     * @param {object} convertData converted data
-     * @param {object} bounds chart bounds
-     * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
-     * @returns {object} axes data
-     * @private
-     */
-    _makeAxesData: function(convertData, bounds, options, initedData) {
-        var axesData = {};
-        if (initedData) {
-            axesData = initedData.axes;
-        } else {
-            axesData = {
-                yAxis: axisDataMaker.makeValueAxisData({
-                    values: convertData.values,
-                    seriesDimension: bounds.series.dimension,
-                    stacked: options.series && options.series.stacked || '',
-                    chartType: options.chartType,
-                    formatFunctions: convertData.formatFunctions,
-                    options: options.yAxis,
-                    isVertical: true
-                }),
-                xAxis: axisDataMaker.makeLabelAxisData({
-                    labels: convertData.labels
-                })
-            };
-        }
-        return axesData;
     },
 
     /**
@@ -85,21 +56,20 @@ var LineChart = ne.util.defineClass(AxisTypeBase, /** @lends LineChart.prototype
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
             },
-            chartType: options.chartType
-        });
-
-        this.addComponent('series', Series, {
-            libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
-            isPointPosition: true,
-            data: {
-                values: calculator.arrayPivot(convertData.values),
-                formattedValues: calculator.arrayPivot(convertData.formattedValues),
-                scale: axesData.yAxis.scale
+            Series: Series,
+            seriesData: {
+                data: {
+                    values: calculator.arrayPivot(convertData.values),
+                    formattedValues: calculator.arrayPivot(convertData.formattedValues),
+                    scale: axesData.yAxis.scale
+                }
             }
         });
     }
 });
+
+AxisTypeBase.mixin(LineChart);
+VerticalTypeBase.mixin(LineChart);
 
 module.exports = LineChart;

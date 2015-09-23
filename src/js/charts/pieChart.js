@@ -36,18 +36,19 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
 
         ChartBase.call(this, bounds, theme, options, initedData);
 
-        this._addComponents(convertData, theme.chart.background, options);
+        this._addComponents(convertData, theme.chart.background, bounds, options);
     },
 
     /**
      * Add components
      * @param {object} convertData converted data
-     * @param {object} chartBackground chart ㅠackground
+     * @param {object} chartBackground chart background
+     * @param {array.<object>} bounds bounds
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, chartBackground, options) {
-        if (convertData.joinLegendLabels) {
+    _addComponents: function(convertData, chartBackground, bounds, options) {
+        if (convertData.joinLegendLabels && (!options.series || !options.series.legendType)) {
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertData.joinLegendLabels,
                 legendLabels: convertData.legendLabels,
@@ -66,11 +67,12 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             libType: options.libType,
             chartType: options.chartType,
             tooltipPrefix: this.tooltipPrefix,
-            isPointPosition: true,
             chartBackground: chartBackground,
             data: {
                 values: convertData.values,
-                formattedValues: convertData.formattedValues
+                formattedValues: convertData.formattedValues,
+                legendLabels: convertData.legendLabels,
+                chartWidth: bounds.chart.dimension.width
             }
         });
     }

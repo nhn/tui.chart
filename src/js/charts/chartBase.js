@@ -44,8 +44,9 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {{convertData: object, bounds: object}} base data
      */
     makeBaseData: function(userData, theme, options, boundParams) {
-        var convertData = dataConverter.convert(userData, options.chart, options.chartType, boundParams && boundParams.yAxisChartTypes),
+        var convertData = dataConverter.convert(userData, options.chart, options.chartType),
             bounds = boundsMaker.make(ne.util.extend({
+                chartType: options.chartType,
                 convertData: convertData,
                 theme: theme,
                 options: options
@@ -95,6 +96,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
             this._renderTitle(el);
             renderUtil.renderDimension(el, this.bounds.chart.dimension);
             renderUtil.renderBackground(el, this.theme.chart.background);
+            renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
         }
 
         this._renderComponents(el, this.components, paper);
@@ -161,7 +163,18 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
         tooltip.on('showAnimation', series.onShowAnimation, series);
         tooltip.on('hideAnimation', series.onHideAnimation, series);
-    }
+    },
+
+    /**
+     * Animate chart.
+     */
+    animateChart: function() {
+        ne.util.forEachArray(this.components, function(component) {
+            if (component.animateComponent) {
+                component.animateComponent();
+            }
+        });
+    },
 });
 
 module.exports = ChartBase;

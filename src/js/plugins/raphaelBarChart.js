@@ -8,8 +8,10 @@
 
 var Raphael = window.Raphael;
 
+var ANIMATION_TIME = 700;
+
 /**
- * @classdesc RaphaelBarChart is graph renderer.
+ * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
  * @class RaphaelBarChart
  */
 var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
@@ -27,7 +29,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             dimension = data.dimension;
 
         if (!groupBounds) {
-            return;
+            return null;
         }
 
         if (!paper) {
@@ -50,18 +52,32 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     _renderBars: function(paper, theme, groupBounds, inCallback, outCallback) {
         var singleColors = (groupBounds[0].length === 1) && theme.singleColors || [],
             colors = theme.colors,
-            borderColor = theme.borderColor || 'none';
+            borderColor = theme.borderColor || 'none',
+            bars = [];
         ne.util.forEachArray(groupBounds, function(bounds, groupIndex) {
-            var singleColor = singleColors[groupIndex];
+            var singleColor = singleColors[groupIndex],
+                color, id, rect;
             ne.util.forEachArray(bounds, function(bound, index) {
-                var color = singleColor || colors[index],
-                    id = groupIndex + '-' + index,
-                    rect = this._renderBar(paper, color, borderColor, bound);
-                if (rect) {
-                    this._bindHoverEvent(rect, bound, id, inCallback, outCallback);
+                if (!bound) {
+                    return;
                 }
+
+                color = singleColor || colors[index];
+                id = groupIndex + '-' + index;
+                rect = this._renderBar(paper, color, borderColor, bound.start);
+
+                if (rect) {
+                    this._bindHoverEvent(rect, bound.end, id, inCallback, outCallback);
+                }
+
+                bars.push({
+                    rect: rect,
+                    bound: bound.end
+                });
             }, this);
         }, this);
+
+        this.bars = bars;
     },
 
     /**
@@ -74,10 +90,11 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @private
      */
     _renderBar: function(paper, color, borderColor, bound) {
+        var rect;
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
-        var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
+        rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: color,
             stroke: borderColor
@@ -101,6 +118,26 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
         }, function() {
             outCallback(id);
         });
+    },
+
+    /**
+     * Animate.
+     * @param {function} callback callback
+     */
+    animate: function(callback) {
+        ne.util.forEach(this.bars, function(bar) {
+            var bound = bar.bound;
+            bar.rect.animate({
+                x: bound.left,
+                y: bound.top,
+                width: bound.width,
+                height: bound.height
+            }, ANIMATION_TIME);
+        });
+
+        if (callback) {
+            setTimeout(callback, ANIMATION_TIME);
+        }
     }
 });
 

@@ -1,44 +1,80 @@
 /**
- * @fileoverview Raphael pie chart renderer.
+ * @fileoverview RaphaelPieCharts is graph renderer for pie chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+
 var Raphael = window.Raphael,
-    RAD = Math.PI / 180,
-    ANIMATION_TIME = 500;
+    ANGLE_180 = 180,
+    ANGLE_90 = 90,
+    RAD = Math.PI / ANGLE_180,
+    ANIMATION_TIME = 500,
+    LOADING_ANIMATION_TIME = 700;
 
 /**
- * @classdesc RaphaelPieCharts is graph renderer.
+ * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
  */
 var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
-     * Render function or line chart.
+     * Render function of pie chart.
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
-     * @param {{percentValues: array.<number>, circleBounds: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @return {object} paper raphael paper
      */
     render: function(paper, container, data, inCallback, outCallback) {
         var dimension = data.dimension;
+
         if (!paper) {
             paper = Raphael(container, dimension.width, dimension.height);
         }
+
+        if (!paper.customAttributes.sector) {
+            paper.customAttributes.sector = ne.util.bind(this._makeSectorPath, this);
+        }
+
+        this.circleBound = data.circleBound;
         this._renderPie(paper, data, inCallback, outCallback);
 
         return paper;
     },
 
     /**
+     * To make sector path.
+     * @param {number} cx center x
+     * @param {number} cy center y
+     * @param {number} r radius
+     * @param {number} startAngle start angle
+     * @param {number} endAngle end angel
+     * @returns {{path: array}} sector path
+     * @private
+     */
+    _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
+        var x1 = cx + r * Math.cos(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 x 좌표
+            y1 = cy - r * Math.sin(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 y 좌표
+            x2 = cx + r * Math.cos(-(endAngle - ANGLE_90) * RAD),// 원 호의 종료 x 좌표
+            y2 = cy - r * Math.sin(-(endAngle - ANGLE_90) * RAD), // 원 호의 종료 y 좌표
+            largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
+            path = ["M", cx, cy,
+                "L", x2, y2,
+                "A", r, r, 0, largeArcFlag, 0, x1, y1,
+                "Z"
+            ];
+        return {path: path};
+    },
+
+    /**
      * Render sector
      * @param {object} params parameters
      *      @param {object} params.paper raphael paper
-     *      @param {{cx: number, cy: number, r:number}} params.circleBounds circle bounds
+     *      @param {{cx: number, cy: number, r:number}} params.circleBound circle bounds
      *      @param {number} params.startAngle start angle
      *      @param {number} params.endAngle end angle
      *      @param {{fill: string, stroke: string, strike-width: string}} params.attrs attrs
@@ -46,70 +82,86 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _renderSector: function (params) {
-        var cx = params.circleBounds.cx,
-            cy = params.circleBounds.cy,
-            r = params.circleBounds.r,
-            x1 = cx + r * Math.cos(-params.startAngle * RAD),
-            x2 = cx + r * Math.cos(-params.endAngle * RAD),
-            y1 = cy + r * Math.sin(-params.startAngle * RAD),
-            y2 = cy + r * Math.sin(-params.endAngle * RAD),
-            pathParam = ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(params.endAngle - params.startAngle > 180), 0, x2, y2, "z"];
-        return params.paper.path(pathParam).attr(params.attrs);
+        var circleBound = params.circleBound,
+            angles = params.angles;
+        return params.paper.path().attr({
+            sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
+        }).attr(params.attrs);
     },
 
     /**
      * Render pie graph.
      * @param {object} paper raphael paper
-     * @param {{percentValues: array.<number>, circleBounds: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
     _renderPie: function(paper, data, inCallback, outCallback) {
-        var percentValues = data.percentValues[0],
-            circleBounds = data.circleBounds,
+        var circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
-            cx = circleBounds.cx,
-            cy = circleBounds.cy,
-            r = circleBounds.r,
-            angle = 0,
-            delta = 10,
-            chart = paper.set();
+            sectors = [];
 
-        ne.util.forEachArray(percentValues, function(percentValue, index) {
-            var anglePlus = 360 * percentValue,
-                popAngle = angle + (anglePlus / 2),
+        ne.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
+            var percentValue = sectorInfo.percentValue,
                 color = colors[index],
-                p = this._renderSector({
+                sector = this._renderSector({
                     paper: paper,
-                    circleBounds: circleBounds,
-                    startAngle: angle,
-                    endAngle: angle + anglePlus,
+                    circleBound: circleBound,
+                    angles: sectorInfo.angles.start,
                     attrs: {
-                        fill: "90-" + color + "-" + color,
+                        fill: color,
                         stroke: chartBackground,
                         'stroke-width': 1
                     }
-                }),
-                position = {
-                    left: cx + (r + delta) * Math.cos(-popAngle * RAD),
-                    top: cy + (r + delta) * Math.sin(-popAngle * RAD)
-                };
+                });
 
             this._bindHoverEvent({
-                target: p,
-                position: position,
+                target: sector,
+                position: sectorInfo.popupPosition,
                 id: '0-' + index,
                 inCallback: inCallback,
                 outCallback: outCallback
             });
-            chart.push(p);
-            angle += anglePlus;
+
+            sectors.push({
+                sector: sector,
+                angles: sectorInfo.angles.end,
+                percentValue: percentValue
+            });
         }, this);
 
-        this.circleBounds = circleBounds;
-        this.chart = chart;
+        this.sectors = sectors;
+    },
+
+    /**
+     * Render legend lines.
+     * @param {object} paper paper
+     * @param {array.<object>} outerPositions outer position
+     */
+    renderLegendLines: function(paper, outerPositions) {
+        var paths = this._makeLinePaths(outerPositions),
+            legendLines = ne.util.map(paths, function(path) {
+                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
+            });
+        this.legendLines = legendLines;
+    },
+
+    /**
+     * To make line paths.
+     * @param {array.<object>} outerPositions outer positions
+     * @returns {Array} line paths.
+     * @private
+     */
+    _makeLinePaths: function(outerPositions) {
+        var paths = ne.util.map(outerPositions, function(positions) {
+            return [
+                raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
+                raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
+            ].join('');
+        }, this);
+        return paths;
     },
 
     /**
@@ -123,9 +175,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _bindHoverEvent: function(params) {
-        var that = this;
         params.target.mouseover(function () {
-            that.showedId = params.id;
             params.inCallback(params.position, params.id);
         }).mouseout(function () {
             params.outCallback(params.id);
@@ -137,10 +187,12 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        var target = this.chart[data.index],
-            cx = this.circleBounds.cx,
-            cy = this.circleBounds.cy;
-        target.stop().animate({transform: "s1.1 1.1 " + cx + " " + cy}, ANIMATION_TIME, "elastic");
+        var sector = this.sectors[data.index].sector,
+            cx = this.circleBound.cx,
+            cy = this.circleBound.cy;
+        sector.animate({
+            transform: "s1.1 1.1 " + cx + " " + cy
+        }, ANIMATION_TIME, "elastic");
     },
 
     /**
@@ -148,8 +200,45 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation: function(data) {
-        var target = this.chart[data.index];
-        target.stop().animate({transform: ""}, ANIMATION_TIME, "elastic");
+        var sector = this.sectors[data.index].sector;
+        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+    },
+
+    /**
+     * Animate.
+     * @param {function} callback callback
+     */
+    animate: function(callback) {
+        var delayTime = 0,
+            circleBound = this.circleBound;
+        ne.util.forEachArray(this.sectors, function(item) {
+            var angles = item.angles,
+                animationTime = LOADING_ANIMATION_TIME * item.percentValue,
+                anim = Raphael.animation({
+                    sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
+                }, animationTime);
+            item.sector.animate(anim.delay(delayTime));
+            delayTime += animationTime;
+        }, this);
+
+        if (callback) {
+            setTimeout(callback, delayTime);
+        }
+    },
+
+    /**
+     * Animate legend lines.
+     */
+    animateLegendLines: function() {
+        if (!this.legendLines) {
+            return;
+        }
+        ne.util.forEachArray(this.legendLines, function(line) {
+            line.animate({
+                'stroke': 'black',
+                'stroke-opacity': 1
+            });
+        });
     }
 });
 

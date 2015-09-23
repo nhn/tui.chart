@@ -13,5 +13,5 @@ var tags = {
 };
 
 module.exports = {
-    TPL_LEGEND: templateMaker.template(tags.HTML_LEGEND)
+    tplLegend: templateMaker.template(tags.HTML_LEGEND)
 };

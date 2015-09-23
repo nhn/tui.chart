@@ -85,7 +85,8 @@
         "title": "X Axis"
     },
     "series": {
-        "hasDot": true
+        "hasDot": true,
+                "showLabel": true
     },
     "theme": "newTheme"
 }
@@ -125,6 +126,7 @@
 </div>
 
 <script src="lib/ne-code-snippet/code-snippet.js"></script>
+<script src="lib/component-effect-slide/effects.js"></script>
 <script src="lib/raphael/raphael-min.js"></script>
 <script src="dist/application-chart.js"></script>
 <script>
@@ -133,52 +135,53 @@
         elBtn = document.getElementById('btn'),
         data = {
             categories: ['cate1', 'cate2', 'cate3'],
-//            series: [
-//                {
-//                    name: 'Legend1',
-//                    data: [20, 30, 50]
-//                },
-//                {
-//                    name: 'Legend2',
-//                    data: [40, 40, 60]
-//                },
-//                {
-//                    name: 'Legend3',
-//                    data: [60, 50, 10]
-//                },
-//                {
-//                    name: 'Legend4',
-//                    data: [80, 10, 70]
-//                }
-//            ],
-            series: {
-                column: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50]
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60]
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10]
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70]
-                    }
-                ],
-                line: [
-                    {
-                        name: 'Legend2_1',
-                        data: [1, 2, 3]
-                    }
-                ]
-            }
+            series: [
+                {
+                    name: 'Legend1',
+                    data: [-20, -30, -50]
+                },
+                {
+                    name: 'Legend2',
+                    data: [-40, -40, -60]
+                },
+                {
+                    name: 'Legend3',
+                    data: [-60, -50, -10]
+                },
+                {
+                    name: 'Legend4',
+                    data: [80, -10, -70]
+                }
+            ],
+//            series: {
+//                column: [
+//                    {
+//                        name: 'Legend1',
+//                        data: [20, 30, 50]
+//                    },
+//                    {
+//                        name: 'Legend2',
+//                        data: [40, 40, 60]
+//                    },
+//                    {
+//                        name: 'Legend3',
+//                        data: [60, 50, 10]
+//                    },
+//                    {
+//                        name: 'Legend4',
+//                        data: [80, 10, 70]
+//                    }
+//                ],
+//                line: [
+//                    {
+//                        name: 'Legend2_1',
+//                        data: [1, 2, 3]
+//                    }
+//                ]
+//            }
         },
 //        data = {
+//            categories: ['cate1', 'cate2', 'cate3'],
 //            series: [
 //                {
 //                    name: 'Legend1',
@@ -207,22 +210,25 @@
             yAxis:{
                 title: 'Y Axis'
             },
-            yAxis:[
-                {
-                    title: 'Y Axis',
-                    chartType: 'line'
-                },
-                {
-                    title: 'XX Axis'
-                }
-            ],
-            series: {
-                line: {
-                    hasDot: true,
-                },
-            },
+//            yAxis:[
+//                {
+//                    title: 'Y Axis',
+//                    chartType: 'line'
+//                },
+//                {
+//                    title: 'XX Axis'
+//                }
+//            ],
+//            series: {
+//                line: {
+//                    hasDot: true,
+//                },
+//            },
             xAxis: {
                 title: 'X Axis'
+            },
+            series: {
+                showLabel: true
             },
             tooltip: {
                 line: {
@@ -234,10 +240,10 @@
             }
         };
 
-    chart.comboChart(elChartArea, data, options);
+//    chart.comboChart(elChartArea, data, options);
 //    chart.pieChart(elChartArea, data, options);
 //    chart.barChart(elChartArea, data, options);
-//    chart.lineChart(elChartArea, data, options);
+    chart.lineChart(elChartArea, data, options);
 //    chart.columnChart(elChartArea, data, options);
 
     var onClick = function() {

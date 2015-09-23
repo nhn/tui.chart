@@ -18,8 +18,9 @@ var dataConverter = {
     /**
      * Convert user data.
      * @memberOf module:dataConverter
-     * @param {array.<array>} userData
+     * @param {array.<array>} userData user data
      * @param {object} chartOptions chart option
+     * @param {string} chartType chart type
      * @returns {{
      *      labels: array.<string>,
      *      values: array.<number>,
@@ -281,9 +282,10 @@ var dataConverter = {
      * @private
      */
     _formatZeroFill: function(len, value) {
-        var zero = '0';
+        var zero = '0',
+            isMinus = value < 0;
 
-        value += '';
+        value = Math.abs(value) + '';
 
         if (value.length >= len) {
             return value;
@@ -293,7 +295,7 @@ var dataConverter = {
             value = zero + value;
         }
 
-        return value;
+        return (isMinus ? '-' : '') + value;
     },
 
     /**

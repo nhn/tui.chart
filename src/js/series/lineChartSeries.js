@@ -6,13 +6,15 @@
 
 'use strict';
 
-var Series = require('./series.js');
+var Series = require('./series.js'),
+    LineTypeSeriesBase = require('./lineTypeSeriesBase.js');
 
-var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs LineChartSeries
      * @extends Series
+     * @mixes LineTypeSeriesBase
      * @param {object} params parameters
      *      @param {object} params.model series model
      *      @param {object} params.options series options
@@ -23,26 +25,16 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
     },
 
     /**
-     * To make positions of line chart.
-     * @param {{width: number, height:nunber}} dimension line chart dimension
-     * @returns {array.<array.<object>>} positions
+     * To make add data.
+     * @returns {object} add data
      */
-    _makePositions: function(dimension) {
-        var groupValues = this.percentValues,
-            width = dimension.width,
-            height = dimension.height,
-            step = width / groupValues[0].length,
-            start = step / 2,
-            result = ne.util.map(groupValues, function(values) {
-                return ne.util.map(values, function(value, index) {
-                    return {
-                        left: start + (step * index),
-                        top: height - (value * height)
-                    };
-                });
-            });
-        return result;
+    makeAddData: function() {
+        return {
+            groupPositions: this.makePositions(this.bound.dimension)
+        };
     }
 });
+
+LineTypeSeriesBase.mixin(LineChartSeries);
 
 module.exports = LineChartSeries;

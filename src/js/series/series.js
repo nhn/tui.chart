@@ -6,12 +6,15 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
+var seriesTemplate = require('./seriesTemplate.js'),
+    chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
+    renderUtil = require('../helpers/renderUtil.js'),
+    event = require('../helpers/eventListener.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
-var HIDDEN_WIDTH = 1;
+var HIDDEN_WIDTH = 1,
+    SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
 
 var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -43,17 +46,17 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Show tooltip (mouseover callback).
-     * @param {string} prefix tooltip id prefix
-     * @param {boolean} isVertical whether vertical or not
+     * @param {object} params parameters
+     *      @param {string} params.prefix tooltip id prefix
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(prefix, isPointPosition, bound, id) {
-        this.fire('showTooltip', {
-            id: prefix + id,
-            isPointPosition: isPointPosition,
+    showTooltip: function(params, bound, id) {
+        this.fire('showTooltip', ne.util.extend({
+            id: params.prefix + id,
             bound: bound
-        });
+        }, params));
     },
 
     /**
@@ -76,42 +79,89 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            isPointPosition = !!this.isPointPosition,
             dimension = bound.dimension,
-            position = bound.position,
-            inCallback = ne.util.bind(this.showTooltip, this, tooltipPrefix, isPointPosition),
+            inCallback = ne.util.bind(this.showTooltip, this, {
+                prefix: tooltipPrefix,
+                allowNegativeTooltip: !!this.allowNegativeTooltip,
+                chartType: this.chartType
+            }),
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
-            hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH,
-            data;
+            data = {
+                dimension: dimension,
+                theme: this.theme,
+                options: this.options
+            },
+            addData = this.makeAddData(),
+            addDataForSeriesLabel;
 
         if (!paper) {
             renderUtil.renderDimension(el, dimension);
-
-            position.top = position.top + (isPointPosition ? -HIDDEN_WIDTH : -1);
-            position.right = position.right + (isPointPosition ? -(HIDDEN_WIDTH * 2) : -hiddenWidth);
-
-            renderUtil.renderPosition(el, position);
         }
 
-        data = {
-            dimension: dimension,
-            theme: this.theme,
-            options: this.options
-        };
+        this._renderPosition(el, bound.position, this.chartType);
 
-        if (this._makeBounds) {
-            data.groupBounds = this._makeBounds(dimension);
-        } else if (this._makePositions) {
-            data.groupPositions = this._makePositions(dimension);
-        } else if (this._makeCircleBounds) {
-            data.percentValues = this.percentValues;
-            data.formattedValues = this.data.formattedValues;
-            data.chartBackground = this.chartBackground;
-            data.circleBounds = this._makeCircleBounds(dimension);
-        }
+        data = ne.util.extend(data, addData);
 
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+
+        if (this._renderSeriesLabel) {
+            addDataForSeriesLabel = this._makeAddDataForSeriesLabel(el, dimension);
+            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, addData));
+        }
+
+        this.attachEvent(el);
+
+        // series label mouse event 동작 시 사용
+        this.inCallback = inCallback;
+        this.outCallback = outCallback;
+
         return el;
+    },
+
+    /**
+     * To make add data.
+     * @returns {object} add data
+     */
+    makeAddData: function() {
+        return {};
+    },
+
+    /**
+     * To make add data for series label.
+     * @param {HTMLElement} container container
+     * @param {{width: number, height: number}}dimension
+     * @returns {{
+     *      container: HTMLElement,
+     *      values: array.<array>,
+     *      formattedValues: array.<array>,
+     *      formatFunctions: array.<function>,
+     *      dimension: {width: number, height: number}
+     * }} add data for series label
+     * @private
+     */
+    _makeAddDataForSeriesLabel: function(container, dimension) {
+        return {
+            container: container,
+            values: this.data.values,
+            formattedValues: this.data.formattedValues,
+            formatFunctions: this.data.formatFunctions,
+            dimension: dimension
+        };
+    },
+
+    /**
+     * Render bounds
+     * @param {HTMLElement} el series element
+     * @param {{width: number, height: number}} dimension series dimension
+     * @param {{top: number, left: number}} position series position
+     * @param {string} chartType chart type
+     * @private
+     */
+    _renderPosition: function(el, position, chartType) {
+        var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
+        position.top = position.top - HIDDEN_WIDTH;
+        position.left = position.left + (chartType === chartConst.CHART_TYPE_BAR ? hiddenWidth : HIDDEN_WIDTH * 2);
+        renderUtil.renderPosition(el, position);
     },
 
     /**
@@ -185,6 +235,16 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Whether line type chart or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isLineTypeChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_LINE || chartType === chartConst.CHART_TYPE_AREA;
+    },
+
+    /**
      * To make normal percent value.
      * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
@@ -194,12 +254,100 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(data.values, function(values) {
-                return ne.util.map(values, function(value) {
-                    return (value - min) / distance;
-                });
+            isLineTypeChart = this._isLineTypeChart(this.chartType),
+            flag = 1,
+            subValue = 0,
+            percentValues;
+
+        if (!isLineTypeChart && min < 0 && max <= 0) {
+            flag = -1;
+            subValue = max;
+            distance = min - max;
+        } else if (isLineTypeChart || min >= 0) {
+            subValue = min;
+        }
+
+        percentValues = ne.util.map(data.values, function(values) {
+            return ne.util.map(values, function(value) {
+                return (value - subValue) * flag / distance;
             });
+        });
         return percentValues;
+    },
+
+    /**
+     * Get scale distance from zero point.
+     * @param {number} size chart size (width or height)
+     * @param {{min: number, max: number}} scale scale
+     * @returns {{toMax: number, toMin: number}} pixel distance
+     */
+    getScaleDistanceFromZeroPoint: function(size, scale) {
+        var min = scale.min,
+            max = scale.max,
+            distance = max - min,
+            toMax = 0,
+            toMin = 0;
+
+        if (min < 0 && max > 0) {
+            toMax = (distance + min) / distance * size;
+            toMin = (distance - max) / distance * size;
+        }
+
+        return {
+            toMax: toMax,
+            toMin: toMin
+        };
+    },
+
+    /**
+     * On mouseover event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+        this.inCallback(this._getBound(groupIndex, index), groupIndex + '-' + index);
+    },
+
+    /**
+     * On mouseout event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var elTarget = e.target || e.srcElement,
+            groupIndex, index;
+
+        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+            return;
+        }
+
+        groupIndex = elTarget.getAttribute('data-group-index');
+        index = elTarget.getAttribute('data-index');
+
+        if (groupIndex === '-1' || index === '-1') {
+            return;
+        }
+
+        this.outCallback(groupIndex + '-' + index);
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
     },
 
     /**
@@ -222,6 +370,54 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
         this.graphRenderer.hideAnimation.call(this.graphRenderer, data);
+    },
+
+    /**
+     * Animate component
+     */
+    animateComponent: function() {
+        if (this.graphRenderer.animate) {
+            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
+        }
+    },
+
+    /**
+     * To make html about series label
+     * @param {{left: number, top: number}} position position
+     * @param {string} value value
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {string} html string
+     * @private
+     */
+    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+        var cssObj = ne.util.extend(position, this.theme.label);
+        return seriesTemplate.tplSeriesLabel({
+            cssText: seriesTemplate.tplCssText(cssObj),
+            value: value,
+            groupIndex: groupIndex,
+            index: index
+        });
+    },
+
+    /**
+     * Show series label area.
+     */
+    showSeriesLabelArea: function() {
+        if ((!this.options.showLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
+            return;
+        }
+
+        dom.addClass(this.elSeriesLabelArea, 'show');
+
+        (new ne.component.Effects.Fade({
+            element: this.elSeriesLabelArea,
+            duration: 300
+        })).action({
+            start: 0,
+            end: 1,
+            complete: function() {}
+        });
     }
 });
 
