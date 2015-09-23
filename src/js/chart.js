@@ -323,6 +323,7 @@ ne.application.chart.lineChart = function(container, data, options) {
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @ignore
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
