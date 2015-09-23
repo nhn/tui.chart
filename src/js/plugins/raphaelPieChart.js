@@ -111,7 +111,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
                     circleBound: circleBound,
                     angles: sectorInfo.angles.start,
                     attrs: {
-                        fill: "90-" + color + "-" + color,
+                        fill: color,
                         stroke: chartBackground,
                         'stroke-width': 1
                     }
