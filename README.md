@@ -2,7 +2,6 @@ Application Chart
 ===============
 Chart<br>
 This application supports draw a chart on web browser.<br>
-Currently it supports Bar Chart, Column Chart, Line Chart, Combo Chart and Pie Chart.
 
 ## Feature
 
