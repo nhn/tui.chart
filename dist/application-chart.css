@@ -209,10 +209,15 @@
   display: block;
 }
 .ne-chart .ne-chart-tooltip-area .ne-chart-tooltip .ne-chart-default-tooltip {
+  padding: 2px 0;
   font-size: 12px;
   min-width: 100px;
-  border: 1px solid #888;
-  background-color: #efefef;
+  color: #fff;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background-clip: padding-box;
+  background-color: #555;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .ne-chart .ne-chart-tooltip-area .ne-chart-tooltip .ne-chart-default-tooltip > * {
   padding: 2px 5px;
