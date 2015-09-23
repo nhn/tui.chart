@@ -50,7 +50,7 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
         this.addComponent('series', params.Series, ne.util.extend({
             libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
+            tooltipPrefix: this.tooltipPrefix
         }, params.seriesData));
 
         this.addComponent('tooltip', Tooltip, {
