@@ -235,6 +235,16 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Whether line type chart or n0t.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isLineTypeChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_LINE || chartType === chartConst.CHART_TYPE_AREA;
+    },
+
+    /**
      * To make normal percent value.
      * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
@@ -244,15 +254,16 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
+            isLineTypeChart = this._isLineTypeChart(this.chartType),
             flag = 1,
             subValue = 0,
             percentValues;
 
-        if (this.chartType !== chartConst.CHART_TYPE_LINE && this.chartType !== chartConst.CHART_TYPE_AREA && min < 0 && max <= 0) {
+        if (!isLineTypeChart && min < 0 && max <= 0) {
             flag = -1;
             subValue = max;
             distance = min - max;
-        } else if (this.chartType === chartConst.CHART_TYPE_LINE || this.chartType === chartConst.CHART_TYPE_AREA || min >= 0) {
+        } else if (isLineTypeChart || min >= 0) {
             subValue = min;
         }
 
