@@ -11,7 +11,7 @@ var Series = require('./series.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
-var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
@@ -29,6 +29,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype 
      * To make bounds of column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
+     * @private
      */
     _makeBounds: function(dimension) {
         if (!this.options.stacked) {

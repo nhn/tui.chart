@@ -235,7 +235,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Whether line type chart or n0t.
+     * Whether line type chart or not.
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      * @private

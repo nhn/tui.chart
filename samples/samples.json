@@ -2,22 +2,49 @@
   "sample01-01-bar-chart": {
     "title": "Bar Chart Sample"
   },
-  "sample01-02-normal-stacked-bar-chart": {
-    "title": "Normal Stacked Bar Chart Sample"
+  "sample01-02-negative-bar-chart": {
+    "title": "Negative Bar Chart Sample"
+  },
+  "sample01-03-normal-stacked-bar-chart": {
+    "title": "Bar Chart Sample(stacked=normal)"
+  },
+  "sample01-04-show-label-bar-chart": {
+    "title": "Bar Chart Sample(showLabel=true)"
+  },
+  "sample01-05-normal-stacked-show-lable-bar-chart": {
+    "title": "Bar Chart Sample(stacked=normal, showLabel=true)"
   },
   "sample02-01-column-chart": {
     "title": "Column Chart Sample"
   },
-  "sample02-02-percent-stacked-column-chart": {
-    "title": "Percent Stacked Column Chart Sample"
+  "sample02-02-negative-column-chart": {
+    "title": "Negative Column Chart Sample"
+  },
+  "sample02-03-percent-stacked-column-chart": {
+    "title": "Column Chart Sample(stacked=percent)"
+  },
+  "sample02-04-show-label-column-chart": {
+    "title": "Column Chart Sample(showLabel=true)"
+  },
+  "sample02-05-percent-stacked-show-label-column-chart": {
+    "title": "Column Chart Sample(stacked=percent, showLabel=true)"
   },
   "sample03-01-line-chart": {
     "title": "Line Chart Sample"
+  },
+  "sample03-02-show-label-line-chart": {
+    "title": "Line Chart Sample(showLabel=true)"
   },
   "sample04-01-combo-chart": {
     "title": "Combo Chart Sample"
   },
   "sample05-01-pie-chart": {
     "title": "Pie Chart Sample"
+  },
+  "sample05-02-legend-type-center-show-label-pie-chart": {
+    "title": "Pie Chart Sample(legendType=center, showLabel=true)"
+  },
+  "sample05-03-legend-type-outer-show-label-pie-chart": {
+    "title": "Pie Chart Sample(legendType=outer, showLabel=true)"
   }
 }

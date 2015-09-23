@@ -10,14 +10,18 @@ var Series = require('./series.js'),
     chartConst = require('../const.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
-
-var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+/**
+ * @classdesc LineTypeSeriesBase is base class for line type series.
+ * @class LineTypeSeriesBase
+ * @mixin
+ */
+var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBase.prototype */ {
     /**
      * To make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
      * @returns {array.<array.<object>>} positions
      */
-    _makePositions: function(dimension) {
+    makePositions: function(dimension) {
         var groupValues = this.percentValues,
             width = dimension.width,
             height = dimension.height,

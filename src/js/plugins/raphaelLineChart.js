@@ -13,8 +13,9 @@ var Raphael = window.Raphael,
     ANIMATION_TIME = 700;
 
 /**
- * @classdesc RaphaelLineCharts is graph renderer.
+ * @classdesc RaphaelLineCharts is graph renderer for line chart.
  * @class RaphaelLineChart
+ * @extends RaphaelLineTypeBase
  */
 var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**

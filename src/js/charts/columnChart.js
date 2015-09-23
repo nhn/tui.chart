@@ -16,8 +16,8 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
      * Column chart.
      * @constructs ColumnChart
      * @extends ChartBase
-     * @extends AxisTypeBase
-     * @extends VerticalTypeBase
+     * @mixes AxisTypeBase
+     * @mixes VerticalTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

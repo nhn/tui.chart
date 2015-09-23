@@ -27,7 +27,7 @@ describe('LineTypeSeriesBase', function() {
         it('라인차트의 position 정보를 생성합니다.', function () {
             var bounds;
             series.percentValues = [[0.25], [0.5]];
-            bounds = series._makePositions({
+            bounds = series.makePositions({
                 width: 200,
                 height: 400
             });

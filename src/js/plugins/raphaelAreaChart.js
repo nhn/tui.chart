@@ -15,8 +15,9 @@ var Raphael = window.Raphael,
 var concat = Array.prototype.concat;
 
 /**
- * @classdesc RaphaelAreaChart is graph renderer.
+ * @classdesc RaphaelAreaChart is graph renderer for area chart.
  * @class RaphaelAreaChart
+ * @extends RaphaelLineTypeBase
  */
 var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
@@ -49,7 +50,6 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         this.outDotStyle = outDotStyle;
         this.groupPaths = groupPaths;
         this.groupAreas = groupAreas;
-        //this.groupLines = groupLines;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
 
@@ -72,7 +72,8 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             fillStyle = {
                 fill: color,
                 opacity: 0.5,
-                stroke: 'none'
+                stroke: color,
+                'stroke-opacity': 0
             },
             addArea;
 
@@ -201,7 +202,7 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             },
             middlePos;
 
-        if (middleLeft > -1) {
+        if (this._isPlus(middleLeft)) {
             middlePos = {left: middleLeft, top: zeroTop};
             result.end = this._makeAreaPath(fromPos, middlePos, zeroTop);
             result.addStart = this._makeAreaPath(middlePos, middlePos, zeroTop);
@@ -236,17 +237,25 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         return groupPaths;
     },
 
+    /**
+     * Animate area chart.
+     * @param {object} area raphael object
+     * @param {string} areaPath path
+     * @param {number} time play time
+     * @param {number} startTime start time
+     * @private
+     */
     _animateArea: function(area, areaPath, time, startTime) {
         var areaAddEndPath = areaPath.addEnd,
             areaEndPath = areaPath.end;
         if (areaAddEndPath) {
             time = time / 2;
             setTimeout(function() {
-                area[1].animate({path: areaAddEndPath}, time);
+                area[1].animate({path: areaAddEndPath, 'stroke-opacity': 0.25}, time);
             }, startTime + time);
         }
         setTimeout(function() {
-            area[0].animate({path: areaEndPath}, time);
+            area[0].animate({path: areaEndPath, 'stroke-opacity': 0.25}, time);
         }, startTime);
     },
 

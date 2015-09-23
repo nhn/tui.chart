@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Column Chart Sample</title>
+    <title>Column Chart Sample(stacked=percent, showLabel=true)</title>
     <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -48,13 +48,17 @@
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "Column Chart"
+        "title": "Column Chart(stacked=percent, showLabel=true)"
     },
     "yAxis": {
         "title": "Y Axis"
     },
     "xAxis": {
         "title": "X Axis"
+    },
+    "series": {
+        "stacked": "percent",
+        "showLabel": true
     }
 }
         </textarea>
@@ -126,13 +130,17 @@
             chart: {
                 width: 500,
                 height: 400,
-                title: 'Column Chart'
+                title: 'Column Chart(stacked=percent, showLabel=true)'
             },
             yAxis: {
                 title: 'Y Axis'
             },
             xAxis: {
                 title: 'X Axis'
+            },
+            series: {
+                stacked: 'percent',
+                showLabel: true
             }
         };
     ne.application.chart.columnChart(container, data, options);

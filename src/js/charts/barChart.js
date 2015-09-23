@@ -16,7 +16,7 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
      * Bar chart.
      * @constructs BarChart
      * @extends ChartBase
-     * @extends AxisTypeBase
+     * @mixes AxisTypeBase
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options

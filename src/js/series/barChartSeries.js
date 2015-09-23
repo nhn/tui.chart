@@ -11,7 +11,7 @@ var Series = require('./series.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
-var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
@@ -30,6 +30,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ 
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
+     * @private
      */
     _makeBounds: function(dimension, hiddenWidth) {
         hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : chartConst.HIDDEN_WIDTH);
