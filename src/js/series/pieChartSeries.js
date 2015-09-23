@@ -11,7 +11,7 @@ var Series = require('./series'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var PieChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs PieChartSeries

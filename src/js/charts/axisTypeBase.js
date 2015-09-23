@@ -1,5 +1,5 @@
 /**
- * @fileoverview AxisBase
+ * @fileoverview AxisTypeBase is base class of axis type chart(bar, column, line, area).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,6 +11,10 @@ var Axis = require('../axes/axis.js'),
     Legend = require('../legends/legend.js'),
     Tooltip = require('../tooltips/tooltip.js');
 
+/**
+ * @classdesc AxisTypeBase is base class of axis type chart(bar, column, line, area).
+ * @class AxisTypeBase
+ */
 var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
     /**
      * Add axis components

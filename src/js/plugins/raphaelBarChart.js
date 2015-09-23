@@ -11,7 +11,7 @@ var Raphael = window.Raphael;
 var ANIMATION_TIME = 700;
 
 /**
- * @classdesc RaphaelBarChart is graph renderer.
+ * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
  * @class RaphaelBarChart
  */
 var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {

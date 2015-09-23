@@ -1,5 +1,5 @@
 /**
- * @fileoverview Raphael pie chart renderer.
+ * @fileoverview RaphaelPieCharts is graph renderer for pie chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -16,7 +16,7 @@ var Raphael = window.Raphael,
     LOADING_ANIMATION_TIME = 700;
 
 /**
- * @classdesc RaphaelPieCharts is graph renderer.
+ * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
  */
 var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {

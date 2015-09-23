@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Normal Stacked Bar Chart Sample</title>
+    <title>Bar Chart Sample(stacked=normal, showLabel=true)</title>
     <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -48,7 +48,7 @@
     "chart": {
         "width": 500,
         "height": 400,
-        "title": "Normal Stacked, Shown Series Label Bar Chart"
+        "title": "Bar Chart(stacked=normal, showLabel=true)"
     },
     "yAxis": {
         "title": "Y Axis"
@@ -58,7 +58,7 @@
     },
     "series": {
         "stacked": "normal",
-        "shownLabel": true
+        "showLabel": true
     }
 }
         </textarea>
@@ -129,7 +129,7 @@
         chart: {
             width: 500,
             height: 400,
-            title: 'Normal Stacked, Shown Series Label Bar Chart'
+            title: 'Bar Chart(stacked=normal, showLabel=true)'
         },
         yAxis: {
             title: 'Y Axis'
@@ -139,7 +139,7 @@
         },
         series: {
             stacked: 'normal',
-            shownLabel: true
+            showLabel: true
         }
     };
     ne.application.chart.barChart(container, data, options);

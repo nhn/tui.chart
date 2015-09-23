@@ -148,12 +148,29 @@
   height: 1px;
 }
 .ne-chart .ne-chart-series-area {
-  z-index: 300;
+  z-index: 400;
   position: absolute;
-  overflow: hidden;
+}
+.ne-chart .ne-chart-series-area .ne-chart-series-label-area {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: none;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=(0));
+  opacity: 0;
+}
+.ne-chart .ne-chart-series-area .ne-chart-series-label-area .ne-chart-series-label {
+  position: absolute;
+  cursor: default;
+  text-align: center;
+  text-shadow: #ffffff 0px 0px 3px;
+}
+.ne-chart .ne-chart-series-area .ne-chart-series-label-area.show {
+  display: block;
 }
 .ne-chart .ne-chart-legend-area {
-  z-index: 400;
+  z-index: 300;
   position: absolute;
   padding: 10px;
 }
@@ -170,6 +187,11 @@
 }
 .ne-chart .ne-chart-legend-area .ne-chart-legend .ne-chart-legend-rect.line {
   height: 2px;
+}
+.ne-chart .ne-chart-legend-area .ne-chart-legend .ne-chart-legend-rect.area {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=(50));
+  opacity: 0.5;
 }
 .ne-chart .ne-chart-legend-area .ne-chart-legend .ne-chart-legend-label {
   padding: 2px 0 2px 5px;
@@ -199,6 +221,16 @@
 .ne-chart .ne-chart-tooltip-area .ne-chart-tooltip .ne-chart-default-tooltip > :first-child {
   backgound-color: #fff;
   font-weight: bold;
+}
+.ne-chart-size-check-element {
+  clear: both;
+  position: absolute;
+  top: 100000px;
+  left: 100000px;
+  width: 1000px;
+  height: 100px;
+  line-height: 1;
+  z-index: 10000000;
 }
 :root .ne-chart .ne-chart-axis-area.vertical .ne-chart-title-area {
   filter: none\0;

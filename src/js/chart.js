@@ -355,9 +355,6 @@ ne.application.chart.lineChart = function(container, data, options) {
  *       },
  *       xAxis: {
  *         title: 'X Axis'
- *       },
- *       series: {
- *         hasDot: true
  *       }
  *     };
  * ne.application.chart.areaChart(container, data, options);

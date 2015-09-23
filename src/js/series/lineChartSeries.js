@@ -7,10 +7,9 @@
 'use strict';
 
 var Series = require('./series.js'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase.js'),
-    chartConst = require('../const.js');
+    LineTypeSeriesBase = require('./lineTypeSeriesBase.js');
 
-var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs LineChartSeries
@@ -31,7 +30,7 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
      */
     makeAddData: function() {
         return {
-            groupPositions: this._makePositions(this.bound.dimension)
+            groupPositions: this.makePositions(this.bound.dimension)
         };
     }
 });

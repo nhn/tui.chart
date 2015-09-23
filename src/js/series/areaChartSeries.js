@@ -9,10 +9,10 @@
 var Series = require('./series.js'),
     LineTypeSeriesBase = require('./lineTypeSeriesBase.js');
 
-var areaChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */ {
+var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
      * Area chart series component.
-     * @constructs areaChartSeries
+     * @constructs AreaChartSeries
      * @extends Series
      * @extends LineTypeSeriesBase
      * @param {object} params parameters
@@ -37,12 +37,12 @@ var areaChartSeries = ne.util.defineClass(Series, /** @lends Series.prototype */
         }
 
         return {
-            groupPositions: this._makePositions(dimension),
+            groupPositions: this.makePositions(dimension),
             zeroTop: zeroTop
         };
     }
 });
 
-LineTypeSeriesBase.mixin(areaChartSeries);
+LineTypeSeriesBase.mixin(AreaChartSeries);
 
-module.exports = areaChartSeries;
+module.exports = AreaChartSeries;

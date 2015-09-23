@@ -6,9 +6,14 @@
 
 'use strict';
 
+/**
+ * Util for raphael rendering.
+ * @module raphaelRenderUtil
+ */
 var raphaelRenderUtil = {
     /**
      * To make line path.
+     * @memberOf module:raphaelRenderUtil
      * @param {{top: number, left: number}} fromPos from position
      * @param {{top: number, left: number}} toPos to position
      * @param {number} width width
@@ -29,7 +34,8 @@ var raphaelRenderUtil = {
     },
 
     /**
-     * Render line
+     * Render line.
+     * @memberOf module:raphaelRenderUtil
      * @param {object} paper raphael paper
      * @param {string} path line path
      * @param {string} color line color

@@ -1,5 +1,5 @@
 /**
- * @fileoverview RaphaelLineBase is base class for line type renderer.
+ * @fileoverview RaphaelLineTypeBase is base class for line type renderer.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,10 +12,10 @@ var DEFAULT_DOT_WIDTH = 4,
     HOVER_DOT_WIDTH = 5;
 
 /**
- * @classdesc RaphaelLineBase is graph renderer.
- * @class RaphaelLineBase
+ * @classdesc RaphaelLineTypeBase is base for line type renderer.
+ * @class RaphaelLineTypeBase
  */
-var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineBase.prototype */ {
+var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * To make line paths.
      * @param {{left: number, top: number}} fromPos from position

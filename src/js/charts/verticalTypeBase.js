@@ -1,5 +1,5 @@
 /**
- * @fileoverview Vertical type base.
+ * @fileoverview VerticalTypeBase is base class of vertical type chart(column, line, area).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,6 +8,10 @@
 
 var axisDataMaker = require('../helpers/axisDataMaker');
 
+/**
+ * @classdesc VerticalTypeBase is base class of vertical type chart(column, line, area).
+ * @class VerticalTypeBase
+ */
 var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype */ {
     /**
      * To make axes data
