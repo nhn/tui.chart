@@ -46,7 +46,8 @@ This application supports draw a chart on web browser.<br>
 * **Sample** : https://nhnent.github.io/fe.application-chart/latest/tutorial-sample01-01-bar-chart.html
 
 ## Dependency
-* ne-code-snippet ~1.0.2
+* ne-code-snippet 1.0.2
+* ne-component-effects 1.1.0
 * Raphaël 2.1.4
 
 ## Test environment
