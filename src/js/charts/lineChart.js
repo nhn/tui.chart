@@ -49,22 +49,24 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
      * @private
      */
     _addComponents: function(convertData, axesData, options) {
-        this.addAxisComponents({
-            convertData: convertData,
-            axes: axesData,
-            plotData: !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
+        var plotData = !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
             },
-            chartType: options.chartType,
-            Series: Series,
-            seriesData: {
+            seriesData = {
                 data: {
                     values: calculator.arrayPivot(convertData.values),
                     formattedValues: calculator.arrayPivot(convertData.formattedValues),
                     scale: axesData.yAxis.scale
                 }
-            }
+            };
+        this.addAxisComponents({
+            convertData: convertData,
+            axes: axesData,
+            plotData: plotData,
+            chartType: options.chartType,
+            Series: Series,
+            seriesData: seriesData
         });
     }
 });
