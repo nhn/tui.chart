@@ -302,12 +302,13 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 sendTheme = params.themeMap[chartType],
                 sendBounds = JSON.parse(JSON.stringify(baseData.bounds)),
                 Chart = chartClasses[chartType],
-                chart;
+                initedData, chart;
 
             if (axes && axes.yAxis.isPositionRight) {
                 sendBounds.yAxis = sendBounds.yrAxis;
             }
-            chart = new Chart(params.userData, sendTheme, sendOptions, {
+
+            initedData = {
                 convertData: {
                     values: convertData.values[chartType],
                     labels: convertData.labels,
@@ -320,7 +321,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 bounds: sendBounds,
                 axes: axes,
                 prefix: chartType + '-'
-            });
+            };
+
+            chart = new Chart(params.userData, sendTheme, sendOptions, initedData);
             plotData = null;
             joinLegendLabels = null;
             return chart;

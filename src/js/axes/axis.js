@@ -127,9 +127,8 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
             elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
-            isVertical = data.isVertical,
-            posType = isVertical ? 'bottom' : 'left',
-            borderColorType = isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
+            posType = data.isVertical ? 'bottom' : 'left',
+            borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position) {
                 var cssText = [
@@ -154,33 +153,29 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderLabelArea: function(size, axisWidth) {
         var data = this.data,
-            theme = this.theme,
             tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
-            labels = data.labels,
-            isVertical = data.isVertical,
-            isLabelAxis = data.isLabelAxis,
             posType = 'left',
             cssTexts = this._makeLabelCssTexts({
-                isVertical: isVertical,
-                isLabelAxis: isLabelAxis,
+                isVertical: data.isVertical,
+                isLabelAxis: data.isLabelAxis,
                 labelSize: labelSize
             }),
             elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
-            areaCssText = renderUtil.makeFontCssText(theme.label),
+            areaCssText = renderUtil.makeFontCssText(this.theme.label),
             labelsHtml, titleAreaWidth;
 
-        if (isVertical) {
-            posType = isLabelAxis ? 'top' : 'bottom';
+        if (data.isVertical) {
+            posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
             areaCssText += ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
         }
 
-        tickPixelPositions.length = labels.length;
+        tickPixelPositions.length = data.labels.length;
 
         labelsHtml = this._makeLabelsHtml({
             positions: tickPixelPositions,
-            labels: labels,
+            labels: data.labels,
             posType: posType,
             cssTexts: cssTexts
         });
@@ -190,9 +185,9 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
         this._changeLabelAreaPosition({
             elLabelArea: elLabelArea,
-            isVertical: isVertical,
-            isLabelAxis: isLabelAxis,
-            theme: theme.label,
+            isVertical: data.isVertical,
+            isLabelAxis: data.isLabelAxis,
+            theme: this.theme.label,
             labelSize: labelSize
         });
 
