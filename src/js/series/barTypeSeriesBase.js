@@ -42,15 +42,16 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             return ne.util.map(values, function(value, index) {
-                var bound = groupBounds[groupIndex][index].end,
-                    formattedValue = formattedValues[groupIndex][index],
-                    renderPosition = this.makeSeriesRenderingPosition({
-                        value: value,
-                        bound: bound,
-                        formattedValue: formattedValue,
-                        labelHeight: labelHeight
-                    }),
-                    labelHtml = this._makeSeriesLabelHtml(renderPosition, formattedValue, groupIndex, index);
+                var bound, formattedValue, renderingPosition, labelHtml;
+                bound = groupBounds[groupIndex][index].end;
+                formattedValue = formattedValues[groupIndex][index];
+                renderingPosition = this.makeSeriesRenderingPosition({
+                    value: value,
+                    bound: bound,
+                    formattedValue: formattedValue,
+                    labelHeight: labelHeight
+                });
+                labelHtml = this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
                 return labelHtml;
             }, this).join('');
         }, this).join('');

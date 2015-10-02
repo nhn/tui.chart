@@ -60,28 +60,34 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
      * @private
      */
     _makeNormalBarChartBounds: function(dimension, hiddenWidth) {
-        var groupValues = this.percentValues,
-            groupHeight = (dimension.height / groupValues.length),
-            barHeight = groupHeight / (groupValues[0].length + 1),
-            scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale),
-            bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
-                return ne.util.map(values, function (value, index) {
-                    var startLeft, endWidth, bound;
-                    startLeft = scaleDistance.toMin - chartConst.HIDDEN_WIDTH;
-                    endWidth = value * dimension.width * (value < 0 ? -1 : 1);
-                    bound = this._makeBarChartBound({
-                        baseBound: {
-                            top: paddingTop + (barHeight * index),
-                            height: barHeight
-                        },
-                        startLeft: startLeft,
-                        endLeft: startLeft + (value < 0 ? -endWidth : 0),
-                        endWidth: endWidth
-                    });
-                    return bound;
-                }, this);
+        var groupValues, groupHeight, barHeight, scaleDistance, bounds;
+
+        groupValues = this.percentValues;
+        groupHeight = (dimension.height / groupValues.length);
+        barHeight = groupHeight / (groupValues[0].length + 1);
+        scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale);
+        bounds = ne.util.map(groupValues, function(values, groupIndex) {
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+            return ne.util.map(values, function (value, index) {
+                var startLeft, endWidth, bound, baseBound;
+
+                startLeft = scaleDistance.toMin - chartConst.HIDDEN_WIDTH;
+                endWidth = value * dimension.width * (value < 0 ? -1 : 1);
+                baseBound = {
+                    top: paddingTop + (barHeight * index),
+                    height: barHeight
+                };
+                bound = this._makeBarChartBound({
+                    baseBound: baseBound,
+                    startLeft: startLeft,
+                    endLeft: startLeft + (value < 0 ? -endWidth : 0),
+                    endWidth: endWidth
+                });
+
+                return bound;
             }, this);
+        }, this);
+
         return bounds;
     },
 
@@ -93,31 +99,37 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
      * @private
      */
     _makeStackedBarChartBounds: function(dimension, hiddenWidth) {
-        var groupValues = this.percentValues,
-            groupHeight = (dimension.height / groupValues.length),
-            barHeight = groupHeight / 2,
-            bounds = ne.util.map(groupValues, function (values, groupIndex) {
-                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
-                    endLeft = -chartConst.HIDDEN_WIDTH;
-                return ne.util.map(values, function (value) {
-                    var endWidth, bound;
-                    if (value < 0) {
-                        return null;
-                    }
-                    endWidth = value * dimension.width;
-                    bound = this._makeBarChartBound({
-                        baseBound: {
-                            top: paddingTop,
-                            height: barHeight
-                        },
-                        startLeft: -chartConst.HIDDEN_WIDTH,
-                        endLeft: endLeft,
-                        endWidth: endWidth
-                    });
-                    endLeft = endLeft + endWidth;
-                    return bound;
-                }, this);
+        var groupValues, groupHeight, barHeight, bounds;
+
+        groupValues = this.percentValues;
+        groupHeight = (dimension.height / groupValues.length);
+        barHeight = groupHeight / 2;
+        bounds = ne.util.map(groupValues, function (values, groupIndex) {
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
+                endLeft = -chartConst.HIDDEN_WIDTH;
+            return ne.util.map(values, function (value) {
+                var endWidth, baseBound, bound;
+
+                if (value < 0) {
+                    return null;
+                }
+
+                endWidth = value * dimension.width;
+                baseBound = {
+                    top: paddingTop,
+                    height: barHeight
+                };
+                bound = this._makeBarChartBound({
+                    baseBound: baseBound,
+                    startLeft: -chartConst.HIDDEN_WIDTH,
+                    endLeft: endLeft,
+                    endWidth: endWidth
+                });
+                endLeft = endLeft + endWidth;
+
+                return bound;
             }, this);
+        }, this);
         return bounds;
     },
 
