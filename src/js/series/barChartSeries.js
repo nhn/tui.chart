@@ -55,11 +55,10 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeNormalBarChartBounds: function(dimension, hiddenWidth) {
+    _makeNormalBarChartBounds: function(dimension) {
         var groupValues, groupHeight, barHeight, scaleDistance, bounds;
 
         groupValues = this.percentValues;
@@ -67,11 +66,11 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
         barHeight = groupHeight / (groupValues[0].length + 1);
         scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale);
         bounds = ne.util.map(groupValues, function(values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2);
             return ne.util.map(values, function (value, index) {
                 var startLeft, endWidth, bound, baseBound;
 
-                startLeft = scaleDistance.toMin - chartConst.HIDDEN_WIDTH;
+                startLeft = scaleDistance.toMin + chartConst.SERIES_EXPAND_SIZE;
                 endWidth = value * dimension.width * (value < 0 ? -1 : 1);
                 baseBound = {
                     top: paddingTop + (barHeight * index),
@@ -94,19 +93,18 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     /**
      * To make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeStackedBarChartBounds: function(dimension, hiddenWidth) {
+    _makeStackedBarChartBounds: function(dimension) {
         var groupValues, groupHeight, barHeight, bounds;
 
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;
         bounds = ne.util.map(groupValues, function (values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
-                endLeft = -chartConst.HIDDEN_WIDTH;
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2),
+                endLeft = chartConst.SERIES_EXPAND_SIZE;
             return ne.util.map(values, function (value) {
                 var endWidth, baseBound, bound;
 
@@ -121,7 +119,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
                 };
                 bound = this._makeBarChartBound({
                     baseBound: baseBound,
-                    startLeft: -chartConst.HIDDEN_WIDTH,
+                    startLeft: chartConst.SERIES_EXPAND_SIZE,
                     endLeft: endLeft,
                     endWidth: endWidth
                 });
@@ -137,16 +135,14 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     /**
      * To make bounds of bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeBounds: function(dimension, hiddenWidth) {
-        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : chartConst.HIDDEN_WIDTH);
+    _makeBounds: function(dimension) {
         if (!this.options.stacked) {
-            return this._makeNormalBarChartBounds(dimension, hiddenWidth);
+            return this._makeNormalBarChartBounds(dimension);
         } else {
-            return this._makeStackedBarChartBounds(dimension, hiddenWidth);
+            return this._makeStackedBarChartBounds(dimension);
         }
     },
 

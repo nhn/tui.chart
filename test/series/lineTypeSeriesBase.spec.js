@@ -34,11 +34,11 @@ describe('LineTypeSeriesBase', function() {
             expect(bounds).toEqual([
                 [{
                     top: 300,
-                    left: 100
+                    left: 110
                 }],
                 [{
                     top: 200,
-                    left: 100
+                    left: 110
                 }]
             ]);
         });

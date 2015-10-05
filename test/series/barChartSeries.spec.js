@@ -93,17 +93,17 @@ describe('BarChartSeries', function() {
                 height: 200
             }, 1);
 
-            // 0점의 위치가 left 159임
+            // 0점의 위치가 left 170임
             // 음수의 경우 left, width 값이 같이 변함
-            expect(result[0][0].start.left).toBe(159);
+            expect(result[0][0].start.left).toBe(170);
             expect(result[0][0].start.width).toBe(0);
-            expect(result[0][0].end.left).toBe(79);
+            expect(result[0][0].end.left).toBe(90);
             expect(result[0][0].end.width).toBe(80);
 
             // 양수의 경우는 width만 변화됨
-            expect(result[0][1].start.left).toBe(159);
+            expect(result[0][1].start.left).toBe(170);
             expect(result[0][1].start.width).toBe(0);
-            expect(result[0][1].end.left).toBe(159);
+            expect(result[0][1].end.left).toBe(170);
             expect(result[0][1].end.width).toBe(160);
         });
     });
@@ -117,13 +117,13 @@ describe('BarChartSeries', function() {
                 height: 100
             }, 1);
 
-            expect(bounds[0][0].end.left).toBe(-1);
+            expect(bounds[0][0].end.left).toBe(10);
             expect(bounds[0][0].end.width).toBe(80);
 
-            expect(bounds[0][1].end.left).toBe(79);
+            expect(bounds[0][1].end.left).toBe(90);
             expect(bounds[0][1].end.width).toBe(120);
 
-            expect(bounds[0][2].end.left).toBe(199);
+            expect(bounds[0][2].end.left).toBe(210);
             expect(bounds[0][2].end.width).toBe(200);
         });
     });

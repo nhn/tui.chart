@@ -52,17 +52,17 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     _renderBars: function(paper, theme, groupBounds, inCallback, outCallback) {
         var singleColors = (groupBounds[0].length === 1) && theme.singleColors || [],
             colors = theme.colors,
-            borderColor = theme.borderColor || 'none',
             bars = [];
         ne.util.forEachArray(groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex],
-                color, id, rect;
+                color, borderColor, id, rect;
             ne.util.forEachArray(bounds, function(bound, index) {
                 if (!bound) {
                     return;
                 }
 
                 color = singleColor || colors[index];
+                borderColor = theme.borderColor || color,
                 id = groupIndex + '-' + index;
                 rect = this._renderBar(paper, color, borderColor, bound.start);
 
@@ -94,6 +94,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
+
         rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: color,

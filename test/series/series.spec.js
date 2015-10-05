@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('../../src/js/series/series.js'),
-    chartConst = require('../../src/js/const.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -164,8 +163,13 @@ describe('Series', function() {
                 }
             );
 
-            expect(elSeries.style.top).toBe('19px');
-            expect(elSeries.style.left).toBe('22px');
+            if (renderUtil.isIE8()) {
+                expect(elSeries.style.top).toBe('18px');
+                expect(elSeries.style.left).toBe('9px');
+            } else {
+                expect(elSeries.style.top).toBe('20px');
+                expect(elSeries.style.left).toBe('10px');
+            }
         });
     });
 
@@ -185,15 +189,15 @@ describe('Series', function() {
             var elSeries = series.render();
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
-            expect(elSeries.style.width).toBe('200px');
-            expect(elSeries.style.height).toBe('100px');
-
-            expect(elSeries.style.top).toBe('49px');
+            expect(elSeries.style.width).toBe('210px');
+            expect(elSeries.style.height).toBe('110px');
 
             if (renderUtil.isIE8()) {
-                expect(elSeries.style.left).toBe('50px');
+                expect(elSeries.style.top).toBe('48px');
+                expect(elSeries.style.left).toBe('39px');
             } else {
-                expect(elSeries.style.left).toBe('51px');
+                expect(elSeries.style.top).toBe('50px');
+                expect(elSeries.style.left).toBe('40px');
             }
         });
     });

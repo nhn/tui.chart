@@ -301,30 +301,6 @@ describe('axisDataMaker', function() {
         });
     });
 
-    describe('_addMinPadding()', function() {
-        it('Line차트의 경우 min과 userMin이 같으면 한 step 감소시킨 min 값을 반환합니다.', function () {
-            var result = maker._addMinPadding({
-                min: 0,
-                userMin: 0,
-                step: 20,
-                chartType: 'line'
-            });
-
-            expect(result).toEqual(-20);
-        });
-
-        it('Bar차트의 경우 min이 0이면서 userMin 같으면 감소 없는 min 값을 반환합니다.', function () {
-            var result = maker._addMinPadding({
-                min: 0,
-                userMin: 0,
-                step: 20,
-                chartType: 'bar'
-            });
-
-            expect(result).toBe(0);
-        });
-    });
-
     describe('_addMaxPadding()', function() {
         it('max와 userMax가 같으면 한 step 증가시킨 max 값을 반환합니다.', function () {
             var result = maker._addMaxPadding({

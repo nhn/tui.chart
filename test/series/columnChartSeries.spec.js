@@ -48,13 +48,13 @@ describe('ColumnChartSeries', function() {
             expect(actual.startTop).toBe(expected);
         });
 
-        it('value가 0보다 클 경우에는 startTop은 endTop에 hidden width를 더한 값으로 생성하고, endTop은 endHeight를 뺀 값에 hidden width를 더해 생성합니다.', function() {
+        it('value가 0보다 크거나 같을 경우에는 startTop은 endTop과 동일한 값으로 생성하고, endTop은 endHeight를 뺀 값을 생성합니다.', function() {
             var endTop = 30,
                 endHeight = 20,
                 value = 10,
                 actual = series._makeStartEndTops(endTop, endHeight, value),
-                expectedStartTop = 30 + chartConst.HIDDEN_WIDTH,
-                expectedEndTop = 10 + chartConst.HIDDEN_WIDTH;
+                expectedStartTop = 30,
+                expectedEndTop = 10;
 
             expect(actual.startTop).toBe(expectedStartTop);
             expect(actual.endTop).toBe(expectedEndTop);
@@ -125,9 +125,9 @@ describe('ColumnChartSeries', function() {
             expect(result[0][0].end.height).toBe(100);
 
             // 양수의 경우는 top, height 값이 같이 변함
-            expect(result[1][0].start.top).toBe(241);
+            expect(result[1][0].start.top).toBe(240);
             expect(result[1][0].start.height).toBe(0);
-            expect(result[1][0].end.top).toBe(41);
+            expect(result[1][0].end.top).toBe(40);
             expect(result[1][0].end.height).toBe(200);
         });
     });
