@@ -11,6 +11,8 @@ var Series = require('./series.js'),
     chartConst = require('../const.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
+var EXPAND_SIZE = 10;
+
 var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
      * Column chart series component.
@@ -39,8 +41,8 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
         if (value < 0) {
             startTop = endTop;
         } else {
-            startTop = endTop + chartConst.HIDDEN_WIDTH;
-            endTop -= endHeight - chartConst.HIDDEN_WIDTH;
+            startTop = endTop;
+            endTop -= endHeight;
         }
 
         return {
@@ -96,7 +98,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
                     startEndTops = this._makeStartEndTops(endTop, endHeight, value);
                     bound = this._makeColumnChartBound(ne.util.extend({
                         baseBound: {
-                            left: paddingLeft + (barWidth * index) - chartConst.HIDDEN_WIDTH,
+                            left: paddingLeft + (barWidth * index) + chartConst.SERIES_EXPAND_SIZE,
                             width: barWidth
                         },
                         endHeight: endHeight
@@ -119,7 +121,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
             seriesHeight = dimension.height,
             barWidth = groupWidth / 2,
             bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2),
+                var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2) + chartConst.SERIES_EXPAND_SIZE,
                     top = 0;
                 return ne.util.map(values, function (value) {
                     var endHeight, bound;

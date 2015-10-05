@@ -30,7 +30,7 @@ var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBa
             result = ne.util.map(groupValues, function(values) {
                 return ne.util.map(values, function(value, index) {
                     return {
-                        left: start + (step * index),
+                        left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
                         top: height - (value * height)
                     };
                 });

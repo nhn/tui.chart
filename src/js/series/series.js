@@ -13,8 +13,7 @@ var seriesTemplate = require('./seriesTemplate.js'),
     event = require('../helpers/eventListener.js'),
     pluginFactory = require('../factories/pluginFactory.js');
 
-var HIDDEN_WIDTH = 1,
-    SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
+var SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
 
 var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -71,6 +70,19 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * To expand series dimension
+     * @param {{width: number, height: number}} dimension series dimension
+     * @returns {{width: number, height: number}} expended dimension
+     * @private
+     */
+    _expandDimension: function(dimension) {
+        return {
+            width: dimension.width + chartConst.SERIES_EXPAND_SIZE,
+            height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+        };
+    },
+
+    /**
      * Render series.
      * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
@@ -79,7 +91,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            dimension = bound.dimension,
+            dimension = this._expandDimension(bound.dimension),
             inCallback = ne.util.bind(this.showTooltip, this, {
                 prefix: tooltipPrefix,
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
@@ -88,6 +100,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             data = {
                 dimension: dimension,
+                expandSize: chartConst.SERIES_EXPAND_SIZE,
                 theme: this.theme,
                 options: this.options
             },
@@ -129,7 +142,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
      * To make add data for series label.
      * @param {HTMLElement} container container
-     * @param {{width: number, height: number}}dimension
+     * @param {{width: number, height: number}} dimension dimension
      * @returns {{
      *      container: HTMLElement,
      *      values: array.<array>,
@@ -152,15 +165,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Render bounds
      * @param {HTMLElement} el series element
-     * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, left: number}} position series position
-     * @param {string} chartType chart type
      * @private
      */
-    _renderPosition: function(el, position, chartType) {
-        var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
-        position.top = position.top - HIDDEN_WIDTH;
-        position.left = position.left + (chartType === chartConst.CHART_TYPE_BAR ? hiddenWidth : HIDDEN_WIDTH * 2);
+    _renderPosition: function(el, position) {
+        var hiddenWidth = renderUtil.isIE8() ? chartConst.HIDDEN_WIDTH : 0;
+        position.top = position.top - (hiddenWidth * 2);
+        position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
         renderUtil.renderPosition(el, position);
     },
 
