@@ -6,7 +6,8 @@
 
 'use strict';
 
-var axisDataMaker = require('../helpers/axisDataMaker');
+var axisDataMaker = require('../helpers/axisDataMaker'),
+    state = require('../helpers/state');
 
 /**
  * @classdesc VerticalTypeBase is base class of vertical type chart(column, line, area).
@@ -38,7 +39,8 @@ var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype
                 isVertical: true
             });
             axesData.xAxis = axisDataMaker.makeLabelAxisData({
-                labels: convertData.labels
+                labels: convertData.labels,
+                aligned: state.isLineTypeChart(this.options.chartType)
             });
         }
         return axesData;

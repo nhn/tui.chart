@@ -10,7 +10,6 @@ var maker = require('../../src/js/helpers/axisDataMaker.js'),
     converter = require('../../src/js/helpers/dataConverter.js');
 
 describe('axisDataMaker', function() {
-
     describe('makeLabelAxisData()', function() {
         it('레이블 타입의 axis data를 생성합니다.', function () {
             var result = maker.makeLabelAxisData({
@@ -23,6 +22,14 @@ describe('axisDataMaker', function() {
                 isLabelAxis: true,
                 isVertical: false
             });
+        });
+
+        it('aligned옵션이 true이면 tick label과 tick의 수가 동일하기 때문에 tickCount는 레이블 수 만큼만 설정된다. ', function () {
+            var result = maker.makeLabelAxisData({
+                labels: ['label1', 'label2', 'label3'],
+                aligned: true
+            });
+            expect(result.tickCount).toBe(3);
         });
     });
 

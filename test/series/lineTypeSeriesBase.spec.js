@@ -26,20 +26,52 @@ describe('LineTypeSeriesBase', function() {
     describe('_makePositions()', function() {
         it('라인차트의 position 정보를 생성합니다.', function () {
             var bounds;
-            series.percentValues = [[0.25], [0.5]];
+            series.percentValues = [[0.25, 0.5, 0.4]];
             bounds = series.makePositions({
-                width: 200,
-                height: 400
+                width: 300,
+                height: 200
             });
             expect(bounds).toEqual([
-                [{
-                    top: 300,
-                    left: 110
-                }],
-                [{
-                    top: 200,
-                    left: 110
-                }]
+                [
+                    {
+                        top: 150,
+                        left: 60
+                    },
+                    {
+                        top: 100,
+                        left: 160
+                    },
+                    {
+                        top: 120,
+                        left: 260
+                    }
+                ]
+            ]);
+        });
+
+        it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function () {
+            var bounds;
+            series.percentValues = [[0.25, 0.5, 0.4]];
+            series.aligned = true;
+            bounds = series.makePositions({
+                width: 300,
+                height: 200
+            });
+            expect(bounds).toEqual([
+                [
+                    {
+                        top: 150,
+                        left: 10
+                    },
+                    {
+                        top: 100,
+                        left: 160
+                    },
+                    {
+                        top: 120,
+                        left: 310
+                    }
+                ]
             ]);
         });
     });
