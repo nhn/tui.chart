@@ -31,14 +31,14 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             }),
             convertData = baseData.convertData,
             bounds = baseData.bounds,
-            axisData;
+            axesData;
 
         this.className = 'ne-line-chart';
 
         ChartBase.call(this, bounds, theme, options, initedData);
 
-        axisData = this._makeAxesData(convertData, bounds, options, initedData);
-        this._addComponents(convertData, axisData, options);
+        axesData = this._makeAxesData(convertData, bounds, options, initedData);
+        this._addComponents(convertData, axesData, options);
     },
 
     /**
@@ -48,7 +48,7 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, axesData, options) {
+    _addComponents: function(convertData, axesData) {
         var plotData, seriesData;
 
         plotData = this.makePlotData(convertData.plotData, axesData);
@@ -63,9 +63,9 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             convertData: convertData,
             axes: axesData,
             plotData: plotData,
-            chartType: options.chartType,
             Series: Series,
-            seriesData: seriesData
+            seriesData: seriesData,
+            aligned: axesData.xAxis && axesData.xAxis.aligned
         });
     }
 });

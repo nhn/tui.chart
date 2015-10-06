@@ -25,16 +25,24 @@ var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBa
         var groupValues = this.percentValues,
             width = dimension.width,
             height = dimension.height,
-            step = width / groupValues[0].length,
-            start = step / 2,
-            result = ne.util.map(groupValues, function(values) {
-                return ne.util.map(values, function(value, index) {
-                    return {
-                        left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
-                        top: height - (value * height)
-                    };
-                });
+            len = groupValues[0].length,
+            step, start, result;
+        if (this.aligned) {
+            step = width / (len - 1);
+            start = 0;
+        } else {
+            step = width / len;
+            start = step / 2;
+        }
+
+        result = ne.util.map(groupValues, function(values) {
+            return ne.util.map(values, function(value, index) {
+                return {
+                    left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
+                    top: height - (value * height)
+                };
             });
+        });
         this.groupPositions = result;
         return result;
     },

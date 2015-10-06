@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const.js'),
+    state = require('./state.js'),
     calculator = require('./calculator.js');
 
 var MIN_PIXEL_STEP_SIZE = 40,
@@ -44,9 +45,13 @@ var axisDataMaker = {
      * }} axis data
      */
     makeLabelAxisData: function(params) {
+        var tickCount = params.labels.length;
+        if (!params.aligned) {
+            tickCount += 1;
+        }
         return {
             labels: params.labels,
-            tickCount: params.labels.length + 1,
+            tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,
             isVertical: !!params.isVertical

@@ -189,8 +189,8 @@ describe('Series', function() {
             var elSeries = series.render();
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
-            expect(elSeries.style.width).toBe('210px');
-            expect(elSeries.style.height).toBe('110px');
+            expect(elSeries.style.width).toBe('220px');
+            expect(elSeries.style.height).toBe('120px');
 
             if (renderUtil.isIE8()) {
                 expect(elSeries.style.top).toBe('48px');

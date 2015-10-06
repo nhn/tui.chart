@@ -8,6 +8,7 @@
 
 var seriesTemplate = require('./seriesTemplate.js'),
     chartConst = require('../const.js'),
+    state = require('../helpers/state.js'),
     dom = require('../helpers/domHandler.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     event = require('../helpers/eventListener.js'),
@@ -77,8 +78,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     _expandDimension: function(dimension) {
         return {
-            width: dimension.width + chartConst.SERIES_EXPAND_SIZE,
-            height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+            width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+            height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
         };
     },
 
@@ -246,16 +247,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Whether line type chart or not.
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isLineTypeChart: function(chartType) {
-        return chartType === chartConst.CHART_TYPE_LINE || chartType === chartConst.CHART_TYPE_AREA;
-    },
-
-    /**
      * To make normal percent value.
      * @param {{values: array, scale: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
@@ -265,7 +256,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            isLineTypeChart = this._isLineTypeChart(this.chartType),
+            isLineTypeChart = state.isLineTypeChart(this.chartType),
             flag = 1,
             subValue = 0,
             percentValues;
