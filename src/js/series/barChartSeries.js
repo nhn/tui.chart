@@ -71,7 +71,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
                 var startLeft, endWidth, bound, baseBound;
 
                 startLeft = scaleDistance.toMin + chartConst.SERIES_EXPAND_SIZE;
-                endWidth = value * dimension.width * (value < 0 ? -1 : 1);
+                endWidth = Math.abs(value * dimension.width);
                 baseBound = {
                     top: paddingTop + (barHeight * index),
                     height: barHeight

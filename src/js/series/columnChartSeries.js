@@ -93,7 +93,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
                 var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2);
                 return ne.util.map(values, function (value, index) {
                     var endHeight, endTop, startEndTops, bound;
-                    endHeight = value * dimension.height * (value < 0 ? -1 : 1);
+                    endHeight = Math.abs(value * dimension.height);
                     endTop = isMinus ? 0 : dimension.height - scaleDistance.toMin;
                     startEndTops = this._makeStartEndTops(endTop, endHeight, value);
                     bound = this._makeColumnChartBound(ne.util.extend({
