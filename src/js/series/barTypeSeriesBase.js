@@ -42,7 +42,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
             html;
         html = ne.util.map(params.values, function(values, groupIndex) {
             return ne.util.map(values, function(value, index) {
-                var bound, formattedValue, renderingPosition, labelHtml;
+                var bound, formattedValue, renderingPosition;
                 bound = groupBounds[groupIndex][index].end;
                 formattedValue = formattedValues[groupIndex][index];
                 renderingPosition = this.makeSeriesRenderingPosition({
@@ -51,8 +51,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
                     formattedValue: formattedValue,
                     labelHeight: labelHeight
                 });
-                labelHtml = this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
-                return labelHtml;
+                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
             }, this).join('');
         }, this).join('');
 

@@ -128,7 +128,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 80,
                 toMin: 20
-            })
+            });
         });
 
         it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
@@ -139,7 +139,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 0,
                 toMin: 0
-            })
+            });
         });
 
         it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
@@ -150,7 +150,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 0,
                 toMin: 0
-            })
+            });
         });
     });
 
