@@ -21,7 +21,69 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
         this.groupBounds = groupBounds;
 
         return {
-            groupBounds: groupBounds
+            groupBounds: groupBounds,
+            groupValues: this.percentValues
+        };
+    },
+
+    /**
+     * To make bar padding.
+     * @param {number} groupSize bar group size
+     * @param {number} itemCount group item count
+     * @returns {number} bar padding
+     */
+    makeBarPadding: function(groupSize, itemCount) {
+        var baseSize = groupSize / (itemCount + 1) / 2,
+            barPadding;
+        if (baseSize <= 2) {
+            barPadding = 0;
+        } else if (baseSize <= 6) {
+            barPadding = 2;
+        } else {
+            barPadding = 4;
+        }
+        return barPadding;
+    },
+
+    /**
+     * To make bar size.
+     * @param {number} groupSize bar group size
+     * @param {number} barPadding bar padding
+     * @param {number} itemCount group item count
+     * @returns {number} bar size (width or height)
+     */
+    makeBarSize: function(groupSize, barPadding, itemCount) {
+        return (groupSize - (barPadding * (itemCount - 1))) / (itemCount + 1);
+    },
+
+    /**
+     * To make base info for normal chart bounds.
+     * @param {{width: number, height: number}} dimension series dimension
+     * @param {string} sizeType size type (width or height)
+     * @param {string} anotherSizeType another size type (width or height)
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      groupValues: array.<array.<number>>,
+     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      distanceToMin: number, isMinus: boolean
+     * }} base info
+     */
+    makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
+        var groupValues = this.percentValues,
+            groupSize = dimension[anotherSizeType] / groupValues.length,
+            itemCount = groupValues[0].length,
+            barPadding = this.makeBarPadding(groupSize, itemCount),
+            barSize = this.makeBarSize(groupSize, barPadding, itemCount),
+            scaleDistance = this.getScaleDistanceFromZeroPoint(dimension[sizeType], this.data.scale);
+        return {
+            dimension: dimension,
+            groupValues: groupValues,
+            groupSize: groupSize,
+            barPadding: barPadding,
+            barSize: barSize,
+            step: barSize + barPadding,
+            distanceToMin: scaleDistance.toMin,
+            isMinus: this.data.scale.min < 0 && this.data.scale.max <= 0
         };
     },
 

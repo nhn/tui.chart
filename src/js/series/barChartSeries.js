@@ -53,37 +53,55 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     },
 
     /**
+     * To make normal bar chart bound.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      groupValues: array.<array.<number>>,
+     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      distanceToMin: number, isMinus: boolean
+     * }} baseInfo base info
+     * @param {number} value value
+     * @param {number} paddingTop padding top
+     * @param {number} index index
+     * @returns {{
+     *      start: {left: number, top: number, width: number, height: number},
+     *      end: {left: number, top: number, width: number, height: number}
+     * }} column chart bound
+     * @private
+     */
+    _makeNormalBarChartBound: function(baseInfo, value, paddingTop, index) {
+        var startLeft, endWidth, bound, baseBound;
+
+        startLeft = baseInfo.distanceToMin + chartConst.SERIES_EXPAND_SIZE;
+        endWidth = Math.abs(value * baseInfo.dimension.width);
+        baseBound = {
+            top: paddingTop + ((baseInfo.step) * index),
+            height: baseInfo.barSize
+        };
+        bound = this._makeBarChartBound({
+            baseBound: baseBound,
+            startLeft: startLeft,
+            endLeft: startLeft + (value < 0 ? -endWidth : 0),
+            endWidth: endWidth
+        });
+
+        return bound;
+    },
+
+    /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
      */
     _makeNormalBarChartBounds: function(dimension) {
-        var groupValues, groupHeight, barHeight, scaleDistance, bounds;
+        var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
+            bounds;
 
-        groupValues = this.percentValues;
-        groupHeight = (dimension.height / groupValues.length);
-        barHeight = groupHeight / (groupValues[0].length + 1);
-        scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale);
-        bounds = ne.util.map(groupValues, function(values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2);
+        bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
+            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2) + 1;
             return ne.util.map(values, function (value, index) {
-                var startLeft, endWidth, bound, baseBound;
-
-                startLeft = scaleDistance.toMin + chartConst.SERIES_EXPAND_SIZE;
-                endWidth = Math.abs(value * dimension.width);
-                baseBound = {
-                    top: paddingTop + (barHeight * index),
-                    height: barHeight
-                };
-                bound = this._makeBarChartBound({
-                    baseBound: baseBound,
-                    startLeft: startLeft,
-                    endLeft: startLeft + (value < 0 ? -endWidth : 0),
-                    endWidth: endWidth
-                });
-
-                return bound;
+                return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
             }, this);
         }, this);
 
@@ -123,8 +141,8 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
                     endLeft: endLeft,
                     endWidth: endWidth
                 });
-                endLeft = endLeft + endWidth;
 
+                endLeft = endLeft + endWidth;
                 return bound;
             }, this);
         }, this);

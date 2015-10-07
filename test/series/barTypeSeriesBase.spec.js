@@ -38,6 +38,34 @@ describe('BarTypeSeriesBase', function() {
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
     });
 
+    describe('makeBarPadding()', function() {
+        it('계산되는 bar의 사이즈(group bar 너비 / (itemCount + 1) / 2)가 2보다 작거나 같다면 bar padding(bar와 bar 사이의 간격)은 0입니다.', function() {
+            var actual = series.makeBarPadding(20, 5),
+                expected = 0;
+            expect(actual).toBe(expected);
+        });
+
+        it('계산되는 bar의 사이즈가 2보다 크고 6보다 작거나 같다면 bar padding은 2입니다.', function() {
+            var actual = series.makeBarPadding(60, 5),
+                expected = 2;
+            expect(actual).toBe(expected);
+        });
+
+        it('계산되는 bar의 사이즈가 6보다 크다면 bar padding은 4입니다.', function() {
+            var actual = series.makeBarPadding(100, 5),
+                expected = 4;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('makeBarSize()', function() {
+        it('bar size는 bar group size에서 간격정보를 빼고 아이템수 + 1로 나누어 계산됩니다.', function() {
+            var actual = series.makeBarSize(100, 4, 5),
+                expected = 14;
+            expect(actual).toBe(expected);
+        });
+    });
+
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
             var container = dom.create('div'),

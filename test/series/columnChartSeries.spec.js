@@ -7,8 +7,6 @@
 'use strict';
 
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
-    chartConst = require('../../src/js/const.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
@@ -84,6 +82,35 @@ describe('ColumnChartSeries', function() {
                         top: 20,
                         width: 40,
                         height: 30
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalColumnChartBound()', function() {
+        it('normal column chart bar 하나의 bound정보를 생성합니다.', function() {
+            var actual = series._makeNormalColumnChartBound({
+                    distanceToMin: 0,
+                    dimension: {
+                        width: 400,
+                        height: 200
+                    },
+                    step: 40,
+                    barSize: 30
+                }, 0.3, 10, 0),
+                expected = {
+                    start: {
+                        left: 20,
+                        top: 200,
+                        width: 30,
+                        height: 0
+                    },
+                    end: {
+                        left: 20,
+                        top: 140,
+                        width: 30,
+                        height: 60
                     }
                 };
             expect(actual).toEqual(expected);

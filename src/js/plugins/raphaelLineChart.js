@@ -45,6 +45,7 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
         groupLines = this._renderLines(paper, groupPaths, colors);
         groupDots = this.renderDots(paper, groupPositions, colors, borderStyle);
 
+        this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
         this.groupPaths = groupPaths;
         this.groupLines = groupLines;
@@ -102,6 +103,7 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
     animate: function(callback) {
         var groupLines = this.groupLines,
             groupPaths = this.groupPaths,
+            borderStyle = this.borderStyle,
             opacity = this.dotOpacity,
             time = ANIMATION_TIME / groupLines[0].length,
             startTime;
@@ -118,7 +120,7 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
                 if (opacity) {
                     setTimeout(function() {
-                        dot.attr({'fill-opacity': opacity});
+                        dot.attr(ne.util.extend({'fill-opacity': opacity}, borderStyle));
                     }, startTime);
                 }
             }, this);

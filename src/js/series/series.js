@@ -101,7 +101,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
             data = {
                 dimension: dimension,
-                expandSize: chartConst.SERIES_EXPAND_SIZE,
+                chartType: this.chartType,
                 theme: this.theme,
                 options: this.options
             },
