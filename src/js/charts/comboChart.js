@@ -289,34 +289,31 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             },
             baseData = params.baseData,
             convertData = baseData.convertData,
-            formattedValues = convertData.formattedValues,
-            baseAxesData = params.baseAxesData,
-            seriesChartTypes = params.seriesChartTypes,
-            optionsMap = params.optionsMap,
-            themeMap = params.themeMap,
             plotData = {
-                vTickCount: baseAxesData.yAxis.validTickCount,
-                hTickCount: baseAxesData.xAxis.validTickCount
+                vTickCount: params.baseAxesData.yAxis.validTickCount,
+                hTickCount: params.baseAxesData.xAxis.validTickCount
             },
             joinLegendLabels = convertData.joinLegendLabels;
 
-        this.charts = ne.util.map(seriesChartTypes, function(chartType) {
+        this.charts = ne.util.map(params.seriesChartTypes, function(chartType) {
             var legendLabels = convertData.legendLabels[chartType],
                 axes = params.axesData[chartType],
-                sendOptions = optionsMap[chartType],
-                sendTheme = themeMap[chartType],
+                sendOptions = params.optionsMap[chartType],
+                sendTheme = params.themeMap[chartType],
                 sendBounds = JSON.parse(JSON.stringify(baseData.bounds)),
-                chart;
+                Chart = chartClasses[chartType],
+                initedData, chart;
 
             if (axes && axes.yAxis.isPositionRight) {
                 sendBounds.yAxis = sendBounds.yrAxis;
             }
-            chart = new chartClasses[chartType](params.userData, sendTheme, sendOptions, {
+
+            initedData = {
                 convertData: {
                     values: convertData.values[chartType],
                     labels: convertData.labels,
                     formatFunctions: convertData.formatFunctions,
-                    formattedValues: formattedValues[chartType],
+                    formattedValues: convertData.formattedValues[chartType],
                     legendLabels: legendLabels,
                     joinLegendLabels: joinLegendLabels,
                     plotData: plotData
@@ -324,7 +321,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 bounds: sendBounds,
                 axes: axes,
                 prefix: chartType + '-'
-            });
+            };
+
+            chart = new Chart(params.userData, sendTheme, sendOptions, initedData);
             plotData = null;
             joinLegendLabels = null;
             return chart;

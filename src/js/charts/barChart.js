@@ -71,24 +71,25 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
      * @private
      */
     _addComponents: function(convertData, axesData, options) {
+        var plotData, seriesData;
+
+        plotData = this.makePlotData(convertData.plotData, axesData);
+        seriesData = {
+            allowNegativeTooltip: true,
+            data: {
+                values: convertData.values,
+                formattedValues: convertData.formattedValues,
+                formatFunctions: convertData.formatFunctions,
+                scale: axesData.xAxis.scale
+            }
+        };
         this.addAxisComponents({
             convertData: convertData,
             axes: axesData,
-            plotData: {
-                vTickCount: axesData.yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
+            plotData: plotData,
             chartType: options.chartType,
             Series: Series,
-            seriesData: {
-                allowNegativeTooltip: true,
-                data: {
-                    values: convertData.values,
-                    formattedValues: convertData.formattedValues,
-                    formatFunctions: convertData.formatFunctions,
-                    scale: axesData.xAxis.scale
-                }
-            }
+            seriesData: seriesData
         });
     }
 });

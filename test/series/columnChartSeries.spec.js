@@ -7,6 +7,7 @@
 'use strict';
 
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
+    chartConst = require('../../src/js/const.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -37,44 +38,71 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_makeNormalColumnBounds()', function() {
-        it('stacked 옵션이 없는 Column차트의 bounds 정보를 생성합니다. start, end로 구분한 이유는 애니메이션 시작과 끝의 높이(height)와 위치(top)를 구분하기 위함입니다.', function () {
-            var bounds;
+    describe('_makeStartEndTops()', function() {
+        it('value가 0보다 작을 경우에는 startTop을 endTop과 동일한 값으로 반환합니다.', function() {
+            var endTop = 30,
+                endHeight = 20,
+                value = -10,
+                actual = series._makeStartEndTops(endTop, endHeight, value),
+                expected = 30;
+            expect(actual.startTop).toBe(expected);
+        });
+
+        it('value가 0보다 클 경우에는 startTop은 endTop에 hidden width를 더한 값으로 생성하고, endTop은 endHeight를 뺀 값에 hidden width를 더해 생성합니다.', function() {
+            var endTop = 30,
+                endHeight = 20,
+                value = 10,
+                actual = series._makeStartEndTops(endTop, endHeight, value),
+                expectedStartTop = 30 + chartConst.HIDDEN_WIDTH,
+                expectedEndTop = 10 + chartConst.HIDDEN_WIDTH;
+
+            expect(actual.startTop).toBe(expectedStartTop);
+            expect(actual.endTop).toBe(expectedEndTop);
+        });
+    });
+
+    describe('_makeColumnChartBound()', function() {
+        it('baseBound 정보에 startTop, endTop, endHeight정보를 더하여 start, end로 구분된 bound 정보를 생성합니다.', function() {
+            var actual = series._makeColumnChartBound({
+                    baseBound: {
+                        left: 10,
+                        width: 40
+                    },
+                    startTop: 10,
+                    endTop: 20,
+                    endHeight: 30
+                }),
+                expected = {
+                    start: {
+                        left: 10,
+                        top: 10,
+                        width: 40,
+                        height: 0
+                    },
+                    end: {
+                        left: 10,
+                        top: 20,
+                        width: 40,
+                        height: 30
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalColumnChartBounds()', function() {
+        it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function () {
+            var actual;
             series.percentValues = [[0.25], [0.5]];
-            bounds = series._makeNormalColumnBounds({
+            actual = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
             });
-            expect(bounds).toEqual([
-                [{
-                    start: {
-                        top: 401,
-                        left: 24,
-                        width: 50,
-                        height: 0
-                    },
-                    end: {
-                        top: 301,
-                        left: 24,
-                        width: 50,
-                        height: 100
-                    }
-                }],
-                [{
-                    start: {
-                        top: 401,
-                        left: 124,
-                        width: 50,
-                        height: 0
-                    },
-                    end: {
-                        top: 201,
-                        left: 124,
-                        width: 50,
-                        height: 200
-                    }
-                }]
-            ]);
+
+            expect(actual.length).toBe(2);
+            expect(actual[0].length).toBe(1);
+            expect(!!actual[0][0].start).toBe(true);
+            expect(!!actual[0][0].end).toBe(true);
         });
 
         it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 위아래로 설정됩니다.', function () {
@@ -84,7 +112,7 @@ describe('ColumnChartSeries', function() {
                 min: -40,
                 max: 60
             };
-            result = series._makeNormalColumnBounds({
+            result = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
             }, 1);
@@ -104,11 +132,11 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_makeStackedColumnBounds()', function() {
+    describe('_makeStackedColumnChartBounds()', function() {
         it('stacked 옵션이 있는 Column차트의 bounds 정보는 end.top이 end.height 만큼씩 감소합니다.', function () {
             var bounds;
             series.percentValues = [[0.2, 0.3, 0.5]];
-            bounds = series._makeStackedColumnBounds({
+            bounds = series._makeStackedColumnChartBounds({
                 width: 100,
                 height: 400
             }, 1);
@@ -124,21 +152,21 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makeBounds()', function() {
-        it('stacked 옵션이 없으면 _makeNormalColumnBounds()가 수행됩니다.', function () {
+        it('stacked 옵션이 없으면 _makeNormalColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
             series.percentValues = [[0.25], [0.5]];
             actual = series._makeBounds({
                 width: 200,
                 height: 400
             });
-            expected = series._makeNormalColumnBounds({
+            expected = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
             });
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 있으면 _makeStackedColumnBounds()가 수행됩니다.', function () {
+        it('stacked 옵션이 있으면 _makeStackedColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
             series.percentValues = [[0.2, 0.3, 0.5]];
             series.options.stacked = 'normal';
@@ -146,7 +174,7 @@ describe('ColumnChartSeries', function() {
                 width: 100,
                 height: 400
             }, 1);
-            expected = series._makeStackedColumnBounds({
+            expected = series._makeStackedColumnChartBounds({
                 width: 100,
                 height: 400
             }, 1);
@@ -154,292 +182,61 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_renderNormalSeriesLabel()', function() {
-        it('일반 series label을 렌더링 하면 label은 막대 그래프 상단에 5px 간격을 두고 좌우 정렬하여 위치하게 됩니다.', function() {
-            var container = dom.create('div'),
-                children;
-            series._renderNormalSeriesLabel({
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 70,
-                                left: 20,
-                                width: 30,
-                                height: 70
-                            }
-                        },
-                        {
-                            end: {
-                                top: 40,
-                                left: 55,
-                                width: 30,
-                                height: 100
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ]
-            });
-            children = container.firstChild.childNodes;
-            expect(children[0].style.top).toBe('45px');
-            expect(children[0].style.left).toBe('15px');
-            expect(children[0].innerHTML).toBe('1.5');
-
-            expect(children[1].style.top).toBe('15px');
-            expect(children[1].style.left).toBe('50px');
-            expect(children[1].innerHTML).toBe('2.2');
-        });
-
-        it('series의 data가 음수인 경우 series label은 막대 그래프 하단에 위치하게 됩니다.', function() {
-            var container = dom.create('div'),
-                children;
-            series._renderNormalSeriesLabel({
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 0,
-                                left: 20,
-                                width: 30,
-                                height: 70
-                            }
-                        },
-                        {
-                            end: {
-                                top: 0,
-                                left: 55,
-                                width: 30,
-                                height: 100
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['-1.5', '-2.2']
-                ],
-                values: [
-                    [-1.5, -2.2]
-                ]
-            });
-            children = container.firstChild.childNodes;
-            expect(children[0].style.top).toBe('75px');
-            expect(children[0].style.left).toBe('15px');
-            expect(children[0].innerHTML).toBe('-1.5');
-
-            expect(children[1].style.top).toBe('105px');
-            expect(children[1].style.left).toBe('50px');
-            expect(children[1].innerHTML).toBe('-2.2');
-        });
-    });
-
-    describe('_renderStackedSeriesLabel()', function() {
-        it('stacked=normal인 series label을 렌더링 하면 label은 각 막대의 중앙에 위치하게 되며, 합산된 label은 5px 간격을 두고 마지막 막대 상단에 위치하게 됩니다..', function() {
-            var container = dom.create('div'),
-                children;
-            series.options.stacked = 'normal';
-            series._renderStackedSeriesLabel({
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 100,
-                                left: 20,
-                                width: 30,
-                                height: 40
-                            }
-                        },
-                        {
-                            end: {
-                                top: 40,
-                                left: 20,
-                                width: 30,
-                                height: 60
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ]
-            });
-            children = container.firstChild.childNodes;
-            expect(children[0].style.top).toBe('111px');
-            expect(children[0].style.left).toBe('16px');
-            expect(children[0].innerHTML).toBe('1.5');
-
-            expect(children[1].style.top).toBe('61px');
-            expect(children[1].style.left).toBe('16px');
-            expect(children[1].innerHTML).toBe('2.2');
-
-            expect(children[2].style.top).toBe('15px');
-            expect(children[2].style.left).toBe('16px');
-            expect(children[2].innerHTML).toBe('3.7');
-        });
-
-        it('stacked=percent일 경우에는 합산 label은 표시하지 않습니다.', function() {
-            var container = dom.create('div'),
-                children;
-
-            series.options.stacked = 'percent';
-
-            series._renderStackedSeriesLabel({
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 100,
-                                left: 20,
-                                width: 30,
-                                height: 40
-                            }
-                        },
-                        {
-                            end: {
-                                top: 40,
-                                left: 20,
-                                width: 30,
-                                height: 60
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ]
-            });
-            children = container.firstChild.childNodes;
-            expect(children[0].style.top).toBe('111px');
-            expect(children[0].style.left).toBe('16px');
-            expect(children[0].innerHTML).toBe('1.5');
-
-            expect(children[1].style.top).toBe('61px');
-            expect(children[1].style.left).toBe('16px');
-            expect(children[1].innerHTML).toBe('2.2');
-
-            expect(children[2]).toBeUndefined();
-        });
-    });
-
-    describe('_renderSeriesLabel()', function() {
-        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function () {
-            var container = dom.create('div'),
-                params, actual, expected;
-
-            params = {
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 70,
-                                left: 20,
-                                width: 35,
-                                height: 70
-                            }
-                        },
-                        {
-                            end: {
-                                top: 40,
-                                left: 55,
-                                width: 35,
-                                height: 100
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ]
-            };
-
-            series.options.showLabel = true;
-            actual = series._renderSeriesLabel(params);
-            expected = series._renderNormalSeriesLabel(params);
+    describe('_makeSeriesRenderingPosition()', function() {
+        it('series label의 렌더링 포지션을 구합니다.', function() {
+            var actual = series.makeSeriesRenderingPosition({
+                    value: 10,
+                    bound: {
+                        left: 10,
+                        top: 30,
+                        width: 40,
+                        height: 20
+                    },
+                    formattedValue: '10',
+                    labelHeight: 20
+                }),
+                expected = {
+                    left: 10,
+                    top: 5
+                };
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function () {
-            var container = dom.create('div'),
-                params, actual, expected;
-
-            params = {
-                container: container,
-                groupBounds: [
-                    [
-                        {
-                            end: {
-                                top: 100,
-                                left: 20,
-                                width: 35,
-                                height: 40
-                            }
-                        },
-                        {
-                            end: {
-                                top: 40,
-                                left: 20,
-                                width: 35,
-                                height: 60
-                            }
-                        }
-                    ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 140
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ]
-            };
-
-            series.options.showLabel = true;
-            series.options.stacked = 'normal';
-            actual = series._renderSeriesLabel(params);
-            expected = series._renderStackedSeriesLabel(params);
+        it('value가 음수일 경우의 series label 렌더링 포지션을 구합니다.', function() {
+            var actual = series.makeSeriesRenderingPosition({
+                    value: -10,
+                    bound: {
+                        left: 10,
+                        top: 30,
+                        width: 40,
+                        height: 20
+                    },
+                    formattedValue: '-10',
+                    labelHeight: 20
+                }),
+                expected = {
+                    left: 10,
+                    top: 55
+                };
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('makeSumLabelHtml', function() {
+        it('합계 label html을 생성합니다.', function() {
+            var actual = series.makeSumLabelHtml({
+                    values: [10, 20, 30],
+                    bound: {
+                        left: 10,
+                        top: 30,
+                        width: 40,
+                        height: 20
+                    },
+                    formatFunctions: [],
+                    labelHeight: 20
+                }),
+                expected = '<div class="ne-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+            expect(actual).toBe(expected);
         });
     });
 });

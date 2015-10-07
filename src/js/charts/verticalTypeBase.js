@@ -28,20 +28,18 @@ var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype
         if (initedData) {
             axesData = initedData.axes;
         } else {
-            axesData = {
-                yAxis: axisDataMaker.makeValueAxisData({
-                    values: convertData.values,
-                    seriesDimension: bounds.series.dimension,
-                    stacked: options.series && options.series.stacked || '',
-                    chartType: options.chartType,
-                    formatFunctions: convertData.formatFunctions,
-                    options: options.yAxis,
-                    isVertical: true
-                }),
-                xAxis: axisDataMaker.makeLabelAxisData({
-                    labels: convertData.labels
-                })
-            };
+            axesData.yAxis = axisDataMaker.makeValueAxisData({
+                values: convertData.values,
+                seriesDimension: bounds.series.dimension,
+                stacked: options.series && options.series.stacked || '',
+                chartType: options.chartType,
+                formatFunctions: convertData.formatFunctions,
+                options: options.yAxis,
+                isVertical: true
+            });
+            axesData.xAxis = axisDataMaker.makeLabelAxisData({
+                labels: convertData.labels
+            });
         }
         return axesData;
     }

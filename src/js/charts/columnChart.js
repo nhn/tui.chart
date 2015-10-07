@@ -48,24 +48,25 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
      * @private
      */
     _addComponents: function(convertData, axesData, options) {
+        var plotData, seriesData;
+
+        plotData = this.makePlotData(convertData.plotData, axesData);
+        seriesData = {
+            allowNegativeTooltip: true,
+            data: {
+                values: convertData.values,
+                formattedValues: convertData.formattedValues,
+                formatFunctions: convertData.formatFunctions,
+                scale: axesData.yAxis.scale
+            }
+        };
         this.addAxisComponents({
             convertData: convertData,
             axes: axesData,
-            plotData: !ne.util.isUndefined(convertData.plotData) ? convertData.plotData : {
-                vTickCount: axesData.yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
+            plotData: plotData,
             chartType: options.chartType,
             Series: Series,
-            seriesData: {
-                allowNegativeTooltip: true,
-                data: {
-                    values: convertData.values,
-                    formattedValues: convertData.formattedValues,
-                    formatFunctions: convertData.formatFunctions,
-                    scale: axesData.yAxis.scale
-                }
-            }
+            seriesData: seriesData
         });
     }
 });

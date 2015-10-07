@@ -60,6 +60,22 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
             legendLabels: convertData.legendLabels,
             prefix: this.tooltipPrefix
         });
+    },
+
+    /**
+     * To make plot data.
+     * @param {object} plotData initialized plot data
+     * @param {object} axesData axes data
+     * @returns {{vTickCount: number, hTickCount: number}} plot data
+     */
+    makePlotData: function(plotData, axesData) {
+        if (ne.util.isUndefined(plotData)) {
+            plotData = {
+                vTickCount: axesData.yAxis.validTickCount,
+                hTickCount: axesData.xAxis.validTickCount
+            };
+        }
+        return plotData;
     }
 });
 
