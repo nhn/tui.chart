@@ -8,7 +8,7 @@
 
 var RaphaelAreaChart = require('../../src/js/plugins/raphaelAreaChart');
 
-describe('RaphaelLineTypeBase', function() {
+describe('RaphaelAreaChart', function() {
     var areaChart;
 
     beforeEach(function() {

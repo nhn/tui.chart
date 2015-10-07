@@ -7,7 +7,6 @@
 'use strict';
 
 var BarChartSeries = require('../../src/js/series/barChartSeries.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarChartSeries', function() {
@@ -45,7 +44,7 @@ describe('BarChartSeries', function() {
                         height: 30
                     },
                     startLeft: 10,
-                    endLeft: 20,
+                    endLeft: 10,
                     endWidth: 40
                 }),
                 expected = {
@@ -56,9 +55,38 @@ describe('BarChartSeries', function() {
                         height: 30
                     },
                     end: {
-                        left: 20,
+                        left: 10,
                         top: 10,
                         width: 40,
+                        height: 30
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalBarChartBound()', function() {
+        it('normal bar chart bar 하나의 bound정보를 생성합니다.', function() {
+            var actual = series._makeNormalBarChartBound({
+                    distanceToMin: 0,
+                    dimension: {
+                        width: 400,
+                        height: 200
+                    },
+                    step: 40,
+                    barSize: 30
+                }, 0.3, 10, 0),
+                expected = {
+                    start: {
+                        left: 10,
+                        top: 10,
+                        width: 0,
+                        height: 30
+                    },
+                    end: {
+                        left: 10,
+                        top: 10,
+                        width: 120,
                         height: 30
                     }
                 };

@@ -74,21 +74,16 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {object} paper raphael papaer
      * @param {{left: number, top: number}} position dot position
      * @param {string} color dot color
-     * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {object} raphael dot
      */
-    renderDot: function(paper, position, color, opacity, borderStyle) {
+    renderDot: function(paper, position, color) {
         var dot = paper.circle(position.left, position.top, DEFAULT_DOT_WIDTH),
             dotStyle = {
                 fill: color,
                 'fill-opacity': 0,
                 'stroke-opacity': 0
             };
-
-        if (borderStyle) {
-            ne.util.extend(dotStyle, borderStyle);
-        }
 
         dot.attr(dotStyle);
 
@@ -103,11 +98,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {object} borderStyle border style
      * @returns {array.<object>} dots
      */
-    renderDots: function(paper, groupPositions, colors, borderStyle) {
+    renderDots: function(paper, groupPositions, colors) {
         var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
             return ne.util.map(positions, function(position) {
-                var dot = this.renderDot(paper, position, color, borderStyle);
+                var dot = this.renderDot(paper, position, color);
                 return dot;
             }, this);
         }, this);
