@@ -7,7 +7,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler.js'),
-    state = require('../helpers/state.js'),
+    chartConst = require('../const.js'),
     calculator = require('../helpers/calculator.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     axisTemplate = require('./axisTemplate.js');
@@ -131,11 +131,15 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
+            labels = data.labels,
             elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
-            ticksHtml = ne.util.map(positions, function(position) {
+            ticksHtml = ne.util.map(positions, function(position, index) {
+                if (labels[index] === chartConst.EMPTY_AXIS_LABEL) {
+                    return '';
+                }
                 var cssText = [
                     renderUtil.concatStr('background-color:', tickColor),
                     renderUtil.concatStr(posType, ': ', position, 'px')
