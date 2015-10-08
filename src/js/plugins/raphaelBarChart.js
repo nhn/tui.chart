@@ -75,7 +75,6 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             return null;
         }
 
-
         rect = params.paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: params.color,

@@ -11,8 +11,6 @@ var Series = require('./series.js'),
     chartConst = require('../const.js'),
     renderUtil = require('../helpers/renderUtil.js');
 
-var EXPAND_SIZE = 10;
-
 var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
      * Column chart series component.
@@ -147,7 +145,6 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
                 top = 0;
             return ne.util.map(values, function (value) {
                 var endHeight, baseBound, bound;
-
                 if (value < 0) {
                     return null;
                 }

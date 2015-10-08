@@ -40,7 +40,8 @@ var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype
             });
             axesData.xAxis = axisDataMaker.makeLabelAxisData({
                 labels: convertData.labels,
-                aligned: state.isLineTypeChart(this.options.chartType)
+                aligned: state.isLineTypeChart(this.options.chartType),
+                options: options.xAxis
             });
         }
         return axesData;
