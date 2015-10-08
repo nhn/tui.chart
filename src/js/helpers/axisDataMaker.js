@@ -54,7 +54,8 @@ var axisDataMaker = {
             tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,
-            isVertical: !!params.isVertical
+            isVertical: !!params.isVertical,
+            aligned: !!params.aligned
         };
     },
 
