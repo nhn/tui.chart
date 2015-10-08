@@ -209,7 +209,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                     sum = ne.util.sum(plusValues),
                     groupPercent = (sum - min) / distance;
                 return ne.util.map(values, function(value) {
-                    return groupPercent * (value / sum);
+                    return value === 0 ? 0 : groupPercent * (value / sum);
                 });
             });
         return percentValues;
@@ -228,7 +228,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 }),
                 sum = ne.util.sum(plusValues);
             return ne.util.map(values, function(value) {
-                return value / sum;
+                return value === 0 ? 0 : value / sum;
             });
         });
         return percentValues;

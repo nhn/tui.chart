@@ -73,7 +73,7 @@ var dataConverter = {
      * @private
      */
     _pickValue: function(items) {
-        return [].concat(items.data);
+        return ne.util.map([].concat(items.data), parseFloat);
     },
 
     /**
