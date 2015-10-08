@@ -19,6 +19,7 @@ module.exports = {
     DEFAULT_THEME_NAME: 'default',
     STACKED_NORMAL_TYPE: 'normal',
     STACKED_PERCENT_TYPE: 'percent',
+    EMPTY_AXIS_LABEL: '',
     ANGLE_360: 360,
     RAD: Math.PI / 180,
     DEFAULT_SERIES_LABEL_FONT_SIZE: 11,

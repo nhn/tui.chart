@@ -6,9 +6,10 @@
 
 'use strict';
 
-var Axis = require('../../src/js/axes/axis.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var Axis = require('../../src/js/axes/axis'),
+    chartConst = require('../../src/js/const'),
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Axis', function() {
     var axis;
@@ -110,6 +111,7 @@ describe('Axis', function() {
 
             axis.data = {
                 tickCount: 5,
+                labels: [],
                 isLabelAxis: true,
                 isVertical: false
             };
@@ -130,6 +132,7 @@ describe('Axis', function() {
 
             axis.data = {
                 tickCount: 5,
+                labels: [],
                 isLabelAxis: false,
                 isVertical: true
             };
@@ -142,6 +145,26 @@ describe('Axis', function() {
             expect(childNodes[2].style.bottom).toBe('150px');
             expect(childNodes[3].style.bottom).toBe('224px');
             expect(childNodes[4].style.bottom).toBe('299px');
+        });
+
+
+        it('레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않는다.', function() {
+            var elTickArea, childNodes;
+
+            axis.data = {
+                tickCount: 5,
+                labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
+                isLabelAxis: true,
+                isVertical: false
+            };
+
+            elTickArea = axis._renderTickArea(300);
+            childNodes = elTickArea.childNodes;
+
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.left).toBe('0px');
+            expect(childNodes[1].style.left).toBe('75px');
+            expect(childNodes[2].style.left).toBe('299px');
         });
     });
 
