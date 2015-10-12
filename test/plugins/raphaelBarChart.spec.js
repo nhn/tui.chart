@@ -29,44 +29,16 @@ describe('RaphaelBarChart', function() {
                         top: 10
                     },
                     rightTop: {
-                        left: 111,
+                        left: 110,
                         top: 10
                     },
                     rightBottom: {
-                        left: 111,
+                        left: 110,
                         top: 50
                     },
                     leftBottom: {
                         left: 10,
                         top: 50
-                    }
-                };
-            expect(actual).toEqual(expected);
-        });
-
-        it('기본적으로 모든 data는 올림 처리 되며, rightTop.left, rightBottom.left 정보만 버림 처리 됩니다.', function() {
-            var actual = barChart._makeRectPoints({
-                    left: 10.2,
-                    top: 10.2,
-                    width: 100,
-                    height: 40
-                }),
-                expected = {
-                    leftTop: {
-                        left: 11,
-                        top: 11
-                    },
-                    rightTop: {
-                        left: 111,
-                        top: 11
-                    },
-                    rightBottom: {
-                        left: 111,
-                        top: 51
-                    },
-                    leftBottom: {
-                        left: 11,
-                        top: 51
                     }
                 };
             expect(actual).toEqual(expected);

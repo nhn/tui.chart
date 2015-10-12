@@ -170,11 +170,11 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
                 top: Math.ceil(bound.top)
             },
             rightTop: {
-                left: Math.floor(bound.left + bound.width) + 1,
+                left: Math.ceil(bound.left + bound.width),
                 top: Math.ceil(bound.top)
             },
             rightBottom: {
-                left: Math.floor(bound.left + bound.width) + 1,
+                left: Math.ceil(bound.left + bound.width),
                 top: Math.ceil(bound.top + bound.height)
             },
             leftBottom: {

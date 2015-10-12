@@ -288,7 +288,7 @@ describe('boundsMaker', function() {
             });
             expect(actual.yrAxis.dimension.height).toBe(200);
             expect(actual.yrAxis.position.top).toBe(20);
-            expect(actual.yrAxis.position.right).toBe(80);
+            expect(actual.yrAxis.position.right).toBe(81);
         });
     });
 

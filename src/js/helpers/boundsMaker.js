@@ -453,7 +453,7 @@ var boundsMaker = {
                 },
                 position: {
                     top: params.top,
-                    right: params.dimensions.legend.width + CHART_PADDING
+                    right: params.dimensions.legend.width + chartConst.HIDDEN_WIDTH + CHART_PADDING
                 }
             };
         }
