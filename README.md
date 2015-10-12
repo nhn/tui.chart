@@ -65,6 +65,7 @@ This application supports draw a chart on web browser.<br>
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/fe.application-chart/1.1.1">1.1.1a</a> | Bug fix. | 2015.10 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-chart/1.1.1">1.1.1</a> | Add start animation. (All Chart)<br> Add showLabel option. (All Chart)<br> Add legendType option. (Pie Chart) | 2015.09 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-chart/1.1.0">1.1.0</a> | Change insert data structure.<br> Add Combo Chart.<br> Add Pie Chart.<br> Add stacked option.(Bar, Column)<br> Add tooltip position options.<br> Add axis min, max options. | 2015.08 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-chart/1.0.0">1.0.0</a> | First deploy. | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
