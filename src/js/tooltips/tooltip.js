@@ -6,16 +6,12 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    event = require('../helpers/eventListener.js'),
-    templateMaker = require('../helpers/templateMaker.js'),
-    tooltipTemplate = require('./tooltipTemplate.js');
-
-var TOOLTIP_GAP = 5,
-    TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
-    HIDE_DELAY = 0;
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    event = require('../helpers/eventListener'),
+    templateMaker = require('../helpers/templateMaker'),
+    tooltipTemplate = require('./tooltipTemplate');
 
 var concat = Array.prototype.concat;
 
@@ -163,8 +159,8 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         var elTarget = e.target || e.srcElement,
             id;
 
-        if (!dom.hasClass(elTarget, TOOLTIP_CLASS_NAME)) {
-            elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
+        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
+            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
         this.showedId = id = elTarget.id;
@@ -180,8 +176,8 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             that = this,
             indexes;
 
-        if (!dom.hasClass(elTarget, TOOLTIP_CLASS_NAME)) {
-            elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
+        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
+            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
         indexes = this._getIndexFromId(elTarget.id);
@@ -207,7 +203,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         var bound = params.bound,
             addPosition = params.addPosition,
             minusWidth = params.dimension.width - (bound.width || 0),
-            lineGap = bound.width ? 0 : TOOLTIP_GAP,
+            lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
             positionOption = params.positionOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
@@ -227,7 +223,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         } else if (positionOption.indexOf('middle') > -1) {
             result.top += tooltipHeight / 2;
         } else {
-            result.top -= TOOLTIP_GAP;
+            result.top -= chartConst.TOOLTIP_GAP;
         }
 
         return result;
@@ -259,7 +255,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         } else if (positionOption.indexOf('center') > -1) {
             result.left -= tooltipWidth / 2;
         } else {
-            result.left += TOOLTIP_GAP;
+            result.left += chartConst.TOOLTIP_GAP;
         }
 
         if (positionOption.indexOf('top') > -1) {
@@ -430,7 +426,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             }
 
             that = null;
-        }, HIDE_DELAY);
+        }, chartConst.HIDE_DELAY);
     },
 
     /**

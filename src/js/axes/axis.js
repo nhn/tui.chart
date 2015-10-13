@@ -6,14 +6,11 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
-    chartConst = require('../const.js'),
-    calculator = require('../helpers/calculator.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    axisTemplate = require('./axisTemplate.js');
-
-var TITLE_AREA_WIDTH_PADDING = 20,
-    V_LABEL_RIGHT_PADDING = 10;
+var dom = require('../helpers/domHandler'),
+    chartConst = require('../const'),
+    calculator = require('../helpers/calculator'),
+    renderUtil = require('../helpers/renderUtil'),
+    axisTemplate = require('./axisTemplate');
 
 var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
@@ -176,8 +173,8 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
-            titleAreaWidth = this._getRenderedTitleHeight() + TITLE_AREA_WIDTH_PADDING;
-            areaCssText += ';width:' + (axisWidth - titleAreaWidth + V_LABEL_RIGHT_PADDING) + 'px';
+            titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
+            areaCssText += ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
         }
 
         tickPixelPositions.length = data.labels.length;

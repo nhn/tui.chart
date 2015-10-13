@@ -4,7 +4,7 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
-var templateMaker = require('../helpers/templateMaker.js');
+var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
     HTML_SERIES_LABEL: '<div class="ne-chart-series-label" style="{{ cssText }}" data-group-index="{{ groupIndex }}" data-index="{{ index }}">{{ value }}</div>',

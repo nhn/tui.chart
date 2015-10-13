@@ -6,10 +6,10 @@
 
 'use strict';
 
-var BarChart = require('./raphaelBarChart.js'),
-    LineChart = require('./raphaelLineChart.js'),
-    AreaChart = require('./raphaelAreaChart.js'),
-    PieChart = require('./raphaelPieChart.js');
+var BarChart = require('./raphaelBarChart'),
+    LineChart = require('./raphaelLineChart'),
+    AreaChart = require('./raphaelAreaChart'),
+    PieChart = require('./raphaelPieChart');
 
 var pluginName = 'raphael',
     pluginRaphael;

@@ -6,10 +6,10 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase.js'),
-    Legend = require('../legends/legend.js'),
-    Tooltip = require('../tooltips/tooltip.js'),
-    Series = require('../series/pieChartSeries.js');
+var ChartBase = require('./chartBase'),
+    Legend = require('../legends/legend'),
+    Tooltip = require('../tooltips/tooltip'),
+    Series = require('../series/pieChartSeries');
 
 var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**

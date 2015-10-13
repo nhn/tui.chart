@@ -6,13 +6,13 @@
 
 'use strict';
 
-var seriesTemplate = require('./seriesTemplate.js'),
-    chartConst = require('../const.js'),
-    state = require('../helpers/state.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    event = require('../helpers/eventListener.js'),
-    pluginFactory = require('../factories/pluginFactory.js');
+var seriesTemplate = require('./seriesTemplate'),
+    chartConst = require('../const'),
+    state = require('../helpers/state'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    event = require('../helpers/eventListener'),
+    pluginFactory = require('../factories/pluginFactory');
 
 var SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
 

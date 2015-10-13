@@ -6,9 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js');
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil');
 
 var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**

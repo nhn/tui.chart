@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Series = require('./series.js'),
-    BarTypeSeriesBase = require('./barTypeSeriesBase.js'),
-    chartConst = require('../const.js'),
-    renderUtil = require('../helpers/renderUtil.js');
+var Series = require('./series'),
+    BarTypeSeriesBase = require('./barTypeSeriesBase'),
+    chartConst = require('../const'),
+    renderUtil = require('../helpers/renderUtil');
 
 var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**

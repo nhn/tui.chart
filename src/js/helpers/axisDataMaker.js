@@ -6,20 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    calculator = require('./calculator.js');
-
-var MIN_PIXEL_STEP_SIZE = 40,
-    MAX_PIXEL_STEP_SIZE = 60,
-    PERCENT_STACKED_TICK_INFO = {
-        scale: {
-            min: 0,
-            max: 100
-        },
-        step: 25,
-        tickCount: 5,
-        labels: [0, 25, 50, 75, 100]
-    };
+var chartConst = require('../const'),
+    calculator = require('./calculator');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -107,7 +95,7 @@ var axisDataMaker = {
             formatFunctions = params.formatFunctions,
             tickInfo;
         if (params.stacked === 'percent') {
-            tickInfo = PERCENT_STACKED_TICK_INFO;
+            tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             formatFunctions = [];
         } else {
             tickInfo = this._getTickInfo({
@@ -179,8 +167,8 @@ var axisDataMaker = {
      */
     _getCandidateTickCounts: function(chartDimension, isVertical) {
         var baseSize = this._getBaseSize(chartDimension, isVertical),
-            start = parseInt(baseSize / MAX_PIXEL_STEP_SIZE, 10),
-            end = parseInt(baseSize / MIN_PIXEL_STEP_SIZE, 10) + 1,
+            start = parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10),
+            end = parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10) + 1,
             tickCounts = ne.util.range(start, end);
         return tickCounts;
     },

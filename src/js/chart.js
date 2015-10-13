@@ -5,19 +5,16 @@
  */
 'use strict';
 
-var chartConst = require('./const.js'),
-    state = require('./helpers/state.js'),
-    chartFactory = require('./factories/chartFactory.js'),
-    pluginFactory = require('./factories/pluginFactory.js'),
-    themeFactory = require('./factories/themeFactory.js');
-
-var DEFAULT_THEME_NAME = 'default';
+var chartConst = require('./const'),
+    chartFactory = require('./factories/chartFactory'),
+    pluginFactory = require('./factories/pluginFactory'),
+    themeFactory = require('./factories/themeFactory');
 
 var _createChart;
 
-require('./code-snippet-util.js');
-require('./registerCharts.js');
-require('./registerThemes.js');
+require('./code-snippet-util');
+require('./registerCharts');
+require('./registerThemes');
 
 /**
  * NHN Entertainment Application Chart.
@@ -57,7 +54,7 @@ ne.util.defineNamespace('ne.application.chart');
 _createChart = function(container, data, options) {
     var themeName, theme, chart;
     options = options || {};
-    themeName = options.theme || DEFAULT_THEME_NAME;
+    themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
 
     chart = chartFactory.get(options.chartType, data, theme, options);

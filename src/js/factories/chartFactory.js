@@ -13,6 +13,7 @@ var charts = {},
          * Get chart instance.
          * @param {string} chartType chart type
          * @param {object} data chart data
+         * @param {object} theme chart options
          * @param {object} options chart options
          * @returns {object} chart instance;
          */

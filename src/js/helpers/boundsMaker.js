@@ -6,16 +6,9 @@
 
 'use strict';
 
-var calculator = require('./calculator'),
-    chartConst = require('../const'),
+var chartConst = require('../const'),
+    calculator = require('./calculator'),
     renderUtil = require('./renderUtil');
-
-var CHART_PADDING = 10,
-    TITLE_ADD_PADDING = 20,
-    LEGEND_AREA_PADDING = 10,
-    LEGEND_RECT_WIDTH = 12,
-    LEGEND_LABEL_PADDING_LEFT = 5,
-    AXIS_LABEL_PADDING = 7;
 
 var concat = Array.prototype.concat;
 
@@ -105,7 +98,7 @@ var boundsMaker = {
      */
     _getXAxisHeight: function(options, labels, theme) {
         var title = options && options.title,
-            titleAreaHeight = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING,
+            titleAreaHeight = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING,
             height = this._getRenderedLabelsMaxHeight(labels, theme.label) + titleAreaHeight;
         return height;
     },
@@ -128,8 +121,8 @@ var boundsMaker = {
             title = options[index || 0].title;
         }
 
-        titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + TITLE_ADD_PADDING;
-        width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + AXIS_LABEL_PADDING;
+        titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
+        width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
 
         return width;
     },
@@ -235,8 +228,8 @@ var boundsMaker = {
                 return item.label;
             });
             maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme);
-            legendWidth = maxLabelWidth + LEGEND_RECT_WIDTH +
-                LEGEND_LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
+            legendWidth = maxLabelWidth + chartConst.LEGEND_RECT_WIDTH +
+                chartConst.LEGEND_LABEL_LEFT_PADDING + (chartConst.LEGEND_AREA_PADDING * 2);
         }
 
         return {
@@ -262,8 +255,8 @@ var boundsMaker = {
     _makeSeriesDimension: function(params) {
         var axesDimension = params.axesDimension,
             rightAreaWidth = params.legendWidth + axesDimension.yrAxis.width,
-            width = params.chartDimension.width - (CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
-            height = params.chartDimension.height - (CHART_PADDING * 2) - params.titleHeight - axesDimension.xAxis.height;
+            width = params.chartDimension.width - (chartConst.CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
+            height = params.chartDimension.height - (chartConst.CHART_PADDING * 2) - params.titleHeight - axesDimension.xAxis.height;
 
         return {
             width: width,
@@ -293,7 +286,7 @@ var boundsMaker = {
      */
     _makeTitleDimension: function(option, theme) {
         return {
-            height: renderUtil.getRenderedLabelHeight(option, theme) + TITLE_ADD_PADDING
+            height: renderUtil.getRenderedLabelHeight(option, theme) + chartConst.TITLE_PADDING
         };
     },
 
@@ -376,7 +369,7 @@ var boundsMaker = {
             },
             position: {
                 top: top,
-                left: CHART_PADDING
+                left: chartConst.CHART_PADDING
             }
         };
     },
@@ -417,7 +410,7 @@ var boundsMaker = {
             },
             position: {
                 top: top,
-                right: dimensions.legend.width + chartConst.HIDDEN_WIDTH + CHART_PADDING
+                right: dimensions.legend.width + chartConst.HIDDEN_WIDTH + chartConst.CHART_PADDING
             }
         };
     },
@@ -479,7 +472,7 @@ var boundsMaker = {
         return {
             position: {
                 top: dimensions.title.height,
-                left: dimensions.yAxis.width + dimensions.series.width + dimensions.yrAxis.width + CHART_PADDING
+                left: dimensions.yAxis.width + dimensions.series.width + dimensions.yrAxis.width + chartConst.CHART_PADDING
             }
         };
     },
@@ -522,8 +515,8 @@ var boundsMaker = {
      */
     make: function(params) {
         var dimensions = this._getComponentsDimensions(params),
-            top = dimensions.title.height + CHART_PADDING,
-            left = dimensions.yAxis.width + CHART_PADDING,
+            top = dimensions.title.height + chartConst.CHART_PADDING,
+            left = dimensions.yAxis.width + chartConst.CHART_PADDING,
             axesBounds = this._makeAxesBounds({
                 hasAxes: params.hasAxes,
                 optionChartTypes: params.optionChartTypes,

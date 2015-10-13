@@ -7,8 +7,8 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    defaultTheme = require('../themes/defaultTheme.js');
+var chartConst = require('../const'),
+    defaultTheme = require('../themes/defaultTheme');
 
 var themes = {};
 

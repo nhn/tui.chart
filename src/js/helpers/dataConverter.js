@@ -6,7 +6,7 @@
 
 'use strict';
 
-var calculator = require('./calculator.js');
+var calculator = require('./calculator');
 
 var concat = Array.prototype.concat;
 

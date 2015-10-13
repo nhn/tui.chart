@@ -6,10 +6,10 @@
 
 'use strict';
 
-var calculator = require('../helpers/calculator.js'),
-    ChartBase = require('./chartBase.js'),
-    axisDataMaker = require('../helpers/axisDataMaker.js'),
-    defaultTheme = require('../themes/defaultTheme.js'),
+var calculator = require('../helpers/calculator'),
+    ChartBase = require('./chartBase'),
+    axisDataMaker = require('../helpers/axisDataMaker'),
+    defaultTheme = require('../themes/defaultTheme'),
     ColumnChart = require('./columnChart'),
     LineChart = require('./lineChart');
 

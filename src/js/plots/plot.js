@@ -6,10 +6,10 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
-    calculator = require('../helpers/calculator.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    plotTemplate = require('./plotTemplate.js');
+var dom = require('../helpers/domHandler'),
+    calculator = require('../helpers/calculator'),
+    renderUtil = require('../helpers/renderUtil'),
+    plotTemplate = require('./plotTemplate');
 
 var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
     /**

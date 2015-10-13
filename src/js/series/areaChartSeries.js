@@ -6,8 +6,8 @@
 
 'use strict';
 
-var Series = require('./series.js'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase.js');
+var Series = require('./series'),
+    LineTypeSeriesBase = require('./lineTypeSeriesBase');
 
 var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**

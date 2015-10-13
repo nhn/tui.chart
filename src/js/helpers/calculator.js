@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10];
+var chartConst = require('../const');
 
 /**
  * Calculator.
@@ -63,7 +63,7 @@ var calculator = {
 
         value *= flag;
 
-        ne.util.forEachArray(AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
+        ne.util.forEachArray(chartConst.AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
             if (value < num) {
                 if (num > 1) {
                     standard = num;

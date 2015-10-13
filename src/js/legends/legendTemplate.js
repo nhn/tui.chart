@@ -4,7 +4,7 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
-var templateMaker = require('../helpers/templateMaker.js');
+var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
     HTML_LEGEND: '<div class="ne-chart-legend">' +

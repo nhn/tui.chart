@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Axis = require('../axes/axis.js'),
-    Plot = require('../plots/plot.js'),
-    Legend = require('../legends/legend.js'),
-    Tooltip = require('../tooltips/tooltip.js');
+var Axis = require('../axes/axis'),
+    Plot = require('../plots/plot'),
+    Legend = require('../legends/legend'),
+    Tooltip = require('../tooltips/tooltip');
 
 /**
  * @classdesc AxisTypeBase is base class of axis type chart(bar, column, line, area).

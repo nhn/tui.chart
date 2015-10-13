@@ -6,15 +6,14 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    dataConverter = require('../helpers/dataConverter.js'),
-    boundsMaker = require('../helpers/boundsMaker.js');
-
-var TOOLTIP_PREFIX = 'ne-chart-tooltip-';
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    dataConverter = require('../helpers/dataConverter'),
+    boundsMaker = require('../helpers/boundsMaker');
 
 var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
-    tooltipPrefix: TOOLTIP_PREFIX + (new Date()).getTime() + '-',
+    tooltipPrefix: chartConst.TOOLTIP_PREFIX + '-' + (new Date()).getTime() + '-',
 
     /**
      * Chart base.

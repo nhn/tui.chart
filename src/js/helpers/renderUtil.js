@@ -7,7 +7,7 @@
 'use strict';
 
 var dom = require('./domHandler'),
-    chartConst = require('./../const.js');
+    chartConst = require('./../const');
 
 var browser = ne.util.browser,
     isIE8 = browser.msie && browser.version === 8;
