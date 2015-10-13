@@ -50,29 +50,6 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getRenderedLabelsMaxSize()', function() {
-        it('인자로 전달하는 레이블들을 보이지 않는 영역에 렌더링 하고 렌더링된 레이블의 사이즈(너비 or 높이)를 구해 레이블들 중 최대 사이즈를 선택하여 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
-                return label.length;
-            });
-            expect(result).toBe(7);
-        });
-    });
-
-    describe('_getRenderedLabelsMaxWidth()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxWidth(['label1', 'label12']);
-            expect(result).toBe(50);
-        });
-    });
-
-    describe('_getRenderedLabelsMaxHeight()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxHeight(['label1', 'label12']);
-            expect(result).toBe(20);
-        });
-    });
-
     describe('_getXAxisHeight()', function() {
         it('x축 영역의 높이를 계산하여 반환합니다.', function () {
             var result = maker._getXAxisHeight({

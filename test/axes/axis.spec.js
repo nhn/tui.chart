@@ -148,7 +148,7 @@ describe('Axis', function() {
         });
 
 
-        it('레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않는다.', function() {
+        it('레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
             var elTickArea, childNodes;
 
             axis.data = {
@@ -165,6 +165,53 @@ describe('Axis', function() {
             expect(childNodes[0].style.left).toBe('0px');
             expect(childNodes[1].style.left).toBe('75px');
             expect(childNodes[2].style.left).toBe('299px');
+        });
+    });
+
+    describe('_findDegree()', function() {
+        it('후보 각(25, 45, 65, 86)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
+            var actual = axis._findDegree(100, 20),
+                expected = 25;
+            expect(actual).toBe(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual = axis._findDegree(5, 20),
+                expected = 85;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeHorizontalLabelRotationInfo', function() {
+        it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = axis._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                degree: 25
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = axis._makeHorizontalLabelRotationInfo(5, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                degree: 85
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('회전하지 않는 상태의 가장 긴 레이블의 길이가 제한 너비를 초과하지 않으면 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(40);
+            actual = axis._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2'], {});
+
+            expect(actual).toBeNull();
         });
     });
 

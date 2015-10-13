@@ -12,6 +12,8 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     axisTemplate = require('./axisTemplate');
 
+var DEGREE_CANDIDATES = [25, 24, 65, 85];
+
 var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
@@ -134,10 +136,11 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position, index) {
+                var cssText;
                 if (labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
                 }
-                var cssText = [
+                cssText = [
                     renderUtil.concatStr('background-color:', tickColor),
                     renderUtil.concatStr(posType, ': ', position, 'px')
                 ].join(';');
@@ -148,6 +151,40 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         elTickArea.style[borderColorType] = tickColor;
 
         return elTickArea;
+    },
+
+    _makeVerticalLabelCssText: function(axisWidth, titleAreaWidth) {
+        return ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
+    },
+
+    _findDegree: function(limitWidth, height, index) {
+        var compareWidth, degree;
+
+        index = ne.util.isUndefined(index) ? 0 : index;
+        degree = DEGREE_CANDIDATES[index];
+        compareWidth = height / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
+
+        if (compareWidth <= limitWidth || index === DEGREE_CANDIDATES.length - 1) {
+            return degree;
+        }
+
+        return this._findDegree(limitWidth, height, index + 1);
+    },
+
+    _makeHorizontalLabelRotationInfo: function(axisWidth, labels, theme) {
+        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
+            limitWidth = axisWidth / labels.length + 4,
+            labelHeight;
+
+        if (labelWidth <= limitWidth) {
+            return null;
+        }
+
+        labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme);
+
+        return {
+            degree: this._findDegree(limitWidth, labelHeight)
+        };
     },
 
     /**
@@ -169,12 +206,14 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             }),
             elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
             areaCssText = renderUtil.makeFontCssText(this.theme.label),
-            labelsHtml, titleAreaWidth;
+            rotationInfo, labelsHtml, titleAreaWidth;
 
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
-            areaCssText += ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
+            areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
+        } else {
+            rotationInfo = this._makeHorizontalLabelRotationInfo(axisWidth, data.labels, this.theme.label);
         }
 
         tickPixelPositions.length = data.labels.length;
@@ -183,6 +222,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             positions: tickPixelPositions,
             labels: data.labels,
             posType: posType,
+            rotationInfo: rotationInfo,
             cssTexts: cssTexts
         });
 
@@ -249,10 +289,12 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.TPL_AXIS_LABEL,
             labelsHtml = ne.util.map(params.positions, function(position, index) {
                 var labelCssTexts = params.cssTexts.slice(),
+                    addClass = params.rotationInfo && (' ' + params.rotationInfo.degree) || '',
                     html;
 
                 labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
                 html = template({
+                    addClass: addClass,
                     cssText: labelCssTexts.join(';'),
                     label: params.labels[index]
                 });

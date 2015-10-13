@@ -135,6 +135,67 @@ var renderUtil = {
     },
 
     /**
+     * Get Rendered Labels Max Size(width or height).
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @param {function} iteratee iteratee
+     * @returns {number} max size (width or height)
+     * @private
+     */
+    getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
+        var sizes = ne.util.map(labels, function(label) {
+                return iteratee(label, theme);
+            }, this),
+            maxSize = ne.util.max(sizes);
+        return maxSize;
+    },
+
+    /**
+     * Get Rendered Labels Max Size(width or height).
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @param {function} iteratee iteratee
+     * @returns {number} max size (width or height)
+     * @private
+     */
+    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
+        var sizes = ne.util.map(labels, function(label) {
+                return iteratee(label, theme);
+            }, this),
+            maxSize = ne.util.max(sizes);
+        return maxSize;
+    },
+
+    /**
+     * Get rendered labels max width.
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max width
+     * @private
+     */
+    getRenderedLabelsMaxWidth: function(labels, theme) {
+        var iteratee = ne.util.bind(this.getRenderedLabelWidth, this),
+            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        return maxWidth;
+    },
+
+    /**
+     * Get rendered labels max height.
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max height
+     */
+    getRenderedLabelsMaxHeight: function(labels, theme) {
+        var iteratee = ne.util.bind(this.getRenderedLabelHeight, this),
+            result = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        return result;
+    },
+
+    /**
      * Render dimension.
      * @memberOf module:renderUtil
      * @param {HTMLElement} el target element

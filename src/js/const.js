@@ -48,6 +48,7 @@ module.exports = {
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel 360 */
+    ANGLE_90: 90,
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,

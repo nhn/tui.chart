@@ -44,50 +44,6 @@ var boundsMaker = {
     },
 
     /**
-     * Get Rendered Labels Max Size(width or height).
-     * @memberOf module:boundsMaker
-     * @param {string[]} labels labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-     * @param {function} iteratee iteratee
-     * @returns {number} max size (width or height)
-     * @private
-     */
-    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
-        var sizes = ne.util.map(labels, function(label) {
-                return iteratee(label, theme);
-            }, this),
-            maxSize = ne.util.max(sizes);
-        return maxSize;
-    },
-
-    /**
-     * Get rendered labels max width.
-     * @memberOf module:boundsMaker
-     * @param {string[]} labels labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-     * @returns {number} max width
-     * @private
-     */
-    _getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = ne.util.bind(renderUtil.getRenderedLabelWidth, renderUtil),
-            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
-        return maxWidth;
-    },
-
-    /**
-     * Get rendered labels max height.
-     * @memberOf module:boundsMaker
-     * @param {string[]} labels labels
-     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
-     * @returns {number} max height
-     */
-    _getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = ne.util.bind(renderUtil.getRenderedLabelHeight, renderUtil),
-            result = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
-        return result;
-    },
-
-    /**
      * Get height of x axis area.
      * @memberOf module:boundsMaker
      * @param {object} options x axis options,
@@ -99,7 +55,7 @@ var boundsMaker = {
     _getXAxisHeight: function(options, labels, theme) {
         var title = options && options.title,
             titleAreaHeight = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING,
-            height = this._getRenderedLabelsMaxHeight(labels, theme.label) + titleAreaHeight;
+            height = renderUtil.getRenderedLabelsMaxHeight(labels, theme.label) + titleAreaHeight;
         return height;
     },
 
@@ -122,7 +78,7 @@ var boundsMaker = {
         }
 
         titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
-        width = this._getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
+        width = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
 
         return width;
     },
@@ -227,7 +183,7 @@ var boundsMaker = {
             legendLabels = ne.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });
-            maxLabelWidth = this._getRenderedLabelsMaxWidth(legendLabels, labelTheme);
+            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
             legendWidth = maxLabelWidth + chartConst.LEGEND_RECT_WIDTH +
                 chartConst.LEGEND_LABEL_LEFT_PADDING + (chartConst.LEGEND_AREA_PADDING * 2);
         }
