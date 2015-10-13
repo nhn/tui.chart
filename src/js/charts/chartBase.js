@@ -174,7 +174,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
                 component.animateComponent();
             }
         });
-    },
+    }
 });
 
 module.exports = ChartBase;

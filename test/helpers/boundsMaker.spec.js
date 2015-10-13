@@ -6,9 +6,10 @@
 
 'use strict';
 
-var maker = require('../../src/js/helpers/boundsMaker.js'),
-    defaultTheme = require('../../src/js/themes/defaultTheme.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var maker = require('../../src/js/helpers/boundsMaker'),
+    chartConst = require('../../src/js/const'),
+    defaultTheme = require('../../src/js/themes/defaultTheme'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('boundsMaker', function() {
     beforeAll(function() {
@@ -185,6 +186,97 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_makeLegendDimension()', function() {
+        it('legend 영역의 dimension을 계산하여 반환합니다.', function () {
+            var acutal = maker._makeLegendDimension([
+                    {
+                        label: 'label1'
+                    },
+                    {
+                        label: 'label12'
+                    }
+                ],
+                {});
+            expect(acutal.width).toBe(87);
+        });
+    });
+
+    describe('_makeSeriesDimension()', function() {
+        it('series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+            var actual = maker._makeSeriesDimension({
+                    chartDimension: {
+                        width: 500,
+                        height: 400
+                    },
+                    axesDimension: {
+                        yAxis: {
+                            width: 50
+                        },
+                        yrAxis: {
+                            width: 0
+                        },
+                        xAxis: {
+                            height: 50
+                        }
+                    },
+                    legendWidth: 50,
+                    titleHeight: 50
+                }),
+                expected = {
+                    width: 380,
+                    height: 280
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeChartDimension()', function() {
+        it('chart option(width, height) 정보를 받아 chart dimension을 생성합니다.', function() {
+            var actual = maker._makeChartDimension({
+                    width: 300,
+                    height: 200
+                }),
+                expected = {
+                    width: 300,
+                    height: 200
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('chart option이 없는 경우에는 기본값으로 dimension을 생성합니다.', function() {
+            var actual = maker._makeChartDimension({}),
+                expected = {
+                    width: chartConst.CHART_DEFAULT_WIDTH,
+                    height: chartConst.CHART_DEFAULT_HEIGHT
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeTitleDimension()', function() {
+        it('option정보와 테마 정보를 전달하여 title dimension 정보를 생성합니다.', function() {
+            var acutal = maker._makeTitleDimension({}, {}),
+                expected = {
+                    height: 40
+                };
+            expect(acutal).toEqual(expected);
+        });
+    });
+
+    describe('_makePlotDimension', function() {
+        it('plot dimension은 전달하는 series dimension에서 hidden width 1을 더한 수치로 생성합니다.', function() {
+            var acutal = maker._makePlotDimension({
+                    width: 200,
+                    height: 100
+                }),
+                expected = {
+                    width: 200 + chartConst.HIDDEN_WIDTH,
+                    height: 100 + chartConst.HIDDEN_WIDTH
+                };
+            expect(acutal).toEqual(expected);
+        });
+    });
+
     describe('_getComponentsDimension()', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
             var result = maker._getComponentsDimensions({
@@ -241,6 +333,146 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_makeBasicBound()', function() {
+        it('dimension과 top, left 정보를 전달받아 기본형태의 bound 정보를 생성합니다.', function() {
+            var actual = maker._makeBasicBound({
+                    width: 100,
+                    height: 100
+                }, 10, 20),
+                expected = {
+                    dimension: {
+                        width: 100,
+                        height: 100
+                    },
+                    position: {
+                        top: 10,
+                        left: 20
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeYAxisBound()', function() {
+       it('yAxis width, plot height, top 정보를 받아 yAxis bound정보를 생성합니다.', function() {
+           var actual = maker._makeYAxisBound({
+                   yAxis: {
+                       width: 100
+                   },
+                   plot: {
+                       height: 200
+                   }
+               }, 20),
+               expected = {
+                   dimension: {
+                       width: 100,
+                       height: 200
+                   },
+                   position: {
+                       top: 20,
+                       left: 10
+                   }
+               };
+           expect(actual).toEqual(expected);
+       });
+    });
+
+    describe('_makeXAxisBound()', function() {
+        it('xAxis height, plot width, series height, top, left 정보를 받아 xAxis bound정보를 생성합니다.', function() {
+            var actual = maker._makeXAxisBound({
+                    xAxis: {
+                        height: 100
+                    },
+                    plot: {
+                        width: 200
+                    },
+                    series: {
+                        height: 100
+                    }
+                }, 10, 20),
+                expected = {
+                    dimension: {
+                        width: 200,
+                        height: 100
+                    },
+                    position: {
+                        top: 110,
+                        left: 19
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeYRAxisBound()', function() {
+        it('yrAxis width, plot height, legend width, top 정보를 받아 yrAxis bound정보를 생성합니다.', function() {
+            var actual = maker._makeYRAxisBound({
+                    yrAxis: {
+                        width: 100
+                    },
+                    plot: {
+                        height: 200
+                    },
+                    legend: {
+                        width: 50
+                    }
+                }, 20),
+                expected = {
+                    dimension: {
+                        width: 100,
+                        height: 200
+                    },
+                    position: {
+                        top: 20,
+                        right: 61
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeChartBound()', function() {
+        it('dimension정보를 받아 chart bound정보를 생성합니다.', function() {
+            var actual = maker._makeChartBound({
+                    width: 100,
+                    height: 100
+                }),
+                expected = {
+                    dimension: {
+                        width: 100,
+                        height: 100
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeLegendBound()', function() {
+        it('title height, yAxis width, series width, yrAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
+            var actual = maker._makeLegendBound({
+                    title: {
+                        height: 20
+                    },
+                    yAxis: {
+                        width: 30
+                    },
+                    series: {
+                        width: 200
+                    },
+                    yrAxis: {
+                        width: 30
+                    }
+                }),
+                expected = {
+                    position: {
+                        top: 20,
+                        left: 270
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeAxesBounds()', function() {
         it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보를 기본 dimension정보를 기반으로 계산하여 반환합니다.', function () {
             var actual = maker._makeAxesBounds({
@@ -289,49 +521,6 @@ describe('boundsMaker', function() {
             expect(actual.yrAxis.dimension.height).toBe(200);
             expect(actual.yrAxis.position.top).toBe(20);
             expect(actual.yrAxis.position.right).toBe(81);
-        });
-    });
-
-    describe('_getLegendAreaWidth()', function() {
-        it('legend 영역의 너비를 계산하여 반환합니다.', function () {
-            var result = maker._getLegendAreaWidth([
-                    {
-                        label: 'label1'
-                    },
-                    {
-                        label: 'label12'
-                    }
-                ],
-                {});
-            expect(result).toBe(87);
-        });
-    });
-
-    describe('_makeSeriesDimension()', function() {
-        it('series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
-            var result = maker._makeSeriesDimension({
-                chartDimension: {
-                    width: 500,
-                    height: 400
-                },
-                axesDimension: {
-                    yAxis: {
-                        width: 50
-                    },
-                    yrAxis: {
-                        width: 0
-                    },
-                    xAxis: {
-                        height: 50
-                    }
-                },
-                legendWidth: 50,
-                titleHeight: 50
-            });
-            expect(result).toEqual({
-                width: 380,
-                height: 280
-            });
         });
     });
 

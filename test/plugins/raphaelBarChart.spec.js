@@ -79,10 +79,10 @@ describe('RaphaelBarChart', function() {
                 height: 50
             }, 'bar', 10);
 
-            expect(!!actual.top).toBe(true);
-            expect(!!actual.right).toBe(true);
-            expect(!!actual.bottom).toBe(true);
-            expect(!!actual.left).not.toBe(true);
+            expect(actual.top).toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).not.toBeDefined();
         });
 
         it('bar 차트이면서 value가 음수인 경우에는 top, bottom, left의 path 정보를 반환합니다.', function() {
@@ -93,10 +93,10 @@ describe('RaphaelBarChart', function() {
                 height: 50
             }, 'bar', -10);
 
-            expect(!!actual.top).toBe(true);
-            expect(!!actual.right).not.toBe(true);
-            expect(!!actual.bottom).toBe(true);
-            expect(!!actual.left).toBe(true);
+            expect(actual.top).toBeDefined();
+            expect(actual.right).not.toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).toBeDefined();
         });
 
         it('column 차트이면서 value가 양수인 경우에는 top, right, left의 path 정보를 반환합니다.', function() {
@@ -107,10 +107,10 @@ describe('RaphaelBarChart', function() {
                 height: 50
             }, 'column', 10);
 
-            expect(!!actual.top).toBe(true);
-            expect(!!actual.right).toBe(true);
-            expect(!!actual.bottom).not.toBe(true);
-            expect(!!actual.left).toBe(true);
+            expect(actual.top).toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).not.toBeDefined();
+            expect(actual.left).toBeDefined();
         });
 
         it('column 차트이면서 value가 음수인 경우에는 right, bottom, left의 path 정보를 반환합니다.', function() {
@@ -121,10 +121,10 @@ describe('RaphaelBarChart', function() {
                 height: 50
             }, 'column', -10);
 
-            expect(!!actual.top).not.toBe(true);
-            expect(!!actual.right).toBe(true);
-            expect(!!actual.bottom).toBe(true);
-            expect(!!actual.left).toBe(true);
+            expect(actual.top).not.toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).toBeDefined();
         });
     });
 });

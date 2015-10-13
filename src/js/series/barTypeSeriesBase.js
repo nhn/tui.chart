@@ -27,22 +27,22 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
     },
 
     /**
-     * To make bar padding.
+     * To make bar gutter.
      * @param {number} groupSize bar group size
      * @param {number} itemCount group item count
-     * @returns {number} bar padding
+     * @returns {number} bar gutter
      */
-    makeBarPadding: function(groupSize, itemCount) {
+    makeBarGutter: function(groupSize, itemCount) {
         var baseSize = groupSize / (itemCount + 1) / 2,
-            barPadding;
+            gutter;
         if (baseSize <= 2) {
-            barPadding = 0;
+            gutter = 0;
         } else if (baseSize <= 6) {
-            barPadding = 2;
+            gutter = 2;
         } else {
-            barPadding = 4;
+            gutter = 4;
         }
-        return barPadding;
+        return gutter;
     },
 
     /**
@@ -72,7 +72,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
         var groupValues = this.percentValues,
             groupSize = dimension[anotherSizeType] / groupValues.length,
             itemCount = groupValues[0].length,
-            barPadding = this.makeBarPadding(groupSize, itemCount),
+            barPadding = this.makeBarGutter(groupSize, itemCount),
             barSize = this.makeBarSize(groupSize, barPadding, itemCount),
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension[sizeType], this.data.scale);
         return {

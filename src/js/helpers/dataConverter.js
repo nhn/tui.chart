@@ -68,7 +68,7 @@ var dataConverter = {
     /**
      * Pick value.
      * @memberOf module:dataConverter
-     * @param {array} items items
+     * @param {{name: string, data: array.<number> || number}} items items
      * @returns {array} picked value
      * @private
      */

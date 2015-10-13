@@ -119,7 +119,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
             bounds;
 
         bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
-            var paddingLeft = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2) + 1;
+            var paddingLeft = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
             return ne.util.map(values, function (value, index) {
                 return this._makeNormalColumnChartBound(baseInfo, value, paddingLeft, index);
             }, this);
