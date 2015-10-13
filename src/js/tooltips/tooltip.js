@@ -14,7 +14,6 @@ var chartConst = require('../const.js'),
     tooltipTemplate = require('./tooltipTemplate.js');
 
 var TOOLTIP_GAP = 5,
-    HIDDEN_WIDTH = 1,
     TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
     HIDE_DELAY = 0;
 
@@ -212,7 +211,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
             positionOption = params.positionOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
-        result.left = bound.left + (HIDDEN_WIDTH * 2) + addPosition.left;
+        result.left = bound.left + addPosition.left;
         result.top = bound.top - tooltipHeight + addPosition.top;
 
         if (positionOption.indexOf('left') > -1) {
@@ -224,11 +223,11 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         }
 
         if (positionOption.indexOf('bottom') > -1) {
-            result.top += tooltipHeight - HIDDEN_WIDTH + lineGap;
+            result.top += tooltipHeight + lineGap;
         } else if (positionOption.indexOf('middle') > -1) {
             result.top += tooltipHeight / 2;
         } else {
-            result.top -= TOOLTIP_GAP + HIDDEN_WIDTH;
+            result.top -= TOOLTIP_GAP;
         }
 
         return result;
@@ -264,11 +263,9 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         }
 
         if (positionOption.indexOf('top') > -1) {
-            result.top -= minusHeight + HIDDEN_WIDTH;
+            result.top -= minusHeight;
         } else if (positionOption.indexOf('middle') > -1) {
             result.top -= minusHeight / 2;
-        } else {
-            result.top -= HIDDEN_WIDTH * 2;
         }
 
         return result;

@@ -99,8 +99,8 @@ describe('Tooltip', function() {
             });
 
             expect(result).toEqual({
-                left: 12,
-                top: 14
+                left: 10,
+                top: 15
             });
         });
     });
@@ -128,7 +128,7 @@ describe('Tooltip', function() {
 
             expect(result).toEqual({
                 left: 55,
-                top: 8
+                top: 10
             });
         });
     });
@@ -198,8 +198,8 @@ describe('Tooltip', function() {
             });
 
             expect(result).toEqual({
-                left: 12,
-                top: 14
+                left: 10,
+                top: 15
             });
         });
 
@@ -226,7 +226,7 @@ describe('Tooltip', function() {
 
             expect(result).toEqual({
                 left: 55,
-                top: 8
+                top: 10
             });
         });
     });

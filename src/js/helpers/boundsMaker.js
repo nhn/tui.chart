@@ -15,8 +15,7 @@ var CHART_PADDING = 10,
     LEGEND_AREA_PADDING = 10,
     LEGEND_RECT_WIDTH = 12,
     LEGEND_LABEL_PADDING_LEFT = 5,
-    AXIS_LABEL_PADDING = 7,
-    HIDDEN_WIDTH = 1;
+    AXIS_LABEL_PADDING = 7;
 
 var concat = Array.prototype.concat;
 
@@ -66,13 +65,12 @@ var boundsMaker = {
             yAxisWidth = dimensions.yAxis.width,
             top = dimensions.title.height + CHART_PADDING,
             left = yAxisWidth + CHART_PADDING,
-            right = dimensions.legend.width + dimensions.yrAxis.width + CHART_PADDING,
             axesBounds = this._makeAxesBounds({
                 hasAxes: params.hasAxes,
                 optionChartTypes: params.optionChartTypes,
                 dimensions: dimensions,
                 top: top,
-                right: right
+                left: left
             }),
             bounds = ne.util.extend({
                 chart: {
@@ -95,7 +93,7 @@ var boundsMaker = {
                     dimension: dimensions.series,
                     position: {
                         top: top,
-                        left: left
+                        left: left - chartConst.SERIES_EXPAND_SIZE
                     }
                 }
             }, axesBounds);
@@ -340,6 +338,7 @@ var boundsMaker = {
             rightAreaWidth = params.legendWidth + axesDimension.yrAxis.width,
             width = params.chartDimension.width - (CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
             height = params.chartDimension.height - (CHART_PADDING * 2) - params.titleHeight - axesDimension.xAxis.height;
+
         return {
             width: width,
             height: height
@@ -384,6 +383,10 @@ var boundsMaker = {
                 height: titleHeight
             },
             series: seriesDimension,
+            plot: {
+                width: seriesDimension.width + chartConst.HIDDEN_WIDTH,
+                height: seriesDimension.height + chartConst.HIDDEN_WIDTH
+            },
             legend: {
                 width: legendWidth
             }
@@ -404,42 +407,39 @@ var boundsMaker = {
      * @private
      */
     _makeAxesBounds: function(params) {
-        var bounds, dimensions, top, right;
+        var bounds;
 
         // pie차트와 같이 axis 영역이 필요 없는 경우에는 빈 값을 반환 함
         if (!params.hasAxes) {
             return {};
         }
 
-        dimensions = params.dimensions;
-        top = params.top;
-        right = params.right;
         bounds = {
             plot: {
-                dimension: dimensions.series,
+                dimension: params.dimensions.plot,
                 position: {
-                    top: top,
-                    right: right
+                    top: params.top,
+                    left: params.left - chartConst.HIDDEN_WIDTH
                 }
             },
             yAxis: {
                 dimension: {
-                    width: dimensions.yAxis.width,
-                    height: dimensions.series.height
+                    width: params.dimensions.yAxis.width,
+                    height: params.dimensions.plot.height
                 },
                 position: {
-                    top: top,
-                    left: CHART_PADDING + HIDDEN_WIDTH
+                    top: params.top,
+                    left: CHART_PADDING
                 }
             },
             xAxis: {
                 dimension: {
-                    width: dimensions.series.width,
-                    height: dimensions.xAxis.height
+                    width: params.dimensions.plot.width,
+                    height: params.dimensions.xAxis.height
                 },
                 position: {
-                    top: top + dimensions.series.height - HIDDEN_WIDTH,
-                    right: right
+                    top: params.top + params.dimensions.series.height,
+                    left: params.left - chartConst.HIDDEN_WIDTH
                 }
             }
         };
@@ -448,12 +448,12 @@ var boundsMaker = {
         if (params.optionChartTypes && params.optionChartTypes.length) {
             bounds.yrAxis = {
                 dimension: {
-                    width: dimensions.yrAxis.width,
-                    height: dimensions.series.height
+                    width: params.dimensions.yrAxis.width,
+                    height: params.dimensions.plot.height
                 },
                 position: {
-                    top: top,
-                    right: dimensions.legend.width + CHART_PADDING + HIDDEN_WIDTH
+                    top: params.top,
+                    right: params.dimensions.legend.width + chartConst.HIDDEN_WIDTH + CHART_PADDING
                 }
             };
         }

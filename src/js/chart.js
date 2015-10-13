@@ -6,6 +6,7 @@
 'use strict';
 
 var chartConst = require('./const.js'),
+    state = require('./helpers/state.js'),
     chartFactory = require('./factories/chartFactory.js'),
     pluginFactory = require('./factories/pluginFactory.js'),
     themeFactory = require('./factories/themeFactory.js');

@@ -7,8 +7,6 @@
 'use strict';
 
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
-    chartConst = require('../../src/js/const.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
@@ -48,13 +46,13 @@ describe('ColumnChartSeries', function() {
             expect(actual.startTop).toBe(expected);
         });
 
-        it('value가 0보다 클 경우에는 startTop은 endTop에 hidden width를 더한 값으로 생성하고, endTop은 endHeight를 뺀 값에 hidden width를 더해 생성합니다.', function() {
+        it('value가 0보다 크거나 같을 경우에는 startTop은 endTop과 동일한 값으로 생성하고, endTop은 endHeight를 뺀 값을 생성합니다.', function() {
             var endTop = 30,
                 endHeight = 20,
                 value = 10,
                 actual = series._makeStartEndTops(endTop, endHeight, value),
-                expectedStartTop = 30 + chartConst.HIDDEN_WIDTH,
-                expectedEndTop = 10 + chartConst.HIDDEN_WIDTH;
+                expectedStartTop = 30,
+                expectedEndTop = 10;
 
             expect(actual.startTop).toBe(expectedStartTop);
             expect(actual.endTop).toBe(expectedEndTop);
@@ -84,6 +82,35 @@ describe('ColumnChartSeries', function() {
                         top: 20,
                         width: 40,
                         height: 30
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalColumnChartBound()', function() {
+        it('normal column chart bar 하나의 bound정보를 생성합니다.', function() {
+            var actual = series._makeNormalColumnChartBound({
+                    distanceToMin: 0,
+                    dimension: {
+                        width: 400,
+                        height: 200
+                    },
+                    step: 40,
+                    barSize: 30
+                }, 0.3, 10, 0),
+                expected = {
+                    start: {
+                        left: 20,
+                        top: 200,
+                        width: 30,
+                        height: 0
+                    },
+                    end: {
+                        left: 20,
+                        top: 140,
+                        width: 30,
+                        height: 60
                     }
                 };
             expect(actual).toEqual(expected);
@@ -125,9 +152,9 @@ describe('ColumnChartSeries', function() {
             expect(result[0][0].end.height).toBe(100);
 
             // 양수의 경우는 top, height 값이 같이 변함
-            expect(result[1][0].start.top).toBe(241);
+            expect(result[1][0].start.top).toBe(240);
             expect(result[1][0].start.height).toBe(0);
-            expect(result[1][0].end.top).toBe(41);
+            expect(result[1][0].end.top).toBe(40);
             expect(result[1][0].end.height).toBe(200);
         });
     });

@@ -298,14 +298,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         this.charts = ne.util.map(params.seriesChartTypes, function(chartType) {
             var legendLabels = convertData.legendLabels[chartType],
                 axes = params.axesData[chartType],
-                sendOptions = params.optionsMap[chartType],
-                sendTheme = params.themeMap[chartType],
-                sendBounds = JSON.parse(JSON.stringify(baseData.bounds)),
+                options = params.optionsMap[chartType],
+                theme = params.themeMap[chartType],
+                bounds = JSON.parse(JSON.stringify(baseData.bounds)),
                 Chart = chartClasses[chartType],
                 initedData, chart;
 
             if (axes && axes.yAxis.isPositionRight) {
-                sendBounds.yAxis = sendBounds.yrAxis;
+                bounds.yAxis = bounds.yrAxis;
             }
 
             initedData = {
@@ -318,12 +318,12 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                     joinLegendLabels: joinLegendLabels,
                     plotData: plotData
                 },
-                bounds: sendBounds,
+                bounds: bounds,
                 axes: axes,
                 prefix: chartType + '-'
             };
 
-            chart = new Chart(params.userData, sendTheme, sendOptions, initedData);
+            chart = new Chart(params.userData, theme, options, initedData);
             plotData = null;
             joinLegendLabels = null;
             return chart;

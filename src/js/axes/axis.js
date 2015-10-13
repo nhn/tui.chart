@@ -7,6 +7,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler.js'),
+    state = require('../helpers/state.js'),
     calculator = require('../helpers/calculator.js'),
     renderUtil = require('../helpers/renderUtil.js'),
     axisTemplate = require('./axisTemplate.js');
@@ -58,8 +59,12 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elTickArea = this._renderTickArea(size),
-            elLabelArea = this._renderLabelArea(size, dimension.width);
+            elLabelArea = this._renderLabelArea(size, dimension.width),
+            elTickArea;
+
+        if (!this.aligned || !isVertical) {
+            elTickArea = this._renderTickArea(size);
+        }
         renderUtil.renderDimension(el, dimension);
         renderUtil.renderPosition(el, bound.position);
         dom.addClass(el, isVertical ? 'vertical' : 'horizontal');
@@ -188,7 +193,8 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             isVertical: data.isVertical,
             isLabelAxis: data.isLabelAxis,
             theme: this.theme.label,
-            labelSize: labelSize
+            labelSize: labelSize,
+            aligned: data.aligned
         });
 
         return elLabelArea;
@@ -268,7 +274,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     _changeLabelAreaPosition: function(params) {
         var labelHeight;
 
-        if (params.isLabelAxis) {
+        if (params.isLabelAxis && !params.aligned) {
             return;
         }
 

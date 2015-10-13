@@ -10,7 +10,6 @@ var maker = require('../../src/js/helpers/axisDataMaker.js'),
     converter = require('../../src/js/helpers/dataConverter.js');
 
 describe('axisDataMaker', function() {
-
     describe('makeLabelAxisData()', function() {
         it('레이블 타입의 axis data를 생성합니다.', function () {
             var result = maker.makeLabelAxisData({
@@ -21,8 +20,17 @@ describe('axisDataMaker', function() {
                 tickCount: 4,
                 validTickCount: 0,
                 isLabelAxis: true,
-                isVertical: false
+                isVertical: false,
+                aligned: false
             });
+        });
+
+        it('aligned옵션이 true이면 tick label과 tick의 수가 동일하기 때문에 tickCount는 레이블 수 만큼만 설정된다. ', function () {
+            var result = maker.makeLabelAxisData({
+                labels: ['label1', 'label2', 'label3'],
+                aligned: true
+            });
+            expect(result.tickCount).toBe(3);
         });
     });
 
@@ -298,30 +306,6 @@ describe('axisDataMaker', function() {
                 tickCount: 5,
                 labels: [0, 30, 60, 90, 120]
             });
-        });
-    });
-
-    describe('_addMinPadding()', function() {
-        it('Line차트의 경우 min과 userMin이 같으면 한 step 감소시킨 min 값을 반환합니다.', function () {
-            var result = maker._addMinPadding({
-                min: 0,
-                userMin: 0,
-                step: 20,
-                chartType: 'line'
-            });
-
-            expect(result).toEqual(-20);
-        });
-
-        it('Bar차트의 경우 min이 0이면서 userMin 같으면 감소 없는 min 값을 반환합니다.', function () {
-            var result = maker._addMinPadding({
-                min: 0,
-                userMin: 0,
-                step: 20,
-                chartType: 'bar'
-            });
-
-            expect(result).toBe(0);
         });
     });
 

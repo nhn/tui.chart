@@ -53,38 +53,55 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     },
 
     /**
+     * To make normal bar chart bound.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      groupValues: array.<array.<number>>,
+     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      distanceToMin: number, isMinus: boolean
+     * }} baseInfo base info
+     * @param {number} value value
+     * @param {number} paddingTop padding top
+     * @param {number} index index
+     * @returns {{
+     *      start: {left: number, top: number, width: number, height: number},
+     *      end: {left: number, top: number, width: number, height: number}
+     * }} column chart bound
+     * @private
+     */
+    _makeNormalBarChartBound: function(baseInfo, value, paddingTop, index) {
+        var startLeft, endWidth, bound, baseBound;
+
+        startLeft = baseInfo.distanceToMin + chartConst.SERIES_EXPAND_SIZE;
+        endWidth = Math.abs(value * baseInfo.dimension.width);
+        baseBound = {
+            top: paddingTop + ((baseInfo.step) * index),
+            height: baseInfo.barSize
+        };
+        bound = this._makeBarChartBound({
+            baseBound: baseBound,
+            startLeft: startLeft,
+            endLeft: startLeft + (value < 0 ? -endWidth : 0),
+            endWidth: endWidth
+        });
+
+        return bound;
+    },
+
+    /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeNormalBarChartBounds: function(dimension, hiddenWidth) {
-        var groupValues, groupHeight, barHeight, scaleDistance, bounds;
+    _makeNormalBarChartBounds: function(dimension) {
+        var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
+            bounds;
 
-        groupValues = this.percentValues;
-        groupHeight = (dimension.height / groupValues.length);
-        barHeight = groupHeight / (groupValues[0].length + 1);
-        scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale);
-        bounds = ne.util.map(groupValues, function(values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
+        bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
+            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2) + 1;
             return ne.util.map(values, function (value, index) {
-                var startLeft, endWidth, bound, baseBound;
-
-                startLeft = scaleDistance.toMin - chartConst.HIDDEN_WIDTH;
-                endWidth = value * dimension.width * (value < 0 ? -1 : 1);
-                baseBound = {
-                    top: paddingTop + (barHeight * index),
-                    height: barHeight
-                };
-                bound = this._makeBarChartBound({
-                    baseBound: baseBound,
-                    startLeft: startLeft,
-                    endLeft: startLeft + (value < 0 ? -endWidth : 0),
-                    endWidth: endWidth
-                });
-
-                return bound;
+                return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
             }, this);
         }, this);
 
@@ -94,19 +111,18 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     /**
      * To make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeStackedBarChartBounds: function(dimension, hiddenWidth) {
+    _makeStackedBarChartBounds: function(dimension) {
         var groupValues, groupHeight, barHeight, bounds;
 
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;
         bounds = ne.util.map(groupValues, function (values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
-                endLeft = -chartConst.HIDDEN_WIDTH;
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2),
+                endLeft = chartConst.SERIES_EXPAND_SIZE;
             return ne.util.map(values, function (value) {
                 var endWidth, baseBound, bound;
 
@@ -121,12 +137,12 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
                 };
                 bound = this._makeBarChartBound({
                     baseBound: baseBound,
-                    startLeft: -chartConst.HIDDEN_WIDTH,
+                    startLeft: chartConst.SERIES_EXPAND_SIZE,
                     endLeft: endLeft,
                     endWidth: endWidth
                 });
-                endLeft = endLeft + endWidth;
 
+                endLeft = endLeft + endWidth;
                 return bound;
             }, this);
         }, this);
@@ -137,16 +153,14 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
     /**
      * To make bounds of bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeBounds: function(dimension, hiddenWidth) {
-        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : chartConst.HIDDEN_WIDTH);
+    _makeBounds: function(dimension) {
         if (!this.options.stacked) {
-            return this._makeNormalBarChartBounds(dimension, hiddenWidth);
+            return this._makeNormalBarChartBounds(dimension);
         } else {
-            return this._makeStackedBarChartBounds(dimension, hiddenWidth);
+            return this._makeStackedBarChartBounds(dimension);
         }
     },
 

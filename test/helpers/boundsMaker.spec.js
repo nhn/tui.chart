@@ -242,62 +242,53 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeAxesBounds()', function() {
-        it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보를 계산하여 반환합니다.', function () {
-            var result = maker._makeAxesBounds({
-                convertData: {
-                    labels: ['label1', 'label12'],
-                    joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
-                },
-                optionChartTypes: [],
-                isVertical: true,
+        it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보를 기본 dimension정보를 기반으로 계산하여 반환합니다.', function () {
+            var actual = maker._makeAxesBounds({
                 hasAxes: true,
-                theme: {
-                    yAxis: {
-                        title: {},
-                        label: {}
-                    },
-                    xAxis: {
-                        title: {},
-                        label: {}
-                    },
-                    legend: {
-                        label: {}
-                    }
-                },
-                options: {
-                    yAxis: {
-                        title: 'YAxis title'
-                    },
-                    xAxis: {
-                        title: 'XAxis title'
-                    }
-                },
                 dimensions: {
-                    chart: {width: 500, height: 400},
-                    title: {height: 36},
-                    plot: {width: 333, height: 294},
-                    series: {width: 333, height: 294},
-                    legend: {width: 96},
-                    tooltip: {width: 333, height: 294},
-                    yAxis: {width: 51},
+                    plot: {width: 300, height: 200},
+                    series: {width: 299, height: 199},
+                    legend: {width: 70},
+                    yAxis: {width: 50},
                     yrAxis: {width: 0},
                     xAxis: {height: 50}
                 },
                 top: 20,
-                right: 20
+                left: 20
             });
 
-            expect(result).toEqual({
-                plot: {dimension: {width: 333, height: 294}, position: {top: 20, right: 20}},
-                yAxis: {dimension: {width: 51, height: 294}, position: {top: 20, left: 11}},
-                xAxis: {dimension: {width: 333, height: 50}, position: {top: 313, right: 20}}
+            expect(actual.plot.position).toEqual({top: 20, left: 19});
+            expect(actual.yAxis.dimension.height).toBe(200);
+            expect(actual.yAxis.position.top).toBe(20);
+            expect(actual.yAxis.position.left).toBe(10);
+            expect(actual.xAxis.dimension.width).toBe(300);
+            expect(actual.xAxis.position.top).toBe(219);
+            expect(actual.xAxis.position.left).toBe(19);
+        });
+
+        it('hasAxes값이 없을 경우에는 빈 객체를 반환합니다.', function() {
+            var actual = maker._makeAxesBounds({});
+            expect(actual).toEqual({});
+        });
+
+        it('optionChartTypes값이 있을 경우에는 우측 yAxis옵션 정보를 반환합니다.', function() {
+            var actual = maker._makeAxesBounds({
+                hasAxes: true,
+                optionChartTypes: ['line', 'column'],
+                dimensions: {
+                    plot: {width: 300, height: 200},
+                    series: {width: 299, height: 199},
+                    legend: {width: 70},
+                    yAxis: {width: 50},
+                    yrAxis: {width: 50},
+                    xAxis: {height: 50}
+                },
+                top: 20,
+                left: 20
             });
+            expect(actual.yrAxis.dimension.height).toBe(200);
+            expect(actual.yrAxis.position.top).toBe(20);
+            expect(actual.yrAxis.position.right).toBe(81);
         });
     });
 
@@ -380,15 +371,15 @@ describe('boundsMaker', function() {
             expect(result.series.position.top).toBe(50);
             expect(result.series.position.left).toBe(107);
             expect(result.yAxis.dimension.width).toBe(97);
-            expect(result.yAxis.dimension.height).toBe(280);
+            expect(result.yAxis.dimension.height).toBe(281);
             expect(result.yAxis.position.top).toBe(50);
-            expect(result.xAxis.dimension.width).toBe(296);
+            expect(result.xAxis.dimension.width).toBe(297);
             expect(result.xAxis.dimension.height).toBe(60);
-            expect(result.xAxis.position.top).toBe(329);
+            expect(result.xAxis.position.top).toBe(330);
             expect(result.legend.position.top).toBe(40);
             expect(result.legend.position.left).toBe(403);
             expect(result.tooltip.position.top).toBe(50);
-            expect(result.tooltip.position.left).toBe(107);
+            expect(result.tooltip.position.left).toBe(97);
         });
     });
 });

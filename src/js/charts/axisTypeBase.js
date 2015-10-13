@@ -27,7 +27,8 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
      */
     addAxisComponents: function(params) {
         var convertData = params.convertData,
-            options = this.options;
+            options = this.options,
+            aligned = !!params.aligned;
 
         if (params.plotData) {
             this.addComponent('plot', Plot, params.plotData);
@@ -35,7 +36,8 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
 
         ne.util.forEach(params.axes, function(data, name) {
             this.addComponent(name, Axis, {
-                data: data
+                data: data,
+                aligned: aligned
             });
         }, this);
 
@@ -50,7 +52,8 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
         this.addComponent('series', params.Series, ne.util.extend({
             libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix
+            tooltipPrefix: this.tooltipPrefix,
+            aligned: aligned
         }, params.seriesData));
 
         this.addComponent('tooltip', Tooltip, {
