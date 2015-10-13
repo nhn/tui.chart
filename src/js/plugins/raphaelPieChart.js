@@ -57,10 +57,10 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
-        var x1 = cx + r * Math.cos(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 x 좌표
-            y1 = cy - r * Math.sin(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 y 좌표
-            x2 = cx + r * Math.cos(-(endAngle - ANGLE_90) * RAD),// 원 호의 종료 x 좌표
-            y2 = cy - r * Math.sin(-(endAngle - ANGLE_90) * RAD), // 원 호의 종료 y 좌표
+        var x1 = cx + r * Math.sin(startAngle * RAD), // 원 호의 시작 x 좌표
+            y1 = cy - r * Math.cos(startAngle * RAD), // 원 호의 시작 y 좌표
+            x2 = cx + r * Math.sin(endAngle * RAD),// 원 호의 종료 x 좌표
+            y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
             largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
             path = ["M", cx, cy,
                 "L", x2, y2,
