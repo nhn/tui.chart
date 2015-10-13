@@ -7,7 +7,6 @@
 'use strict';
 
 var chartConst = require('../const.js'),
-    state = require('./state.js'),
     calculator = require('./calculator.js');
 
 var MIN_PIXEL_STEP_SIZE = 40,
@@ -31,6 +30,28 @@ var abs = Math.abs,
  */
 var axisDataMaker = {
     /**
+     * To make labels.
+     * @param {array.<string>} labels labels
+     * @param {number} labelInterval label interval
+     * @returns {array.<string>} labels
+     * @private
+     */
+    _makeLabels: function(labels, labelInterval) {
+        var lastIndex;
+        if (!labelInterval) {
+            return labels;
+        }
+
+        lastIndex = labels.length - 1;
+        return ne.util.map(labels, function(label, index) {
+            if (index > 0 && index < lastIndex && (index % labelInterval) > 0) {
+                label = chartConst.EMPTY_AXIS_LABEL;
+            }
+            return label;
+        });
+    },
+
+    /**
      * To make data about label axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
@@ -45,12 +66,14 @@ var axisDataMaker = {
      * }} axis data
      */
     makeLabelAxisData: function(params) {
-        var tickCount = params.labels.length;
+        var tickCount = params.labels.length,
+            options = params.options || {};
         if (!params.aligned) {
             tickCount += 1;
         }
+
         return {
-            labels: params.labels,
+            labels: this._makeLabels(params.labels, options.labelInterval),
             tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,

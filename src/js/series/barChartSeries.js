@@ -99,7 +99,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
             bounds;
 
         bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
-            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2) + 1;
+            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
             return ne.util.map(values, function (value, index) {
                 return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
             }, this);

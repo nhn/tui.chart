@@ -25,82 +25,6 @@ var concat = Array.prototype.concat;
  */
 var boundsMaker = {
     /**
-     * To make bounds about chart components.
-     * @memberOf module:boundsMaker
-     * @param {object} params parameters
-     *      @param {object} params.convertData converted data
-     *      @param {object} params.theme chart theme
-     *      @param {boolean} params.isVertical whether vertical or not
-     *      @param {object} params.options chart options
-     *      @param {boolean} params.hasAxes whether has axes area or not
-     *      @param {array} params.optionChartTypes y axis option chart types
-     * @returns {{
-     *   plot: {
-     *     dimension: {width: number, height: number},
-     *     position: {top: number, right: number}
-     *   },
-     *   yAxis: {
-     *     dimension: {width: (number), height: number},
-     *     position: {top: number}
-     *   },
-     *   xAxis: {
-     *     dimension: {width: number, height: (number)},
-     *     position: {right: number}
-     *   },
-     *   series: {
-     *     dimension: {width: number, height: number},
-     *     position: {top: number, right: number}
-     *   },
-     *   legend: {
-     *     position: {top: number}
-     *   },
-     *   tooltip: {
-     *     dimension: {width: number, height: number},
-     *     position: {top: number, left: number}
-     *   }
-     * }} bounds
-     */
-    make: function(params) {
-        var dimensions = this._getComponentsDimensions(params),
-            yAxisWidth = dimensions.yAxis.width,
-            top = dimensions.title.height + CHART_PADDING,
-            left = yAxisWidth + CHART_PADDING,
-            axesBounds = this._makeAxesBounds({
-                hasAxes: params.hasAxes,
-                optionChartTypes: params.optionChartTypes,
-                dimensions: dimensions,
-                top: top,
-                left: left
-            }),
-            bounds = ne.util.extend({
-                chart: {
-                    dimension: dimensions.chart
-                },
-                series: {
-                    dimension: dimensions.series,
-                    position: {
-                        top: top,
-                        left: left
-                    }
-                },
-                legend: {
-                    position: {
-                        top: dimensions.title.height,
-                        left: yAxisWidth + dimensions.series.width + dimensions.yrAxis.width + CHART_PADDING
-                    }
-                },
-                tooltip: {
-                    dimension: dimensions.series,
-                    position: {
-                        top: top,
-                        left: left - chartConst.SERIES_EXPAND_SIZE
-                    }
-                }
-            }, axesBounds);
-        return bounds;
-    },
-
-    /**
      * Get max label of value axis.
      * @memberOf module:boundsMaker
      * @param {object} convertData convert data
@@ -291,16 +215,16 @@ var boundsMaker = {
     },
 
     /**
-     * Get width of legend area.
+     * To make legend dimension.
      * @memberOf module:boundsMaker
      * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @param {string} chartType chart type
      * @param {object} seriesOption series option
-     * @returns {number} width
+     * @returns {{width: number}} legend dimension
      * @private
      */
-    _getLegendAreaWidth: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
+    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
@@ -315,7 +239,9 @@ var boundsMaker = {
                 LEGEND_LABEL_PADDING_LEFT + (LEGEND_AREA_PADDING * 2);
         }
 
-        return legendWidth;
+        return {
+            width: legendWidth
+        };
     },
 
     /**
@@ -346,6 +272,45 @@ var boundsMaker = {
     },
 
     /**
+     * To make chart dimension.
+     * @param {{width: number, height: number}} chartOptions chart options
+     * @returns {{width: (number), height: (number)}} chart dimension
+     * @private
+     */
+    _makeChartDimension: function(chartOptions) {
+        return {
+            width: chartOptions.width || chartConst.CHART_DEFAULT_WIDTH,
+            height: chartOptions.height || chartConst.CHART_DEFAULT_HEIGHT
+        };
+    },
+
+    /**
+     * To make title dimension
+     * @param {{title: string}} option title option
+     * @param {{fontFamily: string, fontSize: number}} theme title theme
+     * @returns {{height: number}} title dimension
+     * @private
+     */
+    _makeTitleDimension: function(option, theme) {
+        return {
+            height: renderUtil.getRenderedLabelHeight(option, theme) + TITLE_ADD_PADDING
+        };
+    },
+
+    /**
+     * To make plot dimention
+     * @param {{width: number, height: number}} seriesDimension series dimension
+     * @returns {{width: number, height: number}} plot dimension
+     * @private
+     */
+    _makePlotDimension: function(seriesDimension) {
+        return {
+            width: seriesDimension.width + chartConst.HIDDEN_WIDTH,
+            height: seriesDimension.height + chartConst.HIDDEN_WIDTH
+        };
+    },
+
+    /**
      * Get components dimension
      * @memberOf module:boundsMaker
      * @param {object} params parameters
@@ -358,40 +323,103 @@ var boundsMaker = {
      */
     _getComponentsDimensions: function(params) {
         var chartOptions = params.options.chart || {},
-            chartDimension = {
-                width: chartOptions.width || 500,
-                height: chartOptions.height || 400
-            },
-            axesDimension, titleHeight, legendWidth, seriesDimension, dimensions;
+            chartDimension = this._makeChartDimension(chartOptions),
+            titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
+            axesDimension = this._makeAxesDimension(params),
+            legendDimension = this._makeLegendDimension(params.convertData.joinLegendLabels, params.theme.legend.label, params.chartType, params.options.series),
+            seriesDimension = this._makeSeriesDimension({
+                chartDimension: chartDimension,
+                axesDimension: axesDimension,
+                legendWidth: legendDimension.width,
+                titleHeight: titleDimension.height
+            });
 
-        // axis 영역에 필요한 요소들의 너비 높이를 얻어옴
-        axesDimension = this._makeAxesDimension(params);
-        titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, params.theme.title) + TITLE_ADD_PADDING;
-        legendWidth = this._getLegendAreaWidth(params.convertData.joinLegendLabels, params.theme.legend.label, params.chartType, params.options.series);
-
-        // series 너비, 높이 값은 차트 bounds를 구성하는 가장 중요한 요소다
-        seriesDimension = this._makeSeriesDimension({
-            chartDimension: chartDimension,
-            axesDimension: axesDimension,
-            legendWidth: legendWidth,
-            titleHeight: titleHeight
-        });
-
-        dimensions = ne.util.extend({
+        return ne.util.extend({
             chart: chartDimension,
-            title: {
-                height: titleHeight
-            },
+            title: titleDimension,
             series: seriesDimension,
-            plot: {
-                width: seriesDimension.width + chartConst.HIDDEN_WIDTH,
-                height: seriesDimension.height + chartConst.HIDDEN_WIDTH
-            },
-            legend: {
-                width: legendWidth
-            }
+            plot: this._makePlotDimension(seriesDimension),
+            legend: legendDimension
         }, axesDimension);
-        return dimensions;
+    },
+
+    /**
+     * To make basic bound.
+     * @param {{width: number, height: number}} dimension series dimension.
+     * @param {number} top top
+     * @param {number} left left
+     * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} series bound.
+     * @private
+     */
+    _makeBasicBound: function(dimension, top, left) {
+        return {
+            dimension: dimension,
+            position: {
+                top: top,
+                left: left
+            }
+        };
+    },
+
+    /**
+     * To make yAxis bound.
+     * @param {{yAxis: {width: number}, plot: {height: number}}} dimensions dimensions
+     * @param {number} top top
+     * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yAxis bound
+     * @private
+     */
+    _makeYAxisBound: function(dimensions, top) {
+        return {
+            dimension: {
+                width: dimensions.yAxis.width,
+                height: dimensions.plot.height
+            },
+            position: {
+                top: top,
+                left: CHART_PADDING
+            }
+        };
+    },
+
+    /**
+     * To make xAxis bound.
+     * @param {{xAxis: {height: number}, plot: {width: number}}} dimensions dimensions
+     * @param {number} top top
+     * @param {number} left left
+     * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} xAxis bound
+     * @private
+     */
+    _makeXAxisBound: function(dimensions, top, left) {
+        return {
+            dimension: {
+                width: dimensions.plot.width,
+                height: dimensions.xAxis.height
+            },
+            position: {
+                top: top + dimensions.series.height,
+                left: left - chartConst.HIDDEN_WIDTH
+            }
+        };
+    },
+
+    /**
+     * To make yrAxis bound.
+     * @param {{yrAxis: {width: number}, plot: {height: number}, legend: {width: number}}} dimensions dimensions
+     * @param {number} top top
+     * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yrAxis bound
+     * @private
+     */
+    _makeYRAxisBound: function(dimensions, top) {
+        return {
+            dimension: {
+                width: dimensions.yrAxis.width,
+                height: dimensions.plot.height
+            },
+            position: {
+                top: top,
+                right: dimensions.legend.width + chartConst.HIDDEN_WIDTH + CHART_PADDING
+            }
+        };
     },
 
     /**
@@ -415,49 +443,100 @@ var boundsMaker = {
         }
 
         bounds = {
-            plot: {
-                dimension: params.dimensions.plot,
-                position: {
-                    top: params.top,
-                    left: params.left - chartConst.HIDDEN_WIDTH
-                }
-            },
-            yAxis: {
-                dimension: {
-                    width: params.dimensions.yAxis.width,
-                    height: params.dimensions.plot.height
-                },
-                position: {
-                    top: params.top,
-                    left: CHART_PADDING
-                }
-            },
-            xAxis: {
-                dimension: {
-                    width: params.dimensions.plot.width,
-                    height: params.dimensions.xAxis.height
-                },
-                position: {
-                    top: params.top + params.dimensions.series.height,
-                    left: params.left - chartConst.HIDDEN_WIDTH
-                }
-            }
+            plot: this._makeBasicBound(params.dimensions.plot, params.top, params.left - chartConst.HIDDEN_WIDTH),
+            yAxis: this._makeYAxisBound(params.dimensions, params.top),
+            xAxis: this._makeXAxisBound(params.dimensions, params.top, params.left)
         };
 
         // 우측 y axis 영역 bounds 정보 추가
         if (params.optionChartTypes && params.optionChartTypes.length) {
-            bounds.yrAxis = {
-                dimension: {
-                    width: params.dimensions.yrAxis.width,
-                    height: params.dimensions.plot.height
-                },
-                position: {
-                    top: params.top,
-                    right: params.dimensions.legend.width + chartConst.HIDDEN_WIDTH + CHART_PADDING
-                }
-            };
+            bounds.yrAxis = this._makeYRAxisBound(params.dimensions, params.top);
         }
 
+        return bounds;
+    },
+
+    /**
+     * To make chart bound.
+     * @param {{width: number, height: number}} dimension chart dimension.
+     * @returns {{dimension: {width: number, height: number}}} chart bound
+     * @private
+     */
+    _makeChartBound: function(dimension) {
+        return {
+            dimension: dimension
+        };
+    },
+
+    /**
+     * To make legend bound.
+     * @param {{title: {height: number}, series: {width: number}, yrAxis: {width: number}}} dimensions dimensions
+     * @param {number} yAxisWidth yAxis width
+     * @returns {{position: {top: number, left: number}}} legend bound
+     * @private
+     */
+    _makeLegendBound: function(dimensions) {
+        return {
+            position: {
+                top: dimensions.title.height,
+                left: dimensions.yAxis.width + dimensions.series.width + dimensions.yrAxis.width + CHART_PADDING
+            }
+        };
+    },
+
+    /**
+     * To make bounds about chart components.
+     * @memberOf module:boundsMaker
+     * @param {object} params parameters
+     *      @param {object} params.convertData converted data
+     *      @param {object} params.theme chart theme
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {object} params.options chart options
+     *      @param {boolean} params.hasAxes whether has axes area or not
+     *      @param {array} params.optionChartTypes y axis option chart types
+     * @returns {{
+     *   plot: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   yAxis: {
+     *     dimension: {width: (number), height: number},
+     *     position: {top: number}
+     *   },
+     *   xAxis: {
+     *     dimension: {width: number, height: (number)},
+     *     position: {right: number}
+     *   },
+     *   series: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, right: number}
+     *   },
+     *   legend: {
+     *     position: {top: number}
+     *   },
+     *   tooltip: {
+     *     dimension: {width: number, height: number},
+     *     position: {top: number, left: number}
+     *   }
+     * }} bounds
+     */
+    make: function(params) {
+        var dimensions = this._getComponentsDimensions(params),
+            top = dimensions.title.height + CHART_PADDING,
+            left = dimensions.yAxis.width + CHART_PADDING,
+            axesBounds = this._makeAxesBounds({
+                hasAxes: params.hasAxes,
+                optionChartTypes: params.optionChartTypes,
+                dimensions: dimensions,
+                top: top,
+                left: left
+            }),
+            bounds = ne.util.extend({
+                chart: this._makeChartBound(dimensions.chart),
+                series: this._makeBasicBound(dimensions.series, top, left),
+                legend: this._makeLegendBound(dimensions),
+                tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE)
+            }, axesBounds);
         return bounds;
     }
 };

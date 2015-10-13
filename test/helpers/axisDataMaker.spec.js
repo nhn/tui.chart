@@ -7,9 +7,24 @@
 'use strict';
 
 var maker = require('../../src/js/helpers/axisDataMaker.js'),
+    chartConst = require('../../src/js/const'),
     converter = require('../../src/js/helpers/dataConverter.js');
 
 describe('axisDataMaker', function() {
+    describe('_makeLabels()', function() {
+        it('전달받은 labelInterval 옵션 정보가 없으면, labels를 그대로 반환합니다.', function() {
+            var actual = maker._makeLabels(['label1', 'label2', 'label3']),
+                expected = ['label1', 'label2', 'label3'];
+            expect(actual).toEqual(expected);
+        });
+
+        it('labelInterval 옵션이 있을 경우 처음과, 끝, 그리고 interval 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
+            var actual = maker._makeLabels(['label1', 'label2', 'label3', 'label4', 'label5'], 2),
+                expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('makeLabelAxisData()', function() {
         it('레이블 타입의 axis data를 생성합니다.', function () {
             var result = maker.makeLabelAxisData({
