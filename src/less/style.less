@@ -137,6 +137,39 @@
         .ne-chart-label {
           top: 10px;
           text-align: center;
+          white-space: nowrap;
+          &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+            text-align: right;
+            span {
+              position:absolute;
+              right:0;
+              top:0;
+            }
+          }
+          &.rotation25 {
+            .rotate(-25deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499);
+            }
+          }
+          &.rotation45 {
+            .rotate(-45deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476);
+            }
+          }
+          &.rotation65 {
+            .rotate(-65deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944);
+            }
+          }
+          &.rotation85 {
+            .rotate(-85deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814);
+            }
+          }
         }
       }
     }

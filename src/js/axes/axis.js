@@ -58,7 +58,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elLabelArea = this._renderLabelArea(size, dimension.width),
+            elLabelArea = this._renderLabelArea(size, dimension.width, bound.degree),
             elTickArea;
 
         if (!this.aligned || !isVertical) {
@@ -157,36 +157,6 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         return ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
     },
 
-    _findDegree: function(limitWidth, height, index) {
-        var compareWidth, degree;
-
-        index = ne.util.isUndefined(index) ? 0 : index;
-        degree = DEGREE_CANDIDATES[index];
-        compareWidth = height / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
-
-        if (compareWidth <= limitWidth || index === DEGREE_CANDIDATES.length - 1) {
-            return degree;
-        }
-
-        return this._findDegree(limitWidth, height, index + 1);
-    },
-
-    _makeHorizontalLabelRotationInfo: function(axisWidth, labels, theme) {
-        var labelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            limitWidth = axisWidth / labels.length + 4,
-            labelHeight;
-
-        if (labelWidth <= limitWidth) {
-            return null;
-        }
-
-        labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme);
-
-        return {
-            degree: this._findDegree(limitWidth, labelHeight)
-        };
-    },
-
     /**
      * Render label area.
      * @param {number} size label area size
@@ -194,7 +164,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * @returns {HTMLElement} label area element
      * @private
      */
-    _renderLabelArea: function(size, axisWidth) {
+    _renderLabelArea: function(size, axisWidth, degree) {
         var data = this.data,
             tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
@@ -206,14 +176,12 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             }),
             elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
             areaCssText = renderUtil.makeFontCssText(this.theme.label),
-            rotationInfo, labelsHtml, titleAreaWidth;
+            labelsHtml, titleAreaWidth;
 
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
             areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
-        } else {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(axisWidth, data.labels, this.theme.label);
         }
 
         tickPixelPositions.length = data.labels.length;
@@ -222,8 +190,10 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             positions: tickPixelPositions,
             labels: data.labels,
             posType: posType,
-            rotationInfo: rotationInfo,
-            cssTexts: cssTexts
+            cssTexts: cssTexts,
+            labelSize: labelSize,
+            degree: degree,
+            theme: this.theme.label
         });
 
         elLabelArea.innerHTML = labelsHtml;
@@ -275,6 +245,13 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         return cssTexts;
     },
 
+    _makeRotationMoveCssText: function(degree, width, left) {
+        var moveLeft = (Math.cos(degree * chartConst.RAD) * width / 2),
+            top = (Math.sin(degree * chartConst.RAD) * width / 2) + 10;
+
+        return renderUtil.concatStr('left:', left - moveLeft, 'px', ';top:', top, 'px');
+    },
+
     /**
      * To make html of label.
      * @param {object} params parameters
@@ -289,14 +266,21 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.TPL_AXIS_LABEL,
             labelsHtml = ne.util.map(params.positions, function(position, index) {
                 var labelCssTexts = params.cssTexts.slice(),
-                    addClass = params.rotationInfo && (' ' + params.rotationInfo.degree) || '',
-                    html;
+                    label = params.labels[index],
+                    addClass = '',
+                    rotationCssText, html;
 
-                labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
+                if (params.degree) {
+                    addClass = ' rotation' + params.degree;
+                    rotationCssText = this._makeRotationMoveCssText(params.degree, params.labelSize, position);
+                    labelCssTexts.push(rotationCssText);
+                } else {
+                    labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
+                }
                 html = template({
                     addClass: addClass,
                     cssText: labelCssTexts.join(';'),
-                    label: params.labels[index]
+                    label: label
                 });
                 return html;
             }, this).join('');

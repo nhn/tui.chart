@@ -8,7 +8,7 @@ var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
     HTML_AXIS_TICK: '<div class="ne-chart-tick" style="{{ cssText }}"></div>',
-    HTML_AXIS_LABEL: '<div class="ne-chart-label{{ addClass }}" style="{{ cssText }}">{{ label }}</div>'
+    HTML_AXIS_LABEL: '<div class="ne-chart-label{{ addClass }}" style="{{ cssText }}"><span>{{ label }}</span></div>'
 };
 
 module.exports = {

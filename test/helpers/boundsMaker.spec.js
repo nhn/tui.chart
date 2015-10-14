@@ -156,6 +156,9 @@ describe('boundsMaker', function() {
                         title: 'XAxis title'
                     }
                 }
+            }, {
+                yAxis: [80],
+                xAxis: ['label1', 'label2']
             });
             expect(result.yAxis.width).toBe(97);
             expect(result.yrAxis.width).toBe(0);
@@ -291,6 +294,9 @@ describe('boundsMaker', function() {
                         title: 'XAxis title'
                     }
                 }
+            }, {
+                yAxis: [80],
+                xAxis: ['label1', 'label2']
             });
 
             expect(result.chart).toEqual({
@@ -498,6 +504,88 @@ describe('boundsMaker', function() {
             expect(actual.yrAxis.dimension.height).toBe(200);
             expect(actual.yrAxis.position.top).toBe(20);
             expect(actual.yrAxis.position.right).toBe(81);
+        });
+    });
+
+    describe('_findDegree()', function() {
+        it('후보 각(25, 45, 65, 86)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
+            var actual = maker._findDegree(100, 20),
+                expected = 25;
+            expect(actual).toBe(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual = maker._findDegree(5, 20),
+                expected = 85;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeHorizontalLabelRotationInfo', function() {
+        it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                diffHeight: 47.25076499868601,
+                degree: 25
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = maker._makeHorizontalLabelRotationInfo(5, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                diffHeight: 80.3648782777467,
+                degree: 85
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('회전하지 않는 상태의 가장 긴 레이블의 길이가 제한 너비를 초과하지 않으면 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(40);
+            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2'], {});
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_calculateXAxisHeight()', function() {
+        it('레이블 dimension과 degree 정보를 이용하여 x axis의 회전된 높이 정보를 구합니다.', function() {
+            var acutal = maker._calculateXAxisHeight(25, 100, 20),
+                expected = 58.79839976387201;
+            expect(acutal).toBe(expected);
+        });
+    });
+
+    describe('_updateDimensions()', function() {
+        it('레이블 회전 정보를 기준으로 xAxis, plot, series 영역의 높이값을 변경합니다.', function() {
+            var dimensions = {
+                xAxis: {
+                    height: 50
+                },
+                plot: {
+                    height: 200
+                },
+                series: {
+                    height: 199
+                }
+            };
+
+            maker._updateDimensions(dimensions, {
+                diffHeight: 38.79839976387201,
+                degree: 25
+            });
+
+            expect(dimensions.xAxis.height).toBe(88.79839976387201);
+            expect(dimensions.plot.height).toBe(200 - 38.79839976387201);
+            expect(dimensions.series.height).toBe(199 - 38.79839976387201);
         });
     });
 
