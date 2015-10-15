@@ -168,6 +168,14 @@ describe('Axis', function() {
         });
     });
 
+    describe('_makeVerticalLabelCssText()', function() {
+        it('세로 axis의 cssText를 생성합니다.', function() {
+            var actual = axis._makeVerticalLabelCssText(50, 20),
+                expected = ';width:40px';
+            expect(actual).toBe(expected);
+        });
+    });
+
     describe('_renderLabelArea()', function() {
         it('axis 영역의 너비가 300인 레이블 타입 x축 레이블 영역은 너비 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
@@ -189,9 +197,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('100px');
             expect(childNodes[1].style.width).toBe('100px');
             expect(childNodes[2].style.width).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('label1');
-            expect(childNodes[1].innerHTML).toBe('label2');
-            expect(childNodes[2].innerHTML).toBe('label3');
+            expect(childNodes[0].innerHTML).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
@@ -211,9 +219,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.lineHeight).toBe('100px');
             expect(childNodes[1].style.lineHeight).toBe('100px');
             expect(childNodes[2].style.lineHeight).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('label1');
-            expect(childNodes[1].innerHTML).toBe('label2');
-            expect(childNodes[2].innerHTML).toBe('label3');
+            expect(childNodes[0].innerHTML).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -236,9 +244,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('150px');
             expect(childNodes[1].style.width).toBe('150px');
             expect(childNodes[2].style.width).toBe('150px');
-            expect(childNodes[0].innerHTML).toBe('0.00');
-            expect(childNodes[1].innerHTML).toBe('30.00');
-            expect(childNodes[2].innerHTML).toBe('60.00');
+            expect(childNodes[0].innerHTML).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML).toBe('<span>60.00</span>');
         });
 
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -257,9 +265,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.bottom).toBe('0px');
             expect(childNodes[1].style.bottom).toBe('150px');
             expect(childNodes[2].style.bottom).toBe('299px');
-            expect(childNodes[0].innerHTML).toBe('0.00');
-            expect(childNodes[1].innerHTML).toBe('30.00');
-            expect(childNodes[2].innerHTML).toBe('60.00');
+            expect(childNodes[0].innerHTML).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML).toBe('<span>60.00</span>');
         });
     });
 
@@ -317,9 +325,9 @@ describe('Axis', function() {
                     posType: 'left',
                     cssTexts: []
                 }),
-                compareHtml = '<div class="ne-chart-label" style="left:10px">label1</div>' +
-                    '<div class="ne-chart-label" style="left:20px">label2</div>' +
-                    '<div class="ne-chart-label" style="left:30px">label3</div>';
+                compareHtml = '<div class="ne-chart-label" style="left:10px"><span>label1</span></div>' +
+                    '<div class="ne-chart-label" style="left:20px"><span>label2</span></div>' +
+                    '<div class="ne-chart-label" style="left:30px"><span>label3</span></div>';
 
             expect(labelsHtml).toBe(compareHtml);
         });

@@ -10,9 +10,6 @@ var chartConst = require('../const'),
     calculator = require('./calculator'),
     renderUtil = require('./renderUtil');
 
-var DEGREE_CANDIDATES = [25, 45, 65, 85];
-
-
 var concat = Array.prototype.concat;
 
 /**
@@ -439,6 +436,16 @@ var boundsMaker = {
         };
     },
 
+    /**
+     * To make axes label info.
+     * @param {object} params parameters
+     *      @param {boolean} params.hasAxes whether has axes or not
+     *      @param {array} params.optionChartTypes chart types
+     *      @param {object} convertData converted data
+     *      @param {boolean} isVertical whether vertical or not
+     * @returns {{xAxis: array, yAxis: array}} label info
+     * @private
+     */
     _makeAxesLabelInfo: function(params) {
         var chartType, maxValueLabel, yLabels, xLabels;
 
@@ -452,8 +459,13 @@ var boundsMaker = {
         maxValueLabel = this._getValueAxisMaxLabel(params.convertData, chartType);
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
-        yLabels = params.isVertical ? [maxValueLabel] : params.convertData.labels;
-        xLabels = params.isVertical ? params.convertData.labels : [maxValueLabel];
+        if (params.isVertical) {
+            yLabels = [maxValueLabel];
+            xLabels = params.convertData.labels;
+        } else {
+            yLabels = params.convertData.labels;
+            xLabels = [maxValueLabel];
+        }
 
         return {
             xAxis: xLabels,
@@ -461,24 +473,41 @@ var boundsMaker = {
         };
     },
 
-    _findDegree: function(limitWidth, labelWidth, labelHeight, index) {
+    /**
+     * Find rotation degree.
+     * @param {number} limitWidth limit width
+     * @param {number} labelWidth label width
+     * @param {number} labelHeight label height
+     * @param {number} index candidates index
+     * @returns {number} rotation degree
+     * @private
+     */
+    _findRotationDegree: function(limitWidth, labelWidth, labelHeight, index) {
         var compareWidth, degree;
 
         index = ne.util.isUndefined(index) ? 0 : index;
-        degree = DEGREE_CANDIDATES[index];
+        degree = chartConst.DEGREE_CANDIDATES[index];
         //compareWidth = ((Math.cos(degree * chartConst.RAD) * labelWidth / 2) + (Math.cos(chartConst.ANGLE_90 - degree) * labelHeight / 2)) * 2;
         compareWidth = labelHeight / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
 
-        if (compareWidth <= limitWidth || index === DEGREE_CANDIDATES.length - 1) {
+        if (compareWidth <= limitWidth || index === chartConst.DEGREE_CANDIDATES.length - 1) {
             return degree;
         }
 
-        return this._findDegree(limitWidth, labelWidth, labelHeight, index + 1);
+        return this._findRotationDegree(limitWidth, labelWidth, labelHeight, index + 1);
     },
 
-    _makeHorizontalLabelRotationInfo: function(dimensions, labels, theme) {
+    /**
+     * To make rotation info about horizontal label.
+     * @param {number} seriesWidth series area width
+     * @param {array.<string>} labels axis labels
+     * @param {object} theme axis label theme
+     * @returns {object} rotation info
+     * @private
+     */
+    _makeHorizontalLabelRotationInfo: function(seriesWidth, labels, theme) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            limitWidth = dimensions.series.width / labels.length + 4,
+            limitWidth = seriesWidth / labels.length + chartConst.XAXIS_LABEL_GUTTER,
             degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
@@ -486,7 +515,7 @@ var boundsMaker = {
         }
 
         labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme);
-        degree = this._findDegree(limitWidth, maxLabelWidth, labelHeight);
+        degree = this._findRotationDegree(limitWidth, maxLabelWidth, labelHeight);
 
         return {
             maxLabelWidth: maxLabelWidth,
@@ -495,57 +524,105 @@ var boundsMaker = {
         };
     },
 
-    _findDiffLeft: function(dimensions, rotationInfo, labels, theme) {
-        var firstLabelWidth = renderUtil.getRenderedLabelWidth(labels[0], theme),
-            newLabelWidth = ((Math.cos(rotationInfo.degree * chartConst.RAD) * firstLabelWidth / 2) + (Math.cos(chartConst.ANGLE_90 - rotationInfo.degree) * rotationInfo.labelHeight / 2)) * 2,
-            diffLeft = newLabelWidth - dimensions.yAxis.width;
+    /**
+     * To calculate overflow position left.
+     * @param {number} yAxisWidth yAxis width
+     * @param {{degree: number, labelHeight: number}} rotationInfo rotation info
+     * @param {string} firstLabel firstLabel
+     * @param {obejct} theme label theme
+     * @returns {number} overflow position left
+     * @private
+     */
+    _calculateOverflowLeft: function(yAxisWidth, rotationInfo, firstLabel, theme) {
+        var degree = rotationInfo.degree,
+            labelHeight = rotationInfo.labelHeight,
+            firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, theme),
+            newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
+            diffLeft = newLabelWidth - yAxisWidth;
         return diffLeft;
     },
 
-    _findDiffHeight: function(rotationInfo) {
-        var xAxisHeight = this._calculateXAxisHeight(rotationInfo.degree, rotationInfo.maxLabelWidth, rotationInfo.labelHeight);
+
+    /**
+     * To calculate height of xAxis.
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
+     * @returns {number} xAxis height
+     * @private
+     */
+    _calculateXAxisHeight: function(rotationInfo) {
+        var degree = rotationInfo.degree,
+            maxLabelWidth = rotationInfo.maxLabelWidth,
+            labelHeight = rotationInfo.labelHeight,
+            axisHeight = (calculator.calculateOpposite(degree, maxLabelWidth / 2) + calculator.calculateOpposite(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
+        return axisHeight;
+    },
+
+    /**
+     * To calculate height difference between origin label and rotation label.
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
+     * @returns {number} height difference
+     * @private
+     */
+    _calculateHeightDifference: function(rotationInfo) {
+        var xAxisHeight = this._calculateXAxisHeight(rotationInfo);
         return xAxisHeight - rotationInfo.labelHeight;
     },
 
-    _updateDegree: function(dimensions, rotationInfo, labels, diffLeft) {
+    /**
+     * Update degree of rotationInfo.
+     * @param {number} seriesWidth series width
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
+     * @param {array} labels labels
+     * @param {number} overflowLeft overflow left
+     * @private
+     */
+    _updateDegree: function(seriesWidth, rotationInfo, labelLength, overflowLeft) {
         var limitWidth, newDegree;
-        if (diffLeft > 0) {
-            limitWidth = dimensions.series.width / labels.length + 4;
-            newDegree = this._findDegree(limitWidth, rotationInfo.maxLabelWidth, rotationInfo.labelHeight);
+        if (overflowLeft > 0) {
+            limitWidth = seriesWidth / labelLength + chartConst.XAXIS_LABEL_GUTTER;
+            newDegree = this._findRotationDegree(limitWidth, rotationInfo.maxLabelWidth, rotationInfo.labelHeight);
             rotationInfo.degree = newDegree;
         }
     },
 
-    _calculateXAxisHeight: function(degree, labelWidth, labelHeight) {
-        var axisHeight = ((Math.sin(degree * chartConst.RAD) * labelWidth / 2) + (Math.sin(chartConst.ANGLE_90 - degree) * labelHeight / 2)) * 2;
-        return axisHeight;
-    },
-
-    _updateDimensionsWidth: function(dimensions, diffLeft) {
-        if (diffLeft <= 0) {
-            return;
+    _updateDimensionsWidth: function(dimensions, overflowLeft) {
+        if (overflowLeft > 0) {
+            this.chartLeftPadding += overflowLeft;
+            dimensions.plot.width -= overflowLeft;
+            dimensions.series.width -= overflowLeft;
+            dimensions.xAxis.width -= overflowLeft;
         }
-        this.chartLeftPadding += diffLeft;
-        dimensions.plot.width -= diffLeft;
-        dimensions.series.width -= diffLeft;
-        dimensions.xAxis.width -= diffLeft;
     },
 
+    /**
+     * Update height of dimensions.
+     * @param {{xAxis: {height: number}, plot: {height: number}, series: {height: number}}} dimensions dimensions
+     * @param {number} diffHeight diff height
+     * @private
+     */
     _updateDimensionsHeight: function(dimensions, diffHeight) {
         dimensions.xAxis.height += diffHeight;
         dimensions.plot.height -= diffHeight;
         dimensions.series.height -= diffHeight;
     },
 
+    /**
+     * Update dimensions and degree.
+     * @param {{plot: {width: number, height: number}, series: {width: number, height: number}, xAxis: {width: number, height: number}}} dimensions dimensions
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
+     * @param {array} labels labels
+     * @param {object} theme theme
+     * @private
+     */
     _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme) {
-        var diffLeft, diffHeight;
+        var overflowLeft, diffHeight;
         if (!rotationInfo) {
             return;
         }
-        diffLeft = this._findDiffLeft(dimensions, rotationInfo, labels, theme);
-        this._updateDimensionsWidth(dimensions, diffLeft);
-        this._updateDegree(dimensions, rotationInfo, labels, diffLeft);
-        diffHeight = this._findDiffHeight(rotationInfo);
+        overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
+        this._updateDimensionsWidth(dimensions, overflowLeft);
+        this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
+        diffHeight = this._calculateHeightDifference(rotationInfo);
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
@@ -594,7 +671,7 @@ var boundsMaker = {
 
         this.chartLeftPadding = chartConst.CHART_PADDING;
         if (params.hasAxes) {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(dimensions, axesLabelInfo.xAxis, params.theme.label);
+            rotationInfo = this._makeHorizontalLabelRotationInfo(dimensions.series.width, axesLabelInfo.xAxis, params.theme.label);
             this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.label);
         }
 

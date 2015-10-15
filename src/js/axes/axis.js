@@ -12,8 +12,6 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     axisTemplate = require('./axisTemplate');
 
-var DEGREE_CANDIDATES = [25, 24, 65, 85];
-
 var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
@@ -130,14 +128,13 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
-            labels = data.labels,
             elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position, index) {
                 var cssText;
-                if (labels[index] === chartConst.EMPTY_AXIS_LABEL) {
+                if (data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
                 }
                 cssText = [
@@ -153,6 +150,13 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         return elTickArea;
     },
 
+    /**
+     * To make cssText of vertical label.
+     * @param {number} axisWidth axis width
+     * @param {number} titleAreaWidth title area width
+     * @returns {string} cssText
+     * @private
+     */
     _makeVerticalLabelCssText: function(axisWidth, titleAreaWidth) {
         return ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
     },
@@ -161,6 +165,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * Render label area.
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
+     * @param {number} degree rotation degree
      * @returns {HTMLElement} label area element
      * @private
      */
@@ -245,10 +250,17 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         return cssTexts;
     },
 
-    _makeRotationMoveCssText: function(degree, width, left) {
-        var moveLeft = (Math.cos(degree * chartConst.RAD) * width / 2),
-            top = (Math.sin(degree * chartConst.RAD) * width / 2) + 10;
-
+    /**
+     * To make cssText for rotation moving.
+     * @param {number} degree rotation degree
+     * @param {number} labelWidth label width
+     * @param {number} left normal left
+     * @returns {string} cssText
+     * @private
+     */
+    _makeCssTextForRotationMoving: function(degree, labelWidth, left) {
+        var moveLeft = calculator.calculateAdjacent(degree, labelWidth / 2),
+            top = calculator.calculateOpposite(degree, labelWidth / 2) + chartConst.XAXIS_LABEL_TOP_MARGIN;
         return renderUtil.concatStr('left:', left - moveLeft, 'px', ';top:', top, 'px');
     },
 
@@ -272,7 +284,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
                 if (params.degree) {
                     addClass = ' rotation' + params.degree;
-                    rotationCssText = this._makeRotationMoveCssText(params.degree, params.labelSize, position);
+                    rotationCssText = this._makeCssTextForRotationMoving(params.degree, params.labelSize, position);
                     labelCssTexts.push(rotationCssText);
                 } else {
                     labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
