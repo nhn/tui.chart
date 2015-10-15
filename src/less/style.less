@@ -211,6 +211,7 @@
         position: absolute;
         cursor: default;
         text-align:center;
+        white-space: nowrap;
         .text-shadow(#fff 0px 0px 3px);
       }
       &.show {
@@ -288,6 +289,19 @@
   z-index: 10000000;
 }
 
-:root .ne-chart .ne-chart-axis-area.vertical .ne-chart-title-area {
-  filter: none\0;
+:root .ne-chart .ne-chart-axis-area {
+  &.vertical .ne-chart-title-area {
+    filter: none\0;
+  }
+  &.horizontal {
+    .ne-chart-label {
+      &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+        span {
+          filter: none\0;
+        }
+      }
+    }
+  }
 }
+
+

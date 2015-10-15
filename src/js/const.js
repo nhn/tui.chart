@@ -98,8 +98,10 @@ module.exports = {
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /** xAxis label compare margin */
+    XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
-    XAXIS_LABEL_GUTTER: 4,
+    XAXIS_LABEL_GUTTER: 2,
     /** stand multiple nums of axis */
     AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10],
     /** label padding top */

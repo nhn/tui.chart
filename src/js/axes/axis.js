@@ -251,17 +251,79 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * To calculate rotation moving position.
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelWidth label width
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     * @returns {{top:number, left: number}} position
+     * @private
+     */
+    _calculateRotationMovingPosition: function(params) {
+        var halfWidth = params.labelWidth / 2,
+            moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
+            top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN;
+
+        if (params.degree === 85) {
+            moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
+        }
+
+        return {
+            top: top,
+            left: params.left - moveLeft
+        };
+    },
+
+    /**
+     * To calculate rotation moving position for ie8.
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelWidth label width
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     *      @param {(string | number)} params.label label
+     *      @param {object} theme label theme
+     * @returns {{top:number, left: number}} position
+     * @private
+     */
+    _calculateRotationMovingPositionForIE8: function(params) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme),
+            smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2),
+            newLabelWidth = (calculator.calculateAdjacent(params.degree, labelWidth / 2) + smallAreaWidth) * 2,
+            collectLeft = labelWidth - newLabelWidth,
+            moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
+
+        if (params.degree === 85) {
+            moveLeft += smallAreaWidth;
+        }
+
+        return {
+            top: chartConst.XAXIS_LABEL_TOP_MARGIN,
+            left: params.left + collectLeft - moveLeft
+        };
+    },
+
+    /**
      * To make cssText for rotation moving.
-     * @param {number} degree rotation degree
-     * @param {number} labelWidth label width
-     * @param {number} left normal left
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelWidth label width
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     *      @param {(string | number)} params.label label
+     *      @param {object} theme label theme
      * @returns {string} cssText
      * @private
      */
-    _makeCssTextForRotationMoving: function(degree, labelWidth, left) {
-        var moveLeft = calculator.calculateAdjacent(degree, labelWidth / 2),
-            top = calculator.calculateOpposite(degree, labelWidth / 2) + chartConst.XAXIS_LABEL_TOP_MARGIN;
-        return renderUtil.concatStr('left:', left - moveLeft, 'px', ';top:', top, 'px');
+    _makeCssTextForRotationMoving: function(params) {
+        var position;
+        if (renderUtil.isIE8()) {
+            position = this._calculateRotationMovingPositionForIE8(params);
+        } else {
+            position = this._calculateRotationMovingPosition(params);
+        }
+        return renderUtil.concatStr('left:', position.left, 'px', ';top:', position.top, 'px');
     },
 
     /**
@@ -276,6 +338,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeLabelsHtml: function(params) {
         var template = axisTemplate.TPL_AXIS_LABEL,
+            labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelsHtml = ne.util.map(params.positions, function(position, index) {
                 var labelCssTexts = params.cssTexts.slice(),
                     label = params.labels[index],
@@ -284,7 +347,14 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
 
                 if (params.degree) {
                     addClass = ' rotation' + params.degree;
-                    rotationCssText = this._makeCssTextForRotationMoving(params.degree, params.labelSize, position);
+                    rotationCssText = this._makeCssTextForRotationMoving({
+                        degree: params.degree,
+                        labelWidth: params.labelSize,
+                        labelHeight: labelHeight,
+                        left: position,
+                        label: label,
+                        theme: params.theme
+                    });
                     labelCssTexts.push(rotationCssText);
                 } else {
                     labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));

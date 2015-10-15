@@ -16,6 +16,7 @@ describe('Axis', function() {
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
@@ -197,9 +198,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('100px');
             expect(childNodes[1].style.width).toBe('100px');
             expect(childNodes[2].style.width).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('<span>label1</span>');
-            expect(childNodes[1].innerHTML).toBe('<span>label2</span>');
-            expect(childNodes[2].innerHTML).toBe('<span>label3</span>');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
@@ -219,9 +220,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.lineHeight).toBe('100px');
             expect(childNodes[1].style.lineHeight).toBe('100px');
             expect(childNodes[2].style.lineHeight).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('<span>label1</span>');
-            expect(childNodes[1].innerHTML).toBe('<span>label2</span>');
-            expect(childNodes[2].innerHTML).toBe('<span>label3</span>');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -244,9 +245,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('150px');
             expect(childNodes[1].style.width).toBe('150px');
             expect(childNodes[2].style.width).toBe('150px');
-            expect(childNodes[0].innerHTML).toBe('<span>0.00</span>');
-            expect(childNodes[1].innerHTML).toBe('<span>30.00</span>');
-            expect(childNodes[2].innerHTML).toBe('<span>60.00</span>');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
         });
 
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -265,9 +266,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.bottom).toBe('0px');
             expect(childNodes[1].style.bottom).toBe('150px');
             expect(childNodes[2].style.bottom).toBe('299px');
-            expect(childNodes[0].innerHTML).toBe('<span>0.00</span>');
-            expect(childNodes[1].innerHTML).toBe('<span>30.00</span>');
-            expect(childNodes[2].innerHTML).toBe('<span>60.00</span>');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
         });
     });
 
@@ -317,19 +318,73 @@ describe('Axis', function() {
         });
     });
 
+    describe('_calculateRotationMovingPosition()', function() {
+        it('xAxis label 회전 시 위치해야 할 position을 계산합니다.', function() {
+            var actual = axis._calculateRotationMovingPosition({
+                    degree: 25,
+                    labelWidth: 70,
+                    labelHeight: 20,
+                    left: 40
+                }),
+                expected = {
+                    top: 24.791639160924483,
+                    left: 8.279227453717251
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calculateRotationMovingPositionForIE8()', function() {
+        it('IE8은 회전 방식이 다르기 때문에 계산결과가 다릅니다.', function() {
+            var actual = axis._calculateRotationMovingPositionForIE8({
+                    degree: 25,
+                    labelWidth: 70,
+                    labelHeight: 20,
+                    left: 40,
+                    label: 'label1',
+                    theme: {}
+                }),
+                expected = {
+                    top: 10,
+                    left: 9.684610648167506
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeCssTextForRotationMoving()', function() {
+        it('_calculateRotationMovingPosition() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
+            var actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(axis, '_calculateRotationMovingPosition').and.returnValue({left: 10, top: 10});
+            actual = axis._makeCssTextForRotationMoving();
+            expected = 'left:10px;top:10px';
+            expect(actual).toEqual(expected);
+        });
+
+        it('IE8의 경우는 _calculateRotationMovingPositionForIE8() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
+            var actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(true);
+            spyOn(axis, '_calculateRotationMovingPositionForIE8').and.returnValue({left: 10, top: 10});
+            actual = axis._makeCssTextForRotationMoving();
+            expected = 'left:10px;top:10px';
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeLabelsHtml()', function() {
         it('간격이 10px인 레이블 영역 html을 생성합니다.', function() {
-            var labelsHtml = axis._makeLabelsHtml({
+            var actual = axis._makeLabelsHtml({
                     positions: [10, 20, 30],
                     labels: ['label1', 'label2', 'label3'],
                     posType: 'left',
                     cssTexts: []
                 }),
-                compareHtml = '<div class="ne-chart-label" style="left:10px"><span>label1</span></div>' +
+                expected = '<div class="ne-chart-label" style="left:10px"><span>label1</span></div>' +
                     '<div class="ne-chart-label" style="left:20px"><span>label2</span></div>' +
                     '<div class="ne-chart-label" style="left:30px"><span>label3</span></div>';
 
-            expect(labelsHtml).toBe(compareHtml);
+            expect(actual).toBe(expected);
         });
     });
 

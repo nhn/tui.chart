@@ -483,14 +483,14 @@ var boundsMaker = {
      * @private
      */
     _findRotationDegree: function(limitWidth, labelWidth, labelHeight, index) {
-        var compareWidth, degree;
+        var degree, compareWidth;
 
         index = ne.util.isUndefined(index) ? 0 : index;
         degree = chartConst.DEGREE_CANDIDATES[index];
-        //compareWidth = ((Math.cos(degree * chartConst.RAD) * labelWidth / 2) + (Math.cos(chartConst.ANGLE_90 - degree) * labelHeight / 2)) * 2;
-        compareWidth = labelHeight / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
+        compareWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
+        //compareWidth = labelHeight / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
 
-        if (compareWidth <= limitWidth || index === chartConst.DEGREE_CANDIDATES.length - 1) {
+        if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN || index === chartConst.DEGREE_CANDIDATES.length - 1) {
             return degree;
         }
 
@@ -507,7 +507,7 @@ var boundsMaker = {
      */
     _makeHorizontalLabelRotationInfo: function(seriesWidth, labels, theme) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            limitWidth = seriesWidth / labels.length + chartConst.XAXIS_LABEL_GUTTER,
+            limitWidth = seriesWidth / labels.length - chartConst.XAXIS_LABEL_GUTTER,
             degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
@@ -572,7 +572,7 @@ var boundsMaker = {
      * Update degree of rotationInfo.
      * @param {number} seriesWidth series width
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
-     * @param {array} labels labels
+     * @param {number} labelLength labelLength
      * @param {number} overflowLeft overflow left
      * @private
      */
@@ -585,6 +585,12 @@ var boundsMaker = {
         }
     },
 
+    /**
+     * Update width of dimentios.
+     * @param {{plot: {width: number}, series: {width: number}, xAxis: {width: number}}} dimensions dimensions
+     * @param {number} overflowLeft overflow left
+     * @private
+     */
     _updateDimensionsWidth: function(dimensions, overflowLeft) {
         if (overflowLeft > 0) {
             this.chartLeftPadding += overflowLeft;
@@ -596,14 +602,14 @@ var boundsMaker = {
 
     /**
      * Update height of dimensions.
-     * @param {{xAxis: {height: number}, plot: {height: number}, series: {height: number}}} dimensions dimensions
+     * @param {{plot: {height: number}, series: {height: number}, xAxis: {height: number}}} dimensions dimensions
      * @param {number} diffHeight diff height
      * @private
      */
     _updateDimensionsHeight: function(dimensions, diffHeight) {
-        dimensions.xAxis.height += diffHeight;
         dimensions.plot.height -= diffHeight;
         dimensions.series.height -= diffHeight;
+        dimensions.xAxis.height += diffHeight;
     },
 
     /**

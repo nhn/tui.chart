@@ -559,8 +559,8 @@ describe('boundsMaker', function() {
     });
 
     describe('_findRotationDegree()', function() {
-        it('후보 각(25, 45, 65, 86)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
-            var actual = maker._findRotationDegree(100, 120, 20),
+        it('후보 각(25, 45, 65, 85)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
+            var actual = maker._findRotationDegree(50, 60, 20),
                 expected = 25;
             expect(actual).toBe(expected);
         });
@@ -653,7 +653,7 @@ describe('boundsMaker', function() {
                 labelHeight: 20
             };
             maker._updateDegree(200, rotationInfo, 8, 20);
-            expect(rotationInfo.degree).toEqual(45);
+            expect(rotationInfo.degree).toEqual(85);
         });
     });
 
