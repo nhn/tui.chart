@@ -108,7 +108,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertData: {
+                convertedData: {
                     joinValues: [
                         [20, 30, 50],
                         [40, 40, 60],
@@ -146,7 +146,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertData: {
+                convertedData: {
                     values: {
                         column: [
                             [20, 30, 50],
@@ -216,7 +216,7 @@ describe('ComboChart', function() {
                     xAxis: {}
                 },
                 result = comboChart._makeAxesData(baseAxis, {
-                    convertData: {
+                    convertedData: {
                         values: {
                             line: [
                                 [60, 50, 10],

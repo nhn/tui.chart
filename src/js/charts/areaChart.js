@@ -29,7 +29,7 @@ var AreaChart = ne.util.defineClass(ChartBase, /** @lends AreaChart.prototype */
                 isVertical: true,
                 hasAxes: true
             }),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds,
             axisData;
 
@@ -37,31 +37,31 @@ var AreaChart = ne.util.defineClass(ChartBase, /** @lends AreaChart.prototype */
 
         ChartBase.call(this, bounds, theme, options, initedData);
 
-        axisData = this._makeAxesData(convertData, bounds, options, initedData);
-        this._addComponents(convertData, axisData, options);
+        axisData = this._makeAxesData(convertedData, bounds, options, initedData);
+        this._addComponents(convertedData, axisData, options);
     },
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, axesData, options) {
+    _addComponents: function(convertedData, axesData, options) {
         var plotData, seriesData;
 
-        plotData = this.makePlotData(convertData.plotData, axesData);
+        plotData = this.makePlotData(convertedData.plotData, axesData);
         seriesData = {
             allowNegativeTooltip: true,
             data: {
-                values: calculator.arrayPivot(convertData.values),
-                formattedValues: calculator.arrayPivot(convertData.formattedValues),
+                values: calculator.arrayPivot(convertedData.values),
+                formattedValues: calculator.arrayPivot(convertedData.formattedValues),
                 scale: axesData.yAxis.scale
             }
         };
         this.addAxisComponents({
-            convertData: convertData,
+            convertedData: convertedData,
             axes: axesData,
             plotData: plotData,
             chartType: options.chartType,

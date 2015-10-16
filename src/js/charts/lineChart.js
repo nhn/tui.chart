@@ -29,7 +29,7 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
                 isVertical: true,
                 hasAxes: true
             }),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds,
             axesData;
 
@@ -37,30 +37,30 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
 
         ChartBase.call(this, bounds, theme, options, initedData);
 
-        axesData = this._makeAxesData(convertData, bounds, options, initedData);
-        this._addComponents(convertData, axesData, options);
+        axesData = this._makeAxesData(convertedData, bounds, options, initedData);
+        this._addComponents(convertedData, axesData, options);
     },
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, axesData) {
+    _addComponents: function(convertedData, axesData) {
         var plotData, seriesData;
 
-        plotData = this.makePlotData(convertData.plotData, axesData);
+        plotData = this.makePlotData(convertedData.plotData, axesData);
         seriesData = {
             data: {
-                values: calculator.arrayPivot(convertData.values),
-                formattedValues: calculator.arrayPivot(convertData.formattedValues),
+                values: calculator.arrayPivot(convertedData.values),
+                formattedValues: calculator.arrayPivot(convertedData.formattedValues),
                 scale: axesData.yAxis.scale
             }
         };
         this.addAxisComponents({
-            convertData: convertData,
+            convertedData: convertedData,
             axes: axesData,
             plotData: plotData,
             Series: Series,

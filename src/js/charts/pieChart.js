@@ -22,7 +22,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
      */
     init: function(userData, theme, options) {
         var baseData = this.makeBaseData(userData, theme, options),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds;
 
         this.className = 'ne-pie-chart';
@@ -35,30 +35,30 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
 
         ChartBase.call(this, bounds, theme, options);
 
-        this._addComponents(convertData, theme.chart.background, bounds, options);
+        this._addComponents(convertedData, theme.chart.background, bounds, options);
     },
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} chartBackground chart background
      * @param {array.<object>} bounds bounds
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, chartBackground, bounds, options) {
-        if (convertData.joinLegendLabels && (!options.series || !options.series.legendType)) {
+    _addComponents: function(convertedData, chartBackground, bounds, options) {
+        if (convertedData.joinLegendLabels && (!options.series || !options.series.legendType)) {
             this.addComponent('legend', Legend, {
-                joinLegendLabels: convertData.joinLegendLabels,
-                legendLabels: convertData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
+                legendLabels: convertedData.legendLabels,
                 chartType: options.chartType
             });
         }
 
         this.addComponent('tooltip', Tooltip, {
-            values: convertData.formattedValues,
-            labels: convertData.labels,
-            legendLabels: convertData.legendLabels,
+            values: convertedData.formattedValues,
+            labels: convertedData.labels,
+            legendLabels: convertedData.legendLabels,
             prefix: this.tooltipPrefix
         });
 
@@ -68,9 +68,9 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             tooltipPrefix: this.tooltipPrefix,
             chartBackground: chartBackground,
             data: {
-                values: convertData.values,
-                formattedValues: convertData.formattedValues,
-                legendLabels: convertData.legendLabels,
+                values: convertedData.values,
+                formattedValues: convertedData.formattedValues,
+                legendLabels: convertedData.legendLabels,
                 chartWidth: bounds.chart.dimension.width
             }
         });

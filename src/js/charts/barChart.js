@@ -25,7 +25,7 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
         var baseData = this.makeBaseData(userData, theme, options, {
                 hasAxes: true
             }),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds,
             axisData;
 
@@ -33,30 +33,30 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
 
         ChartBase.call(this, bounds, theme, options);
 
-        axisData = this._makeAxesData(convertData, bounds, options);
-        this._addComponents(convertData, axisData, options);
+        axisData = this._makeAxesData(convertedData, bounds, options);
+        this._addComponents(convertedData, axisData, options);
     },
 
     /**
      * To make axes data
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertData, bounds, options) {
+    _makeAxesData: function(convertedData, bounds, options) {
         var axesData = {
             yAxis: axisDataMaker.makeLabelAxisData({
-                labels: convertData.labels,
+                labels: convertedData.labels,
                 isVertical: true
             }),
             xAxis: axisDataMaker.makeValueAxisData({
-                values: convertData.values,
+                values: convertedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
-                formatFunctions: convertData.formatFunctions,
+                formatFunctions: convertedData.formatFunctions,
                 options: options.xAxis
             })
         };
@@ -65,26 +65,26 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, axesData, options) {
+    _addComponents: function(convertedData, axesData, options) {
         var plotData, seriesData;
 
-        plotData = this.makePlotData(convertData.plotData, axesData);
+        plotData = this.makePlotData(convertedData.plotData, axesData);
         seriesData = {
             allowNegativeTooltip: true,
             data: {
-                values: convertData.values,
-                formattedValues: convertData.formattedValues,
-                formatFunctions: convertData.formatFunctions,
+                values: convertedData.values,
+                formattedValues: convertedData.formattedValues,
+                formatFunctions: convertedData.formatFunctions,
                 scale: axesData.xAxis.scale
             }
         };
         this.addAxisComponents({
-            convertData: convertData,
+            convertedData: convertedData,
             axes: axesData,
             plotData: plotData,
             chartType: options.chartType,

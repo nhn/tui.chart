@@ -172,7 +172,7 @@ describe('test dataConverter', function() {
 
     describe('convert()', function() {
         it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function () {
-            var convertData = converter.convert({
+            var convertedData = converter.convert({
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
                     {
@@ -197,8 +197,8 @@ describe('test dataConverter', function() {
             }, 'column');
 
             // formatFunctions는 currying된 functions들로 구성되어있어 function 비교가 불가하여 삭제합니다.
-            delete convertData.formatFunctions;
-            expect(convertData).toEqual({
+            delete convertedData.formatFunctions;
+            expect(convertedData).toEqual({
                 labels: ['cate1', 'cate2', 'cate3'],
                 values: [
                     [20, 40, 60, 80],
