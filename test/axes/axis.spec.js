@@ -322,13 +322,28 @@ describe('Axis', function() {
         it('xAxis label 회전 시 위치해야 할 position을 계산합니다.', function() {
             var actual = axis._calculateRotationMovingPosition({
                     degree: 25,
-                    labelWidth: 70,
-                    labelHeight: 20,
-                    left: 40
+                    left: 40,
+                    moveLeft: 20,
+                    top: 30
                 }),
                 expected = {
-                    top: 24.791639160924483,
-                    left: 8.279227453717251
+                    top: 30,
+                    left: 20
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
+            var actual = axis._calculateRotationMovingPosition({
+                    degree: 85,
+                    labelHeight: 20,
+                    left: 40,
+                    moveLeft: 20,
+                    top: 30
+                }),
+                expected = {
+                    top: 30,
+                    left: 10.038053019082547
                 };
             expect(actual).toEqual(expected);
         });
@@ -338,7 +353,7 @@ describe('Axis', function() {
         it('IE8은 회전 방식이 다르기 때문에 계산결과가 다릅니다.', function() {
             var actual = axis._calculateRotationMovingPositionForIE8({
                     degree: 25,
-                    labelWidth: 70,
+                    labelWidth: 40,
                     labelHeight: 20,
                     left: 40,
                     label: 'label1',
@@ -346,7 +361,23 @@ describe('Axis', function() {
                 }),
                 expected = {
                     top: 10,
-                    left: 9.684610648167506
+                    left: 24.684610648167506
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
+            var actual = axis._calculateRotationMovingPositionForIE8({
+                    degree: 85,
+                    labelWidth: 20,
+                    labelHeight: 20,
+                    left: 40,
+                    label: 'label1',
+                    theme: {}
+                }),
+                expected = {
+                    top: 10,
+                    left: 65.68026588169964
                 };
             expect(actual).toEqual(expected);
         });
@@ -372,22 +403,71 @@ describe('Axis', function() {
         });
     });
 
-    describe('_makeLabelsHtml()', function() {
-        it('간격이 10px인 레이블 영역 html을 생성합니다.', function() {
+    describe('_makeNormalLabelsHtml()', function() {
+        it('간격이 50px인 회전없는 레이블 영역 html을 생성합니다.', function() {
             var actual = axis._makeLabelsHtml({
-                    positions: [10, 20, 30],
+                    positions: [30, 80, 130],
                     labels: ['label1', 'label2', 'label3'],
                     posType: 'left',
                     cssTexts: []
                 }),
-                expected = '<div class="ne-chart-label" style="left:10px"><span>label1</span></div>' +
-                    '<div class="ne-chart-label" style="left:20px"><span>label2</span></div>' +
-                    '<div class="ne-chart-label" style="left:30px"><span>label3</span></div>';
+                expected = '<div class="ne-chart-label" style="left:30px"><span>label1</span></div>' +
+                    '<div class="ne-chart-label" style="left:80px"><span>label2</span></div>' +
+                    '<div class="ne-chart-label" style="left:130px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });
     });
 
+    describe('_makeRotationLabelsHtml()', function() {
+        it('45도로 회전된 레이블 영역 html을 생성합니다.', function() {
+            var actual, expected;
+            spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
+            actual = axis._makeRotationLabelsHtml({
+                positions: [30, 80, 130],
+                labels: ['label1', 'label2', 'label3'],
+                posType: 'left',
+                cssTexts: [],
+                labelSize: 80,
+                degree: 45
+            });
+            expected = '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeLabelsHtml()', function() {
+        it('degree 정보가 없을 경우에는 _makeNormalLabelsHtml()을 실행합니다.', function() {
+            var params = {
+                    positions: [30, 80, 130],
+                    labels: ['label1', 'label2', 'label3'],
+                    posType: 'left',
+                    cssTexts: []
+                },
+                actual = axis._makeLabelsHtml(params),
+                expected = axis._makeNormalLabelsHtml(params);
+            expect(actual).toBe(expected);
+        });
+
+        it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
+            var params, actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            params = {
+                positions: [30, 80, 130],
+                labels: ['label1', 'label2', 'label3'],
+                posType: 'left',
+                cssTexts: [],
+                labelSize: 80,
+                degree: 45
+            };
+            actual = axis._makeLabelsHtml(params);
+            expected = axis._makeRotationLabelsHtml(params);
+            expect(actual).toBe(expected);
+        });
+    });
     describe('_changeLabelAreaPosition()', function() {
         it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var elLabelArea = dom.create('DIV');

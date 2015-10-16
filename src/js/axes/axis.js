@@ -254,23 +254,21 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * To calculate rotation moving position.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
-     *      @param {number} params.labelWidth label width
      *      @param {number} params.labelHeight label height
      *      @param {number} params.left normal left
+     *      @param {number} params.moveLeft move left
+     *      @param {number} params.top top
      * @returns {{top:number, left: number}} position
      * @private
      */
     _calculateRotationMovingPosition: function(params) {
-        var halfWidth = params.labelWidth / 2,
-            moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
-            top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN;
-
-        if (params.degree === 85) {
+        var moveLeft = params.moveLeft;
+        if (params.degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
         }
 
         return {
-            top: top,
+            top: params.top,
             left: params.left - moveLeft
         };
     },
@@ -294,7 +292,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             collectLeft = labelWidth - newLabelWidth,
             moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
 
-        if (params.degree === 85) {
+        if (params.degree === chartConst.ANGLE_85) {
             moveLeft += smallAreaWidth;
         }
 
@@ -311,6 +309,8 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      *      @param {number} params.labelWidth label width
      *      @param {number} params.labelHeight label height
      *      @param {number} params.left normal left
+     *      @param {number} params.moveLeft move left
+     *      @param {number} params.top top
      *      @param {(string | number)} params.label label
      *      @param {object} theme label theme
      * @returns {string} cssText
@@ -327,45 +327,87 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of label.
+     * To make html of rotation labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
      *      @param {string} params.posType position type (left or bottom)
      *      @param {string[]} params.cssTexts css array
-     * @returns {string} html
+     * @returns {string} labels html
      * @private
      */
-    _makeLabelsHtml: function(params) {
+    _makeRotationLabelsHtml: function(params) {
         var template = axisTemplate.TPL_AXIS_LABEL,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
+            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
+            addClass = ' rotation' + params.degree,
+            halfWidth = params.labelSize / 2,
+            moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
+            top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
             labelsHtml = ne.util.map(params.positions, function(position, index) {
-                var labelCssTexts = params.cssTexts.slice(),
-                    label = params.labels[index],
-                    addClass = '',
-                    rotationCssText, html;
-
-                if (params.degree) {
-                    addClass = ' rotation' + params.degree;
+                var label = params.labels[index],
                     rotationCssText = this._makeCssTextForRotationMoving({
                         degree: params.degree,
-                        labelWidth: params.labelSize,
                         labelHeight: labelHeight,
+                        labelWidth: params.labelSize,
+                        top: top,
                         left: position,
+                        moveLeft: moveLeft,
                         label: label,
                         theme: params.theme
                     });
-                    labelCssTexts.push(rotationCssText);
-                } else {
-                    labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
-                }
-                html = template({
+
+                return template({
                     addClass: addClass,
-                    cssText: labelCssTexts.join(';'),
+                    cssText: labelCssText + rotationCssText,
                     label: label
                 });
-                return html;
             }, this).join('');
+
+        return labelsHtml;
+    },
+
+    /**
+     * To make html of normal labels.
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions label position array
+     *      @param {string[]} params.labels label array
+     *      @param {string} params.posType position type (left or bottom)
+     *      @param {string[]} params.cssTexts css array
+     * @returns {string} labels html
+     * @private
+     */
+    _makeNormalLabelsHtml: function(params) {
+        var template = axisTemplate.TPL_AXIS_LABEL,
+            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
+            labelsHtml = ne.util.map(params.positions, function(position, index) {
+                var addCssText = renderUtil.concatStr(params.posType, ':', position, 'px');
+                return template({
+                    addClass: '',
+                    cssText: labelCssText + addCssText,
+                    label: params.labels[index]
+                });
+            }, this).join('');
+        return labelsHtml;
+    },
+
+    /**
+     * To make html of labels.
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions label position array
+     *      @param {string[]} params.labels label array
+     *      @param {string} params.posType position type (left or bottom)
+     *      @param {string[]} params.cssTexts css array
+     * @returns {string} labels html
+     * @private
+     */
+    _makeLabelsHtml: function(params) {
+        var labelsHtml;
+        if (params.degree) {
+            labelsHtml = this._makeRotationLabelsHtml(params);
+        } else {
+            labelsHtml = this._makeNormalLabelsHtml(params);
+        }
 
         return labelsHtml;
     },
