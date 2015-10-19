@@ -63,10 +63,13 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
             largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
             path = ["M", cx, cy,
-                "L", x2, y2,
-                "A", r, r, 0, largeArcFlag, 0, x1, y1,
+                "L", x1, y1,
+                "A", r, r, 0, largeArcFlag, 1, x2, y2,
                 "Z"
             ];
+        // path에 대한 자세한 설명은 아래 링크를 참고
+        // http://www.w3schools.com/svg/svg_path.asp
+        // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
         return {path: path};
     },
 

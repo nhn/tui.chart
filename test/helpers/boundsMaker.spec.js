@@ -50,29 +50,6 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getRenderedLabelsMaxSize()', function() {
-        it('인자로 전달하는 레이블들을 보이지 않는 영역에 렌더링 하고 렌더링된 레이블의 사이즈(너비 or 높이)를 구해 레이블들 중 최대 사이즈를 선택하여 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
-                return label.length;
-            });
-            expect(result).toBe(7);
-        });
-    });
-
-    describe('_getRenderedLabelsMaxWidth()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxWidth(['label1', 'label12']);
-            expect(result).toBe(50);
-        });
-    });
-
-    describe('_getRenderedLabelsMaxHeight()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
-            var result = maker._getRenderedLabelsMaxHeight(['label1', 'label12']);
-            expect(result).toBe(20);
-        });
-    });
-
     describe('_getXAxisHeight()', function() {
         it('x축 영역의 높이를 계산하여 반환합니다.', function () {
             var result = maker._getXAxisHeight({
@@ -178,6 +155,10 @@ describe('boundsMaker', function() {
                     xAxis: {
                         title: 'XAxis title'
                     }
+                },
+                axesLabelInfo: {
+                    yAxis: [80],
+                    xAxis: ['label1', 'label2']
                 }
             });
             expect(result.yAxis.width).toBe(97);
@@ -313,6 +294,10 @@ describe('boundsMaker', function() {
                     xAxis: {
                         title: 'XAxis title'
                     }
+                },
+                axesLabelInfo: {
+                    yAxis: [80],
+                    xAxis: ['label1', 'label2']
                 }
             });
 
@@ -431,48 +416,6 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_makeChartBound()', function() {
-        it('dimension정보를 받아 chart bound정보를 생성합니다.', function() {
-            var actual = maker._makeChartBound({
-                    width: 100,
-                    height: 100
-                }),
-                expected = {
-                    dimension: {
-                        width: 100,
-                        height: 100
-                    }
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_makeLegendBound()', function() {
-        it('title height, yAxis width, series width, yrAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
-            var actual = maker._makeLegendBound({
-                    title: {
-                        height: 20
-                    },
-                    yAxis: {
-                        width: 30
-                    },
-                    series: {
-                        width: 200
-                    },
-                    yrAxis: {
-                        width: 30
-                    }
-                }),
-                expected = {
-                    position: {
-                        top: 20,
-                        left: 270
-                    }
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_makeAxesBounds()', function() {
         it('axis영역 표현에 필요한 컴포넌트(xAxis, yAxis, plot)들의 bounds 정보를 기본 dimension정보를 기반으로 계산하여 반환합니다.', function () {
             var actual = maker._makeAxesBounds({
@@ -521,6 +464,242 @@ describe('boundsMaker', function() {
             expect(actual.yrAxis.dimension.height).toBe(200);
             expect(actual.yrAxis.position.top).toBe(20);
             expect(actual.yrAxis.position.right).toBe(81);
+        });
+    });
+
+    describe('_makeChartBound()', function() {
+        it('dimension정보를 받아 chart bound정보를 생성합니다.', function() {
+            var actual = maker._makeChartBound({
+                    width: 100,
+                    height: 100
+                }),
+                expected = {
+                    dimension: {
+                        width: 100,
+                        height: 100
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeLegendBound()', function() {
+        it('title height, yAxis width, series width, yrAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
+            var actual = maker._makeLegendBound({
+                    title: {
+                        height: 20
+                    },
+                    yAxis: {
+                        width: 30
+                    },
+                    series: {
+                        width: 200
+                    },
+                    yrAxis: {
+                        width: 30
+                    }
+                }),
+                expected = {
+                    position: {
+                        top: 20,
+                        left: 270
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeAxesLabelInfo()', function() {
+        it('세로 타입의 차트에서는 yAxis는 value, xAxis는 category가 label이 됩니다.', function() {
+            var actual = maker._makeAxesLabelInfo({
+                    hasAxes: true,
+                    optionChartTypes: ['column'],
+                    convertData: {
+                        values: {
+                            'column': [10, 20, 30]
+                        },
+                        labels: ['cate1', 'cate2', 'cate3'],
+                        formatFunctions: []
+                    },
+                    isVertical: true
+                }),
+                expected = {
+                    xAxis: ['cate1', 'cate2', 'cate3'],
+                    yAxis: [40]
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('가로 타입의 차트에서는 yAxis는 category, xAxis는 value가 label이 됩니다.', function() {
+            var actual = maker._makeAxesLabelInfo({
+                    hasAxes: true,
+                    optionChartTypes: ['column'],
+                    convertData: {
+                        values: {
+                            'column': [10, 20, 30]
+                        },
+                        labels: ['cate1', 'cate2', 'cate3'],
+                        formatFunctions: []
+                    },
+                    isVertical: false
+                }),
+                expected = {
+                    xAxis: [40],
+                    yAxis: ['cate1', 'cate2', 'cate3']
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('hasAxes가 존재하지 않거나 false이면 null을 반환합니다.', function() {
+            var actual = maker._makeAxesLabelInfo({
+                    hasAxes: false
+                });
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_findRotationDegree()', function() {
+        it('후보 각(25, 45, 65, 85)을 순회하며 회전된 비교 너비가 제한 너비보다 작으면 해당 각을 반환합니다.', function() {
+            var actual = maker._findRotationDegree(50, 60, 20),
+                expected = 25;
+            expect(actual).toBe(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual = maker._findRotationDegree(5, 120, 20),
+                expected = 85;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeHorizontalLabelRotationInfo', function() {
+        it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                maxLabelWidth: 120,
+                labelHeight: 20,
+                degree: 25
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('최대 회전각은 85도 입니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
+            actual = maker._makeHorizontalLabelRotationInfo(5, ['cate1', 'cate2', 'cate3'], {});
+            expected = {
+                maxLabelWidth: 120,
+                labelHeight: 20,
+                degree: 85
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('회전하지 않는 상태의 가장 긴 레이블의 길이가 제한 너비를 초과하지 않으면 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(40);
+            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2'], {});
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_calculateOverflowLeft()', function() {
+        it('회전된 xAxis label이 왼쪽 차트 시작 영역을 얼마나 넘어갔는지 값을 계산하여 반환합니다.', function() {
+            var actual = maker._calculateOverflowLeft(50, {
+                    degree: 25,
+                    maxLabelWidth: 120,
+                    labelHeight: 20
+                }, 'abcdefghijklmnopqrstuvwxyz', {}),
+                expected = 3.7677545866464826;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateXAxisHeight()', function() {
+        it('레이블 dimension과 degree 정보를 이용하여 x axis의 회전된 높이 정보를 구합니다.', function() {
+            var actual = maker._calculateXAxisHeight({
+                    degree: 25,
+                    maxLabelWidth: 100,
+                    labelHeight: 20
+                }),
+                expected = 60.38798191480294;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateHeightDifference()', function() {
+        it('회전된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
+            var actual = maker._calculateHeightDifference({
+                    degree: 25,
+                    maxLabelWidth: 100,
+                    labelHeight: 20
+                }),
+                expected = 40.38798191480294;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_updateDegree()', function() {
+        it('overflowLeft값이 0보다 크면 degree를 재계산하여 rotationInfo.degree의 값을 갱신합니다.', function() {
+            var rotationInfo = {
+                degree: 25,
+                maxLabelWidth: 100,
+                labelHeight: 20
+            };
+            maker._updateDegree(200, rotationInfo, 8, 20);
+            expect(rotationInfo.degree).toEqual(85);
+        });
+    });
+
+    describe('_updateDimensionsWidth()', function() {
+        it('50의 overflowLeft를 전달하면 chartLeftPadding은 50 증가하고 나머지 dimensions의 width들을 50씩 감소합니다.', function() {
+            var dimensions = {
+                plot: {
+                    width: 200
+                },
+                series: {
+                    width: 199
+                },
+                xAxis: {
+                    width: 200
+                }
+            };
+
+            maker.chartLeftPadding = 10;
+            maker._updateDimensionsWidth(dimensions, 50);
+
+            expect(maker.chartLeftPadding).toBe(60);
+            expect(dimensions.plot.width).toBe(150);
+            expect(dimensions.series.width).toBe(149);
+            expect(dimensions.xAxis.width).toBe(150);
+        });
+    });
+
+    describe('_updateDimensionsHeight()', function() {
+        it('50의 diffHeight를 전달하면 xAxis.heihgt는 50 감소하고, plot.height, series.height는 50 증가합니다.', function() {
+            var dimensions = {
+                plot: {
+                    height: 200
+                },
+                series: {
+                    height: 199
+                },
+                xAxis: {
+                    height: 50
+                }
+            };
+
+            maker._updateDimensionsHeight(dimensions, 50);
+
+            expect(dimensions.plot.height).toBe(150);
+            expect(dimensions.series.height).toBe(149);
+            expect(dimensions.xAxis.height).toBe(100);
         });
     });
 

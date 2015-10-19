@@ -19,10 +19,9 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      */
-    init: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options),
+    init: function(userData, theme, options) {
+        var baseData = this.makeBaseData(userData, theme, options),
             convertData = baseData.convertData,
             bounds = baseData.bounds;
 
@@ -34,7 +33,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             options.tooltip.position = 'center middle';
         }
 
-        ChartBase.call(this, bounds, theme, options, initedData);
+        ChartBase.call(this, bounds, theme, options);
 
         this._addComponents(convertData, theme.chart.background, bounds, options);
     },

@@ -48,49 +48,84 @@ describe('renderUtil', function() {
 
     describe('_getRenderedLabelSize()', function() {
         it('전달받은 레이블을 테마 속성을 포함하여 렌더링하여 사이즈 계산 후 결과를 반환합니다.', function () {
-            var labelSize = renderUtil._getRenderedLabelSize('Label1', {
+            var atual = renderUtil._getRenderedLabelSize('Label1', {
                 fontFamily: 'Verdana',
                 fontSize: 12
             }, 'offsetWidth');
 
             if (isIE8 || isFirefox) {
-                expect(labelSize).toBe(42);
+                expect(atual).toBe(42);
             } else if (isMac && isChrome) {
-                expect(labelSize).toBe(40);
+                expect(atual).toBe(40);
             } else {
-                expect(labelSize).toBe(39);
+                expect(atual).toBe(39);
             }
         });
     });
 
     describe('getRenderedLabelWidth()', function() {
         it('렌더링된 레이블의 너비값을 반환합니다.', function () {
-            var labelWidth = renderUtil.getRenderedLabelWidth('Label1', {
+            var actual = renderUtil.getRenderedLabelWidth('Label1', {
                 fontFamily: 'Verdana',
                 fontSize: 12
             });
 
             if (isIE8 || isFirefox) {
-                expect(labelWidth).toBe(42);
+                expect(actual).toBe(42);
             } else if (isMac && isChrome) {
-                expect(labelWidth).toBe(40);
+                expect(actual).toBe(40);
             } else {
-                expect(labelWidth).toBe(39);
+                expect(actual).toBe(39);
             }
         });
     });
 
-    describe('getRenderedLabelWidth()', function() {
+    describe('getRenderedLabelHeight()', function() {
         it('렌더링된 레이블의 높이값을 반환합니다.', function () {
-            var labelHeight = renderUtil.getRenderedLabelHeight('Label2', {
+            var actual = renderUtil.getRenderedLabelHeight('Label2', {
                 fontFamily: 'Verdana',
                 fontSize: 12
             });
 
             if (isIE8) {
-                expect(labelHeight).toBe(14);
+                expect(actual).toBe(14);
             } else {
-                expect(labelHeight).toBe(15);
+                expect(actual).toBe(15);
+            }
+        });
+    });
+
+    describe('_getRenderedLabelsMaxSize()', function() {
+        it('인자로 전달하는 레이블들을 전달한 함수로 실행하여 가장 큰 값을 반환합니다.', function () {
+            var acutal = renderUtil._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
+                return label.length;
+            });
+            expect(acutal).toBe(7);
+        });
+    });
+
+    describe('getRenderedLabelsMaxWidth()', function() {
+        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
+            var acutal = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label']);
+
+            if (isIE8 || isFirefox) {
+                expect(acutal).toBe(42);
+            } else if (isMac && isChrome) {
+                expect(acutal).toBe(40);
+            } else {
+                expect(acutal).toBe(39);
+            }
+        });
+    });
+
+    describe('getRenderedLabelsMaxHeight()', function() {
+        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
+            var acutal = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label']);
+
+            if (isIE8) {
+                expect(acutal).toBe(14);
+            } else {
+                expect(acutal).toBe(15);
             }
         });
     });

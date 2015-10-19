@@ -56,7 +56,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elLabelArea = this._renderLabelArea(size, dimension.width),
+            elLabelArea = this._renderLabelArea(size, dimension.width, bound.degree),
             elTickArea;
 
         if (!this.aligned || !isVertical) {
@@ -128,16 +128,16 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
-            labels = data.labels,
             elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.TPL_AXIS_TICK,
             ticksHtml = ne.util.map(positions, function(position, index) {
-                if (labels[index] === chartConst.EMPTY_AXIS_LABEL) {
+                var cssText;
+                if (data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
                 }
-                var cssText = [
+                cssText = [
                     renderUtil.concatStr('background-color:', tickColor),
                     renderUtil.concatStr(posType, ': ', position, 'px')
                 ].join(';');
@@ -151,13 +151,25 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * To make cssText of vertical label.
+     * @param {number} axisWidth axis width
+     * @param {number} titleAreaWidth title area width
+     * @returns {string} cssText
+     * @private
+     */
+    _makeVerticalLabelCssText: function(axisWidth, titleAreaWidth) {
+        return ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
+    },
+
+    /**
      * Render label area.
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
+     * @param {number} degree rotation degree
      * @returns {HTMLElement} label area element
      * @private
      */
-    _renderLabelArea: function(size, axisWidth) {
+    _renderLabelArea: function(size, axisWidth, degree) {
         var data = this.data,
             tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
@@ -174,7 +186,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
-            areaCssText += ';width:' + (axisWidth - titleAreaWidth + chartConst.V_LABEL_RIGHT_PADDING) + 'px';
+            areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
         }
 
         tickPixelPositions.length = data.labels.length;
@@ -183,7 +195,10 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             positions: tickPixelPositions,
             labels: data.labels,
             posType: posType,
-            cssTexts: cssTexts
+            cssTexts: cssTexts,
+            labelSize: labelSize,
+            degree: degree,
+            theme: this.theme.label
         });
 
         elLabelArea.innerHTML = labelsHtml;
@@ -236,28 +251,163 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of label.
+     * To calculate rotation moving position.
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     *      @param {number} params.moveLeft move left
+     *      @param {number} params.top top
+     * @returns {{top:number, left: number}} position
+     * @private
+     */
+    _calculateRotationMovingPosition: function(params) {
+        var moveLeft = params.moveLeft;
+        if (params.degree === chartConst.ANGLE_85) {
+            moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
+        }
+
+        return {
+            top: params.top,
+            left: params.left - moveLeft
+        };
+    },
+
+    /**
+     * To calculate rotation moving position for ie8.
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelWidth label width
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     *      @param {(string | number)} params.label label
+     *      @param {object} theme label theme
+     * @returns {{top:number, left: number}} position
+     * @private
+     */
+    _calculateRotationMovingPositionForIE8: function(params) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme),
+            smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2),
+            newLabelWidth = (calculator.calculateAdjacent(params.degree, labelWidth / 2) + smallAreaWidth) * 2,
+            collectLeft = labelWidth - newLabelWidth,
+            moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
+
+        if (params.degree === chartConst.ANGLE_85) {
+            moveLeft += smallAreaWidth;
+        }
+
+        return {
+            top: chartConst.XAXIS_LABEL_TOP_MARGIN,
+            left: params.left + collectLeft - moveLeft
+        };
+    },
+
+    /**
+     * To make cssText for rotation moving.
+     * @param {object} params parameters
+     *      @param {number} params.degree rotation degree
+     *      @param {number} params.labelWidth label width
+     *      @param {number} params.labelHeight label height
+     *      @param {number} params.left normal left
+     *      @param {number} params.moveLeft move left
+     *      @param {number} params.top top
+     *      @param {(string | number)} params.label label
+     *      @param {object} theme label theme
+     * @returns {string} cssText
+     * @private
+     */
+    _makeCssTextForRotationMoving: function(params) {
+        var position;
+        if (renderUtil.isIE8()) {
+            position = this._calculateRotationMovingPositionForIE8(params);
+        } else {
+            position = this._calculateRotationMovingPosition(params);
+        }
+        return renderUtil.concatStr('left:', position.left, 'px', ';top:', position.top, 'px');
+    },
+
+    /**
+     * To make html of rotation labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
      *      @param {string} params.posType position type (left or bottom)
      *      @param {string[]} params.cssTexts css array
-     * @returns {string} html
+     * @returns {string} labels html
+     * @private
+     */
+    _makeRotationLabelsHtml: function(params) {
+        var template = axisTemplate.TPL_AXIS_LABEL,
+            labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
+            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
+            addClass = ' rotation' + params.degree,
+            halfWidth = params.labelSize / 2,
+            moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
+            top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
+            labelsHtml = ne.util.map(params.positions, function(position, index) {
+                var label = params.labels[index],
+                    rotationCssText = this._makeCssTextForRotationMoving({
+                        degree: params.degree,
+                        labelHeight: labelHeight,
+                        labelWidth: params.labelSize,
+                        top: top,
+                        left: position,
+                        moveLeft: moveLeft,
+                        label: label,
+                        theme: params.theme
+                    });
+
+                return template({
+                    addClass: addClass,
+                    cssText: labelCssText + rotationCssText,
+                    label: label
+                });
+            }, this).join('');
+
+        return labelsHtml;
+    },
+
+    /**
+     * To make html of normal labels.
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions label position array
+     *      @param {string[]} params.labels label array
+     *      @param {string} params.posType position type (left or bottom)
+     *      @param {string[]} params.cssTexts css array
+     * @returns {string} labels html
+     * @private
+     */
+    _makeNormalLabelsHtml: function(params) {
+        var template = axisTemplate.TPL_AXIS_LABEL,
+            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
+            labelsHtml = ne.util.map(params.positions, function(position, index) {
+                var addCssText = renderUtil.concatStr(params.posType, ':', position, 'px');
+                return template({
+                    addClass: '',
+                    cssText: labelCssText + addCssText,
+                    label: params.labels[index]
+                });
+            }, this).join('');
+        return labelsHtml;
+    },
+
+    /**
+     * To make html of labels.
+     * @param {object} params parameters
+     *      @param {array.<object>} params.positions label position array
+     *      @param {string[]} params.labels label array
+     *      @param {string} params.posType position type (left or bottom)
+     *      @param {string[]} params.cssTexts css array
+     * @returns {string} labels html
      * @private
      */
     _makeLabelsHtml: function(params) {
-        var template = axisTemplate.TPL_AXIS_LABEL,
-            labelsHtml = ne.util.map(params.positions, function(position, index) {
-                var labelCssTexts = params.cssTexts.slice(),
-                    html;
-
-                labelCssTexts.push(renderUtil.concatStr(params.posType, ':', position, 'px'));
-                html = template({
-                    cssText: labelCssTexts.join(';'),
-                    label: params.labels[index]
-                });
-                return html;
-            }, this).join('');
+        var labelsHtml;
+        if (params.degree) {
+            labelsHtml = this._makeRotationLabelsHtml(params);
+        } else {
+            labelsHtml = this._makeNormalLabelsHtml(params);
+        }
 
         return labelsHtml;
     },

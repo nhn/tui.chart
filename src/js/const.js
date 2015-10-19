@@ -48,6 +48,8 @@ module.exports = {
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel 360 */
+    ANGLE_85: 85,
+    ANGLE_90: 90,
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
@@ -65,6 +67,8 @@ module.exports = {
     SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors'], // series theme의 속성 - chart type filtering할 때 사용됨
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
+    /** top margin of x axis label */
+    XAXIS_LABEL_TOP_MARGIN: 10,
     /** right padding of vertical label */
     V_LABEL_RIGHT_PADDING: 10,
     /** tooltip prefix */
@@ -93,6 +97,12 @@ module.exports = {
     LEGEND_LABEL_LEFT_PADDING: 5,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
+    /** rotations degree candidates */
+    DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /** xAxis label compare margin */
+    XAXIS_LABEL_COMPARE_MARGIN: 20,
+    /** xAxis label gutter */
+    XAXIS_LABEL_GUTTER: 2,
     /** stand multiple nums of axis */
     AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10],
     /** label padding top */

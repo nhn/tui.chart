@@ -14,7 +14,7 @@ var chartConst = require('../const');
  */
 var calculator = {
     /**
-     * Calculate scale from chart min, max data.
+     * To calculate scale from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
@@ -153,6 +153,26 @@ var calculator = {
             });
         });
         return result;
+    },
+
+    /**
+     * To calculate adjacent.
+     * @param {number} degree degree
+     * @param {number} hypotenuse hypotenuse
+     * @returns {number} adjacent
+     */
+    calculateAdjacent: function(degree, hypotenuse) {
+        return Math.cos(degree * chartConst.RAD) * hypotenuse;
+    },
+
+    /**
+     * To calculate opposite.
+     * @param {number} degree degree
+     * @param {number} hypotenuse hypotenuse
+     * @returns {number} opposite
+     */
+    calculateOpposite: function(degree, hypotenuse) {
+        return Math.sin(degree * chartConst.RAD) * hypotenuse;
     }
 };
 
