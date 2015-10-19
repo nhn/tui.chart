@@ -31,12 +31,12 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 hasAxes: true,
                 optionChartTypes: optionChartTypes
             }),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds,
             optionsMap = this._makeOptionsMap(chartTypes, options),
-            themeMap = this._makeThemeMap(seriesChartTypes, theme, convertData.legendLabels),
+            themeMap = this._makeThemeMap(seriesChartTypes, theme, convertedData.legendLabels),
             yAxisParams = {
-                convertData: convertData,
+                convertedData: convertedData,
                 seriesDimension: bounds.series.dimension,
                 chartTypes: chartTypes,
                 isOneYAxis: !optionChartTypes.length,
@@ -53,7 +53,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         }, yAxisParams));
 
         baseAxesData.xAxis = axisDataMaker.makeLabelAxisData({
-            labels: convertData.labels
+            labels: convertedData.labels
         });
 
         this._installCharts({
@@ -104,7 +104,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * To make y axis data.
      * @param {object} params parameters
      *      @param {number} params.index chart index
-     *      @param {object} params.convertData converted data
+     *      @param {object} params.convertedData converted data
      *      @param {{width: number, height: number}} params.seriesDimension series dimension
      *      @param {array.<string>} chartTypes chart type
      *      @param {boolean} isOneYAxis whether one series or not
@@ -114,17 +114,17 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @private
      */
     _makeYAxisData: function(params) {
-        var convertData = params.convertData,
+        var convertedData = params.convertedData,
             index = params.index,
             chartType = params.chartTypes[index],
             options = params.options,
             yAxisValues, yAxisOptions, seriesOption;
 
         if (params.isOneYAxis) {
-            yAxisValues = convertData.joinValues;
+            yAxisValues = convertedData.joinValues;
             yAxisOptions = [options.yAxis];
         } else {
-            yAxisValues = convertData.values[chartType];
+            yAxisValues = convertedData.values[chartType];
             yAxisOptions = options.yAxis || [];
         }
 
@@ -136,7 +136,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             options: yAxisOptions[index],
             chartType: chartType,
             seriesDimension: params.seriesDimension,
-            formatFunctions: convertData.formatFunctions,
+            formatFunctions: convertedData.formatFunctions,
             isVertical: true
         }, params.addParams));
     },
@@ -288,15 +288,15 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 line: LineChart
             },
             baseData = params.baseData,
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             plotData = {
                 vTickCount: params.baseAxesData.yAxis.validTickCount,
                 hTickCount: params.baseAxesData.xAxis.validTickCount
             },
-            joinLegendLabels = convertData.joinLegendLabels;
+            joinLegendLabels = convertedData.joinLegendLabels;
 
         this.charts = ne.util.map(params.seriesChartTypes, function(chartType) {
-            var legendLabels = convertData.legendLabels[chartType],
+            var legendLabels = convertedData.legendLabels[chartType],
                 axes = params.axesData[chartType],
                 options = params.optionsMap[chartType],
                 theme = params.themeMap[chartType],
@@ -309,11 +309,11 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             }
 
             initedData = {
-                convertData: {
-                    values: convertData.values[chartType],
-                    labels: convertData.labels,
-                    formatFunctions: convertData.formatFunctions,
-                    formattedValues: convertData.formattedValues[chartType],
+                convertedData: {
+                    values: convertedData.values[chartType],
+                    labels: convertedData.labels,
+                    formatFunctions: convertedData.formatFunctions,
+                    formattedValues: convertedData.formattedValues[chartType],
                     legendLabels: legendLabels,
                     joinLegendLabels: joinLegendLabels,
                     plotData: plotData

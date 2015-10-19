@@ -26,7 +26,7 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
      *      @param {function} params.Series series class
      */
     addAxisComponents: function(params) {
-        var convertData = params.convertData,
+        var convertedData = params.convertedData,
             options = this.options,
             aligned = !!params.aligned;
 
@@ -41,10 +41,10 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
             });
         }, this);
 
-        if (convertData.joinLegendLabels) {
+        if (convertedData.joinLegendLabels) {
             this.addComponent('legend', Legend, {
-                joinLegendLabels: convertData.joinLegendLabels,
-                legendLabels: convertData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
+                legendLabels: convertedData.legendLabels,
                 chartType: params.chartType
             });
         }
@@ -57,10 +57,10 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
         }, params.seriesData));
 
         this.addComponent('tooltip', Tooltip, {
-            values: convertData.values,
-            formattedValues: convertData.formattedValues,
-            labels: convertData.labels,
-            legendLabels: convertData.legendLabels,
+            values: convertedData.values,
+            formattedValues: convertedData.formattedValues,
+            labels: convertedData.labels,
+            legendLabels: convertedData.legendLabels,
             prefix: this.tooltipPrefix
         });
     },

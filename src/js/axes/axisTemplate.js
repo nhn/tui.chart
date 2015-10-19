@@ -12,6 +12,6 @@ var tags = {
 };
 
 module.exports = {
-    TPL_AXIS_TICK: templateMaker.template(tags.HTML_AXIS_TICK),
-    TPL_AXIS_LABEL: templateMaker.template(tags.HTML_AXIS_LABEL)
+    tplAxisTick: templateMaker.template(tags.HTML_AXIS_TICK),
+    tplAxisLabel: templateMaker.template(tags.HTML_AXIS_LABEL)
 };

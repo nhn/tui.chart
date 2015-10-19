@@ -40,19 +40,19 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} boundParams add bound params
-     * @returns {{convertData: object, bounds: object}} base data
+     * @returns {{convertedData: object, bounds: object}} base data
      */
     makeBaseData: function(userData, theme, options, boundParams) {
-        var convertData = dataConverter.convert(userData, options.chart, options.chartType),
+        var convertedData = dataConverter.convert(userData, options.chart, options.chartType),
             bounds = boundsMaker.make(ne.util.extend({
                 chartType: options.chartType,
-                convertData: convertData,
+                convertedData: convertedData,
                 theme: theme,
                 options: options
             }, boundParams));
 
         return {
-            convertData: convertData,
+            convertedData: convertedData,
             bounds: bounds
         };
     },
