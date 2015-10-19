@@ -131,7 +131,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
-            template = axisTemplate.TPL_AXIS_TICK,
+            template = axisTemplate.tplAxisTick,
             ticksHtml = ne.util.map(positions, function(position, index) {
                 var cssText;
                 if (data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
@@ -337,7 +337,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRotationLabelsHtml: function(params) {
-        var template = axisTemplate.TPL_AXIS_LABEL,
+        var template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
             addClass = ' rotation' + params.degree,
@@ -378,7 +378,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeNormalLabelsHtml: function(params) {
-        var template = axisTemplate.TPL_AXIS_LABEL,
+        var template = axisTemplate.tplAxisLabel,
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
             labelsHtml = ne.util.map(params.positions, function(position, index) {
                 var addCssText = renderUtil.concatStr(params.posType, ':', position, 'px');

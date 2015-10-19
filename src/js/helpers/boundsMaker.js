@@ -482,19 +482,20 @@ var boundsMaker = {
      * @returns {number} rotation degree
      * @private
      */
-    _findRotationDegree: function(limitWidth, labelWidth, labelHeight, index) {
-        var degree, compareWidth;
+    _findRotationDegree: function(limitWidth, labelWidth, labelHeight) {
+        var foundDegree,
+            halfWidth = labelWidth / 2,
+            halfHeight = labelHeight / 2;
 
-        index = ne.util.isUndefined(index) ? 0 : index;
-        degree = chartConst.DEGREE_CANDIDATES[index];
-        compareWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
-        //compareWidth = labelHeight / Math.cos((chartConst.ANGLE_90 - degree) * chartConst.RAD);
+        ne.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
+            var compareWidth = (calculator.calculateAdjacent(degree, halfWidth) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, halfHeight)) * 2;
+            foundDegree = degree;
+            if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
+                return false;
+            }
+        });
 
-        if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN || index === chartConst.DEGREE_CANDIDATES.length - 1) {
-            return degree;
-        }
-
-        return this._findRotationDegree(limitWidth, labelWidth, labelHeight, index + 1);
+        return foundDegree;
     },
 
     /**
@@ -502,7 +503,7 @@ var boundsMaker = {
      * @param {number} seriesWidth series area width
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis label theme
-     * @returns {object} rotation info
+     * @returns {?object} rotation info
      * @private
      */
     _makeHorizontalLabelRotationInfo: function(seriesWidth, labels, theme) {

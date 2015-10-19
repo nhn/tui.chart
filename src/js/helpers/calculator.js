@@ -160,6 +160,19 @@ var calculator = {
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse
      * @returns {number} adjacent
+     *
+     *   H : Hypotenuse
+     *   A : Adjacent
+     *   O : Opposite
+     *   D : Degree
+     *
+     *        /|
+     *       / |
+     *    H /  | O
+     *     /   |
+     *    /\ D |
+     *    -----
+     *       A
      */
     calculateAdjacent: function(degree, hypotenuse) {
         return Math.cos(degree * chartConst.RAD) * hypotenuse;
