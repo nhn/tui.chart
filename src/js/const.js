@@ -7,6 +7,10 @@
  */
 
 module.exports = {
+    /** chart id prefix */
+    CHAR_ID_PREFIX: 'tui-chart',
+    /** tooltip id prefix*/
+    TOOLTIP_ID_PREFIX: 'tui-chart-tooltip',
     /** chart types */
     CHART_TYPE_BAR: 'bar',
     CHART_TYPE_COLUMN: 'column',
@@ -112,5 +116,5 @@ module.exports = {
     /** tooltip gap */
     TOOLTIP_GAP: 5,
     /** hide delay */
-    HIDE_DELAY: 0
+    HIDE_DELAY: 200
 };

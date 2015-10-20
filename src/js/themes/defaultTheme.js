@@ -46,7 +46,8 @@ var defaultTheme = {
             fontFamily: EMPTY,
             color: DEFAULT_COLOR
         }
-    }
+    },
+    tooltip: {}
 };
 
 module.exports = defaultTheme;

@@ -56,16 +56,16 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
         }
 
         this.addComponent('tooltip', Tooltip, {
+            chartType: options.chartType,
             values: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
-            prefix: this.tooltipPrefix
+            chartId: this.chartId
         });
 
         this.addComponent('series', Series, {
             libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
             chartBackground: chartBackground,
             data: {
                 values: convertedData.values,

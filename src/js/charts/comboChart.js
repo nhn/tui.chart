@@ -320,14 +320,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 },
                 bounds: bounds,
                 axes: axes,
-                prefix: chartType + '-'
+                chartId: this.chartId
             };
 
             chart = new Chart(params.userData, theme, options, initedData);
             plotData = null;
             joinLegendLabels = null;
             return chart;
-        });
+        }, this);
     },
 
     /**
@@ -337,12 +337,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     render: function() {
         var el = ChartBase.prototype.render.call(this);
         var paper;
-        ne.util.forEachArray(this.charts, function(chart) {
-            chart.render(el, paper);
-            if (!paper) {
-                paper = chart.getPaper();
-            }
-            chart.animateChart();
+        ne.util.forEachArray(this.charts, function(chart, index) {
+            setTimeout(function() {
+                chart.render(el, paper);
+                if (!paper) {
+                    paper = chart.getPaper();
+                }
+                chart.animateChart();
+            }, 1 * index);
         });
         return el;
     }

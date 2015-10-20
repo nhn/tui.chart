@@ -10,7 +10,6 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
     ANGLE_180 = 180,
-    ANGLE_90 = 90,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700;
@@ -123,7 +122,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             this._bindHoverEvent({
                 target: sector,
                 position: sectorInfo.popupPosition,
-                id: '0-' + index,
+                index: index,
                 inCallback: inCallback,
                 outCallback: outCallback
             });
@@ -179,19 +178,18 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      */
     _bindHoverEvent: function(params) {
         params.target.mouseover(function () {
-            params.inCallback(params.position, params.id);
+            params.inCallback(params.position, 0, params.index);
         }).mouseout(function () {
-            params.outCallback(params.id);
+            params.outCallback();
         });
     },
 
     /**
-     * Show animation.
-     * @param {{groupIndex: number, index:number}} data show info
+     * To expand selector radius.
+     * @param {object} sector pie sector
      */
-    showAnimation: function(data) {
-        var sector = this.sectors[data.index].sector,
-            cx = this.circleBound.cx,
+    _expandSector: function(sector) {
+        var cx = this.circleBound.cx,
             cy = this.circleBound.cy;
         sector.animate({
             transform: "s1.1 1.1 " + cx + " " + cy
@@ -199,12 +197,29 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     },
 
     /**
+     * To restore selector radius.
+     * @param {object} sector pie sector
+     */
+    _restoreSector: function(sector) {
+        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+    },
+
+    /**
+     * Show animation.
+     * @param {{index: number}} data data
+     */
+    showAnimation: function(data) {
+        var sector = this.sectors[data.index].sector;
+        this._expandSector(sector);
+    },
+
+    /**
      * Hide animation.
-     * @param {{groupIndex: number, index:number}} data hide info
+     * @param {{index: number}} data data
      */
     hideAnimation: function(data) {
         var sector = this.sectors[data.index].sector;
-        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+        this._restoreSector(sector);
     },
 
     /**

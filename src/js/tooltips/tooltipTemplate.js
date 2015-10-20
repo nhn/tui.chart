@@ -7,11 +7,11 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_TOOLTIP: '<div class="ne-chart-tooltip" id="{{ id }}">{{ html }}</div>',
+    HTML_TOOLTIP: '<div class="ne-chart-tooltip"></div>',
     HTML_DEFAULT_TEMPLATE: '<div class="ne-chart-default-tooltip">' +
-        '<div>{{ label }}</div>' +
+        '<div>{{ category }}</div>' +
         '<div>' +
-            '<span>{{ legendLabel }}</span>:' +
+            '<span>{{ legend }}</span>:' +
             '&nbsp;<span>{{ value }}</span>' +
             '<span>{{ suffix }}</span>' +
         '</div>' +

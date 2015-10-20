@@ -13,8 +13,6 @@ var chartConst = require('../const'),
     boundsMaker = require('../helpers/boundsMaker');
 
 var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
-    tooltipPrefix: chartConst.TOOLTIP_PREFIX + '-' + (new Date()).getTime() + '-',
-
     /**
      * Chart base.
      * @constructs ChartBase
@@ -24,14 +22,12 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} initedData initialized data from combo chart
      */
     init: function(bounds, theme, options, initedData) {
+        this.chartId = initedData && initedData.chartId || chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
         this.components = [];
         this.componentMap = {};
         this.bounds = bounds;
         this.theme = theme;
         this.options = options;
-        if (initedData && initedData.prefix) {
-            this.tooltipPrefix += initedData.prefix;
-        }
     },
 
     /**

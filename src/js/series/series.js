@@ -47,27 +47,26 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Show tooltip (mouseover callback).
      * @param {object} params parameters
-     *      @param {string} params.prefix tooltip id prefix
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {string} id tooltip id
      */
-    showTooltip: function(params, bound, id) {
+    showTooltip: function(params, bound, groupIndex, index) {
         this.fire('showTooltip', ne.util.extend({
-            id: params.prefix + id,
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
             bound: bound
         }, params));
     },
 
     /**
      * Hide tooltip (mouseout callback).
-     * @param {string} prefix tooltip id prefix
      * @param {string} id tooltip id
      */
-    hideTooltip: function(prefix, id) {
-        this.fire('hideTooltip', {
-            id: prefix + id
-        });
+    hideTooltip: function() {
+        this.fire('hideTooltip');
     },
 
     /**
@@ -90,15 +89,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     render: function(paper) {
         var el = dom.create('DIV', this.className),
-            tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
             dimension = this._expandDimension(bound.dimension),
             inCallback = ne.util.bind(this.showTooltip, this, {
-                prefix: tooltipPrefix,
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
-            outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
+            outCallback = ne.util.bind(this.hideTooltip, this),
             data = {
                 dimension: dimension,
                 chartType: this.chartType,
@@ -313,12 +310,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        groupIndex = elTarget.getAttribute('data-group-index');
-        index = elTarget.getAttribute('data-index');
-        if (groupIndex === '-1' || index === '-1') {
+        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
+        index = parseInt(elTarget.getAttribute('data-index'), 10);
+
+        if (groupIndex === -1 || index === -1) {
             return;
         }
-        this.inCallback(this._getBound(groupIndex, index), groupIndex + '-' + index);
+
+        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
     },
 
     /**
@@ -333,14 +332,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        groupIndex = elTarget.getAttribute('data-group-index');
-        index = elTarget.getAttribute('data-index');
+        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
+        index = parseInt(elTarget.getAttribute('data-index'), 10);
 
-        if (groupIndex === '-1' || index === '-1') {
+        if (groupIndex === -1 || index === -1) {
             return;
         }
 
-        this.outCallback(groupIndex + '-' + index);
+        this.outCallback(groupIndex, index);
     },
 
     /**

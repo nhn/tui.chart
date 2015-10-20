@@ -52,7 +52,6 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
         this.addComponent('series', params.Series, ne.util.extend({
             libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
             aligned: aligned
         }, params.seriesData));
 
@@ -61,7 +60,7 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
             formattedValues: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
-            prefix: this.tooltipPrefix
+            chartId: this.chartId
         });
     },
 
