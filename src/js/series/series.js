@@ -42,6 +42,16 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
          * @type {string}
          */
         this.className = 'ne-chart-series-area';
+
+        this.seriesData = this.makeSeriesData();
+    },
+
+    /**
+     * To make series data.
+     * @returns {object} add data
+     */
+    makeSeriesData: function() {
+        return {};
     },
 
     /**
@@ -49,7 +59,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} params parameters
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
-     * @param {string} id tooltip id
+     * @param {number} groupIndex group index
+     * @param {number} index index
      */
     showTooltip: function(params, bound, groupIndex, index) {
         this.fire('showTooltip', ne.util.extend({
@@ -78,7 +89,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     _expandDimension: function(dimension) {
         return {
             width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-            height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
+            height: dimension.height + chartConst.SERIES_EXPAND_SIZE
         };
     },
 
@@ -102,7 +113,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
                 theme: this.theme,
                 options: this.options
             },
-            addData = this.makeAddData(),
+            seriesData = this.seriesData,
             addDataForSeriesLabel;
 
         if (!paper) {
@@ -111,30 +122,26 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         this._renderPosition(el, bound.position, this.chartType);
 
-        data = ne.util.extend(data, addData);
+        data = ne.util.extend(data, seriesData);
 
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
 
         if (this._renderSeriesLabel) {
-            addDataForSeriesLabel = this._makeAddDataForSeriesLabel(el, dimension);
-            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, addData));
+            addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(el, dimension);
+            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        this.attachEvent(el);
+        if (this.renderCoordinateEvent) {
+            this.renderCoordinateEvent(el);
+        } else {
+            this.attachEvent(el);
+        }
 
         // series label mouse event 동작 시 사용
         this.inCallback = inCallback;
         this.outCallback = outCallback;
 
         return el;
-    },
-
-    /**
-     * To make add data.
-     * @returns {object} add data
-     */
-    makeAddData: function() {
-        return {};
     },
 
     /**
@@ -150,7 +157,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * }} add data for series label
      * @private
      */
-    _makeAddDataForSeriesLabel: function(container, dimension) {
+    _makeSeriesDataForSeriesLabel: function(container, dimension) {
         return {
             container: container,
             values: this.data.values,
@@ -298,6 +305,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         };
     },
 
+    renderCoordinateArea: function() {},
+
     /**
      * On mouseover event handler for series area
      * @param {MouseEvent} e mouse event
@@ -320,6 +329,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
     },
 
+    onMousemove: function() {},
     /**
      * On mouseout event handler for series area
      * @param {MouseEvent} e mouse event
@@ -348,6 +358,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     attachEvent: function(el) {
         event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
+        event.bindEvent('mousemove', el, ne.util.bind(this.onMousemove, this));
         event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
     },
 

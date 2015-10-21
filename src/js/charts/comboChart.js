@@ -215,6 +215,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             if (chartOptions.tooltip && chartOptions.tooltip[chartType]) {
                 chartOptions.tooltip = chartOptions.tooltip[chartType];
             }
+            chartOptions.parentChartType = chartOptions.chartType;
             chartOptions.chartType = chartType;
             result[chartType] = chartOptions;
         });

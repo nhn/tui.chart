@@ -190,7 +190,7 @@ describe('Series', function() {
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
             expect(elSeries.style.width).toBe('220px');
-            expect(elSeries.style.height).toBe('120px');
+            expect(elSeries.style.height).toBe('110px');
 
             if (renderUtil.isIE8()) {
                 expect(elSeries.style.top).toBe('48px');

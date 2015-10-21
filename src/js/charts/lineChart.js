@@ -56,7 +56,8 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             data: {
                 values: calculator.arrayPivot(convertedData.values),
                 formattedValues: calculator.arrayPivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale
+                scale: axesData.yAxis.scale,
+                xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
             }
         };
         this.addAxisComponents({

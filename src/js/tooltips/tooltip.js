@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
+    state = require('../helpers/state'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     event = require('../helpers/eventListener'),
@@ -78,6 +79,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         this.elLayout = el;
 
         this.attachEvent(el);
+
         return el;
     },
 

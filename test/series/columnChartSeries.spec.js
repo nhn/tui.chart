@@ -26,6 +26,9 @@ describe('ColumnChartSeries', function() {
                 formattedValues: [],
                 scale: {min: 0, max: 0}
             },
+            bound: {
+                dimension: {width: 200, height: 100}
+            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',

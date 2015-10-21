@@ -124,11 +124,11 @@ describe('Tooltip', function() {
     describe('_createTooltipElement()', function() {
         it('툴팁 엘리먼트를 생성합니다.', function() {
             var elLayout = dom.create('DIV'),
-                actual, expected;
+                actual;
             tooltip.elLayout = elLayout;
             actual = tooltip._createTooltipElement();
-            expected = '<div class="ne-chart-tooltip"></div>';
-            expect(actual.parentNode.innerHTML).toBe(expected);
+            expect(actual).toBeDefined();
+            expect(actual.className).toBe('ne-chart-tooltip');
         });
 
         it('기존에 레이아웃 엘리먼트에 자식이 존재할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
@@ -145,11 +145,11 @@ describe('Tooltip', function() {
     describe('_getTooltipElement', function() {
         it('툴팁 엘리먼트를 얻습니다.', function() {
             var elLayout = dom.create('DIV'),
-                actual, expected;
+                actual;
             tooltip.elLayout = elLayout;
             actual = tooltip._getTooltipElement();
-            expected = '<div class="ne-chart-tooltip"></div>';
-            expect(actual.parentNode.innerHTML).toBe(expected);
+            expect(actual).toBeDefined();
+            expect(actual.className).toBe('ne-chart-tooltip');
         });
 
         it('this.elTooltip이 존재하면 그대로 반환합니다.', function() {

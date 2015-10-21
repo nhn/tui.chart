@@ -201,7 +201,6 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
-
         this._hideDot(dot);
     },
 

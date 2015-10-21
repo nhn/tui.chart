@@ -26,6 +26,9 @@ describe('PieChartSeries', function() {
                 values: [],
                 formattedValues: []
             },
+            bound: {
+                dimension: {width: 200, height: 100}
+            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',

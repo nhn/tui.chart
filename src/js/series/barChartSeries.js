@@ -116,7 +116,6 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
      */
     _makeStackedBarChartBounds: function(dimension) {
         var groupValues, groupHeight, barHeight, bounds;
-
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;

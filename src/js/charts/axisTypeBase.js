@@ -52,6 +52,7 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
         this.addComponent('series', params.Series, ne.util.extend({
             libType: options.libType,
             chartType: options.chartType,
+            parentChartType: options.parentChartType,
             aligned: aligned
         }, params.seriesData));
 
