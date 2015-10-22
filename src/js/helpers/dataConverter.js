@@ -329,7 +329,7 @@ var dataConverter = {
     _formatComma: function(value) {
         var comma = ',',
             underPointValue = '',
-            values;
+            values, lastIndex;
 
         value += '';
 
@@ -344,9 +344,10 @@ var dataConverter = {
         }
 
         values = (value).split('').reverse();
+        lastIndex = values.length - 1;
         values = ne.util.map(values, function(char, index) {
             var result = [char];
-            if ((index + 1) % 3 === 0) {
+            if (index < lastIndex && (index + 1) % 3 === 0) {
                 result.push(comma);
             }
             return result;

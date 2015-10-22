@@ -108,7 +108,7 @@ var axisDataMaker = {
         }
 
         return {
-            labels: this._formatLabels(tickInfo.labels, formatFunctions),
+            labels: this.formatLabels(tickInfo.labels, formatFunctions),
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
@@ -597,9 +597,8 @@ var axisDataMaker = {
      * @param {string[]} labels target labels
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted labels
-     * @private
      */
-    _formatLabels: function(labels, formatFunctions) {
+    formatLabels: function(labels, formatFunctions) {
         var result;
         if (!formatFunctions || !formatFunctions.length) {
             return labels;

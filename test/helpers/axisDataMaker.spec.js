@@ -452,16 +452,16 @@ describe('axisDataMaker', function() {
     });
 
 
-    describe('_formatLabels()', function() {
+    describe('formatLabels()', function() {
         it('전달된 labels를 "1,000.00"타입으로 포맷팅하여 반환합니다.', function () {
             var fns = converter._findFormatFunctions('1,000.00'),
-                result = maker._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
-            expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
+                result = maker.formatLabels([1000, 2000.2222, 300000.555555, 4, 5.55], fns);
+            expect(result).toEqual(['1,000.00', '2,000.22', '300,000.56', '4.00', '5.55']);
         });
 
         it('전달된 labels를 "0001"타입으로 포맷팅하여 반환합니다.', function () {
             var fns = converter._findFormatFunctions('0001'),
-                result = maker._formatLabels([1, 2, 3], fns);
+                result = maker.formatLabels([1, 2, 3], fns);
             expect(result).toEqual(['0001', '0002', '0003']);
         });
     });

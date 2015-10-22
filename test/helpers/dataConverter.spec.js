@@ -91,6 +91,11 @@ describe('test dataConverter', function() {
             expect(result).toBe('1,000');
         });
 
+        it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function () {
+            var result = converter._formatComma(100000);
+            expect(result).toBe('100,000');
+        });
+
         it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function () {
             var result = converter._formatComma(1000000);
             expect(result).toBe('1,000,000');

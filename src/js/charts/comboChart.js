@@ -60,7 +60,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             userData: userData,
             baseData: baseData,
             baseAxesData: baseAxesData,
-            axesData: this._makeAxesData(baseAxesData, yAxisParams),
+            axesData: this._makeAxesData(baseAxesData, yAxisParams, convertedData.formatFunctions),
             seriesChartTypes: seriesChartTypes,
             optionsMap: optionsMap,
             themeMap: themeMap
@@ -148,7 +148,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(baseAxesData, yAxisParams) {
+    _makeAxesData: function(baseAxesData, yAxisParams, formatFunctions) {
         var yAxisData = baseAxesData.yAxis,
             chartTypes = yAxisParams.chartTypes,
             axesData = {},
@@ -161,9 +161,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 }
             }, yAxisParams));
             if (yAxisData.tickCount < yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData);
+                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData, formatFunctions);
             } else if (yAxisData.tickCount > yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData);
+                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData, formatFunctions);
             }
         }
 
@@ -261,11 +261,12 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * Increase y axis tick count.
      * @param {number} increaseTickCount increase tick count
      * @param {object} toData to tick info
+     * @param {array.<function>} formatFunctions format functions
      * @private
      */
-    _increaseYAxisTickCount: function(increaseTickCount, toData) {
+    _increaseYAxisTickCount: function(increaseTickCount, toData, formatFunctions) {
         toData.scale.max += toData.step * increaseTickCount;
-        toData.labels = calculator.makeLabelsFromScale(toData.scale, toData.step);
+        toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromScale(toData.scale, toData.step), formatFunctions);
         toData.tickCount += increaseTickCount;
         toData.validTickCount += increaseTickCount;
     },
