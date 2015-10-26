@@ -30,7 +30,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.position) {
-            options.tooltip.position = 'center middle';
+            options.tooltip.position = 'center top';
         }
 
         ChartBase.call(this, {
@@ -64,7 +64,8 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             values: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
-            chartId: this.chartId
+            chartId: this.chartId,
+            seriesPosition: bounds.series.position
         });
 
         this.addComponent('series', Series, {

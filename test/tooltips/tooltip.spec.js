@@ -137,12 +137,44 @@ describe('Tooltip', function() {
 
     describe('_calculateTooltipPositionAboutNotBarChart()', function() {
         it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculateTooltipPositionAboutNotBarChart({
-                bound: {
-                    width: 25,
-                    height: 50,
-                    top: 50,
-                    left: 10
+            var actual = tooltip._calculateTooltipPositionAboutNotBarChart({
+                    bound: {
+                        width: 25,
+                        height: 50,
+                        top: 50,
+                        left: 10
+                    },
+                    dimension: {
+                        width: 50,
+                        height: 30
+                    },
+                    positionOption: '',
+                    addPosition: {
+                        left: 0,
+                        top: 0
+                    }
+                }),
+                expected = {
+                    left: 10,
+                    top: 15
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calculateTooltipPositionAboutPieChart()', function() {
+        it('PIE 차트인 경우에는 마우스 이동 포지션 기준으로 계산하여 반환합니다.', function () {
+            var actual, expected;
+            tooltip.seriesPosition = {
+                left: 10,
+                top: 0
+            };
+            actual = tooltip._calculateTooltipPositionAboutPieChart({
+                bound: {},
+                eventPosition: {
+                    clientX: 50,
+                    clientY: 50
                 },
                 dimension: {
                     width: 50,
@@ -154,39 +186,41 @@ describe('Tooltip', function() {
                     top: 0
                 }
             });
-
-            expect(result).toEqual({
-                left: 10,
+            expected = {
+                left: 45,
                 top: 15
-            });
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('_calculateTooltipPositionAboutBarChart()', function() {
         it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculateTooltipPositionAboutBarChart({
-                bound: {
-                    width: 50,
-                    height: 25,
-                    top: 10,
-                    left: 0
-                },
-                id: 'id-0-0',
-                dimension: {
-                    width: 50,
-                    height: 30
-                },
-                positionOption: '',
-                addPosition: {
-                    left: 0,
-                    top: 0
-                }
-            });
+            var acutal = tooltip._calculateTooltipPositionAboutBarChart({
+                    bound: {
+                        width: 50,
+                        height: 25,
+                        top: 10,
+                        left: 0
+                    },
+                    id: 'id-0-0',
+                    dimension: {
+                        width: 50,
+                        height: 30
+                    },
+                    positionOption: '',
+                    addPosition: {
+                        left: 0,
+                        top: 0
+                    }
+                }),
+                expected = {
+                    left: 55,
+                    top: 10
+                };
 
-            expect(result).toEqual({
-                left: 55,
-                top: 10
-            });
+            expect(acutal).toEqual(expected);
         });
     });
 

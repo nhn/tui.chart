@@ -144,9 +144,8 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @private
      */
     _bindHoverEvent: function(dot, position, groupIndex, index, inCallback, outCallback) {
-        var that = this;
         dot.hover(function() {
-            inCallback(position, index, groupIndex, that._makeGraphBound(position));
+            inCallback(position, index, groupIndex);
         }, function() {
             outCallback();
         });
@@ -201,7 +200,9 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
-        this._hideDot(dot);
+        if (dot) {
+            this._hideDot(dot);
+        }
     },
 
     /**

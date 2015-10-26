@@ -62,13 +62,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} groupIndex group index
      * @param {number} index index
      */
-    showTooltip: function(params, bound, groupIndex, index) {
+    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
         this.fire('showTooltip', ne.util.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
             },
-            bound: bound
+            bound: bound,
+            eventPosition: eventPosition
         }, params));
     },
 

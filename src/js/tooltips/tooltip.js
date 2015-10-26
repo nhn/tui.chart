@@ -100,13 +100,16 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
      * @private
      */
     _getIndexesCustomAttribute: function(elTooltip) {
-        var groupIndex = parseInt(elTooltip.getAttribute('data-groupIndex'), 10),
-            index = parseInt(elTooltip.getAttribute('data-index'), 10);
-
-        return {
-            groupIndex: groupIndex,
-            index: index
-        };
+        var groupIndex = elTooltip.getAttribute('data-groupIndex'),
+            index = elTooltip.getAttribute('data-index'),
+            indexes;
+        if (groupIndex && index) {
+            indexes = {
+                groupIndex: parseInt(groupIndex, 10),
+                index: parseInt(index, 10)
+            };
+        }
+        return indexes;
     },
 
     /**
@@ -141,13 +144,39 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
             elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
+
         if (elTarget.id !== this._getTooltipId()) {
             return;
         }
 
-        this._setShowedCustomAttribute(elTarget, true);
         indexes = this._getIndexesCustomAttribute(elTarget);
+
+        this._setShowedCustomAttribute(elTarget, true);
+
         this._fireShowAnimation(indexes);
+    },
+
+    onMousemove: function(e) {
+        var elTarget = e.target || e.srcElement,
+            indexes;
+
+        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
+            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
+        }
+
+        if (elTarget.id !== this._getTooltipId()) {
+            return;
+        }
+
+        indexes = this._getIndexesCustomAttribute(elTarget);
+        this.onShow({
+            indexes: indexes,
+            bound: {},
+            eventPosition: {
+                clientX: e.clientX,
+                clientY: e.clientY
+            }
+        });
     },
 
     /**
@@ -170,7 +199,21 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Calculate tooltip position about not bar chart.
+     * To calculate tooltip position abount pie chart.
+     * @param {object} params parameters
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {{clientX: number, clientY: number}} params.eventPosition mouse position
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _calculateTooltipPositionAboutPieChart: function(params) {
+        params.bound.left = params.eventPosition.clientX - this.seriesPosition.left;
+        params.bound.top = params.eventPosition.clientY - this.seriesPosition.top;
+        return this._calculateTooltipPositionAboutNotBarChart(params);
+    },
+
+    /**
+     * To calculate tooltip position about not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -204,12 +247,11 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         } else {
             result.top -= chartConst.TOOLTIP_GAP;
         }
-
         return result;
     },
 
     /**
-     * Calculate tooltip position about bar chart.
+     * To calculate tooltip position about bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -260,6 +302,11 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     _calculateTooltipPosition: function(params) {
         var result = {},
             sizeType, positionType, addPadding;
+
+        if (params.eventPosition) {
+            return this._calculateTooltipPositionAboutPieChart(params);
+        }
+
         if (params.chartType === chartConst.CHART_TYPE_BAR) {
             result = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
@@ -347,6 +394,10 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         return this.tplTooltip(data);
     },
 
+    _isChangedIndexes: function(prevIndexes, indexes) {
+        return !!prevIndexes && (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
+    },
+
     /**
      * Show tooltip.
      * @param {HTMLElement} elTooltip tooltip element
@@ -355,7 +406,12 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
      */
     showTooltip: function(elTooltip, params, prevPosition) {
         var indexes = params.indexes,
+            curIndexes = this._getIndexesCustomAttribute(elTooltip),
             position;
+
+        if (elTooltip.id === this._getTooltipId() && this._isChangedIndexes(curIndexes, indexes)) {
+            this._fireHideAnimation(curIndexes);
+        }
 
         elTooltip.id = this._getTooltipId();
         elTooltip.innerHTML = this._makeTooltipHtml(indexes);
@@ -371,7 +427,8 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
                 left: 0,
                 top: 0
             }, this.options.addPosition),
-            positionOption: this.options.position || ''
+            positionOption: this.options.position || '',
+            eventPosition: params.eventPosition
         }, params));
 
         this.moveToPosition(elTooltip, position, prevPosition);
@@ -389,9 +446,10 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         this._setShowedCustomAttribute(elTooltip, false);
         this._fireHideAnimation(indexes);
 
-        if (this.prevIndexes === indexes) {
+        if (this._isChangedIndexes(this.prevIndexes, indexes)) {
             delete this.prevIndexes;
         }
+
         setTimeout(function() {
             if (that._isShowedTooltip(elTooltip)) {
                 return;
@@ -410,6 +468,10 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     attachEvent: function(el) {
         event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
         event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+
+        if (this.chartType === chartConst.CHART_TYPE_PIE) {
+            event.bindEvent('mousemove', el, ne.util.bind(this.onMousemove, this));
+        }
     }
 });
 
