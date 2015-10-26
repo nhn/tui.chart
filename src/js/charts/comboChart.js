@@ -10,6 +10,7 @@ var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     defaultTheme = require('../themes/defaultTheme'),
+    GroupTooltip = require('../tooltips/groupTooltip'),
     ColumnChart = require('./columnChart'),
     LineChart = require('./lineChart');
 
@@ -29,6 +30,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
                 hasAxes: true,
+                seriesChartTypes: seriesChartTypes,
                 optionChartTypes: optionChartTypes
             }),
             convertedData = baseData.convertedData,
@@ -44,16 +46,29 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             },
             baseAxesData = {};
 
-        this.className = 'ne-combo-chart';
-
-        ChartBase.call(this, bounds, theme, options);
-
         baseAxesData.yAxis = this._makeYAxisData(ne.util.extend({
             index: 0
         }, yAxisParams));
 
         baseAxesData.xAxis = axisDataMaker.makeLabelAxisData({
             labels: convertedData.labels
+        });
+
+        this.className = 'ne-combo-chart';
+
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: baseAxesData,
+            theme: theme,
+            options: options,
+            isVertical: true
+        });
+
+        this.addComponent('tooltip', GroupTooltip, {
+            labels: convertedData.labels,
+            joinFormattedValues: convertedData.joinFormattedValues,
+            joinLegendLabels: convertedData.joinLegendLabels,
+            chartId: this.chartId
         });
 
         this._installCharts({

@@ -674,7 +674,7 @@ var boundsMaker = {
             dimensions = this._getComponentsDimensions(ne.util.extend({
                 axesLabelInfo: axesLabelInfo
             }, params)),
-            rotationInfo, top, left, axesBounds, bounds;
+            rotationInfo, top, left, seriesBound, axesBounds, bounds;
 
         this.chartLeftPadding = chartConst.CHART_PADDING;
         if (params.hasAxes) {
@@ -684,6 +684,8 @@ var boundsMaker = {
 
         top = dimensions.title.height + chartConst.CHART_PADDING;
         left = dimensions.yAxis.width + this.chartLeftPadding;
+        seriesBound = this._makeBasicBound(dimensions.series, top, left);
+
         axesBounds = this._makeAxesBounds({
             hasAxes: params.hasAxes,
             rotationInfo: rotationInfo,
@@ -694,9 +696,10 @@ var boundsMaker = {
         });
         bounds = ne.util.extend({
             chart: this._makeChartBound(dimensions.chart),
-            series: this._makeBasicBound(dimensions.series, top, left),
+            series: seriesBound,
             legend: this._makeLegendBound(dimensions),
-            tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE)
+            tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
+            eventor: seriesBound
         }, axesBounds);
         return bounds;
     }

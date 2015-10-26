@@ -131,9 +131,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        if (this.renderCoordinateEvent) {
-            this.renderCoordinateEvent(el);
-        } else {
+        if (!this.isSubChart && !this.isGroupedTooltip) {
             this.attachEvent(el);
         }
 
@@ -400,9 +398,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
-     * @private
      */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+    makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = ne.util.extend(position, this.theme.label);
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),

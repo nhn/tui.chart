@@ -15,10 +15,25 @@ var tags = {
             '&nbsp;<span>{{ value }}</span>' +
             '<span>{{ suffix }}</span>' +
         '</div>' +
-    '</div>'
+    '</div>',
+    HTML_GROUP: '<div class="ne-chart-default-tooltip ne-chart-group-tooltip">' +
+        '<div>{{ category }}</div>' +
+        '{{ items }}' +
+    '</div>',
+    HTML_GROUP_ITEM: '<div>' +
+        '<div class="ne-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>&nbsp;<span>{{ legend }}</span>:' +
+        '&nbsp;<span>{{ value }}</span>' +
+        '<span>{{ suffix }}</span>' +
+    '</div>',
+    GROUP_CSS_TEXT: 'background-color:{{ color }}',
+    HTML_GROUP_HOVER: '<div class="ne-chart-group-tooltip-hover"></div>'
 };
 
 module.exports = {
     tplTooltip: templateMaker.template(tags.HTML_TOOLTIP),
-    tplDefaultTemplate: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE)
+    tplDefault: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE),
+    tplGroup: templateMaker.template(tags.HTML_GROUP),
+    tplGroupItem: templateMaker.template(tags.HTML_GROUP_ITEM),
+    tplGroupCssText: templateMaker.template(tags.GROUP_CSS_TEXT),
+    HTML_GROUP_HOVER: tags.HTML_GROUP_HOVER
 };

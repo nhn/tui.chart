@@ -206,7 +206,7 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
             top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2),
             left = bound.left + bound.width + chartConst.SERIES_LABEL_PADDING;
 
-        return this._makeSeriesLabelHtml({
+        return this.makeSeriesLabelHtml({
             left: left,
             top: top
         }, sum, -1, -1);

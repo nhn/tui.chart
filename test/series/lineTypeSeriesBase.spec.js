@@ -11,16 +11,18 @@ var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series;
+    var series, makeSeriesLabelHtml;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+        makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {
         series = new LineTypeSeriesBase();
+        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
     });
 
     describe('_makePositions()', function() {
@@ -77,17 +79,17 @@ describe('LineTypeSeriesBase', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('라인차트에서 series label을 렌더링 하면 label은 dot위치 상단에 중앙(상하,좌우)정렬하여 위치하게 됩니다.', function() {
+        it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
             var container = dom.create('div'),
-                children;
-
+                elLabelArea;
             series.options = {
                 showLabel: true
             };
             series.theme = {
                 label: {}
             };
-            series._renderSeriesLabel({
+
+            elLabelArea = series._renderSeriesLabel({
                 container: container,
                 groupPositions: [
                     [
@@ -109,14 +111,8 @@ describe('LineTypeSeriesBase', function() {
                     ['1.5', '2.2']
                 ]
             });
-            children = container.firstChild.childNodes;
-            expect(children[0].style.left).toBe('25px');
-            expect(children[0].style.top).toBe('25px');
-            expect(children[0].innerHTML).toBe('1.5');
 
-            expect(children[1].style.left).toBe('125px');
-            expect(children[1].style.top).toBe('45px');
-            expect(children[1].innerHTML).toBe('2.2');
+            expect(elLabelArea.childNodes.length).toBe(2);
         });
     });
 });

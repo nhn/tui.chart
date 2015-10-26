@@ -232,7 +232,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
                     options: params.options
                 }),
                 position = params.moveToPosition(positions[index], label);
-            return this._makeSeriesLabelHtml(position, label, 0, index);
+            return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;

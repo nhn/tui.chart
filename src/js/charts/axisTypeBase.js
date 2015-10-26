@@ -9,7 +9,8 @@
 var Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
-    Tooltip = require('../tooltips/tooltip');
+    Tooltip = require('../tooltips/tooltip'),
+    GroupTooltip = require('../tooltips/groupTooltip');
 
 /**
  * @classdesc AxisTypeBase is base class of axis type chart(bar, column, line, area).
@@ -53,16 +54,28 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
             libType: options.libType,
             chartType: options.chartType,
             parentChartType: options.parentChartType,
-            aligned: aligned
+            aligned: aligned,
+            isSubChart: this.isSubChart,
+            isGroupedTooltip: this.isGroupedTooltip
         }, params.seriesData));
 
-        this.addComponent('tooltip', Tooltip, {
-            values: convertedData.values,
-            formattedValues: convertedData.formattedValues,
-            labels: convertedData.labels,
-            legendLabels: convertedData.legendLabels,
-            chartId: this.chartId
-        });
+        if (this.isGroupedTooltip) {
+            this.addComponent('tooltip', GroupTooltip, {
+                labels: convertedData.labels,
+                joinFormattedValues: convertedData.joinFormattedValues,
+                joinLegendLabels: convertedData.joinLegendLabels,
+                chartId: this.chartId
+            });
+        } else {
+            this.addComponent('tooltip', Tooltip, {
+                values: convertedData.values,
+                formattedValues: convertedData.formattedValues,
+                labels: convertedData.labels,
+                legendLabels: convertedData.legendLabels,
+                chartId: this.chartId
+            });
+        }
+
     },
 
     /**

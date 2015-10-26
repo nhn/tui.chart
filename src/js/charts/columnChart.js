@@ -30,14 +30,21 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
             }),
             convertedData = baseData.convertedData,
             bounds = baseData.bounds,
-            axisData;
+            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
 
         this.className = 'ne-column-chart';
 
-        ChartBase.call(this, bounds, theme, options, initedData);
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: axesData,
+            theme: theme,
+            options: options,
+            isVertical: true,
+            initedData: initedData
+        });
 
-        axisData = this._makeAxesData(convertedData, bounds, options, initedData);
-        this._addComponents(convertedData, axisData, options);
+
+        this._addComponents(convertedData, axesData, options);
     },
 
     /**

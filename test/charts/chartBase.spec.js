@@ -14,13 +14,17 @@ describe('ChartBase', function() {
     var chartBase;
 
     beforeEach(function() {
-        chartBase = new ChartBase({}, {
-            title: {
-                fontSize: 14
-            }
-        }, {
-            chart: {
-                title: 'Chart Title'
+        chartBase = new ChartBase({
+            bounds: {},
+            theme: {
+                title: {
+                    fontSize: 14
+                }
+            },
+            options: {
+                chart: {
+                    title: 'Chart Title'
+                }
             }
         });
     });

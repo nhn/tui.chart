@@ -113,7 +113,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
                     formattedValue: formattedValue,
                     labelHeight: labelHeight
                 });
-                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
+                return this.makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
             }, this).join('');
         }, this).join('');
 
@@ -168,7 +168,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
             labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
             top = bound.top + ((bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2);
-            labelHtml = this._makeSeriesLabelHtml({
+            labelHtml = this.makeSeriesLabelHtml({
                 left: left,
                 top: top
             }, formattedValue, params.groupIndex, index);

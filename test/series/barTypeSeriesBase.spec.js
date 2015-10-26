@@ -21,7 +21,7 @@ describe('BarTypeSeriesBase', function() {
             left: 0,
             top: 0
         });
-        makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');
+        makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
         makeSumLabelHtml = jasmine.createSpy('makeSumLabelHtml').and.returnValue('<div></div>');
     });
 
@@ -35,7 +35,7 @@ describe('BarTypeSeriesBase', function() {
         };
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
         series.makeSumLabelHtml = makeSumLabelHtml;
-        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
     });
 
     describe('makeBarGutter()', function() {

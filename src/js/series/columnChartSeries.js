@@ -225,7 +225,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
             top = bound.top - params.labelHeight - chartConst.SERIES_LABEL_PADDING;
 
-        return this._makeSeriesLabelHtml({
+        return this.makeSeriesLabelHtml({
             left: left,
             top: top
         }, sum, -1, -1);

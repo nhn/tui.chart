@@ -7,8 +7,7 @@
 'use strict';
 
 var Series = require('./series'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase'),
-    LineTypeCoordinateEventMixer = require('./lineTypeCoordinateEventMixer');
+    LineTypeSeriesBase = require('./lineTypeSeriesBase');
 
 var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
     /**
@@ -24,10 +23,10 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.pro
     init: function() {
         Series.apply(this, arguments);
 
-        if (!this.parentChartType) {
-            LineTypeCoordinateEventMixer.mixin(this);
-            this.initCoordinateEvent();
-        }
+        //if (!this.parentChartType) {
+        //    LineTypeCoordinateEventMixer.mixin(this);
+        //    this.initCoordinateEvent();
+        //}
     },
 
     /**

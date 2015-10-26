@@ -33,7 +33,11 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             options.tooltip.position = 'center middle';
         }
 
-        ChartBase.call(this, bounds, theme, options);
+        ChartBase.call(this, {
+            bounds: bounds,
+            theme: theme,
+            options: options
+        });
 
         this._addComponents(convertedData, theme.chart.background, bounds, options);
     },

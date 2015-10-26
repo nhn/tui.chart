@@ -6,9 +6,9 @@
 
 'use strict';
 
-var LineTypeCoordinateEventMixer = require('../../src/js/series/lineTypeCoordinateEventMixer');
+//var LineTypeCoordinateEventMixer = require('../../src/js/series/lineTypeCoordinateEventMixer');
 
-describe('LineTypeSeriesBase', function() {
+xdescribe('LineTypeSeriesBase', function() {
     var series;
 
     beforeEach(function() {

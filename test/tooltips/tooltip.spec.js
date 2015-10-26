@@ -11,17 +11,7 @@ var Tooltip = require('../../src/js/tooltips/tooltip'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('Tooltip', function() {
-    var bound = {
-            dimension: {
-                width: 100,
-                height: 200
-            },
-            position: {
-                top: 20,
-                left: 50
-            }
-        },
-        tooltip;
+    var tooltip;
 
     beforeEach(function() {
         tooltip = new Tooltip({
@@ -29,18 +19,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_getTooltipLayoutElement()', function() {
-        it('tooltip 레이아웃 엘리먼트를 생성합니다.', function() {
-            var actual;
-            tooltip.chartId = 'tui-chart-id';
-            actual = tooltip._getTooltipLayoutElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip-area');
-            expect(actual.id).toBe('tui-chart-id');
-        });
-    });
-
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
             var actual, expected;
             tooltip.labels = [
@@ -52,7 +31,7 @@ describe('Tooltip', function() {
             ];
             tooltip.legendLabels = ['Density1', 'Density2'];
 
-            actual = tooltip._makeTooltipData();
+            actual = tooltip.makeTooltipData();
             expected = [[
                 {category: 'Silver', value: 10, legend: 'Density1'},
                 {category: 'Silver', value: 20, legend: 'Density2'}
@@ -117,47 +96,6 @@ describe('Tooltip', function() {
                 index: 2
             });
             expected = 3;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_createTooltipElement()', function() {
-        it('툴팁 엘리먼트를 생성합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual;
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip');
-        });
-
-        it('기존에 레이아웃 엘리먼트에 자식이 존재할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual, expected;
-            elLayout.innerHTML = '<div class="ne-chart-tooltip"></div>';
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipElement();
-            expected = elLayout.firstChild;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_getTooltipElement', function() {
-        it('툴팁 엘리먼트를 얻습니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual;
-            tooltip.elLayout = elLayout;
-            actual = tooltip._getTooltipElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip');
-        });
-
-        it('this.elTooltip이 존재하면 그대로 반환합니다.', function() {
-            var elTooltip = dom.create('DIV'),
-                actual, expected;
-            tooltip.elTooltip = elTooltip;
-            actual = tooltip._getTooltipElement();
-            expected = elTooltip;
             expect(actual).toBe(expected);
         });
     });

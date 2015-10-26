@@ -173,9 +173,9 @@ describe('Series', function() {
         });
     });
 
-    describe('_makeSeriesLabelHtml()', function() {
+    describe('makeSeriesLabelHtml()', function() {
         it('position, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
-            var result = series._makeSeriesLabelHtml({
+            var result = series.makeSeriesLabelHtml({
                 left: 10,
                 top: 10
             }, 'label1', 0, 0);

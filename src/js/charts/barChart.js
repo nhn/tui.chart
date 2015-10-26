@@ -27,14 +27,18 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
             }),
             convertedData = baseData.convertedData,
             bounds = baseData.bounds,
-            axisData;
+            axesData = this._makeAxesData(convertedData, bounds, options);
 
         this.className = 'ne-bar-chart';
 
-        ChartBase.call(this, bounds, theme, options);
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: axesData,
+            theme: theme,
+            options: options
+        });
 
-        axisData = this._makeAxesData(convertedData, bounds, options);
-        this._addComponents(convertedData, axisData, options);
+        this._addComponents(convertedData, axesData, options);
     },
 
     /**

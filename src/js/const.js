@@ -115,6 +115,9 @@ module.exports = {
     LINE_MARGIN_TOP: 5,
     /** tooltip gap */
     TOOLTIP_GAP: 5,
+    /** tooltip direction */
+    TOOLTIP_DIRECTION_FORWORD: 'forword',
+    TOOLTIP_DIRECTION_BACKWORD: 'backword',
     /** hide delay */
     HIDE_DELAY: 200
 };
