@@ -224,24 +224,24 @@ module.exports = {
                 theme.xAxis.label,
                 theme.legend.label
             ],
-            yAxisChartTypes = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
-            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+            yAxisChartTypeThems = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
+            seriesChartTypeThemes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
-        if (!ne.util.keys(yAxisChartTypes).length) {
+        if (!ne.util.keys(yAxisChartTypeThems).length) {
             items.push(theme.yAxis.title);
             items.push(theme.yAxis.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(chatType) {
-                items.push(chatType.title);
-                items.push(chatType.label);
+            ne.util.forEach(yAxisChartTypeThems, function(chatTypeTheme) {
+                items.push(chatTypeTheme.title);
+                items.push(chatTypeTheme.label);
             });
         }
 
-        if (!ne.util.keys(seriesChartTypes).length) {
+        if (!ne.util.keys(seriesChartTypeThemes).length) {
             items.push(theme.series.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(chatType) {
-                items.push(chatType.label);
+            ne.util.forEach(seriesChartTypeThemes, function(chatTypeTheme) {
+                items.push(chatTypeTheme.label);
             });
         }
         return items;

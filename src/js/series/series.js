@@ -132,7 +132,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        if (!this.isSubChart && !this.isGroupedTooltip) {
+        if (!this.isGroupedTooltip) {
             this.attachEvent(el);
         }
 

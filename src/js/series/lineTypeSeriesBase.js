@@ -62,7 +62,6 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
         if (!this.options.showLabel) {
             return null;
         }
-
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
         elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area');
