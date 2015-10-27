@@ -32,10 +32,11 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         this.bounds = params.bounds;
         this.theme = params.theme;
         this.options = params.options;
+        this.isSubChart = !!params.initedData;
         this.hasAxes = !!params.axesData;
         this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
 
-        if (this.isGroupedTooltip && params.axesData && !this.isSubChart) {
+        if (this.isGroupedTooltip && this.hasAxes && !this.isSubChart) {
             if (params.isVertical) {
                 tickCount = params.axesData.xAxis && params.axesData.xAxis.tickCount || -1;
             } else {

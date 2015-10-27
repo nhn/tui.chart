@@ -7,8 +7,8 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    AxisTypeBase = require('./axisTypeBase'),
-    VerticalTypeBase = require('./verticalTypeBase'),
+    axisTypeMixer = require('./axisTypeMixer'),
+    verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/columnChartSeries');
 
 var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -16,8 +16,8 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
      * Column chart.
      * @constructs ColumnChart
      * @extends ChartBase
-     * @mixes AxisTypeBase
-     * @mixes VerticalTypeBase
+     * @mixes axisTypeMixer
+     * @mixes verticalTypeMixer
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
@@ -32,6 +32,10 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
             bounds = baseData.bounds,
             axesData = this._makeAxesData(convertedData, bounds, options, initedData);
 
+        /**
+         * className
+         * @type {string}
+         */
         this.className = 'ne-column-chart';
 
         ChartBase.call(this, {
@@ -42,7 +46,6 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
             isVertical: true,
             initedData: initedData
         });
-
 
         this._addComponents(convertedData, axesData, options);
     },
@@ -78,7 +81,7 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
     }
 });
 
-AxisTypeBase.mixin(ColumnChart);
-VerticalTypeBase.mixin(ColumnChart);
+axisTypeMixer.mixin(ColumnChart);
+verticalTypeMixer.mixin(ColumnChart);
 
 module.exports = ColumnChart;

@@ -7,7 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    AxisTypeBase = require('./axisTypeBase'),
+    axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
@@ -16,7 +16,7 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
      * Bar chart.
      * @constructs BarChart
      * @extends ChartBase
-     * @mixes AxisTypeBase
+     * @mixes axisTypeMixer
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
@@ -29,6 +29,10 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
             bounds = baseData.bounds,
             axesData = this._makeAxesData(convertedData, bounds, options);
 
+        /**
+         * className
+         * @type {string}
+         */
         this.className = 'ne-bar-chart';
 
         ChartBase.call(this, {
@@ -98,6 +102,6 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     }
 });
 
-AxisTypeBase.mixin(BarChart);
+axisTypeMixer.mixin(BarChart);
 
 module.exports = BarChart;

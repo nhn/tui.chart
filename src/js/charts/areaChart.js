@@ -7,71 +7,39 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    AxisTypeBase = require('./axisTypeBase'),
-    VerticalTypeBase = require('./verticalTypeBase'),
-    calculator = require('../helpers/calculator'),
+    LineTypeMixer = require('./lineTypeMixer'),
+    axisTypeMixer = require('./axisTypeMixer'),
+    verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/areaChartSeries');
 
-var AreaChart = ne.util.defineClass(ChartBase, /** @lends AreaChart.prototype */ {
+var AreaChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
-     * Line chart.
+     * className
+     * @type {string}
+     */
+    className: 'ne-area-chart',
+
+    /**
+     * Series class
+     * @type {function}
+     */
+    Series: Series,
+
+    /**
+     * Area chart.
      * @constructs AreaChart
      * @extends ChartBase
-     * @mixes AxisTypeBase
-     * @mixes VerticalTypeBase
-     * @param {array.<array>} userData chart data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
+     * @mixes axisTypeMixer
+     * @mixes VerticalTypeMixer
+     * @mixes lineTypeMixer
      */
-    init: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axisData;
-
-        this.className = 'ne-line-area';
-
-        ChartBase.call(this, bounds, theme, options, initedData);
-
-        axisData = this._makeAxesData(convertedData, bounds, options, initedData);
-        this._addComponents(convertedData, axisData, options);
-    },
-
-    /**
-     * Add components
-     * @param {object} convertedData converted data
-     * @param {object} axesData axes data
-     * @param {object} options chart options
-     * @private
-     */
-    _addComponents: function(convertedData, axesData, options) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
-            allowNegativeTooltip: true,
-            data: {
-                values: calculator.arrayPivot(convertedData.values),
-                formattedValues: calculator.arrayPivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale
-            }
-        };
-        this.addAxisComponents({
-            convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
-            chartType: options.chartType,
-            Series: Series,
-            seriesData: seriesData
-        });
+    init: function() {
+        this.lineTypeInit.apply(this, arguments);
     }
 });
 
-AxisTypeBase.mixin(AreaChart);
-VerticalTypeBase.mixin(AreaChart);
+LineTypeMixer.mixin(AreaChart);
+axisTypeMixer.mixin(AreaChart);
+verticalTypeMixer.mixin(AreaChart);
 
 module.exports = AreaChart;
