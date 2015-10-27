@@ -42,7 +42,7 @@ var lineTypeMixer = {
         });
 
         if (!this.isSubChart && !this.isGroupedTooltip) {
-            this.addComponent('eventor', LineTypeEventHandleLayer, {
+            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer, {
                 tickCount: axesData.xAxis ? axesData.xAxis.tickCount : -1
             });
         }
