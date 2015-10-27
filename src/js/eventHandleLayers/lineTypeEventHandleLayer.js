@@ -1,21 +1,21 @@
 /**
- * @fileoverview LineTypeCoordinateEventor is coordinate event controller for line type chart.
+ * @fileoverview LineTypeEventHandleLayer is event handle layer for line type chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CoordinateEventorBase = require('./coordinateEventorBase');
+var EventHandleLayerBase = require('./eventHandleLayerBase');
 
-var LineTypeCoordinateEventor = ne.util.defineClass(CoordinateEventorBase, /** @lends LineTypeCoordinateEventor.prototype */ {
+var LineTypeEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @lends LineTypeEventHandleLayer.prototype */ {
     /**
-     * LineTypeCoordinateEventor is coordinate event controller for line type chart.
-     * @constructs LineTypeCoordinateEventor
-     * @extends LineTypeCoordinateEventor
+     * LineTypeEventHandleLayer is event handle layer for line type chart.
+     * @constructs LineTypeEventHandleLayer
+     * @extends LineTypeEventHandleLayer
      */
     init: function() {
-        CoordinateEventorBase.apply(this, arguments);
+        EventHandleLayerBase.apply(this, arguments);
     },
 
     /**
@@ -51,6 +51,6 @@ var LineTypeCoordinateEventor = ne.util.defineClass(CoordinateEventorBase, /** @
     }
 });
 
-ne.util.CustomEvents.mixin(LineTypeCoordinateEventor);
+ne.util.CustomEvents.mixin(LineTypeEventHandleLayer);
 
-module.exports = LineTypeCoordinateEventor;
+module.exports = LineTypeEventHandleLayer;

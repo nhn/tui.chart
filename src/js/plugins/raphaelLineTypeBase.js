@@ -124,15 +124,6 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         };
     },
 
-    _makeGraphBound: function(position) {
-        return {
-            width: 6,
-            height: 6,
-            left: position.left - 3,
-            top: position.top - 3
-        };
-    },
-
     /**
      * Bind hover event.
      * @param {object} dot raphael obejct
@@ -168,6 +159,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         }, this);
     },
 
+    /**
+     * Show dot.
+     * @param {object} dot raphael object
+     * @private
+     */
     _showDot: function(dot) {
         dot.attr({
             'fill-opacity': 1,
@@ -188,6 +184,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         this._showDot(dot);
     },
 
+    /**
+     * Hide dot.
+     * @param {object} dot raphael object
+     * @private
+     */
     _hideDot: function(dot) {
         dot.attr(this.outDotStyle);
     },

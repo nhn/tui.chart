@@ -11,7 +11,7 @@ var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
-    GroupedCoordinateEventor = require('../eventors/groupedCoordinateEventor');
+    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer');
 
 var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -20,11 +20,12 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} params parameters
      *      @param {object} params.bounds chart bounds
      *      @param {object} params.theme chart theme
+     *      @param {{yAxis: obejct, xAxis: object}} axesData axes data
      *      @param {object} params.options chart options
+     *      @param {boolean} param.isVertical whether vertical or not
      *      @param {object} params.initedData initialized data from combo chart
      */
     init: function(params) {
-        var tickCount;
         this.chartId = params.initedData && params.initedData.chartId || chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
         this.isSubChart = !!params.initedData;
         this.components = [];
@@ -36,18 +37,34 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         this.hasAxes = !!params.axesData;
         this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
 
-        if (this.isGroupedTooltip && this.hasAxes && !this.isSubChart) {
-            if (params.isVertical) {
-                tickCount = params.axesData.xAxis && params.axesData.xAxis.tickCount || -1;
-            } else {
-                tickCount = params.axesData.yAxis && params.axesData.yAxis.tickCount || -1;
-            }
-            this.addComponent('eventor', GroupedCoordinateEventor, {
-                tickCount: tickCount,
-                chartType: params.options.chartType,
-                isVertical: params.isVertical
-            });
+        this._addGroupedEventHandleLayer(params.axesData, params.options.chartType, params.isVertical);
+    },
+
+    /**
+     * Add grouped event handler layer.
+     * @param {{yAxis: obejct, xAxis: object}} axesData axes data
+     * @param {string} chartType chart type
+     * @param {boolean} isVertical whether vertical or not
+     * @private
+     */
+    _addGroupedEventHandleLayer: function(axesData, chartType, isVertical) {
+        var tickCount;
+
+        if (!this.hasAxes || !this.isGroupedTooltip || this.isSubChart) {
+            return;
         }
+
+        if (isVertical) {
+            tickCount = axesData.xAxis ? axesData.xAxis.tickCount : -1;
+        } else {
+            tickCount = axesData.yAxis ? axesData.yAxis.tickCount : -1;
+        }
+
+        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
+            tickCount: tickCount,
+            chartType: chartType,
+            isVertical: isVertical
+        });
     },
 
     /**
@@ -99,6 +116,18 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Attach custom evnet.
+     * @private
+     */
+    _attachCustomEvent: function() {
+        if (this.hasAxes && this.isGroupedTooltip && !this.isSubChart) {
+            this._attachCoordinateEvent();
+        } else if (!this.hasAxes || !this.isGroupedTooltip) {
+            this._attachTooltipEvent();
+        }
+    },
+
+    /**
      * Render chart.
      * @param {HTMLElement} el chart element
      * @param {object} paper object for graph drawing
@@ -116,12 +145,8 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         this._renderComponents(el, this.components, paper);
+        this._attachCustomEvent();
 
-        if (this.hasAxes && this.isGroupedTooltip && !this.isSubChart) {
-            this._attachCoordinateEvent();
-        } else if (!this.hasAxes || !this.isGroupedTooltip) {
-            this._attachTooltipEvent();
-        }
         return el;
     },
 
@@ -191,10 +216,10 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _attachCoordinateEvent: function() {
-        var eventor = this.componentMap.eventor,
+        var eventHandleLayer = this.componentMap.eventHandleLayer,
             tooltip = this.componentMap.tooltip;
-        eventor.on('showGroupTooltip', tooltip.onShow, tooltip);
-        eventor.on('hideGroupTooltip', tooltip.onHide, tooltip);
+        eventHandleLayer.on('showGroupTooltip', tooltip.onShow, tooltip);
+        eventHandleLayer.on('hideGroupTooltip', tooltip.onHide, tooltip);
     },
 
     /**

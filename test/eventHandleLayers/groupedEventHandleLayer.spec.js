@@ -1,18 +1,18 @@
 /**
- * @fileoverview Test for GroupedCoordinateEventor.
+ * @fileoverview Test for GroupedEventHandleLayer.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var GroupedCoordinateEventor = require('../../src/js/eventors/groupedCoordinateEventor');
+var GroupedEventHandleLayer = require('../../src/js/eventHandleLayers/groupedEventHandleLayer');
 
-describe('GroupedCoordinateEventor', function() {
-    var eventor;
+describe('GroupedEventHandleLayer', function() {
+    var eventHandleLayer;
 
     beforeEach(function() {
-        eventor = new GroupedCoordinateEventor({
+        eventHandleLayer = new GroupedEventHandleLayer({
             bound: {
                 dimension: {
                     width: 300,
@@ -24,7 +24,7 @@ describe('GroupedCoordinateEventor', function() {
 
     describe('_makeNormalCoordinateData()', function() {
         it('라인 타입이 아닌 차트의 좌표기반 기본 data를 생성합니다.', function() {
-            var actual = eventor._makeNormalCoordinateData(200, 3),
+            var actual = eventHandleLayer._makeNormalCoordinateData(200, 3),
                 expected = [
                     {
                         min: 0,
@@ -45,8 +45,8 @@ describe('GroupedCoordinateEventor', function() {
                     height: 200
                 },
                 tickCount = 3,
-                actual = eventor.makeCoordinateData(dimension, tickCount, 'line'),
-                expected = eventor.makeLineTypeCoordinateData(dimension.height, tickCount);
+                actual = eventHandleLayer.makeCoordinateData(dimension, tickCount, 'line'),
+                expected = eventHandleLayer.makeLineTypeCoordinateData(dimension.height, tickCount);
             expect(actual).toEqual(expected);
         });
 
@@ -55,15 +55,15 @@ describe('GroupedCoordinateEventor', function() {
                     height: 200
                 },
                 tickCount = 3,
-                actual = eventor.makeCoordinateData(dimension, tickCount, 'column'),
-                expected = eventor._makeNormalCoordinateData(dimension.height, tickCount);
+                actual = eventHandleLayer.makeCoordinateData(dimension, tickCount, 'column'),
+                expected = eventHandleLayer._makeNormalCoordinateData(dimension.height, tickCount);
             expect(actual).toEqual(expected);
         });
     });
 
     describe('_makeRange()', function() {
         it('라인타입인 경우에는 입력 scale의 중간값을 툴팁 범위로 반환합니다.', function() {
-            var actual = eventor._makeRange({
+            var actual = eventHandleLayer._makeRange({
                     min: 0,
                     max: 100
                 }, 'line'),
@@ -75,7 +75,7 @@ describe('GroupedCoordinateEventor', function() {
         });
 
         it('라인타입이 아닌 경우에는 입력 scale을 그대로 반환합니다.', function() {
-            var actual = eventor._makeRange({
+            var actual = eventHandleLayer._makeRange({
                     min: 0,
                     max: 100
                 }),
@@ -89,7 +89,7 @@ describe('GroupedCoordinateEventor', function() {
 
     describe('_getLayerPositionValue()', function() {
         it('세로차트에서 마우스 이벤트 지점의 index를 찾기위한 상대 좌표는 clientX와 bound.left의 차입니다.', function() {
-            var actual = eventor._getLayerPositionValue({
+            var actual = eventHandleLayer._getLayerPositionValue({
                     clientX: 100
                 }, {
                     left: 50
@@ -99,7 +99,7 @@ describe('GroupedCoordinateEventor', function() {
         });
 
         it('가로차트에서 마우스 이벤트 지점의 index를 찾기위한 상대 좌표는 clientY와 bound.top의 차입니다', function() {
-            var actual = eventor._getLayerPositionValue({
+            var actual = eventHandleLayer._getLayerPositionValue({
                     clientY: 100
                 }, {
                     top: 50

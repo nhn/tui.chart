@@ -1,18 +1,18 @@
 /**
- * @fileoverview Test for CoordinateEventorBase.
+ * @fileoverview Test for EventHandleLayerBase.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CoordinateEventorBase = require('../../src/js/eventors/coordinateEventorBase');
+var EventHandleLayerBase = require('../../src/js/eventHandleLayers/eventHandleLayerBase');
 
-describe('CoordinateEventorBase', function() {
-    var eventor;
+describe('EventHandleLayerBase', function() {
+    var eventHandleLayer;
 
     beforeEach(function() {
-        eventor = new CoordinateEventorBase({
+        eventHandleLayer = new EventHandleLayerBase({
             bound: {}
         });
     });
@@ -20,7 +20,7 @@ describe('CoordinateEventorBase', function() {
     describe('findIndex()', function() {
         it('마우스 X좌표값(layerX)으로 groups를 탐색하여 해당하는 group index를 찾아냅니다.', function() {
             var actual, exptected;
-            eventor.coordinateData = [
+            eventHandleLayer.coordinateData = [
                 {
                     min: 0,
                     max: 50
@@ -30,14 +30,14 @@ describe('CoordinateEventorBase', function() {
                     max: 150
                 }
             ];
-            actual = eventor.findIndex(70);
+            actual = eventHandleLayer.findIndex(70);
             exptected = 1;
             expect(actual).toBe(exptected);
         });
 
         it('그룹 정보에 해당 좌표값이 없을 경우에는 -1을 반환합니다.', function() {
             var actual, exptected;
-            eventor.coordinateData = [
+            eventHandleLayer.coordinateData = [
                 {
                     min: 0,
                     max: 50
@@ -47,7 +47,7 @@ describe('CoordinateEventorBase', function() {
                     max: 150
                 }
             ];
-            actual = eventor.findIndex(170);
+            actual = eventHandleLayer.findIndex(170);
             exptected = -1;
             expect(actual).toBe(exptected);
         });
@@ -55,7 +55,7 @@ describe('CoordinateEventorBase', function() {
 
     describe('makeLineTypeCoordinateData()', function() {
         it('라인 타입 차트의 좌표기반 기본 data를 생성합니다.', function() {
-            var actual = eventor.makeLineTypeCoordinateData(200, 3),
+            var actual = eventHandleLayer.makeLineTypeCoordinateData(200, 3),
                 expected = [
                     {
                         min: -50,

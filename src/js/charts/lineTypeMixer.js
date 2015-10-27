@@ -8,7 +8,7 @@
 
 var ChartBase = require('./chartBase'),
     calculator = require('../helpers/calculator'),
-    LineTypeCoordinateEventor = require('../eventors/lineTypeCoordinateEventor');
+    LineTypeEventHandleLayer = require('../eventHandleLayers/lineTypeEventHandleLayer');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -30,8 +30,7 @@ var lineTypeMixer = {
             }),
             convertedData = baseData.convertedData,
             bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options, initedData),
-            tickCount;
+            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
 
         ChartBase.call(this, {
             bounds: bounds,
@@ -43,9 +42,8 @@ var lineTypeMixer = {
         });
 
         if (!this.isSubChart && !this.isGroupedTooltip) {
-            tickCount = axesData.xAxis && axesData.xAxis.tickCount || -1;
-            this.addComponent('eventor', LineTypeCoordinateEventor, {
-                tickCount: tickCount
+            this.addComponent('eventor', LineTypeEventHandleLayer, {
+                tickCount: axesData.xAxis ? axesData.xAxis.tickCount : -1
             });
         }
 
@@ -97,10 +95,10 @@ var lineTypeMixer = {
      * @private
      */
     _attachLineTypeCoordinateEvent: function() {
-        var eventor = this.componentMap.eventor,
+        var eventHandleLayer = this.componentMap.eventHandleLayer,
             series = this.componentMap.series;
-        eventor.on('overTickSector', series.onLineTypeOverTickSector, series);
-        eventor.on('outTickSector', series.onLineTypeOutTickSector, series);
+        eventHandleLayer.on('overTickSector', series.onLineTypeOverTickSector, series);
+        eventHandleLayer.on('outTickSector', series.onLineTypeOutTickSector, series);
     },
 
     /**

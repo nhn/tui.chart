@@ -135,7 +135,7 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             index: index
         };
 
-        return !prevIndexes || prevIndexes.groupIndex !== groupIndex || prevIndexes.index !== index;
+        return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
     },
 
     /**

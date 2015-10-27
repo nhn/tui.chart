@@ -1,23 +1,23 @@
 /**
- * @fileoverview GroupedCoordinateEventor is coordinate event controller for grouped toolip option.
+ * @fileoverview GroupedEventHandleLayer is event handle layer for grouped toolip option.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CoordinateEventorBase = require('./coordinateEventorBase'),
+var EventHandleLayerBase = require('./eventHandleLayerBase'),
     chartConst = require('../const'),
     state = require('../helpers/state');
 
-var GroupedCoordinateEventor = ne.util.defineClass(CoordinateEventorBase, /** @lends GroupedCoordinateEventor.prototype */ {
+var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @lends GroupedEventHandleLayer.prototype */ {
     /**
-     * GroupedCoordinateEventor is coordinate event controller for grouped toolip option.
-     * @constructs CoordinateEventorBase
-     * @extends CoordinateEventorBase
+     * GroupedEventHandleLayer is event handle layer for grouped toolip option.
+     * @constructs EventHandleLayerBase
+     * @extends EventHandleLayerBase
      */
     init: function() {
-        CoordinateEventorBase.apply(this, arguments);
+        EventHandleLayerBase.apply(this, arguments);
     },
 
     /**
@@ -143,6 +143,6 @@ var GroupedCoordinateEventor = ne.util.defineClass(CoordinateEventorBase, /** @l
     }
 });
 
-ne.util.CustomEvents.mixin(GroupedCoordinateEventor);
+ne.util.CustomEvents.mixin(GroupedEventHandleLayer);
 
-module.exports = GroupedCoordinateEventor;
+module.exports = GroupedEventHandleLayer;
