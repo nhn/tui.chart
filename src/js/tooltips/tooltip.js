@@ -156,29 +156,6 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         this._fireShowAnimation(indexes);
     },
 
-    onMousemove: function(e) {
-        var elTarget = e.target || e.srcElement,
-            indexes;
-
-        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
-            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
-        }
-
-        if (elTarget.id !== this._getTooltipId()) {
-            return;
-        }
-
-        indexes = this._getIndexesCustomAttribute(elTarget);
-        this.onShow({
-            indexes: indexes,
-            bound: {},
-            eventPosition: {
-                clientX: e.clientX,
-                clientY: e.clientY
-            }
-        });
-    },
-
     /**
      * On mouseout event handler for tooltip area
      * @param {MouseEvent} e mouse event
@@ -247,6 +224,7 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         } else {
             result.top -= chartConst.TOOLTIP_GAP;
         }
+
         return result;
     },
 
@@ -468,10 +446,6 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     attachEvent: function(el) {
         event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
         event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
-
-        if (this.chartType === chartConst.CHART_TYPE_PIE) {
-            event.bindEvent('mousemove', el, ne.util.bind(this.onMousemove, this));
-        }
     }
 });
 
