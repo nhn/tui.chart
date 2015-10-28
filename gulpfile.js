@@ -11,7 +11,21 @@ var gulp = require('gulp'),
     minifiyCss = require('gulp-minify-css'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
-    del = require('del');
+    del = require('del'),
+    header = require('gulp-header'),
+    pkg = require('./package.json');
+
+var banner = [
+    '/**',
+    ' * @fileoverview ${name}',
+    ' * @author ${author}',
+    ' * @version ${version}',
+    ' * @license ${license}',
+    ' * @link ${repository.url}',
+    ' */',
+    ''
+].join('\n');
+
 
 gulp.task('browser-sync', function() {
     sync({
@@ -29,6 +43,7 @@ gulp.task('browserify', function() {
     rebundle = function() {
         return b.bundle()
             .pipe(source('./application-chart.js'))
+            .pipe(header(banner, pkg))
             .pipe(gulp.dest('./dist'));
     };
 
@@ -44,6 +59,7 @@ gulp.task('compress-js', ['browserify'], function() {
         .pipe(rename({
             extname: '.min.js'
         }))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest('dist'));
 });
 
@@ -94,7 +110,7 @@ gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], functi
         .pipe(gulp.dest('./samples/dist'));
     gulp.src('dist/application-chart.min.js')
         .pipe(gulp.dest('./samples/dist'));
-    gulp.src('lib/ne-code-snippet/code-snippet.min.js')
+    gulp.src('lib/code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));
     gulp.src('lib/component-effect-slide/effects.min.js')
         .pipe(gulp.dest('./samples/lib'));

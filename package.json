@@ -1,6 +1,8 @@
 {
   "name": "application-chart",
-  "version": "1.1.0",
+  "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
+  "version": "1.2.0",
+  "license": "MIT",
   "description": "NHN Ent. Chart",
   "main": "index.js",
   "scripts": {
@@ -8,13 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.nhnent.com/fe/component-chart.git"
+    "url": "https://github.com/nhnent/fe.application-chart"
   },
   "keywords": [
     "chart"
   ],
-  "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
-  "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.7.12",
     "browserify": "^10.2.4",
@@ -22,6 +22,7 @@
     "del": "^1.2.0",
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "gulp": "^3.9.0",
+    "gulp-header": "^1.7.1",
     "gulp-less": "^3.0.3",
     "gulp-minify-css": "^1.2.0",
     "gulp-rename": "^1.2.2",
