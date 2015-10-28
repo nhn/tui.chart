@@ -11,7 +11,7 @@ var Series = require('./series'),
     chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil');
 
-var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
+var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
      * Column chart series component.
      * @constructs ColumnChartSeries
@@ -64,11 +64,11 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
      */
     _makeColumnChartBound: function(params) {
         return {
-            start: ne.util.extend({
+            start: tui.util.extend({
                 top: params.startTop,
                 height: 0
             }, params.baseBound),
-            end: ne.util.extend({
+            end: tui.util.extend({
                 top: params.endTop,
                 height: params.endHeight
             }, params.baseBound)
@@ -98,7 +98,7 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
         endHeight = Math.abs(value * baseInfo.dimension.height);
         endTop = baseInfo.isMinus ? 0 : baseInfo.dimension.height - baseInfo.distanceToMin;
         startEndTops = this._makeStartEndTops(endTop, endHeight, value);
-        bound = this._makeColumnChartBound(ne.util.extend({
+        bound = this._makeColumnChartBound(tui.util.extend({
             baseBound: {
                 left: paddingLeft + (baseInfo.step * index) + chartConst.SERIES_EXPAND_SIZE,
                 width: baseInfo.barSize
@@ -118,9 +118,9 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
         var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'height', 'width'),
             bounds;
 
-        bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
+        bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
             var paddingLeft = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
-            return ne.util.map(values, function (value, index) {
+            return tui.util.map(values, function (value, index) {
                 return this._makeNormalColumnChartBound(baseInfo, value, paddingLeft, index);
             }, this);
         }, this);
@@ -140,10 +140,10 @@ var ColumnChartSeries = ne.util.defineClass(Series, /** @lends ColumnChartSeries
         groupValues = this.percentValues;
         groupWidth = (dimension.width / groupValues.length);
         barWidth = groupWidth / 2;
-        bounds = ne.util.map(groupValues, function(values, groupIndex) {
+        bounds = tui.util.map(groupValues, function(values, groupIndex) {
             var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2) + chartConst.SERIES_EXPAND_SIZE,
                 top = 0;
-            return ne.util.map(values, function (value) {
+            return tui.util.map(values, function (value) {
                 var endHeight, baseBound, bound;
                 if (value < 0) {
                     return null;

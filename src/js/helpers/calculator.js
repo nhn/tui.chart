@@ -63,7 +63,7 @@ var calculator = {
 
         value *= flag;
 
-        ne.util.forEachArray(chartConst.AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
+        tui.util.forEachArray(chartConst.AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
             if (value < num) {
                 if (num > 1) {
                     standard = num;
@@ -77,8 +77,8 @@ var calculator = {
         if (standard < 1) {
             normalized = this.normalizeAxisNumber(value * 10) * 0.1;
         } else {
-            mod = ne.util.mod(value, standard);
-            normalized = ne.util.addition(value, (mod > 0 ? standard - mod : 0));
+            mod = tui.util.mod(value, standard);
+            normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
         }
 
         return normalized *= flag;
@@ -98,7 +98,7 @@ var calculator = {
         if (count > 0) {
             pxScale = {min: 0, max: size - 1};
             pxStep = this.getScaleStep(pxScale, count);
-            positions = ne.util.map(ne.util.range(0, size, pxStep), function(position) {
+            positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
                 return Math.round(position);
             });
             positions[positions.length - 1] = size - 1;
@@ -115,11 +115,11 @@ var calculator = {
      * @private
      */
     makeLabelsFromScale: function(scale, step) {
-        var multipleNum = ne.util.findMultipleNum(step),
+        var multipleNum = tui.util.findMultipleNum(step),
             min = scale.min * multipleNum,
             max = scale.max * multipleNum,
-            labels = ne.util.range(min, max + 1, step * multipleNum);
-        labels = ne.util.map(labels, function(label) {
+            labels = tui.util.range(min, max + 1, step * multipleNum);
+        labels = tui.util.map(labels, function(label) {
             return label / multipleNum;
         });
         return labels;

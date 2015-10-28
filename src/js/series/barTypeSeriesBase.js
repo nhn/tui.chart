@@ -10,7 +10,7 @@ var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
+var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
      * To make series data.
      * @returns {object} add data
@@ -100,10 +100,10 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
-            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             html;
-        html = ne.util.map(params.values, function(values, groupIndex) {
-            return ne.util.map(values, function(value, index) {
+        html = tui.util.map(params.values, function(values, groupIndex) {
+            return tui.util.map(values, function(value, index) {
                 var bound, formattedValue, renderingPosition;
                 bound = groupBounds[groupIndex][index].end;
                 formattedValue = formattedValues[groupIndex][index];
@@ -130,12 +130,12 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
      * @returns {number} sum result.
      */
     makeSumValues: function(values, formatFunctions) {
-        var sum = ne.util.sum(ne.util.filter(values, function(value) {
+        var sum = tui.util.sum(tui.util.filter(values, function(value) {
                 return value > 0;
             })),
             fns = [sum].concat(formatFunctions || []);
 
-        return ne.util.reduce(fns, function(stored, fn) {
+        return tui.util.reduce(fns, function(stored, fn) {
             return fn(stored);
         });
     },
@@ -156,7 +156,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
         var values = params.values,
             bound, htmls;
 
-        htmls = ne.util.map(values, function(value, index) {
+        htmls = tui.util.map(values, function(value, index) {
             var labelWidth, left, top, labelHtml, formattedValue;
 
             if (value < 0) {
@@ -199,11 +199,11 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
             formatFunctions = params.formatFunctions || [],
-            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
             html;
 
-        html = ne.util.map(params.values, function(values, index) {
+        html = tui.util.map(params.values, function(values, index) {
             var labelsHtml = this._makeStackedLabelsHtml({
                 groupIndex: index,
                 values: values,
@@ -260,7 +260,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
 });
 
 BarTypeSeriesBase.mixin = function(func) {
-    ne.util.extend(func.prototype, BarTypeSeriesBase.prototype);
+    tui.util.extend(func.prototype, BarTypeSeriesBase.prototype);
 };
 
 module.exports = BarTypeSeriesBase;

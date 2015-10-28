@@ -22,4 +22,4 @@ pluginRaphael = {
     pie: PieChart
 };
 
-ne.application.chart.registerPlugin(pluginName, pluginRaphael);
+tui.chart.registerPlugin(pluginName, pluginRaphael);

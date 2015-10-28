@@ -1,5 +1,5 @@
 /**
- * @fileoverview chart.js is entry point of Application Chart.
+ * @fileoverview chart.js is entry point of Toast UI Chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -17,10 +17,10 @@ require('./registerCharts');
 require('./registerThemes');
 
 /**
- * NHN Entertainment Application Chart.
- * @namespace ne.application.chart
+ * NHN Entertainment Toast UI Chart.
+ * @namespace tui.chart
  */
-ne.util.defineNamespace('ne.application.chart');
+tui.util.defineNamespace('tui.chart');
 
 /**
  * Create chart.
@@ -66,7 +66,7 @@ _createChart = function(container, data, options) {
 
 /**
  * Bar chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<string>} data.categories categories
@@ -130,9 +130,9 @@ _createChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * ne.application.chart.barChart(container, data, options);
+ * tui.chart.barChart(container, data, options);
  */
-ne.application.chart.barChart = function(container, data, options) {
+tui.chart.barChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
     return _createChart(container, data, options);
@@ -140,7 +140,7 @@ ne.application.chart.barChart = function(container, data, options) {
 
 /**
  * Column chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<string>} data.categories categories
@@ -204,9 +204,9 @@ ne.application.chart.barChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * ne.application.chart.columnChart(container, data, options);
+ * tui.chart.columnChart(container, data, options);
  */
-ne.application.chart.columnChart = function(container, data, options) {
+tui.chart.columnChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COLUMN;
     return _createChart(container, data, options);
@@ -214,7 +214,7 @@ ne.application.chart.columnChart = function(container, data, options) {
 
 /**
  * Line chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<string>} data.categories categories
@@ -281,9 +281,9 @@ ne.application.chart.columnChart = function(container, data, options) {
  *         hasDot: true
  *       }
  *     };
- * ne.application.chart.lineChart(container, data, options);
+ * tui.chart.lineChart(container, data, options);
  */
-ne.application.chart.lineChart = function(container, data, options) {
+tui.chart.lineChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
     return _createChart(container, data, options);
@@ -291,7 +291,7 @@ ne.application.chart.lineChart = function(container, data, options) {
 
 /**
  * Area chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<string>} data.categories categories
@@ -355,9 +355,9 @@ ne.application.chart.lineChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * ne.application.chart.areaChart(container, data, options);
+ * tui.chart.areaChart(container, data, options);
  */
-ne.application.chart.areaChart = function(container, data, options) {
+tui.chart.areaChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_AREA;
     return _createChart(container, data, options);
@@ -365,7 +365,7 @@ ne.application.chart.areaChart = function(container, data, options) {
 
 /**
  * Combo chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<string>} data.categories categories
@@ -453,9 +453,9 @@ ne.application.chart.areaChart = function(container, data, options) {
  *         hasDot: true
  *       }
  *     };
- * ne.application.chart.comboChart(container, data, options);
+ * tui.chart.comboChart(container, data, options);
  */
-ne.application.chart.comboChart = function(container, data, options) {
+tui.chart.comboChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COMBO;
     return _createChart(container, data, options);
@@ -463,7 +463,7 @@ ne.application.chart.comboChart = function(container, data, options) {
 
 /**
  * Pie chart creator.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
  *      @param {array.<array>} data.series series data
@@ -513,9 +513,9 @@ ne.application.chart.comboChart = function(container, data, options) {
  *         title: 'Pie Chart'
  *       }
  *     };
- * ne.application.chart.pieChart(container, data, options);
+ * tui.chart.pieChart(container, data, options);
  */
-ne.application.chart.pieChart = function(container, data, options) {
+tui.chart.pieChart = function(container, data, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
     return _createChart(container, data, options);
@@ -523,7 +523,7 @@ ne.application.chart.pieChart = function(container, data, options) {
 
 /**
  * Register theme.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {string} themeName theme name
  * @param {object} theme application chart theme
  *      @param {object} theme.chart chart theme
@@ -601,21 +601,21 @@ ne.application.chart.pieChart = function(container, data, options) {
  *   };
  * chart.registerTheme('newTheme', theme);
  */
-ne.application.chart.registerTheme = function(themeName, theme) {
+tui.chart.registerTheme = function(themeName, theme) {
     themeFactory.register(themeName, theme);
 };
 
 /**
  * Register graph plugin.
- * @memberOf ne.application.chart
+ * @memberOf tui.chart
  * @param {string} libType type of graph library
  * @param {object} plugin plugin to control library
  * @example
  * var pluginRaphael = {
  *   bar: function() {} // Render class
  * };
- * ne.application.chart.registerPlugin('raphael', pluginRaphael);
+ * tui.chart.registerPlugin('raphael', pluginRaphael);
  */
-ne.application.chart.registerPlugin = function(libType, plugin) {
+tui.chart.registerPlugin = function(libType, plugin) {
     pluginFactory.register(libType, plugin);
 };

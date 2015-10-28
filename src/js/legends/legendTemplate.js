@@ -7,9 +7,9 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_LEGEND: '<div class="ne-chart-legend">' +
-        '<div class="ne-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
-        '<div class="ne-chart-legend-label" style="height:{{ height }}px">{{ label }}</div></div>'
+    HTML_LEGEND: '<div class="tui-chart-legend">' +
+        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
+        '<div class="tui-chart-legend-label" style="height:{{ height }}px">{{ label }}</div></div>'
 };
 
 module.exports = {

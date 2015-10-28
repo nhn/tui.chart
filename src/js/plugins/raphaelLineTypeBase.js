@@ -15,7 +15,7 @@ var DEFAULT_DOT_WIDTH = 3,
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
  * @class RaphaelLineTypeBase
  */
-var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
+var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * To make line paths.
      * @param {{left: number, top: number}} fromPos from position
@@ -81,7 +81,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         };
 
         if (borderStyle) {
-            ne.util.extend(outDotStyle, borderStyle);
+            tui.util.extend(outDotStyle, borderStyle);
         }
 
         return outDotStyle;
@@ -117,9 +117,9 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @returns {array.<object>} dots
      */
     renderDots: function(paper, groupPositions, colors) {
-        var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
+        var dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
-            return ne.util.map(positions, function(position) {
+            return tui.util.map(positions, function(position) {
                 var dot = this.renderDot(paper, position, color);
                 return dot;
             }, this);
@@ -169,8 +169,8 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {function} outCallback out callback
      */
     attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
-        ne.util.forEach(groupDots, function(dots, groupIndex) {
-            ne.util.forEach(dots, function(dot, index) {
+        tui.util.forEach(groupDots, function(dots, groupIndex) {
+            tui.util.forEach(dots, function(dot, index) {
                 var position = groupPositions[groupIndex][index];
                 this._bindHoverEvent(dot, position, groupIndex, index, inCallback, outCallback);
             }, this);
@@ -209,7 +209,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      */
     _getPivotGroupDots: function() {
         if (!this.pivotGroupDots) {
-            this.pivotGroupDots = ne.util.pivot(this.groupDots);
+            this.pivotGroupDots = tui.util.pivot(this.groupDots);
         }
 
         return this.pivotGroupDots;
@@ -222,7 +222,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      */
     _showGroupDots: function(index) {
         var dots = this._getPivotGroupDots();
-        ne.util.forEachArray(dots[index], ne.util.bind(this._showDot, this));
+        tui.util.forEachArray(dots[index], tui.util.bind(this._showDot, this));
     },
 
     /**
@@ -290,7 +290,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      */
     _hideGroupDots: function(index) {
         var dots = this._getPivotGroupDots();
-        ne.util.forEachArray(dots[index], ne.util.bind(this._hideDot, this));
+        tui.util.forEachArray(dots[index], tui.util.bind(this._hideDot, this));
     },
 
     /**

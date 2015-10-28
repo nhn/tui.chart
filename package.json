@@ -1,5 +1,5 @@
 {
-  "name": "application-chart",
+  "name": "tui.chart",
   "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
   "version": "1.2.0",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhnent/fe.application-chart"
+    "url": "https://github.com/nhnent/fe.tui.chart"
   },
   "keywords": [
     "chart"

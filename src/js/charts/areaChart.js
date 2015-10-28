@@ -12,12 +12,12 @@ var ChartBase = require('./chartBase'),
     verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/areaChartSeries');
 
-var AreaChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
+var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
      * className
      * @type {string}
      */
-    className: 'ne-area-chart',
+    className: 'tui-area-chart',
 
     /**
      * Series class

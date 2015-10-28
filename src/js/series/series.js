@@ -14,9 +14,9 @@ var seriesTemplate = require('./seriesTemplate'),
     event = require('../helpers/eventListener'),
     pluginFactory = require('../factories/pluginFactory');
 
-var SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
+var SERIES_LABEL_CLASS_NAME = 'tui-chart-series-label';
 
-var Series = ne.util.defineClass(/** @lends Series.prototype */ {
+var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Series base component.
      * @constructs Series
@@ -28,7 +28,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     init: function(params) {
         var libType;
 
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
         this.percentValues = this._makePercentValues(params.data, params.options.stacked);
         /**
@@ -41,7 +41,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
          * Series view className
          * @type {string}
          */
-        this.className = 'ne-chart-series-area';
+        this.className = 'tui-chart-series-area';
 
         this.seriesData = this.makeSeriesData();
     },
@@ -63,7 +63,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} index index
      */
     showTooltip: function(params, bound, groupIndex, index, eventPosition) {
-        this.fire('showTooltip', ne.util.extend({
+        this.fire('showTooltip', tui.util.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
@@ -103,11 +103,11 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className),
             bound = this.bound,
             dimension = this._expandDimension(bound.dimension),
-            inCallback = ne.util.bind(this.showTooltip, this, {
+            inCallback = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
-            outCallback = ne.util.bind(this.hideTooltip, this),
+            outCallback = tui.util.bind(this.hideTooltip, this),
             data = {
                 dimension: dimension,
                 chartType: this.chartType,
@@ -123,13 +123,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         this._renderPosition(el, bound.position, this.chartType);
 
-        data = ne.util.extend(data, seriesData);
+        data = tui.util.extend(data, seriesData);
 
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
 
         if (this._renderSeriesLabel) {
             addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(el, dimension);
-            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, seriesData));
+            this.elSeriesLabelArea = this._renderSeriesLabel(tui.util.extend(addDataForSeriesLabel, seriesData));
         }
 
         if (!this.isGroupedTooltip) {
@@ -217,13 +217,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(data.values, function(values) {
-                var plusValues = ne.util.filter(values, function(value) {
+            percentValues = tui.util.map(data.values, function(values) {
+                var plusValues = tui.util.filter(values, function(value) {
                         return value > 0;
                     }),
-                    sum = ne.util.sum(plusValues),
+                    sum = tui.util.sum(plusValues),
                     groupPercent = (sum - min) / distance;
-                return ne.util.map(values, function(value) {
+                return tui.util.map(values, function(value) {
                     return value === 0 ? 0 : groupPercent * (value / sum);
                 });
             });
@@ -237,12 +237,12 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makePercentStackedPercentValues: function(data) {
-        var percentValues = ne.util.map(data.values, function(values) {
-            var plusValues = ne.util.filter(values, function(value) {
+        var percentValues = tui.util.map(data.values, function(values) {
+            var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;
                 }),
-                sum = ne.util.sum(plusValues);
-            return ne.util.map(values, function(value) {
+                sum = tui.util.sum(plusValues);
+            return tui.util.map(values, function(value) {
                 return value === 0 ? 0 : value / sum;
             });
         });
@@ -272,8 +272,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             subValue = min;
         }
 
-        percentValues = ne.util.map(data.values, function(values) {
-            return ne.util.map(values, function(value) {
+        percentValues = tui.util.map(data.values, function(values) {
+            return tui.util.map(values, function(value) {
                 return (value - subValue) * flag / distance;
             });
         });
@@ -356,9 +356,9 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mousemove', el, ne.util.bind(this.onMousemove, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
+        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     },
 
     /**
@@ -414,7 +414,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
+            this.graphRenderer.animate(tui.util.bind(this.showSeriesLabelArea, this));
         }
     },
 
@@ -427,7 +427,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @returns {string} html string
      */
     makeSeriesLabelHtml: function(position, value, groupIndex, index) {
-        var cssObj = ne.util.extend(position, this.theme.label);
+        var cssObj = tui.util.extend(position, this.theme.label);
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
@@ -446,7 +446,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         dom.addClass(this.elSeriesLabelArea, 'show');
 
-        (new ne.component.Effects.Fade({
+        (new tui.component.Effects.Fade({
             element: this.elSeriesLabelArea,
             duration: 300
         })).action({
@@ -457,6 +457,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     }
 });
 
-ne.util.CustomEvents.mixin(Series);
+tui.util.CustomEvents.mixin(Series);
 
 module.exports = Series;

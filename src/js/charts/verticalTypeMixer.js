@@ -51,7 +51,7 @@ var verticalTypeMixer = {
      * @param {function} func target function
      */
     mixin: function(func) {
-        ne.util.extend(func.prototype, this);
+        tui.util.extend(func.prototype, this);
     }
 };
 

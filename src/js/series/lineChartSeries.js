@@ -9,7 +9,7 @@
 var Series = require('./series'),
     LineTypeSeriesBase = require('./lineTypeSeriesBase');
 
-var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
+var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs LineChartSeries

@@ -11,7 +11,7 @@ var Series = require('./series'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
+var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
      * Line chart series component.
      * @constructs PieChartSeries
@@ -32,9 +32,9 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _makePercentValues: function(data) {
-        var result = ne.util.map(data.values, function(values) {
-            var sum = ne.util.sum(values);
-            return ne.util.map(values, function(value) {
+        var result = tui.util.map(data.values, function(values) {
+            var sum = tui.util.sum(values);
+            return tui.util.map(values, function(value) {
                 return value / sum;
             });
         });
@@ -56,7 +56,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
             delta = 10,
             paths;
 
-        paths = ne.util.map(percentValues, function(percentValue) {
+        paths = tui.util.map(percentValues, function(percentValue) {
             var addAngle = chartConst.ANGLE_360 * percentValue,
                 endAngle = angle + addAngle,
                 popupAngle = angle + (addAngle / 2),
@@ -79,17 +79,17 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
             return {
                 percentValue: percentValue,
                 angles: angles,
-                popupPosition: this._getArcPosition(ne.util.extend({
+                popupPosition: this._getArcPosition(tui.util.extend({
                     r: r + delta
                 }, positionData)),
-                centerPosition: this._getArcPosition(ne.util.extend({
+                centerPosition: this._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
                 }, positionData)),
                 outerPosition: {
-                    start: this._getArcPosition(ne.util.extend({
+                    start: this._getArcPosition(tui.util.extend({
                         r: r
                     }, positionData)),
-                    middle: this._getArcPosition(ne.util.extend({
+                    middle: this._getArcPosition(tui.util.extend({
                         r: r + delta
                     }, positionData))
                 }
@@ -115,7 +115,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
 
-        this.popupPositions = ne.util.pluck(sectorsInfo, 'popupPosition');
+        this.popupPositions = tui.util.pluck(sectorsInfo, 'popupPosition');
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
@@ -135,11 +135,11 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
             height = dimension.height,
             isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
-            diameter = ne.util.multiplication(ne.util.min([width, height]), radiusRate);
+            diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
         return {
-            cx: ne.util.division(width, 2),
-            cy: ne.util.division(height, 2),
-            r: ne.util.division(diameter, 2)
+            cx: tui.util.division(width, 2),
+            cy: tui.util.division(height, 2),
+            r: tui.util.division(diameter, 2)
         };
     },
 
@@ -221,10 +221,10 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
     _renderLegendLabel: function(params) {
         var positions = params.positions,
             formattedValues = params.formattedValues,
-            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
+            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             html;
 
-        html = ne.util.map(params.legendLabels, function(legend, index) {
+        html = tui.util.map(params.legendLabels, function(legend, index) {
             var label = this._getSeriesLabel({
                     legend: legend,
                     label: formattedValues[index],
@@ -267,9 +267,9 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _renderCenterLegend: function(params) {
-        var elArea = this._renderLegendLabel(ne.util.extend({
-            positions: ne.util.pluck(params.sectorsInfo, 'centerPosition'),
-            moveToPosition: ne.util.bind(this._moveToCenterPosition, this),
+        var elArea = this._renderLegendLabel(tui.util.extend({
+            positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
+            moveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
         }, params));
 
@@ -283,8 +283,8 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _addEndPosition: function(centerLeft, positions) {
-        ne.util.forEach(positions, function(position) {
-            var end = ne.util.extend({}, position.middle);
+        tui.util.forEach(positions, function(position) {
+            var end = tui.util.extend({}, position.middle);
             if (end.left < centerLeft) {
                 end.left -= chartConst.SERIES_OUTER_LABEL_PADDING;
             } else {
@@ -329,14 +329,14 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      * @private
      */
     _renderOuterLegend: function(params) {
-        var outerPositions = ne.util.pluck(params.sectorsInfo, 'outerPosition'),
+        var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
             centerLeft = params.chartWidth / 2,
             elArea;
 
         this._addEndPosition(centerLeft, outerPositions);
-        elArea = this._renderLegendLabel(ne.util.extend({
+        elArea = this._renderLegendLabel(tui.util.extend({
             positions: outerPositions,
-            moveToPosition: ne.util.bind(this._moveToOuterPosition, this, centerLeft),
+            moveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
         }, params));
 

@@ -10,7 +10,7 @@ var EventHandleLayerBase = require('./eventHandleLayerBase'),
     chartConst = require('../const'),
     state = require('../helpers/state');
 
-var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @lends GroupedEventHandleLayer.prototype */ {
+var GroupedEventHandleLayer = tui.util.defineClass(EventHandleLayerBase, /** @lends GroupedEventHandleLayer.prototype */ {
     /**
      * GroupedEventHandleLayer is event handle layer for grouped toolip option.
      * @constructs EventHandleLayerBase
@@ -31,8 +31,8 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
         var len = tickCount - 1,
             tickInterval = size / len,
             prev = 0;
-        return ne.util.map(ne.util.range(0, len), function(index) {
-            var max = ne.util.min([size, (index + 1) * tickInterval]),
+        return tui.util.map(tui.util.range(0, len), function(index) {
+            var max = tui.util.min([size, (index + 1) * tickInterval]),
                 scale = {
                     min: prev,
                     max: max
@@ -160,6 +160,6 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
     }
 });
 
-ne.util.CustomEvents.mixin(GroupedEventHandleLayer);
+tui.util.CustomEvents.mixin(GroupedEventHandleLayer);
 
 module.exports = GroupedEventHandleLayer;

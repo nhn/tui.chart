@@ -12,12 +12,12 @@ var ChartBase = require('./chartBase'),
     VerticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/lineChartSeries');
 
-var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
+var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
      * className
      * @type {string}
      */
-    className: 'ne-line-chart',
+    className: 'tui-line-chart',
 
     /**
      * Series class

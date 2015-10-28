@@ -33,13 +33,13 @@ describe('test Legend', function() {
                 right: 10
             }
         },
-        compareHtml = '<div class="ne-chart-legend">' +
-            '<div class="ne-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
-            '<div class="ne-chart-legend-label" style="height:19px">legend1</div>' +
+        compareHtml = '<div class="tui-chart-legend">' +
+            '<div class="tui-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
+            '<div class="tui-chart-legend-label" style="height:19px">legend1</div>' +
             '</div>' +
-            '<div class="ne-chart-legend">' +
-            '<div class="ne-chart-legend-rect" style="background-color:orange;margin-top:2px"></div>' +
-            '<div class="ne-chart-legend-label" style="height:19px">legend2</div>' +
+            '<div class="tui-chart-legend">' +
+            '<div class="tui-chart-legend-rect" style="background-color:orange;margin-top:2px"></div>' +
+            '<div class="tui-chart-legend-label" style="height:19px">legend2</div>' +
             '</div>',
         legend;
 
@@ -65,10 +65,10 @@ describe('test Legend', function() {
 
             tempChildren = elTemp.childNodes;
 
-            expect(elLegend.className).toBe('ne-chart-legend-area');
+            expect(elLegend.className).toBe('tui-chart-legend-area');
             expect(elLegend.style.cssText).toBe(elTemp.style.cssText);
 
-            ne.util.forEachArray(elLegend.childNodes, function (child, index) {
+            tui.util.forEachArray(elLegend.childNodes, function (child, index) {
                 var elTempChild = tempChildren[index];
                 expect(child.firstChild.cssText).toBe(elTempChild.firstChild.cssText);
                 expect(child.lastChild.cssText).toBe(elTempChild.lastChild.cssText);

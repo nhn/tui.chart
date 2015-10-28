@@ -2,10 +2,7 @@
     "source": {
         "include": ["src/js", "README.md"],
         "exclude": [
-            "src/js/code-snippet-util.js",
-            "src/js/charts/areaChart.js",
-            "src/js/plugins/raphaelAreaChart.js",
-            "src/js/series/areaChartSeries.js"
+            "src/js/code-snippet-util.js"
         ],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"

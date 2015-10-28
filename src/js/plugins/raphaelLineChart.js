@@ -17,7 +17,7 @@ var Raphael = window.Raphael,
  * @class RaphaelLineChart
  * @extends RaphaelLineTypeBase
  */
-var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
+var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
      * Render function of line chart.
      * @param {object} paper raphael paper
@@ -66,10 +66,10 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @private
      */
     _getLinesPath: function(groupPositions) {
-        var groupPaths = ne.util.map(groupPositions, function(positions) {
+        var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
-            return ne.util.map(rest, function(position) {
+            return tui.util.map(rest, function(position) {
                 var result = this.makeLinePath(fromPos, position);
                 fromPos = position;
                 return result;
@@ -88,9 +88,9 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        var groupLines = ne.util.map(groupPaths, function(paths, groupIndex) {
+        var groupLines = tui.util.map(groupPaths, function(paths, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
-            return ne.util.map(paths, function(path) {
+            return tui.util.map(paths, function(path) {
                 return raphaelRenderUtil.renderLine(paper, path.start, color, strokeWidth);
             }, this);
         }, this);
@@ -109,9 +109,9 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
             opacity = this.dotOpacity,
             time = ANIMATION_TIME / groupLines[0].length,
             startTime;
-        ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
+        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
             startTime = 0;
-            ne.util.forEachArray(dots, function(dot, index) {
+            tui.util.forEachArray(dots, function(dot, index) {
                 var line, path;
                 if (index) {
                     line = groupLines[groupIndex][index - 1];
@@ -122,7 +122,7 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
 
                 if (opacity) {
                     setTimeout(function() {
-                        dot.attr(ne.util.extend({'fill-opacity': opacity}, borderStyle));
+                        dot.attr(tui.util.extend({'fill-opacity': opacity}, borderStyle));
                     }, startTime);
                 }
             }, this);

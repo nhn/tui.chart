@@ -1,13 +1,13 @@
 {
-  "name": "application-chart",
-  "version": "1.1.0",
+  "name": "tui-chart",
+  "version": "1.2.0",
   "authors": [
     "NHN Ent. FE Development Team <dl_javascript@nhnent.com>"
   ],
   "dependencies": {
-    "component-effect-slide": "ne-component-effects#~1.1.0",
     "raphael": "~2.1.4",
-    "code-snippet": "tui-code-snippet#~1.0.4"
+    "code-snippet": "tui-code-snippet#~1.0.4",
+    "component-effect-slide": "tui-component-effects#~1.1.0"
   },
   "license": "MIT"
 }

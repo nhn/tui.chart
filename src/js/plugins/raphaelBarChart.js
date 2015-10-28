@@ -15,7 +15,7 @@ var ANIMATION_TIME = 700;
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
  * @class RaphaelBarChart
  */
-var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
+var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
      * Render function of bar chart
      * @param {object} paper raphael paper
@@ -46,7 +46,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             chartType: data.chartType
         };
 
-        this._renderBars(ne.util.extend({
+        this._renderBars(tui.util.extend({
             inCallback: inCallback,
             outCallback: outCallback
         }, baseParams));
@@ -115,9 +115,9 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
         var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
             colors = params.theme.colors,
             bars = [];
-        ne.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
+        tui.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
-            ne.util.forEachArray(bounds, function(bound, index) {
+            tui.util.forEachArray(bounds, function(bound, index) {
                 var color, id, rect, value;
 
                 if (!bound) {
@@ -193,7 +193,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @private
      */
     _makeTopLinePath: function(leftTop, rightTop, chartType, value) {
-        var cloneLeftTop = ne.util.extend({}, leftTop);
+        var cloneLeftTop = tui.util.extend({}, leftTop);
         cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
         return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop);
     },
@@ -243,7 +243,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
     _renderBorderLines: function(params) {
         var borderLinePaths = this._makeBorderLinesPaths(params.bound, params.chartType, params.value),
             lines = {};
-        ne.util.forEach(borderLinePaths, function(path, name) {
+        tui.util.forEach(borderLinePaths, function(path, name) {
             lines[name] = raphaelRenderUtil.renderLine(params.paper, path, params.borderColor, 1);
         });
         return lines;
@@ -267,8 +267,8 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
             return;
         }
 
-        ne.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
-            ne.util.forEachArray(bounds, function(bound, index) {
+        tui.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
+            tui.util.forEachArray(bounds, function(bound, index) {
                 var value, borderLines;
 
                 if (!bound) {
@@ -313,7 +313,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      */
     _animateBorders: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
-        ne.util.forEach(lines, function(line, name) {
+        tui.util.forEach(lines, function(line, name) {
             line.animate({path: paths[name]}, ANIMATION_TIME);
         });
     },
@@ -323,7 +323,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @param {function} callback callback
      */
     animate: function(callback) {
-        ne.util.forEach(this.bars, function(bar, index) {
+        tui.util.forEach(this.bars, function(bar, index) {
             var lines = this.borders[index];
             this._animateRect(bar.rect, bar.bound);
             if (lines) {

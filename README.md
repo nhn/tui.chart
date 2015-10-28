@@ -1,4 +1,4 @@
-Application Chart
+Toast UI Chart
 ===============
 Chart<br>
 This application supports draw a chart on web browser.<br>
@@ -41,13 +41,13 @@ This application supports draw a chart on web browser.<br>
 <img alt="outer lengend pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10064141/553cc9a0-62b0-11e5-9b80-ee5a7d9c35c6.png">
 
 ## Documentation
-* **API** : https://nhnent.github.io/fe.application-chart/latest/ne.application.chart.html
-* **Tutorial** : https://github.com/nhnent/fe.application-chart/wiki/application-tutorial
-* **Sample** : https://nhnent.github.io/fe.application-chart/latest/tutorial-sample01-01-bar-chart.html
+* **API** : https://nhnent.github.io/fe.tui.chart/latest/ne.application.chart.html
+* **Tutorial** : https://github.com/nhnent/fe.tui.chart/wiki/tutorial
+* **Sample** : https://nhnent.github.io/fe.tui.chart/latest/tutorial-sample01-01-bar-chart.html
 
 ## Dependency
-* ne-code-snippet 1.0.2
-* ne-component-effects 1.1.0
+* tui.code-snippet 1.0.4
+* tui.component-effects 1.1.0
 * Raphaël 2.1.4
 
 ## Test environment
@@ -58,16 +58,16 @@ This application supports draw a chart on web browser.<br>
 
 ## Download/Install
 * Bower:
-   * latest : `bower install ne-application-chart`
-   * each version : `bower install "ne-application-chart[#tag]"`
-* Download: https://github.com/nhnent/fe.application-chart
+   * latest : `bower install tui-chart`
+   * each version : `bower install "tui-chart[#tag]"`
+* Download: https://github.com/nhnent/fe.tui.chart
 
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| <a href="https://nhnent.github.io/fe.application-chart/1.1.1">1.1.1</a> | Add start animation. (All Chart)<br> Add showLabel option. (All Chart)<br> Add legendType option. (Pie Chart) | 2015.09 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
-| <a href="https://nhnent.github.io/fe.application-chart/1.1.0">1.1.0</a> | Change insert data structure.<br> Add Combo Chart.<br> Add Pie Chart.<br> Add stacked option.(Bar, Column)<br> Add tooltip position options.<br> Add axis min, max options. | 2015.08 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
-| <a href="https://nhnent.github.io/fe.application-chart/1.0.0">1.0.0</a> | First deploy. | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.tui.chart/1.1.1">1.1.1</a> | Add start animation. (All Chart)<br> Add showLabel option. (All Chart)<br> Add legendType option. (Pie Chart) | 2015.09 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.tui.chart/1.1.0">1.1.0</a> | Change insert data structure.<br> Add Combo Chart.<br> Add Pie Chart.<br> Add stacked option.(Bar, Column)<br> Add tooltip position options.<br> Add axis min, max options. | 2015.08 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.tui.chart/1.0.0">1.0.0</a> | First deploy. | 2015.07 | NHN Ent. FE Development Team <dl_javascript@nhnent.com> |
 
 ## License
-This software is licensed under the [MIT License](https://github.com/nhnent/fe.application-chart/blob/master/LICENSE).
+This software is licensed under the [MIT License](https://github.com/nhnent/fe.tui.chart/blob/master/LICENSE).

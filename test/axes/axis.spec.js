@@ -411,9 +411,9 @@ describe('Axis', function() {
                     posType: 'left',
                     cssTexts: []
                 }),
-                expected = '<div class="ne-chart-label" style="left:30px"><span>label1</span></div>' +
-                    '<div class="ne-chart-label" style="left:80px"><span>label2</span></div>' +
-                    '<div class="ne-chart-label" style="left:130px"><span>label3</span></div>';
+                expected = '<div class="tui-chart-label" style="left:30px"><span>label1</span></div>' +
+                    '<div class="tui-chart-label" style="left:80px"><span>label2</span></div>' +
+                    '<div class="tui-chart-label" style="left:130px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });
@@ -431,9 +431,9 @@ describe('Axis', function() {
                 labelSize: 80,
                 degree: 45
             });
-            expected = '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
-                '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
-                '<div class="ne-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+            expected = '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });
@@ -518,9 +518,9 @@ describe('Axis', function() {
             expect(el.style.height).toBe('200px');
             expect(el.style.top).toBe('20px');
             expect(dom.hasClass(el, 'horizontal')).toBeTruthy();
-            expect(el.childNodes[0].className).toBe('ne-chart-title-area');
-            expect(el.childNodes[1].className).toBe('ne-chart-tick-area');
-            expect(el.childNodes[2].className).toBe('ne-chart-label-area');
+            expect(el.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(el.childNodes[1].className).toBe('tui-chart-tick-area');
+            expect(el.childNodes[2].className).toBe('tui-chart-label-area');
         });
     });
 });

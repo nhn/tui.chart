@@ -18,7 +18,7 @@ var Raphael = window.Raphael,
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
  */
-var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
+var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
      * @param {object} paper raphael paper
@@ -36,7 +36,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         }
 
         if (!paper.customAttributes.sector) {
-            paper.customAttributes.sector = ne.util.bind(this._makeSectorPath, this);
+            paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
         this.circleBound = data.circleBound;
@@ -105,7 +105,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             chartBackground = data.chartBackground,
             sectors = [];
 
-        ne.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
+        tui.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
             var percentValue = sectorInfo.percentValue,
                 color = colors[index],
                 sector = this._renderSector({
@@ -144,7 +144,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      */
     renderLegendLines: function(paper, outerPositions) {
         var paths = this._makeLinePaths(outerPositions),
-            legendLines = ne.util.map(paths, function(path) {
+            legendLines = tui.util.map(paths, function(path) {
                 return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
             });
         this.legendLines = legendLines;
@@ -157,7 +157,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _makeLinePaths: function(outerPositions) {
-        var paths = ne.util.map(outerPositions, function(positions) {
+        var paths = tui.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
@@ -177,7 +177,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _bindHoverEvent: function(params) {
-        var throttled = ne.util.throttle(function(e) {
+        var throttled = tui.util.throttle(function(e) {
             if (!e) {
                 return;
             }
@@ -241,7 +241,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     animate: function(callback) {
         var delayTime = 0,
             circleBound = this.circleBound;
-        ne.util.forEachArray(this.sectors, function(item) {
+        tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles,
                 animationTime = LOADING_ANIMATION_TIME * item.percentValue,
                 anim = Raphael.animation({
@@ -263,7 +263,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         if (!this.legendLines) {
             return;
         }
-        ne.util.forEachArray(this.legendLines, function(line) {
+        tui.util.forEachArray(this.legendLines, function(line) {
             line.animate({
                 'stroke': 'black',
                 'stroke-opacity': 1

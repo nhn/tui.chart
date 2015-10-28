@@ -63,8 +63,8 @@ var lineTypeMixer = {
         plotData = this.makePlotData(convertedData.plotData, axesData);
         seriesData = {
             data: {
-                values: ne.util.pivot(convertedData.values),
-                formattedValues: ne.util.pivot(convertedData.formattedValues),
+                values: tui.util.pivot(convertedData.values),
+                formattedValues: tui.util.pivot(convertedData.formattedValues),
                 scale: axesData.yAxis.scale,
                 xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
             }
@@ -106,7 +106,7 @@ var lineTypeMixer = {
      * @param {function} func target function
      */
     mixin: function(func) {
-        ne.util.extend(func.prototype, this);
+        tui.util.extend(func.prototype, this);
     }
 };
 

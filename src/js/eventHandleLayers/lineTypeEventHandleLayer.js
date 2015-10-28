@@ -8,7 +8,7 @@
 
 var EventHandleLayerBase = require('./eventHandleLayerBase');
 
-var LineTypeEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @lends LineTypeEventHandleLayer.prototype */ {
+var LineTypeEventHandleLayer = tui.util.defineClass(EventHandleLayerBase, /** @lends LineTypeEventHandleLayer.prototype */ {
     /**
      * LineTypeEventHandleLayer is event handle layer for line type chart.
      * @constructs LineTypeEventHandleLayer
@@ -53,6 +53,6 @@ var LineTypeEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @le
     }
 });
 
-ne.util.CustomEvents.mixin(LineTypeEventHandleLayer);
+tui.util.CustomEvents.mixin(LineTypeEventHandleLayer);
 
 module.exports = LineTypeEventHandleLayer;

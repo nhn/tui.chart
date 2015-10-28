@@ -9,7 +9,7 @@
         elUseTheme = document.getElementById('use-theme'),
         elTheme = document.getElementById('theme');
     var onBtnClick = function() {
-        var chart = root.ne.application.chart,
+        var chart = root.tui.chart,
             data = elData ? JSON.parse(elData.value) : {},
             options = elOptions ? JSON.parse(elOptions.value) : null,
             theme = elOptions ? JSON.parse(elTheme.value) : null;

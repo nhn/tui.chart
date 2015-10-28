@@ -12,7 +12,7 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     axisTemplate = require('./axisTemplate');
 
-var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
+var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Axis component.
      * @constructs Axis
@@ -28,11 +28,11 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      *      @param {object} params.options axis options
      */
     init: function(params) {
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         /**
          * Axis view className
          */
-        this.className = 'ne-chart-axis-area';
+        this.className = 'tui-chart-axis-area';
     },
 
     /**
@@ -108,7 +108,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderTitleArea: function(params) {
-        var elTitleArea = renderUtil.renderTitle(params.title, params.theme, 'ne-chart-title-area');
+        var elTitleArea = renderUtil.renderTitle(params.title, params.theme, 'tui-chart-title-area');
 
         if (elTitleArea && params.isVertical) {
             this._renderTitleAreaStyle(elTitleArea, params.size, params.isPositionRight);
@@ -128,11 +128,11 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             tickCount = data.tickCount,
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
-            elTickArea = dom.create('DIV', 'ne-chart-tick-area'),
+            elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
             template = axisTemplate.tplAxisTick,
-            ticksHtml = ne.util.map(positions, function(position, index) {
+            ticksHtml = tui.util.map(positions, function(position, index) {
                 var cssText;
                 if (data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
@@ -179,7 +179,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
                 isLabelAxis: data.isLabelAxis,
                 labelSize: labelSize
             }),
-            elLabelArea = dom.create('DIV', 'ne-chart-label-area'),
+            elLabelArea = dom.create('DIV', 'tui-chart-label-area'),
             areaCssText = renderUtil.makeFontCssText(this.theme.label),
             labelsHtml, titleAreaWidth;
 
@@ -344,7 +344,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
             halfWidth = params.labelSize / 2,
             moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
             top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
-            labelsHtml = ne.util.map(params.positions, function(position, index) {
+            labelsHtml = tui.util.map(params.positions, function(position, index) {
                 var label = params.labels[index],
                     rotationCssText = this._makeCssTextForRotationMoving({
                         degree: params.degree,
@@ -380,7 +380,7 @@ var Axis = ne.util.defineClass(/** @lends Axis.prototype */ {
     _makeNormalLabelsHtml: function(params) {
         var template = axisTemplate.tplAxisLabel,
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            labelsHtml = ne.util.map(params.positions, function(position, index) {
+            labelsHtml = tui.util.map(params.positions, function(position, index) {
                 var addCssText = renderUtil.concatStr(params.posType, ':', position, 'px');
                 return template({
                     addClass: '',

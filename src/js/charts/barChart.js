@@ -11,7 +11,7 @@ var ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
-var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
+var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**
      * Bar chart.
      * @constructs BarChart
@@ -33,7 +33,7 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
          * className
          * @type {string}
          */
-        this.className = 'ne-bar-chart';
+        this.className = 'tui-bar-chart';
 
         ChartBase.call(this, {
             bounds: bounds,

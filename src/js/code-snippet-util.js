@@ -17,7 +17,7 @@ var min = function(arr, condition, context) {
     result = arr[0];
     minValue = condition.call(context, result);
     rest = arr.slice(1);
-    ne.util.forEachArray(rest, function(item) {
+    tui.util.forEachArray(rest, function(item) {
         var compareValue = condition.call(context, item);
         if (compareValue < minValue) {
             minValue = compareValue;
@@ -44,7 +44,7 @@ var max = function(arr, condition, context) {
     result = arr[0];
     maxValue = condition.call(context, result);
     rest = arr.slice(1);
-    ne.util.forEachArray(rest, function(item) {
+    tui.util.forEachArray(rest, function(item) {
         var compareValue = condition.call(context, item);
         if (compareValue > maxValue) {
             maxValue = compareValue;
@@ -62,7 +62,7 @@ var max = function(arr, condition, context) {
  */
 var any = function(arr, condition) {
     var result = false;
-    ne.util.forEachArray(arr, function(item) {
+    tui.util.forEachArray(arr, function(item) {
         if (condition(item)) {
             result = true;
             return false;
@@ -79,7 +79,7 @@ var any = function(arr, condition) {
  */
 var all = function(arr, condition) {
     var result = true;
-    ne.util.forEachArray(arr, function(item) {
+    tui.util.forEachArray(arr, function(item) {
         if (!condition(item)) {
             result = false;
             return false;
@@ -96,8 +96,8 @@ var all = function(arr, condition) {
  */
 var pivot = function(arr2d) {
     var result = [];
-    ne.util.forEachArray(arr2d, function(arr) {
-        ne.util.forEachArray(arr, function(value, index) {
+    tui.util.forEachArray(arr2d, function(arr) {
+        tui.util.forEachArray(arr, function(value, index) {
             if (!result[index]) {
                 result[index] = [];
             }
@@ -124,10 +124,10 @@ var lengthAfterPoint = function(value) {
  */
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
-        underPointLens = ne.util.map(args, function(value) {
-            return ne.util.lengthAfterPoint(value);
+        underPointLens = tui.util.map(args, function(value) {
+            return tui.util.lengthAfterPoint(value);
         }),
-        underPointLen = ne.util.max(underPointLens),
+        underPointLen = tui.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
     return multipleNum;
 };
@@ -139,7 +139,7 @@ var findMultipleNum = function() {
  * @returns {number} result mod
  */
 var mod = function(target, modNum) {
-    var multipleNum = ne.util.findMultipleNum(modNum);
+    var multipleNum = tui.util.findMultipleNum(modNum);
     return ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
 };
 
@@ -195,21 +195,21 @@ var division = function(a, b) {
 var sum = function(values) {
     var copyArr = values.slice();
     copyArr.unshift(0);
-    return ne.util.reduce(copyArr, function(base, add) {
+    return tui.util.reduce(copyArr, function(base, add) {
         return parseFloat(base) + parseFloat(add);
     });
 };
 
-ne.util.min = min;
-ne.util.max = max;
-ne.util.any = any;
-ne.util.all = all;
-ne.util.pivot = pivot;
-ne.util.lengthAfterPoint = lengthAfterPoint;
-ne.util.mod = mod;
-ne.util.findMultipleNum = findMultipleNum;
-ne.util.addition = addition;
-ne.util.subtraction = subtraction;
-ne.util.multiplication = multiplication;
-ne.util.division = division;
-ne.util.sum = sum;
+tui.util.min = min;
+tui.util.max = max;
+tui.util.any = any;
+tui.util.all = all;
+tui.util.pivot = pivot;
+tui.util.lengthAfterPoint = lengthAfterPoint;
+tui.util.mod = mod;
+tui.util.findMultipleNum = findMultipleNum;
+tui.util.addition = addition;
+tui.util.subtraction = subtraction;
+tui.util.multiplication = multiplication;
+tui.util.division = division;
+tui.util.sum = sum;

@@ -37,7 +37,7 @@ describe('ChartBase', function() {
             legend = chartBase.componentMap.legend;
             expect(legend).toBeTruthy();
             expect(legend.constructor).toEqual(Legend);
-            expect(ne.util.inArray(legend, chartBase.components)).toBeGreaterThan(-1);
+            expect(tui.util.inArray(legend, chartBase.components)).toBeGreaterThan(-1);
         });
 
         it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {

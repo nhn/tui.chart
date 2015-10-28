@@ -7,7 +7,7 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_DEFAULT_TEMPLATE: '<div class="ne-chart-default-tooltip">' +
+    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ category }}</div>' +
         '<div>' +
             '<span>{{ legend }}</span>:' +
@@ -15,12 +15,12 @@ var tags = {
             '<span>{{ suffix }}</span>' +
         '</div>' +
     '</div>',
-    HTML_GROUP: '<div class="ne-chart-default-tooltip ne-chart-group-tooltip">' +
+    HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
         '<div>{{ category }}</div>' +
         '{{ items }}' +
     '</div>',
     HTML_GROUP_ITEM: '<div>' +
-        '<div class="ne-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>&nbsp;<span>{{ legend }}</span>:' +
+        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>&nbsp;<span>{{ legend }}</span>:' +
         '&nbsp;<span>{{ value }}</span>' +
         '<span>{{ suffix }}</span>' +
     '</div>',

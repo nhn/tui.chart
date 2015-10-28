@@ -9,7 +9,7 @@
 var dom = require('./domHandler'),
     chartConst = require('./../const');
 
-var browser = ne.util.browser,
+var browser = tui.util.browser,
     isIE8 = browser.msie && browser.version === 8;
 
 /**
@@ -68,7 +68,7 @@ var renderUtil = {
             return this.checkEl;
         }
 
-        elDiv = dom.create('DIV', 'ne-chart-size-check-element');
+        elDiv = dom.create('DIV', 'tui-chart-size-check-element');
         elSpan = dom.create('SPAN');
 
         elDiv.appendChild(elSpan);
@@ -88,7 +88,7 @@ var renderUtil = {
     _getRenderedLabelSize: function(label, theme, offsetType) {
         var elDiv, elSpan, labelSize;
 
-        if (ne.util.isUndefined(label) || label === '') {
+        if (tui.util.isUndefined(label) || label === '') {
             return 0;
         }
 
@@ -144,10 +144,10 @@ var renderUtil = {
      * @private
      */
     _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
-        var sizes = ne.util.map(labels, function(label) {
+        var sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
             }, this),
-            maxSize = ne.util.max(sizes);
+            maxSize = tui.util.max(sizes);
         return maxSize;
     },
 
@@ -160,7 +160,7 @@ var renderUtil = {
      * @private
      */
     getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = ne.util.bind(this.getRenderedLabelWidth, this),
+        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this),
             maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
         return maxWidth;
     },
@@ -173,7 +173,7 @@ var renderUtil = {
      * @returns {number} max height
      */
     getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = ne.util.bind(this.getRenderedLabelHeight, this),
+        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this),
             maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
         return maxHeight;
     },
@@ -198,7 +198,7 @@ var renderUtil = {
      * @param {{top: number, left: number, right: number}} position position
      */
     renderPosition: function(el, position) {
-        if (ne.util.isUndefined(position)) {
+        if (tui.util.isUndefined(position)) {
             return;
         }
 

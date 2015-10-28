@@ -14,7 +14,7 @@ var chartConst = require('../const'),
  * @class LineTypeSeriesBase
  * @mixin
  */
-var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
+var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
      * To make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
@@ -34,8 +34,8 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             start = step / 2;
         }
 
-        result = ne.util.map(groupValues, function(values) {
-            return ne.util.map(values, function(value, index) {
+        result = tui.util.map(groupValues, function(values) {
+            return tui.util.map(values, function(value, index) {
                 return {
                     left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
                     top: height - (value * height)
@@ -63,10 +63,10 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
         }
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
-        elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area');
+        elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area');
 
-        html = ne.util.map(params.formattedValues, function(values, groupIndex) {
-            return ne.util.map(values, function(value, index) {
+        html = tui.util.map(params.formattedValues, function(values, groupIndex) {
+            return tui.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
                     labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label),
                     labelHtml = this.makeSeriesLabelHtml({
@@ -106,10 +106,10 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             diff = 1000;
 
         if (!this.tickItems) {
-            this.tickItems = ne.util.pivot(this.groupPositions);
+            this.tickItems = tui.util.pivot(this.groupPositions);
         }
 
-        ne.util.forEach(this.tickItems[groupIndex], function(position, index) {
+        tui.util.forEach(this.tickItems[groupIndex], function(position, index) {
             var compare = Math.abs(layerY - position.top);
             if (diff > compare) {
                 diff = compare;
@@ -169,7 +169,7 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
 });
 
 LineTypeSeriesBase.mixin = function(func) {
-    ne.util.extend(func.prototype, LineTypeSeriesBase.prototype);
+    tui.util.extend(func.prototype, LineTypeSeriesBase.prototype);
 };
 
 module.exports = LineTypeSeriesBase;

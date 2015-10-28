@@ -243,7 +243,7 @@ describe('BarChartSeries', function() {
                     formatFunctions: [],
                     labelHeight: 20
                 }),
-                expected = '<div class="ne-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
             expect(actual).toBe(expected);
         });
     });

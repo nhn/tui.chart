@@ -13,7 +13,7 @@ var TooltipBase = require('./tooltipBase'),
     defaultTheme = require('../themes/defaultTheme'),
     tooltipTemplate = require('./tooltipTemplate');
 
-var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
+var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
@@ -34,7 +34,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
      * @override
      */
     makeTooltipData: function() {
-        return ne.util.map(this.joinFormattedValues, function(values, index) {
+        return tui.util.map(this.joinFormattedValues, function(values, index) {
             return {
                 category: this.labels[index],
                 values: values
@@ -58,7 +58,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
 
         defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
-        return ne.util.map(ne.util.pluck(legendLabels, 'chartType'), function(chartType) {
+        return tui.util.map(tui.util.pluck(legendLabels, 'chartType'), function(chartType) {
             var color;
             if (prevChartType !== chartType) {
                 colors = theme[chartType] ? theme[chartType].colors : defaultColors;
@@ -84,7 +84,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
             colors = this._makeColors(this.joinLegendLabels, this.theme),
             itemsHtml;
 
-        itemsHtml = ne.util.map(item.values, function(value, index) {
+        itemsHtml = tui.util.map(item.values, function(value, index) {
             var legendLabel = this.joinLegendLabels[index];
             return template({
                 value: value,
@@ -176,7 +176,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     _createTooltipSectorElement: function() {
         var elTooltipBlock;
         if (!this.elLayout.childNodes.length < 2) {
-            elTooltipBlock = dom.create('DIV', 'ne-chart-group-tooltip-sector');
+            elTooltipBlock = dom.create('DIV', 'tui-chart-group-tooltip-sector');
             dom.append(this.elLayout, elTooltipBlock);
         } else {
             elTooltipBlock = this.elLayout.lastChild;
@@ -308,7 +308,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     showTooltip: function(elTooltip, params, prevPosition) {
         var dimension, position;
 
-        if (!ne.util.isUndefined(this.prevIndex)) {
+        if (!tui.util.isUndefined(this.prevIndex)) {
             this.fire('hideGroupAnimation', this.prevIndex);
         }
         elTooltip.innerHTML = this._makeTooltipHtml(params.index);
@@ -335,6 +335,6 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     }
 });
 
-ne.util.CustomEvents.mixin(GroupTooltip);
+tui.util.CustomEvents.mixin(GroupTooltip);
 
 module.exports = GroupTooltip;

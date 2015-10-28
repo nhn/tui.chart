@@ -127,7 +127,7 @@ describe('Tooltip', function() {
                 groupIndex: 0,
                 index: 1
             });
-            expected = '<div class="ne-chart-default-tooltip">' +
+            expected = '<div class="tui-chart-default-tooltip">' +
                 '<div>Silver</div>' +
                 '<div><span>Density2</span>:&nbsp;<span>20</span><span>suffix</span></div>' +
                 '</div>';

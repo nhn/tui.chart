@@ -10,7 +10,7 @@ var event = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.prototype */ {
+var EventHandleLayerBase = tui.util.defineClass(/** @lends EventHandleLayerBase.prototype */ {
     /**
      * EventHandleLayerBase is base class for event handle layers.
      * @constructs EventHandleLayerBase
@@ -39,7 +39,7 @@ var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.p
      * @return {HTMLElement} coordinate area
      */
     render: function() {
-        var elCoordinateArea = dom.create('DIV', 'ne-chart-series-coordinate-area');
+        var elCoordinateArea = dom.create('DIV', 'tui-chart-series-coordinate-area');
         renderUtil.renderDimension(elCoordinateArea, this.bound.dimension);
         renderUtil.renderPosition(elCoordinateArea, this.bound.position);
         this.attachEvent(elCoordinateArea);
@@ -53,7 +53,7 @@ var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.p
      */
     findIndex: function(pointValue) {
         var foundIndex = -1;
-        ne.util.forEachArray(this.coordinateData, function(scale, index) {
+        tui.util.forEachArray(this.coordinateData, function(scale, index) {
             if (scale.min < pointValue && scale.max >= pointValue) {
                 foundIndex = index;
                 return false;
@@ -72,7 +72,7 @@ var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.p
     makeLineTypeCoordinateData: function(width, tickCount) {
         var tickInterval = width / (tickCount - 1),
             halfInterval = tickInterval / 2;
-        return ne.util.map(ne.util.range(0, tickCount), function(index) {
+        return tui.util.map(tui.util.range(0, tickCount), function(index) {
             return {
                 min: index * tickInterval - halfInterval,
                 max: index * tickInterval + halfInterval
@@ -97,11 +97,11 @@ var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.p
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mousemove', el, ne.util.bind(this.onMousemove, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
+        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 
-ne.util.CustomEvents.mixin(EventHandleLayerBase);
+tui.util.CustomEvents.mixin(EventHandleLayerBase);
 
 module.exports = EventHandleLayerBase;

@@ -12,7 +12,7 @@ var ChartBase = require('./chartBase'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries');
 
-var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
+var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * Column chart.
      * @constructs PieChart
@@ -26,7 +26,7 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
             convertedData = baseData.convertedData,
             bounds = baseData.bounds;
 
-        this.className = 'ne-pie-chart';
+        this.className = 'tui-pie-chart';
 
         options.tooltip = options.tooltip || {};
 

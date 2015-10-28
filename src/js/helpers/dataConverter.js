@@ -6,8 +6,6 @@
 
 'use strict';
 
-var calculator = require('./calculator');
-
 var concat = Array.prototype.concat;
 
 /**
@@ -21,6 +19,7 @@ var dataConverter = {
      * @param {array.<array>} userData user data
      * @param {object} chartOptions chart option
      * @param {string} chartType chart type
+     * @param {array.<string>} seriesChartTypes chart types
      * @returns {{
      *      labels: array.<string>,
      *      values: array.<number>,
@@ -70,12 +69,12 @@ var dataConverter = {
     /**
      * Pick value.
      * @memberOf module:dataConverter
-     * @param {{name: string, data: array.<number> || number}} items items
+     * @param {{name: string, data: (array.<number> | number)}} items items
      * @returns {array} picked value
      * @private
      */
     _pickValue: function(items) {
-        return ne.util.map([].concat(items.data), parseFloat);
+        return tui.util.map([].concat(items.data), parseFloat);
     },
 
     /**
@@ -86,14 +85,14 @@ var dataConverter = {
      */
     _pickValues: function(seriesData) {
         var values, result;
-        if (ne.util.isArray(seriesData)) {
-            values = ne.util.map(seriesData, this._pickValue, this);
-            result = ne.util.pivot(values);
+        if (tui.util.isArray(seriesData)) {
+            values = tui.util.map(seriesData, this._pickValue, this);
+            result = tui.util.pivot(values);
         } else {
             result = {};
-            ne.util.forEach(seriesData, function(groupValues, type) {
-                values = ne.util.map(groupValues, this._pickValue, this);
-                result[type] = ne.util.pivot(values);
+            tui.util.forEach(seriesData, function(groupValues, type) {
+                values = tui.util.map(groupValues, this._pickValue, this);
+                result[type] = tui.util.pivot(values);
             }, this);
         }
         return result;
@@ -103,6 +102,7 @@ var dataConverter = {
      * Join values.
      * @memberOf module:dataConverter
      * @param {array.<array>} groupValues values
+     * @param {array.<string>} seriesChartTypes chart types
      * @returns {array.<number>} join values
      * @private
      */
@@ -113,13 +113,13 @@ var dataConverter = {
             return groupValues;
         }
 
-        joinValues = ne.util.map(groupValues, function(groupValues) {
-            return groupValues;
+        joinValues = tui.util.map(groupValues, function(values) {
+            return values;
         }, this);
 
         joinValues = [];
-        ne.util.forEachArray(seriesChartTypes, function(_chartType) {
-            ne.util.forEach(groupValues[_chartType], function(values, index) {
+        tui.util.forEachArray(seriesChartTypes, function(_chartType) {
+            tui.util.forEach(groupValues[_chartType], function(values, index) {
                 if (!joinValues[index]) {
                     joinValues[index] = [];
                 }
@@ -149,12 +149,12 @@ var dataConverter = {
      */
     _pickLegendLabels: function(seriesData) {
         var result;
-        if (ne.util.isArray(seriesData)) {
-            result = ne.util.map(seriesData, this._pickLegendLabel, this);
+        if (tui.util.isArray(seriesData)) {
+            result = tui.util.map(seriesData, this._pickLegendLabel, this);
         } else {
             result = {};
-            ne.util.forEach(seriesData, function(groupValues, type) {
-                result[type] = ne.util.map(groupValues, this._pickLegendLabel, this);
+            tui.util.forEach(seriesData, function(groupValues, type) {
+                result[type] = tui.util.map(groupValues, this._pickLegendLabel, this);
             }, this);
         }
         return result;
@@ -165,13 +165,14 @@ var dataConverter = {
      * @memberOf module:dataConverter
      * @param {array} legendLabels legend labels
      * @param {string} chartType chart type
+     * @param {array.<string>} seriesChartTypes chart types
      * @returns {array} labels
      * @private
      */
     _joinLegendLabels: function(legendLabels, chartType, seriesChartTypes) {
         var joinLabels;
         if (!seriesChartTypes || !seriesChartTypes.length) {
-            joinLabels = ne.util.map(legendLabels, function(label) {
+            joinLabels = tui.util.map(legendLabels, function(label) {
                 return {
                     chartType: chartType,
                     label: label
@@ -179,8 +180,8 @@ var dataConverter = {
             });
         } else {
             joinLabels = [];
-            ne.util.forEachArray(seriesChartTypes, function(_chartType) {
-                var labels = ne.util.map(legendLabels[_chartType], function(label) {
+            tui.util.forEachArray(seriesChartTypes, function(_chartType) {
+                var labels = tui.util.map(legendLabels[_chartType], function(label) {
                     return {
                         chartType: _chartType,
                         label: label
@@ -201,10 +202,10 @@ var dataConverter = {
      * @private
      */
     _formatGroupValues: function(groupValues, formatFunctions) {
-        return ne.util.map(groupValues, function(values) {
-            return ne.util.map(values, function(value) {
+        return tui.util.map(groupValues, function(values) {
+            return tui.util.map(values, function(value) {
                 var fns = [value].concat(formatFunctions);
-                return ne.util.reduce(fns, function(stored, fn) {
+                return tui.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });
             });
@@ -221,11 +222,11 @@ var dataConverter = {
      */
     _formatValues: function(chartValues, formatFunctions) {
         var result;
-        if (ne.util.isArray(chartValues)) {
+        if (tui.util.isArray(chartValues)) {
             result = this._formatGroupValues(chartValues, formatFunctions);
         } else {
             result = {};
-            ne.util.forEach(chartValues, function(groupValues, chartType) {
+            tui.util.forEach(chartValues, function(groupValues, chartType) {
                 result[chartType] = this._formatGroupValues(groupValues, formatFunctions);
             }, this);
         }
@@ -242,8 +243,8 @@ var dataConverter = {
     _pickMaxLenUnderPoint: function(values) {
         var max = 0;
 
-        ne.util.forEachArray(values, function(value) {
-            var len = ne.util.lengthAfterPoint(value);
+        tui.util.forEachArray(values, function(value) {
+            var len = tui.util.lengthAfterPoint(value);
             if (len > max) {
                 max = len;
             }
@@ -358,7 +359,7 @@ var dataConverter = {
 
         values = (value).split('').reverse();
         lastIndex = values.length - 1;
-        values = ne.util.map(values, function(char, index) {
+        values = tui.util.map(values, function(char, index) {
             var result = [char];
             if (index < lastIndex && (index + 1) % 3 === 0) {
                 result.push(comma);
@@ -386,10 +387,10 @@ var dataConverter = {
 
         if (this._isDecimal(format)) {
             len = this._pickMaxLenUnderPoint([format]);
-            funcs = [ne.util.bind(this._formatDecimal, this, len)];
+            funcs = [tui.util.bind(this._formatDecimal, this, len)];
         } else if (this._isZeroFill(format)) {
             len = format.length;
-            funcs = [ne.util.bind(this._formatZeroFill, this, len)];
+            funcs = [tui.util.bind(this._formatZeroFill, this, len)];
             return funcs;
         }
 

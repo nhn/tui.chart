@@ -11,7 +11,7 @@ var Series = require('./series'),
     chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil');
 
-var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
+var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
@@ -41,11 +41,11 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
      */
     _makeBarChartBound: function(params) {
         return {
-            start: ne.util.extend({
+            start: tui.util.extend({
                 left: params.startLeft,
                 width: 0
             }, params.baseBound),
-            end: ne.util.extend({
+            end: tui.util.extend({
                 left: params.endLeft,
                 width: params.endWidth
             }, params.baseBound)
@@ -98,9 +98,9 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
         var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
             bounds;
 
-        bounds = ne.util.map(baseInfo.groupValues, function(values, groupIndex) {
+        bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
             var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
-            return ne.util.map(values, function (value, index) {
+            return tui.util.map(values, function (value, index) {
                 return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
             }, this);
         }, this);
@@ -119,10 +119,10 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;
-        bounds = ne.util.map(groupValues, function (values, groupIndex) {
+        bounds = tui.util.map(groupValues, function (values, groupIndex) {
             var paddingTop = (groupHeight * groupIndex) + (barHeight / 2),
                 endLeft = chartConst.SERIES_EXPAND_SIZE;
-            return ne.util.map(values, function (value) {
+            return tui.util.map(values, function (value) {
                 var endWidth, baseBound, bound;
 
                 if (value < 0) {

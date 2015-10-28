@@ -21,7 +21,7 @@ module.exports = {
     template: function (html) {
         return function (data) {
             var result = html;
-            ne.util.forEach(data, function (value, key) {
+            tui.util.forEach(data, function (value, key) {
                 var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
                 result = result.replace(regExp, value);
             });

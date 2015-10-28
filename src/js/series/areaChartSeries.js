@@ -9,7 +9,7 @@
 var Series = require('./series'),
     LineTypeSeriesBase = require('./lineTypeSeriesBase');
 
-var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
+var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
      * Area chart series component.
      * @constructs AreaChartSeries

@@ -34,7 +34,7 @@ var axisTypeMixer = {
             this.addComponent('plot', Plot, params.plotData);
         }
 
-        ne.util.forEach(params.axes, function(data, name) {
+        tui.util.forEach(params.axes, function(data, name) {
             this.addComponent(name, Axis, {
                 data: data,
                 aligned: aligned
@@ -49,7 +49,7 @@ var axisTypeMixer = {
             });
         }
 
-        this.addComponent('series', params.Series, ne.util.extend({
+        this.addComponent('series', params.Series, tui.util.extend({
             libType: options.libType,
             chartType: options.chartType,
             parentChartType: options.parentChartType,
@@ -84,7 +84,7 @@ var axisTypeMixer = {
      * @returns {{vTickCount: number, hTickCount: number}} plot data
      */
     makePlotData: function(plotData, axesData) {
-        if (ne.util.isUndefined(plotData)) {
+        if (tui.util.isUndefined(plotData)) {
             plotData = {
                 vTickCount: axesData.yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
@@ -98,7 +98,7 @@ var axisTypeMixer = {
      * @param {function} func target function
      */
     mixin: function(func) {
-        ne.util.extend(func.prototype, this);
+        tui.util.extend(func.prototype, this);
     }
 };
 

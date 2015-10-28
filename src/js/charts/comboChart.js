@@ -14,7 +14,7 @@ var calculator = require('../helpers/calculator'),
     ColumnChart = require('./columnChart'),
     LineChart = require('./lineChart');
 
-var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
+var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
     /**
      * Combo chart.
      * @constructs ComboChart
@@ -24,7 +24,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @param {object} options chart options
      */
     init: function(userData, theme, options) {
-        var seriesChartTypes = ne.util.keys(userData.series).sort(),
+        var seriesChartTypes = tui.util.keys(userData.series).sort(),
             optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, options.yAxis),
             chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes,
             baseData = this.makeBaseData(userData, theme, options, {
@@ -46,7 +46,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             },
             baseAxesData = {};
 
-        baseAxesData.yAxis = this._makeYAxisData(ne.util.extend({
+        baseAxesData.yAxis = this._makeYAxisData(tui.util.extend({
             index: 0
         }, yAxisParams));
 
@@ -54,7 +54,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             labels: convertedData.labels
         });
 
-        this.className = 'ne-combo-chart';
+        this.className = 'tui-combo-chart';
 
         ChartBase.call(this, {
             bounds: bounds,
@@ -99,11 +99,11 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
         if (yAxisOptions.length === 1 && !yAxisOptions[0].chartType) {
             resultChartTypes = [];
         } else if (yAxisOptions.length) {
-            optionChartTypes = ne.util.map(yAxisOptions, function(option) {
+            optionChartTypes = tui.util.map(yAxisOptions, function(option) {
                 return option.chartType;
             });
 
-            ne.util.forEachArray(optionChartTypes, function(chartType, index) {
+            tui.util.forEachArray(optionChartTypes, function(chartType, index) {
                 isReverse = isReverse || (chartType && resultChartTypes[index] !== chartType || false);
             });
 
@@ -145,7 +145,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
 
         seriesOption = options.series && options.series[chartType] || options.series;
 
-        return axisDataMaker.makeValueAxisData(ne.util.extend({
+        return axisDataMaker.makeValueAxisData(tui.util.extend({
             values: yAxisValues,
             stacked: seriesOption && seriesOption.stacked || '',
             options: yAxisOptions[index],
@@ -169,7 +169,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             axesData = {},
             yrAxisData;
         if (!yAxisParams.isOneYAxis) {
-            yrAxisData = this._makeYAxisData(ne.util.extend({
+            yrAxisData = this._makeYAxisData(tui.util.extend({
                 index: 1,
                 addParams: {
                     isPositionRight: true
@@ -198,7 +198,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      */
     _makeChartTypeOrderInfo: function(chartTypes) {
         var result = {};
-        ne.util.forEachArray(chartTypes, function(chartType, index) {
+        tui.util.forEachArray(chartTypes, function(chartType, index) {
             result[chartType] = index;
         });
         return result;
@@ -215,7 +215,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     _makeOptionsMap: function(chartTypes, options) {
         var orderInfo = this._makeChartTypeOrderInfo(chartTypes),
             result = {};
-        ne.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(chartTypes, function(chartType) {
             var chartOptions = JSON.parse(JSON.stringify(options)),
                 index = orderInfo[chartType];
 
@@ -248,7 +248,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     _makeThemeMap: function(chartTypes, theme, legendLabels) {
         var result = {},
             colorCount = 0;
-        ne.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(chartTypes, function(chartType) {
             var chartTheme = JSON.parse(JSON.stringify(theme)),
                 removedColors;
 
@@ -313,7 +313,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             },
             joinLegendLabels = convertedData.joinLegendLabels;
 
-        this.charts = ne.util.map(params.seriesChartTypes, function(chartType) {
+        this.charts = tui.util.map(params.seriesChartTypes, function(chartType) {
             var legendLabels = convertedData.legendLabels[chartType],
                 axes = params.axesData[chartType],
                 options = params.optionsMap[chartType],
@@ -355,7 +355,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     render: function() {
         var el = ChartBase.prototype.render.call(this);
         var paper;
-        ne.util.forEachArray(this.charts, function(chart, index) {
+        tui.util.forEachArray(this.charts, function(chart, index) {
             setTimeout(function() {
                 chart.render(el, paper);
                 if (!paper) {

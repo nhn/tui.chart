@@ -12,7 +12,7 @@ var chartConst = require('../const'),
     defaultTheme = require('../themes/defaultTheme'),
     legendTemplate = require('./../legends/legendTemplate');
 
-var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
+var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Legend component.
      * @constructs Legend
@@ -22,11 +22,11 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         /**
          * Legend view className
          */
-        this.className = 'ne-chart-legend-area';
+        this.className = 'tui-chart-legend-area';
     },
 
     /**
@@ -51,7 +51,7 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _setThemeForLabels: function(labels, theme) {
-        var result = ne.util.map(labels, function(item, index) {
+        var result = tui.util.map(labels, function(item, index) {
             var itemTheme = {
                 color: theme.colors[index]
             };
@@ -80,10 +80,10 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
             joinLegendLabels = this.joinLegendLabels,
             labelLen = legendLabels.length,
             theme = this.theme,
-            chartLegendTheme = ne.util.filter(theme, function(item, name) {
-                return ne.util.inArray(name, chartConst.SERIES_PROPS) === -1 && name !== 'label';
+            chartLegendTheme = tui.util.filter(theme, function(item, name) {
+                return tui.util.inArray(name, chartConst.SERIES_PROPS) === -1 && name !== 'label';
             }),
-            chartTypes = ne.util.keys(chartLegendTheme),
+            chartTypes = tui.util.keys(chartLegendTheme),
             defaultLegendTheme = {
                 colors: defaultTheme.series.colors
             },
@@ -94,7 +94,7 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
         } else {
             chartTheme = theme[chartType] || defaultLegendTheme;
             result = this._setThemeForLabels(joinLegendLabels.slice(0, labelLen), chartTheme);
-            chartTheme = theme[ne.util.filter(chartTypes, function(propName) {
+            chartTheme = theme[tui.util.filter(chartTypes, function(propName) {
                 return propName !== chartType;
             })[0]] || defaultLegendTheme;
             result = result.concat(this._setThemeForLabels(joinLegendLabels.slice(labelLen), chartTheme));
@@ -112,7 +112,7 @@ var Legend = ne.util.defineClass(/** @lends Legend.prototype */ {
             template = legendTemplate.tplLegend,
             labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme) + (chartConst.LABEL_PADDING_TOP * 2),
             baseMarginTop = parseInt((labelHeight - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
-            html = ne.util.map(labels, function(label) {
+            html = tui.util.map(labels, function(label) {
                 var borderCssText = label.borderColor ? renderUtil.concatStr(';border:1px solid ', label.borderColor) : '',
                     rectMargin, marginTop, data;
                 if (label.chartType === 'line') {

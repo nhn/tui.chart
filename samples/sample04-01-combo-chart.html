@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Combo Chart Sample</title>
-    <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
@@ -75,7 +75,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-options')">More Options</button>
+            <button onclick="openWindow('https://github.com/nhnent/fe.tui.chart/wiki/tutorial#combo-chart-options')">More Options</button>
         </div>
     </div>
     <div id="theme-area">
@@ -107,7 +107,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-theme')">More Theme</button>
+            <button onclick="openWindow('https://github.com/nhnent/fe.tui.chart/wiki/tutorial#combo-chart-theme')">More Theme</button>
         </div>
     </div>
 
@@ -115,7 +115,7 @@
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
-<script src="dist/application-chart.min.js"></script>
+<script src="dist/chart.min.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
@@ -168,7 +168,7 @@
                 }
             }
         };
-    ne.application.chart.comboChart(container, data, options);
+    tui.chart.comboChart(container, data, options);
 </script>
 </body>
 </html>

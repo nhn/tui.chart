@@ -9,7 +9,7 @@
 var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
+var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
@@ -21,12 +21,12 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         /**
          * className
          * @type {string}
          */
-        this.className = 'ne-chart-tooltip-area';
+        this.className = 'tui-chart-tooltip-area';
 
         /**
          * TooltipBase container.
@@ -88,7 +88,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     _createTooltipElement: function() {
         var elTooltip;
         if (!this.elLayout.firstChild) {
-            elTooltip = dom.create('DIV', 'ne-chart-tooltip');
+            elTooltip = dom.create('DIV', 'tui-chart-tooltip');
             dom.append(this.elLayout, elTooltip);
         } else {
             elTooltip = this.elLayout.firstChild;
@@ -158,7 +158,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
             return;
         }
 
-        ne.util.forEach(this.activeSliders, function(slider) {
+        tui.util.forEach(this.activeSliders, function(slider) {
             clearInterval(slider.timerId);
         });
 
@@ -194,7 +194,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
         }
 
         if (!this.slider[type]) {
-            this.slider[type] = new ne.component.Effects.Slide({
+            this.slider[type] = new tui.component.Effects.Slide({
                 flow: type,
                 element: element,
                 duration: 100
@@ -226,7 +226,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
             vDirection = moveTop > 0 ? 'forword' : 'backword',
             hDirection = moveTop > 0 ? 'forword' : 'backword',
             activeSliders = [],
-            complate = ne.util.bind(this._completeSlide, this);
+            complate = tui.util.bind(this._completeSlide, this);
 
         if (moveTop) {
             vSlider.setDistance(moveTop);
@@ -270,7 +270,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     _getHider: function(element) {
         if (!this.hider) {
-            this.hider = new ne.component.Effects.Fade({
+            this.hider = new tui.component.Effects.Fade({
                 element: element,
                 duration: 100
             });
@@ -292,6 +292,6 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     }
 });
 
-ne.util.CustomEvents.mixin(TooltipBase);
+tui.util.CustomEvents.mixin(TooltipBase);
 
 module.exports = TooltipBase;

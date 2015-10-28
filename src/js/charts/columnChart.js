@@ -11,7 +11,7 @@ var ChartBase = require('./chartBase'),
     verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/columnChartSeries');
 
-var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
+var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
     /**
      * Column chart.
      * @constructs ColumnChart
@@ -36,7 +36,7 @@ var ColumnChart = ne.util.defineClass(ChartBase, /** @lends ColumnChart.prototyp
          * className
          * @type {string}
          */
-        this.className = 'ne-column-chart';
+        this.className = 'tui-column-chart';
 
         ChartBase.call(this, {
             bounds: bounds,

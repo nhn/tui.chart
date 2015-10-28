@@ -9,7 +9,7 @@
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     isMac = navigator.userAgent.indexOf('Mac') > -1,
-    browser = ne.util.browser,
+    browser = tui.util.browser,
     isIE8 = browser.msie && browser.version === 8,
     isFirefox = browser.firefox,
     isChrome = browser.chrome;
@@ -41,7 +41,7 @@ describe('renderUtil', function() {
         it('동적인 폰트 크기를 체크할 수 있는 HTML Element를 반환합니다.', function () {
             var actual = renderUtil._createSizeCheckEl();
 
-            expect(actual.className).toBe('ne-chart-size-check-element')
+            expect(actual.className).toBe('tui-chart-size-check-element')
             expect(actual.firstChild.nodeName).toBe('SPAN');
         });
     });

@@ -11,7 +11,7 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     plotTemplate = require('./plotTemplate');
 
-var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
+var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Plot component.
      * @constructs Plot
@@ -22,12 +22,12 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         /**
          * Plot view className
          * @type {string}
          */
-        this.className = 'ne-chart-plot-area';
+        this.className = 'tui-chart-plot-area';
     },
 
     /**
@@ -93,7 +93,7 @@ var Plot = ne.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeLineHtml: function(params) {
         var template = plotTemplate.tplPlotLine,
-            lineHtml = ne.util.map(params.positions, function(position) {
+            lineHtml = tui.util.map(params.positions, function(position) {
                 var cssTexts = [
                         renderUtil.concatStr(params.positionType, ':', position, 'px'),
                         renderUtil.concatStr(params.sizeType, ':', params.size, 'px')

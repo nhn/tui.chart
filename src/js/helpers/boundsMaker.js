@@ -29,15 +29,15 @@ var boundsMaker = {
         var values = chartType && convertedData.values[chartType] || convertedData.joinValues,
             formatFunctions = convertedData.formatFunctions,
             flattenValues = concat.apply([], values),
-            min = ne.util.min(flattenValues),
-            max = ne.util.max(flattenValues),
+            min = tui.util.min(flattenValues),
+            max = tui.util.max(flattenValues),
             scale = calculator.calculateScale(min, max),
             minLabel = calculator.normalizeAxisNumber(scale.min),
             maxLabel = calculator.normalizeAxisNumber(scale.max),
             fns = formatFunctions && formatFunctions.slice() || [];
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
         fns.unshift(maxLabel);
-        maxLabel = ne.util.reduce(fns, function(stored, fn) {
+        maxLabel = tui.util.reduce(fns, function(stored, fn) {
             return fn(stored);
         });
         return maxLabel;
@@ -174,7 +174,7 @@ var boundsMaker = {
         seriesOption = seriesOption || {};
 
         if (chartType !== chartConst.CHART_TYPE_PIE || !seriesOption.legendType) {
-            legendLabels = ne.util.map(joinLegendLabels, function(item) {
+            legendLabels = tui.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
@@ -278,7 +278,7 @@ var boundsMaker = {
                 titleHeight: titleDimension.height
             });
 
-        return ne.util.extend({
+        return tui.util.extend({
             chart: chartDimension,
             title: titleDimension,
             series: seriesDimension,
@@ -487,7 +487,7 @@ var boundsMaker = {
             halfWidth = labelWidth / 2,
             halfHeight = labelHeight / 2;
 
-        ne.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
+        tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
             var compareWidth = (calculator.calculateAdjacent(degree, halfWidth) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, halfHeight)) * 2;
             foundDegree = degree;
             if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
@@ -671,7 +671,7 @@ var boundsMaker = {
      */
     make: function(params) {
         var axesLabelInfo = this._makeAxesLabelInfo(params),
-            dimensions = this._getComponentsDimensions(ne.util.extend({
+            dimensions = this._getComponentsDimensions(tui.util.extend({
                 axesLabelInfo: axesLabelInfo
             }, params)),
             rotationInfo, top, left, seriesBound, axesBounds, bounds;
@@ -694,7 +694,7 @@ var boundsMaker = {
             top: top,
             left: left
         });
-        bounds = ne.util.extend({
+        bounds = tui.util.extend({
             chart: this._makeChartBound(dimensions.chart),
             series: seriesBound,
             legend: this._makeLegendBound(dimensions),

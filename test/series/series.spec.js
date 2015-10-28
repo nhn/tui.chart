@@ -180,7 +180,7 @@ describe('Series', function() {
                 top: 10
             }, 'label1', 0, 0);
 
-            expect(result).toBe('<div class="ne-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
+            expect(result).toBe('<div class="tui-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
         });
     });
 

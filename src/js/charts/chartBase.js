@@ -13,7 +13,7 @@ var chartConst = require('../const'),
     boundsMaker = require('../helpers/boundsMaker'),
     GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer');
 
-var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
+var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Chart base.
      * @constructs ChartBase
@@ -79,7 +79,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
     makeBaseData: function(userData, theme, options, params) {
         var seriesChartTypes = params ? params.seriesChartTypes : [],
             convertedData = dataConverter.convert(userData, options.chart, options.chartType, seriesChartTypes),
-            bounds = boundsMaker.make(ne.util.extend({
+            bounds = boundsMaker.make(tui.util.extend({
                 chartType: options.chartType,
                 convertedData: convertedData,
                 theme: theme,
@@ -106,11 +106,11 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
             commonParams = {},
             component;
 
-        commonParams.bound = ne.util.isArray(bound) ? bound[index] : bound;
-        commonParams.theme = ne.util.isArray(theme) ? theme[index] : theme;
-        commonParams.options = ne.util.isArray(options) ? options[index] : options || {};
+        commonParams.bound = tui.util.isArray(bound) ? bound[index] : bound;
+        commonParams.theme = tui.util.isArray(theme) ? theme[index] : theme;
+        commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
 
-        params = ne.util.extend(commonParams, params);
+        params = tui.util.extend(commonParams, params);
         component = new Component(params);
         this.components.push(component);
         this.componentMap[name] = component;
@@ -138,7 +138,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         if (!el) {
             el = dom.create('DIV', this.className);
 
-            dom.addClass(el, 'ne-chart');
+            dom.addClass(el, 'tui-chart');
             this._renderTitle(el);
             renderUtil.renderDimension(el, this.bounds.chart.dimension);
             renderUtil.renderBackground(el, this.theme.chart.background);
@@ -158,7 +158,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderTitle: function(el) {
         var chartOptions = this.options.chart || {},
-            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'ne-chart-title');
+            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
         dom.append(el, elTitle);
     },
 
@@ -170,7 +170,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(container, components, paper) {
-        var elements = ne.util.map(components, function(component) {
+        var elements = tui.util.map(components, function(component) {
             return component.render(paper);
         });
         dom.append(container, elements);
@@ -233,7 +233,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * Animate chart.
      */
     animateChart: function() {
-        ne.util.forEachArray(this.components, function(component) {
+        tui.util.forEachArray(this.components, function(component) {
             if (component.animateComponent) {
                 component.animateComponent();
             }

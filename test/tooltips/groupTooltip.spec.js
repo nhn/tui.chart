@@ -86,10 +86,10 @@ describe('GroupTooltip', function() {
                 colors: ['red']
             };
             actual = tooltip._makeTooltipHtml(1);
-            expected = '<div class="ne-chart-default-tooltip ne-chart-group-tooltip">' +
+            expected = '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
                 '<div>Gold</div>' +
                     '<div>' +
-                        '<div class="ne-chart-legend-rect column" style="background-color:red"></div>' +
+                        '<div class="tui-chart-legend-rect column" style="background-color:red"></div>' +
                         '&nbsp;<span>legend1</span>:&nbsp;<span>30</span><span></span>' +
                     '</div>' +
                 '</div>';
@@ -223,13 +223,13 @@ describe('GroupTooltip', function() {
             tooltip.elLayout = elLayout;
             actual = tooltip._createTooltipSectorElement();
             expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-group-tooltip-sector');
+            expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
         it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 섹터 엘리먼트로 반환합니다.', function() {
             var elLayout = dom.create('DIV'),
                 actual, expected;
-            elLayout.innerHTML = '<div></div><div class="ne-chart-group-tooltip-sector"></div>';
+            elLayout.innerHTML = '<div></div><div class="tui-chart-group-tooltip-sector"></div>';
             tooltip.elLayout = elLayout;
             actual = tooltip._createTooltipSectorElement();
             expected = elLayout.lastChild;
@@ -244,7 +244,7 @@ describe('GroupTooltip', function() {
             tooltip.elLayout = elLayout;
             actual = tooltip._getTooltipSectorElement();
             expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-group-tooltip-sector');
+            expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
         it('this.elTooltipBlock이 존재하면 그대로 반환합니다.', function() {

@@ -24,7 +24,7 @@ describe('TooltipBase', function() {
             tooltip.chartId = 'tui-chart-id';
             actual = tooltip._getTooltipLayoutElement();
             expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip-area');
+            expect(actual.className).toBe('tui-chart-tooltip-area');
             expect(actual.id).toBe('tui-chart-id');
         });
     });
@@ -36,13 +36,13 @@ describe('TooltipBase', function() {
             tooltip.elLayout = elLayout;
             actual = tooltip._createTooltipElement();
             expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip');
+            expect(actual.className).toBe('tui-chart-tooltip');
         });
 
         it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
             var elLayout = dom.create('DIV'),
                 actual, expected;
-            elLayout.innerHTML = '<div class="ne-chart-tooltip"></div>';
+            elLayout.innerHTML = '<div class="tui-chart-tooltip"></div>';
             tooltip.elLayout = elLayout;
             actual = tooltip._createTooltipElement();
             expected = elLayout.firstChild;
@@ -57,7 +57,7 @@ describe('TooltipBase', function() {
             tooltip.elLayout = elLayout;
             actual = tooltip._getTooltipElement();
             expect(actual).toBeDefined();
-            expect(actual.className).toBe('ne-chart-tooltip');
+            expect(actual.className).toBe('tui-chart-tooltip');
         });
 
         it('this.elTooltip이 존재하면 그대로 반환합니다.', function() {

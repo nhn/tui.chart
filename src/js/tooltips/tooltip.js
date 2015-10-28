@@ -13,7 +13,7 @@ var TooltipBase = require('./tooltipBase'),
     templateMaker = require('../helpers/templateMaker'),
     tooltipTemplate = require('./tooltipTemplate');
 
-var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
+var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     /**
      * Tooltip component.
      * @constructs Tooltip
@@ -77,8 +77,8 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
             groupValues = this.values,
             legendLabels = this.legendLabels;
 
-        return ne.util.map(groupValues, function(values, groupIndex) {
-            return ne.util.map(values, function(value, index) {
+        return tui.util.map(groupValues, function(values, groupIndex) {
+            return tui.util.map(values, function(value, index) {
                 return {
                     category: labels ? labels[groupIndex] : '',
                     legend: legendLabels[index],
@@ -423,9 +423,9 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
 
         dom.addClass(elTooltip, 'show');
 
-        position = this._calculateTooltipPosition(ne.util.extend({
+        position = this._calculateTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            addPosition: ne.util.extend({
+            addPosition: tui.util.extend({
                 left: 0,
                 top: 0
             }, this.options.addPosition),
@@ -468,11 +468,11 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 
-ne.util.CustomEvents.mixin(Tooltip);
+tui.util.CustomEvents.mixin(Tooltip);
 
 module.exports = Tooltip;

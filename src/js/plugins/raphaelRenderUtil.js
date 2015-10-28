@@ -25,7 +25,7 @@ var raphaelRenderUtil = {
 
         width = width || 1;
 
-        ne.util.forEachArray(fromPoint, function(from, index) {
+        tui.util.forEachArray(fromPoint, function(from, index) {
             if (from === toPoint[index]) {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }

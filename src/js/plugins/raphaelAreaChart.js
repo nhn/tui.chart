@@ -19,7 +19,7 @@ var concat = Array.prototype.concat;
  * @class RaphaelAreaChart
  * @extends RaphaelLineTypeBase
  */
-var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
      * Render function of area chart.
      * @param {object} paper raphael paper
@@ -99,9 +99,9 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @private
      */
     _renderAreas: function(paper, groupPaths, colors) {
-        var groupAreas = ne.util.map(groupPaths, function(paths, groupIndex) {
+        var groupAreas = tui.util.map(groupPaths, function(paths, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
-            return ne.util.map(paths, function(path) {
+            return tui.util.map(paths, function(path) {
                 var result = {
                     area: this._renderArea(paper, path.area, color),
                     line: raphaelRenderUtil.renderLine(paper, path.line.start, color)
@@ -156,7 +156,7 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
         var tops = [zeroTop - fromPos.top, zeroTop - toPos.top],
             middleLeft, width, fromHeight, toHeight;
 
-        if (ne.util.all(tops, this._isMinus) || ne.util.all(tops, this._isPlus)) {
+        if (tui.util.all(tops, this._isMinus) || tui.util.all(tops, this._isPlus)) {
             return -1;
         }
 
@@ -224,10 +224,10 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
      * @private
      */
     _getAreasPath: function(groupPositions, zeroTop) {
-        var groupPaths = ne.util.map(groupPositions, function(positions) {
+        var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
-            return ne.util.map(rest, function(position) {
+            return tui.util.map(rest, function(position) {
                 var result = {
                     area: this._makeAreaPaths(fromPos, position, zeroTop),
                     line: this.makeLinePath(fromPos, position)
@@ -271,9 +271,9 @@ var RaphaelAreaChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelAr
             opacity = this.dotOpacity,
             time = ANIMATION_TIME / groupAreas[0].length,
             startTime;
-        ne.util.forEachArray(this.groupDots, function(dots, groupIndex) {
+        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
             startTime = 0;
-            ne.util.forEachArray(dots, function(dot, index) {
+            tui.util.forEachArray(dots, function(dot, index) {
                 var area, areaPath;
                 if (index) {
                     area = groupAreas[groupIndex][index - 1];

@@ -76,7 +76,7 @@ module.exports = {
     /** right padding of vertical label */
     V_LABEL_RIGHT_PADDING: 10,
     /** tooltip prefix */
-    TOOLTIP_PREFIX: 'ne-chart-tooltip',
+    TOOLTIP_PREFIX: 'tui-chart-tooltip',
     /** minimum pixel type step size */
     MIN_PIXEL_TYPE_STEP_SIZE: 40,
     /** maximum pixel type step size */
