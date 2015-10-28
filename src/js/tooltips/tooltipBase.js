@@ -7,8 +7,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    tooltipTemplate = require('./tooltipTemplate');
+    renderUtil = require('../helpers/renderUtil');
 
 var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
@@ -33,7 +32,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
          * TooltipBase container.
          * @type {HTMLElement}
          */
-        this.container = null;
+        this.elLayout = null;
 
         /**
          * TooltipBase base data.
@@ -44,8 +43,10 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
     },
 
+
     /**
      * To make tooltip data.
+     * @abstract
      */
     makeTooltipData: function() {},
 
@@ -85,10 +86,14 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _createTooltipElement: function() {
+        var elTooltip;
         if (!this.elLayout.firstChild) {
-            this.elLayout.innerHTML = tooltipTemplate.tplTooltip();
+            elTooltip = dom.create('DIV', 'ne-chart-tooltip');
+            dom.append(this.elLayout, elTooltip);
+        } else {
+            elTooltip = this.elLayout.firstChild;
         }
-        return this.elLayout.firstChild;
+        return elTooltip;
     },
 
     /**
@@ -133,6 +138,34 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
+     * Cancel hide tooltip.
+     * @private
+     */
+    _cancelHide: function() {
+        if (!this.activeHider) {
+            return;
+        }
+        clearInterval(this.activeHider.timerId);
+        this.activeHider.setOpacity(1);
+    },
+
+    /**
+     * Cancel slide tooltip.
+     * @private
+     */
+    _cancelSlide: function() {
+        if (!this.activeSliders) {
+            return;
+        }
+
+        ne.util.forEach(this.activeSliders, function(slider) {
+            clearInterval(slider.timerId);
+        });
+
+        this._completeSlide();
+    },
+
+    /**
      * Move to Position.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {{left: number, top: number}} position position
@@ -140,10 +173,8 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     moveToPosition: function(elTooltip, position, prevPosition) {
         if (prevPosition) {
-            if (this.activeHider) {
-                window.clearInterval(this.activeHider.timerId);
-                this.activeHider.setOpacity(1);
-            }
+            this._cancelHide();
+            this._cancelSlide();
             this._slideTooltip(elTooltip, prevPosition, position);
         } else {
             renderUtil.renderPosition(elTooltip, position);
@@ -173,6 +204,14 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
+     * Complete slide tooltip.
+     * @private
+     */
+    _completeSlide: function() {
+        delete this.activeSliders;
+    },
+
+    /**
      * Slide tooltip
      * @param {HTMLElement} elTooltip tooltip element
      * @param {{left: number, top: number}} prevPosition prev position
@@ -185,15 +224,18 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
             moveTop = prevPosition.top - position.top,
             moveLeft = prevPosition.left - position.left,
             vDirection = moveTop > 0 ? 'forword' : 'backword',
-            hDirection = moveTop > 0 ? 'forword' : 'backword';
+            hDirection = moveTop > 0 ? 'forword' : 'backword',
+            activeSliders = [],
+            complate = ne.util.bind(this._completeSlide, this);
 
         if (moveTop) {
             vSlider.setDistance(moveTop);
             vSlider.action({
                 direction: vDirection,
                 start: prevPosition.top,
-                complete: function() {}
+                complete: complate
             });
+            activeSliders.push(vSlider);
         }
 
         if (moveLeft) {
@@ -201,18 +243,23 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
             hSlider.action({
                 direction: hDirection,
                 start: prevPosition.left,
-                complete: function() {}
+                complete: complate
             });
+            activeSliders.push(vSlider);
+        }
+
+        if (activeSliders.length) {
+            this.activeSliders = activeSliders;
         }
     },
 
     /**
      * onHide is callback of custom event hideTooltip for SeriesView
-     * @param {{id: string}} data tooltip data
+     * @param {number} index index
      */
-    onHide: function() {
+    onHide: function(index) {
         var elTooltip = this._getTooltipElement();
-        this.hideTooltip(elTooltip);
+        this.hideTooltip(elTooltip, index);
     },
 
     /**

@@ -177,9 +177,21 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _bindHoverEvent: function(params) {
-        params.target.mouseover(function () {
-            params.inCallback(params.position, 0, params.index);
-        }).mouseout(function () {
+        var throttled = ne.util.throttle(function(e) {
+            if (!e) {
+                return;
+            }
+            params.inCallback(params.position, 0, params.index, {
+                clientX: e.clientX,
+                clientY: e.clientY
+            });
+        }, 100);
+        params.target.mouseover(function (e) {
+            params.inCallback(params.position, 0, params.index, {
+                clientX: e.clientX,
+                clientY: e.clientY
+            });
+        }).mousemove(throttled).mouseout(function () {
             params.outCallback();
         });
     },

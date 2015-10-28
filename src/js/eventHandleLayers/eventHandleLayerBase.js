@@ -1,5 +1,5 @@
 /**
- * @fileoverview CoordinateEventorBase is base class for coordinate event classes.
+ * @fileoverview EventHandleLayerBase is base class for event handle layers.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,10 +10,10 @@ var event = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
-var CoordinateEventorBase = ne.util.defineClass(/** @lends CoordinateEventorBase.prototype */ {
+var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.prototype */ {
     /**
-     * CoordinateEventorBase is base class for coordinate event classes.
-     * @constructs CoordinateEventorBase
+     * EventHandleLayerBase is base class for event handle layers.
+     * @constructs EventHandleLayerBase
      * @param {object} params parameters
      *      @param {{
      *          dimension: {width: number, height: number},
@@ -81,6 +81,18 @@ var CoordinateEventorBase = ne.util.defineClass(/** @lends CoordinateEventorBase
     },
 
     /**
+     * On mouse move
+     * @abstract
+     */
+    onMousemove: function() {},
+
+    /**
+     * On mouse out
+     * @abstract
+     */
+    onMouseout: function() {},
+
+    /**
      * Attach event
      * @param {HTMLElement} el target element
      */
@@ -90,6 +102,6 @@ var CoordinateEventorBase = ne.util.defineClass(/** @lends CoordinateEventorBase
     }
 });
 
-ne.util.CustomEvents.mixin(CoordinateEventorBase);
+ne.util.CustomEvents.mixin(EventHandleLayerBase);
 
-module.exports = CoordinateEventorBase;
+module.exports = EventHandleLayerBase;

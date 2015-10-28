@@ -262,6 +262,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 chartTheme.series = chartTheme.series[chartType];
             } else if (!chartTheme.series.colors) {
                 chartTheme.series = JSON.parse(JSON.stringify(defaultTheme.series));
+                chartTheme.series.label.fontFamily = chartTheme.chart.fontFamily;
             } else {
                 removedColors = chartTheme.series.colors.splice(0, colorCount);
                 chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);

@@ -259,22 +259,28 @@
     position: absolute;
     z-index: 500;
     .ne-chart-tooltip {
+      z-index: 100;
       position: absolute;
       display: none;
       &.show {
         display: block;
       }
       .ne-chart-default-tooltip {
-        padding: 2px 0;
+        padding: 4px 0;
         font-size: 12px;
         min-width: 100px;
         color: #fff;
         .border-radius(5px);
         background-color: #555;
-        background-color:rgba(0, 0, 0, 0.5);
+        background-color:rgba(0, 0, 0, 0.7);
         > * {
-          padding: 2px 5px;
+          padding: 2px 7px;
           text-align: center;
+        }
+
+        > :first-child {
+          backgound-color: #fff;
+          font-weight: bold;
         }
 
         &.ne-chart-group-tooltip {
@@ -282,25 +288,36 @@
             text-align: left;
             position: relative;
             padding-left: @legend-rect-width + 5;
+            padding-top: 4px;
+            padding-bottom: 4px;
           }
           .ne-chart-legend-rect {
             position: absolute;
-            left: 5px;
-            top: 0;
+            left: 7px;
+            top: 2px;
             &.line {
-              top: 5px;
+              top: 7px;
             }
           }
 
           > :first-child {
-            padding-left: 0;
+            padding-left: 7px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            text-align: center;
           }
         }
-        > :first-child {
-          backgound-color: #fff;
-          font-weight: bold;
-          text-align: center;
-        }
+      }
+    }
+
+    .ne-chart-group-tooltip-sector {
+      z-index: 50;
+      position: absolute;
+      background-color:#aaa;
+      .opacity(0.3);
+      display: none;
+      &.show {
+        display: block;
       }
     }
   }

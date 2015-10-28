@@ -115,21 +115,21 @@ describe('calculator', function() {
         });
     });
 
-    describe('arrayPivot()', function() {
-        it('배열 회전된 결과를 반환합니다.', function () {
-            var result = calculator.arrayPivot([
-                [1, 2, 3],
-                [4, 5, 6],
-                [7, 8, 9]
-            ]);
-
-            expect(result).toEqual([
-                [1, 4, 7],
-                [2, 5, 8],
-                [3, 6, 9]
-            ]);
-        });
-    });
+    //describe('arrayPivot()', function() {
+    //    it('배열 회전된 결과를 반환합니다.', function () {
+    //        var result = calculator.arrayPivot([
+    //            [1, 2, 3],
+    //            [4, 5, 6],
+    //            [7, 8, 9]
+    //        ]);
+    //
+    //        expect(result).toEqual([
+    //            [1, 4, 7],
+    //            [2, 5, 8],
+    //            [3, 6, 9]
+    //        ]);
+    //    });
+    //});
 
     describe('calculateAdjacent()', function() {
         it('끼인각이 30도이고 빗변이 2일 경우 인접변 너비는 루트3 입니다.', function() {

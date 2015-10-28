@@ -1,5 +1,5 @@
 /**
- * @fileoverview AxisTypeBase is base class of axis type chart(bar, column, line, area).
+ * @fileoverview axisTypeMixer is mixer of axis type chart(bar, column, line, area).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,11 +13,10 @@ var Axis = require('../axes/axis'),
     GroupTooltip = require('../tooltips/groupTooltip');
 
 /**
- * @classdesc AxisTypeBase is base class of axis type chart(bar, column, line, area).
- * @class AxisTypeBase
+ * axisTypeMixer is base class of axis type chart(bar, column, line, area).
  * @mixin
  */
-var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
+var axisTypeMixer = {
     /**
      * Add axis components
      * @param {object} params parameters
@@ -72,10 +71,10 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
                 formattedValues: convertedData.formattedValues,
                 labels: convertedData.labels,
                 legendLabels: convertedData.legendLabels,
-                chartId: this.chartId
+                chartId: this.chartId,
+                isVertical: this.isVertical
             });
         }
-
     },
 
     /**
@@ -92,11 +91,15 @@ var AxisTypeBase = ne.util.defineClass(/** @lends AxisTypeBase.prototype */ {
             };
         }
         return plotData;
-    }
-});
+    },
 
-AxisTypeBase.mixin = function(func) {
-    ne.util.extend(func.prototype, AxisTypeBase.prototype);
+    /**
+     * Mix in.
+     * @param {function} func target function
+     */
+    mixin: function(func) {
+        ne.util.extend(func.prototype, this);
+    }
 };
 
-module.exports = AxisTypeBase;
+module.exports = axisTypeMixer;

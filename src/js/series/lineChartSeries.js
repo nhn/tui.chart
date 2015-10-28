@@ -22,11 +22,6 @@ var LineChartSeries = ne.util.defineClass(Series, /** @lends LineChartSeries.pro
      */
     init: function() {
         Series.apply(this, arguments);
-
-        //if (!this.parentChartType) {
-        //    LineTypeCoordinateEventMixer.mixin(this);
-        //    this.initCoordinateEvent();
-        //}
     },
 
     /**

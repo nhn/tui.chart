@@ -8,8 +8,7 @@
 
 var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    calculator = require('../helpers/calculator');
+    renderUtil = require('../helpers/renderUtil');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase
@@ -62,7 +61,6 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
         if (!this.options.showLabel) {
             return null;
         }
-
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
         elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area');
@@ -108,7 +106,7 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             diff = 1000;
 
         if (!this.tickItems) {
-            this.tickItems = calculator.arrayPivot(this.groupPositions);
+            this.tickItems = ne.util.pivot(this.groupPositions);
         }
 
         ne.util.forEach(this.tickItems[groupIndex], function(position, index) {
@@ -136,7 +134,7 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             index: index
         };
 
-        return !prevIndexes || prevIndexes.groupIndex !== groupIndex || prevIndexes.index !== index;
+        return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
     },
 
     /**

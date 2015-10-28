@@ -52,7 +52,7 @@ describe('RaphaelLineTypeBase', function() {
                 expected = {
                     'fill-opacity': 0.7,
                     'stroke-opacity': 0,
-                    r: 4
+                    r: 3
                 };
             expect(actual).toEqual(expected);
         });
@@ -65,7 +65,7 @@ describe('RaphaelLineTypeBase', function() {
                 }),
                 expected = {
                     'fill-opacity': 0.5,
-                    r: 4,
+                    r: 3,
                     stroke: 'red',
                     'stroke-width': 1,
                     'stroke-opacity': 0.7

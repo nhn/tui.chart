@@ -1,5 +1,5 @@
 /**
- * @fileoverview VerticalTypeBase is base class of vertical type chart(column, line, area).
+ * @fileoverview verticalTypeMixer is mixer of vertical type chart(column, line, area).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,11 +10,10 @@ var axisDataMaker = require('../helpers/axisDataMaker'),
     state = require('../helpers/state');
 
 /**
- * @classdesc VerticalTypeBase is base class of vertical type chart(column, line, area).
- * @class VerticalTypeBase
+ * verticalTypeMixer is mixer of vertical type chart(column, line, area).
  * @mixin
  */
-var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype */ {
+var verticalTypeMixer = {
     /**
      * To make axes data
      * @param {object} convertedData converted data
@@ -45,11 +44,15 @@ var VerticalTypeBase = ne.util.defineClass(/** @lends VerticalTypeBase.prototype
             });
         }
         return axesData;
-    }
-});
+    },
 
-VerticalTypeBase.mixin = function(func) {
-    ne.util.extend(func.prototype, VerticalTypeBase.prototype);
+    /**
+     * Mix in.
+     * @param {function} func target function
+     */
+    mixin: function(func) {
+        ne.util.extend(func.prototype, this);
+    }
 };
 
-module.exports = VerticalTypeBase;
+module.exports = verticalTypeMixer;
