@@ -31,7 +31,8 @@ var LineTypeEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @le
 
     /**
      * On mousemove.
-     * @param {MouseEvent} e mouse event obejct
+     * @param {MouseEvent} e mouse event object
+     * @override
      */
     onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
@@ -45,6 +46,7 @@ var LineTypeEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @le
     /**
      * On mouseout.
      * @param {MouseEvent} e mouse event object
+     * @override
      */
     onMouseout: function() {
         this.fire('outTickSector');

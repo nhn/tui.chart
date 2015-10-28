@@ -31,6 +31,7 @@ var GroupTooltip = ne.util.defineClass(TooltipBase, /** @lends GroupTooltip.prot
     /**
      * To make tooltip data.
      * @returns {array.<object>} tooltip data
+     * @override
      */
     makeTooltipData: function() {
         return ne.util.map(this.joinFormattedValues, function(values, index) {

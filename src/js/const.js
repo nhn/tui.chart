@@ -119,7 +119,7 @@ module.exports = {
     TOOLTIP_DIRECTION_FORWORD: 'forword',
     TOOLTIP_DIRECTION_BACKWORD: 'backword',
     /** tooltip default position option */
-    TOOLTIP_DEFAULT_VERTICAL_POSITION_OPTION: 'center top',
+    TOOLTIP_DEFAULT_POSITION_OPTION: 'center top',
     TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION: 'right middle',
     /** hide delay */
     HIDE_DELAY: 200

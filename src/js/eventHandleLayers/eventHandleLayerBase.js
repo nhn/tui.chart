@@ -81,6 +81,18 @@ var EventHandleLayerBase = ne.util.defineClass(/** @lends EventHandleLayerBase.p
     },
 
     /**
+     * On mouse move
+     * @abstract
+     */
+    onMousemove: function() {},
+
+    /**
+     * On mouse out
+     * @abstract
+     */
+    onMouseout: function() {},
+
+    /**
      * Attach event
      * @param {HTMLElement} el target element
      */

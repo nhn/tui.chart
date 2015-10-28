@@ -8,8 +8,7 @@
 
 var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    calculator = require('../helpers/calculator');
+    renderUtil = require('../helpers/renderUtil');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase

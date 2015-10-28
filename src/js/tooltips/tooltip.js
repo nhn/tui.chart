@@ -50,7 +50,7 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
         }
 
         if (this.isVertical) {
-            this.options.position = chartConst.TOOLTIP_DEFAULT_VERTICAL_POSITION_OPTION;
+            this.options.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
         } else {
             this.options.position = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION;
         }
@@ -70,6 +70,7 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     /**
      * To make tooltip data.
      * @returns {array.<object>} tooltip data
+     * @override
      */
     makeTooltipData: function() {
         var labels = this.labels,

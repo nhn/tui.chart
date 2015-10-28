@@ -7,8 +7,7 @@
 'use strict';
 
 var dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    tooltipTemplate = require('./tooltipTemplate');
+    renderUtil = require('../helpers/renderUtil');
 
 var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
@@ -47,6 +46,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * To make tooltip data.
+     * @abstract
      */
     makeTooltipData: function() {},
 
@@ -145,7 +145,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
         if (!this.activeHider) {
             return;
         }
-        window.clearInterval(this.activeHider.timerId);
+        clearInterval(this.activeHider.timerId);
         this.activeHider.setOpacity(1);
     },
 
@@ -159,7 +159,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
         }
 
         ne.util.forEach(this.activeSliders, function(slider) {
-            window.clearInterval(slider.timerId);
+            clearInterval(slider.timerId);
         });
 
         this._completeSlide();

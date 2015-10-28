@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
+    chartConst = require('../const'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries');
@@ -28,6 +29,10 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
         this.className = 'ne-pie-chart';
 
         options.tooltip = options.tooltip || {};
+
+        if (!options.tooltip.position) {
+            options.tooltip.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
+        }
 
         ChartBase.call(this, {
             bounds: bounds,

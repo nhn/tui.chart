@@ -106,8 +106,22 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
     },
 
     /**
+     * Get tooltip direction.
+     * @param {number} index index
+     * @returns {string} direction
+     * @private
+     */
+    _getTooltipDirection: function(index) {
+        var standardNumber = Math.ceil(this.coordinateData.length / 2),
+            number = index + 1;
+        // 중앙을 기준으로 중앙을 포함하여 앞부분에 위치하는 data는 forword를 반환하고, 뒷부분에 위치하는 data는 backword를 반환한다.
+        return standardNumber >= number ? chartConst.TOOLTIP_DIRECTION_FORWORD : chartConst.TOOLTIP_DIRECTION_BACKWORD;
+    },
+
+    /**
      * On mousemove.
-     * @param {MouseEvent} e mouse event obejct
+     * @param {MouseEvent} e mouse event object
+     * @override
      */
     onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
@@ -123,7 +137,8 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
         }
 
         this.prevIndex = index;
-        direction = Math.ceil(this.coordinateData.length / 2) >= index + 1 ? chartConst.TOOLTIP_DIRECTION_FORWORD : chartConst.TOOLTIP_DIRECTION_BACKWORD;
+
+        direction = this._getTooltipDirection(index);
 
         this.fire('showGroupTooltip', {
             index: index,
@@ -137,6 +152,7 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
     /**
      * On mouseout.
      * @param {MouseEvent} e mouse event object
+     * @override
      */
     onMouseout: function() {
         this.fire('hideGroupTooltip', this.prevIndex);
