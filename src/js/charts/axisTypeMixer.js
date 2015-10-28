@@ -71,7 +71,8 @@ var axisTypeMixer = {
                 formattedValues: convertedData.formattedValues,
                 labels: convertedData.labels,
                 legendLabels: convertedData.legendLabels,
-                chartId: this.chartId
+                chartId: this.chartId,
+                isVertical: this.isVertical
             });
         }
     },

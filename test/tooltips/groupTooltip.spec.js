@@ -8,7 +8,8 @@
 
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
     chartConst = require('../../src/js/const'),
-    defaultTheme = require('../../src/js/themes/defaultTheme');
+    defaultTheme = require('../../src/js/themes/defaultTheme'),
+    dom = require('../../src/js/helpers/domHandler');
 
 describe('GroupTooltip', function() {
     var tooltip;
@@ -211,6 +212,133 @@ describe('GroupTooltip', function() {
                 actual, expected;
             actual = tooltip._calculateTooltipPosition(dimension, params);
             expected = tooltip._calculateHorizontalPosition(dimension, params);
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_createTooltipSectorElement()', function() {
+        it('툴팁 섹터 엘리먼트를 생성합니다.', function() {
+            var elLayout = dom.create('DIV'),
+                actual;
+            tooltip.elLayout = elLayout;
+            actual = tooltip._createTooltipSectorElement();
+            expect(actual).toBeDefined();
+            expect(actual.className).toBe('ne-chart-group-tooltip-sector');
+        });
+
+        it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 섹터 엘리먼트로 반환합니다.', function() {
+            var elLayout = dom.create('DIV'),
+                actual, expected;
+            elLayout.innerHTML = '<div></div><div class="ne-chart-group-tooltip-sector"></div>';
+            tooltip.elLayout = elLayout;
+            actual = tooltip._createTooltipSectorElement();
+            expected = elLayout.lastChild;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_getTooltipSectorElement', function() {
+        it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
+            var elLayout = dom.create('DIV'),
+                actual;
+            tooltip.elLayout = elLayout;
+            actual = tooltip._getTooltipSectorElement();
+            expect(actual).toBeDefined();
+            expect(actual.className).toBe('ne-chart-group-tooltip-sector');
+        });
+
+        it('this.elTooltipBlock이 존재하면 그대로 반환합니다.', function() {
+            var elTooltipBlock = dom.create('DIV'),
+                actual, expected;
+            tooltip.elTooltipBlock = elTooltipBlock;
+            actual = tooltip._getTooltipSectorElement();
+            expected = elTooltipBlock;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeVerticalTooltipSectorBound()', function() {
+        it('라인타입 차트의 세로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+            var actual = tooltip._makeVerticalTooltipSectorBound(200, {
+                    start: 0,
+                    end: 50
+                }, true),
+                expected = {
+                    dimension: {
+                        width: 1,
+                        height: 206
+                    },
+                    position: {
+                        left: 10,
+                        top: 0
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('라인타입 차트가 아닌경우의 세로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+            var actual = tooltip._makeVerticalTooltipSectorBound(200, {
+                    start: 0,
+                    end: 50
+                }, false),
+                expected = {
+                    dimension: {
+                        width: 51,
+                        height: 200
+                    },
+                    position: {
+                        left: 9,
+                        top: 0
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeHorizontalTooltipSectorBound()', function() {
+        it('가로영역 툴팁 섹터 bound 정보를 생성합니다.', function() {
+            var actual = tooltip._makeHorizontalTooltipSectorBound(200, {
+                    start: 0,
+                    end: 50
+                }, false),
+                expected = {
+                    dimension: {
+                        width: 200,
+                        height: 51
+                    },
+                    position: {
+                        left: 10,
+                        top: 0
+                    }
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeTooltipSectorBound()', function() {
+        it('세로타입의 차트의 경우는 _makeVerticalTooltipSectorBound()의 실행 결과를 반환합니다.', function() {
+            var size = 200,
+                range = {
+                    start: 0,
+                    end: 5
+                },
+                isVertical = true,
+                isLine = true,
+                actual = tooltip._makeTooltipSectorBound(size, range, isVertical, isLine),
+                expected = tooltip._makeVerticalTooltipSectorBound(size, range, isLine);
+            expect(actual).toEqual(expected);
+        });
+
+        it('가로타입의 차트의 경우는 _makeHorizontalTooltipSectorBound()의 실행 결과를 반환합니다.', function() {
+            var size = 200,
+                range = {
+                    start: 0,
+                    end: 5
+                },
+                isVertical = false,
+                isLine = true,
+                actual = tooltip._makeTooltipSectorBound(size, range, isVertical, isLine),
+                expected = tooltip._makeHorizontalTooltipSectorBound(size, range, isLine);
             expect(actual).toEqual(expected);
         });
     });

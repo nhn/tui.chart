@@ -123,7 +123,8 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
         }
 
         this.prevIndex = index;
-        direction = this.coordinateData.length / 2 > index + 1 ? chartConst.TOOLTIP_DIRECTION_FORWORD : chartConst.TOOLTIP_DIRECTION_BACKWORD;
+        direction = Math.ceil(this.coordinateData.length / 2) >= index + 1 ? chartConst.TOOLTIP_DIRECTION_FORWORD : chartConst.TOOLTIP_DIRECTION_BACKWORD;
+
         this.fire('showGroupTooltip', {
             index: index,
             range: this._makeRange(this.coordinateData[index], this.chartType),
@@ -138,8 +139,8 @@ var GroupedEventHandleLayer = ne.util.defineClass(EventHandleLayerBase, /** @len
      * @param {MouseEvent} e mouse event object
      */
     onMouseout: function() {
+        this.fire('hideGroupTooltip', this.prevIndex);
         delete this.prevIndex;
-        this.fire('hideGroupTooltip');
     }
 });
 

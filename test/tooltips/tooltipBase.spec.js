@@ -39,7 +39,7 @@ describe('TooltipBase', function() {
             expect(actual.className).toBe('ne-chart-tooltip');
         });
 
-        it('기존에 레이아웃 엘리먼트에 자식이 존재할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
+        it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
             var elLayout = dom.create('DIV'),
                 actual, expected;
             elLayout.innerHTML = '<div class="ne-chart-tooltip"></div>';

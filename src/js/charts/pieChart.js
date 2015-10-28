@@ -29,10 +29,6 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
 
         options.tooltip = options.tooltip || {};
 
-        if (!options.tooltip.position) {
-            options.tooltip.position = 'center top';
-        }
-
         ChartBase.call(this, {
             bounds: bounds,
             theme: theme,

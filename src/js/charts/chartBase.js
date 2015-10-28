@@ -35,9 +35,10 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         this.options = params.options;
         this.isSubChart = !!params.initedData;
         this.hasAxes = !!params.axesData;
+        this.isVertical = !!params.isVertical;
         this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
 
-        this._addGroupedEventHandleLayer(params.axesData, params.options.chartType, params.isVertical);
+        this._addGroupedEventHandleLayer(params.axesData, params.options.chartType);
     },
 
     /**
@@ -47,14 +48,14 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {boolean} isVertical whether vertical or not
      * @private
      */
-    _addGroupedEventHandleLayer: function(axesData, chartType, isVertical) {
+    _addGroupedEventHandleLayer: function(axesData, chartType) {
         var tickCount;
 
         if (!this.hasAxes || !this.isGroupedTooltip || this.isSubChart) {
             return;
         }
 
-        if (isVertical) {
+        if (this.isVertical) {
             tickCount = axesData.xAxis ? axesData.xAxis.tickCount : -1;
         } else {
             tickCount = axesData.yAxis ? axesData.yAxis.tickCount : -1;
@@ -63,7 +64,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
             tickCount: tickCount,
             chartType: chartType,
-            isVertical: isVertical
+            isVertical: this.isVertical
         });
     },
 
@@ -217,9 +218,15 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _attachCoordinateEvent: function() {
         var eventHandleLayer = this.componentMap.eventHandleLayer,
-            tooltip = this.componentMap.tooltip;
+            tooltip = this.componentMap.tooltip,
+            series = this.componentMap.series;
         eventHandleLayer.on('showGroupTooltip', tooltip.onShow, tooltip);
         eventHandleLayer.on('hideGroupTooltip', tooltip.onHide, tooltip);
+
+        if (series) {
+            tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
+            tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
+        }
     },
 
     /**

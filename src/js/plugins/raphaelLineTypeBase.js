@@ -8,8 +8,8 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var DEFAULT_DOT_WIDTH = 4,
-    HOVER_DOT_WIDTH = 5;
+var DEFAULT_DOT_WIDTH = 3,
+    HOVER_DOT_WIDTH = 4;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -29,6 +29,24 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
             start: startLinePath,
             end: endLinePath
         };
+    },
+
+    /**
+     * Render tooltip line.
+     * @param {object} paper raphael paper
+     * @param {number} height height
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderTooltipLine: function(paper, height) {
+        var linePath = raphaelRenderUtil.makeLinePath({
+                left: 10,
+                top: height
+            }, {
+                left: 10,
+                top: 0
+            });
+        return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
     /**
@@ -59,7 +77,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: 4
+            r: DEFAULT_DOT_WIDTH
         };
 
         if (borderStyle) {
@@ -168,7 +186,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         dot.attr({
             'fill-opacity': 1,
             'stroke-opacity': 0.3,
-            'stroke-width': 3,
+            'stroke-width': 2,
             r: HOVER_DOT_WIDTH
         });
     },
@@ -182,6 +200,65 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
         this._showDot(dot);
+    },
+
+    /**
+     * Get pivot group dots.
+     * @returns {array.<array>} dots
+     * @private
+     */
+    _getPivotGroupDots: function() {
+        if (!this.pivotGroupDots) {
+            this.pivotGroupDots = ne.util.pivot(this.groupDots);
+        }
+
+        return this.pivotGroupDots;
+    },
+
+    /**
+     * Show group dots.
+     * @param {number} index index
+     * @private
+     */
+    _showGroupDots: function(index) {
+        var dots = this._getPivotGroupDots();
+        ne.util.forEachArray(dots[index], ne.util.bind(this._showDot, this));
+    },
+
+    /**
+     * Show tooltip line.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     * @private
+     */
+    _showTooltipLine: function(bound) {
+        var linePath = raphaelRenderUtil.makeLinePath({
+            left: bound.position.left,
+            top: bound.dimension.height
+        }, {
+            left: bound.position.left,
+            top: bound.position.top
+        });
+        this.tooltipLine.attr({
+            path: linePath,
+            stroke: '#999',
+            'stroke-opacity': 1
+        });
+    },
+
+    /**
+     * Show group animation.
+     * @param {number} index index
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     */
+    showGroupAnimation: function(index, bound) {
+        this._showGroupDots(index);
+        this._showTooltipLine(bound);
     },
 
     /**
@@ -204,6 +281,35 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         if (dot) {
             this._hideDot(dot);
         }
+    },
+
+    /**
+     * Hide group dots.
+     * @param {number} index index
+     * @private
+     */
+    _hideGroupDots: function(index) {
+        var dots = this._getPivotGroupDots();
+        ne.util.forEachArray(dots[index], ne.util.bind(this._hideDot, this));
+    },
+
+    /**
+     * Hide tooltip line.
+     * @private
+     */
+    _hideTooltipLine: function() {
+        this.tooltipLine.attr({
+            'stroke-opacity': 0
+        });
+    },
+
+    /**
+     * Hide group animation.
+     * @param {number} index index
+     */
+    hideGroupAnimation: function(index) {
+        this._hideGroupDots(index);
+        this._hideTooltipLine();
     },
 
     /**

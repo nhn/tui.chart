@@ -107,7 +107,7 @@ var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.proto
             diff = 1000;
 
         if (!this.tickItems) {
-            this.tickItems = calculator.arrayPivot(this.groupPositions);
+            this.tickItems = ne.util.pivot(this.groupPositions);
         }
 
         ne.util.forEach(this.tickItems[groupIndex], function(position, index) {

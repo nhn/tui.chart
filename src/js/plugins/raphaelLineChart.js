@@ -36,19 +36,21 @@ var RaphaelLineChart = ne.util.defineClass(RaphaelLineBase, /** @lends RaphaelLi
             groupPaths = this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            groupLines, groupDots;
+            groupLines, tooltipLine, groupDots;
 
         if (!paper) {
             paper = Raphael(container, dimension.width, dimension.height);
         }
 
         groupLines = this._renderLines(paper, groupPaths, colors);
+        tooltipLine = this._renderTooltipLine(paper, dimension.height);
         groupDots = this.renderDots(paper, groupPositions, colors, borderStyle);
 
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
         this.groupPaths = groupPaths;
         this.groupLines = groupLines;
+        this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
 

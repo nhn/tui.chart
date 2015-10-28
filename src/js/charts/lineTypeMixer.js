@@ -63,8 +63,8 @@ var lineTypeMixer = {
         plotData = this.makePlotData(convertedData.plotData, axesData);
         seriesData = {
             data: {
-                values: calculator.arrayPivot(convertedData.values),
-                formattedValues: calculator.arrayPivot(convertedData.formattedValues),
+                values: ne.util.pivot(convertedData.values),
+                formattedValues: ne.util.pivot(convertedData.formattedValues),
                 scale: axesData.yAxis.scale,
                 xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
             }

@@ -362,7 +362,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Call showDot function of graphRenderer.
+     * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
     onShowAnimation: function(data) {
@@ -373,7 +373,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Call hideDot function of graphRenderer.
+     * To call hideAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
     onHideAnimation: function(data) {
@@ -384,7 +384,33 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Animate component
+     * To call showGroupAnimation function of graphRenderer.
+     * @param {number} index index
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     */
+    onShowGroupAnimation: function(index, bound) {
+        if (!this.graphRenderer.showGroupAnimation) {
+            return;
+        }
+        this.graphRenderer.showGroupAnimation.call(this.graphRenderer, index, bound);
+    },
+
+    /**
+     * To call hideGroupAnimation function of graphRenderer.
+     * @param {number} index index
+     */
+    onHideGroupAnimation: function(index) {
+        if (!this.graphRenderer.hideGroupAnimation) {
+            return;
+        }
+        this.graphRenderer.hideGroupAnimation.call(this.graphRenderer, index);
+    },
+
+    /**
+     * Animate component.
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {

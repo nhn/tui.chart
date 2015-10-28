@@ -137,25 +137,6 @@ var calculator = {
     },
 
     /**
-     * Array pivot.
-     * @memberOf module:calculator
-     * @param {array.<array>} arr2d target 2d array
-     * @returns {array.<array>} pivoted 2d array
-     */
-    arrayPivot: function(arr2d) {
-        var result = [];
-        ne.util.forEachArray(arr2d, function(arr) {
-            ne.util.forEachArray(arr, function(value, index) {
-                if (!result[index]) {
-                    result[index] = [];
-                }
-                result[index].push(value);
-            });
-        });
-        return result;
-    },
-
-    /**
      * To calculate adjacent.
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse

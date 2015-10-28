@@ -25,12 +25,35 @@ var Tooltip = ne.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        var optionTemplate;
-
         TooltipBase.call(this, params);
+        this.tplTooltip = this._getTooltipTemplate(this.options.template);
+        this._setDefaultTooltipPositionOption();
+    },
 
-        optionTemplate = this.options.template || '';
-        this.tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefault;
+    /**
+     * Get tooltip template.
+     * @param {object} optionTemplate template option
+     * @returns {object} template
+     * @private
+     */
+    _getTooltipTemplate: function(optionTemplate) {
+        return optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefault;
+    },
+
+    /**
+     * Set default position option of tooltip.
+     * @private
+     */
+    _setDefaultTooltipPositionOption: function() {
+        if (this.options.position) {
+            return;
+        }
+
+        if (this.isVertical) {
+            this.options.position = chartConst.TOOLTIP_DEFAULT_VERTICAL_POSITION_OPTION;
+        } else {
+            this.options.position = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION;
+        }
     },
 
     /**

@@ -33,7 +33,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
          * TooltipBase container.
          * @type {HTMLElement}
          */
-        this.container = null;
+        this.elLayout = null;
 
         /**
          * TooltipBase base data.
@@ -43,6 +43,7 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
 
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
     },
+
 
     /**
      * To make tooltip data.
@@ -85,10 +86,14 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _createTooltipElement: function() {
+        var elTooltip;
         if (!this.elLayout.firstChild) {
-            this.elLayout.innerHTML = tooltipTemplate.tplTooltip();
+            elTooltip = dom.create('DIV', 'ne-chart-tooltip');
+            dom.append(this.elLayout, elTooltip);
+        } else {
+            elTooltip = this.elLayout.firstChild;
         }
-        return this.elLayout.firstChild;
+        return elTooltip;
     },
 
     /**
@@ -250,11 +255,11 @@ var TooltipBase = ne.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * onHide is callback of custom event hideTooltip for SeriesView
-     * @param {{id: string}} data tooltip data
+     * @param {number} index index
      */
-    onHide: function() {
+    onHide: function(index) {
         var elTooltip = this._getTooltipElement();
-        this.hideTooltip(elTooltip);
+        this.hideTooltip(elTooltip, index);
     },
 
     /**

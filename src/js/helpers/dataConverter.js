@@ -88,12 +88,12 @@ var dataConverter = {
         var values, result;
         if (ne.util.isArray(seriesData)) {
             values = ne.util.map(seriesData, this._pickValue, this);
-            result = calculator.arrayPivot(values);
+            result = ne.util.pivot(values);
         } else {
             result = {};
             ne.util.forEach(seriesData, function(groupValues, type) {
                 values = ne.util.map(groupValues, this._pickValue, this);
-                result[type] = calculator.arrayPivot(values);
+                result[type] = ne.util.pivot(values);
             }, this);
         }
         return result;

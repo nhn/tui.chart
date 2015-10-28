@@ -151,6 +151,25 @@ var all = function(arr, condition) {
 };
 
 /**
+ * Array pivot.
+ * @memberOf module:calculator
+ * @param {array.<array>} arr2d target 2d array
+ * @returns {array.<array>} pivoted 2d array
+ */
+var pivot = function(arr2d) {
+    var result = [];
+    ne.util.forEachArray(arr2d, function(arr) {
+        ne.util.forEachArray(arr, function(value, index) {
+            if (!result[index]) {
+                result[index] = [];
+            }
+            result[index].push(value);
+        });
+    });
+    return result;
+};
+
+/**
  * Get after point length.
  * @param {string | number} value target value
  * @returns {number} result length
@@ -250,6 +269,7 @@ ne.util.min = min;
 ne.util.max = max;
 ne.util.any = any;
 ne.util.all = all;
+ne.util.pivot = pivot;
 ne.util.lengthAfterPoint = lengthAfterPoint;
 ne.util.mod = mod;
 ne.util.findMultipleNum = findMultipleNum;
