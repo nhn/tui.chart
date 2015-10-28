@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    calculator = require('../helpers/calculator'),
     LineTypeEventHandleLayer = require('../eventHandleLayers/lineTypeEventHandleLayer');
 
 /**
@@ -16,8 +15,7 @@ var ChartBase = require('./chartBase'),
  */
 var lineTypeMixer = {
     /**
-     * Line chart.
-     * @constructs lineTypeMixer
+     * Initialize line type chart.
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
@@ -104,6 +102,7 @@ var lineTypeMixer = {
     /**
      * Mix in.
      * @param {function} func target function
+     * @ignore
      */
     mixin: function(func) {
         tui.util.extend(func.prototype, this);

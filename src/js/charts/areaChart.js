@@ -7,7 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    LineTypeMixer = require('./lineTypeMixer'),
+    lineTypeMixer = require('./lineTypeMixer'),
     axisTypeMixer = require('./axisTypeMixer'),
     verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/areaChartSeries');
@@ -30,7 +30,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @constructs AreaChart
      * @extends ChartBase
      * @mixes axisTypeMixer
-     * @mixes VerticalTypeMixer
+     * @mixes verticalTypeMixer
      * @mixes lineTypeMixer
      */
     init: function() {
@@ -38,7 +38,7 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
     }
 });
 
-LineTypeMixer.mixin(AreaChart);
+lineTypeMixer.mixin(AreaChart);
 axisTypeMixer.mixin(AreaChart);
 verticalTypeMixer.mixin(AreaChart);
 

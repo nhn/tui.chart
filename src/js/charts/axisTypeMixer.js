@@ -96,6 +96,7 @@ var axisTypeMixer = {
     /**
      * Mix in.
      * @param {function} func target function
+     * @ignore
      */
     mixin: function(func) {
         tui.util.extend(func.prototype, this);

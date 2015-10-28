@@ -9,7 +9,7 @@
 var ChartBase = require('./chartBase'),
     lineTypeMixer = require('./lineTypeMixer'),
     axisTypeMixer = require('./axisTypeMixer'),
-    VerticalTypeMixer = require('./verticalTypeMixer'),
+    verticalTypeMixer = require('./verticalTypeMixer'),
     Series = require('../series/lineChartSeries');
 
 var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -30,7 +30,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @constructs LineChart
      * @extends ChartBase
      * @mixes axisTypeMixer
-     * @mixes VerticalTypeMixer
+     * @mixes verticalTypeMixer
      * @mixes lineTypeMixer
      */
     init: function() {
@@ -39,7 +39,7 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
 });
 
 axisTypeMixer.mixin(LineChart);
-VerticalTypeMixer.mixin(LineChart);
+verticalTypeMixer.mixin(LineChart);
 lineTypeMixer.mixin(LineChart);
 
 module.exports = LineChart;
