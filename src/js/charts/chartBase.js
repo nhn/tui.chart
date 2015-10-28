@@ -10,27 +10,42 @@ var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
-    boundsMaker = require('../helpers/boundsMaker');
+    boundsMaker = require('../helpers/boundsMaker'),
+    GroupedCoordinateEventor = require('../eventors/groupedCoordinateEventor');
 
 var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
-    tooltipPrefix: chartConst.TOOLTIP_PREFIX + '-' + (new Date()).getTime() + '-',
-
     /**
      * Chart base.
      * @constructs ChartBase
-     * @param {object} bounds chart bounds
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
+     * @param {object} params parameters
+     *      @param {object} params.bounds chart bounds
+     *      @param {object} params.theme chart theme
+     *      @param {object} params.options chart options
+     *      @param {object} params.initedData initialized data from combo chart
      */
-    init: function(bounds, theme, options, initedData) {
+    init: function(params) {
+        var tickCount;
+        this.chartId = params.initedData && params.initedData.chartId || chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
+        this.isSubChart = !!params.initedData;
         this.components = [];
         this.componentMap = {};
-        this.bounds = bounds;
-        this.theme = theme;
-        this.options = options;
-        if (initedData && initedData.prefix) {
-            this.tooltipPrefix += initedData.prefix;
+        this.bounds = params.bounds;
+        this.theme = params.theme;
+        this.options = params.options;
+        this.hasAxes = !!params.axesData;
+        this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
+
+        if (this.isGroupedTooltip && params.axesData && !this.isSubChart) {
+            if (params.isVertical) {
+                tickCount = params.axesData.xAxis && params.axesData.xAxis.tickCount || -1;
+            } else {
+                tickCount = params.axesData.yAxis && params.axesData.yAxis.tickCount || -1;
+            }
+            this.addComponent('eventor', GroupedCoordinateEventor, {
+                tickCount: tickCount,
+                chartType: params.options.chartType,
+                isVertical: params.isVertical
+            });
         }
     },
 
@@ -39,17 +54,18 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {array | object} userData user data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} boundParams add bound params
+     * @param {object} params add params
      * @returns {{convertedData: object, bounds: object}} base data
      */
-    makeBaseData: function(userData, theme, options, boundParams) {
-        var convertedData = dataConverter.convert(userData, options.chart, options.chartType),
+    makeBaseData: function(userData, theme, options, params) {
+        var seriesChartTypes = params ? params.seriesChartTypes : [],
+            convertedData = dataConverter.convert(userData, options.chart, options.chartType, seriesChartTypes),
             bounds = boundsMaker.make(ne.util.extend({
                 chartType: options.chartType,
                 convertedData: convertedData,
                 theme: theme,
                 options: options
-            }, boundParams));
+            }, params));
 
         return {
             convertedData: convertedData,
@@ -99,7 +115,12 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         this._renderComponents(el, this.components, paper);
-        this._attachCustomEvent();
+
+        if (this.hasAxes && this.isGroupedTooltip && !this.isSubChart) {
+            this._attachCoordinateEvent();
+        } else if (!this.hasAxes || !this.isGroupedTooltip) {
+            this._attachTooltipEvent();
+        }
         return el;
     },
 
@@ -147,7 +168,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * Attach custom event
      * @private
      */
-    _attachCustomEvent: function() {
+    _attachTooltipEvent: function() {
         var tooltip = this.componentMap.tooltip,
             series = this.componentMap.series;
         if (!tooltip || !series) {
@@ -162,6 +183,17 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
         tooltip.on('showAnimation', series.onShowAnimation, series);
         tooltip.on('hideAnimation', series.onHideAnimation, series);
+    },
+
+    /**
+     * Attach coordinate event.
+     * @private
+     */
+    _attachCoordinateEvent: function() {
+        var eventor = this.componentMap.eventor,
+            tooltip = this.componentMap.tooltip;
+        eventor.on('showGroupTooltip', tooltip.onShow, tooltip);
+        eventor.on('hideGroupTooltip', tooltip.onHide, tooltip);
     },
 
     /**

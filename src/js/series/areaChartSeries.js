@@ -25,10 +25,10 @@ var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.pro
     },
 
     /**
-     * To make add data.
+     * To make series data.
      * @returns {object} add data
      */
-    makeAddData: function() {
+    makeSeriesData: function() {
         var dimension = this.bound.dimension,
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
             zeroTop = scaleDistance.toMax;

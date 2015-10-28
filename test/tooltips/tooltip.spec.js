@@ -6,75 +6,132 @@
 
 'use strict';
 
-var Tooltip = require('../../src/js/tooltips/tooltip.js'),
-    chartConst = require('../../src/js/const.js');
+var Tooltip = require('../../src/js/tooltips/tooltip'),
+    chartConst = require('../../src/js/const'),
+    dom = require('../../src/js/helpers/domHandler');
 
 describe('Tooltip', function() {
-    var data = {
-            labels: [
-                'Silver',
-                'Gold'
-            ],
-            values: [
-                [10, 20]
-            ],
-            legendLabels: ['Density1', 'Density2']
-        },
-        bound = {
-            dimension: {
-                width: 100,
-                height: 200
-            },
-            position: {
-                top: 20,
-                left: 50
-            }
-        },
-        tooltip;
+    var tooltip;
 
     beforeEach(function() {
         tooltip = new Tooltip({
-            values: data.values,
-            labels: data.labels,
-            legendLabels: data.legendLabels,
-            prefix: 'ne-chart-tooltip-',
-            theme: {},
-            bound: bound,
             options: {}
         });
     });
 
-    describe('_makeTooltipData()', function() {
+    describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
-            var result = tooltip._makeTooltipData();
-            expect(result).toEqual([
-                {label: 'Silver', value: 10, legendLabel: 'Density1', id: '0-0'},
-                {label: 'Silver', value: 20, legendLabel: 'Density2', id: '0-1'}
-            ]);
+            var actual, expected;
+            tooltip.labels = [
+                'Silver',
+                'Gold'
+            ];
+            tooltip.values = [
+                [10, 20]
+            ];
+            tooltip.legendLabels = ['Density1', 'Density2'];
+
+            actual = tooltip.makeTooltipData();
+            expected = [[
+                {category: 'Silver', value: 10, legend: 'Density1'},
+                {category: 'Silver', value: 20, legend: 'Density2'}
+            ]];
+            expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeTooltipsHtml()', function() {
-        it('툴팁 html을 생성합니다.', function () {
-            var resultHtml = tooltip._makeTooltipsHtml(),
-                compareHtml = '<div class="ne-chart-tooltip" id="ne-chart-tooltip-0-0"><div class="ne-chart-default-tooltip">' +
-                    '<div>Silver</div>' +
-                    '<div><span>Density1</span>:&nbsp;' +
-                    '<span>10</span><span></span></div>' +
-                    '</div></div>' +
-                    '<div class="ne-chart-tooltip" id="ne-chart-tooltip-0-1"><div class="ne-chart-default-tooltip">' +
-                    '<div>Silver</div>' +
-                    '<div><span>Density2</span>:&nbsp;' +
-                    '<span>20</span><span></span></div>' +
-                    '</div></div>';
-            expect(resultHtml).toEqual(compareHtml);
+    describe('_setIndexesCustomAttribute()', function() {
+        it('툴팁 엘리먼트에 index정보들을 custom attribute로 설정합니다.', function() {
+            var elTooltip = dom.create('DIV');
+            tooltip._setIndexesCustomAttribute(elTooltip,
+                {
+                groupIndex: 0,
+                index: 1
+            });
+            expect(elTooltip.getAttribute('data-groupIndex')).toBe('0');
+            expect(elTooltip.getAttribute('data-index')).toBe('1');
         });
     });
 
-    describe('_getIndexFromId()', function() {
-        it('id로부터 index 정보를 추출하여 반환합니다.', function () {
-            var result = tooltip._getIndexFromId('ne-chart-tooltip-0-0');
-            expect(result).toEqual(['0', '0']);
+    describe('_getIndexesCustomAttribute()', function() {
+        it('툴팁 엘리먼트에 설정된 index custom attribute들을 객체로 생성하여 반환합니다.', function() {
+            var elTooltip = dom.create('DIV'),
+                actual;
+            elTooltip.setAttribute('data-groupIndex', 0);
+            elTooltip.setAttribute('data-index', 1);
+            actual = tooltip._getIndexesCustomAttribute(elTooltip);
+
+            expect(actual.groupIndex).toBe(0);
+            expect(actual.index).toBe(1);
+        });
+    });
+
+    describe('_setShowedCustomAttribute()', function() {
+        it('툴팁 엘리먼트에 showed custom attribute 값을 설정합니다.', function() {
+            var elTooltip = dom.create('DIV');
+            tooltip._setShowedCustomAttribute(elTooltip, true);
+            expect(elTooltip.getAttribute('data-showed')).toBe('true');
+        });
+    });
+
+    describe('_isShowedTooltip()', function() {
+        it('툴팁에 showed custom attribute값으로 "true"가 설정되어있는 보여지고 있는 상태입니다.', function() {
+            var elTooltip = dom.create('DIV'),
+                actual;
+            elTooltip.setAttribute('data-showed', true);
+            actual = tooltip._isShowedTooltip(elTooltip);
+            expect(actual).toBe(true);
+        });
+    });
+
+    describe('_getValueByIndexes()', function() {
+        it('indexes 정보를 이용하여 value를 얻어냅니다.', function() {
+            var actual, expected;
+            tooltip.values = [
+                [1, 2, 3],
+                [4, 5, 6]
+            ];
+            actual = tooltip._getValueByIndexes({
+                groupIndex: 0,
+                index: 2
+            });
+            expected = 3;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_getTooltipId()', function() {
+        it('툴팁 아이디가 없을 경우에는 생성하여 반환합니다.', function() {
+            var actual = tooltip._getTooltipId();
+            expect(actual.indexOf(chartConst.TOOLTIP_ID_PREFIX) > -1).toBe(true);
+        });
+
+        it('기존에 this.tooltipId가 있을 경우에는 그대로 반환합니다.', function() {
+            var actual, expected;
+            tooltip.tooltipId = 'tooltip-id';
+            actual = tooltip._getTooltipId();
+            expected = 'tooltip-id';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTooltipHtml()', function() {
+        it('툴팁 html을 생성합니다.', function() {
+            var actual, expected;
+            tooltip.data = [[
+                {category: 'Silver', value: 10, legend: 'Density1'},
+                {category: 'Silver', value: 20, legend: 'Density2'}
+            ]];
+            tooltip.suffix = 'suffix';
+            actual = tooltip._makeTooltipHtml({
+                groupIndex: 0,
+                index: 1
+            });
+            expected = '<div class="ne-chart-default-tooltip">' +
+                '<div>Silver</div>' +
+                '<div><span>Density2</span>:&nbsp;<span>20</span><span>suffix</span></div>' +
+                '</div>';
+            expect(actual).toBe(expected);
         });
     });
 
@@ -133,18 +190,6 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_getValueById', function() {
-        it('tooltip id를 통해서 value값을 얻어내어 반환합니다.', function() {
-            var result;
-            tooltip.values = [
-                [1, 2, 3],
-                [4, 5, 6]
-            ];
-            result = tooltip._getValueById('id-0-2');
-            expect(result).toBe(3);
-        });
-    });
-
     describe('_moveToSymmetry', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var result;
@@ -163,7 +208,10 @@ describe('Tooltip', function() {
                     },
                     sizeType: 'width',
                     positionType: 'left',
-                    id: 'id-0-2',
+                    indexes: {
+                        groupIndex: 0,
+                        index: 2
+                    },
                     dimension: {
                         width: 50
                     },

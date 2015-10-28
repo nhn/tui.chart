@@ -100,7 +100,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
     },
 
     /**
-     * To make add data.
+     * To make series data.
      * @returns {{
      *      formattedValues: array,
      *      chartBackground: string,
@@ -108,7 +108,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      *      sectorsInfo: array.<object>
      * }} add data for graph rendering
      */
-    makeAddData: function() {
+    makeSeriesData: function() {
         var circleBound = this._makeCircleBound(this.bound.dimension, {
                 showLabel: this.options.showLabel,
                 legendType: this.options.legendType
@@ -173,7 +173,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
      * }} add data for make series label
      * @private
      */
-    _makeAddDataForSeriesLabel: function(container) {
+    _makeSeriesDataForSeriesLabel: function(container) {
         return {
             container: container,
             legendLabels: this.data.legendLabels,
@@ -232,7 +232,7 @@ var PieChartSeries = ne.util.defineClass(Series, /** @lends PieChartSeries.proto
                     options: params.options
                 }),
                 position = params.moveToPosition(positions[index], label);
-            return this._makeSeriesLabelHtml(position, label, 0, index);
+            return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;

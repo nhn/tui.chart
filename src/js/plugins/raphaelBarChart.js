@@ -93,11 +93,11 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(rect, bound, id, inCallback, outCallback) {
+    _bindHoverEvent: function(rect, bound, groupIndex, index, inCallback, outCallback) {
         rect.hover(function() {
-            inCallback(bound, id);
+            inCallback(bound, groupIndex, index);
         }, function() {
-            outCallback(id);
+            outCallback();
         });
     },
 
@@ -137,7 +137,7 @@ var RaphaelBarChart = ne.util.defineClass(/** @lends RaphaelBarChart.prototype *
                 });
 
                 if (rect) {
-                    this._bindHoverEvent(rect, bound.end, id, params.inCallback, params.outCallback);
+                    this._bindHoverEvent(rect, bound.end, groupIndex, index, params.inCallback, params.outCallback);
                 }
 
                 bars.push({

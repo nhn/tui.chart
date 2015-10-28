@@ -124,22 +124,31 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         };
     },
 
+    _makeGraphBound: function(position) {
+        return {
+            width: 6,
+            height: 6,
+            left: position.left - 3,
+            top: position.top - 3
+        };
+    },
+
     /**
      * Bind hover event.
-     * @param {object} target raphael item
+     * @param {object} dot raphael obejct
      * @param {{left: number, top: number}} position position
-     * @param {string} id id
+     * @param {number} groupIndex group index
+     * @param {number} index index
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(target, position, id, inCallback, outCallback) {
+    _bindHoverEvent: function(dot, position, groupIndex, index, inCallback, outCallback) {
         var that = this;
-        target.hover(function() {
-            that.showedId = id;
-            inCallback(position, id);
+        dot.hover(function() {
+            inCallback(position, index, groupIndex, that._makeGraphBound(position));
         }, function() {
-            outCallback(id);
+            outCallback();
         });
     },
 
@@ -154,11 +163,19 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
     attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
         ne.util.forEach(groupDots, function(dots, groupIndex) {
             ne.util.forEach(dots, function(dot, index) {
-                var position = groupPositions[groupIndex][index],
-                    id = index + '-' + groupIndex;
-                this._bindHoverEvent(dot, position, id, inCallback, outCallback);
+                var position = groupPositions[groupIndex][index];
+                this._bindHoverEvent(dot, position, groupIndex, index, inCallback, outCallback);
             }, this);
         }, this);
+    },
+
+    _showDot: function(dot) {
+        dot.attr({
+            'fill-opacity': 1,
+            'stroke-opacity': 0.3,
+            'stroke-width': 3,
+            r: HOVER_DOT_WIDTH
+        });
     },
 
     /**
@@ -169,13 +186,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
+        this._showDot(dot);
+    },
 
-        dot.attr({
-            'fill-opacity': 1,
-            'stroke-opacity': 0.3,
-            'stroke-width': 3,
-            r: HOVER_DOT_WIDTH
-        });
+    _hideDot: function(dot) {
+        dot.attr(this.outDotStyle);
     },
 
     /**
@@ -186,8 +201,7 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
-
-        dot.attr(this.outDotStyle);
+        this._hideDot(dot);
     },
 
     /**

@@ -10,6 +10,7 @@ var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     defaultTheme = require('../themes/defaultTheme'),
+    GroupTooltip = require('../tooltips/groupTooltip'),
     ColumnChart = require('./columnChart'),
     LineChart = require('./lineChart');
 
@@ -29,6 +30,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             baseData = this.makeBaseData(userData, theme, options, {
                 isVertical: true,
                 hasAxes: true,
+                seriesChartTypes: seriesChartTypes,
                 optionChartTypes: optionChartTypes
             }),
             convertedData = baseData.convertedData,
@@ -44,10 +46,6 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             },
             baseAxesData = {};
 
-        this.className = 'ne-combo-chart';
-
-        ChartBase.call(this, bounds, theme, options);
-
         baseAxesData.yAxis = this._makeYAxisData(ne.util.extend({
             index: 0
         }, yAxisParams));
@@ -56,11 +54,28 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             labels: convertedData.labels
         });
 
+        this.className = 'ne-combo-chart';
+
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: baseAxesData,
+            theme: theme,
+            options: options,
+            isVertical: true
+        });
+
+        this.addComponent('tooltip', GroupTooltip, {
+            labels: convertedData.labels,
+            joinFormattedValues: convertedData.joinFormattedValues,
+            joinLegendLabels: convertedData.joinLegendLabels,
+            chartId: this.chartId
+        });
+
         this._installCharts({
             userData: userData,
             baseData: baseData,
             baseAxesData: baseAxesData,
-            axesData: this._makeAxesData(baseAxesData, yAxisParams),
+            axesData: this._makeAxesData(baseAxesData, yAxisParams, convertedData.formatFunctions),
             seriesChartTypes: seriesChartTypes,
             optionsMap: optionsMap,
             themeMap: themeMap
@@ -148,7 +163,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(baseAxesData, yAxisParams) {
+    _makeAxesData: function(baseAxesData, yAxisParams, formatFunctions) {
         var yAxisData = baseAxesData.yAxis,
             chartTypes = yAxisParams.chartTypes,
             axesData = {},
@@ -161,9 +176,9 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 }
             }, yAxisParams));
             if (yAxisData.tickCount < yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData);
+                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData, formatFunctions);
             } else if (yAxisData.tickCount > yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData);
+                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData, formatFunctions);
             }
         }
 
@@ -215,6 +230,7 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
             if (chartOptions.tooltip && chartOptions.tooltip[chartType]) {
                 chartOptions.tooltip = chartOptions.tooltip[chartType];
             }
+            chartOptions.parentChartType = chartOptions.chartType;
             chartOptions.chartType = chartType;
             result[chartType] = chartOptions;
         });
@@ -260,11 +276,12 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
      * Increase y axis tick count.
      * @param {number} increaseTickCount increase tick count
      * @param {object} toData to tick info
+     * @param {array.<function>} formatFunctions format functions
      * @private
      */
-    _increaseYAxisTickCount: function(increaseTickCount, toData) {
+    _increaseYAxisTickCount: function(increaseTickCount, toData, formatFunctions) {
         toData.scale.max += toData.step * increaseTickCount;
-        toData.labels = calculator.makeLabelsFromScale(toData.scale, toData.step);
+        toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromScale(toData.scale, toData.step), formatFunctions);
         toData.tickCount += increaseTickCount;
         toData.validTickCount += increaseTickCount;
     },
@@ -320,14 +337,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
                 },
                 bounds: bounds,
                 axes: axes,
-                prefix: chartType + '-'
+                chartId: this.chartId
             };
 
             chart = new Chart(params.userData, theme, options, initedData);
             plotData = null;
             joinLegendLabels = null;
             return chart;
-        });
+        }, this);
     },
 
     /**
@@ -337,12 +354,14 @@ var ComboChart = ne.util.defineClass(ChartBase, /** @lends ComboChart.prototype 
     render: function() {
         var el = ChartBase.prototype.render.call(this);
         var paper;
-        ne.util.forEachArray(this.charts, function(chart) {
-            chart.render(el, paper);
-            if (!paper) {
-                paper = chart.getPaper();
-            }
-            chart.animateChart();
+        ne.util.forEachArray(this.charts, function(chart, index) {
+            setTimeout(function() {
+                chart.render(el, paper);
+                if (!paper) {
+                    paper = chart.getPaper();
+                }
+                chart.animateChart();
+            }, 1 * index);
         });
         return el;
     }

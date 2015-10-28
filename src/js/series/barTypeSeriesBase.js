@@ -12,10 +12,10 @@ var chartConst = require('../const'),
 
 var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
-     * To make add data.
+     * To make series data.
      * @returns {object} add data
      */
-    makeAddData: function() {
+    makeSeriesData: function() {
         var groupBounds = this._makeBounds(this.bound.dimension);
 
         this.groupBounds = groupBounds;
@@ -71,7 +71,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
     makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
         var groupValues = this.percentValues,
             groupSize = dimension[anotherSizeType] / groupValues.length,
-            itemCount = groupValues[0].length,
+            itemCount = groupValues[0] && groupValues[0].length || 0,
             barPadding = this.makeBarGutter(groupSize, itemCount),
             barSize = this.makeBarSize(groupSize, barPadding, itemCount),
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension[sizeType], this.data.scale);
@@ -113,7 +113,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
                     formattedValue: formattedValue,
                     labelHeight: labelHeight
                 });
-                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
+                return this.makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
             }, this).join('');
         }, this).join('');
 
@@ -168,7 +168,7 @@ var BarTypeSeriesBase = ne.util.defineClass(/** @lends BarTypeSeriesBase.prototy
             labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
             top = bound.top + ((bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2);
-            labelHtml = this._makeSeriesLabelHtml({
+            labelHtml = this.makeSeriesLabelHtml({
                 left: left,
                 top: top
             }, formattedValue, params.groupIndex, index);

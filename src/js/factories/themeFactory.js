@@ -201,7 +201,7 @@ module.exports = {
      * @param {array.<string>} colors colors
      * @private
      */
-    _copyColorInfoToLegend: function(seriesTheme, legendTheme, colors) {
+    _copyColorInfoToOther: function(seriesTheme, legendTheme, colors) {
         legendTheme.colors = colors || seriesTheme.colors;
         if (seriesTheme.singleColors) {
             legendTheme.singleColors = seriesTheme.singleColors;
@@ -272,12 +272,16 @@ module.exports = {
     _copyColorInfo: function(theme) {
         var seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
         if (!ne.util.keys(seriesChartTypes).length) {
-            this._copyColorInfoToLegend(theme.series, theme.legend);
+            this._copyColorInfoToOther(theme.series, theme.legend);
+            this._copyColorInfoToOther(theme.series, theme.tooltip);
         } else {
             ne.util.forEach(seriesChartTypes, function(item, chartType) {
                 theme.legend[chartType] = {};
-                this._copyColorInfoToLegend(item, theme.legend[chartType], item.colors || theme.legend.colors);
+                theme.tooltip[chartType] = {};
+                this._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);
+                this._copyColorInfoToOther(item, theme.tooltip[chartType], item.colors || theme.tooltip.colors);
                 delete theme.legend.colors;
+                delete theme.tooltip.colors;
             }, this);
         }
     }

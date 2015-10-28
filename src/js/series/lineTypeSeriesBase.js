@@ -6,16 +6,16 @@
 
 'use strict';
 
-var Series = require('./series'),
-    chartConst = require('../const'),
+var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil');
+    renderUtil = require('../helpers/renderUtil'),
+    calculator = require('../helpers/calculator');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase
  * @mixin
  */
-var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBase.prototype */ {
+var LineTypeSeriesBase = ne.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
      * To make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
@@ -71,7 +71,7 @@ var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBa
             return ne.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
                     labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label),
-                    labelHtml = this._makeSeriesLabelHtml({
+                    labelHtml = this.makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
                         top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
                     }, value, index, groupIndex);
@@ -94,6 +94,79 @@ var LineTypeSeriesBase = ne.util.defineClass(Series, /** @lends LineTypeSeriesBa
      */
     _getBound: function(groupIndex, index) {
         return this.groupPositions[index][groupIndex];
+    },
+
+    /**
+     * Find index.
+     * @param {number} groupIndex group index
+     * @param {number} layerY mouse position
+     * @returns {number} index
+     * @private
+     */
+    _findIndex: function(groupIndex, layerY) {
+        var foundIndex = -1,
+            diff = 1000;
+
+        if (!this.tickItems) {
+            this.tickItems = calculator.arrayPivot(this.groupPositions);
+        }
+
+        ne.util.forEach(this.tickItems[groupIndex], function(position, index) {
+            var compare = Math.abs(layerY - position.top);
+            if (diff > compare) {
+                diff = compare;
+                foundIndex = index;
+            }
+        });
+        return foundIndex;
+    },
+
+    /**
+     * Whether changed or not.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @returns {boolean} whether changed or not
+     * @private
+     */
+    _isChanged: function(groupIndex, index) {
+        var prevIndexes = this.prevIndexes;
+
+        this.prevIndexes = {
+            groupIndex: groupIndex,
+            index: index
+        };
+
+        return !prevIndexes || prevIndexes.groupIndex !== groupIndex || prevIndexes.index !== index;
+    },
+
+    /**
+     * On over tick sector.
+     * @param {number} groupIndex groupIndex
+     * @param {number} layerY layerY
+     */
+    onLineTypeOverTickSector: function(groupIndex, layerY) {
+        var index, prevIndexes;
+
+        index = this._findIndex(groupIndex, layerY);
+        prevIndexes = this.prevIndexes;
+
+        if (!this._isChanged(groupIndex, index)) {
+            return;
+        }
+
+        if (prevIndexes) {
+            this.outCallback();
+        }
+
+        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
+    },
+
+    /**
+     * On out tick sector.
+     */
+    onLineTypeOutTickSector: function() {
+        delete this.prevIndexes;
+        this.outCallback();
     }
 });
 

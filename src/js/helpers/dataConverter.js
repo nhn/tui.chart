@@ -29,16 +29,17 @@ var dataConverter = {
      *      formattedValues: array.<string>
      * }} converted data
      */
-    convert: function(userData, chartOptions, chartType) {
+    convert: function(userData, chartOptions, chartType, seriesChartTypes) {
         var labels = userData.categories,
             seriesData = userData.series,
             values = this._pickValues(seriesData),
-            joinValues = this._joinValues(values),
+            joinValues = this._joinValues(values, seriesChartTypes),
             legendLabels = this._pickLegendLabels(seriesData),
-            joinLegendLabels = this._joinLegendLabels(legendLabels, chartType),
+            joinLegendLabels = this._joinLegendLabels(legendLabels, chartType, seriesChartTypes),
             format = chartOptions && chartOptions.format || '',
             formatFunctions = this._findFormatFunctions(format),
-            formattedValues = format ? this._formatValues(values, formatFunctions) : values;
+            formattedValues = format ? this._formatValues(values, formatFunctions) : values,
+            joinFormattedValues = this._joinValues(formattedValues, seriesChartTypes);
         return {
             labels: labels,
             values: values,
@@ -46,7 +47,8 @@ var dataConverter = {
             legendLabels: legendLabels,
             joinLegendLabels: joinLegendLabels,
             formatFunctions: formatFunctions,
-            formattedValues: formattedValues
+            formattedValues: formattedValues,
+            joinFormattedValues: joinFormattedValues
         };
     },
 
@@ -100,22 +102,32 @@ var dataConverter = {
     /**
      * Join values.
      * @memberOf module:dataConverter
-     * @param {array.<array>} values values
+     * @param {array.<array>} groupValues values
      * @returns {array.<number>} join values
      * @private
      */
-    _joinValues: function(values) {
+    _joinValues: function(groupValues, seriesChartTypes) {
         var joinValues;
 
-        if (ne.util.isArray(values)) {
-            return values;
+        if (!seriesChartTypes) {
+            return groupValues;
         }
 
-        joinValues = ne.util.map(values, function(groupValues) {
+        joinValues = ne.util.map(groupValues, function(groupValues) {
             return groupValues;
         }, this);
 
-        return concat.apply([], joinValues);
+        joinValues = [];
+        ne.util.forEachArray(seriesChartTypes, function(_chartType) {
+            ne.util.forEach(groupValues[_chartType], function(values, index) {
+                if (!joinValues[index]) {
+                    joinValues[index] = [];
+                }
+                joinValues[index] = joinValues[index].concat(values);
+            });
+        });
+
+        return joinValues;
     },
 
     /**
@@ -156,27 +168,28 @@ var dataConverter = {
      * @returns {array} labels
      * @private
      */
-    _joinLegendLabels: function(legendLabels, chartType) {
-        var result;
-        if (ne.util.isArray(legendLabels)) {
-            result = ne.util.map(legendLabels, function(label) {
+    _joinLegendLabels: function(legendLabels, chartType, seriesChartTypes) {
+        var joinLabels;
+        if (!seriesChartTypes || !seriesChartTypes.length) {
+            joinLabels = ne.util.map(legendLabels, function(label) {
                 return {
                     chartType: chartType,
                     label: label
                 };
             });
         } else {
-            result = ne.util.map(legendLabels, function(labels, _chartType) {
-                return ne.util.map(labels, function(label) {
+            joinLabels = [];
+            ne.util.forEachArray(seriesChartTypes, function(_chartType) {
+                var labels = ne.util.map(legendLabels[_chartType], function(label) {
                     return {
                         chartType: _chartType,
                         label: label
                     };
                 });
-            }, this);
-            result = concat.apply([], result);
+                joinLabels = joinLabels.concat(labels);
+            });
         }
-        return result;
+        return joinLabels;
     },
 
     /**
@@ -329,7 +342,7 @@ var dataConverter = {
     _formatComma: function(value) {
         var comma = ',',
             underPointValue = '',
-            values;
+            values, lastIndex;
 
         value += '';
 
@@ -344,9 +357,10 @@ var dataConverter = {
         }
 
         values = (value).split('').reverse();
+        lastIndex = values.length - 1;
         values = ne.util.map(values, function(char, index) {
             var result = [char];
-            if ((index + 1) % 3 === 0) {
+            if (index < lastIndex && (index + 1) % 3 === 0) {
                 result.push(comma);
             }
             return result;

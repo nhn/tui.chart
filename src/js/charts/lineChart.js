@@ -10,7 +10,8 @@ var ChartBase = require('./chartBase'),
     AxisTypeBase = require('./axisTypeBase'),
     VerticalTypeBase = require('./verticalTypeBase'),
     calculator = require('../helpers/calculator'),
-    Series = require('../series/lineChartSeries');
+    Series = require('../series/lineChartSeries'),
+    LineTypeCoordinateEventor = require('../eventors/lineTypeCoordinateEventor');
 
 var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
@@ -31,14 +32,44 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             }),
             convertedData = baseData.convertedData,
             bounds = baseData.bounds,
-            axesData;
+            axesData = this._makeAxesData(convertedData, bounds, options, initedData),
+            tickCount;
 
         this.className = 'ne-line-chart';
 
-        ChartBase.call(this, bounds, theme, options, initedData);
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: axesData,
+            theme: theme,
+            options: options,
+            isVertical: true,
+            initedData: initedData
+        });
 
-        axesData = this._makeAxesData(convertedData, bounds, options, initedData);
+        this.isSubChart = !!initedData;
+
+        if (!this.isSubChart && !this.isGroupedTooltip) {
+            tickCount = axesData.xAxis && axesData.xAxis.tickCount || -1;
+            this.addComponent('eventor', LineTypeCoordinateEventor, {
+                tickCount: tickCount
+            });
+        }
+
         this._addComponents(convertedData, axesData, options);
+    },
+
+    render: function() {
+        if (!this.isSubChart && !this.isGroupedTooltip) {
+            this._attachLineTypeCoordinateEvent();
+        }
+        return ChartBase.prototype.render.apply(this, arguments);
+    },
+
+    _attachLineTypeCoordinateEvent: function() {
+        var eventor = this.componentMap.eventor,
+            series = this.componentMap.series;
+        eventor.on('overTickSector', series.onLineTypeOverTickSector, series);
+        eventor.on('outTickSector', series.onLineTypeOutTickSector, series);
     },
 
     /**
@@ -56,7 +87,8 @@ var LineChart = ne.util.defineClass(ChartBase, /** @lends LineChart.prototype */
             data: {
                 values: calculator.arrayPivot(convertedData.values),
                 formattedValues: calculator.arrayPivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale
+                scale: axesData.yAxis.scale,
+                xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
             }
         };
         this.addAxisComponents({
