@@ -296,7 +296,7 @@
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip.tui-chart-group-tooltip > * {
   text-align: left;
   position: relative;
-  padding-left: 17px;
+  padding-left: 20px;
   padding-top: 4px;
   padding-bottom: 4px;
 }

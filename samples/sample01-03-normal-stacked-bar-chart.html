@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Bar Chart Sample(stacked=normal)</title>
+    <title>Stacked Bar Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -20,22 +20,23 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["cate1", "cate2", "cate3", "cate4"],
     "series": [
         {
             "name": "Legend1",
-            "data": [20, 30, 50]},
+            "data": [20, 30, 50, 70]
+        },
         {
             "name": "Legend2",
-            "data": [40, 40, 60]
+            "data": [40, 40, 60, 30]
         },
         {
             "name": "Legend3",
-            "data": [60, 50, 10]
+            "data": [60, 50, 10, 10]
         },
         {
             "name": "Legend4",
-            "data": [80, 10, 70]
+            "data": [80, 10, 70, 20]
         }
     ]
 }
@@ -46,9 +47,9 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
-        "title": "Bar Chart(stacked=normal)"
+        "title": "Stacked Bar Chart"
     },
     "yAxis": {
         "title": "Y Axis"
@@ -57,7 +58,8 @@
         "title": "X Axis"
     },
     "series": {
-        "stacked": "normal"
+        "stacked": "normal",
+        "showLabel": true
     }
 }
         </textarea>
@@ -104,31 +106,31 @@
 <script>
     var container = document.getElementById('chart-area'),
     data = {
-        categories: ['cate1', 'cate2', 'cate3'],
+        categories: ['cate1', 'cate2', 'cate3', 'cate4'],
         series: [
             {
                 name: 'Legend1',
-                data: [20, 30, 50]
+                data: [20, 30, 50, 70]
             },
             {
                 name: 'Legend2',
-                data: [40, 40, 60]
+                data: [40, 40, 60, 30]
             },
             {
                 name: 'Legend3',
-                data: [60, 50, 10]
+                data: [60, 50, 10, 10]
             },
             {
                 name: 'Legend4',
-                data: [80, 10, 70]
+                data: [80, 10, 70, 20]
             }
         ]
     },
     options = {
         chart: {
-            width: 500,
+            width: 700,
             height: 400,
-            title: 'Bar Chart(stacked=normal)'
+            title: 'Stacked Bar Chart'
         },
         yAxis: {
             title: 'Y Axis'
@@ -137,7 +139,8 @@
             title: 'X Axis'
         },
         series: {
-            stacked: 'normal'
+            stacked: 'normal',
+            showLabel: true
         }
     };
     tui.chart.barChart(container, data, options);

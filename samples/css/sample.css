@@ -1,14 +1,16 @@
 body {
-    min-width: 650px;
+    min-width: 700px;
     min-height: 850px;
 }
 
+body > div {
+    float: left;
+}
 .custom-area {
     margin-top: 5px;
     width: 650px;
     position:relative;
 }
-
 
 .apply-btn-area {
     width: 100%;

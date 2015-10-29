@@ -20,22 +20,23 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["cate1", "cate2", "cate3", "cate4", "cate5", "cate6", "cate7", "cate8"],
     "series": [
         {
             "name": "Legend1",
-            "data": [-20, 30, 50]},
+            "data": [20, 30, -50, -70, 90, 40, 20, 20]
+        },
         {
             "name": "Legend2",
-            "data": [40, -40, 60]
+            "data": [-40, 40, 60, -30, -70, 50, -10, 30]
         },
         {
             "name": "Legend3",
-            "data": [-60, 50, -10]
+            "data": [-60, -50, 10, 20, 40, -70, 50, -29]
         },
         {
             "name": "Legend4",
-            "data": [80, -10, -70]
+            "data": [80, -10, -70, 20, 60, 40, -30, 10]
         }
     ]
 }
@@ -46,7 +47,7 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
         "title": "Negative Column Chart"
     },
@@ -55,6 +56,9 @@
     },
     "xAxis": {
         "title": "X Axis"
+    },
+    "series": {
+      "showLabel": true
     }
 }
         </textarea>
@@ -102,29 +106,29 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3'],
+            categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5', 'cate6', 'cate7', 'cate8'],
             series: [
                 {
                     name: 'Legend1',
-                    data: [-20, 30, 50]
+                    data: [20, 30, -50, -70, 90, 40, 20, 20]
                 },
                 {
                     name: 'Legend2',
-                    data: [40, -40, 60]
+                    data: [-40, 40, 60, -30, -70, 50, -10, 30]
                 },
                 {
                     name: 'Legend3',
-                    data: [-60, 50, -10]
+                    data: [-60, -50, 10, 20, 40, -70, 50, -29]
                 },
                 {
                     name: 'Legend4',
-                    data: [80, -10, -70]
+                    data: [80, -10, -70, 20, 60, 40, -30, 10]
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
+                width: 700,
                 height: 400,
                 title: 'Negative Column Chart'
             },
@@ -133,6 +137,9 @@
             },
             xAxis: {
                 title: 'X Axis'
+            },
+            series: {
+                showLabel: true
             }
         };
     tui.chart.columnChart(container, data, options);

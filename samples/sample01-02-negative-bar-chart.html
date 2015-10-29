@@ -20,23 +20,23 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["cate1", "cate2", "cate3", "cate4"],
     "series": [
         {
             "name": "Legend1",
-            "data": [-20, 30, 50]
+            "data": [-20, 30, 50, -10]
         },
         {
             "name": "Legend2",
-            "data": [40, -40, 60]
+            "data": [40, -40, 60, -30]
         },
         {
             "name": "Legend3",
-            "data": [-60, 50, -10]
+            "data": [-60, 50, -10, -50]
         },
         {
             "name": "Legend4",
-            "data": [80, -10, -70]
+            "data": [80, -10, -70, 80]
         }
     ]
 }
@@ -47,7 +47,7 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
         "title": "Negative Bar Chart"
     },
@@ -56,6 +56,9 @@
     },
     "xAxis": {
         "title": "X Axis"
+    },
+    "series": {
+      "showLabel": true
     }
 }
         </textarea>
@@ -102,29 +105,29 @@
 <script>
     var container = document.getElementById('chart-area'),
     data = {
-        categories: ['cate1', 'cate2', 'cate3'],
+        categories: ['cate1', 'cate2', 'cate3', 'cate3'],
         series: [
             {
                 name: 'Legend1',
-                data: [-20, 30, 50]
+                data: [-20, 30, 50, -10]
             },
             {
                 name: 'Legend2',
-                data: [40, -40, 60]
+                data: [40, -40, 60, -30]
             },
             {
                 name: 'Legend3',
-                data: [-60, 50, -10]
+                data: [-60, 50, -10, 50]
             },
             {
                 name: 'Legend4',
-                data: [80, -10, -70]
+                data: [80, -10, -70, 80]
             }
         ]
     },
     options = {
         chart: {
-            width: 500,
+            width: 700,
             height: 400,
             title: 'Negative Bar Chart'
         },
@@ -133,6 +136,9 @@
         },
         xAxis: {
             title: 'X Axis'
+        },
+        series: {
+            showLabel: true
         }
     };
     tui.chart.barChart(container, data, options);

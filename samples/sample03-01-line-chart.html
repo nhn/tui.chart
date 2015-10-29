@@ -20,22 +20,22 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["category 1", "category 2", "category 3", "category 4", "category 5"],
     "series": [
         {
             "name": "Legend1",
-            "data": [20, 30, 50]},
+            "data": [20, 30, 50, 20, 10]},
         {
             "name": "Legend2",
-            "data": [40, 40, 60]
+            "data": [40, 40, 60, 10, 80]
         },
         {
             "name": "Legend3",
-            "data": [60, 50, 10]
+            "data": [60, 50, 10, 0, 50]
         },
         {
             "name": "Legend4",
-            "data": [80, 10, 70]
+            "data": [80, 10, 70, 30, 70]
         }
     ]
 }
@@ -46,7 +46,7 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
         "title": "Line Chart"
     },
@@ -54,7 +54,8 @@
         "title": "Y Axis"
     },
     "xAxis": {
-        "title": "X Axis"
+        "title": "X Axis",
+        "labelInterval": 2
     },
     "series": {
         "hasDot": true
@@ -105,29 +106,29 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3'],
+            categories: ['category 1', 'category 2', 'category 3', 'category 4', 'category 5'],
             series: [
                 {
                     name: 'Legend1',
-                    data: [20, 30, 50]
+                    data: [20, 30, 40, 20, 10]
                 },
                 {
                     name: 'Legend2',
-                    data: [40, 40, 60]
+                    data: [40, 40, 60, 10, 80]
                 },
                 {
                     name: 'Legend3',
-                    data: [60, 50, 10]
+                    data: [60, 50, 10, 0, 50]
                 },
                 {
                     name: 'Legend4',
-                    data: [80, 10, 70]
+                    data: [80, 10, 70, 30, 70]
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
+                width: 700,
                 height: 400,
                 title: 'Line Chart'
             },
@@ -135,7 +136,8 @@
                 title: 'Y Axis'
             },
             xAxis: {
-                title: 'X Axis'
+                title: 'X Axis',
+                labelInterval: 2
             },
             series: {
                 hasDot: true

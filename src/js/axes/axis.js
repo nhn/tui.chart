@@ -134,7 +134,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             template = axisTemplate.tplAxisTick,
             ticksHtml = tui.util.map(positions, function(position, index) {
                 var cssText;
-                if (data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
+                if (this.aligned && data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
                 }
                 cssText = [
