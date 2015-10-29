@@ -1,7 +1,7 @@
 Toast UI Chart
 ===============
 Chart<br>
-This application supports draw a chart on web browser.<br>
+This application supports drawing a chart on web browser.<br>
 
 ## Feature
 
@@ -42,7 +42,7 @@ This application supports draw a chart on web browser.<br>
 
 <img alt="outer lengend pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10809267/71fe8800-7e38-11e5-9acb-d3d6541e6fd2.png">
 
-<img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/10809270/790f8284-7e38-11e5-89fd-99058d0423cf.png">
+<img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/10811561/8b8579d8-7e50-11e5-9b43-d67f0ec3ce63.png">
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.chart/latest/
