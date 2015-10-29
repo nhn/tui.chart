@@ -45,7 +45,7 @@ This application supports draw a chart on web browser.<br>
 <img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/10809270/790f8284-7e38-11e5-89fd-99058d0423cf.png">
 
 ## Documentation
-* **API** : https://nhnent.github.io/tui.chart/latest/ne.application.chart.html
+* **API** : https://nhnent.github.io/tui.chart/latest/
 * **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial
 * **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial-sample01-01-bar-chart.html
 
