@@ -149,9 +149,10 @@ describe('Axis', function() {
         });
 
 
-        it('레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
+        it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
             var elTickArea, childNodes;
 
+            axis.aligned = true;
             axis.data = {
                 tickCount: 5,
                 labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
