@@ -8,7 +8,7 @@
   "description": "NHN Ent. Toast UI Chart",
   "dependencies": {
     "raphael": "~2.1.4",
-    "code-snippet": "tui-code-snippet#~1.0.4",
-    "component-effect-slide": "tui-component-effects#~1.1.0"
+    "tui-code-snippet": "tui-code-snippet#~1.0.4",
+    "tui-component-effect-slide": "tui-component-effects#~1.1.0"
   }
 }

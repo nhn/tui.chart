@@ -110,9 +110,9 @@ gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], functi
         .pipe(gulp.dest('./samples/dist'));
     gulp.src('dist/chart.min.js')
         .pipe(gulp.dest('./samples/dist'));
-    gulp.src('lib/code-snippet/code-snippet.min.js')
+    gulp.src('lib/tui-code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));
-    gulp.src('lib/component-effect-slide/effects.min.js')
+    gulp.src('lib/tui-component-effect-slide/effects.min.js')
         .pipe(gulp.dest('./samples/lib'));
     return gulp.src('lib/raphael/raphael-min.js')
         .pipe(gulp.dest('./samples/lib'));
