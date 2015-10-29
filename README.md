@@ -47,7 +47,7 @@ This application supports drawing a chart on web browser.<br>
 ## Documentation
 * **API** : https://nhnent.github.io/tui.chart/latest/
 * **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial
-* **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial-sample01-01-bar-chart.html
+* **Sample** : https://github.com/nhnent/tui.chart/wiki/samples
 
 ## Dependency
 * tui.code-snippet 1.0.4
