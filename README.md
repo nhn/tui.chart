@@ -45,9 +45,9 @@ This application supports draw a chart on web browser.<br>
 <img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/10809270/790f8284-7e38-11e5-89fd-99058d0423cf.png">
 
 ## Documentation
-* **API** : https://nhnent.github.io/fe.tui.chart/latest/ne.application.chart.html
-* **Tutorial** : https://github.com/nhnent/fe.tui.chart/wiki/tutorial
-* **Sample** : https://nhnent.github.io/fe.tui.chart/latest/tutorial-sample01-01-bar-chart.html
+* **API** : https://nhnent.github.io/tui.chart/latest/ne.application.chart.html
+* **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial
+* **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial-sample01-01-bar-chart.html
 
 ## Dependency
 * tui.code-snippet 1.0.4
@@ -64,10 +64,10 @@ This application supports draw a chart on web browser.<br>
 * Bower:
    * latest : `bower install tui-chart`
    * each version : `bower install "tui-chart[#tag]"`
-* Download: https://github.com/nhnent/fe.tui.chart
+* Download: https://github.com/nhnent/tui.chart
 
 ## Release History
-* https://github.com/nhnent/fe.tui.chart/releases
+* https://github.com/nhnent/tui.chart/releases
 
 ## License
-This software is licensed under the [MIT License](https://github.com/nhnent/fe.tui.chart/blob/master/LICENSE).
+This software is licensed under the [MIT License](https://github.com/nhnent/tui.chart/blob/master/LICENSE).
