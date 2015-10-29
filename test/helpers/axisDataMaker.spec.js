@@ -324,15 +324,69 @@ describe('axisDataMaker', function() {
         });
     });
 
+    describe('_addMinPadding()', function() {
+        it('min과 userMin가 같으면 한 step 감소시킨 min 값을 반환합니다.', function () {
+            var result = maker._addMinPadding({
+                min: -10,
+                userMin: -10,
+                step: 20,
+                chartType: 'bar'
+            });
+
+            expect(result).toEqual(-30);
+        });
+
+        it('userMin값이 0 이상이면서 라인차트가 아니면 min과 값이 같아도 전달받은 min값 그대로 반환합니다.', function() {
+            var result = maker._addMinPadding({
+                min: 0,
+                userMin: 0,
+                step: 20,
+                chartType: 'bar'
+            });
+            expect(result).toEqual(0);
+        });
+
+        it('userMin,min 모두 0이면서 라인차트이면 한 step 감소시킨 min 값을 반환합니다.', function() {
+            var result = maker._addMinPadding({
+                min: 0,
+                userMin: 0,
+                step: 20,
+                chartType: 'line'
+            });
+            expect(result).toEqual(-20);
+        });
+    });
+
     describe('_addMaxPadding()', function() {
         it('max와 userMax가 같으면 한 step 증가시킨 max 값을 반환합니다.', function () {
             var result = maker._addMaxPadding({
                 max: 90,
                 userMax: 90,
-                step: 20
+                step: 20,
+                chartType: 'bar'
             });
 
             expect(result).toBe(110);
+        });
+
+        it('userMax값이 0 이하이면서 라인차트가 아니면 max와 값이 같아도 전달받은 max값 그대로 반환합니다.', function() {
+            var result = maker._addMaxPadding({
+                max: -90,
+                userMax: -90,
+                step: 20,
+                chartType: 'bar'
+            });
+            expect(result).toEqual(-90);
+        });
+
+        it('userMan,max 모두 0이면서 라인차트이면 한 step 증가시킨 max 값을 반환합니다.', function() {
+            var result = maker._addMaxPadding({
+                max: 0,
+                userMax: 0,
+                step: 20,
+                chartType: 'line'
+            });
+            expect(result).toEqual(20);
         });
     });
 
