@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Combo Chart Sample</title>
-    <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
@@ -20,32 +20,32 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["cate1", "cate2", "cate3", "cate4", "cate5", "cate6"],
     "series": {
         "column": [
             {
                 "name": "Legend1",
-                "data": [20, 30, 50]},
+                "data": [20, 30, 50, 70, 80, 40]
+            },
             {
                 "name": "Legend2",
-                "data": [40, 40, 60]
+                "data": [40, 40, 60, 30, 20, 50]
             },
             {
                 "name": "Legend3",
-                "data": [60, 50, 10]
+                "data": [60, 50, 10, 70, 40, 10]
             },
             {
                 "name": "Legend4",
-                "data": [80, 10, 70]
+                "data": [80, 10, 70, 80, 10, 30]
             }
         ],
-        "line" : [
+        "line": [
             {
                 "name": "Legend",
-                "data": [1, 2, 3]
+                "data": [1, 2, 3, 7, 4, 2]
             }
         ]
-
     }
 }
         </textarea>
@@ -55,7 +55,7 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
         "title": "Combo Chart"
     },
@@ -71,11 +71,14 @@
         "line": {
             "hasDot": true
         }
+    },
+    "tooltip": {
+        "grouped": true
     }
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-options')">More Options</button>
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#combo-chart-options')">More Options</button>
         </div>
     </div>
     <div id="theme-area">
@@ -107,7 +110,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#combo-chart-theme')">More Theme</button>
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#combo-chart-theme')">More Theme</button>
         </div>
     </div>
 
@@ -115,42 +118,42 @@
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
-<script src="dist/application-chart.min.js"></script>
+<script src="dist/chart.min.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3'],
+            categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5', 'cate6'],
             series: {
                 column: [
                     {
                         name: 'Legend1',
-                        data: [20, 30, 50]
+                        data: [20, 30, 50, 70, 80, 40]
                     },
                     {
                         name: 'Legend2',
-                        data: [40, 40, 60]
+                        data: [40, 40, 60, 30, 20, 50]
                     },
                     {
                         name: 'Legend3',
-                        data: [60, 50, 10]
+                        data: [60, 50, 10, 70, 40, 10]
                     },
                     {
                         name: 'Legend4',
-                        data: [80, 10, 70]
+                        data: [80, 10, 70, 80, 10, 30]
                     }
                 ],
                 line: [
                     {
                         name: 'Legend',
-                        data: [1, 2, 3]
+                        data: [1, 2, 3, 7, 4, 2]
                     }
                 ]
             }
         },
         options = {
             chart: {
-                width: 500,
+                width: 700,
                 height: 400,
                 title: 'Combo Chart'
             },
@@ -166,9 +169,12 @@
                 line: {
                     hasDot: true
                 }
+            },
+            tooltip: {
+                grouped: true
             }
         };
-    ne.application.chart.comboChart(container, data, options);
+    tui.chart.comboChart(container, data, options);
 </script>
 </body>
 </html>

@@ -5,13 +5,13 @@
 @legend-rect-width: 12px;
 @hidden-padding: 1px;
 
-.ne-chart {
+.tui-chart {
   position: relative;
   &, * {
     .border-box();
     line-height: 1;
   }
-  .ne-chart-title {
+  .tui-chart-title {
     position: absolute;
     top: 0;
     left: 0;
@@ -19,29 +19,29 @@
     text-align: center;
     padding: 10px 0;
   }
-  .ne-chart-axis-area {
+  .tui-chart-axis-area {
     z-index: 200;
     position: absolute;
 
-    .ne-chart-title-area {
+    .tui-chart-title-area {
       position: absolute;
     }
 
-    .ne-chart-tick-area, .ne-chart-label-area {
+    .tui-chart-tick-area, .tui-chart-label-area {
       position: absolute;
       top: 0;
       width: 100%;
       height: 100%;
     }
-    .ne-chart-tick-area {
-      .ne-chart-tick {
+    .tui-chart-tick-area {
+      .tui-chart-tick {
         position: absolute;
         background-color: @axis-color;
       }
     }
 
-    .ne-chart-label-area {
-      .ne-chart-label {
+    .tui-chart-label-area {
+      .tui-chart-label {
         position: absolute;
       }
     }
@@ -49,7 +49,7 @@
     &.vertical {
       top: @chart-padding;
 
-      .ne-chart-title-area {
+      .tui-chart-title-area {
         .transform-origin(top left);
         .rotate(-90deg);
         text-align: center;
@@ -58,13 +58,13 @@
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
       }
 
-      .ne-chart-tick-area, .ne-chart-label-area {
+      .tui-chart-tick-area, .tui-chart-label-area {
         right: 0;
       }
 
-      .ne-chart-tick-area {
+      .tui-chart-tick-area {
         border-right: 1px solid @axis-color;
-        .ne-chart-tick {
+        .tui-chart-tick {
           right: 0;
           width: 5px;
           height: 1px;
@@ -72,8 +72,8 @@
         }
       }
 
-      .ne-chart-label-area {
-        .ne-chart-label {
+      .tui-chart-label-area {
+        .tui-chart-label {
           width: 100%;
           text-align: right;
           padding-right: 10px;
@@ -81,7 +81,7 @@
       }
 
       &.right {
-        .ne-chart-title-area {
+        .tui-chart-title-area {
           .transform-origin(top left);
           .rotate(90deg);
           text-align: center;
@@ -90,20 +90,20 @@
           filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
         }
 
-        .ne-chart-tick-area, .ne-chart-label-area {
+        .tui-chart-tick-area, .tui-chart-label-area {
           left: 0;
         }
 
-        .ne-chart-tick-area {
+        .tui-chart-tick-area {
           border-right: none;
           border-left: 1px solid @axis-color;
-          .ne-chart-tick {
+          .tui-chart-tick {
             left: 0;
           }
         }
 
-        .ne-chart-label-area {
-          .ne-chart-label {
+        .tui-chart-label-area {
+          .tui-chart-label {
             text-align: left;
             padding-right: 0;
             padding-left: 10px;
@@ -115,39 +115,72 @@
     &.horizontal {
       right: @chart-padding;
 
-      .ne-chart-title-area {
+      .tui-chart-title-area {
         bottom: 0;
         width: 100%;
         text-align: center;
       }
-      .ne-chart-tick-area, .ne-chart-label-area {
+      .tui-chart-tick-area, .tui-chart-label-area {
         left: 0;
       }
 
-      .ne-chart-tick-area {
+      .tui-chart-tick-area {
         border-top: 1px solid @axis-color;
-        .ne-chart-tick {
+        .tui-chart-tick {
           top: 0px;
           width: 1px;
           height: 5px;
         }
       }
 
-      .ne-chart-label-area {
-        .ne-chart-label {
+      .tui-chart-label-area {
+        .tui-chart-label {
           top: 10px;
           text-align: center;
+          white-space: nowrap;
+          &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+            text-align: right;
+            span {
+              position:absolute;
+              right:0;
+              top:0;
+            }
+          }
+          &.rotation25 {
+            .rotate(-25deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499);
+            }
+          }
+          &.rotation45 {
+            .rotate(-45deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476);
+            }
+          }
+          &.rotation65 {
+            .rotate(-65deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944);
+            }
+          }
+          &.rotation85 {
+            .rotate(-85deg);
+            span {
+              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814);
+            }
+          }
         }
       }
     }
   }
 
-  .ne-chart-plot-area {
+  .tui-chart-plot-area {
     position: absolute;
     right: @chart-padding;
     top: @chart-padding;
     z-index: 100;
-    .ne-chart-plot-line {
+    .tui-chart-plot-line {
       background-color: #ccc;
       position: absolute;
       &.vertical {
@@ -162,19 +195,23 @@
     }
   }
 
-  .ne-chart-series-area {
+  .tui-chart-series-area {
     z-index: 400;
     position: absolute;
-    .ne-chart-series-label-area {
+    &:first-child {
+      overflow: visible;
+    }
+    .tui-chart-series-label-area {
       position: absolute;
       left: 0px;
       top: 0px;
       display: none;
       .opacity(0);
-      .ne-chart-series-label {
+      .tui-chart-series-label {
         position: absolute;
         cursor: default;
         text-align:center;
+        white-space: nowrap;
         .text-shadow(#fff 0px 0px 3px);
       }
       &.show {
@@ -183,65 +220,110 @@
     }
   }
 
-  .ne-chart-legend-area {
+  .tui-chart-series-coordinate-area {
+    z-index: 1000;
+    position:absolute;
+    left: 10px;
+    top: 0;
+  }
+
+  .tui-chart-legend-rect {
+    margin-top:2px;
+    width: @legend-rect-width;
+    height: @legend-rect-width;
+    &.line {
+      height: 2px;
+    }
+    &.area {
+      .opacity(0.5);
+    }
+  }
+
+  .tui-chart-legend-area {
     z-index: 300;
     position: absolute;
     padding: 10px;
-    .ne-chart-legend {
+    .tui-chart-legend {
       clear: both;
       > div {
         float: left;
       }
-
-      .ne-chart-legend-rect {
-        margin-top:2px;
-        width: @legend-rect-width;
-        height: @legend-rect-width;
-        &.line {
-          height: 2px;
-        }
-        &.area {
-          .opacity(0.5);
-        }
-      }
-      .ne-chart-legend-label {
+      .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
         line-height:1;
       }
     }
   }
 
-  .ne-chart-tooltip-area {
+  .tui-chart-tooltip-area {
     position: absolute;
     z-index: 500;
-    .ne-chart-tooltip {
+    .tui-chart-tooltip {
+      z-index: 100;
       position: absolute;
       display: none;
       &.show {
         display: block;
       }
-      .ne-chart-default-tooltip {
-        padding: 2px 0;
+      .tui-chart-default-tooltip {
+        padding: 4px 0;
         font-size: 12px;
         min-width: 100px;
         color: #fff;
         .border-radius(5px);
         background-color: #555;
-        background-color:rgba(0, 0, 0, 0.5);
+        background-color:rgba(0, 0, 0, 0.7);
         > * {
-          padding: 2px 5px;
+          padding: 2px 7px;
           text-align: center;
         }
+
         > :first-child {
           backgound-color: #fff;
           font-weight: bold;
         }
+
+        &.tui-chart-group-tooltip {
+          > * {
+            text-align: left;
+            position: relative;
+            padding-left: @legend-rect-width + 8;
+            padding-top: 4px;
+            padding-bottom: 4px;
+          }
+          .tui-chart-legend-rect {
+            position: absolute;
+            left: 7px;
+            top: 2px;
+            &.line {
+              top: 7px;
+            }
+          }
+
+          > :first-child {
+            padding-left: 7px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .tui-chart-group-tooltip-sector {
+      z-index: 50;
+      position: absolute;
+      background-color:#aaa;
+      .opacity(0.3);
+      display: none;
+      &.show {
+        display: block;
       }
     }
   }
 }
 
-.ne-chart-size-check-element {
+.tui-chart-size-check-element {
   clear:both;
   position:absolute;
   top:100000px;
@@ -252,6 +334,19 @@
   z-index: 10000000;
 }
 
-:root .ne-chart .ne-chart-axis-area.vertical .ne-chart-title-area {
-  filter: none\0;
+:root .tui-chart .tui-chart-axis-area {
+  &.vertical .tui-chart-title-area {
+    filter: none\0;
+  }
+  &.horizontal {
+    .tui-chart-label {
+      &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+        span {
+          filter: none\0;
+        }
+      }
+    }
+  }
 }
+
+

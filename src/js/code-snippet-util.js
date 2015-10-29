@@ -1,68 +1,6 @@
 'use strict';
 
 /**
- * ne.util에 range가 추가되기 전까지 임시로 사용
- * @param {number} start start
- * @param {number} stop stop
- * @param {number} step step
- * @returns {array.<number>} result array
- */
-var range = function(start, stop, step) {
-    var arr = [],
-        flag;
-
-    if (ne.util.isUndefined(stop)) {
-        stop = start || 0;
-        start = 0;
-    }
-
-    step = step || 1;
-    flag = step < 0 ? -1 : 1;
-    stop *= flag;
-
-    while (start * flag < stop) {
-        arr.push(start);
-        start += step;
-    }
-
-    return arr;
-};
-
-/**
- * * ne.util에 pluck이 추가되기 전까지 임시로 사용
- * @param {array} arr array
- * @param {string} property property
- * @returns {array} result array
- */
-var pluck = function(arr, property) {
-    var result = ne.util.map(arr, function(item) {
-        return item[property];
-    });
-    return result;
-};
-
-/**
- * * ne.util에 zip이 추가되기 전까지 임시로 사용
- * @params {...array} array
- * @returns {array} result array
- */
-var zip = function() {
-    var arr2 = Array.prototype.slice.call(arguments),
-        result = [];
-
-    ne.util.forEach(arr2, function(arr) {
-        ne.util.forEach(arr, function(value, index) {
-            if (!result[index]) {
-                result[index] = [];
-            }
-            result[index].push(value);
-        });
-    });
-
-    return result;
-};
-
-/**
  * Pick minimum value from value array.
  * @param {array} arr value array
  * @param {function} condition condition function
@@ -79,7 +17,7 @@ var min = function(arr, condition, context) {
     result = arr[0];
     minValue = condition.call(context, result);
     rest = arr.slice(1);
-    ne.util.forEachArray(rest, function(item) {
+    tui.util.forEachArray(rest, function(item) {
         var compareValue = condition.call(context, item);
         if (compareValue < minValue) {
             minValue = compareValue;
@@ -106,7 +44,7 @@ var max = function(arr, condition, context) {
     result = arr[0];
     maxValue = condition.call(context, result);
     rest = arr.slice(1);
-    ne.util.forEachArray(rest, function(item) {
+    tui.util.forEachArray(rest, function(item) {
         var compareValue = condition.call(context, item);
         if (compareValue > maxValue) {
             maxValue = compareValue;
@@ -124,7 +62,7 @@ var max = function(arr, condition, context) {
  */
 var any = function(arr, condition) {
     var result = false;
-    ne.util.forEachArray(arr, function(item) {
+    tui.util.forEachArray(arr, function(item) {
         if (condition(item)) {
             result = true;
             return false;
@@ -141,11 +79,30 @@ var any = function(arr, condition) {
  */
 var all = function(arr, condition) {
     var result = true;
-    ne.util.forEachArray(arr, function(item) {
+    tui.util.forEachArray(arr, function(item) {
         if (!condition(item)) {
             result = false;
             return false;
         }
+    });
+    return result;
+};
+
+/**
+ * Array pivot.
+ * @memberOf module:calculator
+ * @param {array.<array>} arr2d target 2d array
+ * @returns {array.<array>} pivoted 2d array
+ */
+var pivot = function(arr2d) {
+    var result = [];
+    tui.util.forEachArray(arr2d, function(arr) {
+        tui.util.forEachArray(arr, function(value, index) {
+            if (!result[index]) {
+                result[index] = [];
+            }
+            result[index].push(value);
+        });
     });
     return result;
 };
@@ -167,10 +124,10 @@ var lengthAfterPoint = function(value) {
  */
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
-        underPointLens = ne.util.map(args, function(value) {
-            return ne.util.lengthAfterPoint(value);
+        underPointLens = tui.util.map(args, function(value) {
+            return tui.util.lengthAfterPoint(value);
         }),
-        underPointLen = ne.util.max(underPointLens),
+        underPointLen = tui.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
     return multipleNum;
 };
@@ -182,7 +139,7 @@ var findMultipleNum = function() {
  * @returns {number} result mod
  */
 var mod = function(target, modNum) {
-    var multipleNum = ne.util.findMultipleNum(modNum);
+    var multipleNum = tui.util.findMultipleNum(modNum);
     return ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
 };
 
@@ -238,23 +195,21 @@ var division = function(a, b) {
 var sum = function(values) {
     var copyArr = values.slice();
     copyArr.unshift(0);
-    return ne.util.reduce(copyArr, function(base, add) {
+    return tui.util.reduce(copyArr, function(base, add) {
         return parseFloat(base) + parseFloat(add);
     });
 };
 
-ne.util.range = range;
-ne.util.pluck = pluck;
-ne.util.zip = zip;
-ne.util.min = min;
-ne.util.max = max;
-ne.util.any = any;
-ne.util.all = all;
-ne.util.lengthAfterPoint = lengthAfterPoint;
-ne.util.mod = mod;
-ne.util.findMultipleNum = findMultipleNum;
-ne.util.addition = addition;
-ne.util.subtraction = subtraction;
-ne.util.multiplication = multiplication;
-ne.util.division = division;
-ne.util.sum = sum;
+tui.util.min = min;
+tui.util.max = max;
+tui.util.any = any;
+tui.util.all = all;
+tui.util.pivot = pivot;
+tui.util.lengthAfterPoint = lengthAfterPoint;
+tui.util.mod = mod;
+tui.util.findMultipleNum = findMultipleNum;
+tui.util.addition = addition;
+tui.util.subtraction = subtraction;
+tui.util.multiplication = multiplication;
+tui.util.division = division;
+tui.util.sum = sum;

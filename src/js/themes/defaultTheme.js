@@ -1,16 +1,16 @@
 var DEFAULT_COLOR = '#000000',
     DEFAULT_BACKGROUND = '#ffffff',
-    EMPTY_FONT = '',
+    EMPTY = '',
     DEFAULT_AXIS = {
         tickColor: DEFAULT_COLOR,
         title: {
             fontSize: 12,
-            fontFamily: EMPTY_FONT,
+            fontFamily: EMPTY,
             color: DEFAULT_COLOR
         },
         label: {
             fontSize: 12,
-            fontFamily: EMPTY_FONT,
+            fontFamily: EMPTY,
             color: DEFAULT_COLOR
         }
     };
@@ -22,7 +22,7 @@ var defaultTheme = {
     },
     title: {
         fontSize: 18,
-        fontFamily: EMPTY_FONT,
+        fontFamily: EMPTY,
         color: DEFAULT_COLOR
     },
     yAxis: DEFAULT_AXIS,
@@ -34,18 +34,20 @@ var defaultTheme = {
     series: {
         label: {
             fontSize: 11,
-            fontFamily: EMPTY_FONT,
+            fontFamily: EMPTY,
             color: DEFAULT_COLOR
         },
-        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536']
+        colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
+        borderColor: EMPTY
     },
     legend: {
         label: {
             fontSize: 12,
-            fontFamily: EMPTY_FONT,
+            fontFamily: EMPTY,
             color: DEFAULT_COLOR
         }
-    }
+    },
+    tooltip: {}
 };
 
 module.exports = defaultTheme;

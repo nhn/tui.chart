@@ -8,14 +8,14 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var DEFAULT_DOT_WIDTH = 4,
-    HOVER_DOT_WIDTH = 5;
+var DEFAULT_DOT_WIDTH = 3,
+    HOVER_DOT_WIDTH = 4;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
  * @class RaphaelLineTypeBase
  */
-var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
+var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * To make line paths.
      * @param {{left: number, top: number}} fromPos from position
@@ -29,6 +29,24 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
             start: startLinePath,
             end: endLinePath
         };
+    },
+
+    /**
+     * Render tooltip line.
+     * @param {object} paper raphael paper
+     * @param {number} height height
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderTooltipLine: function(paper, height) {
+        var linePath = raphaelRenderUtil.makeLinePath({
+                left: 10,
+                top: height
+            }, {
+                left: 10,
+                top: 0
+            });
+        return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
     /**
@@ -59,11 +77,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: 4
+            r: DEFAULT_DOT_WIDTH
         };
 
         if (borderStyle) {
-            ne.util.extend(outDotStyle, borderStyle);
+            tui.util.extend(outDotStyle, borderStyle);
         }
 
         return outDotStyle;
@@ -74,21 +92,16 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {object} paper raphael papaer
      * @param {{left: number, top: number}} position dot position
      * @param {string} color dot color
-     * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {object} raphael dot
      */
-    renderDot: function(paper, position, color, opacity, borderStyle) {
+    renderDot: function(paper, position, color) {
         var dot = paper.circle(position.left, position.top, DEFAULT_DOT_WIDTH),
             dotStyle = {
                 fill: color,
                 'fill-opacity': 0,
                 'stroke-opacity': 0
             };
-
-        if (borderStyle) {
-            ne.util.extend(dotStyle, borderStyle);
-        }
 
         dot.attr(dotStyle);
 
@@ -103,11 +116,11 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {object} borderStyle border style
      * @returns {array.<object>} dots
      */
-    renderDots: function(paper, groupPositions, colors, borderStyle) {
-        var dots = ne.util.map(groupPositions, function(positions, groupIndex) {
+    renderDots: function(paper, groupPositions, colors) {
+        var dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
-            return ne.util.map(positions, function(position) {
-                var dot = this.renderDot(paper, position, color, borderStyle);
+            return tui.util.map(positions, function(position) {
+                var dot = this.renderDot(paper, position, color);
                 return dot;
             }, this);
         }, this);
@@ -131,20 +144,19 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
 
     /**
      * Bind hover event.
-     * @param {object} target raphael item
+     * @param {object} dot raphael obejct
      * @param {{left: number, top: number}} position position
-     * @param {string} id id
+     * @param {number} groupIndex group index
+     * @param {number} index index
      * @param {function} inCallback in callback
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(target, position, id, inCallback, outCallback) {
-        var that = this;
-        target.hover(function() {
-            that.showedId = id;
-            inCallback(position, id);
+    _bindHoverEvent: function(dot, position, groupIndex, index, inCallback, outCallback) {
+        dot.hover(function() {
+            inCallback(position, index, groupIndex);
         }, function() {
-            outCallback(id);
+            outCallback();
         });
     },
 
@@ -157,13 +169,26 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
      * @param {function} outCallback out callback
      */
     attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
-        ne.util.forEach(groupDots, function(dots, groupIndex) {
-            ne.util.forEach(dots, function(dot, index) {
-                var position = groupPositions[groupIndex][index],
-                    id = index + '-' + groupIndex;
-                this._bindHoverEvent(dot, position, id, inCallback, outCallback);
+        tui.util.forEach(groupDots, function(dots, groupIndex) {
+            tui.util.forEach(dots, function(dot, index) {
+                var position = groupPositions[groupIndex][index];
+                this._bindHoverEvent(dot, position, groupIndex, index, inCallback, outCallback);
             }, this);
         }, this);
+    },
+
+    /**
+     * Show dot.
+     * @param {object} dot raphael object
+     * @private
+     */
+    _showDot: function(dot) {
+        dot.attr({
+            'fill-opacity': 1,
+            'stroke-opacity': 0.3,
+            'stroke-width': 2,
+            r: HOVER_DOT_WIDTH
+        });
     },
 
     /**
@@ -174,13 +199,75 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
+        this._showDot(dot);
+    },
 
-        dot.attr({
-            'fill-opacity': 1,
-            'stroke-opacity': 0.3,
-            'stroke-width': 3,
-            r: HOVER_DOT_WIDTH
+    /**
+     * Get pivot group dots.
+     * @returns {array.<array>} dots
+     * @private
+     */
+    _getPivotGroupDots: function() {
+        if (!this.pivotGroupDots) {
+            this.pivotGroupDots = tui.util.pivot(this.groupDots);
+        }
+
+        return this.pivotGroupDots;
+    },
+
+    /**
+     * Show group dots.
+     * @param {number} index index
+     * @private
+     */
+    _showGroupDots: function(index) {
+        var dots = this._getPivotGroupDots();
+        tui.util.forEachArray(dots[index], tui.util.bind(this._showDot, this));
+    },
+
+    /**
+     * Show tooltip line.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     * @private
+     */
+    _showTooltipLine: function(bound) {
+        var linePath = raphaelRenderUtil.makeLinePath({
+            left: bound.position.left,
+            top: bound.dimension.height
+        }, {
+            left: bound.position.left,
+            top: bound.position.top
         });
+        this.tooltipLine.attr({
+            path: linePath,
+            stroke: '#999',
+            'stroke-opacity': 1
+        });
+    },
+
+    /**
+     * Show group animation.
+     * @param {number} index index
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     */
+    showGroupAnimation: function(index, bound) {
+        this._showGroupDots(index);
+        this._showTooltipLine(bound);
+    },
+
+    /**
+     * Hide dot.
+     * @param {object} dot raphael object
+     * @private
+     */
+    _hideDot: function(dot) {
+        dot.attr(this.outDotStyle);
     },
 
     /**
@@ -191,8 +278,38 @@ var RaphaelLineTypeBase = ne.util.defineClass(/** @lends RaphaelLineTypeBase.pro
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             dot = this.groupDots[groupIndex][index];
+        if (dot) {
+            this._hideDot(dot);
+        }
+    },
 
-        dot.attr(this.outDotStyle);
+    /**
+     * Hide group dots.
+     * @param {number} index index
+     * @private
+     */
+    _hideGroupDots: function(index) {
+        var dots = this._getPivotGroupDots();
+        tui.util.forEachArray(dots[index], tui.util.bind(this._hideDot, this));
+    },
+
+    /**
+     * Hide tooltip line.
+     * @private
+     */
+    _hideTooltipLine: function() {
+        this.tooltipLine.attr({
+            'stroke-opacity': 0
+        });
+    },
+
+    /**
+     * Hide group animation.
+     * @param {number} index index
+     */
+    hideGroupAnimation: function(index) {
+        this._hideGroupDots(index);
+        this._hideTooltipLine();
     },
 
     /**

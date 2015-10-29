@@ -1,13 +1,14 @@
 {
-  "name": "application-chart",
-  "version": "1.1.0",
+  "name": "tui-chart",
   "authors": [
     "NHN Ent. FE Development Team <dl_javascript@nhnent.com>"
   ],
+  "version": "1.2.0",
+  "license": "MIT",
+  "description": "NHN Ent. Toast UI Chart",
   "dependencies": {
-    "component-effect-slide": "ne-component-effects#~1.1.0",
-    "ne-code-snippet": "~1.0.4",
-    "raphael": "~2.1.4"
-  },
-  "license": "MIT"
+    "raphael": "~2.1.4",
+    "code-snippet": "tui-code-snippet#~1.0.4",
+    "component-effect-slide": "tui-component-effects#~1.1.0"
+  }
 }

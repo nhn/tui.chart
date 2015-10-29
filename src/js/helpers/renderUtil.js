@@ -7,9 +7,9 @@
 'use strict';
 
 var dom = require('./domHandler'),
-    chartConst = require('./../const.js');
+    chartConst = require('./../const');
 
-var browser = ne.util.browser,
+var browser = tui.util.browser,
     isIE8 = browser.msie && browser.version === 8;
 
 /**
@@ -68,7 +68,7 @@ var renderUtil = {
             return this.checkEl;
         }
 
-        elDiv = dom.create('DIV', 'ne-chart-size-check-element');
+        elDiv = dom.create('DIV', 'tui-chart-size-check-element');
         elSpan = dom.create('SPAN');
 
         elDiv.appendChild(elSpan);
@@ -88,7 +88,7 @@ var renderUtil = {
     _getRenderedLabelSize: function(label, theme, offsetType) {
         var elDiv, elSpan, labelSize;
 
-        if (ne.util.isUndefined(label) || label === '') {
+        if (tui.util.isUndefined(label) || label === '') {
             return 0;
         }
 
@@ -135,6 +135,50 @@ var renderUtil = {
     },
 
     /**
+     * Get Rendered Labels Max Size(width or height).
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @param {function} iteratee iteratee
+     * @returns {number} max size (width or height)
+     * @private
+     */
+    _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
+        var sizes = tui.util.map(labels, function(label) {
+                return iteratee(label, theme);
+            }, this),
+            maxSize = tui.util.max(sizes);
+        return maxSize;
+    },
+
+    /**
+     * Get rendered labels max width.
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max width
+     * @private
+     */
+    getRenderedLabelsMaxWidth: function(labels, theme) {
+        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this),
+            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        return maxWidth;
+    },
+
+    /**
+     * Get rendered labels max height.
+     * @memberOf module:boundsMaker
+     * @param {string[]} labels labels
+     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @returns {number} max height
+     */
+    getRenderedLabelsMaxHeight: function(labels, theme) {
+        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this),
+            maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        return maxHeight;
+    },
+
+    /**
      * Render dimension.
      * @memberOf module:renderUtil
      * @param {HTMLElement} el target element
@@ -154,7 +198,7 @@ var renderUtil = {
      * @param {{top: number, left: number, right: number}} position position
      */
     renderPosition: function(el, position) {
-        if (ne.util.isUndefined(position)) {
+        if (tui.util.isUndefined(position)) {
             return;
         }
 

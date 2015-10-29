@@ -108,7 +108,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertData: {
+                convertedData: {
                     joinValues: [
                         [20, 30, 50],
                         [40, 40, 60],
@@ -146,7 +146,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertData: {
+                convertedData: {
                     values: {
                         column: [
                             [20, 30, 50],
@@ -216,7 +216,7 @@ describe('ComboChart', function() {
                     xAxis: {}
                 },
                 result = comboChart._makeAxesData(baseAxis, {
-                    convertData: {
+                    convertedData: {
                         values: {
                             line: [
                                 [60, 50, 10],
@@ -299,51 +299,48 @@ describe('ComboChart', function() {
                     line: {
                         position: 'left top'
                     }
-                }
-            }, {
-                column: 0,
-                line: 1
+                },
+                chartType: 'combo'
             });
 
-            expect(result).toEqual({
-                column: {
-                    chartType: 'column',
-                    yAxis: {
-                        title: 'Y Axis'
-                    },
-                    series: {
-                        stacked: 'normal'
-                    },
-                    tooltip: {
-                        suffix: '%'
-                    }
+            expect(result.column).toEqual({
+                chartType: 'column',
+                parentChartType: 'combo',
+                yAxis: {
+                    title: 'Y Axis'
                 },
-                line: {
-                    chartType: 'line',
-                    yAxis: {
-                        title: 'Y Right Axis'
-                    },
-                    series: {
-                        hasDot: true
-                    },
-                    tooltip: {
-                        position: 'left top'
-                    }
+                series: {
+                    stacked: 'normal'
+                },
+                tooltip: {
+                    suffix: '%'
+                }
+            });
+            expect(result.line).toEqual({
+                chartType: 'line',
+                parentChartType: 'combo',
+                yAxis: {
+                    title: 'Y Right Axis'
+                },
+                series: {
+                    hasDot: true
+                },
+                tooltip: {
+                    position: 'left top'
                 }
             });
         });
 
         it('옵션이 없을 경우에는 chartType 정보만을 담은 y축 옵션 정보 맵을 생성합니다.', function() {
-            var result = comboChart._makeOptionsMap(['column', 'line'], {}, {
-                column: 0,
-                line: 1
-            });
+            var result = comboChart._makeOptionsMap(['column', 'line'], {chartType: 'combo'});
             expect(result).toEqual({
                 column: {
-                    chartType: 'column'
+                    chartType: 'column',
+                    parentChartType: 'combo'
                 },
                 line: {
-                    chartType: 'line'
+                    chartType: 'line',
+                    parentChartType: 'combo'
                 }
             });
         });

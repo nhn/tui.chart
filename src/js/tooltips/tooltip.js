@@ -6,21 +6,14 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    event = require('../helpers/eventListener.js'),
-    templateMaker = require('../helpers/templateMaker.js'),
-    tooltipTemplate = require('./tooltipTemplate.js');
+var TooltipBase = require('./tooltipBase'),
+    chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    event = require('../helpers/eventListener'),
+    templateMaker = require('../helpers/templateMaker'),
+    tooltipTemplate = require('./tooltipTemplate');
 
-var TOOLTIP_GAP = 5,
-    HIDDEN_WIDTH = 1,
-    TOOLTIP_CLASS_NAME = 'ne-chart-tooltip',
-    HIDE_DELAY = 0;
-
-var concat = Array.prototype.concat;
-
-var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
+var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
     /**
      * Tooltip component.
      * @constructs Tooltip
@@ -28,32 +21,48 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      *      @param {array.<number>} params.values converted values
      *      @param {array} params.labels labels
      *      @param {array} params.legendLabels legend labels
-     *      @param {string} prefix tooltip prefix
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        ne.util.extend(this, params);
-        /**
-         * Tooltip view className
-         * @type {string}
-         */
-        this.className = 'ne-chart-tooltip-area';
+        TooltipBase.call(this, params);
+        this.tplTooltip = this._getTooltipTemplate(this.options.template);
+        this._setDefaultTooltipPositionOption();
+    },
+
+    /**
+     * Get tooltip template.
+     * @param {object} optionTemplate template option
+     * @returns {object} template
+     * @private
+     */
+    _getTooltipTemplate: function(optionTemplate) {
+        return optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefault;
+    },
+
+    /**
+     * Set default position option of tooltip.
+     * @private
+     */
+    _setDefaultTooltipPositionOption: function() {
+        if (this.options.position) {
+            return;
+        }
+
+        if (this.isVertical) {
+            this.options.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
+        } else {
+            this.options.position = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION;
+        }
     },
 
     /**
      * Render tooltip.
      * @param {{position: object}} bound tooltip bound
-     * @param {string} prefix tooltip id prefix
      * @returns {HTMLElement} tooltip element
      */
     render: function() {
-        var el = dom.create('DIV', this.className),
-            bound = this.bound;
-
-        renderUtil.renderPosition(el, bound.position);
-        el.innerHTML = this._makeTooltipsHtml();
-
+        var el = TooltipBase.prototype.render.call(this);
         this.attachEvent(el);
         return el;
     },
@@ -61,99 +70,90 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     /**
      * To make tooltip data.
      * @returns {array.<object>} tooltip data
-     * @private
+     * @override
      */
-    _makeTooltipData: function() {
+    makeTooltipData: function() {
         var labels = this.labels,
             groupValues = this.values,
-            legendLabels = this.legendLabels,
-            tooltipData = ne.util.map(groupValues, function(values, groupIndex) {
-                var items = ne.util.map(values, function(value, index) {
-                    var item = {value: value,
-                        legendLabel: legendLabels[index],
-                        id: groupIndex + '-' + index
-                    };
-                    if (labels) {
-                        item.label = labels[groupIndex];
-                    }
-                    return item;
-                });
+            legendLabels = this.legendLabels;
 
-                return items;
+        return tui.util.map(groupValues, function(values, groupIndex) {
+            return tui.util.map(values, function(value, index) {
+                return {
+                    category: labels ? labels[groupIndex] : '',
+                    legend: legendLabels[index],
+                    value: value
+                };
             });
-        return concat.apply([], tooltipData);
-    },
-
-    /**
-     * To make html of tooltip.
-     * @param {object} data tooltip data
-     * @param {string} prefix tooltip id prefix
-     * @returns {string} html
-     * @private
-     */
-    _makeTooltipsHtml: function() {
-        var options = this.options,
-            prefix = this.prefix,
-            data = this._makeTooltipData(),
-            optionTemplate = options.template ? options.template : '',
-            tplOuter = tooltipTemplate.tplTooltip,
-            tplTooltip = optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefaultTemplate,
-            suffix = options.suffix ? '&nbsp;' + options.suffix : '',
-            html = ne.util.map(data, function(tooltipData) {
-                var id = prefix + tooltipData.id,
-                    tooltipHtml;
-
-                tooltipData = ne.util.extend({
-                    label: '',
-                    legendLabel: '',
-                    value: '',
-                    suffix: suffix
-                }, tooltipData);
-                tooltipHtml = tplTooltip(tooltipData);
-                return tplOuter({
-                    id: id,
-                    html: tooltipHtml
-                });
-            }, this).join('');
-        return html;
-    },
-
-    /**
-     * Get index from id
-     * @param {string} id tooltip id
-     * @returns {array.<number>} indexes
-     * @private
-     */
-    _getIndexFromId: function(id) {
-        var ids = id.split('-'),
-            sliceIndex = ids.length - 2;
-        return ids.slice(sliceIndex);
+        });
     },
 
     /**
      * Fire custom event showAnimation.
-     * @param {string} id tooltip id
+     * @param {{groupIndex: number, index: number}} indexes indexes
      * @private
      */
-    _fireShowAnimation: function(id) {
-        var indexes = this._getIndexFromId(id);
-        this.fire('showAnimation', {
-            groupIndex: indexes[0],
-            index: indexes[1]
-        });
+    _fireShowAnimation: function(indexes) {
+        this.fire('showAnimation', indexes);
     },
 
     /**
      * Fire custom event hideAnimation.
-     * @param {string} id tooltip id
+     * @param {{groupIndex: number, index: number}} indexes indexes
      * @private
      */
-    _fireHideAnimation: function(id) {
-        var indexes = this._getIndexFromId(id);
-        this.fire('hideAnimation', {
-            groupIndex: indexes[0],
-            index: indexes[1]
-        });
+    _fireHideAnimation: function(indexes) {
+        this.fire('hideAnimation', indexes);
+    },
+
+    /**
+     * Set data indexes.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {{groupIndex: number, index:number}} indexes indexes
+     * @private
+     */
+    _setIndexesCustomAttribute: function(elTooltip, indexes) {
+        elTooltip.setAttribute('data-groupIndex', indexes.groupIndex);
+        elTooltip.setAttribute('data-index', indexes.index);
+    },
+
+    /**
+     * Get data indexes
+     * @param {HTMLElement} elTooltip tooltip element
+     * @returns {{groupIndex: number, index: number}} indexes
+     * @private
+     */
+    _getIndexesCustomAttribute: function(elTooltip) {
+        var groupIndex = elTooltip.getAttribute('data-groupIndex'),
+            index = elTooltip.getAttribute('data-index'),
+            indexes;
+        if (groupIndex && index) {
+            indexes = {
+                groupIndex: parseInt(groupIndex, 10),
+                index: parseInt(index, 10)
+            };
+        }
+        return indexes;
+    },
+
+    /**
+     * Set showed custom attribute.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {boolean} status whether showed or not
+     * @private
+     */
+    _setShowedCustomAttribute: function(elTooltip, status) {
+        elTooltip.setAttribute('data-showed', status);
+    },
+
+    /**
+     * Whether showed tooltip or not.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @returns {boolean} whether showed tooltip or not
+     * @private
+     */
+    _isShowedTooltip: function(elTooltip) {
+        return elTooltip.getAttribute('data-showed') === 'true';
     },
 
     /**
@@ -162,14 +162,22 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            id;
+            indexes;
 
-        if (!dom.hasClass(elTarget, TOOLTIP_CLASS_NAME)) {
-            elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
+        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
+            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
-        this.showedId = id = elTarget.id;
-        this._fireShowAnimation(id);
+
+        if (elTarget.id !== this._getTooltipId()) {
+            return;
+        }
+
+        indexes = this._getIndexesCustomAttribute(elTarget);
+
+        this._setShowedCustomAttribute(elTarget, true);
+
+        this._fireShowAnimation(indexes);
     },
 
     /**
@@ -177,26 +185,36 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @param {MouseEvent} e mouse event
      */
     onMouseout: function(e) {
-        var elTarget = e.target || e.srcElement,
-            that = this,
-            indexes;
+        var elTarget = e.target || e.srcElement;
 
-        if (!dom.hasClass(elTarget, TOOLTIP_CLASS_NAME)) {
-            elTarget = dom.findParentByClass(elTarget, TOOLTIP_CLASS_NAME);
+
+        if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
+            elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
-        indexes = this._getIndexFromId(elTarget.id);
+        if (elTarget.id !== this._getTooltipId()) {
+            return;
+        }
 
-        this._hideTooltip(elTarget, function() {
-            that.fire('hideAnimation', {
-                groupIndex: indexes[0],
-                index: indexes[1]
-            });
-        });
+        this.hideTooltip(elTarget);
     },
 
     /**
-     * Calculate tooltip position about not bar chart.
+     * To calculate tooltip position abount pie chart.
+     * @param {object} params parameters
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {{clientX: number, clientY: number}} params.eventPosition mouse position
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _calculateTooltipPositionAboutPieChart: function(params) {
+        params.bound.left = params.eventPosition.clientX - this.seriesPosition.left;
+        params.bound.top = params.eventPosition.clientY - this.seriesPosition.top;
+        return this._calculateTooltipPositionAboutNotBarChart(params);
+    },
+
+    /**
+     * To calculate tooltip position about not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -208,11 +226,11 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         var bound = params.bound,
             addPosition = params.addPosition,
             minusWidth = params.dimension.width - (bound.width || 0),
-            lineGap = bound.width ? 0 : TOOLTIP_GAP,
+            lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
             positionOption = params.positionOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
-        result.left = bound.left + (HIDDEN_WIDTH * 2) + addPosition.left;
+        result.left = bound.left + addPosition.left;
         result.top = bound.top - tooltipHeight + addPosition.top;
 
         if (positionOption.indexOf('left') > -1) {
@@ -224,18 +242,18 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         }
 
         if (positionOption.indexOf('bottom') > -1) {
-            result.top += tooltipHeight - HIDDEN_WIDTH + lineGap;
+            result.top += tooltipHeight + lineGap;
         } else if (positionOption.indexOf('middle') > -1) {
             result.top += tooltipHeight / 2;
         } else {
-            result.top -= TOOLTIP_GAP + HIDDEN_WIDTH;
+            result.top -= chartConst.TOOLTIP_GAP;
         }
 
         return result;
     },
 
     /**
-     * Calculate tooltip position about bar chart.
+     * To calculate tooltip position about bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -260,15 +278,13 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         } else if (positionOption.indexOf('center') > -1) {
             result.left -= tooltipWidth / 2;
         } else {
-            result.left += TOOLTIP_GAP;
+            result.left += chartConst.TOOLTIP_GAP;
         }
 
         if (positionOption.indexOf('top') > -1) {
-            result.top -= minusHeight + HIDDEN_WIDTH;
+            result.top -= minusHeight;
         } else if (positionOption.indexOf('middle') > -1) {
             result.top -= minusHeight / 2;
-        } else {
-            result.top -= HIDDEN_WIDTH * 2;
         }
 
         return result;
@@ -288,6 +304,11 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     _calculateTooltipPosition: function(params) {
         var result = {},
             sizeType, positionType, addPadding;
+
+        if (params.eventPosition) {
+            return this._calculateTooltipPositionAboutPieChart(params);
+        }
+
         if (params.chartType === chartConst.CHART_TYPE_BAR) {
             result = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
@@ -303,7 +324,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         if (params.allowNegativeTooltip) {
             result = this._moveToSymmetry(result, {
                 bound: params.bound,
-                id: params.id,
+                indexes: params.indexes,
                 dimension: params.dimension,
                 sizeType: sizeType,
                 positionType: positionType,
@@ -314,15 +335,13 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * Get value by id.
-     * @param {string} id tooltip id
-     * @returns {number} result value
+     * Get value by indexes.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {(string | number)} value
      * @private
      */
-    _getValueById: function(id) {
-        var indexes = this._getIndexFromId(id),
-            value = this.values[indexes[0]][indexes[1]];
-        return value;
+    _getValueByIndexes: function(indexes) {
+        return this.values[indexes.groupIndex][indexes.index];
     },
 
     /**
@@ -342,7 +361,7 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this._getValueById(params.id),
+            value = this._getValueByIndexes(params.indexes),
             center;
 
         if (value < 0) {
@@ -354,86 +373,94 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
     },
 
     /**
-     * onShow is callback of custom event showTooltip for SeriesView.
-     * @param {{id: string, bound: object}} params tooltip data
+     * Get tooltip id.
+     * @returns {string} tooltip id
+     * @private
      */
-    onShow: function(params) {
-        var elTooltip = document.getElementById(params.id),
-            addPosition = ne.util.extend({
-                left: 0,
-                top: 0
-            }, this.options.addPosition),
-            positionOption = this.options.position || '',
-            position;
-
-        if (this.showedId) {
-            dom.removeClass(elTooltip, 'show');
-            this._fireHideAnimation(this.showedId);
+    _getTooltipId: function() {
+        if (!this.tooltipId) {
+            this.tooltipId = chartConst.TOOLTIP_ID_PREFIX + '-' + (new Date()).getTime();
         }
-
-        this.showedId = params.id;
-        dom.addClass(elTooltip, 'show');
-
-        position = this._calculateTooltipPosition(ne.util.extend({
-            dimension: {
-                width: elTooltip.offsetWidth,
-                height: elTooltip.offsetHeight
-            },
-            addPosition: addPosition,
-            positionOption: positionOption || ''
-        }, params));
-
-        elTooltip.style.cssText = [
-            renderUtil.concatStr('left:', position.left, 'px'),
-            renderUtil.concatStr('top:', position.top, 'px')
-        ].join(';');
-
-        this._fireShowAnimation(params.id);
+        return this.tooltipId;
     },
 
     /**
-     * onHide is callback of custom event hideTooltip for SeriesView
-     * @param {{id: string}} data tooltip data
+     * To make tooltip html.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {string} tooltip html
+     * @private
      */
-    onHide: function(data) {
-        var elTooltip = document.getElementById(data.id),
-            that = this;
+    _makeTooltipHtml: function(indexes) {
+        var data = this.data[indexes.groupIndex][indexes.index];
+        data.suffix = this.suffix;
+        return this.tplTooltip(data);
+    },
 
-        this._hideTooltip(elTooltip, function() {
-            var indexes = that._getIndexFromId(data.id);
+    _isChangedIndexes: function(prevIndexes, indexes) {
+        return !!prevIndexes && (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
+    },
 
-            that.fire('hideAnimation', {
-                groupIndex: indexes[0],
-                index: indexes[1]
-            });
+    /**
+     * Show tooltip.
+     * @param {HTMLElement} elTooltip tooltip element
+     * @param {{indexes: {groupIndex: number, index: number}, bound: object}} params tooltip data
+     * @param {{left: number, top: number}} prevPosition prev position
+     */
+    showTooltip: function(elTooltip, params, prevPosition) {
+        var indexes = params.indexes,
+            curIndexes = this._getIndexesCustomAttribute(elTooltip),
+            position;
 
-            data = null;
-            elTooltip = null;
-            that = null;
-        });
+        if (elTooltip.id === this._getTooltipId() && this._isChangedIndexes(curIndexes, indexes)) {
+            this._fireHideAnimation(curIndexes);
+        }
+
+        elTooltip.id = this._getTooltipId();
+        elTooltip.innerHTML = this._makeTooltipHtml(indexes);
+
+        this._setIndexesCustomAttribute(elTooltip, indexes);
+        this._setShowedCustomAttribute(elTooltip, true);
+
+        dom.addClass(elTooltip, 'show');
+
+        position = this._calculateTooltipPosition(tui.util.extend({
+            dimension: this.getTooltipDimension(elTooltip),
+            addPosition: tui.util.extend({
+                left: 0,
+                top: 0
+            }, this.options.addPosition),
+            positionOption: this.options.position || '',
+            eventPosition: params.eventPosition
+        }, params));
+
+        this.moveToPosition(elTooltip, position, prevPosition);
+        this._fireShowAnimation(indexes);
     },
 
     /**
      * Hide tooltip.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {function} callback callback
-     * @private
      */
-    _hideTooltip: function(elTooltip, callback) {
-        var that = this;
-        delete this.showedId;
+    hideTooltip: function(elTooltip) {
+        var that = this,
+            indexes = this._getIndexesCustomAttribute(elTooltip);
+        this._setShowedCustomAttribute(elTooltip, false);
+        this._fireHideAnimation(indexes);
+
+        if (this._isChangedIndexes(this.prevIndexes, indexes)) {
+            delete this.prevIndexes;
+        }
+
         setTimeout(function() {
-            if (that.showedId === elTooltip.id) {
+            if (that._isShowedTooltip(elTooltip)) {
                 return;
             }
-
-            dom.removeClass(elTooltip, 'show');
-            if (callback) {
-                callback();
-            }
+            that.hideAnimation(elTooltip);
 
             that = null;
-        }, HIDE_DELAY);
+            indexes = null;
+        }, chartConst.HIDE_DELAY);
     },
 
     /**
@@ -441,11 +468,11 @@ var Tooltip = ne.util.defineClass(/** @lends Tooltip.prototype */ {
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 
-ne.util.CustomEvents.mixin(Tooltip);
+tui.util.CustomEvents.mixin(Tooltip);
 
 module.exports = Tooltip;

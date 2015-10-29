@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('../../src/js/series/series.js'),
-    chartConst = require('../../src/js/const.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -129,7 +128,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 80,
                 toMin: 20
-            })
+            });
         });
 
         it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
@@ -140,7 +139,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 0,
                 toMin: 0
-            })
+            });
         });
 
         it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
@@ -151,7 +150,7 @@ describe('Series', function() {
             expect(result).toEqual({
                 toMax: 0,
                 toMin: 0
-            })
+            });
         });
     });
 
@@ -164,19 +163,24 @@ describe('Series', function() {
                 }
             );
 
-            expect(elSeries.style.top).toBe('19px');
-            expect(elSeries.style.left).toBe('22px');
+            if (renderUtil.isIE8()) {
+                expect(elSeries.style.top).toBe('18px');
+                expect(elSeries.style.left).toBe('9px');
+            } else {
+                expect(elSeries.style.top).toBe('20px');
+                expect(elSeries.style.left).toBe('10px');
+            }
         });
     });
 
-    describe('_makeSeriesLabelHtml()', function() {
+    describe('makeSeriesLabelHtml()', function() {
         it('position, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
-            var result = series._makeSeriesLabelHtml({
+            var result = series.makeSeriesLabelHtml({
                 left: 10,
                 top: 10
             }, 'label1', 0, 0);
 
-            expect(result).toBe('<div class="ne-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
+            expect(result).toBe('<div class="tui-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
         });
     });
 
@@ -185,15 +189,15 @@ describe('Series', function() {
             var elSeries = series.render();
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
-            expect(elSeries.style.width).toBe('200px');
-            expect(elSeries.style.height).toBe('100px');
-
-            expect(elSeries.style.top).toBe('49px');
+            expect(elSeries.style.width).toBe('220px');
+            expect(elSeries.style.height).toBe('110px');
 
             if (renderUtil.isIE8()) {
-                expect(elSeries.style.left).toBe('50px');
+                expect(elSeries.style.top).toBe('48px');
+                expect(elSeries.style.left).toBe('39px');
             } else {
-                expect(elSeries.style.left).toBe('51px');
+                expect(elSeries.style.top).toBe('50px');
+                expect(elSeries.style.left).toBe('40px');
             }
         });
     });

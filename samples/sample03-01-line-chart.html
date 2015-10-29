@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <title>Line Chart Sample</title>
-    <link rel="stylesheet" type="text/css" href="dist/application-chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
 <body>
@@ -20,22 +20,22 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3"],
+    "categories": ["category 1", "category 2", "category 3", "category 4", "category 5"],
     "series": [
         {
             "name": "Legend1",
-            "data": [20, 30, 50]},
+            "data": [20, 30, 50, 20, 10]},
         {
             "name": "Legend2",
-            "data": [40, 40, 60]
+            "data": [40, 40, 60, 10, 80]
         },
         {
             "name": "Legend3",
-            "data": [60, 50, 10]
+            "data": [60, 50, 10, 0, 50]
         },
         {
             "name": "Legend4",
-            "data": [80, 10, 70]
+            "data": [80, 10, 70, 30, 70]
         }
     ]
 }
@@ -46,7 +46,7 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
         "title": "Line Chart"
     },
@@ -54,7 +54,8 @@
         "title": "Y Axis"
     },
     "xAxis": {
-        "title": "X Axis"
+        "title": "X Axis",
+        "labelInterval": 2
     },
     "series": {
         "hasDot": true
@@ -62,7 +63,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-options')">More Options</button>
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
         </div>
     </div>
     <div id="theme-area">
@@ -92,7 +93,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/fe.application-chart/wiki/application-tutorial#full-theme')">More Theme</button>
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
         </div>
     </div>
 
@@ -100,34 +101,34 @@
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
-<script src="dist/application-chart.min.js"></script>
+<script src="dist/chart.min.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3'],
+            categories: ['category 1', 'category 2', 'category 3', 'category 4', 'category 5'],
             series: [
                 {
                     name: 'Legend1',
-                    data: [20, 30, 50]
+                    data: [20, 30, 40, 20, 10]
                 },
                 {
                     name: 'Legend2',
-                    data: [40, 40, 60]
+                    data: [40, 40, 60, 10, 80]
                 },
                 {
                     name: 'Legend3',
-                    data: [60, 50, 10]
+                    data: [60, 50, 10, 0, 50]
                 },
                 {
                     name: 'Legend4',
-                    data: [80, 10, 70]
+                    data: [80, 10, 70, 30, 70]
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
+                width: 700,
                 height: 400,
                 title: 'Line Chart'
             },
@@ -135,13 +136,14 @@
                 title: 'Y Axis'
             },
             xAxis: {
-                title: 'X Axis'
+                title: 'X Axis',
+                labelInterval: 2
             },
             series: {
                 hasDot: true
             }
         };
-    ne.application.chart.lineChart(container, data, options);
+    tui.chart.lineChart(container, data, options);
 </script>
 </body>
 </html>

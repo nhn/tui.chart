@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Series = require('./series.js'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase.js');
+var Series = require('./series'),
+    LineTypeSeriesBase = require('./lineTypeSeriesBase');
 
-var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
+var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
      * Area chart series component.
      * @constructs AreaChartSeries
@@ -25,10 +25,10 @@ var AreaChartSeries = ne.util.defineClass(Series, /** @lends AreaChartSeries.pro
     },
 
     /**
-     * To make add data.
+     * To make series data.
      * @returns {object} add data
      */
-    makeAddData: function() {
+    makeSeriesData: function() {
         var dimension = this.bound.dimension,
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
             zeroTop = scaleDistance.toMax;

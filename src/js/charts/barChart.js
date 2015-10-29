@@ -7,16 +7,16 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    AxisTypeBase = require('./axisTypeBase'),
+    axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
-var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
+var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**
      * Bar chart.
      * @constructs BarChart
      * @extends ChartBase
-     * @mixes AxisTypeBase
+     * @mixes axisTypeMixer
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
@@ -25,38 +25,46 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
         var baseData = this.makeBaseData(userData, theme, options, {
                 hasAxes: true
             }),
-            convertData = baseData.convertData,
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds,
-            axisData;
+            axesData = this._makeAxesData(convertedData, bounds, options);
 
-        this.className = 'ne-bar-chart';
+        /**
+         * className
+         * @type {string}
+         */
+        this.className = 'tui-bar-chart';
 
-        ChartBase.call(this, bounds, theme, options);
+        ChartBase.call(this, {
+            bounds: bounds,
+            axesData: axesData,
+            theme: theme,
+            options: options
+        });
 
-        axisData = this._makeAxesData(convertData, bounds, options);
-        this._addComponents(convertData, axisData, options);
+        this._addComponents(convertedData, axesData, options);
     },
 
     /**
      * To make axes data
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertData, bounds, options) {
+    _makeAxesData: function(convertedData, bounds, options) {
         var axesData = {
             yAxis: axisDataMaker.makeLabelAxisData({
-                labels: convertData.labels,
+                labels: convertedData.labels,
                 isVertical: true
             }),
             xAxis: axisDataMaker.makeValueAxisData({
-                values: convertData.values,
+                values: convertedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
-                formatFunctions: convertData.formatFunctions,
+                formatFunctions: convertedData.formatFunctions,
                 options: options.xAxis
             })
         };
@@ -65,34 +73,35 @@ var BarChart = ne.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, axesData, options) {
+    _addComponents: function(convertedData, axesData, options) {
+        var plotData, seriesData;
+
+        plotData = this.makePlotData(convertedData.plotData, axesData);
+        seriesData = {
+            allowNegativeTooltip: true,
+            data: {
+                values: convertedData.values,
+                formattedValues: convertedData.formattedValues,
+                formatFunctions: convertedData.formatFunctions,
+                scale: axesData.xAxis.scale
+            }
+        };
         this.addAxisComponents({
-            convertData: convertData,
+            convertedData: convertedData,
             axes: axesData,
-            plotData: {
-                vTickCount: axesData.yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
+            plotData: plotData,
             chartType: options.chartType,
             Series: Series,
-            seriesData: {
-                allowNegativeTooltip: true,
-                data: {
-                    values: convertData.values,
-                    formattedValues: convertData.formattedValues,
-                    formatFunctions: convertData.formatFunctions,
-                    scale: axesData.xAxis.scale
-                }
-            }
+            seriesData: seriesData
         });
     }
 });
 
-AxisTypeBase.mixin(BarChart);
+axisTypeMixer.mixin(BarChart);
 
 module.exports = BarChart;

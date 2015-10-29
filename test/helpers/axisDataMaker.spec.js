@@ -7,9 +7,23 @@
 'use strict';
 
 var maker = require('../../src/js/helpers/axisDataMaker.js'),
+    chartConst = require('../../src/js/const'),
     converter = require('../../src/js/helpers/dataConverter.js');
 
 describe('axisDataMaker', function() {
+    describe('_makeLabels()', function() {
+        it('전달받은 labelInterval 옵션 정보가 없으면, labels를 그대로 반환합니다.', function() {
+            var actual = maker._makeLabels(['label1', 'label2', 'label3']),
+                expected = ['label1', 'label2', 'label3'];
+            expect(actual).toEqual(expected);
+        });
+
+        it('labelInterval 옵션이 있을 경우 처음과, 끝, 그리고 interval 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
+            var actual = maker._makeLabels(['label1', 'label2', 'label3', 'label4', 'label5'], 2),
+                expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
+            expect(actual).toEqual(expected);
+        });
+    });
 
     describe('makeLabelAxisData()', function() {
         it('레이블 타입의 axis data를 생성합니다.', function () {
@@ -21,8 +35,17 @@ describe('axisDataMaker', function() {
                 tickCount: 4,
                 validTickCount: 0,
                 isLabelAxis: true,
-                isVertical: false
+                isVertical: false,
+                aligned: false
             });
+        });
+
+        it('aligned옵션이 true이면 tick label과 tick의 수가 동일하기 때문에 tickCount는 레이블 수 만큼만 설정된다. ', function () {
+            var result = maker.makeLabelAxisData({
+                labels: ['label1', 'label2', 'label3'],
+                aligned: true
+            });
+            expect(result.tickCount).toBe(3);
         });
     });
 
@@ -302,26 +325,35 @@ describe('axisDataMaker', function() {
     });
 
     describe('_addMinPadding()', function() {
-        it('Line차트의 경우 min과 userMin이 같으면 한 step 감소시킨 min 값을 반환합니다.', function () {
+        it('min과 userMin가 같으면 한 step 감소시킨 min 값을 반환합니다.', function () {
             var result = maker._addMinPadding({
-                min: 0,
-                userMin: 0,
+                min: -10,
+                userMin: -10,
                 step: 20,
-                chartType: 'line'
+                chartType: 'bar'
             });
 
-            expect(result).toEqual(-20);
+            expect(result).toEqual(-30);
         });
 
-        it('Bar차트의 경우 min이 0이면서 userMin 같으면 감소 없는 min 값을 반환합니다.', function () {
+        it('userMin값이 0 이상이면서 라인차트가 아니면 min과 값이 같아도 전달받은 min값 그대로 반환합니다.', function() {
             var result = maker._addMinPadding({
                 min: 0,
                 userMin: 0,
                 step: 20,
                 chartType: 'bar'
             });
+            expect(result).toEqual(0);
+        });
 
-            expect(result).toBe(0);
+        it('userMin,min 모두 0이면서 라인차트이면 한 step 감소시킨 min 값을 반환합니다.', function() {
+            var result = maker._addMinPadding({
+                min: 0,
+                userMin: 0,
+                step: 20,
+                chartType: 'line'
+            });
+            expect(result).toEqual(-20);
         });
     });
 
@@ -330,10 +362,31 @@ describe('axisDataMaker', function() {
             var result = maker._addMaxPadding({
                 max: 90,
                 userMax: 90,
-                step: 20
+                step: 20,
+                chartType: 'bar'
             });
 
             expect(result).toBe(110);
+        });
+
+        it('userMax값이 0 이하이면서 라인차트가 아니면 max와 값이 같아도 전달받은 max값 그대로 반환합니다.', function() {
+            var result = maker._addMaxPadding({
+                max: -90,
+                userMax: -90,
+                step: 20,
+                chartType: 'bar'
+            });
+            expect(result).toEqual(-90);
+        });
+
+        it('userMan,max 모두 0이면서 라인차트이면 한 step 증가시킨 max 값을 반환합니다.', function() {
+            var result = maker._addMaxPadding({
+                max: 0,
+                userMax: 0,
+                step: 20,
+                chartType: 'line'
+            });
+            expect(result).toEqual(20);
         });
     });
 
@@ -453,16 +506,16 @@ describe('axisDataMaker', function() {
     });
 
 
-    describe('_formatLabels()', function() {
+    describe('formatLabels()', function() {
         it('전달된 labels를 "1,000.00"타입으로 포맷팅하여 반환합니다.', function () {
             var fns = converter._findFormatFunctions('1,000.00'),
-                result = maker._formatLabels([1000, 2000.2222, 3000.555555, 4, 5.55], fns);
-            expect(result).toEqual(['1,000.00', '2,000.22', '3,000.56', '4.00', '5.55']);
+                result = maker.formatLabels([1000, 2000.2222, 300000.555555, 4, 5.55], fns);
+            expect(result).toEqual(['1,000.00', '2,000.22', '300,000.56', '4.00', '5.55']);
         });
 
         it('전달된 labels를 "0001"타입으로 포맷팅하여 반환합니다.', function () {
             var fns = converter._findFormatFunctions('0001'),
-                result = maker._formatLabels([1, 2, 3], fns);
+                result = maker.formatLabels([1, 2, 3], fns);
             expect(result).toEqual(['0001', '0002', '0003']);
         });
     });

@@ -61,10 +61,10 @@ describe('test Plot', function() {
                     positionType: positionType,
                     sizeType: sizeType
                 }),
-                compareHtml = '<div class="ne-chart-plot-line vertical" style="left:10px;height:200px"></div>' +
-                    '<div class="ne-chart-plot-line vertical" style="left:20px;height:200px"></div>' +
-                    '<div class="ne-chart-plot-line vertical" style="left:30px;height:200px"></div>' +
-                    '<div class="ne-chart-plot-line vertical" style="left:40px;height:200px"></div>';
+                compareHtml = '<div class="tui-chart-plot-line vertical" style="left:10px;height:200px"></div>' +
+                    '<div class="tui-chart-plot-line vertical" style="left:20px;height:200px"></div>' +
+                    '<div class="tui-chart-plot-line vertical" style="left:30px;height:200px"></div>' +
+                    '<div class="tui-chart-plot-line vertical" style="left:40px;height:200px"></div>';
             expect(resultHtml).toBe(compareHtml);
         });
     });
@@ -110,7 +110,7 @@ describe('test Plot', function() {
             expect(el.style.height).toBe('200px');
             expect(el.style.top).toBe('5px');
             expect(el.style.right).toBe('5px');
-            expect(el.className).toBe('ne-chart-plot-area');
+            expect(el.className).toBe('tui-chart-plot-area');
 
             childNodes = el.childNodes;
 

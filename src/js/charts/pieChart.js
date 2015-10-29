@@ -6,12 +6,13 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase.js'),
-    Legend = require('../legends/legend.js'),
-    Tooltip = require('../tooltips/tooltip.js'),
-    Series = require('../series/pieChartSeries.js');
+var ChartBase = require('./chartBase'),
+    chartConst = require('../const'),
+    Legend = require('../legends/legend'),
+    Tooltip = require('../tooltips/tooltip'),
+    Series = require('../series/pieChartSeries');
 
-var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
+var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * Column chart.
      * @constructs PieChart
@@ -19,59 +20,63 @@ var PieChart = ne.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
      * @param {array.<array>} userData chart data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      */
-    init: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options),
-            convertData = baseData.convertData,
+    init: function(userData, theme, options) {
+        var baseData = this.makeBaseData(userData, theme, options),
+            convertedData = baseData.convertedData,
             bounds = baseData.bounds;
 
-        this.className = 'ne-pie-chart';
+        this.className = 'tui-pie-chart';
 
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.position) {
-            options.tooltip.position = 'center middle';
+            options.tooltip.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
         }
 
-        ChartBase.call(this, bounds, theme, options, initedData);
+        ChartBase.call(this, {
+            bounds: bounds,
+            theme: theme,
+            options: options
+        });
 
-        this._addComponents(convertData, theme.chart.background, bounds, options);
+        this._addComponents(convertedData, theme.chart.background, bounds, options);
     },
 
     /**
      * Add components
-     * @param {object} convertData converted data
+     * @param {object} convertedData converted data
      * @param {object} chartBackground chart background
      * @param {array.<object>} bounds bounds
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertData, chartBackground, bounds, options) {
-        if (convertData.joinLegendLabels && (!options.series || !options.series.legendType)) {
+    _addComponents: function(convertedData, chartBackground, bounds, options) {
+        if (convertedData.joinLegendLabels && (!options.series || !options.series.legendType)) {
             this.addComponent('legend', Legend, {
-                joinLegendLabels: convertData.joinLegendLabels,
-                legendLabels: convertData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
+                legendLabels: convertedData.legendLabels,
                 chartType: options.chartType
             });
         }
 
         this.addComponent('tooltip', Tooltip, {
-            values: convertData.formattedValues,
-            labels: convertData.labels,
-            legendLabels: convertData.legendLabels,
-            prefix: this.tooltipPrefix
+            chartType: options.chartType,
+            values: convertedData.formattedValues,
+            labels: convertedData.labels,
+            legendLabels: convertedData.legendLabels,
+            chartId: this.chartId,
+            seriesPosition: bounds.series.position
         });
 
         this.addComponent('series', Series, {
             libType: options.libType,
             chartType: options.chartType,
-            tooltipPrefix: this.tooltipPrefix,
             chartBackground: chartBackground,
             data: {
-                values: convertData.values,
-                formattedValues: convertData.formattedValues,
-                legendLabels: convertData.legendLabels,
+                values: convertedData.values,
+                formattedValues: convertedData.formattedValues,
+                legendLabels: convertedData.legendLabels,
                 chartWidth: bounds.chart.dimension.width
             }
         });

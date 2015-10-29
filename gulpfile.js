@@ -11,7 +11,21 @@ var gulp = require('gulp'),
     minifiyCss = require('gulp-minify-css'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
-    del = require('del');
+    del = require('del'),
+    header = require('gulp-header'),
+    pkg = require('./package.json');
+
+var banner = [
+    '/**',
+    ' * @fileoverview ${name}',
+    ' * @author ${author}',
+    ' * @version ${version}',
+    ' * @license ${license}',
+    ' * @link ${repository.url}',
+    ' */',
+    ''
+].join('\n');
+
 
 gulp.task('browser-sync', function() {
     sync({
@@ -28,7 +42,8 @@ gulp.task('browserify', function() {
     gutil.log(gutil.colors.green('rebundle...'));
     rebundle = function() {
         return b.bundle()
-            .pipe(source('./application-chart.js'))
+            .pipe(source('./chart.js'))
+            .pipe(header(banner, pkg))
             .pipe(gulp.dest('./dist'));
     };
 
@@ -39,23 +54,24 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('compress-js', ['browserify'], function() {
-    return gulp.src('dist/application-chart.js')
+    return gulp.src('dist/chart.js')
         .pipe(uglify())
         .pipe(rename({
             extname: '.min.js'
         }))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest('dist'));
 });
 
 gulp.task('compile-less', function() {
     return gulp.src('src/less/style.less')
         .pipe(less())
-        .pipe(rename('application-chart.css'))
+        .pipe(rename('chart.css'))
         .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('minify-css', ['compile-less'], function() {
-    return gulp.src('dist/application-chart.css')
+    return gulp.src('dist/chart.css')
         .pipe(minifiyCss())
         .pipe(rename({
             extname: '.min.css'
@@ -82,19 +98,19 @@ gulp.task('default', ['watch']);
 
 gulp.task('clean-samples', function(callback) {
     del([
-        'dist/application-chart.min.js',
-        'dist/application-chart.min.css',
+        'dist/chart.min.js',
+        'dist/chart.min.css',
         'samples/dist/*',
         'samples/lib/*'
     ], callback);
 });
 
 gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], function() {
-    gulp.src('dist/application-chart.min.css')
+    gulp.src('dist/chart.min.css')
         .pipe(gulp.dest('./samples/dist'));
-    gulp.src('dist/application-chart.min.js')
+    gulp.src('dist/chart.min.js')
         .pipe(gulp.dest('./samples/dist'));
-    gulp.src('lib/ne-code-snippet/code-snippet.min.js')
+    gulp.src('lib/code-snippet/code-snippet.min.js')
         .pipe(gulp.dest('./samples/lib'));
     gulp.src('lib/component-effect-slide/effects.min.js')
         .pipe(gulp.dest('./samples/lib'));

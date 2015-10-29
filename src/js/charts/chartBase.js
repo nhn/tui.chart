@@ -6,33 +6,66 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    dataConverter = require('../helpers/dataConverter.js'),
-    boundsMaker = require('../helpers/boundsMaker.js');
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    dataConverter = require('../helpers/dataConverter'),
+    boundsMaker = require('../helpers/boundsMaker'),
+    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer');
 
-var TOOLTIP_PREFIX = 'ne-chart-tooltip-';
-
-var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
-    tooltipPrefix: TOOLTIP_PREFIX + (new Date()).getTime() + '-',
-
+var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Chart base.
      * @constructs ChartBase
-     * @param {object} bounds chart bounds
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
+     * @param {object} params parameters
+     *      @param {object} params.bounds chart bounds
+     *      @param {object} params.theme chart theme
+     *      @param {{yAxis: obejct, xAxis: object}} axesData axes data
+     *      @param {object} params.options chart options
+     *      @param {boolean} param.isVertical whether vertical or not
+     *      @param {object} params.initedData initialized data from combo chart
      */
-    init: function(bounds, theme, options, initedData) {
+    init: function(params) {
+        this.chartId = params.initedData && params.initedData.chartId || chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
+        this.isSubChart = !!params.initedData;
         this.components = [];
         this.componentMap = {};
-        this.bounds = bounds;
-        this.theme = theme;
-        this.options = options;
-        if (initedData && initedData.prefix) {
-            this.tooltipPrefix += initedData.prefix;
+        this.bounds = params.bounds;
+        this.theme = params.theme;
+        this.options = params.options;
+        this.isSubChart = !!params.initedData;
+        this.hasAxes = !!params.axesData;
+        this.isVertical = !!params.isVertical;
+        this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
+
+        this._addGroupedEventHandleLayer(params.axesData, params.options.chartType);
+    },
+
+    /**
+     * Add grouped event handler layer.
+     * @param {{yAxis: obejct, xAxis: object}} axesData axes data
+     * @param {string} chartType chart type
+     * @param {boolean} isVertical whether vertical or not
+     * @private
+     */
+    _addGroupedEventHandleLayer: function(axesData, chartType) {
+        var tickCount;
+
+        if (!this.hasAxes || !this.isGroupedTooltip || this.isSubChart) {
+            return;
         }
+
+        if (this.isVertical) {
+            tickCount = axesData.xAxis ? axesData.xAxis.tickCount : -1;
+        } else {
+            tickCount = axesData.yAxis ? axesData.yAxis.tickCount : -1;
+        }
+
+        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
+            tickCount: tickCount,
+            chartType: chartType,
+            isVertical: this.isVertical
+        });
     },
 
     /**
@@ -40,20 +73,21 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {array | object} userData user data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} boundParams add bound params
-     * @returns {{convertData: object, bounds: object}} base data
+     * @param {object} params add params
+     * @returns {{convertedData: object, bounds: object}} base data
      */
-    makeBaseData: function(userData, theme, options, boundParams) {
-        var convertData = dataConverter.convert(userData, options.chart, options.chartType),
-            bounds = boundsMaker.make(ne.util.extend({
+    makeBaseData: function(userData, theme, options, params) {
+        var seriesChartTypes = params ? params.seriesChartTypes : [],
+            convertedData = dataConverter.convert(userData, options.chart, options.chartType, seriesChartTypes),
+            bounds = boundsMaker.make(tui.util.extend({
                 chartType: options.chartType,
-                convertData: convertData,
+                convertedData: convertedData,
                 theme: theme,
                 options: options
-            }, boundParams));
+            }, params));
 
         return {
-            convertData: convertData,
+            convertedData: convertedData,
             bounds: bounds
         };
     },
@@ -72,14 +106,26 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
             commonParams = {},
             component;
 
-        commonParams.bound = ne.util.isArray(bound) ? bound[index] : bound;
-        commonParams.theme = ne.util.isArray(theme) ? theme[index] : theme;
-        commonParams.options = ne.util.isArray(options) ? options[index] : options || {};
+        commonParams.bound = tui.util.isArray(bound) ? bound[index] : bound;
+        commonParams.theme = tui.util.isArray(theme) ? theme[index] : theme;
+        commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
 
-        params = ne.util.extend(commonParams, params);
+        params = tui.util.extend(commonParams, params);
         component = new Component(params);
         this.components.push(component);
         this.componentMap[name] = component;
+    },
+
+    /**
+     * Attach custom evnet.
+     * @private
+     */
+    _attachCustomEvent: function() {
+        if (this.hasAxes && this.isGroupedTooltip && !this.isSubChart) {
+            this._attachCoordinateEvent();
+        } else if (!this.hasAxes || !this.isGroupedTooltip) {
+            this._attachTooltipEvent();
+        }
     },
 
     /**
@@ -92,7 +138,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
         if (!el) {
             el = dom.create('DIV', this.className);
 
-            dom.addClass(el, 'ne-chart');
+            dom.addClass(el, 'tui-chart');
             this._renderTitle(el);
             renderUtil.renderDimension(el, this.bounds.chart.dimension);
             renderUtil.renderBackground(el, this.theme.chart.background);
@@ -101,6 +147,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this._renderComponents(el, this.components, paper);
         this._attachCustomEvent();
+
         return el;
     },
 
@@ -111,7 +158,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderTitle: function(el) {
         var chartOptions = this.options.chart || {},
-            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'ne-chart-title');
+            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
         dom.append(el, elTitle);
     },
 
@@ -123,7 +170,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(container, components, paper) {
-        var elements = ne.util.map(components, function(component) {
+        var elements = tui.util.map(components, function(component) {
             return component.render(paper);
         });
         dom.append(container, elements);
@@ -148,7 +195,7 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
      * Attach custom event
      * @private
      */
-    _attachCustomEvent: function() {
+    _attachTooltipEvent: function() {
         var tooltip = this.componentMap.tooltip,
             series = this.componentMap.series;
         if (!tooltip || !series) {
@@ -166,15 +213,32 @@ var ChartBase = ne.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Attach coordinate event.
+     * @private
+     */
+    _attachCoordinateEvent: function() {
+        var eventHandleLayer = this.componentMap.eventHandleLayer,
+            tooltip = this.componentMap.tooltip,
+            series = this.componentMap.series;
+        eventHandleLayer.on('showGroupTooltip', tooltip.onShow, tooltip);
+        eventHandleLayer.on('hideGroupTooltip', tooltip.onHide, tooltip);
+
+        if (series) {
+            tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
+            tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
+        }
+    },
+
+    /**
      * Animate chart.
      */
     animateChart: function() {
-        ne.util.forEachArray(this.components, function(component) {
+        tui.util.forEachArray(this.components, function(component) {
             if (component.animateComponent) {
                 component.animateComponent();
             }
         });
-    },
+    }
 });
 
 module.exports = ChartBase;

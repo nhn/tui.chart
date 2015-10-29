@@ -7,8 +7,8 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    defaultTheme = require('../themes/defaultTheme.js');
+var chartConst = require('../const'),
+    defaultTheme = require('../themes/defaultTheme');
 
 var themes = {};
 
@@ -92,8 +92,8 @@ module.exports = {
             return [];
         }
 
-        result = ne.util.filter(target, function(item, name) {
-            return ne.util.inArray(name, rejectionProps) === -1;
+        result = tui.util.filter(target, function(item, name) {
+            return tui.util.inArray(name, rejectionProps) === -1;
         });
         return result;
     },
@@ -129,10 +129,10 @@ module.exports = {
 
         chartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
-        if (!ne.util.keys(chartTypes).length) {
+        if (!tui.util.keys(chartTypes).length) {
             this._concatColors(theme.series, seriesColors);
         } else {
-            ne.util.forEach(chartTypes, function(item) {
+            tui.util.forEach(chartTypes, function(item) {
                 this._concatColors(item, seriesColors);
             }, this);
         }
@@ -146,15 +146,15 @@ module.exports = {
      * @private
      */
     _overwriteTheme: function(from, to) {
-        ne.util.forEach(to, function(item, key) {
+        tui.util.forEach(to, function(item, key) {
             var fromItem = from[key];
             if (!fromItem) {
                 return;
             }
 
-            if (ne.util.isArray(fromItem)) {
+            if (tui.util.isArray(fromItem)) {
                 to[key] = fromItem.slice();
-            } else if (ne.util.isObject(fromItem)) {
+            } else if (tui.util.isObject(fromItem)) {
                 this._overwriteTheme(fromItem, item);
             } else {
                 to[key] = fromItem;
@@ -182,8 +182,8 @@ module.exports = {
         }
 
         chartTypes = this._filterChartTypes(params.fromTheme[params.propName], params.rejectionProps);
-        if (ne.util.keys(chartTypes).length) {
-            ne.util.forEach(chartTypes, function(item, key) {
+        if (tui.util.keys(chartTypes).length) {
+            tui.util.forEach(chartTypes, function(item, key) {
                 var cloneTheme = JSON.parse(JSON.stringify(defaultTheme[params.propName]));
                 params.fromTheme[params.propName][key] = this._overwriteTheme(item, cloneTheme);
             }, this);
@@ -201,7 +201,7 @@ module.exports = {
      * @param {array.<string>} colors colors
      * @private
      */
-    _copyColorInfoToLegend: function(seriesTheme, legendTheme, colors) {
+    _copyColorInfoToOther: function(seriesTheme, legendTheme, colors) {
         legendTheme.colors = colors || seriesTheme.colors;
         if (seriesTheme.singleColors) {
             legendTheme.singleColors = seriesTheme.singleColors;
@@ -224,24 +224,24 @@ module.exports = {
                 theme.xAxis.label,
                 theme.legend.label
             ],
-            yAxisChartTypes = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
-            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+            yAxisChartTypeThems = this._filterChartTypes(theme.yAxis, chartConst.YAXIS_PROPS),
+            seriesChartTypeThemes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
-        if (!ne.util.keys(yAxisChartTypes).length) {
+        if (!tui.util.keys(yAxisChartTypeThems).length) {
             items.push(theme.yAxis.title);
             items.push(theme.yAxis.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(chatType) {
-                items.push(chatType.title);
-                items.push(chatType.label);
+            tui.util.forEach(yAxisChartTypeThems, function(chatTypeTheme) {
+                items.push(chatTypeTheme.title);
+                items.push(chatTypeTheme.label);
             });
         }
 
-        if (!ne.util.keys(seriesChartTypes).length) {
+        if (!tui.util.keys(seriesChartTypeThemes).length) {
             items.push(theme.series.label);
         } else {
-            ne.util.forEach(yAxisChartTypes, function(chatType) {
-                items.push(chatType.label);
+            tui.util.forEach(seriesChartTypeThemes, function(chatTypeTheme) {
+                items.push(chatTypeTheme.label);
             });
         }
         return items;
@@ -256,7 +256,7 @@ module.exports = {
     _inheritThemeFont: function(theme, targetItems) {
         var baseFont = theme.chart.fontFamily;
 
-        ne.util.forEachArray(targetItems, function(item) {
+        tui.util.forEachArray(targetItems, function(item) {
             if (!item.fontFamily) {
                 item.fontFamily = baseFont;
             }
@@ -271,13 +271,17 @@ module.exports = {
      */
     _copyColorInfo: function(theme) {
         var seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
-        if (!ne.util.keys(seriesChartTypes).length) {
-            this._copyColorInfoToLegend(theme.series, theme.legend);
+        if (!tui.util.keys(seriesChartTypes).length) {
+            this._copyColorInfoToOther(theme.series, theme.legend);
+            this._copyColorInfoToOther(theme.series, theme.tooltip);
         } else {
-            ne.util.forEach(seriesChartTypes, function(item, chartType) {
+            tui.util.forEach(seriesChartTypes, function(item, chartType) {
                 theme.legend[chartType] = {};
-                this._copyColorInfoToLegend(item, theme.legend[chartType], item.colors || theme.legend.colors);
+                theme.tooltip[chartType] = {};
+                this._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);
+                this._copyColorInfoToOther(item, theme.tooltip[chartType], item.colors || theme.tooltip.colors);
                 delete theme.legend.colors;
+                delete theme.tooltip.colors;
             }, this);
         }
     }

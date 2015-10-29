@@ -91,6 +91,11 @@ describe('test dataConverter', function() {
             expect(result).toBe('1,000');
         });
 
+        it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function () {
+            var result = converter._formatComma(100000);
+            expect(result).toBe('100,000');
+        });
+
         it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function () {
             var result = converter._formatComma(1000000);
             expect(result).toBe('1,000,000');
@@ -172,7 +177,7 @@ describe('test dataConverter', function() {
 
     describe('convert()', function() {
         it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function () {
-            var convertData = converter.convert({
+            var actual = converter.convert({
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
                     {
@@ -197,44 +202,47 @@ describe('test dataConverter', function() {
             }, 'column');
 
             // formatFunctions는 currying된 functions들로 구성되어있어 function 비교가 불가하여 삭제합니다.
-            delete convertData.formatFunctions;
-            expect(convertData).toEqual({
-                labels: ['cate1', 'cate2', 'cate3'],
-                values: [
-                    [20, 40, 60, 80],
-                    [30, 40, 50, 10],
-                    [50, 60, 10, 70]
-                ],
-                joinValues: [
-                    [20, 40, 60, 80],
-                    [30, 40, 50, 10],
-                    [50, 60, 10, 70]
-                ],
-                legendLabels: ['Legend1', 'Legend2', 'Legend3', 'Legend4'],
-                joinLegendLabels: [
-                    {
-                        chartType: 'column',
-                        label: 'Legend1'
-                    },
-                    {
-                        chartType: 'column',
-                        label: 'Legend2'
-                    },
-                    {
-                        chartType: 'column',
-                        label: 'Legend3'
-                    },
-                    {
-                        chartType: 'column',
-                        label: 'Legend4'
-                    }
-                ],
-                formattedValues: [
-                    ['20.0', '40.0', '60.0', '80.0'],
-                    ['30.0', '40.0', '50.0', '10.0'],
-                    ['50.0', '60.0', '10.0', '70.0']
-                ]
-            });
+            delete actual.formatFunctions;
+            expect(actual.labels).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(actual.values).toEqual([
+                [20, 40, 60, 80],
+                [30, 40, 50, 10],
+                [50, 60, 10, 70]
+            ]);
+            expect(actual.joinValues).toEqual([
+                [20, 40, 60, 80],
+                [30, 40, 50, 10],
+                [50, 60, 10, 70]
+            ]);
+            expect(actual.joinFormattedValues).toEqual([
+                ['20.0', '40.0', '60.0', '80.0'],
+                ['30.0', '40.0', '50.0', '10.0'],
+                ['50.0', '60.0', '10.0', '70.0']
+            ]);
+            expect(actual.legendLabels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
+            expect(actual.joinLegendLabels).toEqual([
+                {
+                    chartType: 'column',
+                    label: 'Legend1'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend2'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend3'
+                },
+                {
+                    chartType: 'column',
+                    label: 'Legend4'
+                }
+            ]);
+            expect(actual.formattedValues).toEqual([
+                ['20.0', '40.0', '60.0', '80.0'],
+                ['30.0', '40.0', '50.0', '10.0'],
+                ['50.0', '60.0', '10.0', '70.0']
+            ]);
         });
     });
 });

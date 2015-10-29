@@ -6,20 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const.js'),
-    calculator = require('./calculator.js');
-
-var MIN_PIXEL_STEP_SIZE = 40,
-    MAX_PIXEL_STEP_SIZE = 60,
-    PERCENT_STACKED_TICK_INFO = {
-        scale: {
-            min: 0,
-            max: 100
-        },
-        step: 25,
-        tickCount: 5,
-        labels: [0, 25, 50, 75, 100]
-    };
+var chartConst = require('../const'),
+    calculator = require('./calculator'),
+    state = require('./state');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -29,6 +18,28 @@ var abs = Math.abs,
  * @module axisDataMaker
  */
 var axisDataMaker = {
+    /**
+     * To make labels.
+     * @param {array.<string>} labels labels
+     * @param {number} labelInterval label interval
+     * @returns {array.<string>} labels
+     * @private
+     */
+    _makeLabels: function(labels, labelInterval) {
+        var lastIndex;
+        if (!labelInterval) {
+            return labels;
+        }
+
+        lastIndex = labels.length - 1;
+        return tui.util.map(labels, function(label, index) {
+            if (index > 0 && index < lastIndex && (index % labelInterval) > 0) {
+                label = chartConst.EMPTY_AXIS_LABEL;
+            }
+            return label;
+        });
+    },
+
     /**
      * To make data about label axis.
      * @memberOf module:axisDataMaker
@@ -44,12 +55,19 @@ var axisDataMaker = {
      * }} axis data
      */
     makeLabelAxisData: function(params) {
+        var tickCount = params.labels.length,
+            options = params.options || {};
+        if (!params.aligned) {
+            tickCount += 1;
+        }
+
         return {
-            labels: params.labels,
-            tickCount: params.labels.length + 1,
+            labels: this._makeLabels(params.labels, options.labelInterval),
+            tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,
-            isVertical: !!params.isVertical
+            isVertical: !!params.isVertical,
+            aligned: !!params.aligned
         };
     },
 
@@ -78,7 +96,7 @@ var axisDataMaker = {
             formatFunctions = params.formatFunctions,
             tickInfo;
         if (params.stacked === 'percent') {
-            tickInfo = PERCENT_STACKED_TICK_INFO;
+            tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             formatFunctions = [];
         } else {
             tickInfo = this._getTickInfo({
@@ -91,7 +109,7 @@ var axisDataMaker = {
         }
 
         return {
-            labels: this._formatLabels(tickInfo.labels, formatFunctions),
+            labels: this.formatLabels(tickInfo.labels, formatFunctions),
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
             scale: tickInfo.scale,
@@ -112,11 +130,11 @@ var axisDataMaker = {
     _makeBaseValues: function(groupValues, stacked) {
         var baseValues = concat.apply([], groupValues); // flatten array
         if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            baseValues = baseValues.concat(ne.util.map(groupValues, function(values) {
-                var plusValues = ne.util.filter(values, function(value) {
+            baseValues = baseValues.concat(tui.util.map(groupValues, function(values) {
+                var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;
                 });
-                return ne.util.sum(plusValues);
+                return tui.util.sum(plusValues);
             }));
         }
         return baseValues;
@@ -150,9 +168,9 @@ var axisDataMaker = {
      */
     _getCandidateTickCounts: function(chartDimension, isVertical) {
         var baseSize = this._getBaseSize(chartDimension, isVertical),
-            start = parseInt(baseSize / MAX_PIXEL_STEP_SIZE, 10),
-            end = parseInt(baseSize / MIN_PIXEL_STEP_SIZE, 10) + 1,
-            tickCounts = ne.util.range(start, end);
+            start = parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10),
+            end = parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10) + 1,
+            tickCounts = tui.util.range(start, end);
         return tickCounts;
     },
 
@@ -168,7 +186,7 @@ var axisDataMaker = {
     _getComparingValue: function(min, max, tickInfo) {
         var diffMax = abs(tickInfo.scale.max - max),
             diffMin = abs(min - tickInfo.scale.min),
-            weight = Math.pow(10, ne.util.lengthAfterPoint(tickInfo.step));
+            weight = Math.pow(10, tui.util.lengthAfterPoint(tickInfo.step));
         return (diffMax + diffMin) * weight;
     },
 
@@ -182,8 +200,8 @@ var axisDataMaker = {
      * @private
      */
     _selectTickInfo: function(min, max, candidates) {
-        var getComparingValue = ne.util.bind(this._getComparingValue, this, min, max),
-            tickInfo = ne.util.min(candidates, getComparingValue);
+        var getComparingValue = tui.util.bind(this._getComparingValue, this, min, max),
+            tickInfo = tui.util.min(candidates, getComparingValue);
         return tickInfo;
     },
 
@@ -200,8 +218,8 @@ var axisDataMaker = {
      * @private
      */
     _getTickInfo: function(params, options) {
-        var min = ne.util.min(params.values),
-            max = ne.util.max(params.values),
+        var min = tui.util.min(params.values),
+            max = tui.util.max(params.values),
             intTypeInfo, tickCounts, candidates, tickInfo;
         // 01. min, max, options 정보를 정수형으로 변경
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
@@ -246,7 +264,7 @@ var axisDataMaker = {
             };
         }
 
-        multipleNum = ne.util.findMultipleNum(min, max);
+        multipleNum = tui.util.findMultipleNum(min, max);
         changedOptions = {};
 
         if (options.min) {
@@ -278,11 +296,11 @@ var axisDataMaker = {
             return tickInfo;
         }
 
-        tickInfo.step = ne.util.division(tickInfo.step, divideNum);
-        tickInfo.scale.min = ne.util.division(tickInfo.scale.min, divideNum);
-        tickInfo.scale.max = ne.util.division(tickInfo.scale.max, divideNum);
-        tickInfo.labels = ne.util.map(tickInfo.labels, function(label) {
-            return ne.util.division(label, divideNum);
+        tickInfo.step = tui.util.division(tickInfo.step, divideNum);
+        tickInfo.scale.min = tui.util.division(tickInfo.scale.min, divideNum);
+        tickInfo.scale.max = tui.util.division(tickInfo.scale.max, divideNum);
+        tickInfo.labels = tui.util.map(tickInfo.labels, function(label) {
+            return tui.util.division(label, divideNum);
         });
 
         return tickInfo;
@@ -312,16 +330,16 @@ var axisDataMaker = {
      */
     _minimizeTickScale: function(params) {
         var tickInfo = params.tickInfo,
-            ticks = ne.util.range(1, tickInfo.tickCount),
+            ticks = tui.util.range(1, tickInfo.tickCount),
             options = params.options,
             step = tickInfo.step,
             scale = tickInfo.scale,
             tickMax = scale.max,
             tickMin = scale.min,
-            isUndefinedMin = ne.util.isUndefined(options.min),
-            isUndefinedMax = ne.util.isUndefined(options.max),
+            isUndefinedMin = tui.util.isUndefined(options.min),
+            isUndefinedMax = tui.util.isUndefined(options.max),
             labels;
-        ne.util.forEachArray(ticks, function(tickIndex) {
+        tui.util.forEachArray(ticks, function(tickIndex) {
             var curStep = (step * tickIndex),
                 curMin = tickMin + curStep,
                 curMax = tickMax - curStep;
@@ -416,15 +434,16 @@ var axisDataMaker = {
             chartType: params.chartType
         });
 
-        // 05. 사용자의 max값이 scael max와 같을 경우, max값을 1 step 증가 시킴
+        // 04. 사용자의 max값이 scael max와 같을 경우, max값을 1 step 증가 시킴
         scale.max = this._addMaxPadding({
             max: scale.max,
             step: step,
             userMax: params.userMax,
-            maxOption: params.options.max
+            maxOption: params.options.max,
+            chartType: params.chartType
         });
 
-        // 06. axis scale이 사용자 min, max와 거리가 멀 경우 조절
+        // 05. axis scale이 사용자 min, max와 거리가 멀 경우 조절
         tickInfo = this._minimizeTickScale({
             userMin: params.userMin,
             userMax: params.userMax,
@@ -450,8 +469,11 @@ var axisDataMaker = {
     _addMinPadding: function(params) {
         var min = params.min;
 
+        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
+            return min;
+        }
         // normalize된 scale min값이 user min값과 같을 경우 step 감소
-        if ((params.chartType === chartConst.CHART_TYPE_LINE || min) && min === params.userMin) {
+        if (params.min === params.userMin) {
             min -= params.step;
         }
         return min;
@@ -470,8 +492,13 @@ var axisDataMaker = {
      */
     _addMaxPadding: function(params) {
         var max = params.max;
+
+        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
+            return max;
+        }
+
         // normalize된 scale max값이 user max값과 같을 경우 step 증가
-        if (ne.util.isUndefined(params.maxOption) && (params.max === params.userMax)) {
+        if (tui.util.isUndefined(params.maxOption) && (params.max === params.userMax)) {
             max += params.step;
         }
         return max;
@@ -486,13 +513,13 @@ var axisDataMaker = {
      * @private
      */
     _normalizeMin: function(min, step) {
-        var mod = ne.util.mod(min, step),
+        var mod = tui.util.mod(min, step),
             normalized;
 
         if (mod === 0) {
             normalized = min;
         } else {
-            normalized = ne.util.subtraction(min, (min >= 0 ? mod : step + mod));
+            normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
         }
         return normalized;
     },
@@ -507,8 +534,8 @@ var axisDataMaker = {
      * @private
      */
     _makeNormalizedMax: function(scale, step, tickCount) {
-        var minMaxDiff = ne.util.multiplication(step, tickCount - 1),
-            normalizedMax = ne.util.addition(scale.min, minMaxDiff),
+        var minMaxDiff = tui.util.multiplication(step, tickCount - 1),
+            normalizedMax = tui.util.addition(scale.min, minMaxDiff),
             maxDiff = scale.max - normalizedMax,
             modDiff, divideDiff;
         // normalize된 max값이 원래의 max값 보다 작을 경우 step을 증가시켜 큰 값으로 만들기
@@ -557,10 +584,10 @@ var axisDataMaker = {
         // min, max만으로 기본 scale 얻기
         scale = this._makeBaseScale(min, max, options);
 
-        candidates = ne.util.map(params.tickCounts, function(tickCount) {
+        candidates = tui.util.map(params.tickCounts, function(tickCount) {
             return this._makeTickInfo({
                 tickCount: tickCount,
-                scale: ne.util.extend({}, scale),
+                scale: tui.util.extend({}, scale),
                 userMin: userMin,
                 userMax: userMax,
                 chartType: params.chartType,
@@ -610,16 +637,15 @@ var axisDataMaker = {
      * @param {string[]} labels target labels
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted labels
-     * @private
      */
-    _formatLabels: function(labels, formatFunctions) {
+    formatLabels: function(labels, formatFunctions) {
         var result;
         if (!formatFunctions || !formatFunctions.length) {
             return labels;
         }
-        result = ne.util.map(labels, function(label) {
+        result = tui.util.map(labels, function(label) {
             var fns = concat.apply([label], formatFunctions);
-            return ne.util.reduce(fns, function(stored, fn) {
+            return tui.util.reduce(fns, function(stored, fn) {
                 return fn(stored);
             });
         });

@@ -49,7 +49,7 @@ var domHandler = {
      */
     addClass: function(el, newClass) {
         var classNames = this._getClassNames(el),
-            index = ne.util.inArray(newClass, classNames);
+            index = tui.util.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -67,7 +67,7 @@ var domHandler = {
      */
     removeClass: function(el, rmClass) {
         var classNames = this._getClassNames(el),
-            index = ne.util.inArray(rmClass, classNames);
+            index = tui.util.inArray(rmClass, classNames);
 
         if (index === -1) {
             return;
@@ -86,7 +86,7 @@ var domHandler = {
      */
     hasClass: function(el, findClass) {
         var classNames = this._getClassNames(el),
-            index = ne.util.inArray(findClass, classNames);
+            index = tui.util.inArray(findClass, classNames);
         return index > -1;
     },
 
@@ -121,9 +121,9 @@ var domHandler = {
         if (!container || !children) {
             return;
         }
-        children = ne.util.isArray(children) ? children : [children];
+        children = tui.util.isArray(children) ? children : [children];
 
-        ne.util.forEachArray(children, function(child) {
+        tui.util.forEachArray(children, function(child) {
             if (!child) {
                 return;
             }

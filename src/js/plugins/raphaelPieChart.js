@@ -10,7 +10,6 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
     ANGLE_180 = 180,
-    ANGLE_90 = 90,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700;
@@ -19,7 +18,7 @@ var Raphael = window.Raphael,
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
  * @class RaphaelPieChart
  */
-var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
+var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
      * @param {object} paper raphael paper
@@ -37,7 +36,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         }
 
         if (!paper.customAttributes.sector) {
-            paper.customAttributes.sector = ne.util.bind(this._makeSectorPath, this);
+            paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
         this.circleBound = data.circleBound;
@@ -57,16 +56,19 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
-        var x1 = cx + r * Math.cos(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 x 좌표
-            y1 = cy - r * Math.sin(-(startAngle - ANGLE_90) * RAD), // 원 호의 시작 y 좌표
-            x2 = cx + r * Math.cos(-(endAngle - ANGLE_90) * RAD),// 원 호의 종료 x 좌표
-            y2 = cy - r * Math.sin(-(endAngle - ANGLE_90) * RAD), // 원 호의 종료 y 좌표
+        var x1 = cx + r * Math.sin(startAngle * RAD), // 원 호의 시작 x 좌표
+            y1 = cy - r * Math.cos(startAngle * RAD), // 원 호의 시작 y 좌표
+            x2 = cx + r * Math.sin(endAngle * RAD),// 원 호의 종료 x 좌표
+            y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
             largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
             path = ["M", cx, cy,
-                "L", x2, y2,
-                "A", r, r, 0, largeArcFlag, 0, x1, y1,
+                "L", x1, y1,
+                "A", r, r, 0, largeArcFlag, 1, x2, y2,
                 "Z"
             ];
+        // path에 대한 자세한 설명은 아래 링크를 참고
+        // http://www.w3schools.com/svg/svg_path.asp
+        // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
         return {path: path};
     },
 
@@ -103,7 +105,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             chartBackground = data.chartBackground,
             sectors = [];
 
-        ne.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
+        tui.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
             var percentValue = sectorInfo.percentValue,
                 color = colors[index],
                 sector = this._renderSector({
@@ -120,7 +122,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
             this._bindHoverEvent({
                 target: sector,
                 position: sectorInfo.popupPosition,
-                id: '0-' + index,
+                index: index,
                 inCallback: inCallback,
                 outCallback: outCallback
             });
@@ -142,7 +144,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      */
     renderLegendLines: function(paper, outerPositions) {
         var paths = this._makeLinePaths(outerPositions),
-            legendLines = ne.util.map(paths, function(path) {
+            legendLines = tui.util.map(paths, function(path) {
                 return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
             });
         this.legendLines = legendLines;
@@ -155,7 +157,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _makeLinePaths: function(outerPositions) {
-        var paths = ne.util.map(outerPositions, function(positions) {
+        var paths = tui.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
@@ -175,20 +177,31 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
      * @private
      */
     _bindHoverEvent: function(params) {
-        params.target.mouseover(function () {
-            params.inCallback(params.position, params.id);
-        }).mouseout(function () {
-            params.outCallback(params.id);
+        var throttled = tui.util.throttle(function(e) {
+            if (!e) {
+                return;
+            }
+            params.inCallback(params.position, 0, params.index, {
+                clientX: e.clientX,
+                clientY: e.clientY
+            });
+        }, 100);
+        params.target.mouseover(function (e) {
+            params.inCallback(params.position, 0, params.index, {
+                clientX: e.clientX,
+                clientY: e.clientY
+            });
+        }).mousemove(throttled).mouseout(function () {
+            params.outCallback();
         });
     },
 
     /**
-     * Show animation.
-     * @param {{groupIndex: number, index:number}} data show info
+     * To expand selector radius.
+     * @param {object} sector pie sector
      */
-    showAnimation: function(data) {
-        var sector = this.sectors[data.index].sector,
-            cx = this.circleBound.cx,
+    _expandSector: function(sector) {
+        var cx = this.circleBound.cx,
             cy = this.circleBound.cy;
         sector.animate({
             transform: "s1.1 1.1 " + cx + " " + cy
@@ -196,12 +209,29 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     },
 
     /**
+     * To restore selector radius.
+     * @param {object} sector pie sector
+     */
+    _restoreSector: function(sector) {
+        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+    },
+
+    /**
+     * Show animation.
+     * @param {{index: number}} data data
+     */
+    showAnimation: function(data) {
+        var sector = this.sectors[data.index].sector;
+        this._expandSector(sector);
+    },
+
+    /**
      * Hide animation.
-     * @param {{groupIndex: number, index:number}} data hide info
+     * @param {{index: number}} data data
      */
     hideAnimation: function(data) {
         var sector = this.sectors[data.index].sector;
-        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+        this._restoreSector(sector);
     },
 
     /**
@@ -211,7 +241,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
     animate: function(callback) {
         var delayTime = 0,
             circleBound = this.circleBound;
-        ne.util.forEachArray(this.sectors, function(item) {
+        tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles,
                 animationTime = LOADING_ANIMATION_TIME * item.percentValue,
                 anim = Raphael.animation({
@@ -233,7 +263,7 @@ var RaphaelPieChart = ne.util.defineClass(/** @lends RaphaelPieChart.prototype *
         if (!this.legendLines) {
             return;
         }
-        ne.util.forEachArray(this.legendLines, function(line) {
+        tui.util.forEachArray(this.legendLines, function(line) {
             line.animate({
                 'stroke': 'black',
                 'stroke-opacity': 1

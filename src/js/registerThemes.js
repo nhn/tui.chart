@@ -1,7 +1,7 @@
 'use strict';
 
-var chartConst = require('./const.js'),
-    themeFactory = require('./factories/themeFactory.js'),
-    defaultTheme = require('./themes/defaultTheme.js');
+var chartConst = require('./const'),
+    themeFactory = require('./factories/themeFactory'),
+    defaultTheme = require('./themes/defaultTheme');
 
 themeFactory.register(chartConst.DEFAULT_THEME_NAME, defaultTheme);

@@ -6,17 +6,17 @@
 
 'use strict';
 
-var seriesTemplate = require('./seriesTemplate.js'),
-    chartConst = require('../const.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js'),
-    event = require('../helpers/eventListener.js'),
-    pluginFactory = require('../factories/pluginFactory.js');
+var seriesTemplate = require('./seriesTemplate'),
+    chartConst = require('../const'),
+    state = require('../helpers/state'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    event = require('../helpers/eventListener'),
+    pluginFactory = require('../factories/pluginFactory');
 
-var HIDDEN_WIDTH = 1,
-    SERIES_LABEL_CLASS_NAME = 'ne-chart-series-label';
+var SERIES_LABEL_CLASS_NAME = 'tui-chart-series-label';
 
-var Series = ne.util.defineClass(/** @lends Series.prototype */ {
+var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Series base component.
      * @constructs Series
@@ -28,7 +28,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     init: function(params) {
         var libType;
 
-        ne.util.extend(this, params);
+        tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
         this.percentValues = this._makePercentValues(params.data, params.options.stacked);
         /**
@@ -41,33 +41,57 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
          * Series view className
          * @type {string}
          */
-        this.className = 'ne-chart-series-area';
+        this.className = 'tui-chart-series-area';
+
+        this.seriesData = this.makeSeriesData();
+    },
+
+    /**
+     * To make series data.
+     * @returns {object} add data
+     */
+    makeSeriesData: function() {
+        return {};
     },
 
     /**
      * Show tooltip (mouseover callback).
      * @param {object} params parameters
-     *      @param {string} params.prefix tooltip id prefix
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
-     * @param {string} id tooltip id
+     * @param {number} groupIndex group index
+     * @param {number} index index
      */
-    showTooltip: function(params, bound, id) {
-        this.fire('showTooltip', ne.util.extend({
-            id: params.prefix + id,
-            bound: bound
+    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
+        this.fire('showTooltip', tui.util.extend({
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
+            bound: bound,
+            eventPosition: eventPosition
         }, params));
     },
 
     /**
      * Hide tooltip (mouseout callback).
-     * @param {string} prefix tooltip id prefix
      * @param {string} id tooltip id
      */
-    hideTooltip: function(prefix, id) {
-        this.fire('hideTooltip', {
-            id: prefix + id
-        });
+    hideTooltip: function() {
+        this.fire('hideTooltip');
+    },
+
+    /**
+     * To expand series dimension
+     * @param {{width: number, height: number}} dimension series dimension
+     * @returns {{width: number, height: number}} expended dimension
+     * @private
+     */
+    _expandDimension: function(dimension) {
+        return {
+            width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+            height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+        };
     },
 
     /**
@@ -77,21 +101,20 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      */
     render: function(paper) {
         var el = dom.create('DIV', this.className),
-            tooltipPrefix = this.tooltipPrefix,
             bound = this.bound,
-            dimension = bound.dimension,
-            inCallback = ne.util.bind(this.showTooltip, this, {
-                prefix: tooltipPrefix,
+            dimension = this._expandDimension(bound.dimension),
+            inCallback = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
-            outCallback = ne.util.bind(this.hideTooltip, this, tooltipPrefix),
+            outCallback = tui.util.bind(this.hideTooltip, this),
             data = {
                 dimension: dimension,
+                chartType: this.chartType,
                 theme: this.theme,
                 options: this.options
             },
-            addData = this.makeAddData(),
+            seriesData = this.seriesData,
             addDataForSeriesLabel;
 
         if (!paper) {
@@ -100,16 +123,18 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         this._renderPosition(el, bound.position, this.chartType);
 
-        data = ne.util.extend(data, addData);
+        data = tui.util.extend(data, seriesData);
 
         this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
 
         if (this._renderSeriesLabel) {
-            addDataForSeriesLabel = this._makeAddDataForSeriesLabel(el, dimension);
-            this.elSeriesLabelArea = this._renderSeriesLabel(ne.util.extend(addDataForSeriesLabel, addData));
+            addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(el, dimension);
+            this.elSeriesLabelArea = this._renderSeriesLabel(tui.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        this.attachEvent(el);
+        if (!this.isGroupedTooltip) {
+            this.attachEvent(el);
+        }
 
         // series label mouse event 동작 시 사용
         this.inCallback = inCallback;
@@ -119,17 +144,9 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make add data.
-     * @returns {object} add data
-     */
-    makeAddData: function() {
-        return {};
-    },
-
-    /**
      * To make add data for series label.
      * @param {HTMLElement} container container
-     * @param {{width: number, height: number}}dimension
+     * @param {{width: number, height: number}} dimension dimension
      * @returns {{
      *      container: HTMLElement,
      *      values: array.<array>,
@@ -139,7 +156,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * }} add data for series label
      * @private
      */
-    _makeAddDataForSeriesLabel: function(container, dimension) {
+    _makeSeriesDataForSeriesLabel: function(container, dimension) {
         return {
             container: container,
             values: this.data.values,
@@ -152,15 +169,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Render bounds
      * @param {HTMLElement} el series element
-     * @param {{width: number, height: number}} dimension series dimension
      * @param {{top: number, left: number}} position series position
-     * @param {string} chartType chart type
      * @private
      */
-    _renderPosition: function(el, position, chartType) {
-        var hiddenWidth = renderUtil.isIE8() ? 0 : HIDDEN_WIDTH;
-        position.top = position.top - HIDDEN_WIDTH;
-        position.left = position.left + (chartType === chartConst.CHART_TYPE_BAR ? hiddenWidth : HIDDEN_WIDTH * 2);
+    _renderPosition: function(el, position) {
+        var hiddenWidth = renderUtil.isIE8() ? chartConst.HIDDEN_WIDTH : 0;
+        position.top = position.top - (hiddenWidth * 2);
+        position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
         renderUtil.renderPosition(el, position);
     },
 
@@ -202,13 +217,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            percentValues = ne.util.map(data.values, function(values) {
-                var plusValues = ne.util.filter(values, function(value) {
+            percentValues = tui.util.map(data.values, function(values) {
+                var plusValues = tui.util.filter(values, function(value) {
                         return value > 0;
                     }),
-                    sum = ne.util.sum(plusValues),
+                    sum = tui.util.sum(plusValues),
                     groupPercent = (sum - min) / distance;
-                return ne.util.map(values, function(value) {
+                return tui.util.map(values, function(value) {
                     return value === 0 ? 0 : groupPercent * (value / sum);
                 });
             });
@@ -222,26 +237,16 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makePercentStackedPercentValues: function(data) {
-        var percentValues = ne.util.map(data.values, function(values) {
-            var plusValues = ne.util.filter(values, function(value) {
+        var percentValues = tui.util.map(data.values, function(values) {
+            var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;
                 }),
-                sum = ne.util.sum(plusValues);
-            return ne.util.map(values, function(value) {
+                sum = tui.util.sum(plusValues);
+            return tui.util.map(values, function(value) {
                 return value === 0 ? 0 : value / sum;
             });
         });
         return percentValues;
-    },
-
-    /**
-     * Whether line type chart or not.
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isLineTypeChart: function(chartType) {
-        return chartType === chartConst.CHART_TYPE_LINE || chartType === chartConst.CHART_TYPE_AREA;
     },
 
     /**
@@ -254,7 +259,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            isLineTypeChart = this._isLineTypeChart(this.chartType),
+            isLineTypeChart = state.isLineTypeChart(this.chartType),
             flag = 1,
             subValue = 0,
             percentValues;
@@ -267,8 +272,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             subValue = min;
         }
 
-        percentValues = ne.util.map(data.values, function(values) {
-            return ne.util.map(values, function(value) {
+        percentValues = tui.util.map(data.values, function(values) {
+            return tui.util.map(values, function(value) {
                 return (value - subValue) * flag / distance;
             });
         });
@@ -299,6 +304,8 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
         };
     },
 
+    renderCoordinateArea: function() {},
+
     /**
      * On mouseover event handler for series area
      * @param {MouseEvent} e mouse event
@@ -311,14 +318,17 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        groupIndex = elTarget.getAttribute('data-group-index');
-        index = elTarget.getAttribute('data-index');
-        if (groupIndex === '-1' || index === '-1') {
+        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
+        index = parseInt(elTarget.getAttribute('data-index'), 10);
+
+        if (groupIndex === -1 || index === -1) {
             return;
         }
-        this.inCallback(this._getBound(groupIndex, index), groupIndex + '-' + index);
+
+        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
     },
 
+    onMousemove: function() {},
     /**
      * On mouseout event handler for series area
      * @param {MouseEvent} e mouse event
@@ -331,14 +341,14 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        groupIndex = elTarget.getAttribute('data-group-index');
-        index = elTarget.getAttribute('data-index');
+        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
+        index = parseInt(elTarget.getAttribute('data-index'), 10);
 
-        if (groupIndex === '-1' || index === '-1') {
+        if (groupIndex === -1 || index === -1) {
             return;
         }
 
-        this.outCallback(groupIndex + '-' + index);
+        this.outCallback(groupIndex, index);
     },
 
     /**
@@ -346,12 +356,13 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, ne.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, ne.util.bind(this.onMouseout, this));
+        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
+        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     },
 
     /**
-     * Call showDot function of graphRenderer.
+     * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
     onShowAnimation: function(data) {
@@ -362,7 +373,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Call hideDot function of graphRenderer.
+     * To call hideAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} data data
      */
     onHideAnimation: function(data) {
@@ -373,11 +384,37 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Animate component
+     * To call showGroupAnimation function of graphRenderer.
+     * @param {number} index index
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     */
+    onShowGroupAnimation: function(index, bound) {
+        if (!this.graphRenderer.showGroupAnimation) {
+            return;
+        }
+        this.graphRenderer.showGroupAnimation.call(this.graphRenderer, index, bound);
+    },
+
+    /**
+     * To call hideGroupAnimation function of graphRenderer.
+     * @param {number} index index
+     */
+    onHideGroupAnimation: function(index) {
+        if (!this.graphRenderer.hideGroupAnimation) {
+            return;
+        }
+        this.graphRenderer.hideGroupAnimation.call(this.graphRenderer, index);
+    },
+
+    /**
+     * Animate component.
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(ne.util.bind(this.showSeriesLabelArea, this));
+            this.graphRenderer.animate(tui.util.bind(this.showSeriesLabelArea, this));
         }
     },
 
@@ -388,10 +425,9 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
-     * @private
      */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
-        var cssObj = ne.util.extend(position, this.theme.label);
+    makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+        var cssObj = tui.util.extend(position, this.theme.label);
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
@@ -410,7 +446,7 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
 
         dom.addClass(this.elSeriesLabelArea, 'show');
 
-        (new ne.component.Effects.Fade({
+        (new tui.component.Effects.Fade({
             element: this.elSeriesLabelArea,
             duration: 300
         })).action({
@@ -421,6 +457,6 @@ var Series = ne.util.defineClass(/** @lends Series.prototype */ {
     }
 });
 
-ne.util.CustomEvents.mixin(Series);
+tui.util.CustomEvents.mixin(Series);
 
 module.exports = Series;

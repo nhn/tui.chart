@@ -4,21 +4,32 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
-var templateMaker = require('../helpers/templateMaker.js');
+var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_TOOLTIP: '<div class="ne-chart-tooltip" id="{{ id }}">{{ html }}</div>',
-    HTML_DEFAULT_TEMPLATE: '<div class="ne-chart-default-tooltip">' +
-        '<div>{{ label }}</div>' +
+    HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+        '<div>{{ category }}</div>' +
         '<div>' +
-            '<span>{{ legendLabel }}</span>:' +
+            '<span>{{ legend }}</span>:' +
             '&nbsp;<span>{{ value }}</span>' +
             '<span>{{ suffix }}</span>' +
         '</div>' +
-    '</div>'
+    '</div>',
+    HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
+        '<div>{{ category }}</div>' +
+        '{{ items }}' +
+    '</div>',
+    HTML_GROUP_ITEM: '<div>' +
+        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>&nbsp;<span>{{ legend }}</span>:' +
+        '&nbsp;<span>{{ value }}</span>' +
+        '<span>{{ suffix }}</span>' +
+    '</div>',
+    GROUP_CSS_TEXT: 'background-color:{{ color }}'
 };
 
 module.exports = {
-    tplTooltip: templateMaker.template(tags.HTML_TOOLTIP),
-    tplDefaultTemplate: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE)
+    tplDefault: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE),
+    tplGroup: templateMaker.template(tags.HTML_GROUP),
+    tplGroupItem: templateMaker.template(tags.HTML_GROUP_ITEM),
+    tplGroupCssText: templateMaker.template(tags.GROUP_CSS_TEXT)
 };

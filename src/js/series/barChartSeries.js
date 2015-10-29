@@ -6,12 +6,12 @@
 
 'use strict';
 
-var Series = require('./series.js'),
-    chartConst = require('../const.js'),
-    dom = require('../helpers/domHandler.js'),
-    renderUtil = require('../helpers/renderUtil.js');
+var Series = require('./series'),
+    BarTypeSeriesBase = require('./barTypeSeriesBase'),
+    chartConst = require('../const'),
+    renderUtil = require('../helpers/renderUtil');
 
-var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
+var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
      * Bar chart series component.
      * @constructs BarChartSeries
@@ -25,264 +25,194 @@ var BarChartSeries = ne.util.defineClass(Series, /** @lends BarChartSeries.proto
         Series.apply(this, arguments);
     },
 
+
     /**
-     * To make bounds of bar chart.
-     * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
-     * @returns {array.<array.<object>>} bounds
+     * To make bound of bar chart.
+     * @param {object} params parameters
+     *      @param {{top: number, height: number}} params.baseBound base bound
+     *      @param {number} params.startLeft start left
+     *      @param {number} params.endLeft end left
+     *      @param {number} params.endWidth end width
+     * @returns {{
+     *      start: {left: number, top: number, width: number, height: number},
+     *      end: {left: number, top: number, width: number, height: number}
+     * }} column chart bound
      * @private
      */
-    _makeBounds: function(dimension, hiddenWidth) {
-        hiddenWidth = hiddenWidth || (renderUtil.isIE8() ? 0 : chartConst.HIDDEN_WIDTH);
-        if (!this.options.stacked) {
-            return this._makeNormalBarBounds(dimension, hiddenWidth);
-        } else {
-            return this._makeStackedBarBounds(dimension, hiddenWidth);
-        }
+    _makeBarChartBound: function(params) {
+        return {
+            start: tui.util.extend({
+                left: params.startLeft,
+                width: 0
+            }, params.baseBound),
+            end: tui.util.extend({
+                left: params.endLeft,
+                width: params.endWidth
+            }, params.baseBound)
+        };
     },
 
     /**
-     * To make add data.
-     * @returns {object} add data
+     * To make normal bar chart bound.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      groupValues: array.<array.<number>>,
+     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      distanceToMin: number, isMinus: boolean
+     * }} baseInfo base info
+     * @param {number} value value
+     * @param {number} paddingTop padding top
+     * @param {number} index index
+     * @returns {{
+     *      start: {left: number, top: number, width: number, height: number},
+     *      end: {left: number, top: number, width: number, height: number}
+     * }} column chart bound
+     * @private
      */
-    makeAddData: function() {
-        var groupBounds = this._makeBounds(this.bound.dimension);
+    _makeNormalBarChartBound: function(baseInfo, value, paddingTop, index) {
+        var startLeft, endWidth, bound, baseBound;
 
-        this.groupBounds = groupBounds;
-
-        return {
-            groupBounds: groupBounds
+        startLeft = baseInfo.distanceToMin + chartConst.SERIES_EXPAND_SIZE;
+        endWidth = Math.abs(value * baseInfo.dimension.width);
+        baseBound = {
+            top: paddingTop + ((baseInfo.step) * index),
+            height: baseInfo.barSize
         };
+        bound = this._makeBarChartBound({
+            baseBound: baseBound,
+            startLeft: startLeft,
+            endLeft: startLeft + (value < 0 ? -endWidth : 0),
+            endWidth: endWidth
+        });
+
+        return bound;
     },
 
     /**
      * To make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeNormalBarBounds: function(dimension, hiddenWidth) {
-        var groupValues = this.percentValues,
-            groupHeight = (dimension.height / groupValues.length),
-            barHeight = groupHeight / (groupValues[0].length + 1),
-            scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.width, this.data.scale),
-            bounds = ne.util.map(groupValues, function(values, groupIndex) {
-                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth;
-                return ne.util.map(values, function (value, index) {
-                    var top = paddingTop + (barHeight * index),
-                        startLeft = -chartConst.HIDDEN_WIDTH,
-                        endLeft = startLeft,
-                        barWidth = value * dimension.width;
-                    if (value < 0) {
-                        barWidth *= -1;
-                        startLeft += scaleDistance.toMin;
-                        endLeft += scaleDistance.toMin - barWidth;
-                    } else {
-                        startLeft += scaleDistance.toMin;
-                        endLeft += scaleDistance.toMin;
-                    }
+    _makeNormalBarChartBounds: function(dimension) {
+        var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
+            bounds;
 
-                    return {
-                        start: {
-                            top: top,
-                            left: startLeft,
-                            width: 0,
-                            height: barHeight
-                        },
-                        end: {
-                            top: top,
-                            left: endLeft,
-                            width: barWidth,
-                            height: barHeight
-                        }
-                    };
-                }, this);
-            });
+        bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
+            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
+            return tui.util.map(values, function (value, index) {
+                return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
+            }, this);
+        }, this);
+
         return bounds;
     },
 
     /**
      * To make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @param {number} hiddenWidth hidden width
      * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _makeStackedBarBounds: function(dimension, hiddenWidth) {
-        var groupValues = this.percentValues,
-            groupHeight = (dimension.height / groupValues.length),
-            barHeight = groupHeight / 2,
-            bounds = ne.util.map(groupValues, function (values, groupIndex) {
-                var paddingTop = (groupHeight * groupIndex) + (barHeight / 2) + hiddenWidth,
-                    left = -chartConst.HIDDEN_WIDTH;
-                return ne.util.map(values, function (value) {
-                    var width, bound;
-                    if (value < 0) {
-                        return null;
-                    }
-                    width = value * dimension.width;
-                    bound = {
-                        start: {
-                            top: paddingTop,
-                            left: -chartConst.HIDDEN_WIDTH,
-                            width: 0,
-                            height: barHeight
-                        },
-                        end: {
-                            top: paddingTop,
-                            left: left,
-                            width: width,
-                            height: barHeight
-                        }
-                    };
-                    left = left + width;
-                    return bound;
-                }, this);
-            });
+    _makeStackedBarChartBounds: function(dimension) {
+        var groupValues, groupHeight, barHeight, bounds;
+        groupValues = this.percentValues;
+        groupHeight = (dimension.height / groupValues.length);
+        barHeight = groupHeight / 2;
+        bounds = tui.util.map(groupValues, function (values, groupIndex) {
+            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2),
+                endLeft = chartConst.SERIES_EXPAND_SIZE;
+            return tui.util.map(values, function (value) {
+                var endWidth, baseBound, bound;
+
+                if (value < 0) {
+                    return null;
+                }
+
+                endWidth = value * dimension.width;
+                baseBound = {
+                    top: paddingTop,
+                    height: barHeight
+                };
+                bound = this._makeBarChartBound({
+                    baseBound: baseBound,
+                    startLeft: chartConst.SERIES_EXPAND_SIZE,
+                    endLeft: endLeft,
+                    endWidth: endWidth
+                });
+
+                endLeft = endLeft + endWidth;
+                return bound;
+            }, this);
+        }, this);
         return bounds;
     },
 
-    /**
-     * Render normal series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
-     * @private
-     */
-    _renderNormalSeriesLabel: function(params) {
-        var groupBounds = params.groupBounds,
-            formattedValues = params.formattedValues,
-            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
-            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
-            html;
-        html = ne.util.map(params.values, function(values, groupIndex) {
-            return ne.util.map(values, function(value, index) {
-                var bound = groupBounds[groupIndex][index].end,
-                    formattedValue = formattedValues[groupIndex][index],
-                    labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
-                    left = bound.left,
-                    labelHtml;
-
-                if (value >= 0) {
-                    left += bound.width + chartConst.SERIES_LABEL_PADDING;
-                } else {
-                    left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
-                }
-                labelHtml = this._makeSeriesLabelHtml({
-                    left: left,
-                    top: bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2
-                }, formattedValue, groupIndex, index);
-                return labelHtml;
-            }, this).join('');
-        }, this).join('');
-
-        elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
-    },
-
 
     /**
-     * Render stacked series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
+     * To make bounds of bar chart.
+     * @param {{width: number, height:number}} dimension bar chart dimension
+     * @returns {array.<array.<object>>} bounds
      * @private
      */
-    _renderStackedSeriesLabel: function(params) {
-        var groupBounds = params.groupBounds,
-            formattedValues = params.formattedValues,
-            formatFunctions = params.formatFunctions || [],
-            elSeriesLabelArea = dom.create('div', 'ne-chart-series-label-area'),
-            html;
-        html = ne.util.map(params.values, function(values, groupIndex) {
-            var total = 0,
-                labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
-                labelHtmls, lastLeft, lastTop, fns;
-            labelHtmls = ne.util.map(values, function(value, index) {
-                var bound, formattedValue, labelWidth, left, top, labelHtml;
-
-                if (value < 0) {
-                    return '';
-                }
-
-                bound = groupBounds[groupIndex][index].end;
-                formattedValue = formattedValues[groupIndex][index];
-                labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
-                left = bound.left + (bound.width - labelWidth) / 2;
-                top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
-                labelHtml = this._makeSeriesLabelHtml({
-                    left: left,
-                    top: top
-                }, formattedValue, groupIndex, index);
-                lastLeft = bound.left + bound.width;
-                lastTop = top;
-                total += value;
-                return labelHtml;
-            }, this);
-
-            if (this.options.stacked === 'normal') {
-                fns = [total].concat(formatFunctions);
-                total = ne.util.reduce(fns, function(stored, fn) {
-                    return fn(stored);
-                });
-                labelHtmls.push(this._makeSeriesLabelHtml({
-                    left: lastLeft + chartConst.SERIES_LABEL_PADDING,
-                    top: lastTop
-                }, total, -1, -1));
-            }
-            return labelHtmls.join('');
-        }, this).join('');
-
-        elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
-    },
-
-    /**
-     * Render series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
-     * @private
-     */
-    _renderSeriesLabel: function(params) {
-        var elSeriesLabelArea;
-
-        if (!this.options.showLabel) {
-            return null;
-        }
-
-        if (this.options.stacked) {
-            elSeriesLabelArea = this._renderStackedSeriesLabel(params);
+    _makeBounds: function(dimension) {
+        if (!this.options.stacked) {
+            return this._makeNormalBarChartBounds(dimension);
         } else {
-            elSeriesLabelArea = this._renderNormalSeriesLabel(params);
+            return this._makeStackedBarChartBounds(dimension);
         }
-        return elSeriesLabelArea;
     },
 
     /**
-     * Get bound.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {{left: number, top: number}} bound
-     * @private
+     * To make series rendering position
+     * @param {obeject} params parameters
+     *      @param {number} params.value value
+     *      @param {{left: number, top: number, width:number, height: number}} params.bound bound
+     *      @param {string} params.formattedValue formatted value
+     *      @param {number} params.labelHeight label height
+     * @returns {{left: number, top: number}} rendering position
      */
-    _getBound: function(groupIndex, index) {
-        if (groupIndex === -1 || index === -1) {
-            return null;
+    makeSeriesRenderingPosition: function(params) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(params.formattedValue, this.theme.label),
+            bound = params.bound,
+            left = bound.left,
+            top = bound.top + (bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2;
+
+        if (params.value >= 0) {
+            left += bound.width + chartConst.SERIES_LABEL_PADDING;
+        } else {
+            left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
         }
-        return this.groupBounds[groupIndex][index].end;
+
+        return {
+            left: left,
+            top: top
+        };
+    },
+
+    /**
+     * To make sum label html.
+     * @param {object} params parameters
+     *      @param {array.<number>} params.values values
+     *      @param {array.<function>} params.formatFunctions formatting functions
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {number} params.labelHeight label height
+     * @returns {string} sum label html
+     */
+    makeSumLabelHtml: function(params) {
+        var sum = this.makeSumValues(params.values, params.formatFunctions),
+            bound = params.bound,
+            labelHeight = renderUtil.getRenderedLabelHeight(sum, this.theme.label),
+            top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2),
+            left = bound.left + bound.width + chartConst.SERIES_LABEL_PADDING;
+
+        return this.makeSeriesLabelHtml({
+            left: left,
+            top: top
+        }, sum, -1, -1);
     }
 });
+
+BarTypeSeriesBase.mixin(BarChartSeries);
 
 module.exports = BarChartSeries;

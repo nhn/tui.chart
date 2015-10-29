@@ -6,15 +6,17 @@
 
 'use strict';
 
-var Axis = require('../../src/js/axes/axis.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var Axis = require('../../src/js/axes/axis'),
+    chartConst = require('../../src/js/const'),
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Axis', function() {
     var axis;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
+        spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
@@ -110,6 +112,7 @@ describe('Axis', function() {
 
             axis.data = {
                 tickCount: 5,
+                labels: [],
                 isLabelAxis: true,
                 isVertical: false
             };
@@ -130,6 +133,7 @@ describe('Axis', function() {
 
             axis.data = {
                 tickCount: 5,
+                labels: [],
                 isLabelAxis: false,
                 isVertical: true
             };
@@ -142,6 +146,34 @@ describe('Axis', function() {
             expect(childNodes[2].style.bottom).toBe('150px');
             expect(childNodes[3].style.bottom).toBe('224px');
             expect(childNodes[4].style.bottom).toBe('299px');
+        });
+
+
+        it('레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
+            var elTickArea, childNodes;
+
+            axis.data = {
+                tickCount: 5,
+                labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
+                isLabelAxis: true,
+                isVertical: false
+            };
+
+            elTickArea = axis._renderTickArea(300);
+            childNodes = elTickArea.childNodes;
+
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.left).toBe('0px');
+            expect(childNodes[1].style.left).toBe('75px');
+            expect(childNodes[2].style.left).toBe('299px');
+        });
+    });
+
+    describe('_makeVerticalLabelCssText()', function() {
+        it('세로 axis의 cssText를 생성합니다.', function() {
+            var actual = axis._makeVerticalLabelCssText(50, 20),
+                expected = ';width:40px';
+            expect(actual).toBe(expected);
         });
     });
 
@@ -166,9 +198,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('100px');
             expect(childNodes[1].style.width).toBe('100px');
             expect(childNodes[2].style.width).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('label1');
-            expect(childNodes[1].innerHTML).toBe('label2');
-            expect(childNodes[2].innerHTML).toBe('label3');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
@@ -188,9 +220,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.lineHeight).toBe('100px');
             expect(childNodes[1].style.lineHeight).toBe('100px');
             expect(childNodes[2].style.lineHeight).toBe('100px');
-            expect(childNodes[0].innerHTML).toBe('label1');
-            expect(childNodes[1].innerHTML).toBe('label2');
-            expect(childNodes[2].innerHTML).toBe('label3');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
         });
 
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -213,9 +245,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.width).toBe('150px');
             expect(childNodes[1].style.width).toBe('150px');
             expect(childNodes[2].style.width).toBe('150px');
-            expect(childNodes[0].innerHTML).toBe('0.00');
-            expect(childNodes[1].innerHTML).toBe('30.00');
-            expect(childNodes[2].innerHTML).toBe('60.00');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
         });
 
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -234,9 +266,9 @@ describe('Axis', function() {
             expect(childNodes[0].style.bottom).toBe('0px');
             expect(childNodes[1].style.bottom).toBe('150px');
             expect(childNodes[2].style.bottom).toBe('299px');
-            expect(childNodes[0].innerHTML).toBe('0.00');
-            expect(childNodes[1].innerHTML).toBe('30.00');
-            expect(childNodes[2].innerHTML).toBe('60.00');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
         });
     });
 
@@ -286,22 +318,156 @@ describe('Axis', function() {
         });
     });
 
-    describe('_makeLabelsHtml()', function() {
-        it('간격이 10px인 레이블 영역 html을 생성합니다.', function() {
-            var labelsHtml = axis._makeLabelsHtml({
-                    positions: [10, 20, 30],
+    describe('_calculateRotationMovingPosition()', function() {
+        it('xAxis label 회전 시 위치해야 할 position을 계산합니다.', function() {
+            var actual = axis._calculateRotationMovingPosition({
+                    degree: 25,
+                    left: 40,
+                    moveLeft: 20,
+                    top: 30
+                }),
+                expected = {
+                    top: 30,
+                    left: 20
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
+            var actual = axis._calculateRotationMovingPosition({
+                    degree: 85,
+                    labelHeight: 20,
+                    left: 40,
+                    moveLeft: 20,
+                    top: 30
+                }),
+                expected = {
+                    top: 30,
+                    left: 10.038053019082547
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calculateRotationMovingPositionForIE8()', function() {
+        it('IE8은 회전 방식이 다르기 때문에 계산결과가 다릅니다.', function() {
+            var actual = axis._calculateRotationMovingPositionForIE8({
+                    degree: 25,
+                    labelWidth: 40,
+                    labelHeight: 20,
+                    left: 40,
+                    label: 'label1',
+                    theme: {}
+                }),
+                expected = {
+                    top: 10,
+                    left: 24.684610648167506
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
+            var actual = axis._calculateRotationMovingPositionForIE8({
+                    degree: 85,
+                    labelWidth: 20,
+                    labelHeight: 20,
+                    left: 40,
+                    label: 'label1',
+                    theme: {}
+                }),
+                expected = {
+                    top: 10,
+                    left: 65.68026588169964
+                };
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeCssTextForRotationMoving()', function() {
+        it('_calculateRotationMovingPosition() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
+            var actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(axis, '_calculateRotationMovingPosition').and.returnValue({left: 10, top: 10});
+            actual = axis._makeCssTextForRotationMoving();
+            expected = 'left:10px;top:10px';
+            expect(actual).toEqual(expected);
+        });
+
+        it('IE8의 경우는 _calculateRotationMovingPositionForIE8() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
+            var actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(true);
+            spyOn(axis, '_calculateRotationMovingPositionForIE8').and.returnValue({left: 10, top: 10});
+            actual = axis._makeCssTextForRotationMoving();
+            expected = 'left:10px;top:10px';
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalLabelsHtml()', function() {
+        it('간격이 50px인 회전없는 레이블 영역 html을 생성합니다.', function() {
+            var actual = axis._makeLabelsHtml({
+                    positions: [30, 80, 130],
                     labels: ['label1', 'label2', 'label3'],
                     posType: 'left',
                     cssTexts: []
                 }),
-                compareHtml = '<div class="ne-chart-label" style="left:10px">label1</div>' +
-                    '<div class="ne-chart-label" style="left:20px">label2</div>' +
-                    '<div class="ne-chart-label" style="left:30px">label3</div>';
+                expected = '<div class="tui-chart-label" style="left:30px"><span>label1</span></div>' +
+                    '<div class="tui-chart-label" style="left:80px"><span>label2</span></div>' +
+                    '<div class="tui-chart-label" style="left:130px"><span>label3</span></div>';
 
-            expect(labelsHtml).toBe(compareHtml);
+            expect(actual).toBe(expected);
         });
     });
 
+    describe('_makeRotationLabelsHtml()', function() {
+        it('45도로 회전된 레이블 영역 html을 생성합니다.', function() {
+            var actual, expected;
+            spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
+            actual = axis._makeRotationLabelsHtml({
+                positions: [30, 80, 130],
+                labels: ['label1', 'label2', 'label3'],
+                posType: 'left',
+                cssTexts: [],
+                labelSize: 80,
+                degree: 45
+            });
+            expected = '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeLabelsHtml()', function() {
+        it('degree 정보가 없을 경우에는 _makeNormalLabelsHtml()을 실행합니다.', function() {
+            var params = {
+                    positions: [30, 80, 130],
+                    labels: ['label1', 'label2', 'label3'],
+                    posType: 'left',
+                    cssTexts: []
+                },
+                actual = axis._makeLabelsHtml(params),
+                expected = axis._makeNormalLabelsHtml(params);
+            expect(actual).toBe(expected);
+        });
+
+        it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
+            var params, actual, expected;
+            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            params = {
+                positions: [30, 80, 130],
+                labels: ['label1', 'label2', 'label3'],
+                posType: 'left',
+                cssTexts: [],
+                labelSize: 80,
+                degree: 45
+            };
+            actual = axis._makeLabelsHtml(params);
+            expected = axis._makeRotationLabelsHtml(params);
+            expect(actual).toBe(expected);
+        });
+    });
     describe('_changeLabelAreaPosition()', function() {
         it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var elLabelArea = dom.create('DIV');
@@ -352,9 +518,9 @@ describe('Axis', function() {
             expect(el.style.height).toBe('200px');
             expect(el.style.top).toBe('20px');
             expect(dom.hasClass(el, 'horizontal')).toBeTruthy();
-            expect(el.childNodes[0].className).toBe('ne-chart-title-area');
-            expect(el.childNodes[1].className).toBe('ne-chart-tick-area');
-            expect(el.childNodes[2].className).toBe('ne-chart-label-area');
+            expect(el.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(el.childNodes[1].className).toBe('tui-chart-tick-area');
+            expect(el.childNodes[2].className).toBe('tui-chart-label-area');
         });
     });
 });

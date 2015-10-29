@@ -6,7 +6,7 @@
 
 'use strict';
 
-var AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10];
+var chartConst = require('../const');
 
 /**
  * Calculator.
@@ -14,7 +14,7 @@ var AXIS_STANDARD_MULTIPLE_NUMS = [1, 2, 5, 10];
  */
 var calculator = {
     /**
-     * Calculate scale from chart min, max data.
+     * To calculate scale from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
@@ -63,7 +63,7 @@ var calculator = {
 
         value *= flag;
 
-        ne.util.forEachArray(AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
+        tui.util.forEachArray(chartConst.AXIS_STANDARD_MULTIPLE_NUMS, function(num) {
             if (value < num) {
                 if (num > 1) {
                     standard = num;
@@ -77,8 +77,8 @@ var calculator = {
         if (standard < 1) {
             normalized = this.normalizeAxisNumber(value * 10) * 0.1;
         } else {
-            mod = ne.util.mod(value, standard);
-            normalized = ne.util.addition(value, (mod > 0 ? standard - mod : 0));
+            mod = tui.util.mod(value, standard);
+            normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
         }
 
         return normalized *= flag;
@@ -98,7 +98,7 @@ var calculator = {
         if (count > 0) {
             pxScale = {min: 0, max: size - 1};
             pxStep = this.getScaleStep(pxScale, count);
-            positions = ne.util.map(ne.util.range(0, size, pxStep), function(position) {
+            positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
                 return Math.round(position);
             });
             positions[positions.length - 1] = size - 1;
@@ -115,11 +115,11 @@ var calculator = {
      * @private
      */
     makeLabelsFromScale: function(scale, step) {
-        var multipleNum = ne.util.findMultipleNum(step),
+        var multipleNum = tui.util.findMultipleNum(step),
             min = scale.min * multipleNum,
             max = scale.max * multipleNum,
-            labels = ne.util.range(min, max + 1, step * multipleNum);
-        labels = ne.util.map(labels, function(label) {
+            labels = tui.util.range(min, max + 1, step * multipleNum);
+        labels = tui.util.map(labels, function(label) {
             return label / multipleNum;
         });
         return labels;
@@ -137,22 +137,36 @@ var calculator = {
     },
 
     /**
-     * Array pivot.
-     * @memberOf module:calculator
-     * @param {array.<array>} arr2d target 2d array
-     * @returns {array.<array>} pivoted 2d array
+     * To calculate adjacent.
+     * @param {number} degree degree
+     * @param {number} hypotenuse hypotenuse
+     * @returns {number} adjacent
+     *
+     *   H : Hypotenuse
+     *   A : Adjacent
+     *   O : Opposite
+     *   D : Degree
+     *
+     *        /|
+     *       / |
+     *    H /  | O
+     *     /   |
+     *    /\ D |
+     *    -----
+     *       A
      */
-    arrayPivot: function(arr2d) {
-        var result = [];
-        ne.util.forEachArray(arr2d, function(arr) {
-            ne.util.forEachArray(arr, function(value, index) {
-                if (!result[index]) {
-                    result[index] = [];
-                }
-                result[index].push(value);
-            });
-        });
-        return result;
+    calculateAdjacent: function(degree, hypotenuse) {
+        return Math.cos(degree * chartConst.RAD) * hypotenuse;
+    },
+
+    /**
+     * To calculate opposite.
+     * @param {number} degree degree
+     * @param {number} hypotenuse hypotenuse
+     * @returns {number} opposite
+     */
+    calculateOpposite: function(degree, hypotenuse) {
+        return Math.sin(degree * chartConst.RAD) * hypotenuse;
     }
 };
 

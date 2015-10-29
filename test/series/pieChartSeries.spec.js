@@ -26,6 +26,9 @@ describe('PieChartSeries', function() {
                 values: [],
                 formattedValues: []
             },
+            bound: {
+                dimension: {width: 200, height: 100}
+            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -93,7 +96,7 @@ describe('PieChartSeries', function() {
                 legendType: 'outer'
             });
 
-            expect(actual.r).toBe(97.5)
+            expect(actual.r).toBe(97.5);
         });
     });
 
@@ -110,7 +113,6 @@ describe('PieChartSeries', function() {
                     top: 64.64466094067262
                 };
             expect(actual).toEqual(expected);
-
         });
     });
 
@@ -284,7 +286,7 @@ describe('PieChartSeries', function() {
                 container: container,
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],
-                sectorsInfo:  [
+                sectorsInfo: [
                     {
                         outerPosition: {
                             middle: {
@@ -337,7 +339,7 @@ describe('PieChartSeries', function() {
                     container: container,
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
-                    sectorsInfo:  [
+                    sectorsInfo: [
                         {
                             outerPosition: {
                                 middle: {

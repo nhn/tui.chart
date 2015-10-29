@@ -1,13 +1,13 @@
 'use strict';
 
-var chartConst = require('./const.js'),
-    chartFactory = require('./factories/chartFactory.js'),
-    BarChart = require('./charts/barChart.js'),
-    ColumnChart = require('./charts/columnChart.js'),
-    LineChart = require('./charts/lineChart.js'),
-    AreaChart = require('./charts/areaChart.js'),
-    ComboChart = require('./charts/comboChart.js'),
-    PieChart = require('./charts/pieChart.js');
+var chartConst = require('./const'),
+    chartFactory = require('./factories/chartFactory'),
+    BarChart = require('./charts/barChart'),
+    ColumnChart = require('./charts/columnChart'),
+    LineChart = require('./charts/lineChart'),
+    AreaChart = require('./charts/areaChart'),
+    ComboChart = require('./charts/comboChart'),
+    PieChart = require('./charts/pieChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
 chartFactory.register(chartConst.CHART_TYPE_COLUMN, ColumnChart);

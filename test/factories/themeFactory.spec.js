@@ -1,9 +1,6 @@
 'use strict';
 
 var themeFactory = require('../../src/js/factories/themeFactory.js');
-    //chartConst = require('../../src/js/const.js');
-
-//require('../../src/js/registerThemes.js');
 
 describe('test themeFactory', function() {
     themeFactory.register('newTheme', {
@@ -253,11 +250,11 @@ describe('test themeFactory', function() {
         })
     });
 
-    describe('_copyColorInfoToLegend()', function() {
+    describe('_copyColorInfoToOther()', function() {
         it('series 테마의 color 속성들을 legend 테마로 복사합니다.', function () {
             var legendTheme = {};
 
-            themeFactory._copyColorInfoToLegend({
+            themeFactory._copyColorInfoToOther({
                 colors: ['red', 'orange'],
                 singleColors: ['red', 'orange'],
                 borderColor: 'blue'
@@ -273,7 +270,7 @@ describe('test themeFactory', function() {
         it('3번째 인자로 colors를 넘기게 되면 인자로 넘긴 colors를 legend의 colors로 복사합니다..', function () {
             var legendTheme = {};
 
-            themeFactory._copyColorInfoToLegend({}, legendTheme, ['black', 'gray']);
+            themeFactory._copyColorInfoToOther({}, legendTheme, ['black', 'gray']);
 
             expect(legendTheme.colors).toEqual(['black', 'gray']);
         });
@@ -285,12 +282,14 @@ describe('test themeFactory', function() {
                 series: {
                     colors: ['red', 'orange']
                 },
-                legend: {}
+                legend: {},
+                tooltip: {}
             };
 
             themeFactory._copyColorInfo(theme);
 
             expect(theme.legend.colors).toEqual(['red', 'orange']);
+            expect(theme.tooltip.colors).toEqual(['red', 'orange']);
         });
 
         it('콤보 차트에서 series color속성을 legend color 속성으로 복사합니다.', function() {
@@ -303,12 +302,22 @@ describe('test themeFactory', function() {
                         colors: ['blue', 'green']
                     }
                 },
-                legend: {}
+                legend: {},
+                tooltip: {}
             };
 
             themeFactory._copyColorInfo(theme);
 
             expect(theme.legend).toEqual({
+                column: {
+                    colors: ['red', 'orange']
+                },
+                line: {
+                    colors: ['blue', 'green']
+                }
+            });
+
+            expect(theme.tooltip).toEqual({
                 column: {
                     colors: ['red', 'orange']
                 },
