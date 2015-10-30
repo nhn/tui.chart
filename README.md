@@ -30,11 +30,11 @@ This application supports drawing a chart on web browser.<br>
 
 <img alt="negative column chart" src="https://cloud.githubusercontent.com/assets/2888775/10809244/41009874-7e38-11e5-8739-75535dde146f.png">
 
-<img alt="percent stacked column chart" src="https://cloud.githubusercontent.com/assets/2888775/10809247/47cd1d58-7e38-11e5-9800-7dabc6dc1679.png">
+<img alt="percent stacked column chart" src="https://cloud.githubusercontent.com/assets/2888775/10836377/3b9af344-7ef0-11e5-824c-2e4d6c5f605a.png">
 
 <img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/10809249/4de3976c-7e38-11e5-9e5e-eda2dd0a6cd6.png">
 
-<img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/10809259/64782722-7e38-11e5-962c-933b7094be15.png">
+<img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/10836378/41002b60-7ef0-11e5-8337-d66db2adaac8.png">
 
 <img alt="pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10064137/468634d2-62b0-11e5-8961-402cd5a7e518.png">
 
