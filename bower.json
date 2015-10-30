@@ -9,6 +9,6 @@
   "dependencies": {
     "raphael": "~2.1.4",
     "tui-code-snippet": "tui-code-snippet#~1.0.4",
-    "tui-component-effect-slide": "tui-component-effects#~1.1.0"
+    "tui-component-effects": "tui-component-effects#~1.1.0"
   }
 }

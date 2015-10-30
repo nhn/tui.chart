@@ -113,12 +113,12 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _calculateVerticalPosition: function(dimension, params) {
         var range = params.range,
             isLine = (range.start === range.end),
-            padding = isLine ? 6 : 0,
+            padding = isLine ? 9 : 5,
             left = chartConst.SERIES_EXPAND_SIZE;
         if (params.direction === chartConst.TOOLTIP_DIRECTION_FORWORD) {
-            left += range.start + padding;
+            left += range.end + padding;
         } else {
-            left += range.end - dimension.width - padding;
+            left += range.start - dimension.width - padding - 1;
         }
         return {
             left: left,

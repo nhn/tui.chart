@@ -111,7 +111,7 @@ describe('GroupTooltip', function() {
                     size: 200
                 }),
                 expected = {
-                    left: 10,
+                    left: 115,
                     top: 50
                 };
             expect(actual).toEqual(expected);
@@ -129,7 +129,7 @@ describe('GroupTooltip', function() {
                     size: 200
                 }),
                 expected = {
-                    left: 130,
+                    left: 24,
                     top: 50
                 };
             expect(actual).toEqual(expected);

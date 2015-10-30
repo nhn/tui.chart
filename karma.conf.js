@@ -31,7 +31,7 @@ module.exports = function(config) {
     singleRun: false,
     autoWatch: true,
     files: [
-      'lib/code-snippet/code-snippet.min.js',
+      'lib/tui-code-snippet/code-snippet.min.js',
       'lib/raphael/raphael-min.js',
       'src/js/**/*.js',
       'test/**/*.spec.js'
