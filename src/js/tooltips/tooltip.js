@@ -74,7 +74,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     makeTooltipData: function() {
         var labels = this.labels,
-            groupValues = this.values,
+            groupValues = this.formattedValues,
             legendLabels = this.legendLabels;
 
         return tui.util.map(groupValues, function(values, groupIndex) {
