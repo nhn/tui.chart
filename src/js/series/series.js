@@ -173,7 +173,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isIE8() ? chartConst.HIDDEN_WIDTH : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
         position.top = position.top - (hiddenWidth * 2);
         position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
         renderUtil.renderPosition(el, position);

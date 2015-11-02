@@ -143,17 +143,12 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @param {number} layerY layerY
      */
     onLineTypeOverTickSector: function(groupIndex, layerY) {
-        var index, prevIndexes;
+        var index;
 
         index = this._findIndex(groupIndex, layerY);
-        prevIndexes = this.prevIndexes;
 
         if (!this._isChanged(groupIndex, index)) {
             return;
-        }
-
-        if (prevIndexes) {
-            this.outCallback();
         }
 
         this.inCallback(this._getBound(groupIndex, index), groupIndex, index);

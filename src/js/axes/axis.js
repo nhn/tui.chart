@@ -88,7 +88,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             cssTexts.push(renderUtil.concatStr('top:', 0, 'px'));
         } else {
             cssTexts.push(renderUtil.concatStr('left:', 0, 'px'));
-            if (!renderUtil.isIE8()) {
+            if (!renderUtil.isOldBrowser()) {
                 cssTexts.push(renderUtil.concatStr('top:', size, 'px'));
             }
         }
@@ -318,7 +318,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeCssTextForRotationMoving: function(params) {
         var position;
-        if (renderUtil.isIE8()) {
+        if (renderUtil.isOldBrowser()) {
             position = this._calculateRotationMovingPositionForIE8(params);
         } else {
             position = this._calculateRotationMovingPosition(params);

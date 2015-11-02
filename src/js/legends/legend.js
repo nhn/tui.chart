@@ -110,8 +110,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _makeLegendHtml: function() {
         var labels = this._makeLegendLabels(),
             template = legendTemplate.tplLegend,
-            labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme) + (chartConst.LABEL_PADDING_TOP * 2),
-            baseMarginTop = parseInt((labelHeight - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
+            labelHeight = renderUtil.getRenderedLabelHeight(labels[0].label, labels[0].theme),
+            height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2),
+            baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(labels, function(label) {
                 var borderCssText = label.borderColor ? renderUtil.concatStr(';border:1px solid ', label.borderColor) : '',
                     rectMargin, marginTop, data;
@@ -124,7 +125,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
                 data = {
                     cssText: renderUtil.concatStr('background-color:', label.theme.singleColor || label.theme.color, borderCssText, rectMargin),
-                    height: labelHeight,
+                    height: height,
+                    labelHeight: labelHeight,
                     chartType: label.chartType || 'rect',
                     label: label.label
                 };

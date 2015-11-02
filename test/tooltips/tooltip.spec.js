@@ -48,8 +48,8 @@ describe('Tooltip', function() {
                 groupIndex: 0,
                 index: 1
             });
-            expect(elTooltip.getAttribute('data-groupIndex')).toBe('0');
-            expect(elTooltip.getAttribute('data-index')).toBe('1');
+            expect(parseInt(elTooltip.getAttribute('data-groupIndex'), 10)).toBe(0);
+            expect(parseInt(elTooltip.getAttribute('data-index'), 10)).toBe(1);
         });
     });
 
@@ -68,9 +68,11 @@ describe('Tooltip', function() {
 
     describe('_setShowedCustomAttribute()', function() {
         it('툴팁 엘리먼트에 showed custom attribute 값을 설정합니다.', function() {
-            var elTooltip = dom.create('DIV');
+            var elTooltip = dom.create('DIV'),
+                isShowed;
             tooltip._setShowedCustomAttribute(elTooltip, true);
-            expect(elTooltip.getAttribute('data-showed')).toBe('true');
+            isShowed = elTooltip.getAttribute('data-showed') === 'true' || elTooltip.getAttribute('data-showed') === true;
+            expect(isShowed).toBe(true);
         });
     });
 

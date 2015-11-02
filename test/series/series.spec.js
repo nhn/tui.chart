@@ -163,7 +163,7 @@ describe('Series', function() {
                 }
             );
 
-            if (renderUtil.isIE8()) {
+            if (renderUtil.isOldBrowser()) {
                 expect(elSeries.style.top).toBe('18px');
                 expect(elSeries.style.left).toBe('9px');
             } else {
@@ -192,7 +192,7 @@ describe('Series', function() {
             expect(elSeries.style.width).toBe('220px');
             expect(elSeries.style.height).toBe('110px');
 
-            if (renderUtil.isIE8()) {
+            if (renderUtil.isOldBrowser()) {
                 expect(elSeries.style.top).toBe('48px');
                 expect(elSeries.style.left).toBe('39px');
             } else {
