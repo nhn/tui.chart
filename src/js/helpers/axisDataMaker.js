@@ -168,8 +168,8 @@ var axisDataMaker = {
      */
     _getCandidateTickCounts: function(chartDimension, isVertical) {
         var baseSize = this._getBaseSize(chartDimension, isVertical),
-            start = parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10),
-            end = parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10) + 1,
+            start = tui.util.max([3, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10)]),
+            end = tui.util.max([start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)]) + 1,
             tickCounts = tui.util.range(start, end);
         return tickCounts;
     },
