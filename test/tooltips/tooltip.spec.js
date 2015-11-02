@@ -26,7 +26,7 @@ describe('Tooltip', function() {
                 'Silver',
                 'Gold'
             ];
-            tooltip.values = [
+            tooltip.formattedValues = [
                 [10, 20]
             ];
             tooltip.legendLabels = ['Density1', 'Density2'];
