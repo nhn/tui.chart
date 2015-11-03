@@ -79,9 +79,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return {
                 percentValue: percentValue,
                 angles: angles,
-                popupPosition: this._getArcPosition(tui.util.extend({
-                    r: r + delta
-                }, positionData)),
                 centerPosition: this._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
                 }, positionData)),
@@ -115,7 +112,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
 
-        this.popupPositions = tui.util.pluck(sectorsInfo, 'popupPosition');
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
@@ -370,12 +366,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @returns {{left: number, top: number}} bound
      * @private
      */
-    _getBound: function(groupIndex, index) {
+    _getBound: function() {
         return null;
-        if (groupIndex === -1 || index === -1) {
-            return null;
-        }
-        return this.popupPositions[index];
     },
 
     /**
