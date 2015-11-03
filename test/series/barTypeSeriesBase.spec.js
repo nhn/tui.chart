@@ -214,10 +214,10 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
-
             actual = series._renderSeriesLabel(params);
             expected = series._renderNormalSeriesLabel(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
 
         it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function () {
@@ -251,7 +251,8 @@ describe('BarTypeSeriesBase', function() {
 
             actual = series._renderSeriesLabel(params);
             expected = series._renderStackedSeriesLabel(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
 
         it('showLabel 옵션이 없으면 null을 반환합니다.', function () {

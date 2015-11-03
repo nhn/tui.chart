@@ -372,7 +372,8 @@ describe('PieChartSeries', function() {
                 },
                 actual = series._renderSeriesLabel(params),
                 expected = series._renderOuterLegend(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
             var container = dom.create('div'),
@@ -406,7 +407,8 @@ describe('PieChartSeries', function() {
                 },
                 actual = series._renderSeriesLabel(params),
                 expected = series._renderCenterLegend(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
     });
 });
