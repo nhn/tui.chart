@@ -62,7 +62,8 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
         this.addComponent('tooltip', Tooltip, {
             chartType: options.chartType,
-            values: convertedData.formattedValues,
+            values: convertedData.values,
+            formattedValues: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
             chartId: this.chartId,

@@ -76,7 +76,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var labels = this.labels,
             groupValues = this.formattedValues,
             legendLabels = this.legendLabels;
-
         return tui.util.map(groupValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 return {
@@ -178,7 +177,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         indexes = this._getIndexesCustomAttribute(elTarget);
 
         this._setShowedCustomAttribute(elTarget, true);
-
         this._fireShowAnimation(indexes);
     },
 

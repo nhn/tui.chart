@@ -371,6 +371,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _getBound: function(groupIndex, index) {
+        return null;
         if (groupIndex === -1 || index === -1) {
             return null;
         }
