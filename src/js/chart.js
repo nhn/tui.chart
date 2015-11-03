@@ -12,6 +12,7 @@ var chartConst = require('./const'),
 
 var _createChart;
 
+require('./polyfill');
 require('./code-snippet-util');
 require('./registerCharts');
 require('./registerThemes');

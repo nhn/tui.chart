@@ -61,6 +61,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {number} groupIndex group index
      * @param {number} index index
+     * @param {{clientX: number, clientY: number}} eventPosition mouse event position
      */
     showTooltip: function(params, bound, groupIndex, index, eventPosition) {
         this.fire('showTooltip', tui.util.extend({
@@ -173,7 +174,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isIE8() ? chartConst.HIDDEN_WIDTH : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
         position.top = position.top - (hiddenWidth * 2);
         position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
         renderUtil.renderPosition(el, position);
@@ -307,12 +308,26 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     renderCoordinateArea: function() {},
 
     /**
+     * To make label bound.
+     * @param {number} clientX clientX
+     * @param {number} clientY clientY
+     * @returns {{left: number, top: number}} bound
+     * @private
+     */
+    _makeLabelBound: function(clientX, clientY) {
+        return {
+            left: clientX - this.bound.position.left,
+            top: clientY - this.bound.position.top
+        };
+    },
+
+    /**
      * On mouseover event handler for series area
      * @param {MouseEvent} e mouse event
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            groupIndex, index;
+            groupIndex, index, bound;
 
         if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
             return;
@@ -325,7 +340,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
+        bound = this._getBound(groupIndex, index) || this._makeLabelBound(e.clientX, e.clientY);
+
+        this.inCallback(bound, groupIndex, index);
     },
 
     onMousemove: function() {},

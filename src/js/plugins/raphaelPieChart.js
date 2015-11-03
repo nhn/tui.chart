@@ -177,22 +177,33 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _bindHoverEvent: function(params) {
-        var throttled = tui.util.throttle(function(e) {
-            if (!e) {
-                return;
-            }
-            params.inCallback(params.position, 0, params.index, {
-                clientX: e.clientX,
-                clientY: e.clientY
-            });
-        }, 100);
+        var args = [params.position, 0, params.index],
+            inCallback = params.inCallback,
+            outCallback = params.outCallback,
+            isOn = false,
+            throttled = tui.util.throttle(function() {
+                if (!isOn) {
+                    return;
+                }
+                inCallback.apply(null, arguments);
+            }, 100);
+
         params.target.mouseover(function (e) {
-            params.inCallback(params.position, 0, params.index, {
+            var _args = args.concat({
                 clientX: e.clientX,
                 clientY: e.clientY
             });
-        }).mousemove(throttled).mouseout(function () {
-            params.outCallback();
+            isOn = true;
+            inCallback.apply(null, _args);
+        }).mousemove(function(e) {
+            var _args = args.concat({
+                clientX: e.clientX,
+                clientY: e.clientY
+            });
+            throttled.apply(null, _args);
+        }).mouseout(function () {
+            isOn = false;
+            outCallback();
         });
     },
 

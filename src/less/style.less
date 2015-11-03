@@ -58,11 +58,8 @@
         filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
       }
 
-      .tui-chart-tick-area, .tui-chart-label-area {
-        right: 0;
-      }
-
       .tui-chart-tick-area {
+        right: 0;
         border-right: 1px solid @axis-color;
         .tui-chart-tick {
           right: 0;
@@ -73,10 +70,11 @@
       }
 
       .tui-chart-label-area {
+        right: 10px;
         .tui-chart-label {
+          left: 0;
           width: 100%;
           text-align: right;
-          padding-right: 10px;
         }
       }
 
@@ -149,25 +147,25 @@
           &.rotation25 {
             .rotate(-25deg);
             span {
-              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499);
+              filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
             }
           }
           &.rotation45 {
             .rotate(-45deg);
             span {
-              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476);
+              filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
             }
           }
           &.rotation65 {
             .rotate(-65deg);
             span {
-              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944);
+              filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
             }
           }
           &.rotation85 {
             .rotate(-85deg);
             span {
-              filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814);
+              filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
             }
           }
         }
@@ -225,6 +223,8 @@
     position:absolute;
     left: 10px;
     top: 0;
+    background-color:#fff;
+    .opacity(0);
   }
 
   .tui-chart-legend-rect {
@@ -250,6 +250,7 @@
       }
       .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
+        .content-box();
         line-height:1;
       }
     }
@@ -271,11 +272,12 @@
         min-width: 100px;
         color: #fff;
         .border-radius(5px);
-        background-color: #555;
         background-color:rgba(0, 0, 0, 0.7);
+        background-color: #555\9;
         > * {
           padding: 2px 7px;
           text-align: center;
+          white-space: nowrap;
         }
 
         > :first-child {

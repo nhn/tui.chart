@@ -61,7 +61,7 @@ describe('Axis', function() {
             expect(elTitle.style.left).toBe('0px');
 
             // IE8에서는 회전 방법 이슈로 인해 top값을 설정하지 않습니다.
-            if (!renderUtil.isIE8()) {
+            if (!renderUtil.isOldBrowser()) {
                 expect(elTitle.style.top).toBe('50px');
             }
         });
@@ -387,7 +387,7 @@ describe('Axis', function() {
     describe('_makeCssTextForRotationMoving()', function() {
         it('_calculateRotationMovingPosition() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
             var actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             spyOn(axis, '_calculateRotationMovingPosition').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
             expected = 'left:10px;top:10px';
@@ -396,7 +396,7 @@ describe('Axis', function() {
 
         it('IE8의 경우는 _calculateRotationMovingPositionForIE8() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
             var actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(true);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
             spyOn(axis, '_calculateRotationMovingPositionForIE8').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
             expected = 'left:10px;top:10px';
@@ -455,7 +455,7 @@ describe('Axis', function() {
 
         it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
             var params, actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             params = {
                 positions: [30, 80, 130],
                 labels: ['label1', 'label2', 'label3'],

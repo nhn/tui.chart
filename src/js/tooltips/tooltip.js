@@ -76,7 +76,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var labels = this.labels,
             groupValues = this.formattedValues,
             legendLabels = this.legendLabels;
-
         return tui.util.map(groupValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 return {
@@ -126,8 +125,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     _getIndexesCustomAttribute: function(elTooltip) {
         var groupIndex = elTooltip.getAttribute('data-groupIndex'),
             index = elTooltip.getAttribute('data-index'),
-            indexes;
-        if (groupIndex && index) {
+            indexes = null;
+
+        if (!tui.util.isNull(groupIndex) && !tui.util.isNull(index)) {
             indexes = {
                 groupIndex: parseInt(groupIndex, 10),
                 index: parseInt(index, 10)
@@ -153,7 +153,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _isShowedTooltip: function(elTooltip) {
-        return elTooltip.getAttribute('data-showed') === 'true';
+        var isShowed = elTooltip.getAttribute('data-showed');
+        return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
     },
 
     /**
@@ -176,7 +177,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         indexes = this._getIndexesCustomAttribute(elTarget);
 
         this._setShowedCustomAttribute(elTarget, true);
-
         this._fireShowAnimation(indexes);
     },
 
@@ -195,7 +195,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (elTarget.id !== this._getTooltipId()) {
             return;
         }
-
         this.hideTooltip(elTarget);
     },
 
@@ -396,6 +395,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         return this.tplTooltip(data);
     },
 
+    /**
+     * Whether changed indexes or not.
+     * @param {{groupIndex: number, index: number}} prevIndexes prev indexes
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {boolean} whether changed or not
+     * @private
+     */
     _isChangedIndexes: function(prevIndexes, indexes) {
         return !!prevIndexes && (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
     },

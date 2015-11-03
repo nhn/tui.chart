@@ -49,7 +49,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeSectorsInfo()', function() {
-        it('percentValues를 이용하여 angle 정보와 center position 정보를 계산하여 반환합니다.', function() {
+        it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
             var actual = series._makeSectorsInfo([0.25, 0.125, 0.1, 0.35, 0.175], {
                 cx: 100,
                 cy: 100,
@@ -62,13 +62,17 @@ describe('PieChartSeries', function() {
             expect(actual[0].angles.start.endAngle).toBe(0);
             expect(actual[0].angles.end.startAngle).toBe(0);
             expect(actual[0].angles.end.endAngle).toBe(90);
-            expect(actual[0].popupPosition).toEqual({
-                left: 177.78174593052023,
-                top: 22.21825406947977
-            });
             expect(actual[0].centerPosition).toEqual({
                 left: 142.42640687119285,
                 top: 57.57359312880715
+            });
+            expect(actual[0].outerPosition.start).toEqual({
+                left: 170.71067811865476,
+                top: 29.289321881345245
+            });
+            expect(actual[0].outerPosition.middle).toEqual({
+                left: 177.78174593052023,
+                top: 22.21825406947977
             });
         });
     });
@@ -372,7 +376,8 @@ describe('PieChartSeries', function() {
                 },
                 actual = series._renderSeriesLabel(params),
                 expected = series._renderOuterLegend(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
             var container = dom.create('div'),
@@ -406,7 +411,8 @@ describe('PieChartSeries', function() {
                 },
                 actual = series._renderSeriesLabel(params),
                 expected = series._renderCenterLegend(params);
-            expect(actual).toEqual(expected);
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
     });
 });

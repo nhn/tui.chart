@@ -10,7 +10,7 @@ var dom = require('./domHandler'),
     chartConst = require('./../const');
 
 var browser = tui.util.browser,
-    isIE8 = browser.msie && browser.version === 8;
+    isOldBrowser = browser.msie && browser.version <= 8;
 
 /**
  * Util for rendering.
@@ -277,8 +277,8 @@ var renderUtil = {
      * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */
-    isIE8: function() {
-        return isIE8;
+    isOldBrowser: function() {
+        return isOldBrowser;
     }
 };
 

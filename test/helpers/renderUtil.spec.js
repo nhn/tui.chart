@@ -10,7 +10,7 @@ var renderUtil = require('../../src/js/helpers/renderUtil.js'),
     dom = require('../../src/js/helpers/domHandler.js'),
     isMac = navigator.userAgent.indexOf('Mac') > -1,
     browser = tui.util.browser,
-    isIE8 = browser.msie && browser.version === 8,
+    isOldBrowser = browser.msie && browser.version <= 8,
     isFirefox = browser.firefox,
     isChrome = browser.chrome;
 
@@ -53,7 +53,7 @@ describe('renderUtil', function() {
                 fontSize: 12
             }, 'offsetWidth');
 
-            if (isIE8 || isFirefox) {
+            if (isOldBrowser || isFirefox) {
                 expect(atual).toBe(42);
             } else if (isMac && isChrome) {
                 expect(atual).toBe(40);
@@ -70,7 +70,7 @@ describe('renderUtil', function() {
                 fontSize: 12
             });
 
-            if (isIE8 || isFirefox) {
+            if (isOldBrowser || isFirefox) {
                 expect(actual).toBe(42);
             } else if (isMac && isChrome) {
                 expect(actual).toBe(40);
@@ -87,7 +87,7 @@ describe('renderUtil', function() {
                 fontSize: 12
             });
 
-            if (isIE8) {
+            if (isOldBrowser) {
                 expect(actual).toBe(14);
             } else {
                 expect(actual).toBe(15);
@@ -108,7 +108,7 @@ describe('renderUtil', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
             var acutal = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label']);
 
-            if (isIE8 || isFirefox) {
+            if (isOldBrowser || isFirefox) {
                 expect(acutal).toBe(42);
             } else if (isMac && isChrome) {
                 expect(acutal).toBe(40);
@@ -122,7 +122,7 @@ describe('renderUtil', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
             var acutal = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label']);
 
-            if (isIE8) {
+            if (isOldBrowser) {
                 expect(acutal).toBe(14);
             } else {
                 expect(acutal).toBe(15);
