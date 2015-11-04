@@ -8,7 +8,8 @@
 
 var ChartBase = require('../../src/js/charts/chartBase.js'),
     Legend = require('../../src/js/legends/legend.js'),
-    dom = require('../../src/js/helpers/domHandler.js');
+    dom = require('../../src/js/helpers/domHandler.js'),
+    UserEventListener = require('../../src/js/helpers/UserEventListener');
 
 describe('ChartBase', function() {
     var chartBase;
@@ -26,6 +27,21 @@ describe('ChartBase', function() {
                     title: 'Chart Title'
                 }
             }
+        });
+    });
+
+    describe('_initUserEventListener()', function() {
+        it('사용자 이벤트를 등록할 수 있는 userEventListener 객체를 생성합니다.', function() {
+            var actual = chartBase._initUserEventListener();
+            expect(actual.constructor).toBe(UserEventListener);
+        });
+
+        it('부모 차트에서 userEvent객체를 전달 받았다면 전달받은 객체를 반환합니다.', function() {
+            var userEvent = new UserEventListener(),
+                actual = chartBase._initUserEventListener({
+                    userEvent: userEvent
+                });
+            expect(actual).toBe(userEvent);
         });
     });
 

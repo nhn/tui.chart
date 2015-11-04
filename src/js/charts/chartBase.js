@@ -11,7 +11,8 @@ var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
-    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer');
+    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer'),
+    UserEventListener = require('../helpers/UserEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -37,8 +38,25 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.hasAxes = !!params.axesData;
         this.isVertical = !!params.isVertical;
         this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
+        this.userEvent = this._initUserEventListener(params.initedData);
 
         this._addGroupedEventHandleLayer(params.axesData, params.options.chartType);
+    },
+
+    /**
+     * Initialize user event listener.
+     * @param {?object} initedData initialized data from parent chart
+     * @returns {object} userEvent object
+     * @private
+     */
+    _initUserEventListener: function(initedData) {
+        var userEvent;
+        if (initedData) {
+            userEvent = initedData.userEvent;
+        } else {
+            userEvent = new UserEventListener();
+        }
+        return userEvent;
     },
 
     /**
@@ -238,6 +256,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
                 component.animateComponent();
             }
         });
+    },
+
+    /**
+     * To register of user event.
+     * @param {string} eventName event name
+     * @param {function} func event callback
+     */
+    on: function(eventName, func) {
+        this.userEvent.register(eventName, func);
     }
 });
 

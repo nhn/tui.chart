@@ -133,6 +133,8 @@ var chartConst = {
     LEGEND_RECT_WIDTH: 12,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
+    /** legend class name */
+    CLASS_NAME_LEGEND: 'tui-chart-legend',
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
