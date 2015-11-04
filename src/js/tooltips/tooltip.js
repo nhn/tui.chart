@@ -435,8 +435,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
                 left: 0,
                 top: 0
             }, this.options.addPosition),
-            positionOption: this.options.position || '',
-            eventPosition: params.eventPosition
+            positionOption: this.options.position || ''
         }, params));
 
         this.moveToPosition(elTooltip, position, prevPosition);

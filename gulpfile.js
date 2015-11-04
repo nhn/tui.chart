@@ -43,7 +43,6 @@ gulp.task('browserify', function() {
     rebundle = function() {
         return b.bundle()
             .pipe(source('./chart.js'))
-            .pipe(header(banner, pkg))
             .pipe(gulp.dest('./dist'));
     };
 

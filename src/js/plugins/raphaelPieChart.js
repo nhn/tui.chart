@@ -121,7 +121,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             this._bindHoverEvent({
                 target: sector,
-                position: sectorInfo.popupPosition,
                 index: index,
                 inCallback: inCallback,
                 outCallback: outCallback
@@ -177,7 +176,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _bindHoverEvent: function(params) {
-        var args = [params.position, 0, params.index],
+        var args = [{}, 0, params.index],
             inCallback = params.inCallback,
             outCallback = params.outCallback,
             isOn = false,
