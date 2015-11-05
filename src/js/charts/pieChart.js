@@ -80,6 +80,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
                 legendLabels: convertedData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
                 chartWidth: bounds.chart.dimension.width
             }
         });

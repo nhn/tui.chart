@@ -178,7 +178,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _selectLegend: function(index) {
         var data = this.legendData[index];
-        this.userEvent.fire('selectLegend', {
+        this.userEvent.fire('clickLegend', {
             legend: data.label,
             chartType: data.chartType,
             index: data.index
