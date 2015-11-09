@@ -22,30 +22,20 @@ var lineTypeMixer = {
      * @param {object} initedData initialized data from combo chart
      */
     lineTypeInit: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
-
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: axesData,
+            userData: userData,
             theme: theme,
             options: options,
+            hasAxes: true,
             isVertical: true,
             initedData: initedData
         });
 
-        if (!this.isSubChart && !this.isGroupedTooltip) {
-            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer, {
-                tickCount: axesData.xAxis ? axesData.xAxis.tickCount : -1
-            });
-        }
+        this._addComponents(this.convertedData, options);
 
-        this._addComponents(convertedData, axesData, options);
+        if (!this.isSubChart && !this.isGroupedTooltip) {
+            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer);
+        }
     },
 
     /**
@@ -56,24 +46,17 @@ var lineTypeMixer = {
      * @private
      */
     _addComponents: function(convertedData, axesData) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
+        var seriesData = {
             data: {
                 values: tui.util.pivot(convertedData.values),
-                formattedValues: tui.util.pivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale,
-                xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
+                formattedValues: tui.util.pivot(convertedData.formattedValues)
             }
         };
         this.addAxisComponents({
             convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
+            axes: ['yAxis', 'xAxis'],
             Series: this.Series,
-            seriesData: seriesData,
-            aligned: axesData.xAxis && axesData.xAxis.aligned
+            seriesData: seriesData
         });
     },
 

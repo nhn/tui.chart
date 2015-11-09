@@ -22,13 +22,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(userData, theme, options) {
-        var baseData = this.makeBaseData(userData, theme, options, {
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options);
-
         /**
          * className
          * @type {string}
@@ -36,13 +29,13 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.className = 'tui-bar-chart';
 
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: axesData,
+            userData: userData,
             theme: theme,
-            options: options
+            options: options,
+            hasAxes: true
         });
 
-        this._addComponents(convertedData, axesData, options);
+        this._addComponents(this.convertedData, options);
     },
 
     /**
@@ -54,47 +47,45 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @private
      */
     _makeAxesData: function(convertedData, bounds, options) {
-        var axesData = {
-            yAxis: axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels,
-                isVertical: true
-            }),
-            xAxis: axisDataMaker.makeValueAxisData({
+        var xAxisData = axisDataMaker.makeValueAxisData({
                 values: convertedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
                 formatFunctions: convertedData.formatFunctions,
                 options: options.xAxis
-            })
+            }),
+            yAxisData = axisDataMaker.makeLabelAxisData({
+                labels: convertedData.labels,
+                isVertical: true
+            });
+        yAxisData.aligned = xAxisData.aligned;
+
+        return {
+            xAxis: xAxisData,
+            yAxis: yAxisData
         };
-        return axesData;
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertedData, axesData, options) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
+    _addComponents: function(convertedData, options) {
+        var seriesData = {
             allowNegativeTooltip: true,
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions,
-                scale: axesData.xAxis.scale
+                formatFunctions: convertedData.formatFunctions
             }
         };
+
         this.addAxisComponents({
             convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
+            axes: ['yAxis', 'xAxis'],
             chartType: options.chartType,
             Series: Series,
             seriesData: seriesData

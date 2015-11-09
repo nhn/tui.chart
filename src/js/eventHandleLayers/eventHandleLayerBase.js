@@ -23,10 +23,9 @@ var EventHandleLayerBase = tui.util.defineClass(/** @lends EventHandleLayerBase.
      *      @param {boolean} params.isVertical whether vertical or not
      */
     init: function(params) {
-        this.bound = params.bound;
+        //this.bound = params.bound;
         this.chartType = params.chartType;
         this.isVertical = params.isVertical;
-        this.coordinateData = this.makeCoordinateData(params.bound.dimension, params.tickCount, params.chartType);
     },
 
     /**
@@ -36,12 +35,19 @@ var EventHandleLayerBase = tui.util.defineClass(/** @lends EventHandleLayerBase.
 
     /**
      * Render.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
+     * @param {object} data rendering data
      * @return {HTMLElement} coordinate area
      */
-    render: function() {
+    render: function(bound, data) {
         var elCoordinateArea = dom.create('DIV', 'tui-chart-series-coordinate-area');
-        renderUtil.renderDimension(elCoordinateArea, this.bound.dimension);
-        renderUtil.renderPosition(elCoordinateArea, this.bound.position);
+
+        this.bound = bound;
+        this.coordinateData = this.makeCoordinateData(bound.dimension, data.tickCount, this.chartType);
+
+        renderUtil.renderDimension(elCoordinateArea, bound.dimension);
+        renderUtil.renderPosition(elCoordinateArea, bound.position);
+
         this.attachEvent(elCoordinateArea);
         return elCoordinateArea;
     },

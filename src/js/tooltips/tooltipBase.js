@@ -69,9 +69,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{position: object}} bound tooltip bound
      * @returns {HTMLElement} tooltip element
      */
-    render: function() {
-        var el = this._getTooltipLayoutElement(),
-            bound = this.bound;
+    render: function(bound) {
+        var el = this._getTooltipLayoutElement();
 
         renderUtil.renderPosition(el, bound.position);
 
@@ -279,6 +278,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         return this.hider;
     },
 
+    /**
+     * To hide animation.
+     * @param {HTMLElement} elTooltip tooltip element
+     */
     hideAnimation: function(elTooltip) {
         this.activeHider = this._getHider(elTooltip);
         this.activeHider.action({

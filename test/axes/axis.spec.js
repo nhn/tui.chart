@@ -22,11 +22,6 @@ describe('Axis', function() {
 
     beforeEach(function() {
         axis = new Axis({
-            data: {
-                labels: ['label1', 'label2', 'label3'],
-                tickCount: 4,
-                isLabelAxis: true
-            },
             theme: {
                 title: {
                     fontSize: 12
@@ -35,15 +30,6 @@ describe('Axis', function() {
                     fontSize: 12
                 },
                 tickColor: 'black'
-            },
-            bound: {
-                dimension: {
-                    width: 100,
-                    height: 200
-                },
-                position: {
-                    top: 20
-                }
             },
             options: {
                 title: 'Axis Title'
@@ -152,12 +138,12 @@ describe('Axis', function() {
         it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
             var elTickArea, childNodes;
 
-            axis.aligned = true;
             axis.data = {
                 tickCount: 5,
                 labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
                 isLabelAxis: true,
-                isVertical: false
+                isVertical: false,
+                aligned: true
             };
 
             elTickArea = axis._renderTickArea(300);
@@ -207,7 +193,13 @@ describe('Axis', function() {
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data.isVertical = true;
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4,
+                isLabelAxis: true,
+                isVertical: true
+            };
+
             elLabelArea = axis._renderLabelArea(300, 100);
             childNodes = elLabelArea.childNodes;
 
@@ -511,9 +503,20 @@ describe('Axis', function() {
 
     describe('render()', function() {
         it('레이블 타입 axis의 전체 영역을 렌더링 합니다.', function() {
-            var el;
-            axis.data.isVertical = false;
-            el = axis.render();
+            var el = axis.render({
+                dimension: {
+                    width: 100,
+                    height: 200
+                },
+                position: {
+                    top: 20
+                }
+            }, {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4,
+                isLabelAxis: true,
+                isVertical: false
+            });
 
             expect(el.style.width).toBe('100px');
             expect(el.style.height).toBe('200px');

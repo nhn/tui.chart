@@ -28,7 +28,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
-        this.percentValues = this._makePercentValues(params.data, params.options.stacked);
         /**
          * Graph renderer
          * @type {object}
@@ -40,8 +39,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {string}
          */
         this.className = 'tui-chart-series-area';
-
-        this.seriesData = this.makeSeriesData();
     },
 
     /**
@@ -95,36 +92,47 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @param {object} data data for rendering
      * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      */
-    render: function(paper) {
+    render: function(bound, data, paper) {
         var el = dom.create('DIV', this.className),
-            bound = this.bound,
-            dimension = this._expandDimension(bound.dimension),
             inCallback = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
             outCallback = tui.util.bind(this.hideTooltip, this),
-            data = {
-                dimension: dimension,
-                chartType: this.chartType,
-                theme: this.theme,
-                options: this.options
-            },
-            seriesData = this.seriesData,
-            addDataForSeriesLabel;
+            dimension, params, seriesData, addDataForSeriesLabel;
 
+        this.data = tui.util.extend(this.data, data);
+
+        this.bound = bound;
+
+        this.percentValues = this._makePercentValues(this.data, this.options.stacked);
+
+        dimension = this._expandDimension(bound.dimension);
+        params = tui.util.extend({
+            dimension: dimension,
+            chartType: this.chartType,
+            theme: this.theme,
+            options: this.options
+        });
+
+        seriesData = this.makeSeriesData(bound);
         if (!paper) {
             renderUtil.renderDimension(el, dimension);
         }
 
         this._renderPosition(el, bound.position, this.chartType);
 
-        data = tui.util.extend(data, seriesData);
+        params = tui.util.extend(params, seriesData);
 
-        this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+        this.paper = this.graphRenderer.render(paper, el, params, inCallback, outCallback);
 
         if (this._renderSeriesLabel) {
             addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(el, dimension);

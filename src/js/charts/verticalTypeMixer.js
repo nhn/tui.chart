@@ -19,16 +19,16 @@ var verticalTypeMixer = {
      * @param {object} convertedData converted data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertedData, bounds, options, initedData) {
-        var axesData = {};
-        if (initedData) {
-            axesData = initedData.axes;
-        } else {
-            axesData.yAxis = axisDataMaker.makeValueAxisData({
+    _makeAxesData: function(convertedData, bounds, options) {
+        var xAxisData = axisDataMaker.makeLabelAxisData({
+                labels: convertedData.labels,
+                aligned: state.isLineTypeChart(options.chartType),
+                options: options.xAxis
+            }),
+            yAxisData = axisDataMaker.makeValueAxisData({
                 values: convertedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
@@ -37,13 +37,12 @@ var verticalTypeMixer = {
                 options: options.yAxis,
                 isVertical: true
             });
-            axesData.xAxis = axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels,
-                aligned: state.isLineTypeChart(options.chartType),
-                options: options.xAxis
-            });
-        }
-        return axesData;
+        yAxisData.aligned = xAxisData.aligned;
+
+        return {
+            xAxis: xAxisData,
+            yAxis: yAxisData
+        };
     },
 
     /**

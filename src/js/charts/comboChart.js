@@ -8,9 +8,9 @@
 
 var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
+    axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     defaultTheme = require('../themes/defaultTheme'),
-    GroupTooltip = require('../tooltips/groupTooltip'),
     ColumnChart = require('./columnChart'),
     LineChart = require('./lineChart');
 
@@ -26,59 +26,47 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     init: function(userData, theme, options) {
         var seriesChartTypes = tui.util.keys(userData.series).sort(),
             optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, options.yAxis),
-            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes,
-            baseData = this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true,
-                seriesChartTypes: seriesChartTypes,
-                optionChartTypes: optionChartTypes
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            optionsMap = this._makeOptionsMap(chartTypes, options),
-            themeMap = this._makeThemeMap(seriesChartTypes, theme, convertedData.legendLabels),
-            yAxisParams = {
-                convertedData: convertedData,
-                seriesDimension: bounds.series.dimension,
-                chartTypes: chartTypes,
-                isOneYAxis: !optionChartTypes.length,
-                options: options
-            },
-            baseAxesData = {};
+            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes;
 
-        baseAxesData.yAxis = this._makeYAxisData(tui.util.extend({
-            index: 0
-        }, yAxisParams));
-
-        baseAxesData.xAxis = axisDataMaker.makeLabelAxisData({
-            labels: convertedData.labels
-        });
+        this.chartTypes = chartTypes;
+        this.seriesChartTypes = seriesChartTypes;
+        this.optionChartTypes = optionChartTypes;
 
         this.className = 'tui-combo-chart';
 
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: baseAxesData,
+            userData: userData,
             theme: theme,
             options: options,
+            seriesChartTypes: seriesChartTypes,
+            hasAxes: true,
             isVertical: true
         });
 
-        this.addComponent('tooltip', GroupTooltip, {
-            labels: convertedData.labels,
-            joinFormattedValues: convertedData.joinFormattedValues,
-            joinLegendLabels: convertedData.joinLegendLabels,
-            chartId: this.chartId
-        });
+        this._addComponents(this.convertedData, this.options);
 
-        this._installCharts({
+        this._initSubCharts({
             userData: userData,
-            baseData: baseData,
-            baseAxesData: baseAxesData,
-            axesData: this._makeAxesData(baseAxesData, yAxisParams, convertedData.formatFunctions),
-            seriesChartTypes: seriesChartTypes,
-            optionsMap: optionsMap,
-            themeMap: themeMap
+            seriesChartTypes: seriesChartTypes
+        });
+    },
+
+    /**
+     * Add components
+     * @param {object} convertedData converted data
+     * @param {object} options chart options
+     * @private
+     */
+    _addComponents: function(convertedData, options) {
+        var axes = ['yAxis', 'xAxis'];
+        if (this.optionChartTypes.length) {
+            axes.push('yrAxis');
+        }
+        this.addAxisComponents({
+            convertedData: convertedData,
+            axes: axes,
+            seriesChartTypes: this.seriesChartTypes,
+            chartType: options.chartType
         });
     },
 
@@ -157,17 +145,37 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make axes data.
-     * @param {{yAxis: object, xAxis: object}} baseAxesData base axes data
-     * @param {object} yAxisParams y axis params
+     * To make axes data
+     * @param {object} convertedData converted data
+     * @param {object} bounds chart bounds
+     * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(baseAxesData, yAxisParams, formatFunctions) {
-        var yAxisData = baseAxesData.yAxis,
-            chartTypes = yAxisParams.chartTypes,
-            axesData = {},
-            yrAxisData;
+    _makeAxesData: function(convertedData, bounds, options) {
+        var formatFunctions = convertedData.formatFunctions,
+            yAxisParams = {
+                convertedData: convertedData,
+                seriesDimension: bounds.series.dimension,
+                chartTypes: this.chartTypes,
+                isOneYAxis: !this.optionChartTypes.length,
+                options: options
+            },
+            xAxisData = axisDataMaker.makeLabelAxisData({
+                labels: convertedData.labels
+            }),
+            yAxisData = this._makeYAxisData(tui.util.extend({
+                index: 0
+            }, yAxisParams)),
+            axesData, yrAxisData;
+
+        yAxisData.aligned = xAxisData.aligned;
+
+        axesData = {
+            yAxis: yAxisData,
+            xAxis: xAxisData
+        };
+
         if (!yAxisParams.isOneYAxis) {
             yrAxisData = this._makeYAxisData(tui.util.extend({
                 index: 1,
@@ -180,28 +188,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             } else if (yAxisData.tickCount > yrAxisData.tickCount) {
                 this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData, formatFunctions);
             }
+
+            yrAxisData.aligned = xAxisData.aligned;
+            axesData.yrAxis = yrAxisData;
         }
 
-        axesData[chartTypes[0]] = baseAxesData;
-        axesData[chartTypes[1]] = {
-            yAxis: yrAxisData || yAxisData
-        };
-
         return axesData;
-    },
-
-    /**
-     * To make order info abound chart type.
-     * @param {array.<string>} chartTypes chart types
-     * @returns {object} chart order info
-     * @private
-     */
-    _makeChartTypeOrderInfo: function(chartTypes) {
-        var result = {};
-        tui.util.forEachArray(chartTypes, function(chartType, index) {
-            result[chartType] = index;
-        });
-        return result;
     },
 
     /**
@@ -213,15 +205,9 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _makeOptionsMap: function(chartTypes, options) {
-        var orderInfo = this._makeChartTypeOrderInfo(chartTypes),
-            result = {};
+        var result = {};
         tui.util.forEachArray(chartTypes, function(chartType) {
-            var chartOptions = JSON.parse(JSON.stringify(options)),
-                index = orderInfo[chartType];
-
-            if (chartOptions.yAxis && chartOptions.yAxis[index]) {
-                chartOptions.yAxis = chartOptions.yAxis[index];
-            }
+            var chartOptions = JSON.parse(JSON.stringify(options));
 
             if (chartOptions.series && chartOptions.series[chartType]) {
                 chartOptions.series = chartOptions.series[chartType];
@@ -251,12 +237,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         tui.util.forEachArray(chartTypes, function(chartType) {
             var chartTheme = JSON.parse(JSON.stringify(theme)),
                 removedColors;
-
-            if (chartTheme.yAxis[chartType]) {
-                chartTheme.yAxis = chartTheme.yAxis[chartType];
-            } else if (!chartTheme.yAxis.title) {
-                chartTheme.yAxis = JSON.parse(JSON.stringify(defaultTheme.yAxis));
-            }
 
             if (chartTheme.series[chartType]) {
                 chartTheme.series = chartTheme.series[chartType];
@@ -288,7 +268,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Install charts.
+     * Init sub charts.
      * @param {object} params parameters
      *      @param {object} params.userData user data
      *      @param {object} params.baseData chart base data
@@ -300,31 +280,21 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      *      @param {array.<string>} params.chartTypes chart types
      * @private
      */
-    _installCharts: function(params) {
+    _initSubCharts: function(params) {
         var chartClasses = {
                 column: ColumnChart,
                 line: LineChart
             },
-            baseData = params.baseData,
-            convertedData = baseData.convertedData,
-            plotData = {
-                vTickCount: params.baseAxesData.yAxis.validTickCount,
-                hTickCount: params.baseAxesData.xAxis.validTickCount
-            },
-            joinLegendLabels = convertedData.joinLegendLabels;
+            optionsMap = this._makeOptionsMap(this.chartTypes, this.options),
+            themeMap = this._makeThemeMap(this.seriesChartTypes, this.theme, this.convertedData.legendLabels),
+            convertedData = this.convertedData;
 
         this.charts = tui.util.map(params.seriesChartTypes, function(chartType) {
             var legendLabels = convertedData.legendLabels[chartType],
-                axes = params.axesData[chartType],
-                options = params.optionsMap[chartType],
-                theme = params.themeMap[chartType],
-                bounds = JSON.parse(JSON.stringify(baseData.bounds)),
+                options = optionsMap[chartType],
+                theme = themeMap[chartType],
                 Chart = chartClasses[chartType],
-                initedData, chart;
-
-            if (axes && axes.yAxis.isPositionRight) {
-                bounds.yAxis = bounds.yrAxis;
-            }
+                initedData;
 
             initedData = {
                 convertedData: {
@@ -333,19 +303,13 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                     formatFunctions: convertedData.formatFunctions,
                     formattedValues: convertedData.formattedValues[chartType],
                     legendLabels: legendLabels,
-                    joinLegendLabels: joinLegendLabels,
-                    plotData: plotData
+                    joinLegendLabels: convertedData.joinLegendLabels
                 },
-                bounds: bounds,
-                axes: axes,
                 chartId: this.chartId,
                 userEvent: this.userEvent
             };
 
-            chart = new Chart(params.userData, theme, options, initedData);
-            plotData = null;
-            joinLegendLabels = null;
-            return chart;
+            return new Chart(params.userData, theme, options, initedData);
         }, this);
     },
 
@@ -354,19 +318,32 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @returns {HTMLElement} combo chart element
      */
     render: function() {
-        var el = ChartBase.prototype.render.call(this);
-        var paper;
+        var el = ChartBase.prototype.render.call(this, null, null, {
+                seriesChartTypes: this.seriesChartTypes,
+                optionChartTypes: this.optionChartTypes
+            }),
+            that = this,
+            paper;
+
         tui.util.forEachArray(this.charts, function(chart, index) {
             setTimeout(function() {
-                chart.render(el, paper);
+                chart.render(el, paper, null, {
+                    bounds: {
+                        series: that.bounds.series,
+                        tooltip: that.bounds.tooltip
+                    },
+                    renderingData: that.renderingData
+                });
                 if (!paper) {
                     paper = chart.getPaper();
                 }
                 chart.animateChart();
             }, 1 * index);
-        });
+        }, this);
         return el;
     }
 });
+
+axisTypeMixer.mixin(ComboChart);
 
 module.exports = ComboChart;

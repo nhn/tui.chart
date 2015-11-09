@@ -24,14 +24,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @param {object} initedData initialized data from combo chart
      */
     init: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
-
         /**
          * className
          * @type {string}
@@ -39,41 +31,35 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         this.className = 'tui-column-chart';
 
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: axesData,
+            userData: userData,
             theme: theme,
             options: options,
+            hasAxes: true,
             isVertical: true,
             initedData: initedData
         });
 
-        this._addComponents(convertedData, axesData, options);
+        this._addComponents(this.convertedData, options);
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} axesData axes data
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertedData, axesData, options) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
+    _addComponents: function(convertedData, options) {
+        var seriesData = {
             allowNegativeTooltip: true,
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions,
-                scale: axesData.yAxis.scale
+                formatFunctions: convertedData.formatFunctions
             }
         };
         this.addAxisComponents({
             convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
+            axes: ['yAxis', 'xAxis'],
             chartType: options.chartType,
             Series: Series,
             seriesData: seriesData

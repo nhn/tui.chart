@@ -10,20 +10,13 @@ var Plot = require('../../src/js/plots/plot.js'),
     dom = require('../../src/js/helpers/domHandler.js');
 
 describe('test Plot', function() {
-    var bound = {
-            dimension: {width: 400, height: 200},
-            position: {top: 5, right: 5}
-        },
-        theme = {
-            lineColor: 'black'
-        },
-        plot;
+    var plot;
 
     beforeEach(function() {
         plot = new Plot({
-            vTickCount: 5,
-            theme: theme,
-            bound: bound
+            theme: {
+                lineColor: 'black'
+            }
         });
     });
 
@@ -31,8 +24,14 @@ describe('test Plot', function() {
         it('vTickCount=5 width=400인 경우에는 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 아래에서 부터 렌더링합니다.', function () {
             var el = dom.create('DIV'),
                 childNodes;
-
-            plot._renderLines(el, bound.dimension);
+            plot.bound = {
+                dimension: {width: 400, height: 200},
+                position: {top: 5, right: 5}
+            };
+            plot.data = {
+                vTickCount: 5
+            };
+            plot._renderLines(el, plot.bound.dimension);
             childNodes = el.childNodes;
 
             expect(childNodes.length).toBe(4);
@@ -72,14 +71,18 @@ describe('test Plot', function() {
     describe('_makeVerticalPixelPositions()', function() {
         it('vTickCount=5, size=200의 세로 라인들의 pixel타입 위치 정보(position.left)를 반환([50, 100, 149, 199])합니다.', function () {
             var positions;
-            plot.vTickCount = 5;
+            plot.data = {
+                vTickCount: 5
+            };
             positions = plot._makeVerticalPixelPositions(200);
             expect(positions).toEqual([50, 100, 149, 199]);
         });
 
         it('vTickCount=0일 경우에는 빈 배열을 반환합니다.', function () {
             var positions;
-            plot.vTickCount = 0;
+            plot.data = {
+                vTickCount: 0
+            };
             positions = plot._makeVerticalPixelPositions(200);
             expect(positions).toEqual([]);
         });
@@ -88,14 +91,18 @@ describe('test Plot', function() {
     describe('_makeHorizontalPixelPositions()', function() {
         it('hTickCount=5, size=200의 가로 라인들의 pixel타입 위치 정보(position.top)를 반환([50, 100, 149, 199])합니다.', function () {
             var positions;
-            plot.hTickCount = 5;
+            plot.data = {
+                hTickCount: 5
+            };
             positions = plot._makeHorizontalPixelPositions(200);
             expect(positions).toEqual([50, 100, 149, 199]);
         });
 
         it('hTickCount=0일 경우에는 빈 배열을 반환합니다.', function () {
             var positions;
-            plot.hTickCount = 0;
+            plot.data = {
+                hTickCount: 0
+            };
             positions = plot._makeHorizontalPixelPositions(200);
             expect(positions).toEqual([]);
         });
@@ -103,7 +110,12 @@ describe('test Plot', function() {
 
     describe('render()', function() {
         it('vTickCount=5 width=400, height=200인 plot 영역은 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 렌더링합니다.', function () {
-            var el = plot.render(),
+            var el = plot.render({
+                    dimension: {width: 400, height: 200},
+                    position: {top: 5, right: 5}
+                }, {
+                    vTickCount: 5
+                }),
                 childNodes;
 
             expect(el.style.width).toBe('400px');

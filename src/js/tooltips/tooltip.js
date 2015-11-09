@@ -61,8 +61,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {{position: object}} bound tooltip bound
      * @returns {HTMLElement} tooltip element
      */
-    render: function() {
-        var el = TooltipBase.prototype.render.call(this);
+    render: function(bound) {
+        var el = TooltipBase.prototype.render.call(this, bound);
         this.attachEvent(el);
         return el;
     },

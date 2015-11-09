@@ -26,7 +26,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             height = dimension.height,
             len = groupValues[0].length,
             step, start, result;
-        if (this.aligned) {
+        if (this.data.aligned) {
             step = width / (len - 1);
             start = 0;
         } else {

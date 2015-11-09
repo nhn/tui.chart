@@ -28,37 +28,44 @@ var axisTypeMixer = {
     addAxisComponents: function(params) {
         var convertedData = params.convertedData,
             options = this.options,
+            hasSeries = !!params.Series,
             aligned = !!params.aligned;
 
-        if (params.plotData) {
-            this.addComponent('plot', Plot, params.plotData);
-        }
+        this.addComponent('plot', Plot);
 
-        tui.util.forEach(params.axes, function(data, name) {
-            this.addComponent(name, Axis, {
-                data: data,
+        tui.util.forEach(params.axes, function(name, data) {
+            var AxisParams = {
                 aligned: aligned
-            });
+            };
+            if (name === 'yrAxis') {
+                AxisParams.key = 'yAxis';
+                AxisParams.index = 1;
+            }
+            this.addComponent(name, Axis, AxisParams);
         }, this);
 
         if (convertedData.joinLegendLabels) {
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,
+                seriesChartTypes: params.seriesChartTypes,
                 chartType: params.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this.addComponent('series', params.Series, tui.util.extend({
-            libType: options.libType,
-            chartType: options.chartType,
-            parentChartType: options.parentChartType,
-            aligned: aligned,
-            isSubChart: this.isSubChart,
-            isGroupedTooltip: this.isGroupedTooltip,
-            userEvent: this.userEvent
-        }, params.seriesData));
+        if (hasSeries) {
+            this.addComponent('series', params.Series, tui.util.extend({
+                libType: options.libType,
+                chartType: options.chartType,
+                parentChartType: options.parentChartType,
+                aligned: aligned,
+                isSubChart: this.isSubChart,
+                isGroupedTooltip: this.isGroupedTooltip,
+                userEvent: this.userEvent
+            }, params.seriesData));
+        }
+
 
         if (this.isGroupedTooltip) {
             this.addComponent('tooltip', GroupTooltip, {
@@ -67,7 +74,7 @@ var axisTypeMixer = {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 chartId: this.chartId
             });
-        } else {
+        } else if (hasSeries) {
             this.addComponent('tooltip', Tooltip, {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
@@ -77,22 +84,6 @@ var axisTypeMixer = {
                 isVertical: this.isVertical
             });
         }
-    },
-
-    /**
-     * To make plot data.
-     * @param {object} plotData initialized plot data
-     * @param {object} axesData axes data
-     * @returns {{vTickCount: number, hTickCount: number}} plot data
-     */
-    makePlotData: function(plotData, axesData) {
-        if (tui.util.isUndefined(plotData)) {
-            plotData = {
-                vTickCount: axesData.yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            };
-        }
-        return plotData;
     },
 
     /**
