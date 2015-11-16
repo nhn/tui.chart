@@ -1,5 +1,5 @@
 node_modules
 report
-lib
+/lib
 Output Location
 */tutorials
