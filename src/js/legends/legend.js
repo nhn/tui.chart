@@ -8,7 +8,7 @@
 
 var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
     defaultTheme = require('../themes/defaultTheme'),
     legendTemplate = require('./../legends/legendTemplate');
@@ -197,7 +197,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             return;
         }
 
-        index = parseInt(elLegend.getAttribute('data-index'), 0);
+        index = parseInt(elLegend.getAttribute('data-index'), 10);
         this._selectLegend(index);
     },
 
@@ -207,7 +207,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _attachEvent: function(el) {
-        event.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
     }
 });
 

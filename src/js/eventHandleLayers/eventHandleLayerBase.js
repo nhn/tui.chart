@@ -6,7 +6,7 @@
 
 'use strict';
 
-var event = require('../helpers/eventListener'),
+var eventListener = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
@@ -103,8 +103,8 @@ var EventHandleLayerBase = tui.util.defineClass(/** @lends EventHandleLayerBase.
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
-        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 

@@ -9,7 +9,7 @@
 var TooltipBase = require('./tooltipBase'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
     templateMaker = require('../helpers/templateMaker'),
     tooltipTemplate = require('./tooltipTemplate');
@@ -510,8 +510,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 

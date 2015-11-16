@@ -378,9 +378,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * On click event handler.
      * @param {MouseEvent} e mouse event
-     * @private
+     * @override
      */
-    _onClick: function(e) {
+    onClick: function(e) {
         var elTarget = e.target || e.srcElement,
             elLabel = this._findLabelElement(elTarget),
             index, legendData;

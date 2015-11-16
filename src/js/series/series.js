@@ -11,7 +11,7 @@ var seriesTemplate = require('./seriesTemplate'),
     state = require('../helpers/state'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
     pluginFactory = require('../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
@@ -346,37 +346,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return elLegend;
     },
 
-    /**
-     * On mouseover event handler for series area
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseover: function(e) {
-        var elTarget = e.target || e.srcElement,
-            elLabel = this._findLabelElement(elTarget),
-            groupIndex, index, bound;
-
-        if (!elLabel) {
-            return;
-        }
-
-        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
-        index = parseInt(elLabel.getAttribute('data-index'), 10);
-
-        if (groupIndex === -1 || index === -1) {
-            return;
-        }
-
-        bound = this._getBound(groupIndex, index) || this._makeLabelBound(e.clientX, e.clientY);
-
-        this.inCallback(bound, groupIndex, index);
-    },
-
-    onMousemove: function() {},
-    /**
-     * On mouseout event handler for series area
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseout: function(e) {
+    _onMouseEvent: function(e, callback) {
         var elTarget = e.target || e.srcElement,
             elLabel = this._findLabelElement(elTarget),
             groupIndex, index;
@@ -392,25 +362,46 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        this.outCallback(groupIndex, index);
+        callback(groupIndex, index);
+    },
+    /**
+     * On mouseover event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var that = this;
+        this._onMouseEvent(e, function(groupIndex, index) {
+            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY);
+            that.inCallback(bound, groupIndex, index);
+        });
+    },
+
+    /**
+     * On mouseout event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var that = this;
+        this._onMouseEvent(e, function(groupIndex, index) {
+            that.outCallback(groupIndex, index);
+        });
     },
 
     /**
      * On click event handler.
      * @param {MouseEvent} e mouse event
-     * @private
+     * @abstract
      */
-    _onClick: function() {},
+    onClick: function() {},
 
     /**
      * Attach event
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('click', el, tui.util.bind(this._onClick, this));
-        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
-        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     },
 
     /**
