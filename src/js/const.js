@@ -18,6 +18,12 @@ var chartConst = {
      * @type {string}
      */
     TOOLTIP_ID_PREFIX: 'tui-chart-tooltip',
+    /** tui class names
+     * @type {string}
+     */
+    CLASS_NAME_LEGEND: 'tui-chart-legend',
+    /** @type {string} */
+    CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
     /** chart types
      * @type {string}
      */

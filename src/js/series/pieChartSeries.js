@@ -374,6 +374,31 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     showSeriesLabelArea: function() {
         this.graphRenderer.animateLegendLines();
         Series.prototype.showSeriesLabelArea.call(this);
+    },
+
+    /**
+     * On click event handler.
+     * @param {MouseEvent} e mouse event
+     * @private
+     */
+    _onClick: function(e) {
+        var elTarget = e.target || e.srcElement,
+            elLabel = this._findLabelElement(elTarget),
+            index, legendData;
+
+        if (!elLabel) {
+            return;
+        }
+
+        if (this.options.legendType) {
+            index = parseInt(elLabel.getAttribute('data-index'), 10);
+            legendData = this.data.joinLegendLabels[index];
+            this.userEvent.fire('clickLegend', {
+                legend: legendData.label,
+                chartType: legendData.chartType,
+                index: index
+            });
+        }
     }
 });
 

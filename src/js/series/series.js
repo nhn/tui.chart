@@ -14,8 +14,6 @@ var seriesTemplate = require('./seriesTemplate'),
     event = require('../helpers/eventListener'),
     pluginFactory = require('../factories/pluginFactory');
 
-var SERIES_LABEL_CLASS_NAME = 'tui-chart-series-label';
-
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Series base component.
@@ -322,19 +320,36 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Find label element.
+     * @param {HTMLElement} elTarget target element
+     * @returns {HTMLElement} legend element
+     * @private
+     */
+    _findLabelElement: function(elTarget) {
+        var elLegend = null;
+
+        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LABEL)) {
+            elLegend = elTarget;
+        }
+
+        return elLegend;
+    },
+
+    /**
      * On mouseover event handler for series area
      * @param {MouseEvent} e mouse event
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
+            elLabel = this._findLabelElement(elTarget),
             groupIndex, index, bound;
 
-        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+        if (!elLabel) {
             return;
         }
 
-        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
-        index = parseInt(elTarget.getAttribute('data-index'), 10);
+        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
+        index = parseInt(elLabel.getAttribute('data-index'), 10);
 
         if (groupIndex === -1 || index === -1) {
             return;
@@ -352,14 +367,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     onMouseout: function(e) {
         var elTarget = e.target || e.srcElement,
+            elLabel = this._findLabelElement(elTarget),
             groupIndex, index;
 
-        if (elTarget.className !== SERIES_LABEL_CLASS_NAME) {
+        if (!elLabel) {
             return;
         }
 
-        groupIndex = parseInt(elTarget.getAttribute('data-group-index'), 10);
-        index = parseInt(elTarget.getAttribute('data-index'), 10);
+        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
+        index = parseInt(elLabel.getAttribute('data-index'), 10);
 
         if (groupIndex === -1 || index === -1) {
             return;
@@ -369,10 +385,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * On click event handler.
+     * @param {MouseEvent} e mouse event
+     * @private
+     */
+    _onClick: function() {},
+
+    /**
      * Attach event
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
+        event.bindEvent('click', el, tui.util.bind(this._onClick, this));
         event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
         event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
         event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));

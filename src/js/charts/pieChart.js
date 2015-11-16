@@ -56,7 +56,8 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,
-                chartType: options.chartType
+                chartType: options.chartType,
+                userEvent: this.userEvent
             });
         }
 
@@ -74,10 +75,12 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             libType: options.libType,
             chartType: options.chartType,
             chartBackground: chartBackground,
+            userEvent: this.userEvent,
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
                 legendLabels: convertedData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
                 chartWidth: bounds.chart.dimension.width
             }
         });

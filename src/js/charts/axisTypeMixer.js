@@ -45,7 +45,8 @@ var axisTypeMixer = {
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,
-                chartType: params.chartType
+                chartType: params.chartType,
+                userEvent: this.userEvent
             });
         }
 
@@ -55,7 +56,8 @@ var axisTypeMixer = {
             parentChartType: options.parentChartType,
             aligned: aligned,
             isSubChart: this.isSubChart,
-            isGroupedTooltip: this.isGroupedTooltip
+            isGroupedTooltip: this.isGroupedTooltip,
+            userEvent: this.userEvent
         }, params.seriesData));
 
         if (this.isGroupedTooltip) {

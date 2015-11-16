@@ -6,9 +6,10 @@
 
 'use strict';
 
-var Series = require('../../src/js/series/series.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var Series = require('../../src/js/series/series'),
+    chartConst = require('../../src/js/const'),
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Series', function() {
     var series;
@@ -199,6 +200,15 @@ describe('Series', function() {
                 expect(elSeries.style.top).toBe('50px');
                 expect(elSeries.style.left).toBe('40px');
             }
+        });
+    });
+
+    describe('_findLabelElement()', function() {
+        it('대상 엘리먼트가 시리즈 라벨(series label) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
+            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL),
+                actual = series._findLabelElement(elTarget),
+                expected = elTarget;
+            expect(actual).toBe(expected);
         });
     });
 });

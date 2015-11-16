@@ -338,7 +338,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 },
                 bounds: bounds,
                 axes: axes,
-                chartId: this.chartId
+                chartId: this.chartId,
+                userEvent: this.userEvent
             };
 
             chart = new Chart(params.userData, theme, options, initedData);
