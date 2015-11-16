@@ -23,7 +23,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      */
-    init: function(userData, theme, options, initedData) {
+    init: function(userData, theme, options) {
         /**
          * className
          * @type {string}
@@ -35,20 +35,19 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             theme: theme,
             options: options,
             hasAxes: true,
-            isVertical: true,
-            initedData: initedData
+            isVertical: true
         });
 
-        this._addComponents(this.convertedData, options);
+        this._addComponents(this.convertedData, options.chartType);
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} options chart options
+     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, options) {
+    _addComponents: function(convertedData, chartType) {
         var seriesData = {
             allowNegativeTooltip: true,
             data: {
@@ -57,12 +56,17 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                 formatFunctions: convertedData.formatFunctions
             }
         };
-        this.addAxisComponents({
+        this.addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
-            chartType: options.chartType,
-            Series: Series,
-            seriesData: seriesData
+            chartType: chartType,
+            serieses: [
+                {
+                    name: 'series',
+                    SeriesClass: Series,
+                    data: seriesData
+                }
+            ]
         });
     }
 });

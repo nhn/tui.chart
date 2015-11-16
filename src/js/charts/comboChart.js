@@ -10,9 +10,10 @@ var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
     axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
+    state = require('../helpers/state'),
     defaultTheme = require('../themes/defaultTheme'),
-    ColumnChart = require('./columnChart'),
-    LineChart = require('./lineChart');
+    ColumnChartSeries = require('../series/columnChartSeries'),
+    LineChartSeries = require('../series/lineChartSeries');
 
 var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
     /**
@@ -44,11 +45,94 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         });
 
         this._addComponents(this.convertedData, this.options);
+    },
 
-        this._initSubCharts({
-            userData: userData,
-            seriesChartTypes: seriesChartTypes
+    /**
+     * To make options map
+     * @param {object} chartTypes chart types
+     * @param {object} options chart options
+     * @param {object} orderInfo chart order
+     * @returns {object} options map
+     * @private
+     */
+    _makeOptionsMap: function(chartTypes, options) {
+        var optionsMap = {};
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            optionsMap[chartType] = options.series && options.series[chartType];
         });
+        return optionsMap;
+    },
+
+    /**
+     * To make theme map
+     * @param {object} chartTypes chart types
+     * @param {object} theme chart theme
+     * @param {object} legendLabels legend labels
+     * @returns {object} theme map
+     * @private
+     */
+    _makeThemeMap: function(chartTypes, theme, legendLabels) {
+        var themeMap = {},
+            colorCount = 0;
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            var chartTheme = JSON.parse(JSON.stringify(theme)),
+                removedColors;
+
+            if (chartTheme.series[chartType]) {
+                themeMap[chartType] = chartTheme.series[chartType];
+            } else if (!chartTheme.series.colors) {
+                themeMap[chartType] = JSON.parse(JSON.stringify(defaultTheme.series));
+                themeMap[chartType].label.fontFamily = chartTheme.chart.fontFamily;
+            } else {
+                removedColors = chartTheme.series.colors.splice(0, colorCount);
+                chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);
+                themeMap[chartType] = chartTheme.series;
+                colorCount += legendLabels[chartType].length;
+            }
+        });
+        return themeMap;
+    },
+
+    _makeSerieses: function(seriesChartTypes, convertedData) {
+        var seriesClasses = {
+                column: ColumnChartSeries,
+                line: LineChartSeries
+            },
+            optionsMap = this._makeOptionsMap(this.optionChartTypes, this.options),
+            themeMap = this._makeThemeMap(this.seriesChartTypes, this.theme, this.convertedData.legendLabels),
+            serieses;
+
+        serieses = tui.util.map(seriesChartTypes, function(chartType) {
+            var values = convertedData.values[chartType],
+                formattedValues = convertedData.formattedValues[chartType],
+                data;
+
+            if (state.isLineTypeChart(chartType)) {
+                values = tui.util.pivot(values);
+                formattedValues = tui.util.pivot(formattedValues);
+            }
+
+            data = {
+                allowNegativeTooltip: true,
+                componentType: 'series',
+                chartType: chartType,
+                options: optionsMap[chartType],
+                theme: themeMap[chartType],
+                data: {
+                    values: values,
+                    formattedValues: formattedValues,
+                    formatFunctions: convertedData.formatFunctions
+                }
+            };
+
+            return {
+                name: chartType + 'Series',
+                SeriesClass: seriesClasses[chartType],
+                data: data
+            };
+        });
+
+        return serieses;
     },
 
     /**
@@ -58,15 +142,19 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _addComponents: function(convertedData, options) {
-        var axes = ['yAxis', 'xAxis'];
+        var axes = ['yAxis', 'xAxis'],
+            serieses = this._makeSerieses(this.seriesChartTypes, convertedData);
+
         if (this.optionChartTypes.length) {
             axes.push('yrAxis');
         }
-        this.addAxisComponents({
+
+        this.addComponentsForAxisType({
             convertedData: convertedData,
             axes: axes,
             seriesChartTypes: this.seriesChartTypes,
-            chartType: options.chartType
+            chartType: options.chartType,
+            serieses: serieses
         });
     },
 
@@ -197,63 +285,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make options map
-     * @param {object} chartTypes chart types
-     * @param {object} options chart options
-     * @param {object} orderInfo chart order
-     * @returns {object} options map
-     * @private
-     */
-    _makeOptionsMap: function(chartTypes, options) {
-        var result = {};
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            var chartOptions = JSON.parse(JSON.stringify(options));
-
-            if (chartOptions.series && chartOptions.series[chartType]) {
-                chartOptions.series = chartOptions.series[chartType];
-            }
-
-            if (chartOptions.tooltip && chartOptions.tooltip[chartType]) {
-                chartOptions.tooltip = chartOptions.tooltip[chartType];
-            }
-            chartOptions.parentChartType = chartOptions.chartType;
-            chartOptions.chartType = chartType;
-            result[chartType] = chartOptions;
-        });
-        return result;
-    },
-
-    /**
-     * To make theme map
-     * @param {object} chartTypes chart types
-     * @param {object} theme chart theme
-     * @param {object} legendLabels legend labels
-     * @returns {object} theme map
-     * @private
-     */
-    _makeThemeMap: function(chartTypes, theme, legendLabels) {
-        var result = {},
-            colorCount = 0;
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            var chartTheme = JSON.parse(JSON.stringify(theme)),
-                removedColors;
-
-            if (chartTheme.series[chartType]) {
-                chartTheme.series = chartTheme.series[chartType];
-            } else if (!chartTheme.series.colors) {
-                chartTheme.series = JSON.parse(JSON.stringify(defaultTheme.series));
-                chartTheme.series.label.fontFamily = chartTheme.chart.fontFamily;
-            } else {
-                removedColors = chartTheme.series.colors.splice(0, colorCount);
-                chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);
-                colorCount += legendLabels[chartType].length;
-            }
-            result[chartType] = chartTheme;
-        });
-        return result;
-    },
-
-    /**
      * Increase y axis tick count.
      * @param {number} increaseTickCount increase tick count
      * @param {object} toData to tick info
@@ -267,80 +298,11 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         toData.validTickCount += increaseTickCount;
     },
 
-    /**
-     * Init sub charts.
-     * @param {object} params parameters
-     *      @param {object} params.userData user data
-     *      @param {object} params.baseData chart base data
-     *      @param {object} params.theme chart theme
-     *      @param {object} params.options chart options
-     *      @param {{yAxis: object, xAxis: object}} params.baseAxesData base axes data
-     *      @param {object} params.axesData axes data
-     *      @param {array.<string>} params.seriesChartTypes series chart types
-     *      @param {array.<string>} params.chartTypes chart types
-     * @private
-     */
-    _initSubCharts: function(params) {
-        var chartClasses = {
-                column: ColumnChart,
-                line: LineChart
-            },
-            optionsMap = this._makeOptionsMap(this.chartTypes, this.options),
-            themeMap = this._makeThemeMap(this.seriesChartTypes, this.theme, this.convertedData.legendLabels),
-            convertedData = this.convertedData;
-
-        this.charts = tui.util.map(params.seriesChartTypes, function(chartType) {
-            var legendLabels = convertedData.legendLabels[chartType],
-                options = optionsMap[chartType],
-                theme = themeMap[chartType],
-                Chart = chartClasses[chartType],
-                initedData;
-
-            initedData = {
-                convertedData: {
-                    values: convertedData.values[chartType],
-                    labels: convertedData.labels,
-                    formatFunctions: convertedData.formatFunctions,
-                    formattedValues: convertedData.formattedValues[chartType],
-                    legendLabels: legendLabels,
-                    joinLegendLabels: convertedData.joinLegendLabels
-                },
-                chartId: this.chartId,
-                userEvent: this.userEvent
-            };
-
-            return new Chart(params.userData, theme, options, initedData);
-        }, this);
-    },
-
-    /**
-     * Render combo chart.
-     * @returns {HTMLElement} combo chart element
-     */
     render: function() {
-        var el = ChartBase.prototype.render.call(this, null, null, {
-                seriesChartTypes: this.seriesChartTypes,
-                optionChartTypes: this.optionChartTypes
-            }),
-            that = this,
-            paper;
-
-        tui.util.forEachArray(this.charts, function(chart, index) {
-            setTimeout(function() {
-                chart.render(el, paper, null, {
-                    bounds: {
-                        series: that.bounds.series,
-                        tooltip: that.bounds.tooltip
-                    },
-                    renderingData: that.renderingData
-                });
-                if (!paper) {
-                    paper = chart.getPaper();
-                }
-                chart.animateChart();
-            }, 1 * index);
-        }, this);
-        return el;
+        return ChartBase.prototype.render.call(this, null, null, {
+            seriesChartTypes: this.seriesChartTypes,
+            optionChartTypes: this.optionChartTypes
+        });
     }
 });
 

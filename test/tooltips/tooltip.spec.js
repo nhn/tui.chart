@@ -22,6 +22,7 @@ describe('Tooltip', function() {
     describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
             var actual, expected;
+            tooltip.chartType = 'column';
             tooltip.labels = [
                 'Silver',
                 'Gold'
@@ -32,10 +33,12 @@ describe('Tooltip', function() {
             tooltip.legendLabels = ['Density1', 'Density2'];
 
             actual = tooltip.makeTooltipData();
-            expected = [[
-                {category: 'Silver', value: 10, legend: 'Density1'},
-                {category: 'Silver', value: 20, legend: 'Density2'}
-            ]];
+            expected = {
+                column: [[
+                    {category: 'Silver', value: 10, legend: 'Density1'},
+                    {category: 'Silver', value: 20, legend: 'Density2'}
+                ]]
+            };
             expect(actual).toEqual(expected);
         });
     });
@@ -89,14 +92,16 @@ describe('Tooltip', function() {
     describe('_getValueByIndexes()', function() {
         it('indexes 정보를 이용하여 value를 얻어냅니다.', function() {
             var actual, expected;
-            tooltip.values = [
-                [1, 2, 3],
-                [4, 5, 6]
-            ];
+            tooltip.values = {
+                'column': [
+                    [1, 2, 3],
+                    [4, 5, 6]
+                ]
+            };
             actual = tooltip._getValueByIndexes({
                 groupIndex: 0,
                 index: 2
-            });
+            }, 'column');
             expected = 3;
             expect(actual).toBe(expected);
         });
@@ -120,12 +125,14 @@ describe('Tooltip', function() {
     describe('_makeTooltipHtml()', function() {
         it('툴팁 html을 생성합니다.', function() {
             var actual, expected;
-            tooltip.data = [[
-                {category: 'Silver', value: 10, legend: 'Density1'},
-                {category: 'Silver', value: 20, legend: 'Density2'}
-            ]];
+            tooltip.data = {
+                'column': [[
+                    {category: 'Silver', value: 10, legend: 'Density1'},
+                    {category: 'Silver', value: 20, legend: 'Density2'}
+                ]]
+            };
             tooltip.suffix = 'suffix';
-            actual = tooltip._makeTooltipHtml({
+            actual = tooltip._makeTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
@@ -229,10 +236,12 @@ describe('Tooltip', function() {
     describe('_moveToSymmetry', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var result;
-            tooltip.values = [
-                [1, 2, -3],
-                [4, 5, 6]
-            ];
+            tooltip.values = {
+                'column': [
+                    [1, 2, -3],
+                    [4, 5, 6]
+                ]
+            };
             result = tooltip._moveToSymmetry(
                 {
                     left: 120
@@ -251,7 +260,8 @@ describe('Tooltip', function() {
                     dimension: {
                         width: 50
                     },
-                    addPadding: 0
+                    addPadding: 0,
+                    chartType: 'column'
                 }
             );
 

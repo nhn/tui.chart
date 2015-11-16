@@ -10,6 +10,7 @@ var TooltipBase = require('./tooltipBase'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     event = require('../helpers/eventListener'),
+    renderUtil = require('../helpers/renderUtil'),
     templateMaker = require('../helpers/templateMaker'),
     tooltipTemplate = require('./tooltipTemplate');
 
@@ -25,8 +26,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
+        var values;
         TooltipBase.call(this, params);
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
+        if (tui.util.isArray(this.values)) {
+            values = this.values;
+            this.values = {};
+            this.values[this.chartType] = values;
+        }
         this._setDefaultTooltipPositionOption();
     },
 
@@ -59,10 +66,16 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Render tooltip.
      * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound) {
+    render: function(bound, data) {
         var el = TooltipBase.prototype.render.call(this, bound);
+
+        if (data) {
+            this.seriesPosition = data.seriesPosition;
+        }
+
         this.attachEvent(el);
         return el;
     },
@@ -74,35 +87,51 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     makeTooltipData: function() {
         var labels = this.labels,
-            groupValues = this.formattedValues,
+            tooltipData = {},
+            legendLabels = {};
+
+        if (tui.util.isArray(this.formattedValues)) {
+            tooltipData[this.chartType] = this.formattedValues;
+            legendLabels[this.chartType] = this.legendLabels;
+        } else {
+            tooltipData = this.formattedValues;
             legendLabels = this.legendLabels;
-        return tui.util.map(groupValues, function(values, groupIndex) {
-            return tui.util.map(values, function(value, index) {
-                return {
-                    category: labels ? labels[groupIndex] : '',
-                    legend: legendLabels[index],
-                    value: value
-                };
+        }
+
+        tui.util.forEach(tooltipData, function(groupValues, chartType) {
+            tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
+                return tui.util.map(values, function(value, index) {
+                    return {
+                        category: labels ? labels[groupIndex] : '',
+                        legend: legendLabels[chartType][index],
+                        value: value
+                    };
+                });
             });
         });
+        return tooltipData;
     },
 
     /**
      * Fire custom event showAnimation.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @private
      */
-    _fireShowAnimation: function(indexes) {
-        this.fire('showAnimation', indexes);
+    _fireShowAnimation: function(indexes, chartType) {
+        var eventName = renderUtil.makeCustomEventName('show', chartType, 'animation');
+        this.fire(eventName, indexes);
     },
 
     /**
      * Fire custom event hideAnimation.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @private
      */
-    _fireHideAnimation: function(indexes) {
-        this.fire('hideAnimation', indexes);
+    _fireHideAnimation: function(indexes, chartType) {
+        var eventName = renderUtil.makeCustomEventName('hide', chartType, 'animation');
+        this.fire(eventName, indexes);
     },
 
     /**
@@ -163,7 +192,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            indexes;
+            indexes, chartType;
 
         if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
             elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
@@ -175,9 +204,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }
 
         indexes = this._getIndexesCustomAttribute(elTarget);
+        chartType = elTarget.getAttribute('data-chart-type');
 
         this._setShowedCustomAttribute(elTarget, true);
-        this._fireShowAnimation(indexes);
+        this._fireShowAnimation(indexes, chartType);
     },
 
     /**
@@ -325,6 +355,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
                 bound: params.bound,
                 indexes: params.indexes,
                 dimension: params.dimension,
+                chartType: params.chartType,
                 sizeType: sizeType,
                 positionType: positionType,
                 addPadding: addPadding
@@ -336,11 +367,12 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Get value by indexes.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @returns {(string | number)} value
      * @private
      */
-    _getValueByIndexes: function(indexes) {
-        return this.values[indexes.groupIndex][indexes.index];
+    _getValueByIndexes: function(indexes, chartType) {
+        return this.values[chartType][indexes.groupIndex][indexes.index];
     },
 
     /**
@@ -360,7 +392,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this._getValueByIndexes(params.indexes),
+            value = this._getValueByIndexes(params.indexes, params.chartType),
             center;
 
         if (value < 0) {
@@ -385,12 +417,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * To make tooltip html.
+     * @param {string} chartType chart type
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(indexes) {
-        var data = this.data[indexes.groupIndex][indexes.index];
+    _makeTooltipHtml: function(chartType, indexes) {
+        var data = this.data[chartType][indexes.groupIndex][indexes.index];
         data.suffix = this.suffix;
         return this.tplTooltip(data);
     },
@@ -414,16 +447,18 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     showTooltip: function(elTooltip, params, prevPosition) {
         var indexes = params.indexes,
-            curIndexes = this._getIndexesCustomAttribute(elTooltip),
-            position;
+            prevIndexes = this._getIndexesCustomAttribute(elTooltip),
+            prevChartType, position;
 
-        if (elTooltip.id === this._getTooltipId() && this._isChangedIndexes(curIndexes, indexes)) {
-            this._fireHideAnimation(curIndexes);
+        if (elTooltip.id === this._getTooltipId() && this._isChangedIndexes(prevIndexes, indexes)) {
+            prevChartType = elTooltip.getAttribute('data-chart-type');
+            this._fireHideAnimation(prevIndexes, prevChartType);
         }
 
         elTooltip.id = this._getTooltipId();
-        elTooltip.innerHTML = this._makeTooltipHtml(indexes);
+        elTooltip.innerHTML = this._makeTooltipHtml(params.chartType, indexes);
 
+        elTooltip.setAttribute('data-chart-type', params.chartType);
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);
 
@@ -439,7 +474,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }, params));
 
         this.moveToPosition(elTooltip, position, prevPosition);
-        this._fireShowAnimation(indexes);
+        this._fireShowAnimation(indexes, params.chartType);
     },
 
     /**
@@ -449,9 +484,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     hideTooltip: function(elTooltip) {
         var that = this,
-            indexes = this._getIndexesCustomAttribute(elTooltip);
+            indexes = this._getIndexesCustomAttribute(elTooltip),
+            chartType = elTooltip.getAttribute('data-chart-type');
+
         this._setShowedCustomAttribute(elTooltip, false);
-        this._fireHideAnimation(indexes);
+        this._fireHideAnimation(indexes, chartType);
 
         if (this._isChangedIndexes(this.prevIndexes, indexes)) {
             delete this.prevIndexes;

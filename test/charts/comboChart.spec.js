@@ -242,7 +242,7 @@ describe('ComboChart', function() {
 
     describe('_makeOptionsMap()', function() {
         it('옵션이 있을 경우에는 각 chartType에 맞는 옵션을 추출하여 chartType을 key로 하는 y축 옵션 정보 맵을 생성합니다.', function () {
-            var result = comboChart._makeOptionsMap(['column', 'line'], {
+            var actual = comboChart._makeOptionsMap(['column', 'line'], {
                 series: {
                     column: {
                         stacked: 'normal'
@@ -262,39 +262,11 @@ describe('ComboChart', function() {
                 chartType: 'combo'
             });
 
-            expect(result.column).toEqual({
-                chartType: 'column',
-                parentChartType: 'combo',
-                series: {
-                    stacked: 'normal'
-                },
-                tooltip: {
-                    suffix: '%'
-                }
+            expect(actual.column).toEqual({
+                stacked: 'normal'
             });
-            expect(result.line).toEqual({
-                chartType: 'line',
-                parentChartType: 'combo',
-                series: {
-                    hasDot: true
-                },
-                tooltip: {
-                    position: 'left top'
-                }
-            });
-        });
-
-        it('옵션이 없을 경우에는 chartType 정보만을 담은 y축 옵션 정보 맵을 생성합니다.', function() {
-            var result = comboChart._makeOptionsMap(['column', 'line'], {chartType: 'combo'});
-            expect(result).toEqual({
-                column: {
-                    chartType: 'column',
-                    parentChartType: 'combo'
-                },
-                line: {
-                    chartType: 'line',
-                    parentChartType: 'combo'
-                }
+            expect(actual.line).toEqual({
+                hasDot: true
             });
         });
     });
@@ -316,11 +288,6 @@ describe('ComboChart', function() {
 
         it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
-                yAxis: {
-                    title: {
-                        fontSize: 12
-                    }
-                },
                 series: {
                     colors: ['green', 'blue', 'gray', 'red', 'orange']
                 }
@@ -329,17 +296,12 @@ describe('ComboChart', function() {
                 line: ['Legend1', 'Legend2', 'Legend3']
             });
 
-            expect(result.column.series.colors).toEqual(['green', 'blue', 'gray', 'red', 'orange']);
-            expect(result.line.series.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
+            expect(result.column.colors).toEqual(['green', 'blue', 'gray', 'red', 'orange']);
+            expect(result.line.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
         });
 
         it('series의 colors는 차트별로 설정하게 되면 그대로 할당되게 됩니다.', function () {
             var result = comboChart._makeThemeMap(['column', 'line'], {
-                yAxis: {
-                    title: {
-                        fontSize: 12
-                    }
-                },
                 series: {
                     column: {
                         colors: ['green', 'blue']
@@ -353,8 +315,8 @@ describe('ComboChart', function() {
                 line: ['Legend1', 'Legend2', 'Legend3']
             });
 
-            expect(result.column.series.colors).toEqual(['green', 'blue']);
-            expect(result.line.series.colors).toEqual(['blue', 'gray', 'red']);
+            expect(result.column.colors).toEqual(['green', 'blue']);
+            expect(result.line.colors).toEqual(['blue', 'gray', 'red']);
         });
     });
 

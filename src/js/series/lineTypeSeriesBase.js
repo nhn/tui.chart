@@ -25,19 +25,20 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             width = dimension.width,
             height = dimension.height,
             len = groupValues[0].length,
-            step, start, result;
+            start = chartConst.SERIES_EXPAND_SIZE,
+            step, result;
+
         if (this.data.aligned) {
             step = width / (len - 1);
-            start = 0;
         } else {
             step = width / len;
-            start = step / 2;
+            start += (step / 2);
         }
 
         result = tui.util.map(groupValues, function(values) {
             return tui.util.map(values, function(value, index) {
                 return {
-                    left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
+                    left: start + (step * index),
                     top: height - (value * height)
                 };
             });

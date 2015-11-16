@@ -72,7 +72,7 @@ var GroupedEventHandleLayer = tui.util.defineClass(EventHandleLayerBase, /** @le
     _makeRange: function(scale, chartType) {
         var range, center;
         if (state.isLineTypeChart(chartType)) {
-            center = scale.max - (scale.max - scale.min) / 2;
+            center = parseInt(scale.max - (scale.max - scale.min) / 2, 10);
             range = {
                 start: center,
                 end: center
@@ -130,7 +130,7 @@ var GroupedEventHandleLayer = tui.util.defineClass(EventHandleLayerBase, /** @le
             index = this.findIndex(layerPositionValue),
             prevIndex = this.prevIndex,
             sizeType = this.isVertical ? 'height' : 'width',
-            direction;
+            isLastIndex, direction;
 
         if (index === -1 || prevIndex === index) {
             return;
@@ -142,6 +142,7 @@ var GroupedEventHandleLayer = tui.util.defineClass(EventHandleLayerBase, /** @le
 
         this.fire('showGroupTooltip', {
             index: index,
+            isLastIndex: this.coordinateData.length - 1 === index,
             range: this._makeRange(this.coordinateData[index], this.chartType),
             size: this.bound.dimension[sizeType],
             direction: direction,

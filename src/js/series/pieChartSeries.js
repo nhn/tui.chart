@@ -328,7 +328,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
             centerLeft = params.chartWidth / 2,
             elArea;
-
         this._addEndPosition(centerLeft, outerPositions);
         elArea = this._renderLegendLabel(tui.util.extend({
             positions: outerPositions,

@@ -35,7 +35,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             hasAxes: true
         });
 
-        this._addComponents(this.convertedData, options);
+        this._addComponents(this.convertedData, options.chartType);
     },
 
     /**
@@ -70,10 +70,10 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} options chart options
+     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, options) {
+    _addComponents: function(convertedData, chartType) {
         var seriesData = {
             allowNegativeTooltip: true,
             data: {
@@ -83,12 +83,17 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             }
         };
 
-        this.addAxisComponents({
+        this.addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
-            chartType: options.chartType,
-            Series: Series,
-            seriesData: seriesData
+            chartType: chartType,
+            serieses: [
+                {
+                    name: 'series',
+                    SeriesClass: Series,
+                    data: seriesData
+                }
+            ]
         });
     }
 });

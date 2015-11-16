@@ -272,6 +272,10 @@ var renderUtil = {
         return elTitle;
     },
 
+    makeCustomEventName: function(prefix, str, suffix) {
+        return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
+    },
+
     /**
      * Whether IE8 or not.
      * @memberOf module:renderUtil

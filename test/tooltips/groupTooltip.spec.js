@@ -247,12 +247,12 @@ describe('GroupTooltip', function() {
             expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
-        it('this.elTooltipBlock이 존재하면 그대로 반환합니다.', function() {
-            var elTooltipBlock = dom.create('DIV'),
+        it('this.elTooltipSector이 존재하면 그대로 반환합니다.', function() {
+            var elTooltipSector = dom.create('DIV'),
                 actual, expected;
-            tooltip.elTooltipBlock = elTooltipBlock;
+            tooltip.elTooltipSector = elTooltipSector;
             actual = tooltip._getTooltipSectorElement();
-            expected = elTooltipBlock;
+            expected = elTooltipSector;
             expect(actual).toBe(expected);
         });
     });
@@ -283,7 +283,7 @@ describe('GroupTooltip', function() {
                 }, false),
                 expected = {
                     dimension: {
-                        width: 51,
+                        width: 50,
                         height: 200
                     },
                     position: {
@@ -307,7 +307,7 @@ describe('GroupTooltip', function() {
                         height: 51
                     },
                     position: {
-                        left: 10,
+                        left: 9,
                         top: 0
                     }
                 };

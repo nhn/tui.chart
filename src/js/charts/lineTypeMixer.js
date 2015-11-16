@@ -21,19 +21,18 @@ var lineTypeMixer = {
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      */
-    lineTypeInit: function(userData, theme, options, initedData) {
+    lineTypeInit: function(userData, theme, options) {
         ChartBase.call(this, {
             userData: userData,
             theme: theme,
             options: options,
             hasAxes: true,
-            isVertical: true,
-            initedData: initedData
+            isVertical: true
         });
 
-        this._addComponents(this.convertedData, options);
+        this._addComponents(this.convertedData, options.chartType);
 
-        if (!this.isSubChart && !this.isGroupedTooltip) {
+        if (!this.isGroupedTooltip) {
             this.addComponent('eventHandleLayer', LineTypeEventHandleLayer);
         }
     },
@@ -41,22 +40,28 @@ var lineTypeMixer = {
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} axesData axes data
-     * @param {object} options chart options
+     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, axesData) {
+    _addComponents: function(convertedData, chartType) {
         var seriesData = {
             data: {
                 values: tui.util.pivot(convertedData.values),
-                formattedValues: tui.util.pivot(convertedData.formattedValues)
+                formattedValues: tui.util.pivot(convertedData.formattedValues),
+                formatFunctions: convertedData.formatFunctions
             }
         };
-        this.addAxisComponents({
+        this.addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
-            Series: this.Series,
-            seriesData: seriesData
+            chartType: chartType,
+            serieses: [
+                {
+                    name: 'series',
+                    SeriesClass: this.Series,
+                    data: seriesData
+                }
+            ]
         });
     },
 
@@ -65,7 +70,7 @@ var lineTypeMixer = {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        if (!this.isSubChart && !this.isGroupedTooltip) {
+        if (!this.isGroupedTooltip) {
             this._attachLineTypeCoordinateEvent();
         }
         return ChartBase.prototype.render.apply(this, arguments);

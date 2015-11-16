@@ -63,19 +63,6 @@ describe('ChartBase', function() {
             });
             expect(actual.values).toEqual([1, 2, 3]);
         });
-
-        it('초기화된 convertedData가 존재할 경우 해당 데이터를 바로 반환합니다.', function() {
-            var actual;
-            spyOn(dataConverter, 'convert').and.returnValue({});
-            actual = chartBase._makeConvertedData({
-                initedData: {
-                    convertedData: {
-                        'values': [4, 5, 6]
-                    }
-                }
-            });
-            expect(actual.values).toEqual([4, 5, 6]);
-        });
     });
 
     describe('_makeChartId', function() {
@@ -83,27 +70,12 @@ describe('ChartBase', function() {
             var actual = chartBase._makeChartId();
             expect(actual.indexOf(chartConst.CHAR_ID_PREFIX)).toBeGreaterThan(-1);
         });
-
-        it('초기화된 아이디가 존재할 경우 해당 아디디를 바로 반환합니다.', function() {
-            var actual = chartBase._makeChartId({
-                chartId: 'chart_id'
-            });
-            expect(actual).toBe('chart_id');
-        });
     });
 
     describe('_initUserEventListener()', function() {
         it('사용자 이벤트를 등록할 수 있는 userEventListener 객체를 생성합니다.', function() {
             var actual = chartBase._initUserEventListener();
             expect(actual.constructor).toBe(UserEventListener);
-        });
-
-        it('부모 차트에서 userEvent객체를 전달 받았다면 전달받은 객체를 반환합니다.', function() {
-            var userEvent = new UserEventListener(),
-                actual = chartBase._initUserEventListener({
-                    userEvent: userEvent
-                });
-            expect(actual).toBe(userEvent);
         });
     });
 

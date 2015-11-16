@@ -28,6 +28,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
+
         /**
          * Graph renderer
          * @type {object}
@@ -181,9 +182,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderPosition: function(el, position) {
         var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
-        position.top = position.top - (hiddenWidth * 2);
-        position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
-        renderUtil.renderPosition(el, position);
+        renderUtil.renderPosition(el, {
+            top: position.top - (hiddenWidth * 2),
+            left: position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth
+        });
     },
 
     /**
@@ -284,6 +286,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 return (value - subValue) * flag / distance;
             });
         });
+
         return percentValues;
     },
 
