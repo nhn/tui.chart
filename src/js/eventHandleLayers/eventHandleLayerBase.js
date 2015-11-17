@@ -34,22 +34,41 @@ var EventHandleLayerBase = tui.util.defineClass(/** @lends EventHandleLayerBase.
     makeCoordinateData: function() {},
 
     /**
-     * Render.
+     * To render event handle layer area
+     * @param {HTMLElement} elCoordinateArea coordinate area element
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
+     * @param {object} data rendering data
+     * @private
+     */
+    _renderCoordinateArea: function(elCoordinateArea, bound, data) {
+        this.bound = bound;
+        this.coordinateData = this.makeCoordinateData(bound.dimension, data.tickCount, this.chartType);
+        renderUtil.renderDimension(elCoordinateArea, bound.dimension);
+        renderUtil.renderPosition(elCoordinateArea, bound.position);
+    },
+
+    /**
+     * To render event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
      * @return {HTMLElement} coordinate area
      */
     render: function(bound, data) {
-        var elCoordinateArea = dom.create('DIV', 'tui-chart-series-coordinate-area');
+        var el = dom.create('DIV', 'tui-chart-series-coordinate-area');
 
-        this.bound = bound;
-        this.coordinateData = this.makeCoordinateData(bound.dimension, data.tickCount, this.chartType);
+        this._renderCoordinateArea(el, bound, data);
+        this.attachEvent(el);
+        this.elCoordinateArea = el;
+        return el;
+    },
 
-        renderUtil.renderDimension(elCoordinateArea, bound.dimension);
-        renderUtil.renderPosition(elCoordinateArea, bound.position);
-
-        this.attachEvent(elCoordinateArea);
-        return elCoordinateArea;
+    /**
+     * To resize event handle layer component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
+     * @param {{tickCount: number}} data data
+     */
+    resize: function(bound, data) {
+        this._renderCoordinateArea(this.elCoordinateArea, bound, data);
     },
 
     /**

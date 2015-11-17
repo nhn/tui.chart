@@ -18,27 +18,6 @@ describe('TooltipBase', function() {
         });
     });
 
-    describe('_createTooltipElement()', function() {
-        it('툴팁 엘리먼트를 생성합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual;
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('tui-chart-tooltip');
-        });
-
-        it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 엘리먼트로 반환합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual, expected;
-            elLayout.innerHTML = '<div class="tui-chart-tooltip"></div>';
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipElement();
-            expected = elLayout.firstChild;
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_getTooltipElement', function() {
         it('툴팁 엘리먼트를 얻습니다.', function() {
             var elLayout = dom.create('DIV'),

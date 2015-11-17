@@ -53,7 +53,9 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         this._renderBarBorders(baseParams);
 
+        this.groupBounds = groupBounds;
         this.chartType = data.chartType;
+        this.paper = paper;
 
         return paper;
     },
@@ -93,8 +95,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {function} outCallback out callback
      * @private
      */
-    _bindHoverEvent: function(rect, bound, groupIndex, index, inCallback, outCallback) {
+    _bindHoverEvent: function(rect, groupIndex, index, inCallback, outCallback) {
+        var that = this;
         rect.hover(function() {
+            var bound = that.groupBounds[groupIndex][index].end;
             inCallback(bound, groupIndex, index);
         }, function() {
             outCallback();
@@ -136,13 +140,15 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 });
 
                 if (rect) {
-                    this._bindHoverEvent(rect, bound.end, groupIndex, index, params.inCallback, params.outCallback);
+                    this._bindHoverEvent(rect, groupIndex, index, params.inCallback, params.outCallback);
                 }
 
                 bars.push({
                     rect: rect,
                     bound: bound.end,
-                    value: value
+                    value: value,
+                    groupIndex: groupIndex,
+                    index: index
                 });
             }, this);
         }, this);
@@ -333,6 +339,60 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         if (callback) {
             setTimeout(callback, ANIMATION_TIME);
         }
+    },
+
+    /**
+     * To update rect attribute
+     * @param {object} rect raphael object
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     * @private
+     */
+    _updateRectAttr: function(rect, bound) {
+        rect.attr({
+            x: bound.left,
+            y: bound.top,
+            width: bound.width,
+            height: bound.height
+        });
+    },
+
+    /**
+     * To update borders attribute
+     * @param {array.<object>} lines raphael objects
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     * @param {string} chartType chart type
+     * @param {number} value value
+     * @private
+     */
+    _updateBordersAttr: function(lines, bound, chartType, value) {
+        var paths = this._makeBorderLinesPaths(bound, chartType, value);
+        tui.util.forEach(lines, function(line, name) {
+            line.attr({path: paths[name]});
+        });
+    },
+
+    /**
+     * To resize graph of bar type chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {array.<array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            groupBounds = params.groupBounds;
+
+        this.groupBounds = groupBounds;
+        this.paper.setSize(dimension.width, dimension.height);
+
+        tui.util.forEach(this.bars, function(bar, index) {
+            var lines = this.borders[index],
+                bound = groupBounds[bar.groupIndex][bar.index].end;
+            bar.bound = bound;
+            this._updateRectAttr(bar.rect, bound);
+            if (lines) {
+                this._updateBordersAttr(lines, bound, this.chartType, bar.value);
+            }
+        }, this);
     }
 });
 

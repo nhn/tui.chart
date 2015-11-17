@@ -216,27 +216,6 @@ describe('GroupTooltip', function() {
         });
     });
 
-    describe('_createTooltipSectorElement()', function() {
-        it('툴팁 섹터 엘리먼트를 생성합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual;
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipSectorElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('tui-chart-group-tooltip-sector');
-        });
-
-        it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 섹터 엘리먼트로 반환합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual, expected;
-            elLayout.innerHTML = '<div></div><div class="tui-chart-group-tooltip-sector"></div>';
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipSectorElement();
-            expected = elLayout.lastChild;
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_getTooltipSectorElement', function() {
         it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
             var elLayout = dom.create('DIV'),
