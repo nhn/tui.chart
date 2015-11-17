@@ -51,26 +51,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     makeTooltipData: function() {},
 
     /**
-     * Get tooltip layout element.
-     * @returns {HTMLElement} layout element
-     * @private
-     */
-    _getTooltipLayoutElement: function() {
-        var elLayout = document.getElementById(this.chartId);
-        if (!elLayout) {
-            elLayout = dom.create('DIV', this.className);
-            elLayout.id = this.chartId;
-        }
-        return elLayout;
-    },
-
-    /**
      * Render tooltip.
      * @param {{position: object}} bound tooltip bound
      * @returns {HTMLElement} tooltip element
      */
     render: function(bound) {
-        var el = this._getTooltipLayoutElement();
+        var el = dom.create('DIV', this.className);
 
         renderUtil.renderPosition(el, bound.position);
 

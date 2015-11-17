@@ -11,7 +11,6 @@ var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
-    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer'),
     UserEventListener = require('../helpers/UserEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -27,7 +26,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     init: function(params) {
         this.convertedData = this._makeConvertedData(params);
-        this.chartId = this._makeChartId();
         this.components = [];
         this.componentMap = {};
         this.renderingData = {};
@@ -38,7 +36,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.hasAxes = params.hasAxes;
 
         this.isVertical = !!params.isVertical;
-        this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
+        this.hasGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
         this.userEvent = this._initUserEventListener();
 
         this._addGroupedEventHandleLayer();
@@ -84,17 +82,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} chartType chart type
      * @param {boolean} isVertical whether vertical or not
      * @private
+     * @abstract
      */
-    _addGroupedEventHandleLayer: function() {
-        if (!this.hasAxes || !this.isGroupedTooltip) {
-            return;
-        }
-
-        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
-            chartType: this.options.chartType,
-            isVertical: this.isVertical
-        });
-    },
+    _addGroupedEventHandleLayer: function() {},
 
     /**
      * To make baes data.
@@ -154,14 +144,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Attach custom evnet.
      * @private
+     * @abstract
      */
-    _attachCustomEvent: function() {
-        if (this.hasAxes && this.isGroupedTooltip) {
-            this._attachCoordinateEvent();
-        } else if (!this.hasAxes || !this.isGroupedTooltip) {
-            this._attachTooltipEvent();
-        }
-    },
+    _attachCustomEvent: function() {},
 
     /**
      * To make bounds.
@@ -189,88 +174,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return bounds;
     },
 
-    _makeRenderingSeriesData: function(axesData, isVertical) {
-        var aligned = !!axesData.xAxis.aligned,
-            chartTypes, seriesData, firstData;
-
-        if (!isVertical) {
-            return {
-                series: {
-                    scale: axesData.xAxis.scale,
-                    aligned: aligned
-                }
-            };
-        }
-
-        firstData = {
-            scale: axesData.yAxis.scale,
-            aligned: aligned
-        };
-
-        chartTypes = this.optionChartTypes;
-
-        if (!chartTypes) {
-            return {
-                series: firstData
-            };
-        }
-
-        seriesData = {};
-        seriesData[chartTypes[0] + 'Series'] = firstData;
-        seriesData[chartTypes[1] + 'Series'] = axesData.yrAxis ? {
-            scale: axesData.yrAxis.scale,
-            aligned: aligned
-        } : firstData;
-
-        return seriesData;
-    },
-
-    _makeRenderingDataForAxisType: function(convertedData, bounds, options) {
-        var axesData = this._makeAxesData(convertedData, bounds, options),
-            renderingData, seriesData, tickCount;
-
-        if (this.isVertical) {
-            tickCount = axesData.xAxis ? axesData.xAxis.tickCount : -1;
-        } else {
-            tickCount = axesData.yAxis ? axesData.yAxis.tickCount : -1;
-        }
-
-        seriesData = this._makeRenderingSeriesData(axesData, this.isVertical);
-
-        renderingData = tui.util.extend({
-            plot: this.makePlotData(convertedData.plotData, axesData),
-            eventHandleLayer: {
-                tickCount: tickCount
-            }
-        }, seriesData, axesData);
-
-        return renderingData;
-    },
-
     /**
-     * Set rendering data.
+     * Set rendering data for axis type chart.
      * @param {object} bounds chart bounds
      * @param {object} convertedData convertedData
      * @param {object} options options
      * @private
+     * @abstract
      */
-    _setRenderingData: function(bounds, convertedData, options) {
-        var renderingData;
-        if (this.hasAxes) {
-            renderingData = this._makeRenderingDataForAxisType(convertedData, bounds, options);
-        } else {
-            renderingData = {
-                tooltip: {
-                    seriesPosition: bounds.series.position
-                },
-                series: {
-                    chartWidth: bounds.chart.dimension.width
-                }
-            };
-        }
-
-        this.renderingData = renderingData;
-    },
+    _setRenderingData: function() {},
 
     /**
      * Render chart.
@@ -284,7 +196,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var bounds = this._makeBounds(boundsParams, parentData);
 
         this.bounds = bounds;
-        this._setRenderingData(bounds, this.convertedData, this.options, parentData);
+        this._setRenderingData(bounds, this.convertedData, this.options);
 
         if (!el) {
             el = dom.create('DIV', this.className);
@@ -296,28 +208,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
         }
 
-        this.elChart = el;
         this._renderComponents(el, this.components);
         this._attachCustomEvent();
 
         return el;
-    },
-
-
-    /**
-     * To make plot data.
-     * @param {object} plotData initialized plot data
-     * @param {object} axesData axes data
-     * @returns {{vTickCount: number, hTickCount: number}} plot data
-     */
-    makePlotData: function(plotData, axesData) {
-        if (tui.util.isUndefined(plotData)) {
-            plotData = {
-                vTickCount: axesData.yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            };
-        }
-        return plotData;
     },
 
     /**

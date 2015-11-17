@@ -61,8 +61,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             formattedValues: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
-            chartType: options.chartType,
-            chartId: this.chartId
+            chartType: options.chartType
         });
 
         this.addComponent('series', Series, {
@@ -78,6 +77,32 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 joinLegendLabels: convertedData.joinLegendLabels
             }
         });
+    },
+
+    /**
+     * Set rendering data for pie chart.
+     * @param {object} bounds chart bounds
+     * @private
+     * @override
+     */
+    _setRenderingData: function(bounds) {
+        this.renderingData = {
+            tooltip: {
+                seriesPosition: bounds.series.position
+            },
+            series: {
+                chartWidth: bounds.chart.dimension.width
+            }
+        };
+    },
+
+    /**
+     * Attach custom evnet.
+     * @private
+     * @override
+     */
+    _attachCustomEvent: function() {
+        this._attachTooltipEvent();
     }
 });
 

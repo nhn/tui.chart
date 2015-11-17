@@ -9,6 +9,7 @@
 var Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
+    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer'),
     Tooltip = require('../tooltips/tooltip'),
     GroupTooltip = require('../tooltips/groupTooltip');
 
@@ -49,7 +50,7 @@ var axisTypeMixer = {
             chartType: options.chartType,
             parentChartType: options.parentChartType,
             aligned: aligned,
-            isGroupedTooltip: this.isGroupedTooltip,
+            hasGroupedTooltip: this.hasGroupedTooltip,
             userEvent: this.userEvent,
             componentType: 'series'
         };
@@ -67,12 +68,11 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function(convertedData, options) {
-        if (this.isGroupedTooltip) {
+        if (this.hasGroupedTooltip) {
             this.addComponent('tooltip', GroupTooltip, {
                 labels: convertedData.labels,
                 joinFormattedValues: convertedData.joinFormattedValues,
-                joinLegendLabels: convertedData.joinLegendLabels,
-                chartId: this.chartId
+                joinLegendLabels: convertedData.joinLegendLabels
             });
         } else {
             this.addComponent('tooltip', Tooltip, {
@@ -81,7 +81,6 @@ var axisTypeMixer = {
                 labels: convertedData.labels,
                 legendLabels: convertedData.legendLabels,
                 chartType: options.chartType,
-                chartId: this.chartId,
                 isVertical: this.isVertical
             });
         }
@@ -111,6 +110,125 @@ var axisTypeMixer = {
         });
         this._addSeriesComponents(params.serieses, options, aligned);
         this._addTooltipComponent(convertedData, options);
+    },
+
+    /**
+     * To make series data for rendering.
+     * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @param {boolean} isVertical whether vertical or not
+     * @returns {object} series data
+     * @private
+     */
+    _makeSeriesDataForRendering: function(axesData, isVertical) {
+        var aligned = !!axesData.xAxis.aligned,
+            chartTypes, seriesData, firstData;
+
+        if (!isVertical) {
+            return {
+                series: {
+                    scale: axesData.xAxis.scale,
+                    aligned: aligned
+                }
+            };
+        }
+
+        firstData = {
+            scale: axesData.yAxis.scale,
+            aligned: aligned
+        };
+
+        chartTypes = this.optionChartTypes;
+
+        if (!chartTypes) {
+            return {
+                series: firstData
+            };
+        }
+
+        seriesData = {};
+        seriesData[chartTypes[0] + 'Series'] = firstData;
+        seriesData[chartTypes[1] + 'Series'] = axesData.yrAxis ? {
+            scale: axesData.yrAxis.scale,
+            aligned: aligned
+        } : firstData;
+
+        return seriesData;
+    },
+
+    /**
+     * To make plot data for rendering.
+     * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @returns {{vTickCount: number, hTickCount: number}} plot data
+     * @private
+     */
+    _makePlotDataForRendering: function(axesData) {
+        return {
+            vTickCount: axesData.yAxis.validTickCount,
+            hTickCount: axesData.xAxis.validTickCount
+        };
+    },
+
+    /**
+     * To make data of event handle layer for rendering.
+     * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @param {boolean} isVertical whether vertical or not
+     * @returns {{tickCount: number}} event handler data
+     * @private
+     */
+    _makeEventHandleLayerDataForRendering: function(axesData, isVertical) {
+        return {
+            tickCount: isVertical ? axesData.xAxis.tickCount : axesData.yAxis.tickCount
+        };
+    },
+
+    /**
+     * Set rendering data for axis type chart.
+     * @param {object} bounds chart bounds
+     * @param {object} convertedData convertedData
+     * @param {object} options options
+     * @private
+     * @override
+     */
+    _setRenderingData: function(bounds, convertedData, options) {
+        var axesData = this._makeAxesData(convertedData, bounds, options),
+            seriesData = this._makeSeriesDataForRendering(axesData, this.isVertical);
+
+        this.renderingData = tui.util.extend({
+            plot: this._makePlotDataForRendering(axesData),
+            eventHandleLayer: this._makeEventHandleLayerDataForRendering(axesData, this.isVertical)
+        }, seriesData, axesData);
+    },
+
+    /**
+     * Add grouped event handler layer.
+     * @param {{yAxis: obejct, xAxis: object}} axesData axes data
+     * @param {string} chartType chart type
+     * @param {boolean} isVertical whether vertical or not
+     * @private
+     * @override
+     */
+    _addGroupedEventHandleLayer: function() {
+        if (!this.hasGroupedTooltip) {
+            return;
+        }
+
+        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
+            chartType: this.options.chartType,
+            isVertical: this.isVertical
+        });
+    },
+
+    /**
+     * Attach custom evnet.
+     * @private
+     * @override
+     */
+    _attachCustomEvent: function() {
+        if (this.hasGroupedTooltip) {
+            this._attachCoordinateEvent();
+        } else {
+            this._attachTooltipEvent();
+        }
     },
 
     /**
