@@ -60,13 +60,13 @@ describe('ComboChart', function() {
 
     describe('_addTooltipComponent', function() {
         it('isGroupedTooltip값이 true이면 그룹 툴팁 컴포넌트를 추가합니다..', function() {
-            axisTypeMixer.hasGroupedTooltip = true;
+            axisTypeMixer.hasGroupTooltip = true;
             axisTypeMixer._addTooltipComponent({}, {});
             expect(componentMap.tooltip).toEqual(GroupTooltip);
         });
 
         it('isGroupedTooltip값이 true가 아니면 툴팁 컴포넌트를 추가합니다..', function() {
-            axisTypeMixer.hasGroupedTooltip = false;
+            axisTypeMixer.hasGroupTooltip = false;
             axisTypeMixer._addTooltipComponent({}, {});
             expect(componentMap.tooltip).toEqual(Tooltip);
         });

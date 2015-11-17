@@ -32,7 +32,7 @@ var lineTypeMixer = {
 
         this._addComponents(this.convertedData, options.chartType);
 
-        if (!this.hasGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             this.addComponent('eventHandleLayer', LineTypeEventHandleLayer);
         }
     },
@@ -70,7 +70,7 @@ var lineTypeMixer = {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        if (!this.hasGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             this._attachLineTypeCoordinateEvent();
         }
         return ChartBase.prototype.render.apply(this, arguments);

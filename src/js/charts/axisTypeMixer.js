@@ -50,7 +50,7 @@ var axisTypeMixer = {
             chartType: options.chartType,
             parentChartType: options.parentChartType,
             aligned: aligned,
-            hasGroupedTooltip: this.hasGroupedTooltip,
+            hasGroupTooltip: this.hasGroupTooltip,
             userEvent: this.userEvent,
             componentType: 'series'
         };
@@ -68,7 +68,7 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function(convertedData, options) {
-        if (this.hasGroupedTooltip) {
+        if (this.hasGroupTooltip) {
             this.addComponent('tooltip', GroupTooltip, {
                 labels: convertedData.labels,
                 joinFormattedValues: convertedData.joinFormattedValues,
@@ -208,7 +208,7 @@ var axisTypeMixer = {
      * @override
      */
     _addGroupedEventHandleLayer: function() {
-        if (!this.hasGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             return;
         }
 
@@ -224,7 +224,7 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
-        if (this.hasGroupedTooltip) {
+        if (this.hasGroupTooltip) {
             this._attachCoordinateEvent();
         } else {
             this._attachTooltipEvent();

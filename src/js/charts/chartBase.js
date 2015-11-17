@@ -25,18 +25,64 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {boolean} param.isVertical whether vertical or not
      */
     init: function(params) {
+        /**
+         * converted data
+         * @type {object}
+         */
         this.convertedData = this._makeConvertedData(params);
-        this.components = [];
-        this.componentMap = {};
-        this.renderingData = {};
-        //this.bounds = params.bounds;
 
+        /**
+         * component array
+         * @type {array}
+         */
+        this.components = [];
+
+        /**
+         * component instance map
+         * @type {object}
+         */
+        this.componentMap = {};
+
+        /**
+         * data for rendering
+         * @type {object}
+         */
+        this.renderingData = {};
+
+        /**
+         * theme
+         * @type {object}
+         */
         this.theme = params.theme;
+
+        /**
+         * options
+         * @type {object}
+         */
         this.options = params.options;
+
+        /**
+         * whether chart has axes or not
+         * @type {boolean}
+         */
         this.hasAxes = params.hasAxes;
 
+        /**
+         * whether vertical or not
+         * @type {boolean}
+         */
         this.isVertical = !!params.isVertical;
-        this.hasGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
+
+        /**
+         * whether chart has group tooltip or not
+         * @type {*|boolean}
+         */
+        this.hasGroupTooltip = params.options.tooltip && params.options.tooltip.grouped;
+
+        /**
+         * user event listener
+         * @type {object}
+         */
         this.userEvent = this._initUserEventListener();
 
         this._addGroupedEventHandleLayer();
@@ -151,27 +197,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * To make bounds.
      * @param {object} boundsParams parameters for making bounds
-     * @param {object} parentData parent chart data
      * @returns {object} chart bounds
      * @private
      */
-    _makeBounds: function(boundsParams, parentData) {
-        var bounds;
-
-        if (parentData) {
-            bounds = parentData.bounds;
-        } else {
-            bounds = boundsMaker.make(tui.util.extend({
-                chartType: this.options.chartType,
-                convertedData: this.convertedData,
-                theme: this.theme,
-                options: this.options,
-                hasAxes: this.hasAxes,
-                isVertical: this.isVertical
-            }, boundsParams));
-        }
-
-        return bounds;
+    _makeBounds: function(boundsParams) {
+        return boundsMaker.make(tui.util.extend({
+            chartType: this.options.chartType,
+            convertedData: this.convertedData,
+            theme: this.theme,
+            options: this.options,
+            hasAxes: this.hasAxes,
+            isVertical: this.isVertical
+        }, boundsParams));
     },
 
     /**
@@ -189,11 +226,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {HTMLElement} el chart element
      * @param {object} paper object for graph drawing
      * @param {object} boundsParams parameters for making bounds
-     * @param {object} parentData parentData
      * @returns {HTMLElement} chart element
      */
-    render: function(el, paper, boundsParams, parentData) {
-        var bounds = this._makeBounds(boundsParams, parentData);
+    render: function(el, paper, boundsParams) {
+        var bounds = this._makeBounds(boundsParams);
 
         this.bounds = bounds;
         this._setRenderingData(bounds, this.convertedData, this.options);
@@ -233,40 +269,25 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(container, components) {
-        var paper,
-            elements = tui.util.map(components, function(component) {
-                var name = component.name,
-                    bound = this.bounds[name] || (component.componentType && this.bounds[component.componentType]),
-                    data = this.renderingData[name],
-                    elComponent;
+        var paper, elements;
+        elements = tui.util.map(components, function(component) {
+            var name = component.name,
+                bound = this.bounds[name] || (component.componentType && this.bounds[component.componentType]),
+                data = this.renderingData[name],
+                elComponent;
 
-                if (!bound) {
-                    return null;
-                }
+            if (!bound) {
+                return null;
+            }
 
-                elComponent = component.instance.render(bound, data, paper);
-                if (!paper && component.instance.getPaper) {
-                    paper = component.instance.getPaper();
-                }
+            elComponent = component.instance.render(bound, data, paper);
+            if (!paper && component.instance.getPaper) {
+                paper = component.instance.getPaper();
+            }
 
-                return elComponent;
-            }, this);
+            return elComponent;
+        }, this);
         dom.append(container, elements);
-    },
-
-    /**
-     * Get paper.
-     * @returns {object} paper
-     */
-    getPaper: function() {
-        var series = this.componentMap.series,
-            paper;
-
-        if (series) {
-            paper = series.getPaper();
-        }
-
-        return paper;
     },
 
     _makeAnimationEventName: function(chartType, prefix) {

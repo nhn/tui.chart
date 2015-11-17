@@ -140,7 +140,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             this.elSeriesLabelArea = this._renderSeriesLabel(tui.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        if (!this.hasGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             this.attachEvent(el);
         }
 
