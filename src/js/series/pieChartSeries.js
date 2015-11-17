@@ -8,7 +8,6 @@
 
 var Series = require('./series'),
     chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
@@ -98,6 +97,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * To make series data.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
      * @returns {{
      *      formattedValues: array,
      *      chartBackground: string,
@@ -105,13 +108,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      sectorsInfo: array.<object>
      * }} add data for graph rendering
      */
-    makeSeriesData: function() {
-        var circleBound = this._makeCircleBound(this.bound.dimension, {
+    makeSeriesData: function(bound) {
+        var circleBound = this._makeCircleBound(bound.dimension, {
                 showLabel: this.options.showLabel,
                 legendType: this.options.legendType
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
-
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
@@ -159,7 +161,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * To make add data for series label.
-     * @param {HTMLElement} container container
+     * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
      *      legendLabels: array.<string>,
@@ -169,9 +171,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * }} add data for make series label
      * @private
      */
-    _makeSeriesDataForSeriesLabel: function(container) {
-        return {
-            container: container,
+    _makeSeriesDataForSeriesLabel: function(seriesData) {
+        return tui.util.extend({
             legendLabels: this.data.legendLabels,
             options: {
                 legendType: this.options.legendType,
@@ -179,7 +180,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             },
             chartWidth: this.data.chartWidth,
             formattedValues: this.data.formattedValues[0]
-        };
+        }, seriesData);
     },
 
     /**
@@ -194,6 +195,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
+
         if (params.options.legendType) {
             seriesLabel = params.legend;
         }
@@ -208,18 +210,19 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} series area element
+     *      @param {array.<object>} params.positions positions
+     *      @param {array.<string>} params.legends legendLabels
+     *      @param {array.<string>} params.formattedValues formatted values
+     *      @param {string} params.separator separator
+     *      @param {object} params.options options
+     *      @param {function} params.funcMoveToPosition function
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderLegendLabel: function(params) {
+    _renderLegendLabel: function(params, elSeriesLabelArea) {
         var positions = params.positions,
             formattedValues = params.formattedValues,
-            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             html;
-
         html = tui.util.map(params.legendLabels, function(legend, index) {
             var label = this._getSeriesLabel({
                     legend: legend,
@@ -227,14 +230,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     separator: params.separator,
                     options: params.options
                 }),
-                position = params.moveToPosition(positions[index], label);
+                position = params.funcMoveToPosition(positions[index], label);
             return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**
@@ -256,20 +256,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} area element
+     *      @param {object} params.sectorsInfo sector info
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderCenterLegend: function(params) {
-        var elArea = this._renderLegendLabel(tui.util.extend({
+    _renderCenterLegend: function(params, elSeriesLabelArea) {
+        this._renderLegendLabel(tui.util.extend({
             positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
-            moveToPosition: tui.util.bind(this._moveToCenterPosition, this),
+            funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
-        }, params));
-
-        return elArea;
+        }, params), elSeriesLabelArea);
     },
 
     /**
@@ -318,44 +314,39 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render outer legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} area element
+     *      @param {object} params.sectorsInfo sector info
+     *      @param {number} params.chartWidth chart width
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderOuterLegend: function(params) {
+    _renderOuterLegend: function(params, elSeriesLabelArea) {
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
-            centerLeft = params.chartWidth / 2,
-            elArea;
+            centerLeft = params.chartWidth / 2;
         this._addEndPosition(centerLeft, outerPositions);
-        elArea = this._renderLegendLabel(tui.util.extend({
+        this._renderLegendLabel(tui.util.extend({
             positions: outerPositions,
-            moveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
+            funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, params));
+        }, params), elSeriesLabelArea);
 
-        if (this.paper) {
+        if (this.paper && !this.isRenderdLines) {
+            this.isRenderdLines = true;
             this.graphRenderer.renderLegendLines(this.paper, outerPositions);
         }
-
-        return elArea;
     },
 
     /**
      * Render series label.
      * @param {object} params parameters
-     * @returns {HTMLElement} area element
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params) {
-        var elArea;
+    _renderSeriesLabel: function(params, elSeriesLabelArea) {
         if (params.options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER) {
-            elArea = this._renderOuterLegend(params);
+            this._renderOuterLegend(params, elSeriesLabelArea);
         } else {
-            elArea = this._renderCenterLegend(params);
+            this._renderCenterLegend(params, elSeriesLabelArea);
         }
-        return elArea;
     },
 
     /**
@@ -370,8 +361,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Show series label area.
      */
-    showSeriesLabelArea: function() {
+    animateShowSeriesLabelArea: function() {
         this.graphRenderer.animateLegendLines();
+        Series.prototype.animateShowSeriesLabelArea.call(this);
+    },
+
+    showSeriesLabelArea: function(seriesData) {
+        var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
+            centerLeft = this.data.chartWidth / 2;
+        this._addEndPosition(centerLeft, outerPositions);
+        this.graphRenderer.moveLegendLines(outerPositions);
         Series.prototype.showSeriesLabelArea.call(this);
     },
 

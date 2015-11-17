@@ -113,4 +113,18 @@ describe('ChartBase', function() {
             expect(el.firstChild.style.fontSize).toBe('14px');
         });
     });
+
+    describe('_updateDimension()', function() {
+        it('전달받은 디멘션 정보로 차트 너비, 높이 정보를 갱신합니다.', function() {
+            chartBase.options = {
+                chart: {}
+            };
+            chartBase._updateDimension({
+                width: 200,
+                height: 100
+            });
+            expect(chartBase.options.chart.width).toBe(200);
+            expect(chartBase.options.chart.height).toBe(100);
+        })
+    });
 });

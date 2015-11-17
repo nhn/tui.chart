@@ -57,6 +57,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
 
+        this.paper = paper;
+
         return paper;
     },
 
@@ -266,34 +268,80 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {function} callback callback
      */
     animate: function(callback) {
-        var groupAreas = this.groupAreas,
-            groupPaths = this.groupPaths,
-            opacity = this.dotOpacity,
-            time = ANIMATION_TIME / groupAreas[0].length,
-            startTime;
-        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            startTime = 0;
-            tui.util.forEachArray(dots, function(dot, index) {
-                var area, areaPath;
-                if (index) {
-                    area = groupAreas[groupIndex][index - 1];
-                    areaPath = groupPaths[groupIndex][index - 1];
-                    this.animateLine(area.line, areaPath.line.end, time, startTime);
-                    this._animateArea(area.area, areaPath.area, time, startTime);
-                    startTime += time;
-                }
+        var time = ANIMATION_TIME / this.groupAreas[0].length,
+            that = this;
 
-                if (opacity) {
-                    setTimeout(function() {
-                        dot.attr({'fill-opacity': opacity});
-                    }, startTime);
-                }
-            }, this);
-        }, this);
+        this.renderItems(function(dot, groupIndex, index) {
+            var startTime = index * time,
+                area, areaPath;
+            if (index) {
+                area = that.groupAreas[groupIndex][index - 1];
+                areaPath = that.groupPaths[groupIndex][index - 1];
+                that.animateLine(area.line, areaPath.line.end, time, startTime);
+                that._animateArea(area.area, areaPath.area, time, startTime);
+            }
+
+            if (that.dotOpacity) {
+                setTimeout(function() {
+                    dot.attr({'fill-opacity': that.dotOpacity});
+                }, startTime + time);
+            }
+        });
 
         if (callback) {
-            setTimeout(callback, startTime);
+            setTimeout(callback, (this.groupDots.length + 1) * time);
         }
+    },
+
+    /**
+     * To update area attribute
+     * @param {object} area raphael object
+     * @param {string} areaPath area path
+     * @private
+     */
+    _updateAreaAttr: function(area, areaPath) {
+        var areaAddEndPath = areaPath.addEnd;
+        area[0].attr({path: areaPath.end});
+        if (areaAddEndPath) {
+            area[1].attr({path: areaAddEndPath});
+        }
+    },
+
+    /**
+     * To resize graph of area chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            groupPositions = params.groupPositions,
+            that = this;
+
+        this.groupPaths = this._getAreasPath(groupPositions, params.zeroTop);
+        this.paper.setSize(dimension.width, dimension.height);
+        this.tooltipLine.attr({top: dimension.height});
+
+        this.renderItems(function(dot, groupIndex, index) {
+            var position = groupPositions[groupIndex][index],
+                dotAttrs = {
+                    cx: position.left,
+                    cy: position.top
+                },
+                area, areaPath;
+            if (index) {
+                area = that.groupAreas[groupIndex][index - 1];
+                areaPath = that.groupPaths[groupIndex][index - 1];
+                area.line.attr({path: areaPath.line.end});
+                that._updateAreaAttr(area.area, areaPath.area);
+            }
+
+            if (that.dotOpacity) {
+                dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
+            }
+
+            dot.attr(dotAttrs);
+        });
     }
 });
 

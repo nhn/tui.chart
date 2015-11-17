@@ -85,8 +85,7 @@ describe('LineTypeSeriesBase', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea;
+            var elLabelArea = dom.create('div');
             series.options = {
                 showLabel: true
             };
@@ -94,8 +93,7 @@ describe('LineTypeSeriesBase', function() {
                 label: {}
             };
 
-            elLabelArea = series._renderSeriesLabel({
-                container: container,
+            series._renderSeriesLabel({
                 groupPositions: [
                     [
                         {
@@ -115,7 +113,7 @@ describe('LineTypeSeriesBase', function() {
                 formattedValues: [
                     ['1.5', '2.2']
                 ]
-            });
+            }, elLabelArea);
 
             expect(elLabelArea.childNodes.length).toBe(2);
         });

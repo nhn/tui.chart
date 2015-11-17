@@ -7,7 +7,6 @@
 'use strict';
 
 var chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -53,18 +52,16 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupPositions group positions
      *      @param {array.<array>} params.formattedValues formatted values
-     * @return {HTMLElement} series area element
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params) {
-        var groupPositions, labelHeight, elSeriesLabelArea, html;
-
+    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+        var groupPositions, labelHeight, html;
         if (!this.options.showLabel) {
-            return null;
+            return;
         }
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
-        elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area');
 
         html = tui.util.map(params.formattedValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
@@ -79,9 +76,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**

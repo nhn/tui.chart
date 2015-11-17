@@ -169,29 +169,15 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * Create tooltip element.
-     * @returns {HTMLElement} tooltip element
-     * @private
-     */
-    _createTooltipSectorElement: function() {
-        var elTooltipSector;
-        if (!this.elLayout.childNodes.length < 2) {
-            elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
-            dom.append(this.elLayout, elTooltipSector);
-        } else {
-            elTooltipSector = this.elLayout.lastChild;
-        }
-        return elTooltipSector;
-    },
-
-    /**
      * Get tooltip sector element.
      * @returns {HTMLElement} sector element
      * @private
      */
     _getTooltipSectorElement: function() {
+        var elTooltipSector;
         if (!this.elTooltipSector) {
-            this.elTooltipSector = this._createTooltipSectorElement();
+            this.elTooltipSector = elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
+            dom.append(this.elTooltipArea, elTooltipSector);
         }
         return this.elTooltipSector;
     },
