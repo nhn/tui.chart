@@ -103,16 +103,6 @@ describe('ChartBase', function() {
             actual = chartBase._makeBounds({});
             expect(actual.chart.dimension).toEqual({width: 100, height: 100});
         });
-
-        it('부모로 부터 전달받은 bounds정보가 있으면, 그대로 반환합니다..', function() {
-            var actual;
-            actual = chartBase._makeBounds({}, {
-                'bounds': {
-                    'chart': {dimension: {width: 200, height: 200}}
-                }
-            });
-            expect(actual.chart.dimension).toEqual({width: 200, height: 200});
-        });
     });
 
     describe('_renderTitle()', function() {
