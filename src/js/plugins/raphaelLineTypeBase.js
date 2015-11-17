@@ -323,6 +323,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         setTimeout(function() {
             line.animate({path: linePath}, time);
         }, startTime);
+    },
+
+    /**
+     * To render items of line type chart.
+     * @param {function} funcRenderItem function
+     */
+    renderItems: function(funcRenderItem) {
+        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
+            tui.util.forEachArray(dots, function(dot, index) {
+                funcRenderItem(dot, groupIndex, index);
+            }, this);
+        }, this);
     }
 });
 

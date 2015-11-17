@@ -36,19 +36,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render axis.
+     * To render axis area.
+     * @param {HTMLElement} elAxisArea axis area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
-     * @returns {HTMLElement} axis area base element
+     * @private
      */
-    render: function(bound, data) {
+    _renderAxisArea: function(elAxisArea, bound, data) {
         var theme = this.theme,
             isVertical = !!data.isVertical,
             isPositionRight = !!data.isPositionRight,
             options = this.options,
             dimension = bound.dimension,
             size = isVertical ? dimension.height : dimension.width,
-            el = dom.create('DIV', this.className),
             elTitleArea = this._renderTitleArea({
                 title: options.title,
                 theme: theme.title,
@@ -56,22 +56,43 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elLabelArea, elTickArea;
+            elLabelArea = this._renderLabelArea(data, size, dimension.width, bound.degree),
+            elTickArea;
 
         this.data = data;
         this.bound = bound;
 
-        elLabelArea = this._renderLabelArea(size, dimension.width, bound.degree);
         if (!isVertical || !data.aligned) {
             elTickArea = this._renderTickArea(size);
         }
-        renderUtil.renderDimension(el, dimension);
-        renderUtil.renderPosition(el, bound.position);
-        dom.addClass(el, isVertical ? 'vertical' : 'horizontal');
-        dom.addClass(el, isPositionRight ? 'right' : '');
-        dom.append(el, [elTitleArea, elTickArea, elLabelArea]);
+        renderUtil.renderDimension(elAxisArea, dimension);
+        renderUtil.renderPosition(elAxisArea, bound.position);
+        dom.addClass(elAxisArea, isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(elAxisArea, isPositionRight ? 'right' : '');
+        dom.append(elAxisArea, [elTitleArea, elTickArea, elLabelArea]);
+    },
 
+    /**
+     * To render axis component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
+     * @param {object} data rendering data
+     * @returns {HTMLElement} axis area base element
+     */
+    render: function(bound, data) {
+        var el = dom.create('DIV', this.className);
+        this._renderAxisArea(el, bound, data);
+        this.elAxisArea = el;
         return el;
+    },
+
+    /**
+     * To resize axis component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
+     * @param {object} data rendering data
+     */
+    resize: function(bound, data) {
+        this.elAxisArea.innerHTML = '';
+        this._renderAxisArea(this.elAxisArea, bound, data);
     },
 
     /**
@@ -166,15 +187,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Render label area.
+     * @param {object} data rendering data
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
      * @param {number} degree rotation degree
      * @returns {HTMLElement} label area element
      * @private
      */
-    _renderLabelArea: function(size, axisWidth, degree) {
-        var data = this.data,
-            tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
+    _renderLabelArea: function(data, size, axisWidth, degree) {
+        var tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
             posType = 'left',
             cssTexts = this._makeLabelCssTexts({

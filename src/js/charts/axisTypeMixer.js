@@ -219,6 +219,23 @@ var axisTypeMixer = {
     },
 
     /**
+     * Attach coordinate event.
+     * @private
+     */
+    _attachCoordinateEvent: function() {
+        var eventHandleLayer = this.componentMap.eventHandleLayer,
+            tooltip = this.componentMap.tooltip,
+            series = this.componentMap.series;
+        eventHandleLayer.on('showGroupTooltip', tooltip.onShow, tooltip);
+        eventHandleLayer.on('hideGroupTooltip', tooltip.onHide, tooltip);
+
+        if (series) {
+            tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
+            tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
+        }
+    },
+
+    /**
      * Attach custom evnet.
      * @private
      * @override

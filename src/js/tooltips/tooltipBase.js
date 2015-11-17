@@ -51,8 +51,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     makeTooltipData: function() {},
 
     /**
-     * Render tooltip.
+     * To render tooltip component.
      * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
     render: function(bound) {
@@ -60,25 +61,18 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
         renderUtil.renderPosition(el, bound.position);
 
-        this.elLayout = el;
+        this.elTooltipArea = el;
 
         return el;
     },
 
     /**
-     * Create tooltip element.
-     * @returns {HTMLElement} tooltip element
-     * @private
+     * To resize tooltip component.
+     * @param {{position: object}} bound tooltip bound
+     * @override
      */
-    _createTooltipElement: function() {
-        var elTooltip;
-        if (!this.elLayout.firstChild) {
-            elTooltip = dom.create('DIV', 'tui-chart-tooltip');
-            dom.append(this.elLayout, elTooltip);
-        } else {
-            elTooltip = this.elLayout.firstChild;
-        }
-        return elTooltip;
+    resize: function(bound) {
+        renderUtil.renderPosition(this.elTooltipArea, bound.position);
     },
 
     /**
@@ -87,8 +81,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _getTooltipElement: function() {
+        var elTooltip;
         if (!this.elTooltip) {
-            this.elTooltip = this._createTooltipElement();
+            this.elTooltip = elTooltip = dom.create('DIV', 'tui-chart-tooltip');
+            dom.append(this.elTooltipArea, elTooltip);
         }
         return this.elTooltip;
     },
