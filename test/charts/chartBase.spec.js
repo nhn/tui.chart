@@ -12,7 +12,7 @@ var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
     dataConverter = require('../../src/js/helpers/dataConverter'),
     boundsMaker = require('../../src/js/helpers/boundsMaker'),
-    UserEventListener = require('../../src/js/helpers/UserEventListener');
+    UserEventListener = require('../../src/js/helpers/userEventListener');
 
 describe('ChartBase', function() {
     var chartBase;
