@@ -11,7 +11,7 @@ var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
-    UserEventListener = require('../helpers/UserEventListener');
+    UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
