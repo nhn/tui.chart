@@ -22,10 +22,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(userData, theme, options) {
-        var baseData = this.makeBaseData(userData, theme, options),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds;
-
         this.className = 'tui-pie-chart';
 
         options.tooltip = options.tooltip || {};
@@ -35,23 +31,22 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         }
 
         ChartBase.call(this, {
-            bounds: bounds,
+            userData: userData,
             theme: theme,
             options: options
         });
 
-        this._addComponents(convertedData, theme.chart.background, bounds, options);
+        this._addComponents(this.convertedData, theme.chart.background, options);
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
      * @param {object} chartBackground chart background
-     * @param {array.<object>} bounds bounds
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertedData, chartBackground, bounds, options) {
+    _addComponents: function(convertedData, chartBackground, options) {
         if (convertedData.joinLegendLabels && (!options.series || !options.series.legendType)) {
             this.addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
@@ -62,28 +57,52 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         }
 
         this.addComponent('tooltip', Tooltip, {
-            chartType: options.chartType,
             values: convertedData.values,
             formattedValues: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
-            chartId: this.chartId,
-            seriesPosition: bounds.series.position
+            chartType: options.chartType
         });
 
         this.addComponent('series', Series, {
             libType: options.libType,
             chartType: options.chartType,
+            componentType: 'series',
             chartBackground: chartBackground,
             userEvent: this.userEvent,
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
                 legendLabels: convertedData.legendLabels,
-                joinLegendLabels: convertedData.joinLegendLabels,
-                chartWidth: bounds.chart.dimension.width
+                joinLegendLabels: convertedData.joinLegendLabels
             }
         });
+    },
+
+    /**
+     * Set rendering data for pie chart.
+     * @param {object} bounds chart bounds
+     * @private
+     * @override
+     */
+    _setRenderingData: function(bounds) {
+        this.renderingData = {
+            tooltip: {
+                seriesPosition: bounds.series.position
+            },
+            series: {
+                chartWidth: bounds.chart.dimension.width
+            }
+        };
+    },
+
+    /**
+     * Attach custom evnet.
+     * @private
+     * @override
+     */
+    _attachCustomEvent: function() {
+        this._attachTooltipEvent();
     }
 });
 

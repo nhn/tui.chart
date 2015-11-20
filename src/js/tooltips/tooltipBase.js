@@ -51,27 +51,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     makeTooltipData: function() {},
 
     /**
-     * Get tooltip layout element.
-     * @returns {HTMLElement} layout element
-     * @private
-     */
-    _getTooltipLayoutElement: function() {
-        var elLayout = document.getElementById(this.chartId);
-        if (!elLayout) {
-            elLayout = dom.create('DIV', this.className);
-            elLayout.id = this.chartId;
-        }
-        return elLayout;
-    },
-
-    /**
      * Render tooltip.
      * @param {{position: object}} bound tooltip bound
      * @returns {HTMLElement} tooltip element
      */
-    render: function() {
-        var el = this._getTooltipLayoutElement(),
-            bound = this.bound;
+    render: function(bound) {
+        var el = dom.create('DIV', this.className);
 
         renderUtil.renderPosition(el, bound.position);
 
@@ -279,6 +264,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         return this.hider;
     },
 
+    /**
+     * To hide animation.
+     * @param {HTMLElement} elTooltip tooltip element
+     */
     hideAnimation: function(elTooltip) {
         this.activeHider = this._getHider(elTooltip);
         this.activeHider.action({

@@ -37,15 +37,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Render axis.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
+     * @param {object} data rendering data
      * @returns {HTMLElement} axis area base element
      */
-    render: function() {
-        var data = this.data,
-            theme = this.theme,
+    render: function(bound, data) {
+        var theme = this.theme,
             isVertical = !!data.isVertical,
-            isPositionRight = data.isPositionRight,
+            isPositionRight = !!data.isPositionRight,
             options = this.options,
-            bound = this.bound,
             dimension = bound.dimension,
             size = isVertical ? dimension.height : dimension.width,
             el = dom.create('DIV', this.className),
@@ -56,10 +56,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elLabelArea = this._renderLabelArea(size, dimension.width, bound.degree),
-            elTickArea;
+            elLabelArea, elTickArea;
 
-        if (!this.aligned || !isVertical) {
+        this.data = data;
+        this.bound = bound;
+
+        elLabelArea = this._renderLabelArea(size, dimension.width, bound.degree);
+        if (!isVertical || !data.aligned) {
             elTickArea = this._renderTickArea(size);
         }
         renderUtil.renderDimension(el, dimension);
@@ -134,7 +137,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             template = axisTemplate.tplAxisTick,
             ticksHtml = tui.util.map(positions, function(position, index) {
                 var cssText;
-                if (this.aligned && data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
+                if (data.aligned && data.labels[index] === chartConst.EMPTY_AXIS_LABEL) {
                     return '';
                 }
                 cssText = [

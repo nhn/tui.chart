@@ -37,7 +37,7 @@ var domHandler = {
      */
     _getClassNames: function(el) {
         var className = el.className || '',
-            classNames = className && typeof className === 'string' ? className.split(' ') : [];
+            classNames = className && tui.util.isString(className) ? className.split(' ') : [];
         return classNames;
     },
 

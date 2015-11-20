@@ -8,10 +8,12 @@
 
 var chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
     defaultTheme = require('../themes/defaultTheme'),
     legendTemplate = require('./../legends/legendTemplate');
+
+var concat = Array.prototype.concat;
 
 var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
@@ -32,14 +34,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Render legend.
-     * @param {object} bound plot bound
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
      */
-    render: function() {
+    render: function(bound) {
         var el = dom.create('DIV', this.className),
             legendData = this._makeLegendData();
+        this.bound = bound;
         el.innerHTML = this._makeLegendHtml(legendData);
-        renderUtil.renderPosition(el, this.bound.position);
+        renderUtil.renderPosition(el, bound.position);
         this._renderLabelTheme(el, this.theme.label);
         this._attachEvent(el);
 
@@ -81,29 +84,24 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _makeLegendData: function() {
-        var chartType = this.chartType,
-            legendLabels = this.legendLabels,
-            joinLegendLabels = this.joinLegendLabels,
-            labelLen = legendLabels.length,
+        var joinLegendLabels = this.joinLegendLabels,
             theme = this.theme,
-            chartLegendTheme = tui.util.filter(theme, function(item, name) {
-                return tui.util.inArray(name, chartConst.SERIES_PROPS) === -1 && name !== 'label';
-            }),
-            chartTypes = tui.util.keys(chartLegendTheme),
             defaultLegendTheme = {
                 colors: defaultTheme.series.colors
             },
-            chartTheme, result;
+            startIndex, result;
 
-        if (!chartTypes.length) {
+        if (!this.seriesChartTypes) {
             result = this._setThemeForLabels(joinLegendLabels, theme);
         } else {
-            chartTheme = theme[chartType] || defaultLegendTheme;
-            result = this._setThemeForLabels(joinLegendLabels.slice(0, labelLen), chartTheme);
-            chartTheme = theme[tui.util.filter(chartTypes, function(propName) {
-                return propName !== chartType;
-            })[0]] || defaultLegendTheme;
-            result = result.concat(this._setThemeForLabels(joinLegendLabels.slice(labelLen), chartTheme));
+            startIndex = 0;
+            result = concat.apply([], tui.util.map(this.seriesChartTypes, function(chartType) {
+                var chartTheme = theme[chartType] || defaultLegendTheme,
+                    endIndex = startIndex + this.legendLabels[chartType].length,
+                    data = this._setThemeForLabels(joinLegendLabels.slice(startIndex, endIndex), chartTheme);
+                startIndex = endIndex;
+                return data;
+            }, this));
         }
         return result;
     },
@@ -199,7 +197,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             return;
         }
 
-        index = parseInt(elLegend.getAttribute('data-index'), 0);
+        index = parseInt(elLegend.getAttribute('data-index'), 10);
         this._selectLegend(index);
     },
 
@@ -209,7 +207,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _attachEvent: function(el) {
-        event.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
     }
 });
 

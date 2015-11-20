@@ -200,6 +200,11 @@ var sum = function(values) {
     });
 };
 
+
+var properCase = function(str) {
+    return str.substring(0, 1).toUpperCase() + str.substring(1);
+};
+
 tui.util.min = min;
 tui.util.max = max;
 tui.util.any = any;
@@ -213,6 +218,7 @@ tui.util.subtraction = subtraction;
 tui.util.multiplication = multiplication;
 tui.util.division = division;
 tui.util.sum = sum;
+tui.util.properCase = properCase;
 
 var aps = Array.prototype.slice;
 

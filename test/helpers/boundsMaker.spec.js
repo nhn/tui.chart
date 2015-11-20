@@ -16,6 +16,7 @@ describe('boundsMaker', function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+        maker.chartLeftPadding = chartConst.CHART_PADDING;
     });
 
     describe('_getValueAxisMaxLabel()', function() {

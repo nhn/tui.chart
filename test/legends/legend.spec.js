@@ -11,56 +11,50 @@ var Legend = require('../../src/js/legends/legend'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('test Legend', function() {
-    var legendLabels = [
-            'legend1',
-            'legend2'
-        ],
-        joinLegendLabels = [
-            {
-                label: 'legend1'
-            },
-            {
-                label: 'legend2'
-            }
-        ],
-        theme = {
-            label: {
-                fontSize: 12
-            },
-            colors: ['red', 'orange']
-        },
-        bound = {
-            position: {
-                top: 20,
-                right: 10
-            }
-        },
-        compareHtml = '<div class="tui-chart-legend">' +
-            '<div class="tui-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
-            '<div class="tui-chart-legend-label" style="height:19px">legend1</div>' +
-            '</div>' +
-            '<div class="tui-chart-legend">' +
-            '<div class="tui-chart-legend-rect" style="background-color:orange;margin-top:2px"></div>' +
-            '<div class="tui-chart-legend-label" style="height:19px">legend2</div>' +
-            '</div>',
-        legend;
+    var legend;
 
     beforeEach(function() {
         legend = new Legend({
-            legendLabels: legendLabels,
-            joinLegendLabels: joinLegendLabels,
-            theme: theme,
-            bound: bound
+            legendLabels: [
+                'legend1',
+                'legend2'
+            ],
+            joinLegendLabels: [
+                {
+                    label: 'legend1'
+                },
+                {
+                    label: 'legend2'
+                }
+            ],
+            theme: {
+                label: {
+                    fontSize: 12
+                },
+                colors: ['red', 'orange']
+            }
         });
     });
 
     describe('render()', function() {
         it('legend 영역 렌더링', function () {
-            var elLegend = legend.render(),
+            var elLegend = legend.render({
+                    position: {
+                        top: 20,
+                        right: 10
+                    }
+                }),
                 elTemp = document.createElement('DIV'),
                 tempChildren;
 
-            elTemp.innerHTML = compareHtml;
+            elTemp.innerHTML = '<div class="tui-chart-legend">' +
+                '<div class="tui-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
+                '<div class="tui-chart-legend-label" style="height:19px">legend1</div>' +
+            '</div>' +
+                '<div class="tui-chart-legend">' +
+                '<div class="tui-chart-legend-rect" style="background-color:orange;margin-top:2px"></div>' +
+                '<div class="tui-chart-legend-label" style="height:19px">legend2</div>' +
+            '</div>';
             elTemp.style.top = '20px';
             elTemp.style.right = '10px';
             elTemp.style.fontSize = '12px';

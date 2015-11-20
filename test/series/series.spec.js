@@ -23,10 +23,6 @@ describe('Series', function() {
                 formattedValues: [[20], [40]],
                 scale: {min: 0, max: 160}
             },
-            bound: {
-                dimension: {width: 200, height: 100},
-                position: {top: 50, left: 50}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -187,7 +183,10 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
-            var elSeries = series.render();
+            var elSeries = series.render({
+                dimension: {width: 200, height: 100},
+                position: {top: 50, left: 50}
+            });
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
             expect(elSeries.style.width).toBe('220px');

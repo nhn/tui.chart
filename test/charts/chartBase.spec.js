@@ -6,17 +6,40 @@
 
 'use strict';
 
-var ChartBase = require('../../src/js/charts/chartBase.js'),
-    Legend = require('../../src/js/legends/legend.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    UserEventListener = require('../../src/js/helpers/UserEventListener');
+var ChartBase = require('../../src/js/charts/chartBase'),
+    chartConst = require('../../src/js/const'),
+    Legend = require('../../src/js/legends/legend'),
+    dom = require('../../src/js/helpers/domHandler'),
+    dataConverter = require('../../src/js/helpers/dataConverter'),
+    boundsMaker = require('../../src/js/helpers/boundsMaker'),
+    UserEventListener = require('../../src/js/helpers/userEventListener');
 
 describe('ChartBase', function() {
     var chartBase;
 
     beforeEach(function() {
         chartBase = new ChartBase({
-            bounds: {},
+            userData: {
+                categories: ['cate1', 'cate2', 'cate3'],
+                series: [
+                    {
+                        name: 'Legend1',
+                        data: [20, 30, 50]
+                    },
+                    {
+                        name: 'Legend2',
+                        data: [40, 40, 60]
+                    },
+                    {
+                        name: 'Legend3',
+                        data: [60, 50, 10]
+                    },
+                    {
+                        name: 'Legend4',
+                        data: [80, 10, 70]
+                    }
+                ]
+            },
             theme: {
                 title: {
                     fontSize: 14
@@ -30,18 +53,29 @@ describe('ChartBase', function() {
         });
     });
 
+    describe('_makeConvertedData()', function() {
+        it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
+            var actual;
+            spyOn(dataConverter, 'convert').and.returnValue({'values': [1, 2, 3]});
+            actual = chartBase._makeConvertedData({
+                userData: {},
+                options: {}
+            });
+            expect(actual.values).toEqual([1, 2, 3]);
+        });
+    });
+
+    describe('_makeChartId', function() {
+        it('차트 아이디를 생성합니다.', function() {
+            var actual = chartBase._makeChartId();
+            expect(actual.indexOf(chartConst.CHAR_ID_PREFIX)).toBeGreaterThan(-1);
+        });
+    });
+
     describe('_initUserEventListener()', function() {
         it('사용자 이벤트를 등록할 수 있는 userEventListener 객체를 생성합니다.', function() {
             var actual = chartBase._initUserEventListener();
             expect(actual.constructor).toBe(UserEventListener);
-        });
-
-        it('부모 차트에서 userEvent객체를 전달 받았다면 전달받은 객체를 반환합니다.', function() {
-            var userEvent = new UserEventListener(),
-                actual = chartBase._initUserEventListener({
-                    userEvent: userEvent
-                });
-            expect(actual).toBe(userEvent);
         });
     });
 
@@ -53,11 +87,21 @@ describe('ChartBase', function() {
             legend = chartBase.componentMap.legend;
             expect(legend).toBeTruthy();
             expect(legend.constructor).toEqual(Legend);
-            expect(tui.util.inArray(legend, chartBase.components)).toBeGreaterThan(-1);
+            expect(tui.util.inArray('legend', tui.util.pluck(chartBase.components, 'name'))).toBe(0);
         });
 
         it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {
             expect(chartBase.componentMap.plot).toBeFalsy();
+        });
+    });
+
+
+    describe('_makeBounds()', function() {
+        it('차트의 요소들의 bounds 정보를 생성합니다.', function() {
+            var actual;
+            spyOn(boundsMaker, 'make').and.returnValue({'chart': {dimension: {width: 100, height: 100}}});
+            actual = chartBase._makeBounds({});
+            expect(actual.chart.dimension).toEqual({width: 100, height: 100});
         });
     });
 

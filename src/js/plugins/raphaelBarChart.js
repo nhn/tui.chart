@@ -118,14 +118,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         tui.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
             tui.util.forEachArray(bounds, function(bound, index) {
-                var color, id, rect, value;
+                var color, rect, value;
 
                 if (!bound) {
                     return;
                 }
 
                 color = singleColor || colors[index];
-                id = groupIndex + '-' + index;
                 value = params.groupValues[groupIndex][index];
                 rect = this._renderBar({
                     paper: params.paper,

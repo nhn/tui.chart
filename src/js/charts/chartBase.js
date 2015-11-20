@@ -11,8 +11,7 @@ var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
-    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer'),
-    UserEventListener = require('../helpers/UserEventListener');
+    UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -24,39 +23,103 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {{yAxis: obejct, xAxis: object}} axesData axes data
      *      @param {object} params.options chart options
      *      @param {boolean} param.isVertical whether vertical or not
-     *      @param {object} params.initedData initialized data from combo chart
      */
     init: function(params) {
-        this.chartId = params.initedData && params.initedData.chartId || chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
-        this.isSubChart = !!params.initedData;
-        this.components = [];
-        this.componentMap = {};
-        this.bounds = params.bounds;
-        this.theme = params.theme;
-        this.options = params.options;
-        this.isSubChart = !!params.initedData;
-        this.hasAxes = !!params.axesData;
-        this.isVertical = !!params.isVertical;
-        this.isGroupedTooltip = params.options.tooltip && params.options.tooltip.grouped;
-        this.userEvent = this._initUserEventListener(params.initedData);
+        /**
+         * converted data
+         * @type {object}
+         */
+        this.convertedData = this._makeConvertedData(params);
 
-        this._addGroupedEventHandleLayer(params.axesData, params.options.chartType);
+        /**
+         * component array
+         * @type {array}
+         */
+        this.components = [];
+
+        /**
+         * component instance map
+         * @type {object}
+         */
+        this.componentMap = {};
+
+        /**
+         * data for rendering
+         * @type {object}
+         */
+        this.renderingData = {};
+
+        /**
+         * theme
+         * @type {object}
+         */
+        this.theme = params.theme;
+
+        /**
+         * options
+         * @type {object}
+         */
+        this.options = params.options;
+
+        /**
+         * whether chart has axes or not
+         * @type {boolean}
+         */
+        this.hasAxes = params.hasAxes;
+
+        /**
+         * whether vertical or not
+         * @type {boolean}
+         */
+        this.isVertical = !!params.isVertical;
+
+        /**
+         * whether chart has group tooltip or not
+         * @type {*|boolean}
+         */
+        this.hasGroupTooltip = params.options.tooltip && params.options.tooltip.grouped;
+
+        /**
+         * user event listener
+         * @type {object}
+         */
+        this.userEvent = this._initUserEventListener();
+
+        this._addGroupedEventHandleLayer();
+    },
+
+    /**
+     * To make converted data.
+     * @param {object} params parameters
+     *      @params {object} userData user data
+     *      @params {{chart: object, chartType: string}} options chart options
+     *      @params {array} seriesChartTypes series chart types
+     * @returns {object} converted data
+     * @private
+     */
+    _makeConvertedData: function(params) {
+        var options = params.options,
+            convertedData = dataConverter.convert(params.userData, options.chart, options.chartType, params.seriesChartTypes);
+
+        return convertedData;
+    },
+
+    /**
+     * To make chart id.
+     * @returns {string} chart id
+     * @private
+     */
+    _makeChartId: function() {
+        return chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
     },
 
     /**
      * Initialize user event listener.
-     * @param {?object} initedData initialized data from parent chart
      * @returns {object} userEvent object
      * @private
      */
-    _initUserEventListener: function(initedData) {
-        var userEvent;
-        if (initedData) {
-            userEvent = initedData.userEvent;
-        } else {
-            userEvent = new UserEventListener();
-        }
-        return userEvent;
+    _initUserEventListener: function() {
+        return new UserEventListener();
     },
 
     /**
@@ -65,26 +128,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} chartType chart type
      * @param {boolean} isVertical whether vertical or not
      * @private
+     * @abstract
      */
-    _addGroupedEventHandleLayer: function(axesData, chartType) {
-        var tickCount;
-
-        if (!this.hasAxes || !this.isGroupedTooltip || this.isSubChart) {
-            return;
-        }
-
-        if (this.isVertical) {
-            tickCount = axesData.xAxis ? axesData.xAxis.tickCount : -1;
-        } else {
-            tickCount = axesData.yAxis ? axesData.yAxis.tickCount : -1;
-        }
-
-        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
-            tickCount: tickCount,
-            chartType: chartType,
-            isVertical: this.isVertical
-        });
-    },
+    _addGroupedEventHandleLayer: function() {},
 
     /**
      * To make baes data.
@@ -117,53 +163,88 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} params parameters
      */
     addComponent: function(name, Component, params) {
-        var bound = this.bounds[name],
-            theme = this.theme[name],
-            options = this.options[name],
-            index = params.index || 0,
-            commonParams = {},
-            component;
+        var commonParams = {},
+            options, index, theme, component;
 
-        commonParams.bound = tui.util.isArray(bound) ? bound[index] : bound;
+        params = params || {};
+
+        options = params.options || this.options[params && params.componentType || name];
+        theme = params.theme || this.theme[params && params.componentType || name];
+        index = params && params.index || 0;
+
         commonParams.theme = tui.util.isArray(theme) ? theme[index] : theme;
         commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
 
-        params = tui.util.extend(commonParams, params);
+        params = tui.util.extend(params, commonParams);
+
         component = new Component(params);
-        this.components.push(component);
+
+        this.components.push({
+            name: name,
+            componentType: params.componentType,
+            instance: component
+        });
         this.componentMap[name] = component;
     },
 
     /**
      * Attach custom evnet.
      * @private
+     * @abstract
      */
-    _attachCustomEvent: function() {
-        if (this.hasAxes && this.isGroupedTooltip && !this.isSubChart) {
-            this._attachCoordinateEvent();
-        } else if (!this.hasAxes || !this.isGroupedTooltip) {
-            this._attachTooltipEvent();
-        }
+    _attachCustomEvent: function() {},
+
+    /**
+     * To make bounds.
+     * @param {object} boundsParams parameters for making bounds
+     * @returns {object} chart bounds
+     * @private
+     */
+    _makeBounds: function(boundsParams) {
+        return boundsMaker.make(tui.util.extend({
+            chartType: this.options.chartType,
+            convertedData: this.convertedData,
+            theme: this.theme,
+            options: this.options,
+            hasAxes: this.hasAxes,
+            isVertical: this.isVertical
+        }, boundsParams));
     },
+
+    /**
+     * Set rendering data for axis type chart.
+     * @param {object} bounds chart bounds
+     * @param {object} convertedData convertedData
+     * @param {object} options options
+     * @private
+     * @abstract
+     */
+    _setRenderingData: function() {},
 
     /**
      * Render chart.
      * @param {HTMLElement} el chart element
      * @param {object} paper object for graph drawing
+     * @param {object} boundsParams parameters for making bounds
      * @returns {HTMLElement} chart element
      */
-    render: function(el, paper) {
+    render: function(el, paper, boundsParams) {
+        var bounds = this._makeBounds(boundsParams);
+
+        this.bounds = bounds;
+        this._setRenderingData(bounds, this.convertedData, this.options);
+
         if (!el) {
             el = dom.create('DIV', this.className);
 
             dom.addClass(el, 'tui-chart');
             this._renderTitle(el);
-            renderUtil.renderDimension(el, this.bounds.chart.dimension);
+            renderUtil.renderDimension(el, bounds.chart.dimension);
             renderUtil.renderBackground(el, this.theme.chart.background);
             renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
         }
 
-        this._renderComponents(el, this.components, paper);
+        this._renderComponents(el, this.components);
         this._attachCustomEvent();
 
         return el;
@@ -187,26 +268,30 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} paper object for graph drawing
      * @private
      */
-    _renderComponents: function(container, components, paper) {
-        var elements = tui.util.map(components, function(component) {
-            return component.render(paper);
-        });
+    _renderComponents: function(container, components) {
+        var paper, elements;
+        elements = tui.util.map(components, function(component) {
+            var name = component.name,
+                bound = this.bounds[name] || (component.componentType && this.bounds[component.componentType]),
+                data = this.renderingData[name],
+                elComponent;
+
+            if (!bound) {
+                return null;
+            }
+
+            elComponent = component.instance.render(bound, data, paper);
+            if (!paper && component.instance.getPaper) {
+                paper = component.instance.getPaper();
+            }
+
+            return elComponent;
+        }, this);
         dom.append(container, elements);
     },
 
-    /**
-     * Get paper.
-     * @returns {object} paper
-     */
-    getPaper: function() {
-        var series = this.componentMap.series,
-            paper;
-
-        if (series) {
-            paper = series.getPaper();
-        }
-
-        return paper;
+    _makeAnimationEventName: function(chartType, prefix) {
+        return prefix + chartType.substring(0, 1).toUpperCase() + chartType.substring(1) + 'Animation';
     },
 
     /**
@@ -215,19 +300,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _attachTooltipEvent: function() {
         var tooltip = this.componentMap.tooltip,
-            series = this.componentMap.series;
-        if (!tooltip || !series) {
-            return;
-        }
-        series.on('showTooltip', tooltip.onShow, tooltip);
-        series.on('hideTooltip', tooltip.onHide, tooltip);
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
 
-        if (!series.onShowAnimation) {
-            return;
-        }
-
-        tooltip.on('showAnimation', series.onShowAnimation, series);
-        tooltip.on('hideAnimation', series.onHideAnimation, series);
+        tui.util.forEach(serieses, function(series) {
+            series.on('showTooltip', tooltip.onShow, tooltip);
+            series.on('hideTooltip', tooltip.onHide, tooltip);
+            if (series.onShowAnimation) {
+                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
+                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
+            }
+        }, this);
     },
 
     /**
@@ -252,8 +336,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     animateChart: function() {
         tui.util.forEachArray(this.components, function(component) {
-            if (component.animateComponent) {
-                component.animateComponent();
+            if (component.instance.animateComponent) {
+                component.instance.animateComponent();
             }
         });
     },

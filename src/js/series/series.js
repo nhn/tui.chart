@@ -11,7 +11,7 @@ var seriesTemplate = require('./seriesTemplate'),
     state = require('../helpers/state'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
     pluginFactory = require('../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
@@ -28,7 +28,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
-        this.percentValues = this._makePercentValues(params.data, params.options.stacked);
+
         /**
          * Graph renderer
          * @type {object}
@@ -40,8 +40,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {string}
          */
         this.className = 'tui-chart-series-area';
-
-        this.seriesData = this.makeSeriesData();
     },
 
     /**
@@ -95,43 +93,54 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @param {object} data data for rendering
      * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      */
-    render: function(paper) {
+    render: function(bound, data, paper) {
         var el = dom.create('DIV', this.className),
-            bound = this.bound,
-            dimension = this._expandDimension(bound.dimension),
             inCallback = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
             outCallback = tui.util.bind(this.hideTooltip, this),
-            data = {
-                dimension: dimension,
-                chartType: this.chartType,
-                theme: this.theme,
-                options: this.options
-            },
-            seriesData = this.seriesData,
-            addDataForSeriesLabel;
+            dimension, params, seriesData, addDataForSeriesLabel;
 
+        this.data = tui.util.extend(this.data, data);
+
+        this.bound = bound;
+
+        this.percentValues = this._makePercentValues(this.data, this.options.stacked);
+
+        dimension = this._expandDimension(bound.dimension);
+        params = tui.util.extend({
+            dimension: dimension,
+            chartType: this.chartType,
+            theme: this.theme,
+            options: this.options
+        });
+
+        seriesData = this.makeSeriesData(bound);
         if (!paper) {
             renderUtil.renderDimension(el, dimension);
         }
 
         this._renderPosition(el, bound.position, this.chartType);
 
-        data = tui.util.extend(data, seriesData);
+        params = tui.util.extend(params, seriesData);
 
-        this.paper = this.graphRenderer.render(paper, el, data, inCallback, outCallback);
+        this.paper = this.graphRenderer.render(paper, el, params, inCallback, outCallback);
 
         if (this._renderSeriesLabel) {
             addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(el, dimension);
             this.elSeriesLabelArea = this._renderSeriesLabel(tui.util.extend(addDataForSeriesLabel, seriesData));
         }
 
-        if (!this.isGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             this.attachEvent(el);
         }
 
@@ -173,9 +182,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderPosition: function(el, position) {
         var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
-        position.top = position.top - (hiddenWidth * 2);
-        position.left = position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth;
-        renderUtil.renderPosition(el, position);
+        renderUtil.renderPosition(el, {
+            top: position.top - (hiddenWidth * 2),
+            left: position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth
+        });
     },
 
     /**
@@ -276,6 +286,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 return (value - subValue) * flag / distance;
             });
         });
+
         return percentValues;
     },
 
@@ -335,37 +346,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return elLegend;
     },
 
-    /**
-     * On mouseover event handler for series area
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseover: function(e) {
-        var elTarget = e.target || e.srcElement,
-            elLabel = this._findLabelElement(elTarget),
-            groupIndex, index, bound;
-
-        if (!elLabel) {
-            return;
-        }
-
-        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
-        index = parseInt(elLabel.getAttribute('data-index'), 10);
-
-        if (groupIndex === -1 || index === -1) {
-            return;
-        }
-
-        bound = this._getBound(groupIndex, index) || this._makeLabelBound(e.clientX, e.clientY);
-
-        this.inCallback(bound, groupIndex, index);
-    },
-
-    onMousemove: function() {},
-    /**
-     * On mouseout event handler for series area
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseout: function(e) {
+    _onMouseEvent: function(e, callback) {
         var elTarget = e.target || e.srcElement,
             elLabel = this._findLabelElement(elTarget),
             groupIndex, index;
@@ -381,25 +362,46 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        this.outCallback(groupIndex, index);
+        callback(groupIndex, index);
+    },
+    /**
+     * On mouseover event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var that = this;
+        this._onMouseEvent(e, function(groupIndex, index) {
+            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY);
+            that.inCallback(bound, groupIndex, index);
+        });
+    },
+
+    /**
+     * On mouseout event handler for series area
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var that = this;
+        this._onMouseEvent(e, function(groupIndex, index) {
+            that.outCallback(groupIndex, index);
+        });
     },
 
     /**
      * On click event handler.
      * @param {MouseEvent} e mouse event
-     * @private
+     * @abstract
      */
-    _onClick: function() {},
+    onClick: function() {},
 
     /**
      * Attach event
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('click', el, tui.util.bind(this._onClick, this));
-        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        event.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
-        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     },
 
     /**

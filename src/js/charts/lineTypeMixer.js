@@ -21,59 +21,47 @@ var lineTypeMixer = {
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      */
-    lineTypeInit: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
-
+    lineTypeInit: function(userData, theme, options) {
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: axesData,
+            userData: userData,
             theme: theme,
             options: options,
-            isVertical: true,
-            initedData: initedData
+            hasAxes: true,
+            isVertical: true
         });
 
-        if (!this.isSubChart && !this.isGroupedTooltip) {
-            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer, {
-                tickCount: axesData.xAxis ? axesData.xAxis.tickCount : -1
-            });
-        }
+        this._addComponents(this.convertedData, options.chartType);
 
-        this._addComponents(convertedData, axesData, options);
+        if (!this.hasGroupTooltip) {
+            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer);
+        }
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} axesData axes data
-     * @param {object} options chart options
+     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, axesData) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
+    _addComponents: function(convertedData, chartType) {
+        var seriesData = {
             data: {
                 values: tui.util.pivot(convertedData.values),
                 formattedValues: tui.util.pivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale,
-                xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
+                formatFunctions: convertedData.formatFunctions
             }
         };
-        this.addAxisComponents({
+        this.addComponentsForAxisType({
             convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
-            Series: this.Series,
-            seriesData: seriesData,
-            aligned: axesData.xAxis && axesData.xAxis.aligned
+            axes: ['yAxis', 'xAxis'],
+            chartType: chartType,
+            serieses: [
+                {
+                    name: 'series',
+                    SeriesClass: this.Series,
+                    data: seriesData
+                }
+            ]
         });
     },
 
@@ -82,7 +70,7 @@ var lineTypeMixer = {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        if (!this.isSubChart && !this.isGroupedTooltip) {
+        if (!this.hasGroupTooltip) {
             this._attachLineTypeCoordinateEvent();
         }
         return ChartBase.prototype.render.apply(this, arguments);

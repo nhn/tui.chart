@@ -174,14 +174,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _createTooltipSectorElement: function() {
-        var elTooltipBlock;
+        var elTooltipSector;
         if (!this.elLayout.childNodes.length < 2) {
-            elTooltipBlock = dom.create('DIV', 'tui-chart-group-tooltip-sector');
-            dom.append(this.elLayout, elTooltipBlock);
+            elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
+            dom.append(this.elLayout, elTooltipSector);
         } else {
-            elTooltipBlock = this.elLayout.lastChild;
+            elTooltipSector = this.elLayout.lastChild;
         }
-        return elTooltipBlock;
+        return elTooltipSector;
     },
 
     /**
@@ -190,10 +190,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _getTooltipSectorElement: function() {
-        if (!this.elTooltipBlock) {
-            this.elTooltipBlock = this._createTooltipSectorElement();
+        if (!this.elTooltipSector) {
+            this.elTooltipSector = this._createTooltipSectorElement();
         }
-        return this.elTooltipBlock;
+        return this.elTooltipSector;
     },
 
     /**
@@ -201,18 +201,19 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @param {number} height height
      * @param {{start: number, end: number}} range range
      * @param {boolean} isLine whether line or not
+     * @param {boolean} isLastIndex whether last index or not
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
      * @private
      */
-    _makeVerticalTooltipSectorBound: function(height, range, isLine) {
+    _makeVerticalTooltipSectorBound: function(height, range, isLine, isLastIndex) {
         var width, moveLeft;
         if (isLine) {
             width = 1;
             height += 6;
-            moveLeft = 0;
+            moveLeft = isLastIndex ? chartConst.HIDDEN_WIDTH : 0;
         } else {
-            width = range.end - range.start + 1;
-            moveLeft = 1;
+            width = range.end - range.start;
+            moveLeft = chartConst.HIDDEN_WIDTH;
         }
         return {
             dimension: {
@@ -237,10 +238,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         return {
             dimension: {
                 width: width,
-                height: range.end - range.start + 1
+                height: range.end - range.start + chartConst.HIDDEN_WIDTH
             },
             position: {
-                left: chartConst.SERIES_EXPAND_SIZE,
+                left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
                 top: range.start
             }
         };
@@ -252,13 +253,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @param {{start: number, end:number}} range range
      * @param {boolean} isVertical whether vertical or not
      * @param {boolean} isLine whether line type or not
+     * @param {boolean} isLastIndex whether last index or not
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
      * @private
      */
-    _makeTooltipSectorBound: function(size, range, isVertical, isLine) {
+    _makeTooltipSectorBound: function(size, range, isVertical, isLine, isLastIndex) {
         var bound;
         if (isVertical) {
-            bound = this._makeVerticalTooltipSectorBound(size, range, isLine);
+            bound = this._makeVerticalTooltipSectorBound(size, range, isLine, isLastIndex);
         } else {
             bound = this._makeHorizontalTooltipSectorBound(size, range);
         }
@@ -271,18 +273,19 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @param {{start: number, end:number}} range range
      * @param {boolean} isVertical whether vertical or not
      * @param {number} index index
+     * @param {boolean} isLastIndex whether last index or not
      * @private
      */
-    _showTooltipSector: function(size, range, isVertical, index) {
-        var elTooltipBlock = this._getTooltipSectorElement(),
+    _showTooltipSector: function(size, range, isVertical, index, isLastIndex) {
+        var elTooltipSector = this._getTooltipSectorElement(),
             isLine = (range.start === range.end),
-            bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
+            bound = this._makeTooltipSectorBound(size, range, isVertical, isLine, isLastIndex);
         if (isLine) {
             this.fire('showGroupAnimation', index, bound);
         } else {
-            renderUtil.renderDimension(elTooltipBlock, bound.dimension);
-            renderUtil.renderPosition(elTooltipBlock, bound.position);
-            dom.addClass(elTooltipBlock, 'show');
+            renderUtil.renderDimension(elTooltipSector, bound.dimension);
+            renderUtil.renderPosition(elTooltipSector, bound.position);
+            dom.addClass(elTooltipSector, 'show');
         }
     },
 
@@ -292,8 +295,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _hideTooltipSector: function(index) {
-        var elTooltipBlock = this._getTooltipSectorElement();
-        dom.removeClass(elTooltipBlock, 'show');
+        var elTooltipSector = this._getTooltipSectorElement();
+        dom.removeClass(elTooltipSector, 'show');
         this.fire('hideGroupAnimation', index);
     },
 
@@ -314,7 +317,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         elTooltip.innerHTML = this._makeTooltipHtml(params.index);
         dom.addClass(elTooltip, 'show');
 
-        this._showTooltipSector(params.size, params.range, params.isVertical, params.index);
+        this._showTooltipSector(params.size, params.range, params.isVertical, params.index, params.isLastIndex);
         dimension = this.getTooltipDimension(elTooltip);
 
         position = this._calculateTooltipPosition(dimension, params);
