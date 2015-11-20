@@ -24,11 +24,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
-     * @param {function} funcShowTooltip show tooltip function
-     * @param {function} funcHideTooltip hide tooltip function
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, funcShowTooltip, funcHideTooltip) {
+    render: function(paper, container, data, callbacks) {
         var dimension = data.dimension;
 
         if (!paper) {
@@ -40,7 +42,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         }
 
         this.circleBound = data.circleBound;
-        this._renderPie(paper, data, funcShowTooltip, funcHideTooltip);
+        this._renderPie(paper, data, callbacks);
 
         this.paper = paper;
 
@@ -97,11 +99,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Render pie graph.
      * @param {object} paper raphael paper
      * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
-     * @param {function} funcShowTooltip show tooltip function
-     * @param {function} funcHideTooltip hide tooltip function
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @private
      */
-    _renderPie: function(paper, data, funcShowTooltip, funcHideTooltip) {
+    _renderPie: function(paper, data, callbacks) {
         var circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
@@ -121,12 +125,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                     }
                 });
 
-            this._bindHoverEvent({
-                target: sector,
-                index: index,
-                funcShowTooltip: funcShowTooltip,
-                funcHideTooltip: funcHideTooltip
-            });
+            this._bindHoverEvent(sector, index, callbacks);
 
             sectors.push({
                 sector: sector,
@@ -170,33 +169,31 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Bind hover event.
-     * @param {object} params parameters
-     *      @param {object} params.target raphael item
-     *      @param {{left: number, top: number}} params.position position
-     *      @param {string} params.id id
-     *      @param {function} params.funcShowTooltip show tooltip function
-     *      @param {function} params.funcHideTooltip hide tooltip function
+     * @param {object} target raphael item
+     * @param {number} index index
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @private
      */
-    _bindHoverEvent: function(params) {
-        var args = [{}, 0, params.index],
-            funcShowTooltip = params.funcShowTooltip,
-            funcHideTooltip = params.funcHideTooltip,
+    _bindHoverEvent: function(target, index, callbacks) {
+        var args = [{}, 0, index],
             isOn = false,
             throttled = tui.util.throttle(function() {
                 if (!isOn) {
                     return;
                 }
-                funcShowTooltip.apply(null, arguments);
+                callbacks.funcShowTooltip.apply(null, arguments);
             }, 100);
 
-        params.target.mouseover(function (e) {
+        target.mouseover(function (e) {
             var _args = args.concat({
                 clientX: e.clientX,
                 clientY: e.clientY
             });
             isOn = true;
-            funcShowTooltip.apply(null, _args);
+            callbacks.funcShowTooltip.apply(null, _args);
         }).mousemove(function(e) {
             var _args = args.concat({
                 clientX: e.clientX,
@@ -205,7 +202,9 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             throttled.apply(null, _args);
         }).mouseout(function () {
             isOn = false;
-            funcHideTooltip();
+            callbacks.funcHideTooltip();
+        }).click(function() {
+            callbacks.funcSelectSeries(index);
         });
     },
 

@@ -78,7 +78,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions
+                formatFunctions: convertedData.formatFunctions,
+                joinLegendLabels: convertedData.joinLegendLabels
             }
         };
 

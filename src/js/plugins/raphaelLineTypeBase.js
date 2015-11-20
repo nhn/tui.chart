@@ -191,14 +191,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Show tooltip line.
+     * Show line for group tooltip.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
      * }} bound bound
-     * @private
      */
-    _showTooltipLine: function(bound) {
+    showGroupTooltipLine: function(bound) {
         var linePath = raphaelRenderUtil.makeLinePath({
             left: bound.position.left,
             top: bound.dimension.height
@@ -216,14 +215,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Show group animation.
      * @param {number} index index
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound bound
      */
-    showGroupAnimation: function(index, bound) {
+    showGroupAnimation: function(index) {
         this._showGroupDots(index);
-        this._showTooltipLine(bound);
     },
 
     /**
@@ -259,10 +253,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Hide tooltip line.
+     * Hide line for group tooltip.
      * @private
      */
-    _hideTooltipLine: function() {
+    hideGroupTooltipLine: function() {
         this.tooltipLine.attr({
             'stroke-opacity': 0
         });
@@ -274,7 +268,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     hideGroupAnimation: function(index) {
         this._hideGroupDots(index);
-        this._hideTooltipLine();
     },
 
     /**

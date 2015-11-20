@@ -43,7 +43,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             isVertical: true
         });
 
-        this._addComponents(this.convertedData, this.options);
+        this._addComponents(this.convertedData, this.options, this.theme);
     },
 
     /**
@@ -92,15 +92,24 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         return themeMap;
     },
 
-    _makeSerieses: function(seriesChartTypes, convertedData) {
+    /**
+     * To make serieses
+     * @param {array.<string>} chartTypes chart types
+     * @param {object} convertedData converted data.
+     * @param {object} options chart options
+     * @param {object} theme chart theme
+     * @returns {array.<object>} serieses
+     * @private
+     */
+    _makeSerieses: function(chartTypes, convertedData, options, theme) {
         var seriesClasses = {
                 column: ColumnChartSeries,
                 line: LineChartSeries
             },
-            optionsMap = this._makeOptionsMap(this.chartTypes, this.options),
-            themeMap = this._makeThemeMap(this.seriesChartTypes, this.theme, this.convertedData.legendLabels),
+            optionsMap = this._makeOptionsMap(chartTypes, options),
+            themeMap = this._makeThemeMap(chartTypes, theme, convertedData.legendLabels),
             serieses;
-        serieses = tui.util.map(seriesChartTypes, function(chartType) {
+        serieses = tui.util.map(chartTypes, function(chartType) {
             var values = convertedData.values[chartType],
                 formattedValues = convertedData.formattedValues[chartType],
                 data;
@@ -119,7 +128,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 data: {
                     values: values,
                     formattedValues: formattedValues,
-                    formatFunctions: convertedData.formatFunctions
+                    formatFunctions: convertedData.formatFunctions,
+                    joinLegendLabels: convertedData.joinLegendLabels
                 }
             };
 
@@ -137,11 +147,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * Add components
      * @param {object} convertedData converted data
      * @param {object} options chart options
+     * @param {object} theme chart theme
      * @private
      */
-    _addComponents: function(convertedData, options) {
+    _addComponents: function(convertedData, options, theme) {
         var axes = ['yAxis', 'xAxis'],
-            serieses = this._makeSerieses(this.seriesChartTypes, convertedData);
+            serieses = this._makeSerieses(this.seriesChartTypes, convertedData, options, theme);
 
         if (this.optionChartTypes.length) {
             axes.push('yrAxis');

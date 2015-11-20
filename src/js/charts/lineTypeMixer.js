@@ -51,7 +51,8 @@ var lineTypeMixer = {
             data: {
                 values: tui.util.pivot(convertedData.values),
                 formattedValues: tui.util.pivot(convertedData.formattedValues),
-                formatFunctions: convertedData.formatFunctions
+                formatFunctions: convertedData.formatFunctions,
+                joinLegendLabels: convertedData.joinLegendLabels
             }
         };
         this.addComponentsForAxisType({

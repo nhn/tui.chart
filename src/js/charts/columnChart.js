@@ -53,7 +53,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions
+                formatFunctions: convertedData.formatFunctions,
+                joinLegendLabels: convertedData.joinLegendLabels
             }
         };
         this.addComponentsForAxisType({

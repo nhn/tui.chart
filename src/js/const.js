@@ -24,6 +24,8 @@ var chartConst = {
     CLASS_NAME_LEGEND: 'tui-chart-legend',
     /** @type {string} */
     CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
+    /** @type {string} */
+    CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** chart types
      * @type {string}
      */

@@ -228,18 +228,24 @@ var axisTypeMixer = {
     _attachCustomEventForGroupTooltip: function() {
         var customEvent = this.componentMap.customEvent,
             tooltip = this.componentMap.tooltip,
-            series = this.componentMap.series;
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
         customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
 
-        if (series) {
+        tui.util.forEach(serieses, function(series) {
+            if (series.onShowGroupTooltipLine) {
+                tooltip.on('showGroupTooltipLine', series.onShowGroupTooltipLine, series);
+                tooltip.on('hideGroupTooltipLine', series.onHideGroupTooltipLine, series);
+            }
             tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
             tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
-        }
+        }, this);
     },
 
     /**
-     * To attach coordinate event of combo chart.
+     * To attach custom event for normal tooltip.
      * @private
      */
     _attachCustomEventForNormalTooltip: function() {
@@ -260,7 +266,11 @@ var axisTypeMixer = {
         }, this);
     },
 
-    _attachItemSelectCustomEvent: function() {
+    /**
+     * To attach custom event for series selection.
+     * @private
+     */
+    _attachCustomEventForSeriesSelection: function() {
         var customEvent = this.componentMap.customEvent,
             serieses = tui.util.filter(this.componentMap, function(component) {
                 return component.componentType === 'series';
@@ -272,7 +282,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Attach custom evnet.
+     * Attach custom event.
      * @private
      * @override
      */
@@ -283,7 +293,7 @@ var axisTypeMixer = {
             this._attachCustomEventForNormalTooltip();
         }
 
-        this._attachItemSelectCustomEvent();
+        this._attachCustomEventForSeriesSelection();
     },
 
     /**
