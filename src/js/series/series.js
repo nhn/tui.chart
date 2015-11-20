@@ -123,15 +123,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderSeriesArea: function(elSeriesArea, bound, data, funcRenderGraph) {
         var dimension, seriesData, elSeriesLabelArea;
+
         this._setBaseData(bound, data);
 
         dimension = this._expandDimension(bound.dimension);
-        seriesData = this.makeSeriesData(bound);
+        this.seriesData = seriesData = this.makeSeriesData(bound);
 
-        this.seriesData = seriesData;
         renderUtil.renderDimension(elSeriesArea, dimension);
         this._renderPosition(elSeriesArea, bound.position, this.chartType);
-
         funcRenderGraph(dimension, seriesData);
 
         elSeriesLabelArea = this._renderSeriesLabelArea(dimension, seriesData, this.elSeriesLabelArea);
@@ -180,9 +179,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {HTMLElement} series element
      */
     render: function(bound, data, paper) {
-        var el;
-
-        el = dom.create('DIV', this.className);
+        var el = dom.create('DIV', this.className);
 
         this.elSeriesArea = el;
         this.paper = paper;
@@ -190,6 +187,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
 
         return el;
+    },
+
+    /**
+     * To resize raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     */
+    _resizeGraph: function(dimension, seriesData) {
+        this.graphRenderer.resize(tui.util.extend({
+            dimension: dimension
+        }, seriesData));
+        this.showSeriesLabelArea(seriesData);
     },
 
     /**
@@ -201,17 +211,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(bound, data) {
-        var el, funcRenderGraph;
-        el = this.elSeriesArea;
+        var el = this.elSeriesArea;
 
-        funcRenderGraph = tui.util.bind(function(dimension, seriesData) {
-            this.graphRenderer.resize(tui.util.extend({
-                dimension: dimension
-            }, seriesData));
-            this.showSeriesLabelArea(seriesData);
-        }, this);
-
-        this._renderSeriesArea(el, bound, data, funcRenderGraph);
+        this._renderSeriesArea(el, bound, data, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -510,6 +512,22 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             end: 1,
             complete: function() {}
         });
+    },
+
+    _makeExportSeriesData: function(seriesData) {
+        return {
+            chartType: seriesData.chartType,
+            legendIndex: seriesData.indexes.index,
+            index: seriesData.indexes.groupIndex
+        };
+    },
+
+    onSelectSeries: function(seriesData) {
+        this.userEvent.fire('selectSeries', this._makeExportSeriesData(seriesData));
+    },
+
+    onUnselectSeries: function(seriesData) {
+        this.userEvent.fire('unselectSeries', this._makeExportSeriesData(seriesData));
     }
 });
 

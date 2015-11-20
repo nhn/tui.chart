@@ -26,11 +26,7 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
      */
     onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
-            bound = elTarget.getBoundingClientRect(),
-            layerX = e.clientX - bound.left,
-            layerY = e.clientY - bound.top,
-            groupIndex = this.tickBaseDataModel.findIndex(this.isVertical ? layerX : layerY),
-            foundData = this.pointTypeDataModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
+            foundData = this._findPointTypeData(elTarget, e.clientX, e.clientY);
 
         if (!this._isChanged(this.prevFoundData, foundData)) {
             return;

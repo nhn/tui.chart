@@ -9,6 +9,7 @@
 var eventListener = require('../helpers/eventListener'),
     TickBaseDataModel = require('./tickBaseDataModel'),
     PointTypeDataModel = require('./pointTypeDataModel'),
+    chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
@@ -80,7 +81,36 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      */
     _isChanged: function(prev, cur) {
         return !prev || !cur || prev.chartType !== cur.chartType ||
-            prev.indexes.groupIndex !== cur.indexes.index || prev.indexes.index !== cur.indexes.index;
+            prev.indexes.groupIndex !== cur.indexes.groupIndex || prev.indexes.index !== cur.indexes.index;
+    },
+
+    _findPointTypeData: function(elTarget, clientX, clientY) {
+        var bound = elTarget.getBoundingClientRect(),
+            layerX = clientX - bound.left,
+            layerY = clientY - bound.top,
+            groupIndex = this.tickBaseDataModel.findIndex(this.isVertical ? layerX : layerY);
+        return this.pointTypeDataModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
+    },
+
+    unselectSelectedData: function() {
+        var eventName = this.fire(renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series'), this.selectedData);
+        this.fire(eventName, this.selectedData);
+        delete this.selectedData;
+    },
+
+    onClick: function(e) {
+        var elTarget = e.target || e.srcElement,
+            foundData = this._findPointTypeData(elTarget, e.clientX, e.clientY);
+        if (!this._isChanged(this.selectedData, foundData)) {
+            this.unselectSelectedData();
+            return;
+        } else if (foundData) {
+            if (this.selectedData) {
+                this.unselectSelectedData();
+            }
+            this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
+            this.selectedData = foundData;
+        }
     },
 
     /**
@@ -100,6 +130,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
+        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
         eventListener.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
         eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }

@@ -478,32 +478,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             var legendData;
             if (that.options.legendType) {
                 legendData = that.data.joinLegendLabels[index];
-                that.userEvent.fire('clickLegend', {
+                that.userEvent.fire('selectLegend', {
                     legend: legendData.label,
                     chartType: legendData.chartType,
                     index: index
                 });
             }
         });
-        //
-        //
-        //var elTarget = e.target || e.srcElement,
-        //    elLabel = this._findLabelElement(elTarget),
-        //    index, legendData;
-        //
-        //if (!elLabel) {
-        //    return;
-        //}
-        //
-        //if (this.options.legendType) {
-        //    index = parseInt(elLabel.getAttribute('data-index'), 10);
-        //    legendData = this.data.joinLegendLabels[index];
-        //    this.userEvent.fire('clickLegend', {
-        //        legend: legendData.label,
-        //        chartType: legendData.chartType,
-        //        index: index
-        //    });
-        //}
     },
 
     /**

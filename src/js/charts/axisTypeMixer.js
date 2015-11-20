@@ -260,6 +260,17 @@ var axisTypeMixer = {
         }, this);
     },
 
+    _attachItemSelectCustomEvent: function() {
+        var customEvent = this.componentMap.customEvent,
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
+        tui.util.forEach(serieses, function(series) {
+            customEvent.on(renderUtil.makeCustomEventName('select', series.chartType, 'series'), series.onSelectSeries, series);
+            customEvent.on(renderUtil.makeCustomEventName('unselect', series.chartType, 'series'), series.onUnselectSeries, series);
+        }, this);
+    },
+
     /**
      * Attach custom evnet.
      * @private
@@ -271,6 +282,8 @@ var axisTypeMixer = {
         } else {
             this._attachCustomEventForNormalTooltip();
         }
+
+        this._attachItemSelectCustomEvent();
     },
 
     /**
