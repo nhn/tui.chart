@@ -50,6 +50,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return {};
     },
 
+    getSeriesData: function() {
+        return this.seriesData;
+    },
+
     /**
      * Show tooltip (mouseover callback).
      * @param {object} params parameters
@@ -149,6 +153,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         dimension = this._expandDimension(bound.dimension);
         seriesData = this.makeSeriesData(bound);
 
+        this.seriesData = seriesData;
         renderUtil.renderDimension(elSeriesArea, dimension);
         this._renderPosition(elSeriesArea, bound.position, this.chartType);
 

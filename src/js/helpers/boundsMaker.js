@@ -699,7 +699,7 @@ var boundsMaker = {
             series: seriesBound,
             legend: this._makeLegendBound(dimensions),
             tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
-            eventHandleLayer: axesBounds.plot
+            customEvent: axesBounds.plot
         }, axesBounds);
         return bounds;
     }

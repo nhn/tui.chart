@@ -408,12 +408,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             positionType = params.positionType,
             value = this._getValueByIndexes(params.indexes, params.chartType),
             center;
-
         if (value < 0) {
             center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
             position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
         }
-
         return position;
     },
 

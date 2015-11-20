@@ -8,8 +8,8 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var DEFAULT_DOT_WIDTH = 3,
-    HOVER_DOT_WIDTH = 4;
+var DEFAULT_DOT_RADIUS = 3,
+    HOVER_DOT_RADIUS = 4;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -77,7 +77,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: DEFAULT_DOT_WIDTH
+            r: DEFAULT_DOT_RADIUS
         };
 
         if (borderStyle) {
@@ -96,7 +96,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @returns {object} raphael dot
      */
     renderDot: function(paper, position, color) {
-        var dot = paper.circle(position.left, position.top, DEFAULT_DOT_WIDTH),
+        var dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS),
             dotStyle = {
                 fill: color,
                 'fill-opacity': 0,
@@ -187,7 +187,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             'fill-opacity': 1,
             'stroke-opacity': 0.3,
             'stroke-width': 2,
-            r: HOVER_DOT_WIDTH
+            r: HOVER_DOT_RADIUS
         });
     },
 

@@ -8,6 +8,8 @@
 
 var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
+    dataConverter = require('../helpers/dataConverter'),
+    renderUtil = require('../helpers/renderUtil'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries');
@@ -80,13 +82,15 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     },
 
     /**
-     * Set rendering data for pie chart.
+     * To make rendering data for pie chart.
      * @param {object} bounds chart bounds
+     * * @param {object} bounds chart bounds
+     * @return {object} data for rendering
      * @private
      * @override
      */
-    _setRenderingData: function(bounds) {
-        this.renderingData = {
+    _makeRenderingData: function(bounds) {
+        return {
             tooltip: {
                 seriesPosition: bounds.series.position
             },
@@ -102,8 +106,20 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        this._attachTooltipEvent();
-    }
+        var tooltip = this.componentMap.tooltip,
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
+        tui.util.forEach(serieses, function(series) {
+            series.on('showTooltip', tooltip.onShow, tooltip);
+            series.on('hideTooltip', tooltip.onHide, tooltip);
+
+            if (series.onShowAnimation) {
+                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
+                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
+            }
+        }, this);
+    },
 });
 
 module.exports = PieChart;

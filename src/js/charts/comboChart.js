@@ -32,7 +32,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         this.chartTypes = chartTypes;
         this.seriesChartTypes = seriesChartTypes;
         this.optionChartTypes = optionChartTypes;
-
         this.className = 'tui-combo-chart';
 
         ChartBase.call(this, {
@@ -98,10 +97,9 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 column: ColumnChartSeries,
                 line: LineChartSeries
             },
-            optionsMap = this._makeOptionsMap(this.optionChartTypes, this.options),
+            optionsMap = this._makeOptionsMap(this.chartTypes, this.options),
             themeMap = this._makeThemeMap(this.seriesChartTypes, this.theme, this.convertedData.legendLabels),
             serieses;
-
         serieses = tui.util.map(seriesChartTypes, function(chartType) {
             var values = convertedData.values[chartType],
                 formattedValues = convertedData.formattedValues[chartType],
@@ -257,8 +255,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             }, yAxisParams)),
             axesData, yrAxisData;
 
-        yAxisData.aligned = xAxisData.aligned;
-
         axesData = {
             yAxis: yAxisData,
             xAxis: xAxisData
@@ -303,6 +299,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @returns {HTMLElement} chart element
      */
     render: function() {
+        //this._attachComboChartCoordinateEvent();
         return ChartBase.prototype.render.call(this, {
             seriesChartTypes: this.seriesChartTypes,
             optionChartTypes: this.optionChartTypes

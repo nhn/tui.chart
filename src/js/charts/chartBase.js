@@ -6,8 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
+var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     dataConverter = require('../helpers/dataConverter'),
     boundsMaker = require('../helpers/boundsMaker'),
@@ -83,9 +82,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * user event listener
          * @type {object}
          */
-        this.userEvent = this._initUserEventListener();
+        this.userEvent = new UserEventListener();
 
-        this._addGroupedEventHandleLayer();
+        this.chartType = this.options.chartType;
+
+        this._addCustomEventComponent();
     },
 
     /**
@@ -100,64 +101,21 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeConvertedData: function(params) {
         var options = params.options,
             convertedData = dataConverter.convert(params.userData, options.chart, options.chartType, params.seriesChartTypes);
-
         return convertedData;
     },
 
     /**
-     * To make chart id.
-     * @returns {string} chart id
+     *
      * @private
+     * @abastract
      */
-    _makeChartId: function() {
-        return chartConst.CHAR_ID_PREFIX + '-' + (new Date()).getTime();
-    },
+    _addCustomEventComponent: function() {},
 
     /**
-     * Initialize user event listener.
-     * @returns {object} userEvent object
-     * @private
-     */
-    _initUserEventListener: function() {
-        return new UserEventListener();
-    },
-
-    /**
-     * Add grouped event handler layer.
-     * @param {{yAxis: obejct, xAxis: object}} axesData axes data
-     * @param {string} chartType chart type
-     * @param {boolean} isVertical whether vertical or not
-     * @private
-     * @abstract
-     */
-    _addGroupedEventHandleLayer: function() {},
-
-    /**
-     * To make baes data.
-     * @param {array | object} userData user data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     * @param {object} params add params
-     * @returns {{convertedData: object, bounds: object}} base data
-     */
-    makeBaseData: function(userData, theme, options, params) {
-        var seriesChartTypes = params ? params.seriesChartTypes : [],
-            convertedData = dataConverter.convert(userData, options.chart, options.chartType, seriesChartTypes),
-            bounds = boundsMaker.make(tui.util.extend({
-                chartType: options.chartType,
-                convertedData: convertedData,
-                theme: theme,
-                options: options
-            }, params));
-
-        return {
-            convertedData: convertedData,
-            bounds: bounds
-        };
-    },
-
-    /**
-     * Add component.
+     * To add component.
+     * The component refers to a component of the chart.
+     * The component types are axis, legend, plot, series and customEvent.
+     * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
      * @param {function} Component component function
      * @param {object} params parameters
@@ -188,13 +146,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Attach custom evnet.
-     * @private
-     * @abstract
-     */
-    _attachCustomEvent: function() {},
-
-    /**
      * To make bounds.
      * @param {object} boundsParams parameters for making bounds
      * @returns {object} chart bounds
@@ -211,14 +162,21 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Set rendering data for axis type chart.
+     * To make rendering data for axis type chart.
      * @param {object} bounds chart bounds
      * @param {object} convertedData convertedData
      * @param {object} options options
      * @private
      * @abstract
      */
-    _setRenderingData: function() {},
+    _makeRenderingData: function() {},
+
+    /**
+     * Attach custom evnet.
+     * @private
+     * @abstract
+     */
+    _attachCustomEvent: function() {},
 
     /**
      * Render chart.
@@ -227,21 +185,22 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     render: function(boundsParams) {
         var el = dom.create('DIV', this.className),
-            bounds;
+            bounds, renderingData;
 
         if (boundsParams) {
             this._makeBounds = tui.util.bind(this._makeBounds, this, boundsParams);
         }
 
         dom.addClass(el, 'tui-chart');
-        this.bounds = bounds = this._makeBounds();
-        this._setRenderingData(bounds, this.convertedData, this.options);
+        bounds = this._makeBounds();
+        renderingData = this._makeRenderingData(bounds, this.convertedData, this.options);
 
         this._renderTitle(el);
         renderUtil.renderDimension(el, bounds.chart.dimension);
         renderUtil.renderBackground(el, this.theme.chart.background);
         renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
-        this._renderComponents(el, this.components);
+        this._renderComponents(el, this.components, bounds, renderingData);
+        this._sendSeriesData();
         this._attachCustomEvent();
         this.elChart = el;
 
@@ -259,25 +218,25 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         dom.append(el, elTitle);
     },
 
-    _findBound: function(name, componentType) {
-        return this.bounds[name] || (componentType && this.bounds[componentType]);
+    _findBound: function(bounds, name, componentType) {
+        return bounds[name] || (componentType && bounds[componentType]);
     },
 
     /**
      * Render components.
      * @param {HTMLElement} container container element
      * @param {array.<object>} components components
-     * @param {object} paper object for graph drawing
+     * @param {array.<object>} bounds bounds
+     * @param {object} renderingData data for rendering
      * @private
      */
-    _renderComponents: function(container, components) {
+    _renderComponents: function(container, components, bounds, renderingData) {
         var paper, elements;
         elements = tui.util.map(components, function(component) {
             var name = component.name,
-                bound = this._findBound(name, component.componentType),
-                data = this.renderingData[name],
+                bound = this._findBound(bounds, name, component.componentType),
+                data = renderingData[name],
                 elComponent;
-
             if (!bound) {
                 return null;
             }
@@ -293,6 +252,28 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Send series data to custom event component.
+     * @private
+     */
+    _sendSeriesData: function() {
+        var seriesInfos, chartTypes;
+
+        if (!this.componentMap.customEvent) {
+            return;
+        }
+
+        chartTypes = this.chartTypes || [this.chartType];
+        seriesInfos = tui.util.map(chartTypes, function(chartType) {
+            var key = chartTypes.length === 1 ? 'series' : chartType + 'Series';
+            return {
+                chartType: chartType,
+                data: this.componentMap[key].getSeriesData()
+            };
+        }, this);
+        this.componentMap.customEvent.initCustomEventData(seriesInfos);
+    },
+
+    /**
      * To make event name for animation.
      * @param {string} chartType chart type
      * @param {string} prefix prefix
@@ -301,26 +282,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _makeAnimationEventName: function(chartType, prefix) {
         return prefix + chartType.substring(0, 1).toUpperCase() + chartType.substring(1) + 'Animation';
-    },
-
-    /**
-     * Attach custom event
-     * @private
-     */
-    _attachTooltipEvent: function() {
-        var tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-        tui.util.forEach(serieses, function(series) {
-            series.on('showTooltip', tooltip.onShow, tooltip);
-            series.on('hideTooltip', tooltip.onHide, tooltip);
-
-            if (series.onShowAnimation) {
-                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
-                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
-            }
-        }, this);
     },
 
     /**
@@ -367,13 +328,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Resize components.
      * @param {array.<{name: string, instance: object}>} components components
+     * @param {array.<object>} bounds bounds
+     * @param {object} renderingData data for rendering
      * @private
      */
-    _resizeComponents: function(components) {
+    _resizeComponents: function(components, bounds, renderingData) {
         tui.util.forEachArray(components, function(component) {
             var name = component.name,
-                bound = this._findBound(name, component.componentType),
-                data = this.renderingData[name];
+                bound = this._findBound(bounds, name, component.componentType),
+                data = renderingData[name];
 
             if (!component.instance.resize) {
                 return;
@@ -388,7 +351,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {{width: number, height: number}} dimension dimension
      */
     resize: function(dimension) {
-        var changed, bounds;
+        var changed, bounds, renderingData;
 
         if (!dimension) {
             return;
@@ -400,10 +363,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        this.bounds = bounds = this._makeBounds();
-        this._setRenderingData(bounds, this.convertedData, this.options);
+        bounds = this._makeBounds();
+
+        renderingData = this._makeRenderingData(bounds, this.convertedData, this.options);
         renderUtil.renderDimension(this.elChart, bounds.chart.dimension);
-        this._resizeComponents(this.components);
+        this._resizeComponents(this.components, bounds, renderingData);
+        this._sendSeriesData();
     }
 });
 

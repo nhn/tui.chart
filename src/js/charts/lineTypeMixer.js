@@ -7,7 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    LineTypeEventHandleLayer = require('../eventHandleLayers/lineTypeEventHandleLayer');
+    AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -31,10 +31,13 @@ var lineTypeMixer = {
         });
 
         this._addComponents(this.convertedData, options.chartType);
+    },
 
-        if (!this.hasGroupTooltip) {
-            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer);
-        }
+    _addCustomEventComponentForNormalTooltip: function() {
+        this.addComponent('customEvent', AreaTypeCustomEvent, {
+            chartType: this.chartType,
+            isVertical: this.isVertical
+        });
     },
 
     /**
@@ -70,21 +73,7 @@ var lineTypeMixer = {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        if (!this.hasGroupTooltip) {
-            this._attachLineTypeCoordinateEvent();
-        }
         return ChartBase.prototype.render.apply(this, arguments);
-    },
-
-    /**
-     * To attach coordinate event of line type.
-     * @private
-     */
-    _attachLineTypeCoordinateEvent: function() {
-        var eventHandleLayer = this.componentMap.eventHandleLayer,
-            series = this.componentMap.series;
-        eventHandleLayer.on('overTickSector', series.onLineTypeOverTickSector, series);
-        eventHandleLayer.on('outTickSector', series.onLineTypeOutTickSector, series);
     },
 
     /**

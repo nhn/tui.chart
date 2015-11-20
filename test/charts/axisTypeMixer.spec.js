@@ -8,7 +8,9 @@
 
 var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     Tooltip = require('../../src/js/tooltips/tooltip'),
-    GroupTooltip = require('../../src/js/tooltips/groupTooltip');
+    GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
+    GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
+    PointTypeCustomEvent = require('../../src/js/customEvents/pointTypeCustomEvent');
 
 describe('ComboChart', function() {
     var componentMap = {};
@@ -101,17 +103,70 @@ describe('ComboChart', function() {
         });
     });
 
+    describe('_getScales()', function() {
+        it('가로형 차트에서는 xAxis의 scale 정보를 chart type을 키로하여 반환합니다.', function() {
+            var xAxis = {
+                    scale: {}
+                },
+                yAxis = {
+                    scale: {}
+                },
+                actual = axisTypeMixer._getScales({
+                    xAxis: xAxis,
+                    yAxis: yAxis
+                }, ['bar'], false);
+            expect(actual.bar).toBe(xAxis.scale);
+        });
+
+        it('세로형 차트에서는 yAxis의 scale 정보를 chart type을 키로하여 반환합니다.', function() {
+            var xAxis = {
+                    scale: {}
+                },
+                yAxis = {
+                    scale: {}
+                },
+                actual = axisTypeMixer._getScales({
+                    xAxis: xAxis,
+                    yAxis: yAxis
+                }, ['column'], true);
+            expect(actual.column).toBe(yAxis.scale);
+        });
+
+        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 yrAxis의 scale 정보를 포함하는 데이터도 포함됩니다.', function() {
+            var xAxis = {
+                    scale: {}
+                },
+                yAxis = {
+                    scale: {}
+                },
+                yrAxis = {
+                    scale: {}
+                },
+                actual = axisTypeMixer._getScales({
+                    xAxis: xAxis,
+                    yAxis: yAxis,
+                    yrAxis: yrAxis
+                }, ['column', 'line'], true);
+            expect(actual.column).toBe(yAxis.scale);
+            expect(actual.line).toBe(yrAxis.scale);
+        });
+    });
+
     describe('_makeSeriesDataForRendering()', function() {
         it('가로형(!!isVertical === false) 차트의 시리즈 데이터는 x axis의 scale과 aligned를 반환합니다.', function() {
             var xAxis = {
                     scale: {},
                     aligned: true
                 },
+                yAxis = {
+                    scale: {}
+                },
                 actual;
 
             actual = axisTypeMixer._makeSeriesDataForRendering({
-                xAxis: xAxis
-            });
+                xAxis: xAxis,
+                yAxis: yAxis
+            }, ['bar'], false);
 
             expect(actual.series.scale).toBe(xAxis.scale);
             expect(actual.series.aligned).toBe(xAxis.aligned);
@@ -129,7 +184,7 @@ describe('ComboChart', function() {
             actual = axisTypeMixer._makeSeriesDataForRendering({
                 xAxis: xAxis,
                 yAxis: yAxis
-            }, true);
+            }, ['column'], true);
 
             expect(actual.series.scale).toBe(yAxis.scale);
             expect(actual.series.aligned).toBe(xAxis.aligned);
@@ -152,7 +207,7 @@ describe('ComboChart', function() {
                 xAxis: xAxis,
                 yAxis: yAxis,
                 yrAxis: yrAxis
-            }, true);
+            }, ['column', 'line'], true);
 
             expect(actual.columnSeries.scale).toBe(yAxis.scale);
             expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
@@ -161,58 +216,9 @@ describe('ComboChart', function() {
         });
     });
 
-    describe('_makePlotDataForRendering()', function() {
-        it('ploat data의 vTickCount는 yAxis.validTickCount를 hTickCount는 yAxis.validTickCount를 갖습니다.', function() {
-            var actual = axisTypeMixer._makePlotDataForRendering({
-                    yAxis: {
-                        validTickCount: 0
-                    },
-                    xAxis: {
-                        validTickCount: 4
-                    }
-                }),
-                expected = {
-                    vTickCount: 0,
-                    hTickCount: 4
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_makeEventHandleLayerDataForRendering()', function() {
-        it('세로 차트의 경우는 xAxis.tickCount를 tickCount로 반환합니다.', function() {
-            var actual = axisTypeMixer._makeEventHandleLayerDataForRendering({
-                    xAxis: {
-                        tickCount: 5
-                    },
-                    yAxis: {
-                        tickCount: 3
-                    }
-                }, true),
-                expected = {
-                    tickCount: 5
-                };
-            expect(actual).toEqual(expected);
-        });
-
-        it('가로 차트의 경우는 yAxis.tickCount를 tickCount로 반환합니다.', function() {
-            var actual = axisTypeMixer._makeEventHandleLayerDataForRendering({
-                    xAxis: {
-                        tickCount: 5
-                    },
-                    yAxis: {
-                        tickCount: 3
-                    }
-                }, false),
-                expected = {
-                    tickCount: 3
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_setRenderingData()', function() {
-        it('axis type chart의 renderingData를 셋팅합니다.', function() {
+    describe('_makeRenderingData()', function() {
+        it('axis type chart의 renderingData를 생성합니다.', function() {
+            var actual;
             axisTypeMixer._makeAxesData = jasmine.createSpy('_makeAxesData').and.returnValue({
                 xAxis: {
                     scale: {},
@@ -224,12 +230,26 @@ describe('ComboChart', function() {
                     validTickCount: 3
                 }
             });
-            axisTypeMixer._setRenderingData();
-            expect(axisTypeMixer.renderingData.plot.vTickCount).toBe(3);
-            expect(axisTypeMixer.renderingData.plot.hTickCount).toBe(0);
-            expect(axisTypeMixer.renderingData.eventHandleLayer.tickCount).toBe(3);
-            expect(axisTypeMixer.renderingData.series.scale).toBeDefined();
-            expect(axisTypeMixer.renderingData.series.aligned).toBe(true);
+            actual = axisTypeMixer._makeRenderingData();
+            expect(actual.plot.vTickCount).toBe(3);
+            expect(actual.plot.hTickCount).toBe(0);
+            expect(actual.customEvent.tickCount).toBe(3);
+            expect(actual.series.scale).toBeDefined();
+            expect(actual.series.aligned).toBe(true);
+        });
+    });
+
+    describe('_addCustomEventComponentForGroupTooltip()', function() {
+        it('그룹 툴팁을 위한 custom event 컴포넌트는 GroupTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer._addCustomEventComponentForGroupTooltip();
+            expect(componentMap.customEvent).toBe(GroupTypeCustomEvent);
+        });
+    });
+
+    describe('_addCustomEventComponentForNormalTooltip()', function() {
+        it('일반 툴팁을 위한 custom event 컴포넌트는 PointTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer._addCustomEventComponentForNormalTooltip();
+            expect(componentMap.customEvent).toBe(PointTypeCustomEvent);
         });
     });
 });

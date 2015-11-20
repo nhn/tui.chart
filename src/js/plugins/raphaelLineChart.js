@@ -104,25 +104,29 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      */
     animate: function(callback) {
         var time = ANIMATION_TIME / this.groupLines[0].length,
-            that = this;
+            that = this,
+            startTime = 0;
         this.renderItems(function(dot, groupIndex, index) {
-            var startTime = index * time,
-                line, path;
+            var line, path;
+
             if (index) {
                 line = that.groupLines[groupIndex][index - 1];
                 path = that.groupPaths[groupIndex][index - 1].end;
                 that.animateLine(line, path, time, startTime);
+                startTime += time;
+            } else {
+                startTime = 0;
             }
 
             if (that.dotOpacity) {
                 setTimeout(function() {
                     dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
-                }, startTime + time);
+                }, startTime);
             }
         });
 
         if (callback) {
-            setTimeout(callback, (this.groupDots.length + 1) * time);
+            setTimeout(callback, startTime);
         }
     },
 

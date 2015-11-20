@@ -269,27 +269,30 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     animate: function(callback) {
         var time = ANIMATION_TIME / this.groupAreas[0].length,
-            that = this;
+            that = this,
+            startTime = 0;
 
         this.renderItems(function(dot, groupIndex, index) {
-            var startTime = index * time,
-                area, areaPath;
+            var area, areaPath;
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
                 areaPath = that.groupPaths[groupIndex][index - 1];
                 that.animateLine(area.line, areaPath.line.end, time, startTime);
                 that._animateArea(area.area, areaPath.area, time, startTime);
+                startTime += time;
+            } else {
+                startTime = 0;
             }
 
             if (that.dotOpacity) {
                 setTimeout(function() {
                     dot.attr({'fill-opacity': that.dotOpacity});
-                }, startTime + time);
+                }, startTime);
             }
         });
 
         if (callback) {
-            setTimeout(callback, (this.groupDots.length + 1) * time);
+            setTimeout(callback, startTime);
         }
     },
 

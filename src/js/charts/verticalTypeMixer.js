@@ -23,9 +23,10 @@ var verticalTypeMixer = {
      * @private
      */
     _makeAxesData: function(convertedData, bounds, options) {
-        var xAxisData = axisDataMaker.makeLabelAxisData({
+        var aligned = state.isLineTypeChart(options.chartType),
+            xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: convertedData.labels,
-                aligned: state.isLineTypeChart(options.chartType),
+                aligned: aligned,
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
@@ -35,9 +36,9 @@ var verticalTypeMixer = {
                 chartType: options.chartType,
                 formatFunctions: convertedData.formatFunctions,
                 options: options.yAxis,
-                isVertical: true
+                isVertical: true,
+                aligned: aligned
             });
-        yAxisData.aligned = xAxisData.aligned;
 
         return {
             xAxis: xAxisData,
