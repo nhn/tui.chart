@@ -143,41 +143,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Bind hover event.
-     * @param {object} dot raphael obejct
-     * @param {{left: number, top: number}} position position
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
-     * @private
-     */
-    _bindHoverEvent: function(dot, position, groupIndex, index, inCallback, outCallback) {
-        dot.hover(function() {
-            inCallback(position, index, groupIndex);
-        }, function() {
-            outCallback();
-        });
-    },
-
-    /**
-     * Attach event.
-     * @param {array.<array.<object>>} groupDots dots
-     * @param {array.<array.<object>>} groupPositions positions
-     * @param {object} outDotStyle dot style
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
-     */
-    attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
-        tui.util.forEach(groupDots, function(dots, groupIndex) {
-            tui.util.forEach(dots, function(dot, index) {
-                var position = groupPositions[groupIndex][index];
-                this._bindHoverEvent(dot, position, groupIndex, index, inCallback, outCallback);
-            }, this);
-        }, this);
-    },
-
-    /**
      * Show dot.
      * @param {object} dot raphael object
      * @private

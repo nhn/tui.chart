@@ -11,7 +11,6 @@ var seriesTemplate = require('./seriesTemplate'),
     state = require('../helpers/state'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    eventListener = require('../helpers/eventListener'),
     pluginFactory = require('../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
@@ -50,36 +49,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return {};
     },
 
+    /**
+     * Get seriesData
+     * @returns {object} series data
+     */
     getSeriesData: function() {
         return this.seriesData;
-    },
-
-    /**
-     * Show tooltip (mouseover callback).
-     * @param {object} params parameters
-     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
-     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @param {{clientX: number, clientY: number}} eventPosition mouse event position
-     */
-    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
-        this.fire('showTooltip', tui.util.extend({
-            indexes: {
-                groupIndex: groupIndex,
-                index: index
-            },
-            bound: bound,
-            eventPosition: eventPosition
-        }, params));
-    },
-
-    /**
-     * Hide tooltip (mouseout callback).
-     * @param {string} id tooltip id
-     */
-    hideTooltip: function() {
-        this.fire('hideTooltip');
     },
 
     /**
@@ -168,6 +143,33 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * To make parameters for graph rendering.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @returns {object} parameters for graph rendering
+     * @private
+     */
+    _makeParamsForGraphRendering: function(dimension, seriesData) {
+        return tui.util.extend({
+            dimension: dimension,
+            chartType: this.chartType,
+            theme: this.theme,
+            options: this.options
+        }, seriesData);
+    },
+
+    /**
+     * To render raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     */
+    _renderGraph: function(dimension, seriesData) {
+        var params = this._makeParamsForGraphRendering(dimension, seriesData);
+        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params);
+    },
+
+    /**
      * To render series component.
      * @param {{
      *      dimension: {width: number, height: number},
@@ -178,36 +180,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {HTMLElement} series element
      */
     render: function(bound, data, paper) {
-        var el, funcRenderGraph;
+        var el;
 
         el = dom.create('DIV', this.className);
-        funcRenderGraph = tui.util.bind(function(dimension, seriesData) {
-            var inCallback = tui.util.bind(this.showTooltip, this, {
-                    allowNegativeTooltip: !!this.allowNegativeTooltip,
-                    chartType: this.chartType
-                }),
-                outCallback = tui.util.bind(this.hideTooltip, this),
-                params = tui.util.extend({
-                    dimension: dimension,
-                    chartType: this.chartType,
-                    theme: this.theme,
-                    options: this.options
-                }, seriesData);
-
-            this.paper = this.graphRenderer.render(paper, el, params, inCallback, outCallback);
-
-            // series label mouse event 동작 시 사용
-            this.inCallback = inCallback;
-            this.outCallback = outCallback;
-        }, this);
-
-        this._renderSeriesArea(el, bound, data, funcRenderGraph);
-
-        if (!this.hasGroupTooltip) {
-            this.attachEvent(el);
-        }
 
         this.elSeriesArea = el;
+        this.paper = paper;
+
+        this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
+
         return el;
     },
 
@@ -425,70 +406,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return elLegend;
     },
 
-    /**
-     * To handle mouse event.
-     * @param {MouseEvent} e mouse event
-     * @param {function} callback callback
-     * @private
-     */
-    _handleMouseEvent: function(e, callback) {
-        var elTarget = e.target || e.srcElement,
-            elLabel = this._findLabelElement(elTarget),
-            groupIndex, index;
 
-        if (!elLabel) {
-            return;
-        }
-
-        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
-        index = parseInt(elLabel.getAttribute('data-index'), 10);
-
-        if (groupIndex === -1 || index === -1) {
-            return;
-        }
-
-        callback(groupIndex, index);
-    },
-
-    /**
-     * This is event handler for mouseover.
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseover: function(e) {
-        var that = this;
-        this._handleMouseEvent(e, function(groupIndex, index) {
-            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY);
-            that.inCallback(bound, groupIndex, index);
-        });
-    },
-
-    /**
-     * This is event handler for mouseout.
-     * @param {MouseEvent} e mouse event
-     */
-    onMouseout: function(e) {
-        var that = this;
-        this._handleMouseEvent(e, function(groupIndex, index) {
-            that.outCallback(groupIndex, index);
-        });
-    },
-
-    /**
-     * This is event handler for mouse click.
-     * @param {MouseEvent} e mouse event
-     * @abstract
-     */
-    onClick: function() {},
-
-    /**
-     * Attach event
-     * @param {HTMLElement} el target element
-     */
-    attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
-        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
-    },
 
     /**
      * To call showAnimation function of graphRenderer.
@@ -594,7 +512,5 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         });
     }
 });
-
-tui.util.CustomEvents.mixin(Series);
 
 module.exports = Series;

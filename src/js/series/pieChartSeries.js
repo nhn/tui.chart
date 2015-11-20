@@ -8,7 +8,8 @@
 
 var Series = require('./series'),
     chartConst = require('../const'),
-    renderUtil = require('../helpers/renderUtil');
+    renderUtil = require('../helpers/renderUtil'),
+    eventListener = require('../helpers/eventListener');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -102,7 +103,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      position: {left: number, top: number}
      * }} bound series bound
      * @returns {{
-     *      formattedValues: array,
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
      *      sectorsInfo: array.<object>
@@ -181,6 +181,74 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             chartWidth: this.data.chartWidth,
             formattedValues: this.data.formattedValues[0]
         }, seriesData);
+    },
+
+    /**
+     * To render raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     * @override
+     */
+    _renderGraph: function(dimension, seriesData) {
+        var funcShowTooltip = tui.util.bind(this.showTooltip, this, {
+                allowNegativeTooltip: !!this.allowNegativeTooltip,
+                chartType: this.chartType
+            }),
+            funcHideTooltip = tui.util.bind(this.hideTooltip, this),
+            params = this._makeParamsForGraphRendering(dimension, seriesData);
+
+        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params, funcShowTooltip, funcHideTooltip);
+
+        // series label mouse event 동작 시 사용
+        this.showTooltip = funcShowTooltip;
+        this.hideTooltip = funcHideTooltip;
+    },
+
+    /**
+     * To render series component of pie chart.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @param {object} data data for rendering
+     * @param {object} paper object for graph drawing
+     * @returns {HTMLElement} series element
+     * @override
+     */
+    render: function() {
+        var el = Series.prototype.render.apply(this, arguments);
+        this.attachEvent(el);
+
+        return el;
+    },
+
+    /**
+     * Show tooltip (mouseover callback).
+     * @param {object} params parameters
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
+     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {{clientX: number, clientY: number}} eventPosition mouse event position
+     */
+    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
+        this.fire('showTooltip', tui.util.extend({
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
+            bound: bound,
+            eventPosition: eventPosition
+        }, params));
+    },
+
+    /**
+     * Hide tooltip (mouseout callback).
+     * @param {string} id tooltip id
+     */
+    hideTooltip: function() {
+        this.fire('hideTooltip');
     },
 
     /**
@@ -375,29 +443,103 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * On click event handler.
+     * To handle mouse event.
      * @param {MouseEvent} e mouse event
-     * @override
+     * @param {function} callback callback
+     * @private
      */
-    onClick: function(e) {
+    _handleMouseEvent: function(e, callback) {
         var elTarget = e.target || e.srcElement,
             elLabel = this._findLabelElement(elTarget),
-            index, legendData;
+            groupIndex, index;
 
         if (!elLabel) {
             return;
         }
 
-        if (this.options.legendType) {
-            index = parseInt(elLabel.getAttribute('data-index'), 10);
-            legendData = this.data.joinLegendLabels[index];
-            this.userEvent.fire('clickLegend', {
-                legend: legendData.label,
-                chartType: legendData.chartType,
-                index: index
-            });
+        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
+        index = parseInt(elLabel.getAttribute('data-index'), 10);
+
+        if (groupIndex === -1 || index === -1) {
+            return;
         }
+
+        callback(groupIndex, index);
+    },
+
+    /**
+     * On click event handler.
+     * @param {MouseEvent} e mouse event
+     * @override
+     */
+    onClick: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index) {
+            var legendData;
+            if (that.options.legendType) {
+                legendData = that.data.joinLegendLabels[index];
+                that.userEvent.fire('clickLegend', {
+                    legend: legendData.label,
+                    chartType: legendData.chartType,
+                    index: index
+                });
+            }
+        });
+        //
+        //
+        //var elTarget = e.target || e.srcElement,
+        //    elLabel = this._findLabelElement(elTarget),
+        //    index, legendData;
+        //
+        //if (!elLabel) {
+        //    return;
+        //}
+        //
+        //if (this.options.legendType) {
+        //    index = parseInt(elLabel.getAttribute('data-index'), 10);
+        //    legendData = this.data.joinLegendLabels[index];
+        //    this.userEvent.fire('clickLegend', {
+        //        legend: legendData.label,
+        //        chartType: legendData.chartType,
+        //        index: index
+        //    });
+        //}
+    },
+
+    /**
+     * This is event handler for mouseover.
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index) {
+            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY);
+            that.showTooltip(bound, groupIndex, index);
+        });
+    },
+
+    /**
+     * This is event handler for mouseout.
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index) {
+            that.hideTooltip(groupIndex, index);
+        });
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
+
+tui.util.CustomEvents.mixin(PieChartSeries);
 
 module.exports = PieChartSeries;

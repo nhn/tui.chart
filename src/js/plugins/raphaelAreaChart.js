@@ -25,11 +25,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
+    render: function(paper, container, data) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
@@ -54,9 +52,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
-
-        this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
-
         this.paper = paper;
 
         return paper;
