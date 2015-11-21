@@ -8,6 +8,7 @@
 
 var TooltipBase = require('./tooltipBase'),
     chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
     eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
@@ -352,7 +353,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             return this._calculateTooltipPositionAboutPieChart(params);
         }
 
-        if (params.chartType === chartConst.CHART_TYPE_BAR) {
+        if (predicate.isBarChart(params.chartType)) {
             result = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
             positionType = 'left';

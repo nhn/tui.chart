@@ -483,7 +483,6 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
  *      @param {object} options.series options of series
- *          @param {string} options.series.legendType legend type
  *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
@@ -492,6 +491,8 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {object} options.tooltip.addPosition add position
  *              @param {number} options.tooltip.addPosition.left add left position
  *              @param {number} options.tooltip.addPosition.top add top position
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.legendType legend type
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart

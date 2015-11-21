@@ -8,7 +8,7 @@
 
 var seriesTemplate = require('./seriesTemplate'),
     chartConst = require('../const'),
-    state = require('../helpers/state'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     pluginFactory = require('../factories/pluginFactory');
@@ -332,7 +332,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var min = data.scale.min,
             max = data.scale.max,
             distance = max - min,
-            isLineTypeChart = state.isLineTypeChart(this.chartType),
+            isLineTypeChart = predicate.isLineTypeChart(this.chartType),
             flag = 1,
             subValue = 0,
             percentValues;
@@ -497,7 +497,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Animate showing about series label area.
      */
     animateShowingAboutSeriesLabelArea: function() {
-        if ((!this.options.showLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
+        if ((!this.options.showLabel && !this.legendType) || !this.elSeriesLabelArea) {
             return;
         }
 

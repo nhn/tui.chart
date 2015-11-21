@@ -6,7 +6,7 @@
 
 'use strict';
 
-var state = require('../helpers/state');
+var predicate = require('../helpers/predicate');
 
 var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.prototype */ {
     /**
@@ -73,7 +73,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     _makeData: function(dimension, tickCount, chartType, isVertical) {
         var sizeType = isVertical ? 'width' : 'height',
             data;
-        if (state.isLineTypeChart(chartType)) {
+        if (predicate.isLineTypeChart(chartType)) {
             data = this._makeLineTypeData(dimension[sizeType], tickCount);
         } else {
             data = this._makeNormalData(dimension[sizeType], tickCount);
@@ -117,7 +117,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     makeRange: function(index, chartType) {
         var scale = this.data[index],
             range, center;
-        if (state.isLineTypeChart(chartType)) {
+        if (predicate.isLineTypeChart(chartType)) {
             center = parseInt(scale.max - (scale.max - scale.min) / 2, 10);
             range = {
                 start: center,

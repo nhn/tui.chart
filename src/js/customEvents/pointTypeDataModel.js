@@ -7,7 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
-    state = require('../helpers/state');
+    predicate = require('../helpers/predicate');
 
 var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prototype */ {
     /**
@@ -112,7 +112,7 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
         seriesInfos.reverse();
         coordinateData = tui.util.map(seriesInfos, function(info) {
             var result;
-            if (state.isLineTypeChart(info.chartType)) {
+            if (predicate.isLineTypeChart(info.chartType)) {
                 result = this._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
             } else {
                 result = this._makeRectTypeCoordinateData(info.data.groupBounds, info.chartType);

@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
+    predicate = require('./predicate'),
     calculator = require('./calculator');
 
 var abs = Math.abs,
@@ -469,7 +470,7 @@ var axisDataMaker = {
     _addMinPadding: function(params) {
         var min = params.min;
 
-        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
+        if ((!predicate.isLineChart(params.chartType) && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
             return min;
         }
         // normalize된 scale min값이 user min값과 같을 경우 step 감소
@@ -493,7 +494,7 @@ var axisDataMaker = {
     _addMaxPadding: function(params) {
         var max = params.max;
 
-        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
+        if ((!predicate.isLineChart(params.chartType) && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
             return max;
         }
 

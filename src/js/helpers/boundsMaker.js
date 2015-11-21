@@ -8,6 +8,7 @@
 
 var chartConst = require('../const'),
     calculator = require('./calculator'),
+    predicate = require('./predicate'),
     renderUtil = require('./renderUtil');
 
 var concat = Array.prototype.concat;
@@ -158,22 +159,33 @@ var boundsMaker = {
     },
 
     /**
+     * Whether skipped legend sizing or not.
+     * @param {string} chartType chart type
+     * @param {?string} legendType legend type
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isSkippedLegendSizing: function(chartType, legendType) {
+        return (predicate.isPieChart(chartType) && predicate.isPieLegendType(legendType)) || predicate.isHiddenLegendType(legendType);
+    },
+
+    /**
      * To make legend dimension.
      * @memberOf module:boundsMaker
      * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @param {string} chartType chart type
-     * @param {object} seriesOption series option
+     * @param {object} legendOptions series option
      * @returns {{width: number}} legend dimension
      * @private
      */
-    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
+    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, legendOptions) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
-        seriesOption = seriesOption || {};
+        legendOptions = legendOptions || {};
 
-        if (chartType !== chartConst.CHART_TYPE_PIE || !seriesOption.legendType) {
+        if (!this._isSkippedLegendSizing(chartType, legendOptions.legendType)) {
             legendLabels = tui.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });
@@ -270,7 +282,7 @@ var boundsMaker = {
             chartDimension = this._makeChartDimension(chartOptions),
             titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
             axesDimension = this._makeAxesDimension(params),
-            legendDimension = this._makeLegendDimension(params.convertedData.joinLegendLabels, params.theme.legend.label, params.options.chartType, params.options.series),
+            legendDimension = this._makeLegendDimension(params.convertedData.joinLegendLabels, params.theme.legend.label, params.options.chartType, params.options.legend),
             seriesDimension = this._makeSeriesDimension({
                 chartDimension: chartDimension,
                 axesDimension: axesDimension,
