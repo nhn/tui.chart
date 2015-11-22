@@ -80,7 +80,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @param {{
      *      dimension: {width: number, height: number},
      *      groupValues: array.<array.<number>>,
-     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} baseInfo base info
      * @param {number} value value
@@ -119,7 +119,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             bounds;
 
         bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
-            var paddingLeft = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
+            var paddingLeft = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
             return tui.util.map(values, function (value, index) {
                 return this._makeNormalColumnChartBound(baseInfo, value, paddingLeft, index);
             }, this);
@@ -135,13 +135,17 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeStackedColumnChartBounds: function(dimension) {
-        var groupValues, groupWidth, barWidth, bounds;
+        var groupValues, groupWidth, barWidth,
+            optionWidth, additionPadding, bounds;
 
         groupValues = this.percentValues;
         groupWidth = (dimension.width / groupValues.length);
         barWidth = groupWidth / 2;
+        optionWidth = this._makeOptionSize(barWidth, this.options.barWidth);
+        additionPadding = this._makeAdditionPadding(barWidth, optionWidth, 1);
+        barWidth = optionWidth || barWidth;
         bounds = tui.util.map(groupValues, function(values, groupIndex) {
-            var paddingLeft = (groupWidth * groupIndex) + (barWidth / 2) + chartConst.SERIES_EXPAND_SIZE,
+            var paddingLeft = (groupWidth * groupIndex) + additionPadding + chartConst.SERIES_EXPAND_SIZE,
                 top = 0;
             return tui.util.map(values, function (value) {
                 var endHeight, baseBound, bound;

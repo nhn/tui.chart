@@ -34,8 +34,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @param {number} groupSize bar group size
      * @param {number} itemCount group item count
      * @returns {number} bar gutter
+     * @private
      */
-    makeBarGutter: function(groupSize, itemCount) {
+    _makeBarGutter: function(groupSize, itemCount) {
         var baseSize = groupSize / (itemCount + 1) / 2,
             gutter;
         if (baseSize <= 2) {
@@ -51,12 +52,44 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * To make bar size.
      * @param {number} groupSize bar group size
-     * @param {number} barPadding bar padding
+     * @param {number} barGutter bar padding
      * @param {number} itemCount group item count
      * @returns {number} bar size (width or height)
+     * @private
      */
-    makeBarSize: function(groupSize, barPadding, itemCount) {
-        return (groupSize - (barPadding * (itemCount - 1))) / (itemCount + 1);
+    _makeBarSize: function(groupSize, barGutter, itemCount) {
+        return (groupSize - (barGutter * (itemCount - 1))) / (itemCount + 1);
+    },
+
+    /**
+     * To make option size.
+     * @param {number} barSize bar size
+     * @param {?number} optionBarWidth barWidth option
+     * @returns {number} option size
+     * @private
+     */
+    _makeOptionSize: function(barSize, optionBarWidth) {
+        var optionsSize = 0;
+        if (optionBarWidth) {
+            optionsSize = tui.util.min([barSize, optionBarWidth]);
+        }
+        return optionsSize;
+    },
+
+    /**
+     * To make addition padding.
+     * @param {number} barSize bar size
+     * @param {number} optionSize option size
+     * @param {number} itemCount item count
+     * @returns {number} addition padding
+     * @private
+     */
+    _makeAdditionPadding: function(barSize, optionSize, itemCount) {
+        var padding = 0;
+        if (optionSize && optionSize < barSize) {
+            padding = (barSize - optionSize) * itemCount / 2;
+        }
+        return (barSize / 2) + padding;
     },
 
     /**
@@ -67,7 +100,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @returns {{
      *      dimension: {width: number, height: number},
      *      groupValues: array.<array.<number>>,
-     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} base info
      */
@@ -75,16 +108,19 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var groupValues = this.percentValues,
             groupSize = dimension[anotherSizeType] / groupValues.length,
             itemCount = groupValues[0] && groupValues[0].length || 0,
-            barPadding = this.makeBarGutter(groupSize, itemCount),
-            barSize = this.makeBarSize(groupSize, barPadding, itemCount),
+            barGutter = this._makeBarGutter(groupSize, itemCount),
+            barSize = this._makeBarSize(groupSize, barGutter, itemCount),
+            optionSize = this._makeOptionSize(barSize, this.options.barWidth),
+            additionPadding = this._makeAdditionPadding(barSize, optionSize, itemCount),
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension[sizeType], this.data.scale);
+        barSize = optionSize || barSize;
         return {
             dimension: dimension,
             groupValues: groupValues,
             groupSize: groupSize,
-            barPadding: barPadding,
             barSize: barSize,
-            step: barSize + barPadding,
+            additionPadding: additionPadding,
+            step: barSize + barGutter,
             distanceToMin: scaleDistance.toMin,
             isMinus: this.data.scale.min < 0 && this.data.scale.max <= 0
         };
@@ -174,7 +210,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return labelHtml;
         }, this);
 
-        if (this.options.stacked === 'normal') {
+        if (this.options.stacked === 'normal' && bound) {
             htmls.push(this.makeSumLabelHtml({
                 values: values,
                 formatFunctions: params.formatFunctions,
