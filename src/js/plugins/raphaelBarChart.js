@@ -48,6 +48,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         this._renderBarBorders(baseParams);
 
+        this.theme = data.theme;
         this.groupBounds = groupBounds;
         this.chartType = data.chartType;
         this.paper = paper;
@@ -91,19 +92,19 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _renderBars: function(params) {
         var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
-            colors = params.theme.colors,
-            bars = [];
-        tui.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
+            colors = params.theme.colors;
+        this.groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
-            tui.util.forEachArray(bounds, function(bound, index) {
+            return tui.util.map(bounds, function(bound, index) {
                 var color, rect, value;
 
                 if (!bound) {
-                    return;
+                    return null;
                 }
 
                 color = singleColor || colors[index];
                 value = params.groupValues[groupIndex][index];
+
                 rect = this._renderBar({
                     paper: params.paper,
                     chartType: params.chartType,
@@ -113,17 +114,16 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     value: value
                 });
 
-                bars.push({
+                return {
                     rect: rect,
+                    color: color,
                     bound: bound.end,
                     value: value,
                     groupIndex: groupIndex,
                     index: index
-                });
+                };
             }, this);
         }, this);
-
-        this.bars = bars;
     },
 
     /**
@@ -233,32 +233,27 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @private
      */
     _renderBarBorders: function(params) {
-        var borderColor = params.theme.borderColor,
-            borders = [];
-
-        this.borders = borders;
-
+        var borderColor = params.theme.borderColor;
         if (!borderColor) {
             return;
         }
-
-        tui.util.forEachArray(params.groupBounds, function(bounds, groupIndex) {
-            tui.util.forEachArray(bounds, function(bound, index) {
-                var value, borderLines;
+        this.groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+            return tui.util.map(bounds, function(bound, index) {
+                var value;
 
                 if (!bound) {
-                    return;
+                    return null;
                 }
 
                 value = params.groupValues[groupIndex][index];
-                borderLines = this._renderBorderLines({
+
+                return this._renderBorderLines({
                     paper: params.paper,
                     bound: bound.start,
                     borderColor: borderColor,
                     chartType: params.chartType,
                     value: value
                 });
-                borders.push(borderLines);
             }, this);
         }, this);
     },
@@ -298,12 +293,15 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {function} callback callback
      */
     animate: function(callback) {
-        tui.util.forEach(this.bars, function(bar, index) {
-            var lines = this.borders[index];
-            this._animateRect(bar.rect, bar.bound);
-            if (lines) {
-                this._animateBorders(lines, bar.bound, this.chartType, bar.value);
-            }
+        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
+            var borders = this.groupBorders && this.groupBorders[groupIndex];
+            tui.util.forEachArray(bars, function(bar, index) {
+                var lines = borders && borders[index];
+                this._animateRect(bar.rect, bar.bound);
+                if (lines) {
+                    this._animateBorders(lines, bar.bound, this.chartType, bar.value);
+                }
+            }, this);
         }, this);
 
         if (callback) {
@@ -354,15 +352,80 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEach(this.bars, function(bar, index) {
-            var lines = this.borders[index],
-                bound = groupBounds[bar.groupIndex][bar.index].end;
-            bar.bound = bound;
-            this._updateRectAttr(bar.rect, bound);
-            if (lines) {
-                this._updateBordersAttr(lines, bound, this.chartType, bar.value);
-            }
+        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
+            var borders = this.groupBorders && this.groupBorders[groupIndex];
+            tui.util.forEachArray(function(bar, index) {
+                var lines = borders && borders[index],
+                    bound = groupBounds[groupIndex][index].end;
+                bar.bound = bound;
+                this._updateRectAttr(bar.rect, bound);
+                if (lines) {
+                    this._updateBordersAttr(lines, bound, this.chartType, bar.value);
+                }
+            }, this);
         }, this);
+    },
+
+    /**
+     * Change borders color.
+     * @param {array.<object>} lines raphael objects
+     * @param {borderColor} borderColor border color
+     * @private
+     */
+    _changeBordersColor: function(lines, borderColor) {
+        tui.util.forEach(lines, function(line) {
+            line.attr({stroke: borderColor});
+        });
+    },
+
+    /**
+     * To change bar color.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} color fill color
+     * @param {?string} borderColor stroke color
+     * @private
+     */
+    _changeBarColor: function(indexes, color, borderColor) {
+        var bar = this.groupBars[indexes.groupIndex][indexes.index],
+            lines;
+
+        bar.rect.attr({
+            fill: color
+        });
+
+        if (borderColor) {
+            lines = this.groupBorders[indexes.groupIndex][indexes.index];
+            this._changeBordersColor(lines, borderColor);
+        }
+    },
+
+    /**
+     * Select series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    selectSeries: function(indexes) {
+        var bar = this.groupBars[indexes.groupIndex][indexes.index],
+            objColor = Raphael.color(bar.color),
+            color = this.theme.selectionColor || raphaelRenderUtil.changeColorLuminance(objColor.hex, 0.2),
+            borderColor = this.theme.borderColor,
+            objBorderColor;
+
+        if (borderColor) {
+            objBorderColor = Raphael.color(borderColor);
+            borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, 0.2);
+        }
+
+        this._changeBarColor(indexes, color, borderColor);
+    },
+
+    /**
+     * Unselect series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    unselectSeries: function(indexes) {
+        var bar = this.groupBars[indexes.groupIndex][indexes.index],
+            borderColor = this.theme.borderColor;
+        this._changeBarColor(indexes, bar.color, borderColor);
     }
 });
 

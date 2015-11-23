@@ -281,7 +281,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             this.onUnselectSeries(seriesData);
             delete this.selectedIndex;
         } else {
-            if (this.selectedIndex) {
+            if (!tui.util.isUndefined(this.selectedIndex)) {
                 this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
             }
             this.onSelectSeries(seriesData);

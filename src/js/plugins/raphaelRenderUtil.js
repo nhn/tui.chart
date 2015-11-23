@@ -56,6 +56,31 @@ var raphaelRenderUtil = {
         line.attr(strokeStyle);
 
         return line;
+    },
+
+    /**
+     * To make changed luminance color.
+     * http://www.sitepoint.com/javascript-generate-lighter-darker-color/
+     * @param {string} hex hax color
+     * @param {number} lum luminance
+     * @returns {string} changed color
+     */
+    makeChangedLuminanceColor: function (hex, lum) {
+        // validate hex string
+        hex = String(hex).replace(/[^0-9a-f]/gi, '');
+
+        if (hex.length < 6) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+
+        lum = lum || 0;
+
+        // convert to decimal and change luminosity
+        return '#' + tui.util.map(tui.util.range(3), function(index) {
+            var c = parseInt(hex.substr(index * 2, 2), 16);
+            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+            return ("00" + c).substr(c.length);
+        }).join('');
     }
 };
 

@@ -89,6 +89,7 @@ _createChart = function(container, data, options) {
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -168,6 +169,7 @@ tui.chart.barChart = function(container, data, options) {
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -246,6 +248,7 @@ tui.chart.columnChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -327,6 +330,7 @@ tui.chart.lineChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -407,9 +411,11 @@ tui.chart.areaChart = function(container, data, options) {
  *              @param {string} options.series.column.stacked stacked type
  *              @param {boolean} options.series.column.showLabel whether show label or not
  *              @param {number} options.series.column.barWidth bar width
+ *              @param {boolean} options.series.column.hasSelection whether has selection or not
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
+ *              @param {boolean} options.series.line.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
  *              @param {string} options.tooltip.column.suffix suffix of tooltip
@@ -497,6 +503,7 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -614,7 +621,8 @@ tui.chart.pieChart = function(container, data, options) {
  *     },
  *     series: {
  *       colors: ['#40abb4', '#e78a31', '#c1c452', '#795224', '#f5f5f5'],
- *       borderColor: '#8e6535'
+ *       borderColor: '#8e6535',
+ *       selectionColor: '#cccccc',
  *     },
  *     legend: {
  *       label: {

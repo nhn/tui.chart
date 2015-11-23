@@ -34,7 +34,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPaths = this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            groupLines, tooltipLine, groupDots;
+            groupLines, tooltipLine, selectionDot, groupDots;
 
         if (!paper) {
             paper = Raphael(container, dimension.width, dimension.height);
@@ -42,7 +42,13 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
         groupLines = this._renderLines(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        groupDots = this.renderDots(paper, groupPositions, colors, borderStyle);
+        selectionDot = this._makeSelectionDot(paper);
+        groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
+
+        if (data.options.hasSelection) {
+            this.selectionDot = selectionDot;
+            this.selectionColor = theme.selectionColor;
+        }
 
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;

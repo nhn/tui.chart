@@ -41,6 +41,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
+        this.selectionColor = data.theme.selectionColor;
         this.circleBound = data.circleBound;
         this._renderPie(paper, data, callbacks);
 
@@ -129,6 +130,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             sectors.push({
                 sector: sector,
+                color: color,
                 angles: sectorInfo.angles.end,
                 percentValue: percentValue
             });
@@ -197,7 +199,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         }).mousemove(function(e) {
             var _args = args.concat({
                 clientX: e.clientX,
-                clientY: e.clientY
+                clientY: e.clientY - 10
             });
             throttled.apply(null, _args);
         }).mouseout(function () {
@@ -319,6 +321,30 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         tui.util.forEachArray(this.legendLines, function(line, index) {
             line.attr({path: paths[index]});
             return line;
+        });
+    },
+
+    /**
+     * Select series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    selectSeries: function(indexes) {
+        var item = this.sectors[indexes.index],
+            objColor = Raphael.color(item.color),
+            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+        item.sector.attr({
+            fill: color
+        });
+    },
+
+    /**
+     * Unelect series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    unselectSeries: function(indexes) {
+        var sector = this.sectors[indexes.index];
+        sector.sector.attr({
+            fill: sector.color
         });
     }
 });
