@@ -379,18 +379,32 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._sendSeriesData();
     },
 
+    /**
+     * Set tooltip align option.
+     * @param {string} align align
+     */
     setTooltipAlign: function(align) {
         this.componentMap.tooltip.setAlign(align);
     },
 
+    /**
+     * Set movingPosition option.
+     * @param {{left: number, top: number}} position moving position
+     */
     setTooltipMovingPosition: function(position) {
         this.componentMap.tooltip.setMovingPosition(position);
     },
 
+    /**
+     * Reset tooltip align option.
+     */
     resetTooltipAlign: function() {
         this.componentMap.tooltip.resetAlign();
     },
 
+    /**
+     * Reset tooltip moving position.
+     */
     resetTooltipMovingPosition: function() {
         this.componentMap.tooltip.resetMovingPosition();
     }

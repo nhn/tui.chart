@@ -44,7 +44,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
     },
 
-
+    /**
+     * To save position options.
+     * @private
+     */
     _saveOriginalPositionOptions: function() {
         this.orgPositionOptions = {
             align: this.options.align,
@@ -284,19 +287,33 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         });
     },
 
+    /**
+     * Set tooltip align option.
+     * @param {string} align align
+     */
     setAlign: function(align) {
         this.options.align = align;
     },
 
+    /**
+     * Set movingPosition option.
+     * @param {{left: number, top: number}} position moving position
+     */
     setMovingPosition: function(position) {
         var movingPosition = this.options.movingPosition;
         this.options.movingPosition = tui.util.extend({}, movingPosition, position);
     },
 
+    /**
+     * Reset tooltip align option.
+     */
     resetAlign: function() {
         this.options.align = this.orgPositionOptions.align;
     },
 
+    /**
+     * Reset tooltip moving position.
+     */
     resetMovingPosition: function() {
         this.options.movingPosition = this.orgPositionOptions.movingPosition;
     }

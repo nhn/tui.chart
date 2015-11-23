@@ -457,7 +457,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         dom.addClass(elTooltip, 'show');
 
-        this._fireShowTooltip(indexes);
+        this._fireBeforeShowTooltip(indexes);
 
         position = this._calculateTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
@@ -470,33 +470,51 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         this.moveToPosition(elTooltip, position, prevPosition);
         this._fireShowAnimation(indexes, params.chartType);
-        this._fireShownTooltip(indexes, position);
+        this._fireAfterShowTooltip(indexes, {
+            element: elTooltip,
+            position: position
+        });
     },
 
-    _makeShowTooltipParams: function(indexes, position) {
+    /**
+     * To make parameters for show tooltip user event.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
+     * @private
+     */
+    _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index,
             legendData = this.joinLegendLabels[legendIndex],
             params;
-        params = {
+        params = tui.util.extend({
             chartType: legendData.chartType,
             legend: legendData.label,
             legendIndex: legendIndex,
             index: indexes.groupIndex
-        };
-        if (position) {
-            params.position = position;
-        }
+        }, additionParams);
         return params;
     },
 
-    _fireShowTooltip: function(indexes) {
+    /**
+     * To call beforeShowTooltip callback of userEvent.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @private
+     */
+    _fireBeforeShowTooltip: function(indexes) {
         var params = this._makeShowTooltipParams(indexes);
-        this.userEvent.fire('showTooltip', params);
+        this.userEvent.fire('beforeShowTooltip', params);
     },
 
-    _fireShownTooltip: function(indexes, position) {
-        var params = this._makeShowTooltipParams(indexes, position);
-        this.userEvent.fire('shownTooltip', params);
+    /**
+     * To call afterShowTooltip callback of userEvent.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @private
+     */
+    _fireAfterShowTooltip: function(indexes, additionParams) {
+        var params = this._makeShowTooltipParams(indexes, additionParams);
+        this.userEvent.fire('afterShowTooltip', params);
     },
 
     /**
