@@ -7,7 +7,8 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase'),
-    AreaTypeDataModel = require('./areaTypeDataModel');
+    AreaTypeDataModel = require('./areaTypeDataModel'),
+    chartConst = require('../const');
 
 var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaTypeCustomEvent.prototype */ {
     /**
@@ -38,7 +39,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
             bound = elTarget.getBoundingClientRect(),
-            layerX = e.clientX - bound.left,
+            layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
             layerY = e.clientY - bound.top,
             groupIndex = this.tickBaseDataModel.findIndex(layerX),
             foundData = this.dataModel.findData(groupIndex, layerY);

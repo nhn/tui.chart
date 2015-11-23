@@ -37,6 +37,7 @@ describe('PieChartSeries', function() {
             },
             options: {}
         });
+        spyOn(series.graphRenderer, 'renderLegendLines');
     });
 
     describe('_makePercentValues()', function() {
@@ -287,7 +288,6 @@ describe('PieChartSeries', function() {
         it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
             var elLabelArea = dom.create('div'),
                 children;
-
             series._renderOuterLegend({
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],

@@ -18,23 +18,20 @@ var ANIMATION_TIME = 700;
 var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype */ {
     /**
      * Render function of bar chart
-     * @param {object} paper raphael paper
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data) {
+    render: function(container, data) {
         var groupBounds = data.groupBounds,
             dimension = data.dimension,
-            baseParams;
+            paper, baseParams;
 
         if (!groupBounds) {
             return null;
         }
 
-        if (!paper) {
-            paper = Raphael(container, dimension.width, dimension.height);
-        }
+        this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         baseParams = {
             paper: paper,
@@ -51,7 +48,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.theme = data.theme;
         this.groupBounds = groupBounds;
         this.chartType = data.chartType;
-        this.paper = paper;
 
         return paper;
     },
@@ -354,7 +350,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
             var borders = this.groupBorders && this.groupBorders[groupIndex];
-            tui.util.forEachArray(function(bar, index) {
+            tui.util.forEachArray(bars, function(bar, index) {
                 var lines = borders && borders[index],
                     bound = groupBounds[groupIndex][index].end;
                 bar.bound = bound;

@@ -58,19 +58,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To expand series dimension
-     * @param {{width: number, height: number}} dimension series dimension
-     * @returns {{width: number, height: number}} expended dimension
-     * @private
-     */
-    _expandDimension: function(dimension) {
-        return {
-            width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-            height: dimension.height + chartConst.SERIES_EXPAND_SIZE
-        };
-    },
-
-    /**
      * Render series label.
      * @private
      * @abstract
@@ -122,18 +109,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderSeriesArea: function(elSeriesArea, bound, data, funcRenderGraph) {
-        var dimension, seriesData, elSeriesLabelArea;
+        var expandedBound, seriesData, elSeriesLabelArea;
 
         this._setBaseData(bound, data);
 
-        dimension = this._expandDimension(bound.dimension);
+        expandedBound = renderUtil.expandBound(bound);
         this.seriesData = seriesData = this.makeSeriesData(bound);
 
-        renderUtil.renderDimension(elSeriesArea, dimension);
-        this._renderPosition(elSeriesArea, bound.position, this.chartType);
-        funcRenderGraph(dimension, seriesData);
+        renderUtil.renderDimension(elSeriesArea, expandedBound.dimension);
+        this._renderPosition(elSeriesArea, expandedBound.position, this.chartType);
+        funcRenderGraph(expandedBound.dimension, seriesData);
 
-        elSeriesLabelArea = this._renderSeriesLabelArea(dimension, seriesData, this.elSeriesLabelArea);
+        elSeriesLabelArea = this._renderSeriesLabelArea(expandedBound.dimension, seriesData, this.elSeriesLabelArea);
 
         if (!this.elSeriesLabelArea) {
             this.elSeriesLabelArea = elSeriesLabelArea;
@@ -165,7 +152,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderGraph: function(dimension, seriesData) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
-        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params);
+        this.graphRenderer.render(this.elSeriesArea, params);
     },
 
     /**
@@ -175,14 +162,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *      position: {left: number, top: number}
      * }} bound series bound
      * @param {object} data data for rendering
-     * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      */
-    render: function(bound, data, paper) {
+    render: function(bound, data) {
         var el = dom.create('DIV', this.className);
 
         this.elSeriesArea = el;
-        this.paper = paper;
 
         this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
 
@@ -248,16 +233,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
         renderUtil.renderPosition(el, {
             top: position.top - (hiddenWidth * 2),
-            left: position.left - chartConst.SERIES_EXPAND_SIZE - hiddenWidth
+            left: position.left - hiddenWidth
         });
-    },
-
-    /**
-     * Get paper.
-     * @returns {object} object for graph drawing
-     */
-    getPaper: function() {
-        return this.paper;
     },
 
     /**

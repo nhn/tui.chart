@@ -26,7 +26,8 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
      */
     onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
-            foundData = this._findPointTypeData(elTarget, e.clientX, e.clientY);
+            clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
+            foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
 
         if (!this._isChanged(this.prevFoundData, foundData)) {
             return;

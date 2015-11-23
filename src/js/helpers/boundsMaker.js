@@ -645,6 +645,21 @@ var boundsMaker = {
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
+    _makeCustomEventBound: function(bound) {
+        var dimension = bound.dimension,
+            position = bound.position;
+        return {
+            dimension: {
+                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+            },
+            position: {
+                left: position.left - chartConst.SERIES_EXPAND_SIZE,
+                top: position.top
+            }
+        }
+    },
+
     /**
      * To make bounds about chart components.
      * @memberOf module:boundsMaker
@@ -706,12 +721,13 @@ var boundsMaker = {
             top: top,
             left: left
         });
+
         bounds = tui.util.extend({
             chart: this._makeChartBound(dimensions.chart),
             series: seriesBound,
             legend: this._makeLegendBound(dimensions),
             tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
-            customEvent: axesBounds.plot
+            customEvent: seriesBound
         }, axesBounds);
         return bounds;
     }

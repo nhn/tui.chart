@@ -33,7 +33,7 @@ describe('GroupTypeCustomEvent', function() {
                 }, {
                     left: 50
                 }, true),
-                expected = 50;
+                expected = 40;
             expect(actual).toBe(expected);
         });
 

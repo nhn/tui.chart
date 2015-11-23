@@ -165,7 +165,7 @@ describe('Series', function() {
                 expect(elSeries.style.left).toBe('9px');
             } else {
                 expect(elSeries.style.top).toBe('20px');
-                expect(elSeries.style.left).toBe('10px');
+                expect(elSeries.style.left).toBe('20px');
             }
         });
     });

@@ -22,12 +22,11 @@ var concat = Array.prototype.concat;
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
     /**
      * Render function of area chart.
-     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data) {
+    render: function(container, data) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
@@ -36,15 +35,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             groupPaths = this._getAreasPath(groupPositions, data.zeroTop),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            groupAreas, tooltipLine, selectionDot, groupDots;
+            paper, groupAreas, tooltipLine, selectionDot, groupDots;
 
-        if (!paper) {
-            paper = Raphael(container, dimension.width, dimension.height);
-        }
+        this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         groupAreas = this._renderAreas(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        selectionDot = this._makeSelectionDot();
+        selectionDot = this._makeSelectionDot(paper);
         groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
 
         if (data.options.hasSelection) {
@@ -53,12 +50,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         }
 
         this.outDotStyle = outDotStyle;
+        this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.groupAreas = groupAreas;
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
-        this.paper = paper;
 
         return paper;
     },
@@ -322,6 +319,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             groupPositions = params.groupPositions,
             that = this;
 
+        this.groupPositions = groupPositions;
         this.groupPaths = this._getAreasPath(groupPositions, params.zeroTop);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});

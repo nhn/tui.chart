@@ -272,6 +272,26 @@ var renderUtil = {
         return elTitle;
     },
 
+    /**
+     * To expand dimension.
+     * @param {{width: number, height: number}} dimension series dimension
+     * @returns {{width: number, height: number}} expended dimension
+     */
+    expandBound: function(bound) {
+        var dimension = bound.dimension,
+            position = bound.position;
+        return {
+            dimension: {
+                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+            },
+            position: {
+                left: position.left - chartConst.SERIES_EXPAND_SIZE,
+                top: position.top
+            }
+        };
+    },
+
     makeCustomEventName: function(prefix, str, suffix) {
         return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
     },

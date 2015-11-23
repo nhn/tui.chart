@@ -218,6 +218,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         dom.append(el, elTitle);
     },
 
+    /**
+     * Find bound about component
+     * @param {object} bounds components bounds
+     * @param {string} name component name
+     * @param {string} componentType component type
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} found bound
+     * @private
+     */
     _findBound: function(bounds, name, componentType) {
         return bounds[name] || (componentType && bounds[componentType]);
     },
@@ -231,7 +242,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(container, components, bounds, renderingData) {
-        var paper, elements;
+        var elements;
         elements = tui.util.map(components, function(component) {
             var name = component.name,
                 bound = this._findBound(bounds, name, component.componentType),
@@ -241,10 +252,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
                 return null;
             }
 
-            elComponent = component.instance.render(bound, data, paper);
-            if (!paper && component.instance.getPaper) {
-                paper = component.instance.getPaper();
-            }
+            elComponent = component.instance.render(bound, data);
 
             return elComponent;
         }, this);
