@@ -38,30 +38,58 @@ describe('BarTypeSeriesBase', function() {
         series.makeSeriesLabelHtml = makeSeriesLabelHtml;
     });
 
-    describe('makeBarGutter()', function() {
+    describe('_makeBarGutter()', function() {
         it('계산되는 bar의 사이즈(group bar 너비 / (itemCount + 1) / 2)가 2보다 작거나 같다면 bar gutter(bar와 bar 사이의 간격)은 0입니다.', function() {
-            var actual = series.makeBarGutter(20, 5),
+            var actual = series._makeBarGutter(20, 5),
                 expected = 0;
             expect(actual).toBe(expected);
         });
 
         it('계산되는 bar의 사이즈가 2보다 크고 6보다 작거나 같다면 bar gutter는 2입니다.', function() {
-            var actual = series.makeBarGutter(60, 5),
+            var actual = series._makeBarGutter(60, 5),
                 expected = 2;
             expect(actual).toBe(expected);
         });
 
         it('계산되는 bar의 사이즈가 6보다 크다면 bar gutter는 4입니다.', function() {
-            var actual = series.makeBarGutter(100, 5),
+            var actual = series._makeBarGutter(100, 5),
                 expected = 4;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('makeBarSize()', function() {
+    describe('_makeBarSize()', function() {
         it('bar size는 bar group size에서 간격정보를 빼고 아이템수 + 1로 나누어 계산됩니다.', function() {
-            var actual = series.makeBarSize(100, 4, 5),
+            var actual = series._makeBarSize(100, 4, 5),
                 expected = 14;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeOptionSize()', function() {
+        it('optionBarWidth(옵션값,두번째인자)가 barSize(첫번째 인자)보다 작을 경우에는 옵션 값을 반환합니다.', function() {
+            var actual = series._makeOptionSize(14, 10),
+                expected = 10;
+            expect(actual).toBe(expected);
+        });
+
+        it('optionBarWidth가 barSize보다 클 경우에는 barSize를 반환합니다.', function() {
+            var actual = series._makeOptionSize(14, 20),
+                expected = 14;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeAdditionPadding()', function() {
+        it('시리즈 양쪽 사이드 영역의 추가적인 padding값을 구합니다. 옵션이 없을 경우에는 barSize(첫번째인자)을 반으로 나눈 값을 반환합니다.', function() {
+            var actual = series._makeAdditionPadding(14),
+                expected = 7;
+            expect(actual).toBe(expected);
+        });
+
+        it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에 barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
+            var actual = series._makeAdditionPadding(14, 10, 4),
+                expected = 15;
             expect(actual).toBe(expected);
         });
     });
