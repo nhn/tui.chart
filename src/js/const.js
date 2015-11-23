@@ -10,14 +10,6 @@
  * @enum {number}
  */
 var chartConst = {
-    /** chart id prefix
-     * @type {string}
-     */
-    CHAR_ID_PREFIX: 'tui-chart',
-    /** tooltip id prefix
-     * @type {string}
-     */
-    TOOLTIP_ID_PREFIX: 'tui-chart-tooltip',
     /** tui class names
      * @type {string}
      */
@@ -169,12 +161,12 @@ var chartConst = {
     TOOLTIP_DIRECTION_FORWORD: 'forword',
     /** @type {string} */
     TOOLTIP_DIRECTION_BACKWORD: 'backword',
-    /** tooltip default position option
+    /** tooltip align options
      * @type {string}
      */
-    TOOLTIP_DEFAULT_POSITION_OPTION: 'center top',
+    TOOLTIP_DEFAULT_ALIGN_OPTION: 'center top',
     /** @type {string} */
-    TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION: 'right middle',
+    TOOLTIP_DEFAULT_HORIZONTAL_ALIGN_OPTION: 'right middle',
     /** hide delay */
     HIDE_DELAY: 200
 };

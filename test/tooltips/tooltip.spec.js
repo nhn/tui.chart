@@ -107,21 +107,6 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_getTooltipId()', function() {
-        it('툴팁 아이디가 없을 경우에는 생성하여 반환합니다.', function() {
-            var actual = tooltip._getTooltipId();
-            expect(actual.indexOf(chartConst.TOOLTIP_ID_PREFIX) > -1).toBe(true);
-        });
-
-        it('기존에 this.tooltipId가 있을 경우에는 그대로 반환합니다.', function() {
-            var actual, expected;
-            tooltip.tooltipId = 'tooltip-id';
-            actual = tooltip._getTooltipId();
-            expected = 'tooltip-id';
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_makeTooltipHtml()', function() {
         it('툴팁 html을 생성합니다.', function() {
             var actual, expected;
@@ -157,8 +142,8 @@ describe('Tooltip', function() {
                         width: 50,
                         height: 30
                     },
-                    positionOption: '',
-                    addPosition: {
+                    alignOption: '',
+                    movingPosition: {
                         left: 0,
                         top: 0
                     }
@@ -189,8 +174,8 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                movingPosition: {
                     left: 0,
                     top: 0
                 }
@@ -218,8 +203,8 @@ describe('Tooltip', function() {
                         width: 50,
                         height: 30
                     },
-                    positionOption: '',
-                    addPosition: {
+                    alignOption: '',
+                    movingPosition: {
                         left: 0,
                         top: 0
                     }
@@ -284,8 +269,8 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                movingPosition: {
                     left: 0,
                     top: 0
                 }
@@ -311,8 +296,8 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                movingPosition: {
                     left: 0,
                     top: 0
                 }

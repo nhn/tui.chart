@@ -29,7 +29,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.position) {
-            options.tooltip.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
+            options.tooltip.position = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
 
         ChartBase.call(this, {
@@ -65,6 +65,8 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             formattedValues: convertedData.formattedValues,
             labels: convertedData.labels,
             legendLabels: convertedData.legendLabels,
+            joinLegendLabels: convertedData.joinLegendLabels,
+            userEvent: this.userEvent,
             chartType: options.chartType
         });
 

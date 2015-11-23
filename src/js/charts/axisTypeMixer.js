@@ -6,8 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
+var predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil'),
     Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
@@ -84,8 +83,10 @@ var axisTypeMixer = {
                 formattedValues: convertedData.formattedValues,
                 labels: convertedData.labels,
                 legendLabels: convertedData.legendLabels,
+                joinLegendLabels: convertedData.joinLegendLabels,
                 chartType: options.chartType,
-                isVertical: this.isVertical
+                isVertical: this.isVertical,
+                userEvent: this.userEvent
             });
         }
     },

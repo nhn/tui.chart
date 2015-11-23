@@ -377,6 +377,22 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.elChart, bounds.chart.dimension);
         this._resizeComponents(this.components, bounds, renderingData);
         this._sendSeriesData();
+    },
+
+    setTooltipAlign: function(align) {
+        this.componentMap.tooltip.setAlign(align);
+    },
+
+    setTooltipMovingPosition: function(position) {
+        this.componentMap.tooltip.setMovingPosition(position);
+    },
+
+    resetTooltipAlign: function() {
+        this.componentMap.tooltip.resetAlign();
+    },
+
+    resetTooltipMovingPosition: function() {
+        this.componentMap.tooltip.resetMovingPosition();
     }
 });
 
