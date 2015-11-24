@@ -388,11 +388,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Set movingPosition option.
+     * Set position option.
      * @param {{left: number, top: number}} position moving position
      */
-    setTooltipMovingPosition: function(position) {
-        this.componentMap.tooltip.setMovingPosition(position);
+    setTooltipPosition: function(position) {
+        this.componentMap.tooltip.setPosition(position);
     },
 
     /**
@@ -403,10 +403,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Reset tooltip moving position.
+     * Reset tooltip position.
      */
-    resetTooltipMovingPosition: function() {
-        this.componentMap.tooltip.resetMovingPosition();
+    resetTooltipPosition: function() {
+        this.componentMap.tooltip.resetPosition();
     }
 });
 

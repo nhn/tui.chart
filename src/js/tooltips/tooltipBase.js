@@ -51,7 +51,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _saveOriginalPositionOptions: function() {
         this.orgPositionOptions = {
             align: this.options.align,
-            movingPosition: this.options.movingPosition
+            position: this.options.position
         };
     },
 
@@ -296,12 +296,11 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Set movingPosition option.
+     * Set position option.
      * @param {{left: number, top: number}} position moving position
      */
-    setMovingPosition: function(position) {
-        var movingPosition = this.options.movingPosition;
-        this.options.movingPosition = tui.util.extend({}, movingPosition, position);
+    setPosition: function(position) {
+        this.options.position = tui.util.extend({}, this.options.position, position);
     },
 
     /**
@@ -312,10 +311,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Reset tooltip moving position.
+     * Reset tooltip position.
      */
-    resetMovingPosition: function() {
-        this.options.movingPosition = this.orgPositionOptions.movingPosition;
+    resetPosition: function() {
+        this.options.position = this.orgPositionOptions.position;
     }
 });
 

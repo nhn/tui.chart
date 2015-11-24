@@ -94,9 +94,9 @@ _createChart = function(container, data, options) {
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.movingPosition moving position
- *              @param {number} options.tooltip.movingPosition.left moving left value
- *              @param {number} movingPosition.top moving top value
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
@@ -174,9 +174,9 @@ tui.chart.barChart = function(container, data, options) {
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.movingPosition moving position
- *              @param {number} options.tooltip.movingPosition.left moving left value
- *              @param {number} movingPosition.top moving top value
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
@@ -253,9 +253,9 @@ tui.chart.columnChart = function(container, data, options) {
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.movingPosition moving position
- *              @param {number} options.tooltip.movingPosition.left moving left value
- *              @param {number} movingPosition.top moving top value
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
@@ -335,9 +335,9 @@ tui.chart.lineChart = function(container, data, options) {
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.movingPosition moving position
- *              @param {number} options.tooltip.movingPosition.left moving left value
- *              @param {number} movingPosition.top moving top value
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
@@ -421,9 +421,9 @@ tui.chart.areaChart = function(container, data, options) {
  *              @param {string} options.tooltip.column.suffix suffix of tooltip
  *              @param {string} options.tooltip.column.template template of tooltip
  *              @param {string} options.tooltip.column.align tooltip align option
- *              @param {object} options.tooltip.column.movingPosition moving position
- *                  @param {number} options.tooltip.column.movingPosition.left moving left value
- *                  @param {number} options.tooltip.column.movingPosition.top moving top value
+ *              @param {object} options.tooltip.column.position relative position
+ *                  @param {number} options.tooltip.column.position.left position left
+ *                  @param {number} options.tooltip.column.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
@@ -508,9 +508,9 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.movingPosition moving position
- *              @param {number} options.tooltip.movingPosition.left moving left value
- *              @param {number} movingPosition.top moving top value
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.legendType legend type
  *      @param {string} options.theme theme name

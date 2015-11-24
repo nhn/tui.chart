@@ -261,14 +261,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _calculateTooltipPositionAboutNotBarChart: function(params) {
         var bound = params.bound,
-            movingPosition = params.movingPosition,
+            positionOption = params.positionOption,
             minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
             alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
-        result.left = bound.left + movingPosition.left;
-        result.top = bound.top - tooltipHeight + movingPosition.top;
+        result.left = bound.left + positionOption.left;
+        result.top = bound.top - tooltipHeight + positionOption.top;
 
         if (alignOption.indexOf('left') > -1) {
             result.left -= minusWidth + lineGap;
@@ -300,14 +300,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _calculateTooltipPositionAboutBarChart: function(params) {
         var bound = params.bound,
-            movingPosition = params.movingPosition,
+            positionOption = params.positionOption,
             minusHeight = params.dimension.height - (bound.height || 0),
             alignOption = params.alignOption || '',
             tooltipWidth = params.dimension.width,
             result = {};
 
-        result.left = bound.left + bound.width + movingPosition.left;
-        result.top = bound.top + movingPosition.top;
+        result.left = bound.left + bound.width + positionOption.left;
+        result.top = bound.top + positionOption.top;
 
         // TODO : alignOptions을 객체로 만들어서 검사하도록 변경하기 ex) alignOption.left = true
         if (alignOption.indexOf('left') > -1) {
@@ -461,10 +461,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         position = this._calculateTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            movingPosition: tui.util.extend({
+            positionOption: tui.util.extend({
                 left: 0,
                 top: 0
-            }, this.options.movingPosition),
+            }, this.options.position),
             alignOption: this.options.align || ''
         }, params));
 

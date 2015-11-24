@@ -143,7 +143,7 @@ describe('Tooltip', function() {
                         height: 30
                     },
                     alignOption: '',
-                    movingPosition: {
+                    positionOption: {
                         left: 0,
                         top: 0
                     }
@@ -175,7 +175,7 @@ describe('Tooltip', function() {
                     height: 30
                 },
                 alignOption: '',
-                movingPosition: {
+                positionOption: {
                     left: 0,
                     top: 0
                 }
@@ -204,7 +204,7 @@ describe('Tooltip', function() {
                         height: 30
                     },
                     alignOption: '',
-                    movingPosition: {
+                    positionOption: {
                         left: 0,
                         top: 0
                     }
@@ -270,7 +270,7 @@ describe('Tooltip', function() {
                     height: 30
                 },
                 alignOption: '',
-                movingPosition: {
+                positionOption: {
                     left: 0,
                     top: 0
                 }
@@ -297,7 +297,7 @@ describe('Tooltip', function() {
                     height: 30
                 },
                 alignOption: '',
-                movingPosition: {
+                positionOption: {
                     left: 0,
                     top: 0
                 }
