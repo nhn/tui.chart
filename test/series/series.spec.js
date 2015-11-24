@@ -162,7 +162,7 @@ describe('Series', function() {
 
             if (renderUtil.isOldBrowser()) {
                 expect(elSeries.style.top).toBe('18px');
-                expect(elSeries.style.left).toBe('9px');
+                expect(elSeries.style.left).toBe('19px');
             } else {
                 expect(elSeries.style.top).toBe('20px');
                 expect(elSeries.style.left).toBe('20px');

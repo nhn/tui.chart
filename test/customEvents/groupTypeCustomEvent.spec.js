@@ -6,11 +6,10 @@
 
 'use strict';
 
-var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
-    chartConst = require('../../src/js/const');
+var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
 
 describe('GroupTypeCustomEvent', function() {
-    var groupTypeCustomEvent, getDataModelLength;
+    var groupTypeCustomEvent;
 
     beforeEach(function() {
         groupTypeCustomEvent = new GroupTypeCustomEvent({

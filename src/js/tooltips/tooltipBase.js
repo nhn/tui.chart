@@ -95,7 +95,11 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @override
      */
     resize: function(bound) {
+        this.bound = bound;
         renderUtil.renderPosition(this.elTooltipArea, bound.position);
+        if (this.positionModel) {
+            this.positionModel.updateBound(bound);
+        }
     },
 
     /**
@@ -328,7 +332,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var align = this.orgPositionOptions.align;
         this.options.align = align;
         if (this.positionModel) {
-            this.positionModel.updateData(this.options);
+            this.positionModel.updateOptions(this.options);
         }
     },
 
@@ -339,7 +343,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var position = this.orgPositionOptions.position;
         this.options.position = position;
         if (this.positionModel) {
-            this.positionModel.updateData(this.options);
+            this.positionModel.updateOptions(this.options);
         }
     }
 });

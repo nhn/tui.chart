@@ -1,5 +1,5 @@
 /**
- * @fileoverview test groupTooltip
+ * @fileoverview test GroupTooltip
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -7,7 +7,6 @@
 'use strict';
 
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
-    chartConst = require('../../src/js/const'),
     defaultTheme = require('../../src/js/themes/defaultTheme'),
     dom = require('../../src/js/helpers/domHandler');
 
