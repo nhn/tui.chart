@@ -33,21 +33,39 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * Render legend.
+     * To render legend area.
+     * @param {HTMLElement} elLegnedArea legend area element
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
+     * @private
+     */
+    _renderLegendArea: function(elLegnedArea, bound) {
+        var legendData;
+        this.bound = bound;
+        this.legendData = legendData = this._makeLegendData();
+        elLegnedArea.innerHTML = this._makeLegendHtml(legendData);
+        renderUtil.renderPosition(elLegnedArea, bound.position);
+        this._renderLabelTheme(elLegnedArea, this.theme.label);
+    },
+
+    /**
+     * To render legend component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
      */
     render: function(bound) {
-        var el = dom.create('DIV', this.className),
-            legendData = this._makeLegendData();
-        this.bound = bound;
-        el.innerHTML = this._makeLegendHtml(legendData);
-        renderUtil.renderPosition(el, bound.position);
-        this._renderLabelTheme(el, this.theme.label);
+        var el = dom.create('DIV', this.className);
+        this._renderLegendArea(el, bound);
         this._attachEvent(el);
-
-        this.legendData = legendData;
+        this.elLegendArea = el;
         return el;
+    },
+
+    /**
+     * To resize legend component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
+     */
+    resize: function(bound) {
+        this._renderLegendArea(this.elLegendArea, bound);
     },
 
     /**

@@ -68,26 +68,25 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea = series._renderNormalSeriesLabel({
-                    container: container,
-                    groupBounds: [
-                        [
-                            {
-                                end: {}
-                            },
-                            {
-                                end: {}
-                            }
-                        ]
-                    ],
-                    formattedValues: [
-                        ['1.5', '2.2']
-                    ],
-                    values: [
-                        [1.5, 2.2]
+            var elLabelArea = dom.create('div');
+            series._renderNormalSeriesLabel({
+                groupBounds: [
+                    [
+                        {
+                            end: {}
+                        },
+                        {
+                            end: {}
+                        }
                     ]
-                });
+                ],
+                formattedValues: [
+                    ['1.5', '2.2']
+                ],
+                values: [
+                    [1.5, 2.2]
+                ]
+            }, elLabelArea);
             expect(elLabelArea.childNodes.length).toEqual(2);
         });
     });
@@ -159,14 +158,12 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderStackedSeriesLabel()', function() {
         it('bar type(bar, column) stacked=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea;
+            var elLabelArea = dom.create('div');
             series.options = {
                 stacked: 'normal'
             };
 
-            elLabelArea = series._renderStackedSeriesLabel({
-                container: container,
+            series._renderStackedSeriesLabel({
                 formattedValues: [
                     ['1.5', '2.2']
                 ],
@@ -183,20 +180,20 @@ describe('BarTypeSeriesBase', function() {
                         }
                     ]
                 ]
-            });
+            }, elLabelArea);
             expect(elLabelArea.childNodes.length).toBe(3);
         });
     });
 
     describe('_renderSeriesLabel()', function() {
         it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function () {
-            var container = dom.create('div'),
-                params, actual, expected;
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
+                params;
             series.options = {
                 showLabel: true
             };
             params = {
-                container: container,
                 formattedValues: [
                     ['-1.5', '-2.2']
                 ],
@@ -214,15 +211,16 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
-            actual = series._renderSeriesLabel(params);
-            expected = series._renderNormalSeriesLabel(params);
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderNormalSeriesLabel(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
 
         it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function () {
-            var container = dom.create('div'),
-                params, actual, expected;
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
+                params;
 
             series.options = {
                 showLabel: true,
@@ -230,7 +228,6 @@ describe('BarTypeSeriesBase', function() {
             };
 
             params = {
-                container: container,
                 formattedValues: [
                     ['-1.5', '-2.2']
                 ],
@@ -249,20 +246,19 @@ describe('BarTypeSeriesBase', function() {
                 ]
             };
 
-            actual = series._renderSeriesLabel(params);
-            expected = series._renderStackedSeriesLabel(params);
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderStackedSeriesLabel(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
 
-        it('showLabel 옵션이 없으면 null을 반환합니다.', function () {
-            var actual;
+        it('showLabel 옵션이 없으면 랜더링하지 않습니다.', function () {
+            var elLabelArea = dom.create('div');
             series.options = {
                 stacked: 'normal'
             };
-            actual = series._renderSeriesLabel({});
-
-            expect(actual).toBeNull();
+            series._renderSeriesLabel({}, elLabelArea);
+            expect(elLabelArea.innerHTML).toBe('');
         });
     });
 });

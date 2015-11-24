@@ -168,14 +168,12 @@ describe('Axis', function() {
         it('axis 영역의 너비가 300인 레이블 타입 x축 레이블 영역은 너비 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 isLabelAxis: true,
                 isVertical: false
-            };
-
-            elLabelArea = axis._renderLabelArea(300);
+            }, 300);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -193,14 +191,12 @@ describe('Axis', function() {
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 isLabelAxis: true,
                 isVertical: true
-            };
-
-            elLabelArea = axis._renderLabelArea(300, 100);
+            }, 300, 100);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -221,12 +217,10 @@ describe('Axis', function() {
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['0.00', '30.00', '60.00'],
                 tickCount: 3
-            };
-
-            elLabelArea = axis._renderLabelArea(300);
+            }, 300);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -246,13 +240,11 @@ describe('Axis', function() {
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['0.00', '30.00', '60.00'],
                 tickCount: 3,
                 isVertical: true
-            };
-
-            elLabelArea = axis._renderLabelArea(300, 100);
+            }, 300, 100);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);

@@ -298,8 +298,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         toData.validTickCount += increaseTickCount;
     },
 
+    /**
+     * Render
+     * @returns {HTMLElement} chart element
+     */
     render: function() {
-        return ChartBase.prototype.render.call(this, null, null, {
+        return ChartBase.prototype.render.call(this, {
             seriesChartTypes: this.seriesChartTypes,
             optionChartTypes: this.optionChartTypes
         });

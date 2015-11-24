@@ -42,6 +42,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.circleBound = data.circleBound;
         this._renderPie(paper, data, inCallback, outCallback);
 
+        this.paper = paper;
+
         return paper;
     },
 
@@ -159,7 +161,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var paths = tui.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
-                raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
+                raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
+                'Z'
             ].join('');
         }, this);
         return paths;
@@ -278,6 +281,45 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 'stroke': 'black',
                 'stroke-opacity': 1
             });
+        });
+    },
+
+
+    /**
+     * To resize graph of pie chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {{cx:number, cy:number, r: number}} params.circleBound circle bound
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            circleBound = params.circleBound;
+
+        this.circleBound = circleBound;
+        this.paper.setSize(dimension.width, dimension.height);
+
+        tui.util.forEachArray(this.sectors, function(item) {
+            var angles = item.angles;
+            item.sector.attr({
+                sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
+            });
+        }, this);
+    },
+
+    /**
+     * To move legend lines.
+     * @param {array.<object>} outerPositions outer positions
+     */
+    moveLegendLines: function(outerPositions) {
+        var paths;
+        if (!this.legendLines) {
+            return;
+        }
+
+        paths = this._makeLinePaths(outerPositions)
+        tui.util.forEachArray(this.legendLines, function(line, index) {
+            line.attr({path: paths[index]});
+            return line;
         });
     }
 });

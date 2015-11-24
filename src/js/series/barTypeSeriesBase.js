@@ -7,16 +7,19 @@
 'use strict';
 
 var chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
      * To make series data.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
      * @returns {object} add data
      */
-    makeSeriesData: function() {
-        var groupBounds = this._makeBounds(this.bound.dimension);
+    makeSeriesData: function(bound) {
+        var groupBounds = this._makeBounds(bound.dimension);
 
         this.groupBounds = groupBounds;
 
@@ -93,14 +96,13 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupBounds group bounds
      *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderNormalSeriesLabel: function(params) {
+    _renderNormalSeriesLabel: function(params, elSeriesLabelArea) {
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
-            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             html;
         html = tui.util.map(params.values, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
@@ -118,9 +120,6 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**
@@ -189,20 +188,17 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Render stacked series label.
      * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupBounds group bounds
      *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderStackedSeriesLabel: function(params) {
+    _renderStackedSeriesLabel: function(params, elSeriesLabelArea) {
         var groupBounds = params.groupBounds,
             formattedValues = params.formattedValues,
             formatFunctions = params.formatFunctions || [],
-            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
             html;
-
         html = tui.util.map(params.values, function(values, index) {
             var labelsHtml = this._makeStackedLabelsHtml({
                 groupIndex: index,
@@ -216,32 +212,26 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**
      * Render series label.
      * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupBounds group bounds
      *      @param {array.<array>} params.formattedValues formatted values
-     * @returns {HTMLElement} series label area
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params) {
-        var elSeriesLabelArea;
+    _renderSeriesLabel: function(params, elSeriesLabelArea) {
         if (!this.options.showLabel) {
-            return null;
+            return;
         }
 
         if (this.options.stacked) {
-            elSeriesLabelArea = this._renderStackedSeriesLabel(params);
+            this._renderStackedSeriesLabel(params, elSeriesLabelArea);
         } else {
-            elSeriesLabelArea = this._renderNormalSeriesLabel(params);
+            this._renderNormalSeriesLabel(params, elSeriesLabelArea);
         }
-        return elSeriesLabelArea;
     },
 
     /**

@@ -55,7 +55,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.dotOpacity = opacity;
 
         this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
-
+        this.paper = paper;
         return paper;
     },
 
@@ -103,34 +103,63 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @param {function} callback callback
      */
     animate: function(callback) {
-        var groupLines = this.groupLines,
-            groupPaths = this.groupPaths,
-            borderStyle = this.borderStyle,
-            opacity = this.dotOpacity,
-            time = ANIMATION_TIME / groupLines[0].length,
-            startTime;
-        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            startTime = 0;
-            tui.util.forEachArray(dots, function(dot, index) {
-                var line, path;
-                if (index) {
-                    line = groupLines[groupIndex][index - 1];
-                    path = groupPaths[groupIndex][index - 1].end;
-                    this.animateLine(line, path, time, startTime);
-                    startTime += time;
-                }
+        var time = ANIMATION_TIME / this.groupLines[0].length,
+            that = this;
+        this.renderItems(function(dot, groupIndex, index) {
+            var startTime = index * time,
+                line, path;
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                path = that.groupPaths[groupIndex][index - 1].end;
+                that.animateLine(line, path, time, startTime);
+            }
 
-                if (opacity) {
-                    setTimeout(function() {
-                        dot.attr(tui.util.extend({'fill-opacity': opacity}, borderStyle));
-                    }, startTime);
-                }
-            }, this);
-        }, this);
+            if (that.dotOpacity) {
+                setTimeout(function() {
+                    dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
+                }, startTime + time);
+            }
+        });
 
         if (callback) {
-            setTimeout(callback, startTime);
+            setTimeout(callback, (this.groupDots.length + 1) * time);
         }
+    },
+
+    /**
+     * To resize graph of line chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            groupPositions = params.groupPositions,
+            that = this;
+
+        this.groupPaths = this._getLinesPath(groupPositions);
+        this.paper.setSize(dimension.width, dimension.height);
+        this.tooltipLine.attr({top: dimension.height});
+
+        this.renderItems(function(dot, groupIndex, index) {
+            var position = groupPositions[groupIndex][index],
+                dotAttrs = {
+                    cx: position.left,
+                    cy: position.top
+                },
+                line, path;
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                path = that.groupPaths[groupIndex][index - 1].end;
+                line.attr({path: path});
+            }
+
+            if (that.dotOpacity) {
+                dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
+            }
+
+            dot.attr(dotAttrs);
+        });
     }
 });
 

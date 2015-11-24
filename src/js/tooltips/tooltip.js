@@ -64,10 +64,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Render tooltip.
+     * To render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
+     * @override
      */
     render: function(bound, data) {
         var el = TooltipBase.prototype.render.call(this, bound);
@@ -78,6 +79,19 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         this.attachEvent(el);
         return el;
+    },
+
+    /**
+     * To resize tooltip component.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     * @override
+     */
+    resize: function(bound, data) {
+        if (data) {
+            this.seriesPosition = data.seriesPosition;
+        }
+        TooltipBase.prototype.resize.call(this, bound);
     },
 
     /**

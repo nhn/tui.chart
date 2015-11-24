@@ -175,11 +175,10 @@ describe('PieChartSeries', function() {
 
     describe('_renderCenterLegend()', function() {
         it('legend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea, children;
+            var elLabelArea = dom.create('div'),
+                children;
 
-            elLabelArea = series._renderCenterLegend({
-                container: container,
+            series._renderCenterLegend({
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
@@ -205,7 +204,7 @@ describe('PieChartSeries', function() {
                 options: {
                     legendType: 'center'
                 }
-            });
+            }, elLabelArea);
 
             children = elLabelArea.childNodes;
 
@@ -283,11 +282,10 @@ describe('PieChartSeries', function() {
 
     describe('_renderOuterLegend()', function() {
         it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea, children;
+            var elLabelArea = dom.create('div'),
+                children;
 
-            elLabelArea = series._renderOuterLegend({
-                container: container,
+            series._renderOuterLegend({
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
@@ -320,7 +318,7 @@ describe('PieChartSeries', function() {
                     legendType: 'outer'
                 },
                 chartWidth: 220
-            });
+            }, elLabelArea);
 
             children = elLabelArea.childNodes;
 
@@ -338,9 +336,9 @@ describe('PieChartSeries', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
-            var container = dom.create('div'),
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
                 params = {
-                    container: container,
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
                     sectorsInfo: [
@@ -373,16 +371,16 @@ describe('PieChartSeries', function() {
                         legendType: 'outer'
                     },
                     chartWidth: 220
-                },
-                actual = series._renderSeriesLabel(params),
-                expected = series._renderOuterLegend(params);
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+                };
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderOuterLegend(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var container = dom.create('div'),
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
                 params = {
-                    container: container,
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
                     sectorsInfo: [
@@ -408,11 +406,11 @@ describe('PieChartSeries', function() {
                     options: {
                         legendType: 'center'
                     }
-                },
-                actual = series._renderSeriesLabel(params),
-                expected = series._renderCenterLegend(params);
-            expect(actual.className).toEqual(expected.className);
-            expect(actual.innerHTML).toEqual(expected.innerHTML);
+                };
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderCenterLegend(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
     });
 });
