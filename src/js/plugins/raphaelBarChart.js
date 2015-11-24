@@ -402,7 +402,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     selectSeries: function(indexes) {
         var bar = this.groupBars[indexes.groupIndex][indexes.index],
             objColor = Raphael.color(bar.color),
-            color = this.theme.selectionColor || raphaelRenderUtil.changeColorLuminance(objColor.hex, 0.2),
+            color = this.theme.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2),
             borderColor = this.theme.borderColor,
             objBorderColor;
 

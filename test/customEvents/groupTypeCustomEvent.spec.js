@@ -47,20 +47,4 @@ describe('GroupTypeCustomEvent', function() {
             expect(actual).toBe(expected);
         });
     });
-
-    describe('_getTooltipDirection()', function() {
-        it('index가 중앙을 포함하여 this.coordinateData의 앞부분에 위치하면 forword를 반환합니다.', function() {
-            var actual, expected;
-            actual = groupTypeCustomEvent._getTooltipDirection(2);
-            expected = chartConst.TOOLTIP_DIRECTION_FORWORD;
-            expect(actual).toBe(expected);
-        });
-
-        it('index가 this.coordinateData의 뒷부분에 위치하면 backword를 반환합니다.', function() {
-            var actual, expected;
-            actual = groupTypeCustomEvent._getTooltipDirection(3);
-            expected = chartConst.TOOLTIP_DIRECTION_BACKWORD;
-            expect(actual).toBe(expected);
-        });
-    });
 });

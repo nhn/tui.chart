@@ -35,8 +35,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this.values = {};
             this.values[this.chartType] = values;
         }
-        this._setDefaultTooltipPositionOption();
-        this._saveOriginalPositionOptions();
     },
 
     /**
@@ -52,6 +50,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Set default align option of tooltip.
      * @private
+     * @override
      */
     _setDefaultTooltipPositionOption: function() {
         if (this.options.align) {
@@ -73,7 +72,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @override
      */
     render: function(bound, data) {
-        var el = TooltipBase.prototype.render.call(this, bound);
+        var el = TooltipBase.prototype.render.call(this, bound, data);
 
         if (data) {
             this.seriesPosition = data.seriesPosition;
@@ -328,6 +327,23 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Adjust position.
+     * @param {{width: number, height: number}} chartDimension chart dimension
+     * @param {{left: number, top: number}} areaPosition area position
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{left: number, top: number}} position position
+     * @returns {{left: number, top: number}} adjusted position
+     * @private
+     */
+    _adjustPosition: function(chartDimension, areaPosition, tooltipDimension, position) {
+        position.left = tui.util.max([position.left, -areaPosition.left]);
+        position.left = tui.util.min([position.left, chartDimension.width - areaPosition.left - tooltipDimension.width]);
+        position.top = tui.util.max([position.top, -areaPosition.top]);
+        position.top = tui.util.min([position.top, chartDimension.height - areaPosition.top - tooltipDimension.height]);
+        return position;
+    },
+
+    /**
      * Calculate tooltip position.
      * @param {object} params parameters
      *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
@@ -339,7 +355,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _calculateTooltipPosition: function(params) {
-        var result = {},
+        var position = {},
             sizeType, positionType, addPadding;
 
         if (params.eventPosition) {
@@ -347,19 +363,19 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }
 
         if (predicate.isBarChart(params.chartType)) {
-            result = this._calculateTooltipPositionAboutBarChart(params);
+            position = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
             positionType = 'left';
             addPadding = 1;
         } else {
-            result = this._calculateTooltipPositionAboutNotBarChart(params);
+            position = this._calculateTooltipPositionAboutNotBarChart(params);
             sizeType = 'height';
             positionType = 'top';
             addPadding = -1;
         }
 
         if (params.allowNegativeTooltip) {
-            result = this._moveToSymmetry(result, {
+            position = this._moveToSymmetry(position, {
                 bound: params.bound,
                 indexes: params.indexes,
                 dimension: params.dimension,
@@ -369,7 +385,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
                 addPadding: addPadding
             });
         }
-        return result;
+
+        position = this._adjustPosition(this.chartDimension, this.bound.position, params.dimension, position);
+        return position;
     },
 
     /**
@@ -443,7 +461,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var indexes = params.indexes,
             prevIndexes = this._getIndexesCustomAttribute(elTooltip),
             prevChartType, position;
-
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
             this._fireHideAnimation(prevIndexes, prevChartType);

@@ -43,12 +43,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.componentMap = {};
 
         /**
-         * data for rendering
-         * @type {object}
-         */
-        this.renderingData = {};
-
-        /**
          * theme
          * @type {object}
          */

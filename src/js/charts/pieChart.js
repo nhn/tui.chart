@@ -28,8 +28,8 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
         options.tooltip = options.tooltip || {};
 
-        if (!options.tooltip.position) {
-            options.tooltip.position = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
+        if (!options.tooltip.align) {
+            options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         }
 
         ChartBase.call(this, {
@@ -97,7 +97,8 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     _makeRenderingData: function(bounds) {
         return {
             tooltip: {
-                seriesPosition: bounds.series.position
+                seriesPosition: bounds.series.position,
+                chartDimension: bounds.chart.dimension
             },
             series: {
                 chartWidth: bounds.chart.dimension.width

@@ -42,7 +42,17 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
 
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
+
+        this._setDefaultTooltipPositionOption();
+        this._saveOriginalPositionOptions();
     },
+
+    /**
+     * Set default align option of tooltip.
+     * @private
+     * @abstract
+     */
+    _setDefaultTooltipPositionOption: function() {},
 
     /**
      * To save position options.
@@ -67,11 +77,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound) {
+    render: function(bound, data) {
         var el = dom.create('DIV', this.className);
 
         renderUtil.renderPosition(el, bound.position);
 
+        this.bound = bound;
+        this.chartDimension = data.chartDimension;
         this.elTooltipArea = el;
 
         return el;
@@ -293,6 +305,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     setAlign: function(align) {
         this.options.align = align;
+        if (this.positionModel) {
+            this.positionModel.setAlign(align);
+        }
     },
 
     /**
@@ -301,20 +316,31 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     setPosition: function(position) {
         this.options.position = tui.util.extend({}, this.options.position, position);
+        if (this.positionModel) {
+            this.positionModel.setPosition(position);
+        }
     },
 
     /**
      * Reset tooltip align option.
      */
     resetAlign: function() {
-        this.options.align = this.orgPositionOptions.align;
+        var align = this.orgPositionOptions.align;
+        this.options.align = align;
+        if (this.positionModel) {
+            this.positionModel.updateData(this.options);
+        }
     },
 
     /**
      * Reset tooltip position.
      */
     resetPosition: function() {
-        this.options.position = this.orgPositionOptions.position;
+        var position = this.orgPositionOptions.position;
+        this.options.position = position;
+        if (this.positionModel) {
+            this.positionModel.updateData(this.options);
+        }
     }
 });
 

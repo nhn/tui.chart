@@ -75,7 +75,8 @@ var axisTypeMixer = {
             this.addComponent('tooltip', GroupTooltip, {
                 labels: convertedData.labels,
                 joinFormattedValues: convertedData.joinFormattedValues,
-                joinLegendLabels: convertedData.joinLegendLabels
+                joinLegendLabels: convertedData.joinLegendLabels,
+                isVertical: this.isVertical
             });
         } else {
             this.addComponent('tooltip', Tooltip, {
@@ -196,6 +197,9 @@ var axisTypeMixer = {
             },
             customEvent: {
                 tickCount: this.isVertical ? axesData.xAxis.tickCount : axesData.yAxis.tickCount
+            },
+            tooltip: {
+                chartDimension: bounds.chart.dimension
             }
         }, seriesData, axesData);
     },
