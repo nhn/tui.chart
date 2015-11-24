@@ -29,7 +29,13 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     _makeRectTypeCoordinateData: function(groupBounds, chartType) {
         return tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(_bound, index) {
-                var bound = _bound.end;
+                var bound;
+                if (!_bound) {
+                    return null;
+                }
+
+                bound = _bound.end;
+
                 return {
                     sendData: {
                         chartType: chartType,
@@ -140,8 +146,8 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
 
         // layerX, layerY를 포함하는 data 추출
         candidates = tui.util.filter(this.data[groupIndex], function(data) {
-            var bound = data.bound;
-            return bound.left <= layerX && bound.right >= layerX && bound.top <= layerY && bound.bottom >= layerY;
+            var bound = data && data.bound;
+            return bound && bound.left <= layerX && bound.right >= layerX && bound.top <= layerY && bound.bottom >= layerY;
         });
 
         // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기

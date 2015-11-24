@@ -88,6 +88,7 @@ _createChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {number} options.series.barWidth bar width
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -166,6 +167,7 @@ tui.chart.barChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {number} options.series.barWidth bar width
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
@@ -404,6 +406,7 @@ tui.chart.areaChart = function(container, data, options) {
  *          @param {object} options.series.column options of column series
  *              @param {string} options.series.column.stacked stacked type
  *              @param {boolean} options.series.column.showLabel whether show label or not
+ *              @param {number} options.series.column.barWidth bar width
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
