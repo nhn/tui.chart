@@ -43,12 +43,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.componentMap = {};
 
         /**
-         * data for rendering
-         * @type {object}
-         */
-        this.renderingData = {};
-
-        /**
          * theme
          * @type {object}
          */
@@ -377,6 +371,36 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.elChart, bounds.chart.dimension);
         this._resizeComponents(this.components, bounds, renderingData);
         this._sendSeriesData();
+    },
+
+    /**
+     * Set tooltip align option.
+     * @param {string} align align
+     */
+    setTooltipAlign: function(align) {
+        this.componentMap.tooltip.setAlign(align);
+    },
+
+    /**
+     * Set position option.
+     * @param {{left: number, top: number}} position moving position
+     */
+    setTooltipPosition: function(position) {
+        this.componentMap.tooltip.setPosition(position);
+    },
+
+    /**
+     * Reset tooltip align option.
+     */
+    resetTooltipAlign: function() {
+        this.componentMap.tooltip.resetAlign();
+    },
+
+    /**
+     * Reset tooltip position.
+     */
+    resetTooltipPosition: function() {
+        this.componentMap.tooltip.resetPosition();
     }
 });
 

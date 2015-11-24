@@ -38,19 +38,6 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * Get tooltip direction.
-     * @param {number} index index
-     * @returns {string} direction
-     * @private
-     */
-    _getTooltipDirection: function(index) {
-        var standardNumber = Math.ceil(this.tickBaseDataModel.getLength() / 2),
-            number = index + 1;
-        // 중앙을 기준으로 중앙을 포함하여 앞부분에 위치하는 data는 forword를 반환하고, 뒷부분에 위치하는 data는 backword를 반환한다.
-        return standardNumber >= number ? chartConst.TOOLTIP_DIRECTION_FORWORD : chartConst.TOOLTIP_DIRECTION_BACKWORD;
-    },
-
-    /**
      * On mousemove.
      * @param {MouseEvent} e mouse event object
      * @override
@@ -61,8 +48,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             layerPositionValue = this._getLayerPositionValue(e, bound, this.isVertical),
             index = this.tickBaseDataModel.findIndex(layerPositionValue),
             prevIndex = this.prevIndex,
-            sizeType = this.isVertical ? 'height' : 'width',
-            direction;
+            sizeType = this.isVertical ? 'height' : 'width';
 
         if (index === -1) {
             this.onMouseout();
@@ -75,14 +61,10 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
         this.prevIndex = index;
 
-        direction = this._getTooltipDirection(index);
-
         this.fire('showGroupTooltip', {
             index: index,
-            isLastIndex: this.tickBaseDataModel.getLength() - 1 === index,
             range: this.tickBaseDataModel.makeRange(index, this.chartType),
             size: this.bound.dimension[sizeType],
-            direction: direction,
             isVertical: this.isVertical
         });
     },

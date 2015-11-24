@@ -330,7 +330,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
     selectSeries: function(indexes) {
-        //console.log('select indexes', indexes);
         var item = this.sectors[indexes.index],
             objColor = Raphael.color(item.color),
             color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
@@ -344,7 +343,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {{groupIndex: number, index: number}} indexes indexes
      */
     unselectSeries: function(indexes) {
-        //console.log('unselect indexes', indexes);
         var sector = this.sectors[indexes.index];
         sector.sector.attr({
             fill: sector.color

@@ -40,9 +40,30 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.data = this.makeTooltipData();
 
+
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
+
+        this._setDefaultTooltipPositionOption();
+        this._saveOriginalPositionOptions();
     },
 
+    /**
+     * Set default align option of tooltip.
+     * @private
+     * @abstract
+     */
+    _setDefaultTooltipPositionOption: function() {},
+
+    /**
+     * To save position options.
+     * @private
+     */
+    _saveOriginalPositionOptions: function() {
+        this.orgPositionOptions = {
+            align: this.options.align,
+            position: this.options.position
+        };
+    },
 
     /**
      * To make tooltip data.
@@ -56,11 +77,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound) {
+    render: function(bound, data) {
         var el = dom.create('DIV', this.className);
 
         renderUtil.renderPosition(el, bound.position);
 
+        this.bound = bound;
+        this.chartDimension = data.chartDimension;
         this.elTooltipArea = el;
 
         return el;
@@ -72,7 +95,11 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @override
      */
     resize: function(bound) {
+        this.bound = bound;
         renderUtil.renderPosition(this.elTooltipArea, bound.position);
+        if (this.positionModel) {
+            this.positionModel.updateBound(bound);
+        }
     },
 
     /**
@@ -274,6 +301,50 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
                 elTooltip.style.cssText = '';
             }
         });
+    },
+
+    /**
+     * Set tooltip align option.
+     * @param {string} align align
+     */
+    setAlign: function(align) {
+        this.options.align = align;
+        if (this.positionModel) {
+            this.positionModel.setAlign(align);
+        }
+    },
+
+    /**
+     * Set position option.
+     * @param {{left: number, top: number}} position moving position
+     */
+    setPosition: function(position) {
+        this.options.position = tui.util.extend({}, this.options.position, position);
+        if (this.positionModel) {
+            this.positionModel.setPosition(position);
+        }
+    },
+
+    /**
+     * Reset tooltip align option.
+     */
+    resetAlign: function() {
+        var align = this.orgPositionOptions.align;
+        this.options.align = align;
+        if (this.positionModel) {
+            this.positionModel.updateOptions(this.options);
+        }
+    },
+
+    /**
+     * Reset tooltip position.
+     */
+    resetPosition: function() {
+        var position = this.orgPositionOptions.position;
+        this.options.position = position;
+        if (this.positionModel) {
+            this.positionModel.updateOptions(this.options);
+        }
     }
 });
 

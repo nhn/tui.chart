@@ -230,7 +230,9 @@ describe('ComboChart', function() {
                     validTickCount: 3
                 }
             });
-            actual = axisTypeMixer._makeRenderingData();
+            actual = axisTypeMixer._makeRenderingData({
+                chart: {}
+            });
             expect(actual.plot.vTickCount).toBe(3);
             expect(actual.plot.hTickCount).toBe(0);
             expect(actual.customEvent.tickCount).toBe(3);
