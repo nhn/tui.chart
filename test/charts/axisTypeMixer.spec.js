@@ -15,7 +15,7 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
 describe('ComboChart', function() {
     var componentMap = {};
     beforeAll(function() {
-        axisTypeMixer.addComponent = jasmine.createSpy('addComponent').and.callFake(function(name, ComponentClass) {
+        axisTypeMixer._addComponent = jasmine.createSpy('_addComponent').and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
     });
@@ -77,7 +77,7 @@ describe('ComboChart', function() {
     describe('addComponentsForAxisType()', function() {
         it('axis type chart의 컴포넌트들을 추가합니다..', function() {
             axisTypeMixer.options = {};
-            axisTypeMixer.addComponentsForAxisType({
+            axisTypeMixer._addComponentsForAxisType({
                 axes: ['xAxis', 'yAxis'],
                 convertedData: {},
                 serieses: [

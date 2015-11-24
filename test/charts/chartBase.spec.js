@@ -68,7 +68,7 @@ describe('ChartBase', function() {
     describe('addComponent()', function() {
         it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
             var legend;
-            chartBase.addComponent('legend', Legend, {});
+            chartBase._addComponent('legend', Legend, {});
 
             legend = chartBase.componentMap.legend;
             expect(legend).toBeTruthy();

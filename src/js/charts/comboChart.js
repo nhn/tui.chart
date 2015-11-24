@@ -158,7 +158,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             axes.push('yrAxis');
         }
 
-        this.addComponentsForAxisType({
+        this._addComponentsForAxisType({
             convertedData: convertedData,
             axes: axes,
             seriesChartTypes: this.seriesChartTypes,

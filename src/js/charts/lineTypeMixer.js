@@ -20,8 +20,9 @@ var lineTypeMixer = {
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
+     * @private
      */
-    lineTypeInit: function(userData, theme, options) {
+    _lineTypeInit: function(userData, theme, options) {
         ChartBase.call(this, {
             userData: userData,
             theme: theme,
@@ -34,7 +35,7 @@ var lineTypeMixer = {
     },
 
     _addCustomEventComponentForNormalTooltip: function() {
-        this.addComponent('customEvent', AreaTypeCustomEvent, {
+        this._addComponent('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -55,7 +56,7 @@ var lineTypeMixer = {
                 joinLegendLabels: convertedData.joinLegendLabels
             }
         };
-        this.addComponentsForAxisType({
+        this._addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,

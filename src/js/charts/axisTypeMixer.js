@@ -36,7 +36,7 @@ var axisTypeMixer = {
                 axisParams.componentType = 'yAxis';
                 axisParams.index = 1;
             }
-            this.addComponent(name, Axis, axisParams);
+            this._addComponent(name, Axis, axisParams);
         }, this);
     },
 
@@ -60,7 +60,7 @@ var axisTypeMixer = {
 
         tui.util.forEach(serieses, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-            this.addComponent(series.name, series.SeriesClass, seriesParams);
+            this._addComponent(series.name, series.SeriesClass, seriesParams);
         }, this);
     },
 
@@ -72,14 +72,14 @@ var axisTypeMixer = {
      */
     _addTooltipComponent: function(convertedData, options) {
         if (this.hasGroupTooltip) {
-            this.addComponent('tooltip', GroupTooltip, {
+            this._addComponent('tooltip', GroupTooltip, {
                 labels: convertedData.labels,
                 joinFormattedValues: convertedData.joinFormattedValues,
                 joinLegendLabels: convertedData.joinLegendLabels,
                 isVertical: this.isVertical
             });
         } else {
-            this.addComponent('tooltip', Tooltip, {
+            this._addComponent('tooltip', Tooltip, {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,
                 labels: convertedData.labels,
@@ -102,7 +102,7 @@ var axisTypeMixer = {
      */
     _addLegendComponent: function(convertedData, seriesChartTypes, chartType, legendOptions) {
         if (!legendOptions || !predicate.isHiddenLegendType(legendOptions.legendType)) {
-            this.addComponent('legend', Legend, {
+            this._addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,
                 seriesChartTypes: seriesChartTypes,
@@ -119,13 +119,14 @@ var axisTypeMixer = {
      *      @param {object} params.axes axes data
      *      @param {object} params.plotData plot data
      *      @param {function} params.serieses serieses
+     * @private
      */
-    addComponentsForAxisType: function(params) {
+    _addComponentsForAxisType: function(params) {
         var convertedData = params.convertedData,
             options = this.options,
             aligned = !!params.aligned;
 
-        this.addComponent('plot', Plot);
+        this._addComponent('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(convertedData, params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options, aligned);
@@ -213,7 +214,7 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
-        this.addComponent('customEvent', GroupTypeCustomEvent, {
+        this._addComponent('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -224,7 +225,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this.addComponent('customEvent', PointTypeCustomEvent, {
+        this._addComponent('customEvent', PointTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });

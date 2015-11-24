@@ -57,7 +57,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                 joinLegendLabels: convertedData.joinLegendLabels
             }
         };
-        this.addComponentsForAxisType({
+        this._addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,

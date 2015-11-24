@@ -113,8 +113,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {string} name component name
      * @param {function} Component component function
      * @param {object} params parameters
+     * @private
      */
-    addComponent: function(name, Component, params) {
+    _addComponent: function(name, Component, params) {
         var commonParams = {},
             options, index, theme, component;
 

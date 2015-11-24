@@ -83,7 +83,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             }
         };
 
-        this.addComponentsForAxisType({
+        this._addComponentsForAxisType({
             convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
