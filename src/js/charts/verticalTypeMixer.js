@@ -7,7 +7,7 @@
 'use strict';
 
 var axisDataMaker = require('../helpers/axisDataMaker'),
-    state = require('../helpers/state');
+    predicate = require('../helpers/predicate');
 
 /**
  * verticalTypeMixer is mixer of vertical type chart(column, line, area).
@@ -23,7 +23,7 @@ var verticalTypeMixer = {
      * @private
      */
     _makeAxesData: function(convertedData, bounds, options) {
-        var aligned = state.isLineTypeChart(options.chartType),
+        var aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: convertedData.labels,
                 aligned: aligned,

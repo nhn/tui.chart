@@ -8,6 +8,7 @@
 
 var Series = require('./series'),
     chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     eventListener = require('../helpers/eventListener');
@@ -112,7 +113,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     makeSeriesData: function(bound) {
         var circleBound = this._makeCircleBound(bound.dimension, {
                 showLabel: this.options.showLabel,
-                legendType: this.options.legendType
+                legendType: this.legendType
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
         return {
@@ -132,7 +133,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.showLabel,
+            isSmallPie = predicate.isOuterLegendType(options.legendType) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
         return {
@@ -176,7 +177,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         return tui.util.extend({
             legendLabels: this.data.legendLabels,
             options: {
-                legendType: this.options.legendType,
+                legendType: this.legendType,
                 showLabel: this.options.showLabel
             },
             chartWidth: this.data.chartWidth,
@@ -300,7 +301,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
-
         if (params.options.legendType) {
             seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
@@ -447,9 +447,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderSeriesLabel: function(params, elSeriesLabelArea) {
-        if (params.options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER) {
+        var legendType = params.options.legendType;
+        if (predicate.isOuterLegendType(legendType)) {
             this._renderOuterLegend(params, elSeriesLabelArea);
-        } else {
+        } else if (predicate.isCenterLegendType(legendType)) {
             this._renderCenterLegend(params, elSeriesLabelArea);
         }
     },

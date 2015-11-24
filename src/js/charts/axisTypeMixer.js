@@ -6,7 +6,9 @@
 
 'use strict';
 
-var renderUtil = require('../helpers/renderUtil'),
+var chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
+    renderUtil = require('../helpers/renderUtil'),
     Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
@@ -89,6 +91,26 @@ var axisTypeMixer = {
     },
 
     /**
+     * Add legend component.
+     * @param {object} convertedData convertedData
+     * @param {array.<string>} seriesChartTypes series chart types
+     * @param {string} chartType chartType
+     * @param {object} legendOptions legend options
+     * @private
+     */
+    _addLegendComponent: function(convertedData, seriesChartTypes, chartType, legendOptions) {
+        if (!legendOptions || !predicate.isHiddenLegendType(legendOptions.legendType)) {
+            this.addComponent('legend', Legend, {
+                joinLegendLabels: convertedData.joinLegendLabels,
+                legendLabels: convertedData.legendLabels,
+                seriesChartTypes: seriesChartTypes,
+                chartType: chartType,
+                userEvent: this.userEvent
+            });
+        }
+    },
+
+    /**
      * Add components for axis type chart.
      * @param {object} params parameters
      *      @param {object} params.convertedData converted data
@@ -103,13 +125,7 @@ var axisTypeMixer = {
 
         this.addComponent('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
-        this.addComponent('legend', Legend, {
-            joinLegendLabels: convertedData.joinLegendLabels,
-            legendLabels: convertedData.legendLabels,
-            seriesChartTypes: params.seriesChartTypes,
-            chartType: params.chartType,
-            userEvent: this.userEvent
-        });
+        this._addLegendComponent(convertedData, params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options, aligned);
         this._addTooltipComponent(convertedData, options);
     },

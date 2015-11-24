@@ -10,7 +10,7 @@ var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
     axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
-    state = require('../helpers/state'),
+    predicate = require('../helpers/predicate'),
     defaultTheme = require('../themes/defaultTheme'),
     ColumnChartSeries = require('../series/columnChartSeries'),
     LineChartSeries = require('../series/lineChartSeries');
@@ -114,7 +114,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 formattedValues = convertedData.formattedValues[chartType],
                 data;
 
-            if (state.isLineTypeChart(chartType)) {
+            if (predicate.isLineTypeChart(chartType)) {
                 values = tui.util.pivot(values);
                 formattedValues = tui.util.pivot(formattedValues);
             }
