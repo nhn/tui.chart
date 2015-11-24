@@ -59,7 +59,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                 labels: convertedData.labels,
                 isVertical: true
             });
-        yAxisData.aligned = xAxisData.aligned;
 
         return {
             xAxis: xAxisData,

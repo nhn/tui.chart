@@ -25,11 +25,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
+    render: function(paper, container, data) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
@@ -54,9 +52,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
-
-        this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
-
         this.paper = paper;
 
         return paper;
@@ -269,27 +264,30 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     animate: function(callback) {
         var time = ANIMATION_TIME / this.groupAreas[0].length,
-            that = this;
+            that = this,
+            startTime = 0;
 
         this.renderItems(function(dot, groupIndex, index) {
-            var startTime = index * time,
-                area, areaPath;
+            var area, areaPath;
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
                 areaPath = that.groupPaths[groupIndex][index - 1];
                 that.animateLine(area.line, areaPath.line.end, time, startTime);
                 that._animateArea(area.area, areaPath.area, time, startTime);
+                startTime += time;
+            } else {
+                startTime = 0;
             }
 
             if (that.dotOpacity) {
                 setTimeout(function() {
                     dot.attr({'fill-opacity': that.dotOpacity});
-                }, startTime + time);
+                }, startTime);
             }
         });
 
         if (callback) {
-            setTimeout(callback, (this.groupDots.length + 1) * time);
+            setTimeout(callback, startTime);
         }
     },
 

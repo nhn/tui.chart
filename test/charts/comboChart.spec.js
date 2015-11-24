@@ -140,7 +140,8 @@ describe('ComboChart', function() {
                 },
                 step: 30,
                 isVertical: true,
-                isPositionRight: false
+                isPositionRight: false,
+                aligned: false
             });
         });
 
@@ -193,7 +194,8 @@ describe('ComboChart', function() {
                 },
                 step: 10,
                 isVertical: true,
-                isPositionRight: false
+                isPositionRight: false,
+                aligned: false
             });
         });
     });

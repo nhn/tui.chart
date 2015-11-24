@@ -16,7 +16,7 @@ module.exports = function(config) {
       'jasmine'
     ],
     reporters: [
-      'mocha',
+      'dots',
       'coverage',
       'junit'
     ],

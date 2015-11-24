@@ -21,11 +21,9 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
-     * @param {function} inCallback mouseover callback
-     * @param {function} outCallback mouseout callback
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
+    render: function(paper, container, data) {
         var groupBounds = data.groupBounds,
             dimension = data.dimension,
             baseParams;
@@ -46,10 +44,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             chartType: data.chartType
         };
 
-        this._renderBars(tui.util.extend({
-            inCallback: inCallback,
-            outCallback: outCallback
-        }, baseParams));
+        this._renderBars(baseParams);
 
         this._renderBarBorders(baseParams);
 
@@ -87,32 +82,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * Bind hover event.
-     * @param {object} rect raphael rect
-     * @param {{left: number, top: number, width: number, height: number}} bound bound
-     * @param {string} id tooltip id
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
-     * @private
-     */
-    _bindHoverEvent: function(rect, groupIndex, index, inCallback, outCallback) {
-        var that = this;
-        rect.hover(function() {
-            var bound = that.groupBounds[groupIndex][index].end;
-            inCallback(bound, groupIndex, index);
-        }, function() {
-            outCallback();
-        });
-    },
-
-    /**
      * Render bars.
      * @param {object} params parameters
      *      @param {object} params.paper raphael paper
      *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
      *      @param {array.<array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
-     *      @param {function} params.inCallback in callback
-     *      @param {function} params.outCallback out callback
      * @private
      */
     _renderBars: function(params) {
@@ -138,10 +112,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     bound: bound.start,
                     value: value
                 });
-
-                if (rect) {
-                    this._bindHoverEvent(rect, groupIndex, index, params.inCallback, params.outCallback);
-                }
 
                 bars.push({
                     rect: rect,

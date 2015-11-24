@@ -6,10 +6,12 @@
 
 'use strict';
 
-var Axis = require('../axes/axis'),
+var renderUtil = require('../helpers/renderUtil'),
+    Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
-    GroupedEventHandleLayer = require('../eventHandleLayers/groupedEventHandleLayer'),
+    GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent'),
+    PointTypeCustomEvent = require('../customEvents/pointTypeCustomEvent'),
     Tooltip = require('../tooltips/tooltip'),
     GroupTooltip = require('../tooltips/groupTooltip');
 
@@ -113,89 +115,71 @@ var axisTypeMixer = {
     },
 
     /**
+     * Get scales.
+     * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @param {array.<string>} chartTypes chart types
+     * @returns {array.<{min: number, max: number}>} scales
+     * @param {boolean} isVertical whether vertical or not
+     * @private
+     */
+    _getScales: function(axesData, chartTypes, isVertical) {
+        var scales = {},
+            yAxisScale = axesData.yAxis.scale;
+
+        scales[chartTypes[0]] = isVertical ? yAxisScale : axesData.xAxis.scale;
+
+        if (chartTypes.length > 1) {
+            scales[chartTypes[1]] = axesData.yrAxis ? axesData.yrAxis.scale : yAxisScale;
+        }
+
+        return scales;
+    },
+
+    /**
      * To make series data for rendering.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
+     * @param {array.<string>} chartTypes chart types
      * @param {boolean} isVertical whether vertical or not
      * @returns {object} series data
      * @private
      */
-    _makeSeriesDataForRendering: function(axesData, isVertical) {
-        var aligned = !!axesData.xAxis.aligned,
-            chartTypes, seriesData, firstData;
+    _makeSeriesDataForRendering: function(axesData, chartTypes, isVertical) {
+        var scales = this._getScales(axesData, chartTypes, isVertical),
+            aligned = axesData.xAxis.aligned,
+            seriesData = {};
 
-        if (!isVertical) {
-            return {
-                series: {
-                    scale: axesData.xAxis.scale,
-                    aligned: aligned
-                }
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            var key = chartTypes.length > 1 ? chartType + 'Series' : 'series';
+            seriesData[key] = {
+                scale: scales[chartType],
+                aligned: aligned
             };
-        }
-
-        firstData = {
-            scale: axesData.yAxis.scale,
-            aligned: aligned
-        };
-
-        chartTypes = this.optionChartTypes;
-
-        if (!chartTypes) {
-            return {
-                series: firstData
-            };
-        }
-
-        seriesData = {};
-        seriesData[chartTypes[0] + 'Series'] = firstData;
-        seriesData[chartTypes[1] + 'Series'] = axesData.yrAxis ? {
-            scale: axesData.yrAxis.scale,
-            aligned: aligned
-        } : firstData;
-
+        });
         return seriesData;
     },
 
     /**
-     * To make plot data for rendering.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @returns {{vTickCount: number, hTickCount: number}} plot data
-     * @private
-     */
-    _makePlotDataForRendering: function(axesData) {
-        return {
-            vTickCount: axesData.yAxis.validTickCount,
-            hTickCount: axesData.xAxis.validTickCount
-        };
-    },
-
-    /**
-     * To make data of event handle layer for rendering.
-     * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {boolean} isVertical whether vertical or not
-     * @returns {{tickCount: number}} event handler data
-     * @private
-     */
-    _makeEventHandleLayerDataForRendering: function(axesData, isVertical) {
-        return {
-            tickCount: isVertical ? axesData.xAxis.tickCount : axesData.yAxis.tickCount
-        };
-    },
-
-    /**
-     * Set rendering data for axis type chart.
+     * To make rendering data for axis type chart.
      * @param {object} bounds chart bounds
      * @param {object} convertedData convertedData
      * @param {object} options options
+     * @return {object} data for rendering
      * @private
      * @override
      */
-    _setRenderingData: function(bounds, convertedData, options) {
+    _makeRenderingData: function(bounds, convertedData, options) {
         var axesData = this._makeAxesData(convertedData, bounds, options),
-            seriesData = this._makeSeriesDataForRendering(axesData, this.isVertical);
+            optionChartTypes = this.chartTypes || [this.chartType],
+            seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
 
-        this.renderingData = tui.util.extend({
-            plot: this._makePlotDataForRendering(axesData),
-            eventHandleLayer: this._makeEventHandleLayerDataForRendering(axesData, this.isVertical)
+        return tui.util.extend({
+            plot: {
+                vTickCount: axesData.yAxis.validTickCount,
+                hTickCount: axesData.xAxis.validTickCount
+            },
+            customEvent: {
+                tickCount: this.isVertical ? axesData.xAxis.tickCount : axesData.yAxis.tickCount
+            }
         }, seriesData, axesData);
     },
 
@@ -207,32 +191,73 @@ var axisTypeMixer = {
      * @private
      * @override
      */
-    _addGroupedEventHandleLayer: function() {
-        if (!this.hasGroupTooltip) {
-            return;
-        }
-
-        this.addComponent('eventHandleLayer', GroupedEventHandleLayer, {
-            chartType: this.options.chartType,
+    _addCustomEventComponentForGroupTooltip: function() {
+        this.addComponent('customEvent', GroupTypeCustomEvent, {
+            chartType: this.chartType,
             isVertical: this.isVertical
         });
+    },
+
+    /**
+     * Add custom event component for normal tooltip.
+     * @private
+     */
+    _addCustomEventComponentForNormalTooltip: function() {
+        this.addComponent('customEvent', PointTypeCustomEvent, {
+            chartType: this.chartType,
+            isVertical: this.isVertical
+        });
+    },
+
+    /**
+     * Add custom event component.
+     * @private
+     */
+    _addCustomEventComponent: function() {
+        if (this.hasGroupTooltip) {
+            this._addCustomEventComponentForGroupTooltip();
+        } else {
+            this._addCustomEventComponentForNormalTooltip();
+        }
     },
 
     /**
      * Attach coordinate event.
      * @private
      */
-    _attachCoordinateEvent: function() {
-        var eventHandleLayer = this.componentMap.eventHandleLayer,
+    _attachCustomEventForGroupTooltip: function() {
+        var customEvent = this.componentMap.customEvent,
             tooltip = this.componentMap.tooltip,
             series = this.componentMap.series;
-        eventHandleLayer.on('showGroupTooltip', tooltip.onShow, tooltip);
-        eventHandleLayer.on('hideGroupTooltip', tooltip.onHide, tooltip);
+        customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
+        customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
 
         if (series) {
             tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
             tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
         }
+    },
+
+    /**
+     * To attach coordinate event of combo chart.
+     * @private
+     */
+    _attachCustomEventForNormalTooltip: function() {
+        var customEvent = this.componentMap.customEvent,
+            tooltip = this.componentMap.tooltip,
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
+
+        customEvent.on('showTooltip', tooltip.onShow, tooltip);
+        customEvent.on('hideTooltip', tooltip.onHide, tooltip);
+
+        tui.util.forEach(serieses, function(series) {
+            if (series.onShowAnimation) {
+                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
+                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
+            }
+        }, this);
     },
 
     /**
@@ -242,9 +267,9 @@ var axisTypeMixer = {
      */
     _attachCustomEvent: function() {
         if (this.hasGroupTooltip) {
-            this._attachCoordinateEvent();
+            this._attachCustomEventForGroupTooltip();
         } else {
-            this._attachTooltipEvent();
+            this._attachCustomEventForNormalTooltip();
         }
     },
 

@@ -545,7 +545,8 @@ describe('axisDataMaker', function() {
                 },
                 step: 30,
                 isVertical: false,
-                isPositionRight: false
+                isPositionRight: false,
+                aligned: false
             });
         });
 
@@ -574,7 +575,8 @@ describe('axisDataMaker', function() {
                 },
                 step: 30,
                 isVertical: false,
-                isPositionRight: false
+                isPositionRight: false,
+                aligned: false
             });
         });
 
@@ -603,7 +605,8 @@ describe('axisDataMaker', function() {
                 },
                 step: 25,
                 isVertical: false,
-                isPositionRight: false
+                isPositionRight: false,
+                aligned: false
             });
         });
     });

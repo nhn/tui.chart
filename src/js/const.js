@@ -97,6 +97,8 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATE: 0.8,
     /** small rate of pie graph */
     PIE_GRAPH_SMALL_RATE: 0.65,
+    /** dot radius */
+    DOT_RADIUS: 4,
     /** yAxis properties
      * @type {array.<string>}
      */

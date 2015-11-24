@@ -8,8 +8,8 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var DEFAULT_DOT_WIDTH = 3,
-    HOVER_DOT_WIDTH = 4;
+var DEFAULT_DOT_RADIUS = 3,
+    HOVER_DOT_RADIUS = 4;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -77,7 +77,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var outDotStyle = {
             'fill-opacity': opacity,
             'stroke-opacity': 0,
-            r: DEFAULT_DOT_WIDTH
+            r: DEFAULT_DOT_RADIUS
         };
 
         if (borderStyle) {
@@ -96,7 +96,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @returns {object} raphael dot
      */
     renderDot: function(paper, position, color) {
-        var dot = paper.circle(position.left, position.top, DEFAULT_DOT_WIDTH),
+        var dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS),
             dotStyle = {
                 fill: color,
                 'fill-opacity': 0,
@@ -143,41 +143,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * Bind hover event.
-     * @param {object} dot raphael obejct
-     * @param {{left: number, top: number}} position position
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
-     * @private
-     */
-    _bindHoverEvent: function(dot, position, groupIndex, index, inCallback, outCallback) {
-        dot.hover(function() {
-            inCallback(position, index, groupIndex);
-        }, function() {
-            outCallback();
-        });
-    },
-
-    /**
-     * Attach event.
-     * @param {array.<array.<object>>} groupDots dots
-     * @param {array.<array.<object>>} groupPositions positions
-     * @param {object} outDotStyle dot style
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
-     */
-    attachEvent: function(groupDots, groupPositions, outDotStyle, inCallback, outCallback) {
-        tui.util.forEach(groupDots, function(dots, groupIndex) {
-            tui.util.forEach(dots, function(dot, index) {
-                var position = groupPositions[groupIndex][index];
-                this._bindHoverEvent(dot, position, groupIndex, index, inCallback, outCallback);
-            }, this);
-        }, this);
-    },
-
-    /**
      * Show dot.
      * @param {object} dot raphael object
      * @private
@@ -187,7 +152,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             'fill-opacity': 1,
             'stroke-opacity': 0.3,
             'stroke-width': 2,
-            r: HOVER_DOT_WIDTH
+            r: HOVER_DOT_RADIUS
         });
     },
 

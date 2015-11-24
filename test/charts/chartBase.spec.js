@@ -65,20 +65,6 @@ describe('ChartBase', function() {
         });
     });
 
-    describe('_makeChartId', function() {
-        it('차트 아이디를 생성합니다.', function() {
-            var actual = chartBase._makeChartId();
-            expect(actual.indexOf(chartConst.CHAR_ID_PREFIX)).toBeGreaterThan(-1);
-        });
-    });
-
-    describe('_initUserEventListener()', function() {
-        it('사용자 이벤트를 등록할 수 있는 userEventListener 객체를 생성합니다.', function() {
-            var actual = chartBase._initUserEventListener();
-            expect(actual.constructor).toBe(UserEventListener);
-        });
-    });
-
     describe('addComponent()', function() {
         it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
             var legend;

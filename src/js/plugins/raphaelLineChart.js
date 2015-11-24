@@ -23,11 +23,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
+    render: function(paper, container, data) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
@@ -54,7 +52,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
 
-        this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
         this.paper = paper;
         return paper;
     },
@@ -104,25 +101,29 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      */
     animate: function(callback) {
         var time = ANIMATION_TIME / this.groupLines[0].length,
-            that = this;
+            that = this,
+            startTime = 0;
         this.renderItems(function(dot, groupIndex, index) {
-            var startTime = index * time,
-                line, path;
+            var line, path;
+
             if (index) {
                 line = that.groupLines[groupIndex][index - 1];
                 path = that.groupPaths[groupIndex][index - 1].end;
                 that.animateLine(line, path, time, startTime);
+                startTime += time;
+            } else {
+                startTime = 0;
             }
 
             if (that.dotOpacity) {
                 setTimeout(function() {
                     dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
-                }, startTime + time);
+                }, startTime);
             }
         });
 
         if (callback) {
-            setTimeout(callback, (this.groupDots.length + 1) * time);
+            setTimeout(callback, startTime);
         }
     },
 

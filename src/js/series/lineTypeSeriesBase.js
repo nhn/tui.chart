@@ -130,31 +130,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         };
 
         return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
-    },
-
-    /**
-     * On over tick sector.
-     * @param {number} groupIndex groupIndex
-     * @param {number} layerY layerY
-     */
-    onLineTypeOverTickSector: function(groupIndex, layerY) {
-        var index;
-
-        index = this._findIndex(groupIndex, layerY);
-
-        if (!this._isChanged(groupIndex, index)) {
-            return;
-        }
-
-        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
-    },
-
-    /**
-     * On out tick sector.
-     */
-    onLineTypeOutTickSector: function() {
-        delete this.prevIndexes;
-        this.outCallback();
     }
 });
 

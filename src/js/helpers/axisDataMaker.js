@@ -7,8 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
-    calculator = require('./calculator'),
-    state = require('./state');
+    calculator = require('./calculator');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -115,7 +114,8 @@ var axisDataMaker = {
             scale: tickInfo.scale,
             step: tickInfo.step,
             isVertical: isVertical,
-            isPositionRight: isPositionRight
+            isPositionRight: isPositionRight,
+            aligned: !!params.aligned
         };
     },
 
@@ -267,11 +267,11 @@ var axisDataMaker = {
         multipleNum = tui.util.findMultipleNum(min, max);
         changedOptions = {};
 
-        if (options.min) {
+        if (!tui.util.isUndefined(options.min)) {
             changedOptions.min = options.min * multipleNum;
         }
 
-        if (options.max) {
+        if (!tui.util.isUndefined(options.max)) {
             changedOptions.max = options.max * multipleNum;
         }
 
@@ -625,8 +625,8 @@ var axisDataMaker = {
             scale.max = -tmpMin;
         }
 
-        scale.min = options.min || scale.min;
-        scale.max = options.max || scale.max;
+        scale.min = !tui.util.isUndefined(options.min) ? options.min : scale.min;
+        scale.max = !tui.util.isUndefined(options.max) ? options.max : scale.max;
 
         return scale;
     },

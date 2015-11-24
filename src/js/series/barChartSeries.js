@@ -25,7 +25,6 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         Series.apply(this, arguments);
     },
 
-
     /**
      * To make bound of bar chart.
      * @param {object} params parameters
