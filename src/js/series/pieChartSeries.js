@@ -8,6 +8,7 @@
 
 var Series = require('./series'),
     chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     eventListener = require('../helpers/eventListener');
 
@@ -195,14 +196,17 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
-            funcHideTooltip = tui.util.bind(this.hideTooltip, this),
+            callbacks = {
+                funcShowTooltip: funcShowTooltip,
+                funcHideTooltip: tui.util.bind(this.hideTooltip, this),
+                funcSelectSeries: tui.util.bind(this.selectSeries, this)
+            },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params, funcShowTooltip, funcHideTooltip);
+        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params, callbacks);
 
         // series label mouse event 동작 시 사용
         this.showTooltip = funcShowTooltip;
-        this.hideTooltip = funcHideTooltip;
     },
 
     /**
@@ -224,7 +228,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Show tooltip (mouseover callback).
+     * showTooltip is mouseover event callback on series graph.
      * @param {object} params parameters
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
@@ -244,11 +248,44 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Hide tooltip (mouseout callback).
+     * hideTooltip is mouseout event callback on series graph.
      * @param {string} id tooltip id
      */
     hideTooltip: function() {
         this.fire('hideTooltip');
+    },
+
+    /**
+     * To make series data by selection.
+     * @param {number} index index
+     * @returns {{indexes: {index: number, groupIndex: number}}} series data
+     * @private
+     */
+    _makeSeriesDataBySelection: function(index) {
+        return {
+            indexes: {
+                index: index,
+                groupIndex: index
+            }
+        };
+    },
+
+    /**
+     * selectSeries is click event callback on series graph.
+     * @param {number} index index
+     */
+    selectSeries: function(index) {
+        var seriesData = this._makeSeriesDataBySelection(index);
+        if (this.selectedIndex === index) {
+            this.onUnselectSeries(seriesData);
+            delete this.selectedIndex;
+        } else {
+            if (this.selectedIndex) {
+                this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
+            }
+            this.onSelectSeries(seriesData);
+            this.selectedIndex = index;
+        }
     },
 
     /**
@@ -265,7 +302,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var seriesLabel = '';
 
         if (params.options.legendType) {
-            seriesLabel = params.legend;
+            seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
 
         if (params.options.showLabel) {
@@ -427,13 +464,19 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Show series label area.
+     * Animate showing about series label area.
+     * @override
      */
-    animateShowSeriesLabelArea: function() {
+    animateShowingAboutSeriesLabelArea: function() {
         this.graphRenderer.animateLegendLines();
-        Series.prototype.animateShowSeriesLabelArea.call(this);
+        Series.prototype.animateShowingAboutSeriesLabelArea.call(this);
     },
 
+    /**
+     * Show series label area.
+     * @param {object} seriesData series data
+     * @override
+     */
     showSeriesLabelArea: function(seriesData) {
         var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
             centerLeft = this.data.chartWidth / 2;
@@ -464,7 +507,22 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return;
         }
 
-        callback(groupIndex, index);
+        callback(groupIndex, index, elTarget);
+    },
+
+    /**
+     * Find legend element.
+     * @param {HTMLElement} elTarget target element
+     * @returns {HTMLElement} legend element
+     * @private
+     */
+    _findLegendElement: function(elTarget) {
+        var elLegend;
+        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LEGEND)) {
+            elLegend = elTarget;
+        }
+
+        return elLegend;
     },
 
     /**
@@ -474,36 +532,22 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     onClick: function(e) {
         var that = this;
-        this._handleMouseEvent(e, function(groupIndex, index) {
-            var legendData;
-            if (that.options.legendType) {
+        this._handleMouseEvent(e, function(groupIndex, index, elTarget) {
+            var elLegend = that._findLegendElement(elTarget),
+                legendData;
+
+            if (!elLegend) {
+                that.selectSeries(index);
+            } else {
                 legendData = that.data.joinLegendLabels[index];
-                that.userEvent.fire('clickLegend', {
+                that.userEvent.fire('selectLegend', {
                     legend: legendData.label,
                     chartType: legendData.chartType,
+                    legendIndex: index,
                     index: index
                 });
             }
         });
-        //
-        //
-        //var elTarget = e.target || e.srcElement,
-        //    elLabel = this._findLabelElement(elTarget),
-        //    index, legendData;
-        //
-        //if (!elLabel) {
-        //    return;
-        //}
-        //
-        //if (this.options.legendType) {
-        //    index = parseInt(elLabel.getAttribute('data-index'), 10);
-        //    legendData = this.data.joinLegendLabels[index];
-        //    this.userEvent.fire('clickLegend', {
-        //        legend: legendData.label,
-        //        chartType: legendData.chartType,
-        //        index: index
-        //    });
-        //}
     },
 
     /**

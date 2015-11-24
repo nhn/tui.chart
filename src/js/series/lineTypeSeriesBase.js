@@ -130,6 +130,30 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         };
 
         return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
+    },
+
+    /**
+     * To call showGroupTooltipLine function of graphRenderer.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
+     */
+    onShowGroupTooltipLine: function(bound) {
+        if (!this.graphRenderer.showGroupTooltipLine) {
+            return;
+        }
+        this.graphRenderer.showGroupTooltipLine(bound);
+    },
+
+    /**
+     * To call hideGroupTooltipLine function of graphRenderer.
+     */
+    onHideGroupTooltipLine: function() {
+        if (!this.graphRenderer.hideGroupTooltipLine) {
+            return;
+        }
+        this.graphRenderer.hideGroupTooltipLine();
     }
 });
 

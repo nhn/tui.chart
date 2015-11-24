@@ -228,18 +228,24 @@ var axisTypeMixer = {
     _attachCustomEventForGroupTooltip: function() {
         var customEvent = this.componentMap.customEvent,
             tooltip = this.componentMap.tooltip,
-            series = this.componentMap.series;
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
         customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
 
-        if (series) {
+        tui.util.forEach(serieses, function(series) {
+            if (series.onShowGroupTooltipLine) {
+                tooltip.on('showGroupTooltipLine', series.onShowGroupTooltipLine, series);
+                tooltip.on('hideGroupTooltipLine', series.onHideGroupTooltipLine, series);
+            }
             tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
             tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
-        }
+        }, this);
     },
 
     /**
-     * To attach coordinate event of combo chart.
+     * To attach custom event for normal tooltip.
      * @private
      */
     _attachCustomEventForNormalTooltip: function() {
@@ -261,7 +267,22 @@ var axisTypeMixer = {
     },
 
     /**
-     * Attach custom evnet.
+     * To attach custom event for series selection.
+     * @private
+     */
+    _attachCustomEventForSeriesSelection: function() {
+        var customEvent = this.componentMap.customEvent,
+            serieses = tui.util.filter(this.componentMap, function(component) {
+                return component.componentType === 'series';
+            });
+        tui.util.forEach(serieses, function(series) {
+            customEvent.on(renderUtil.makeCustomEventName('select', series.chartType, 'series'), series.onSelectSeries, series);
+            customEvent.on(renderUtil.makeCustomEventName('unselect', series.chartType, 'series'), series.onUnselectSeries, series);
+        }, this);
+    },
+
+    /**
+     * Attach custom event.
      * @private
      * @override
      */
@@ -271,6 +292,8 @@ var axisTypeMixer = {
         } else {
             this._attachCustomEventForNormalTooltip();
         }
+
+        this._attachCustomEventForSeriesSelection();
     },
 
     /**

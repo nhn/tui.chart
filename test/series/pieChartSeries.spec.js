@@ -128,7 +128,7 @@ describe('PieChartSeries', function() {
                         legendType: 'outer'
                     }
                 }),
-                expected = 'legend';
+                expected = '<span class="tui-chart-series-legend">legend</span>';
             expect(actual).toBe(expected);
         });
 
@@ -153,7 +153,7 @@ describe('PieChartSeries', function() {
                         showLabel: true
                     }
                 }),
-                expected = 'legend:&nbsp;label';
+                expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
             expect(actual).toBe(expected);
         });
     });
@@ -210,13 +210,16 @@ describe('PieChartSeries', function() {
 
             expect(children[0].style.left).toBe('80px');
             expect(children[0].style.top).toBe('40px');
-            expect(children[0].innerHTML).toBe('legend1');
+            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[0].firstChild.innerHTML).toBe('legend1');
             expect(children[1].style.left).toBe('80px');
             expect(children[1].style.top).toBe('90px');
-            expect(children[1].innerHTML).toBe('legend2');
+            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[1].firstChild.innerHTML).toBe('legend2');
             expect(children[2].style.left).toBe('80px');
             expect(children[2].style.top).toBe('140px');
-            expect(children[2].innerHTML).toBe('legend3');
+            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[2].firstChild.innerHTML).toBe('legend3');
         });
     });
 
@@ -324,13 +327,16 @@ describe('PieChartSeries', function() {
 
             expect(children[0].style.left).toBe('35px');
             expect(children[0].style.top).toBe('40px');
-            expect(children[0].innerHTML).toBe('legend1');
+            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[0].firstChild.innerHTML).toBe('legend1');
             expect(children[1].style.left).toBe('175px');
             expect(children[1].style.top).toBe('90px');
-            expect(children[1].innerHTML).toBe('legend2');
+            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[1].firstChild.innerHTML).toBe('legend2');
             expect(children[2].style.left).toBe('35px');
             expect(children[2].style.top).toBe('140px');
-            expect(children[2].innerHTML).toBe('legend3');
+            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[2].firstChild.innerHTML).toBe('legend3');
         });
     });
 

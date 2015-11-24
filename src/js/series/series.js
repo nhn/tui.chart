@@ -123,15 +123,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderSeriesArea: function(elSeriesArea, bound, data, funcRenderGraph) {
         var dimension, seriesData, elSeriesLabelArea;
+
         this._setBaseData(bound, data);
 
         dimension = this._expandDimension(bound.dimension);
-        seriesData = this.makeSeriesData(bound);
+        this.seriesData = seriesData = this.makeSeriesData(bound);
 
-        this.seriesData = seriesData;
         renderUtil.renderDimension(elSeriesArea, dimension);
         this._renderPosition(elSeriesArea, bound.position, this.chartType);
-
         funcRenderGraph(dimension, seriesData);
 
         elSeriesLabelArea = this._renderSeriesLabelArea(dimension, seriesData, this.elSeriesLabelArea);
@@ -180,9 +179,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {HTMLElement} series element
      */
     render: function(bound, data, paper) {
-        var el;
-
-        el = dom.create('DIV', this.className);
+        var el = dom.create('DIV', this.className);
 
         this.elSeriesArea = el;
         this.paper = paper;
@@ -190,6 +187,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
 
         return el;
+    },
+
+    /**
+     * To resize raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     */
+    _resizeGraph: function(dimension, seriesData) {
+        this.graphRenderer.resize(tui.util.extend({
+            dimension: dimension
+        }, seriesData));
+        this.showSeriesLabelArea(seriesData);
     },
 
     /**
@@ -201,17 +211,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(bound, data) {
-        var el, funcRenderGraph;
-        el = this.elSeriesArea;
+        var el = this.elSeriesArea;
 
-        funcRenderGraph = tui.util.bind(function(dimension, seriesData) {
-            this.graphRenderer.resize(tui.util.extend({
-                dimension: dimension
-            }, seriesData));
-            this.showSeriesLabelArea(seriesData);
-        }, this);
-
-        this._renderSeriesArea(el, bound, data, funcRenderGraph);
+        this._renderSeriesArea(el, bound, data, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -393,20 +395,20 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Find label element.
      * @param {HTMLElement} elTarget target element
-     * @returns {HTMLElement} legend element
+     * @returns {HTMLElement} label element
      * @private
      */
     _findLabelElement: function(elTarget) {
-        var elLegend = null;
+        var elLabel = null;
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LABEL)) {
-            elLegend = elTarget;
+            elLabel = elTarget;
+        } else {
+            elLabel = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_SERIES_LABEL);
         }
 
-        return elLegend;
+        return elLabel;
     },
-
-
 
     /**
      * To call showAnimation function of graphRenderer.
@@ -416,7 +418,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.showAnimation) {
             return;
         }
-        this.graphRenderer.showAnimation.call(this.graphRenderer, data);
+        this.graphRenderer.showAnimation(data);
     },
 
     /**
@@ -427,22 +429,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.hideAnimation) {
             return;
         }
-        this.graphRenderer.hideAnimation.call(this.graphRenderer, data);
+        this.graphRenderer.hideAnimation(data);
     },
 
     /**
      * To call showGroupAnimation function of graphRenderer.
      * @param {number} index index
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound bound
      */
-    onShowGroupAnimation: function(index, bound) {
+    onShowGroupAnimation: function(index) {
         if (!this.graphRenderer.showGroupAnimation) {
             return;
         }
-        this.graphRenderer.showGroupAnimation.call(this.graphRenderer, index, bound);
+        this.graphRenderer.showGroupAnimation(index);
     },
 
     /**
@@ -453,7 +451,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!this.graphRenderer.hideGroupAnimation) {
             return;
         }
-        this.graphRenderer.hideGroupAnimation.call(this.graphRenderer, index);
+        this.graphRenderer.hideGroupAnimation(index);
     },
 
     /**
@@ -461,12 +459,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function() {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(tui.util.bind(this.animateShowSeriesLabelArea, this));
+            this.graphRenderer.animate(tui.util.bind(this.animateShowingAboutSeriesLabelArea, this));
         }
     },
 
     /**
-     * To make html about series label
+     * To make html about series label.
      * @param {{left: number, top: number}} position position
      * @param {string} value value
      * @param {number} groupIndex group index
@@ -483,6 +481,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         });
     },
 
+    /**
+     * Show series label area.
+     */
     showSeriesLabelArea: function() {
         if (renderUtil.isOldBrowser()) {
             this.elSeriesLabelArea.style.filter = 'alpha(opacity=' + 100 + ')';
@@ -493,9 +494,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Show series label area.
+     * Animate showing about series label area.
      */
-    animateShowSeriesLabelArea: function() {
+    animateShowingAboutSeriesLabelArea: function() {
         if ((!this.options.showLabel && !this.options.legendType) || !this.elSeriesLabelArea) {
             return;
         }
@@ -510,6 +511,39 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             end: 1,
             complete: function() {}
         });
+    },
+
+    /**
+     * To make exportation data for series type userEvent.
+     * @param {object} seriesData series data
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
+     * @private
+     */
+    _makeExportationSeriesData: function(seriesData) {
+        var legendIndex = seriesData.indexes.index,
+            legendData = this.data.joinLegendLabels[legendIndex];
+        return {
+            chartType: legendData.chartType,
+            legend: legendData.label,
+            legendIndex: legendIndex,
+            index: seriesData.indexes.groupIndex
+        };
+    },
+
+    /**
+     * To call selectSeries callback of userEvent.
+     * @param {object} seriesData series data
+     */
+    onSelectSeries: function(seriesData) {
+        this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
+    },
+
+    /**
+     * To call unselectSeries callback of userEvent.
+     * @param {object} seriesData series data.
+     */
+    onUnselectSeries: function(seriesData) {
+        this.userEvent.fire('unselectSeries', this._makeExportationSeriesData(seriesData));
     }
 });
 
