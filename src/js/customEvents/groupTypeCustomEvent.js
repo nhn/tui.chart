@@ -30,7 +30,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     _getLayerPositionValue: function(e, bound, isVertical) {
         var layerPosition;
         if (isVertical) {
-            layerPosition = e.clientX - bound.left;
+            layerPosition = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left;
         } else {
             layerPosition = e.clientY - bound.top;
         }
@@ -64,7 +64,12 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             sizeType = this.isVertical ? 'height' : 'width',
             direction;
 
-        if (index === -1 || prevIndex === index) {
+        if (index === -1) {
+            this.onMouseout();
+            return;
+        }
+
+        if (prevIndex === index) {
             return;
         }
 
@@ -88,8 +93,10 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @override
      */
     onMouseout: function() {
-        this.fire('hideGroupTooltip', this.prevIndex);
-        delete this.prevIndex;
+        if (!tui.util.isUndefined(this.prevIndex)) {
+            this.fire('hideGroupTooltip', this.prevIndex);
+            delete this.prevIndex;
+        }
     }
 });
 

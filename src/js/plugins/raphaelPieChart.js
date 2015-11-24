@@ -21,7 +21,6 @@ var Raphael = window.Raphael,
 var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
-     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {object} callbacks callbacks
@@ -30,21 +29,19 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      *      @param {function} callbacks.funcSelectSeries select series function
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, callbacks) {
-        var dimension = data.dimension;
+    render: function(container, data, callbacks) {
+        var dimension = data.dimension,
+            paper;
 
-        if (!paper) {
-            paper = Raphael(container, dimension.width, dimension.height);
-        }
+        this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         if (!paper.customAttributes.sector) {
             paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
+        this.selectionColor = data.theme.selectionColor;
         this.circleBound = data.circleBound;
         this._renderPie(paper, data, callbacks);
-
-        this.paper = paper;
 
         return paper;
     },
@@ -129,6 +126,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             sectors.push({
                 sector: sector,
+                color: color,
                 angles: sectorInfo.angles.end,
                 percentValue: percentValue
             });
@@ -139,15 +137,20 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Render legend lines.
-     * @param {object} paper paper
      * @param {array.<object>} outerPositions outer position
      */
-    renderLegendLines: function(paper, outerPositions) {
-        var paths = this._makeLinePaths(outerPositions),
-            legendLines = tui.util.map(paths, function(path) {
-                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
-            });
-        this.legendLines = legendLines;
+    renderLegendLines: function(outerPositions) {
+        var that = this,
+            paths;
+
+        if (this.legendLines) {
+            return;
+        }
+
+        paths = this._makeLinePaths(outerPositions);
+        this.legendLines = tui.util.map(paths, function(path) {
+            return raphaelRenderUtil.renderLine(that.paper, path, 'transparent', 1);
+        });
     },
 
     /**
@@ -197,7 +200,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         }).mousemove(function(e) {
             var _args = args.concat({
                 clientX: e.clientX,
-                clientY: e.clientY
+                clientY: e.clientY - 10
             });
             throttled.apply(null, _args);
         }).mouseout(function () {
@@ -319,6 +322,32 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         tui.util.forEachArray(this.legendLines, function(line, index) {
             line.attr({path: paths[index]});
             return line;
+        });
+    },
+
+    /**
+     * Select series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    selectSeries: function(indexes) {
+        //console.log('select indexes', indexes);
+        var item = this.sectors[indexes.index],
+            objColor = Raphael.color(item.color),
+            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+        item.sector.attr({
+            fill: color
+        });
+    },
+
+    /**
+     * Unelect series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    unselectSeries: function(indexes) {
+        //console.log('unselect indexes', indexes);
+        var sector = this.sectors[indexes.index];
+        sector.sector.attr({
+            fill: sector.color
         });
     }
 });

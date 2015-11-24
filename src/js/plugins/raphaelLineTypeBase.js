@@ -9,7 +9,8 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var DEFAULT_DOT_RADIUS = 3,
-    HOVER_DOT_RADIUS = 4;
+    HOVER_DOT_RADIUS = 4,
+    SELECTION_DOT_RADIOUS = 7;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -105,7 +106,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         dot.attr(dotStyle);
 
-        return dot;
+        return {
+            dot: dot,
+            color: color
+        };
     },
 
     /**
@@ -115,8 +119,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {string[]} colors colors
      * @param {object} borderStyle border style
      * @returns {array.<object>} dots
+     * @private
      */
-    renderDots: function(paper, groupPositions, colors) {
+    _renderDots: function(paper, groupPositions, colors) {
         var dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
             return tui.util.map(positions, function(position) {
@@ -163,8 +168,8 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            dot = this.groupDots[groupIndex][index];
-        this._showDot(dot);
+            item = this.groupDots[groupIndex][index];
+        this._showDot(item.dot);
     },
 
     /**
@@ -186,8 +191,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _showGroupDots: function(index) {
-        var dots = this._getPivotGroupDots();
-        tui.util.forEachArray(dots[index], tui.util.bind(this._showDot, this));
+        var groupDots = this._getPivotGroupDots();
+        tui.util.forEachArray(groupDots[index], function(item) {
+            this._showDot(item.dot);
+        }, this);
     },
 
     /**
@@ -236,9 +243,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            dot = this.groupDots[groupIndex][index];
-        if (dot) {
-            this._hideDot(dot);
+            item = this.groupDots[groupIndex][index];
+        if (item) {
+            this._hideDot(item.dot);
         }
     },
 
@@ -249,7 +256,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _hideGroupDots: function(index) {
         var dots = this._getPivotGroupDots();
-        tui.util.forEachArray(dots[index], tui.util.bind(this._hideDot, this));
+        tui.util.forEachArray(dots[index], function(item) {
+            this._hideDot(item.dot);
+        }, this);
     },
 
     /**
@@ -289,10 +298,59 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     renderItems: function(funcRenderItem) {
         tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            tui.util.forEachArray(dots, function(dot, index) {
-                funcRenderItem(dot, groupIndex, index);
+            tui.util.forEachArray(dots, function(item, index) {
+                funcRenderItem(item.dot, groupIndex, index);
             }, this);
         }, this);
+    },
+
+    /**
+     * To make selection dot.
+     * @param {object} paper raphael paper
+     * @returns {object} selection dot
+     * @private
+     */
+    _makeSelectionDot: function(paper) {
+        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIOUS);
+        selectionDot.attr({
+            'fill': '#ffffff',
+            'fill-opacity': 0,
+            'stroke-opacity': 0,
+            'stroke-width': 2
+        });
+        return selectionDot;
+    },
+
+    /**
+     * Select series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    selectSeries: function(indexes) {
+        var item = this.groupDots[indexes.index][indexes.groupIndex],
+            position = this.groupPositions[indexes.index][indexes.groupIndex];
+        this.selectedItem = item;
+        this.selectionDot.attr({
+            cx: position.left,
+            cy: position.top,
+            'fill-opacity': 0.5,
+            'stroke-opacity': 1,
+            stroke: this.selectionColor || item.color
+        });
+    },
+
+    /**
+     * Unselect series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    unselectSeries: function(indexes) {
+        var item = this.groupDots[indexes.index][indexes.groupIndex];
+
+        if (this.selectedItem === item) {
+            this.selectionDot.attr({
+                'fill-opacity': 0,
+                'stroke-opacity': 0
+            });
+        }
     }
 });
 

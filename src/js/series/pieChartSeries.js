@@ -204,7 +204,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.paper = this.graphRenderer.render(this.paper, this.elSeriesArea, params, callbacks);
+        this.graphRenderer.render(this.elSeriesArea, params, callbacks);
 
         // series label mouse event 동작 시 사용
         this.showTooltip = funcShowTooltip;
@@ -217,7 +217,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      position: {left: number, top: number}
      * }} bound series bound
      * @param {object} data data for rendering
-     * @param {object} paper object for graph drawing
      * @returns {HTMLElement} series element
      * @override
      */
@@ -281,7 +280,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             this.onUnselectSeries(seriesData);
             delete this.selectedIndex;
         } else {
-            if (this.selectedIndex) {
+            if (!tui.util.isUndefined(this.selectedIndex)) {
                 this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
             }
             this.onSelectSeries(seriesData);
@@ -433,11 +432,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
         }, params), elSeriesLabelArea);
-
-        if (this.paper && !this.isRenderdLines) {
-            this.isRenderdLines = true;
-            this.graphRenderer.renderLegendLines(this.paper, outerPositions);
-        }
+        this.graphRenderer.renderLegendLines(outerPositions);
     },
 
     /**
@@ -558,7 +553,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     onMouseover: function(e) {
         var that = this;
         this._handleMouseEvent(e, function(groupIndex, index) {
-            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY);
+            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
             that.showTooltip(bound, groupIndex, index);
         });
     },

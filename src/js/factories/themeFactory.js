@@ -209,6 +209,9 @@ module.exports = {
         if (seriesTheme.borderColor) {
             legendTheme.borderColor = seriesTheme.borderColor;
         }
+        if (seriesTheme.selectionColor) {
+            legendTheme.selectionColor = seriesTheme.selectionColor;
+        }
     },
 
     /**

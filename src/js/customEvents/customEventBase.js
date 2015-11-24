@@ -37,11 +37,13 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {object} data rendering data
      * @private
      */
-    _renderCoordinateArea: function(elCoordinateArea, bound, data) {
+    _renderCustomEventArea: function(elCoordinateArea, bound, data) {
+        var expandedBound;
         this.bound = bound;
         this.tickBaseDataModel = new TickBaseDataModel(bound.dimension, data.tickCount, this.chartType, this.isVertical);
-        renderUtil.renderDimension(elCoordinateArea, bound.dimension);
-        renderUtil.renderPosition(elCoordinateArea, bound.position);
+        expandedBound = renderUtil.expandBound(bound);
+        renderUtil.renderDimension(elCoordinateArea, expandedBound.dimension);
+        renderUtil.renderPosition(elCoordinateArea, expandedBound.position);
     },
 
     /**
@@ -51,14 +53,18 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @return {HTMLElement} coordinate area
      */
     render: function(bound, data) {
-        var el = dom.create('DIV', 'tui-chart-series-coordinate-area');
+        var el = dom.create('DIV', 'tui-chart-series-custom-event-area');
 
-        this._renderCoordinateArea(el, bound, data);
+        this._renderCustomEventArea(el, bound, data);
         this.attachEvent(el);
         this.elCoordinateArea = el;
         return el;
     },
 
+    /**
+     * Initialize data of custom event
+     * @param {array.<object>} seriesInfos series infos
+     */
     initCustomEventData: function(seriesInfos) {
         this.pointTypeDataModel = new PointTypeDataModel(seriesInfos);
     },
@@ -69,7 +75,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data data
      */
     resize: function(bound, data) {
-        this._renderCoordinateArea(this.elCoordinateArea, bound, data);
+        this._renderCustomEventArea(this.elCoordinateArea, bound, data);
     },
 
     /**
@@ -84,6 +90,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
             prev.indexes.groupIndex !== cur.indexes.groupIndex || prev.indexes.index !== cur.indexes.index;
     },
 
+    /**
+     * Find point type data.
+     * @param {HTMLElement} elTarget target element
+     * @param {number} clientX mouse position x
+     * @param {number} clientY mouse position y
+     * @returns {object} found data
+     * @private
+     */
     _findPointTypeData: function(elTarget, clientX, clientY) {
         var bound = elTarget.getBoundingClientRect(),
             layerX = clientX - bound.left,
@@ -92,21 +106,30 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         return this.pointTypeDataModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
     },
 
-    unselectSelectedData: function() {
+    /**
+     * Unselect selected data.
+     * @private
+     */
+    _unselectSelectedData: function() {
         var eventName = this.fire(renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series'), this.selectedData);
         this.fire(eventName, this.selectedData);
         delete this.selectedData;
     },
 
+    /**
+     * On click
+     * @param {mouseevent} e mouse event
+     */
     onClick: function(e) {
         var elTarget = e.target || e.srcElement,
-            foundData = this._findPointTypeData(elTarget, e.clientX, e.clientY);
+            clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
+            foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
         if (!this._isChanged(this.selectedData, foundData)) {
-            this.unselectSelectedData();
+            this._unselectSelectedData();
             return;
         } else if (foundData) {
             if (this.selectedData) {
-                this.unselectSelectedData();
+                this._unselectSelectedData();
             }
             this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
             this.selectedData = foundData;
