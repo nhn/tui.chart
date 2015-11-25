@@ -56,7 +56,7 @@ This application supports drawing a chart on web browser.<br>
 
 ## Test environment
 * PC
-	* IE8~11
+	* IE7~11
 	* Chrome
 	* Firefox
 
