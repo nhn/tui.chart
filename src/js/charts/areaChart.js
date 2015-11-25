@@ -34,12 +34,12 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @mixes lineTypeMixer
      */
     init: function() {
-        this.lineTypeInit.apply(this, arguments);
+        this._lineTypeInit.apply(this, arguments);
     }
 });
 
-lineTypeMixer.mixin(AreaChart);
 axisTypeMixer.mixin(AreaChart);
 verticalTypeMixer.mixin(AreaChart);
+lineTypeMixer.mixin(AreaChart);
 
 module.exports = AreaChart;

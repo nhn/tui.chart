@@ -7,6 +7,7 @@
 'use strict';
 
 var TooltipBase = require('./tooltipBase'),
+    GroupTooltipPositionModel = require('./groupTooltipPositionModel'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
@@ -26,6 +27,37 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     init: function(params) {
         TooltipBase.call(this, params);
+    },
+
+    /**
+     * Set default align option of tooltip.
+     * @private
+     * @override
+     */
+    _setDefaultTooltipPositionOption: function() {
+        if (this.options.align) {
+            return;
+        }
+
+        if (this.isVertical) {
+            this.options.align = chartConst.TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION;
+        } else {
+            this.options.align = chartConst.TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION;
+        }
+    },
+
+    /**
+     * To render tooltip component.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     * @returns {HTMLElement} tooltip element
+     * @override
+     */
+    render: function(bound, data) {
+        var el = TooltipBase.prototype.render.call(this, bound, data);
+
+        this.positionModel = new GroupTooltipPositionModel(this.chartDimension, bound, this.isVertical, this.options);
+        return el;
     },
 
     /**
@@ -102,98 +134,17 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To calculate vertical position.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {{index: number, range: {start: number, end: number},
-     *          size: number, direction: string, isVertical: boolean
-     *        }} params coordinate event parameters
-     * @returns {{left: number, top: number}} position
-     * @private
-     */
-    _calculateVerticalPosition: function(dimension, params) {
-        var range = params.range,
-            isLine = (range.start === range.end),
-            padding = isLine ? 9 : 5,
-            left = chartConst.SERIES_EXPAND_SIZE;
-        if (params.direction === chartConst.TOOLTIP_DIRECTION_FORWORD) {
-            left += range.end + padding;
-        } else {
-            left += range.start - dimension.width - padding - 1;
-        }
-        return {
-            left: left,
-            top: (params.size - dimension.height) / 2
-        };
-    },
-
-    /**
-     * To calculate horizontal position.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {{index: number, range: {start: number, end: number},
-     *          size: number, direction: string, isVertical: boolean
-     *        }} params coordinate event parameters
-     * @returns {{left: number, top: number}} position
-     * @private
-     */
-    _calculateHorizontalPosition: function(dimension, params) {
-        var range = params.range,
-            top = 0;
-        if (params.direction === chartConst.TOOLTIP_DIRECTION_FORWORD) {
-            top += range.start;
-        } else {
-            top += range.end - dimension.height;
-        }
-        return {
-            left: (params.size - dimension.width) / 2 + chartConst.SERIES_EXPAND_SIZE,
-            top: top
-        };
-    },
-
-    /**
-     * To calculate position.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {{index: number, range: {start: number, end: number},
-     *          size: number, direction: string, isVertical: boolean
-     *        }} params coordinate event parameters
-     * @returns {{left: number, top: number}} position
-     * @private
-     */
-    _calculateTooltipPosition: function(dimension, params) {
-        var position;
-        if (params.isVertical) {
-            position = this._calculateVerticalPosition(dimension, params);
-        } else {
-            position = this._calculateHorizontalPosition(dimension, params);
-        }
-        return position;
-    },
-
-    /**
-     * Create tooltip element.
-     * @returns {HTMLElement} tooltip element
-     * @private
-     */
-    _createTooltipSectorElement: function() {
-        var elTooltipBlock;
-        if (!this.elLayout.childNodes.length < 2) {
-            elTooltipBlock = dom.create('DIV', 'tui-chart-group-tooltip-sector');
-            dom.append(this.elLayout, elTooltipBlock);
-        } else {
-            elTooltipBlock = this.elLayout.lastChild;
-        }
-        return elTooltipBlock;
-    },
-
-    /**
      * Get tooltip sector element.
      * @returns {HTMLElement} sector element
      * @private
      */
     _getTooltipSectorElement: function() {
-        if (!this.elTooltipBlock) {
-            this.elTooltipBlock = this._createTooltipSectorElement();
+        var elTooltipSector;
+        if (!this.elTooltipSector) {
+            this.elTooltipSector = elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
+            dom.append(this.elTooltipArea, elTooltipSector);
         }
-        return this.elTooltipBlock;
+        return this.elTooltipSector;
     },
 
     /**
@@ -205,14 +156,12 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _makeVerticalTooltipSectorBound: function(height, range, isLine) {
-        var width, moveLeft;
+        var width;
         if (isLine) {
             width = 1;
             height += 6;
-            moveLeft = 0;
         } else {
-            width = range.end - range.start + 1;
-            moveLeft = 1;
+            width = range.end - range.start;
         }
         return {
             dimension: {
@@ -220,7 +169,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
                 height: height
             },
             position: {
-                left: range.start + chartConst.SERIES_EXPAND_SIZE - moveLeft,
+                left: range.start + chartConst.SERIES_EXPAND_SIZE,
                 top: 0
             }
         };
@@ -237,10 +186,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         return {
             dimension: {
                 width: width,
-                height: range.end - range.start + 1
+                height: range.end - range.start + chartConst.HIDDEN_WIDTH
             },
             position: {
-                left: chartConst.SERIES_EXPAND_SIZE,
+                left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
                 top: range.start
             }
         };
@@ -274,16 +223,18 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _showTooltipSector: function(size, range, isVertical, index) {
-        var elTooltipBlock = this._getTooltipSectorElement(),
+        var elTooltipSector = this._getTooltipSectorElement(),
             isLine = (range.start === range.end),
             bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
         if (isLine) {
-            this.fire('showGroupAnimation', index, bound);
+            this.fire('showGroupTooltipLine', bound);
         } else {
-            renderUtil.renderDimension(elTooltipBlock, bound.dimension);
-            renderUtil.renderPosition(elTooltipBlock, bound.position);
-            dom.addClass(elTooltipBlock, 'show');
+            renderUtil.renderDimension(elTooltipSector, bound.dimension);
+            renderUtil.renderPosition(elTooltipSector, bound.position);
+            dom.addClass(elTooltipSector, 'show');
         }
+
+        this.fire('showGroupAnimation', index);
     },
 
     /**
@@ -292,9 +243,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _hideTooltipSector: function(index) {
-        var elTooltipBlock = this._getTooltipSectorElement();
-        dom.removeClass(elTooltipBlock, 'show');
+        var elTooltipSector = this._getTooltipSectorElement();
+        dom.removeClass(elTooltipSector, 'show');
         this.fire('hideGroupAnimation', index);
+        this.fire('hideGroupTooltipLine');
     },
 
     /**
@@ -312,15 +264,50 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             this.fire('hideGroupAnimation', this.prevIndex);
         }
         elTooltip.innerHTML = this._makeTooltipHtml(params.index);
+
+        this._fireBeforeShowTooltip(params.index, params.range);
+
         dom.addClass(elTooltip, 'show');
 
         this._showTooltipSector(params.size, params.range, params.isVertical, params.index);
+
         dimension = this.getTooltipDimension(elTooltip);
-
-        position = this._calculateTooltipPosition(dimension, params);
-
+        position = this.positionModel.calculatePosition(dimension, params.range);
         this.moveToPosition(elTooltip, position, prevPosition);
+
+        this._fireAfterShowTooltip(params.index, params.range, {
+            element: elTooltip,
+            position: position
+        });
+
         this.prevIndex = params.index;
+    },
+
+    /**
+     * To call beforeShowTooltip callback of userEvent.
+     * @param {number} index index
+     * @param {{start: number, end: number}} range range
+     * @private
+     */
+    _fireBeforeShowTooltip: function(index, range) {
+        this.userEvent.fire('beforeShowTooltip', {
+            index: index,
+            range: range
+        });
+    },
+
+    /**
+     * To call afterShowTooltip callback of userEvent.
+     * @param {number} index index
+     * @param {{start: number, end: number}} range range
+     * @param {object} additionParams addition parameters
+     * @private
+     */
+    _fireAfterShowTooltip: function(index, range, additionParams) {
+        this.userEvent.fire('afterShowTooltip', tui.util.extend({
+            index: index,
+            range: range
+        }, additionParams));
     },
 
     /**

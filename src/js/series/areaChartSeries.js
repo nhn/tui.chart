@@ -26,10 +26,14 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * To make series data.
-     * @returns {object} add data
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @returns {object} series data
      */
-    makeSeriesData: function() {
-        var dimension = this.bound.dimension,
+    makeSeriesData: function(bound) {
+        var dimension = bound.dimension,
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
             zeroTop = scaleDistance.toMax;
         if (this.data.scale.min >= 0 && !zeroTop) {

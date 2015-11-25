@@ -8,8 +8,10 @@
 
 var TooltipBase = require('./tooltipBase'),
     chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
-    event = require('../helpers/eventListener'),
+    eventListener = require('../helpers/eventListener'),
+    renderUtil = require('../helpers/renderUtil'),
     templateMaker = require('../helpers/templateMaker'),
     tooltipTemplate = require('./tooltipTemplate');
 
@@ -25,9 +27,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
+        var values;
         TooltipBase.call(this, params);
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
-        this._setDefaultTooltipPositionOption();
+        if (tui.util.isArray(this.values)) {
+            values = this.values;
+            this.values = {};
+            this.values[this.chartType] = values;
+        }
     },
 
     /**
@@ -41,30 +48,51 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Set default position option of tooltip.
+     * Set default align option of tooltip.
      * @private
+     * @override
      */
     _setDefaultTooltipPositionOption: function() {
-        if (this.options.position) {
+        if (this.options.align) {
             return;
         }
 
         if (this.isVertical) {
-            this.options.position = chartConst.TOOLTIP_DEFAULT_POSITION_OPTION;
+            this.options.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
         } else {
-            this.options.position = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION;
+            this.options.align = chartConst.TOOLTIP_DEFAULT_HORIZONTAL_ALIGN_OPTION;
         }
     },
 
     /**
-     * Render tooltip.
+     * To render tooltip component.
      * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
+     * @override
      */
-    render: function() {
-        var el = TooltipBase.prototype.render.call(this);
+    render: function(bound, data) {
+        var el = TooltipBase.prototype.render.call(this, bound, data);
+
+        if (data) {
+            this.seriesPosition = data.seriesPosition;
+        }
+
         this.attachEvent(el);
         return el;
+    },
+
+    /**
+     * To resize tooltip component.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     * @override
+     */
+    resize: function(bound, data) {
+        if (data) {
+            this.seriesPosition = data.seriesPosition;
+        }
+        TooltipBase.prototype.resize.call(this, bound);
     },
 
     /**
@@ -74,36 +102,51 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     makeTooltipData: function() {
         var labels = this.labels,
-            groupValues = this.values,
-            legendLabels = this.legendLabels;
+            tooltipData = {},
+            legendLabels = {};
 
-        return tui.util.map(groupValues, function(values, groupIndex) {
-            return tui.util.map(values, function(value, index) {
-                return {
-                    category: labels ? labels[groupIndex] : '',
-                    legend: legendLabels[index],
-                    value: value
-                };
+        if (tui.util.isArray(this.formattedValues)) {
+            tooltipData[this.chartType] = this.formattedValues;
+            legendLabels[this.chartType] = this.legendLabels;
+        } else {
+            tooltipData = this.formattedValues;
+            legendLabels = this.legendLabels;
+        }
+
+        tui.util.forEach(tooltipData, function(groupValues, chartType) {
+            tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
+                return tui.util.map(values, function(value, index) {
+                    return {
+                        category: labels ? labels[groupIndex] : '',
+                        legend: legendLabels[chartType][index],
+                        value: value
+                    };
+                });
             });
         });
+        return tooltipData;
     },
 
     /**
      * Fire custom event showAnimation.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @private
      */
-    _fireShowAnimation: function(indexes) {
-        this.fire('showAnimation', indexes);
+    _fireShowAnimation: function(indexes, chartType) {
+        var eventName = renderUtil.makeCustomEventName('show', chartType, 'animation');
+        this.fire(eventName, indexes);
     },
 
     /**
      * Fire custom event hideAnimation.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @private
      */
-    _fireHideAnimation: function(indexes) {
-        this.fire('hideAnimation', indexes);
+    _fireHideAnimation: function(indexes, chartType) {
+        var eventName = renderUtil.makeCustomEventName('hide', chartType, 'animation');
+        this.fire(eventName, indexes);
     },
 
     /**
@@ -126,8 +169,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     _getIndexesCustomAttribute: function(elTooltip) {
         var groupIndex = elTooltip.getAttribute('data-groupIndex'),
             index = elTooltip.getAttribute('data-index'),
-            indexes;
-        if (groupIndex && index) {
+            indexes = null;
+
+        if (!tui.util.isNull(groupIndex) && !tui.util.isNull(index)) {
             indexes = {
                 groupIndex: parseInt(groupIndex, 10),
                 index: parseInt(index, 10)
@@ -153,7 +197,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _isShowedTooltip: function(elTooltip) {
-        return elTooltip.getAttribute('data-showed') === 'true';
+        var isShowed = elTooltip.getAttribute('data-showed');
+        return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
     },
 
     /**
@@ -162,22 +207,17 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
-            indexes;
+            indexes, chartType;
 
         if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
             elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
         }
 
-
-        if (elTarget.id !== this._getTooltipId()) {
-            return;
-        }
-
         indexes = this._getIndexesCustomAttribute(elTarget);
+        chartType = elTarget.getAttribute('data-chart-type');
 
         this._setShowedCustomAttribute(elTarget, true);
-
-        this._fireShowAnimation(indexes);
+        this._fireShowAnimation(indexes, chartType);
     },
 
     /**
@@ -190,10 +230,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
             elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
-        }
-
-        if (elTarget.id !== this._getTooltipId()) {
-            return;
         }
 
         this.hideTooltip(elTarget);
@@ -218,32 +254,32 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
-     *      @param {string} params.positionOption position option (ex: 'left top')
+     *      @param {string} params.alignOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
     _calculateTooltipPositionAboutNotBarChart: function(params) {
         var bound = params.bound,
-            addPosition = params.addPosition,
+            positionOption = params.positionOption,
             minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
-            positionOption = params.positionOption || '',
+            alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
-        result.left = bound.left + addPosition.left;
-        result.top = bound.top - tooltipHeight + addPosition.top;
+        result.left = bound.left + positionOption.left;
+        result.top = bound.top - tooltipHeight + positionOption.top;
 
-        if (positionOption.indexOf('left') > -1) {
+        if (alignOption.indexOf('left') > -1) {
             result.left -= minusWidth + lineGap;
-        } else if (positionOption.indexOf('center') > -1) {
+        } else if (alignOption.indexOf('center') > -1) {
             result.left -= minusWidth / 2;
         } else {
             result.left += lineGap;
         }
 
-        if (positionOption.indexOf('bottom') > -1) {
+        if (alignOption.indexOf('bottom') > -1) {
             result.top += tooltipHeight + lineGap;
-        } else if (positionOption.indexOf('middle') > -1) {
+        } else if (alignOption.indexOf('middle') > -1) {
             result.top += tooltipHeight / 2;
         } else {
             result.top -= chartConst.TOOLTIP_GAP;
@@ -257,37 +293,54 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
-     *      @param {string} params.positionOption position option (ex: 'left top')
+     *      @param {string} params.alignOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
     _calculateTooltipPositionAboutBarChart: function(params) {
         var bound = params.bound,
-            addPosition = params.addPosition,
+            positionOption = params.positionOption,
             minusHeight = params.dimension.height - (bound.height || 0),
-            positionOption = params.positionOption || '',
+            alignOption = params.alignOption || '',
             tooltipWidth = params.dimension.width,
             result = {};
 
-        result.left = bound.left + bound.width + addPosition.left;
-        result.top = bound.top + addPosition.top;
+        result.left = bound.left + bound.width + positionOption.left;
+        result.top = bound.top + positionOption.top;
 
-        // TODO : positionOptions을 객체로 만들어서 검사하도록 변경하기 ex) positionOption.left = true
-        if (positionOption.indexOf('left') > -1) {
+        // TODO : alignOptions을 객체로 만들어서 검사하도록 변경하기 ex) alignOption.left = true
+        if (alignOption.indexOf('left') > -1) {
             result.left -= tooltipWidth;
-        } else if (positionOption.indexOf('center') > -1) {
+        } else if (alignOption.indexOf('center') > -1) {
             result.left -= tooltipWidth / 2;
         } else {
             result.left += chartConst.TOOLTIP_GAP;
         }
 
-        if (positionOption.indexOf('top') > -1) {
+        if (alignOption.indexOf('top') > -1) {
             result.top -= minusHeight;
-        } else if (positionOption.indexOf('middle') > -1) {
+        } else if (alignOption.indexOf('middle') > -1) {
             result.top -= minusHeight / 2;
         }
 
         return result;
+    },
+
+    /**
+     * Adjust position.
+     * @param {{width: number, height: number}} chartDimension chart dimension
+     * @param {{left: number, top: number}} areaPosition area position
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{left: number, top: number}} position position
+     * @returns {{left: number, top: number}} adjusted position
+     * @private
+     */
+    _adjustPosition: function(chartDimension, areaPosition, tooltipDimension, position) {
+        position.left = tui.util.max([position.left, -areaPosition.left]);
+        position.left = tui.util.min([position.left, chartDimension.width - areaPosition.left - tooltipDimension.width]);
+        position.top = tui.util.max([position.top, -areaPosition.top]);
+        position.top = tui.util.min([position.top, chartDimension.height - areaPosition.top - tooltipDimension.height]);
+        return position;
     },
 
     /**
@@ -297,51 +350,55 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {string} params.chartType chart type
      *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
-     *      @param {string} params.positionOption position option (ex: 'left top')
+     *      @param {string} params.alignOption position option (ex: 'left top')
      * @returns {{top: number, left: number}} position
      * @private
      */
     _calculateTooltipPosition: function(params) {
-        var result = {},
+        var position = {},
             sizeType, positionType, addPadding;
 
         if (params.eventPosition) {
             return this._calculateTooltipPositionAboutPieChart(params);
         }
 
-        if (params.chartType === chartConst.CHART_TYPE_BAR) {
-            result = this._calculateTooltipPositionAboutBarChart(params);
+        if (predicate.isBarChart(params.chartType)) {
+            position = this._calculateTooltipPositionAboutBarChart(params);
             sizeType = 'width';
             positionType = 'left';
             addPadding = 1;
         } else {
-            result = this._calculateTooltipPositionAboutNotBarChart(params);
+            position = this._calculateTooltipPositionAboutNotBarChart(params);
             sizeType = 'height';
             positionType = 'top';
             addPadding = -1;
         }
 
         if (params.allowNegativeTooltip) {
-            result = this._moveToSymmetry(result, {
+            position = this._moveToSymmetry(position, {
                 bound: params.bound,
                 indexes: params.indexes,
                 dimension: params.dimension,
+                chartType: params.chartType,
                 sizeType: sizeType,
                 positionType: positionType,
                 addPadding: addPadding
             });
         }
-        return result;
+
+        position = this._adjustPosition(this.chartDimension, this.bound.position, params.dimension, position);
+        return position;
     },
 
     /**
      * Get value by indexes.
      * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {string} chartType chart type
      * @returns {(string | number)} value
      * @private
      */
-    _getValueByIndexes: function(indexes) {
-        return this.values[indexes.groupIndex][indexes.index];
+    _getValueByIndexes: function(indexes, chartType) {
+        return this.values[chartType][indexes.groupIndex][indexes.index];
     },
 
     /**
@@ -361,41 +418,35 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this._getValueByIndexes(params.indexes),
+            value = this._getValueByIndexes(params.indexes, params.chartType),
             center;
-
         if (value < 0) {
             center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
             position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
         }
-
         return position;
     },
 
     /**
-     * Get tooltip id.
-     * @returns {string} tooltip id
-     * @private
-     */
-    _getTooltipId: function() {
-        if (!this.tooltipId) {
-            this.tooltipId = chartConst.TOOLTIP_ID_PREFIX + '-' + (new Date()).getTime();
-        }
-        return this.tooltipId;
-    },
-
-    /**
      * To make tooltip html.
+     * @param {string} chartType chart type
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(indexes) {
-        var data = this.data[indexes.groupIndex][indexes.index];
+    _makeTooltipHtml: function(chartType, indexes) {
+        var data = this.data[chartType][indexes.groupIndex][indexes.index];
         data.suffix = this.suffix;
         return this.tplTooltip(data);
     },
 
+    /**
+     * Whether changed indexes or not.
+     * @param {{groupIndex: number, index: number}} prevIndexes prev indexes
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @returns {boolean} whether changed or not
+     * @private
+     */
     _isChangedIndexes: function(prevIndexes, indexes) {
         return !!prevIndexes && (prevIndexes.groupIndex !== indexes.groupIndex || prevIndexes.index !== indexes.index);
     },
@@ -408,33 +459,79 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     showTooltip: function(elTooltip, params, prevPosition) {
         var indexes = params.indexes,
-            curIndexes = this._getIndexesCustomAttribute(elTooltip),
-            position;
-
-        if (elTooltip.id === this._getTooltipId() && this._isChangedIndexes(curIndexes, indexes)) {
-            this._fireHideAnimation(curIndexes);
+            prevIndexes = this._getIndexesCustomAttribute(elTooltip),
+            prevChartType, position;
+        if (this._isChangedIndexes(prevIndexes, indexes)) {
+            prevChartType = elTooltip.getAttribute('data-chart-type');
+            this._fireHideAnimation(prevIndexes, prevChartType);
         }
 
-        elTooltip.id = this._getTooltipId();
-        elTooltip.innerHTML = this._makeTooltipHtml(indexes);
+        elTooltip.innerHTML = this._makeTooltipHtml(params.chartType, indexes);
 
+        elTooltip.setAttribute('data-chart-type', params.chartType);
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);
+
+        this._fireBeforeShowTooltip(indexes);
 
         dom.addClass(elTooltip, 'show');
 
         position = this._calculateTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            addPosition: tui.util.extend({
+            positionOption: tui.util.extend({
                 left: 0,
                 top: 0
-            }, this.options.addPosition),
-            positionOption: this.options.position || '',
-            eventPosition: params.eventPosition
+            }, this.options.position),
+            alignOption: this.options.align || ''
         }, params));
 
         this.moveToPosition(elTooltip, position, prevPosition);
-        this._fireShowAnimation(indexes);
+        this._fireShowAnimation(indexes, params.chartType);
+        this._fireAfterShowTooltip(indexes, {
+            element: elTooltip,
+            position: position
+        });
+    },
+
+    /**
+     * To make parameters for show tooltip user event.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
+     * @private
+     */
+    _makeShowTooltipParams: function(indexes, additionParams) {
+        var legendIndex = indexes.index,
+            legendData = this.joinLegendLabels[legendIndex],
+            params;
+        params = tui.util.extend({
+            chartType: legendData.chartType,
+            legend: legendData.label,
+            legendIndex: legendIndex,
+            index: indexes.groupIndex
+        }, additionParams);
+        return params;
+    },
+
+    /**
+     * To call beforeShowTooltip callback of userEvent.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @private
+     */
+    _fireBeforeShowTooltip: function(indexes) {
+        var params = this._makeShowTooltipParams(indexes);
+        this.userEvent.fire('beforeShowTooltip', params);
+    },
+
+    /**
+     * To call afterShowTooltip callback of userEvent.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @private
+     */
+    _fireAfterShowTooltip: function(indexes, additionParams) {
+        var params = this._makeShowTooltipParams(indexes, additionParams);
+        this.userEvent.fire('afterShowTooltip', params);
     },
 
     /**
@@ -444,9 +541,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     hideTooltip: function(elTooltip) {
         var that = this,
-            indexes = this._getIndexesCustomAttribute(elTooltip);
+            indexes = this._getIndexesCustomAttribute(elTooltip),
+            chartType = elTooltip.getAttribute('data-chart-type');
+
         this._setShowedCustomAttribute(elTooltip, false);
-        this._fireHideAnimation(indexes);
+        this._fireHideAnimation(indexes, chartType);
 
         if (this._isChangedIndexes(this.prevIndexes, indexes)) {
             delete this.prevIndexes;
@@ -468,8 +567,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        event.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        event.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
 

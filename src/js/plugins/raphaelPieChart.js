@@ -21,26 +21,27 @@ var Raphael = window.Raphael,
 var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype */ {
     /**
      * Render function of pie chart.
-     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
-        var dimension = data.dimension;
+    render: function(container, data, callbacks) {
+        var dimension = data.dimension,
+            paper;
 
-        if (!paper) {
-            paper = Raphael(container, dimension.width, dimension.height);
-        }
+        this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         if (!paper.customAttributes.sector) {
             paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
+        this.selectionColor = data.theme.selectionColor;
         this.circleBound = data.circleBound;
-        this._renderPie(paper, data, inCallback, outCallback);
+        this._renderPie(paper, data, callbacks);
 
         return paper;
     },
@@ -95,11 +96,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Render pie graph.
      * @param {object} paper raphael paper
      * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @private
      */
-    _renderPie: function(paper, data, inCallback, outCallback) {
+    _renderPie: function(paper, data, callbacks) {
         var circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
@@ -119,16 +122,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                     }
                 });
 
-            this._bindHoverEvent({
-                target: sector,
-                position: sectorInfo.popupPosition,
-                index: index,
-                inCallback: inCallback,
-                outCallback: outCallback
-            });
+            this._bindHoverEvent(sector, index, callbacks);
 
             sectors.push({
                 sector: sector,
+                color: color,
                 angles: sectorInfo.angles.end,
                 percentValue: percentValue
             });
@@ -139,15 +137,20 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Render legend lines.
-     * @param {object} paper paper
      * @param {array.<object>} outerPositions outer position
      */
-    renderLegendLines: function(paper, outerPositions) {
-        var paths = this._makeLinePaths(outerPositions),
-            legendLines = tui.util.map(paths, function(path) {
-                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
-            });
-        this.legendLines = legendLines;
+    renderLegendLines: function(outerPositions) {
+        var that = this,
+            paths;
+
+        if (this.legendLines) {
+            return;
+        }
+
+        paths = this._makeLinePaths(outerPositions);
+        this.legendLines = tui.util.map(paths, function(path) {
+            return raphaelRenderUtil.renderLine(that.paper, path, 'transparent', 1);
+        });
     },
 
     /**
@@ -160,7 +163,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var paths = tui.util.map(outerPositions, function(positions) {
             return [
                 raphaelRenderUtil.makeLinePath(positions.start, positions.middle),
-                raphaelRenderUtil.makeLinePath(positions.middle, positions.end)
+                raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
+                'Z'
             ].join('');
         }, this);
         return paths;
@@ -168,31 +172,42 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Bind hover event.
-     * @param {object} params parameters
-     *      @param {object} params.target raphael item
-     *      @param {{left: number, top: number}} params.position position
-     *      @param {string} params.id id
-     *      @param {function} params.inCallback in callback
-     *      @param {function} params.outCallback out callback
+     * @param {object} target raphael item
+     * @param {number} index index
+     * @param {object} callbacks callbacks
+     *      @param {function} callbacks.funcShowTooltip show tooltip function
+     *      @param {function} callbacks.funcHideTooltip hide tooltip function
+     *      @param {function} callbacks.funcSelectSeries select series function
      * @private
      */
-    _bindHoverEvent: function(params) {
-        var throttled = tui.util.throttle(function(e) {
-            if (!e) {
-                return;
-            }
-            params.inCallback(params.position, 0, params.index, {
+    _bindHoverEvent: function(target, index, callbacks) {
+        var args = [{}, 0, index],
+            isOn = false,
+            throttled = tui.util.throttle(function() {
+                if (!isOn) {
+                    return;
+                }
+                callbacks.funcShowTooltip.apply(null, arguments);
+            }, 100);
+
+        target.mouseover(function (e) {
+            var _args = args.concat({
                 clientX: e.clientX,
                 clientY: e.clientY
             });
-        }, 100);
-        params.target.mouseover(function (e) {
-            params.inCallback(params.position, 0, params.index, {
+            isOn = true;
+            callbacks.funcShowTooltip.apply(null, _args);
+        }).mousemove(function(e) {
+            var _args = args.concat({
                 clientX: e.clientX,
-                clientY: e.clientY
+                clientY: e.clientY - 10
             });
-        }).mousemove(throttled).mouseout(function () {
-            params.outCallback();
+            throttled.apply(null, _args);
+        }).mouseout(function () {
+            isOn = false;
+            callbacks.funcHideTooltip();
+        }).click(function() {
+            callbacks.funcSelectSeries(index);
         });
     },
 
@@ -268,6 +283,69 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 'stroke': 'black',
                 'stroke-opacity': 1
             });
+        });
+    },
+
+
+    /**
+     * To resize graph of pie chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {{cx:number, cy:number, r: number}} params.circleBound circle bound
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            circleBound = params.circleBound;
+
+        this.circleBound = circleBound;
+        this.paper.setSize(dimension.width, dimension.height);
+
+        tui.util.forEachArray(this.sectors, function(item) {
+            var angles = item.angles;
+            item.sector.attr({
+                sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
+            });
+        }, this);
+    },
+
+    /**
+     * To move legend lines.
+     * @param {array.<object>} outerPositions outer positions
+     */
+    moveLegendLines: function(outerPositions) {
+        var paths;
+        if (!this.legendLines) {
+            return;
+        }
+
+        paths = this._makeLinePaths(outerPositions)
+        tui.util.forEachArray(this.legendLines, function(line, index) {
+            line.attr({path: paths[index]});
+            return line;
+        });
+    },
+
+    /**
+     * Select series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    selectSeries: function(indexes) {
+        var item = this.sectors[indexes.index],
+            objColor = Raphael.color(item.color),
+            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+        item.sector.attr({
+            fill: color
+        });
+    },
+
+    /**
+     * Unelect series.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     */
+    unselectSeries: function(indexes) {
+        var sector = this.sectors[indexes.index];
+        sector.sector.attr({
+            fill: sector.color
         });
     }
 });

@@ -6,9 +6,10 @@
 
 'use strict';
 
-var Series = require('../../src/js/series/series.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var Series = require('../../src/js/series/series'),
+    chartConst = require('../../src/js/const'),
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Series', function() {
     var series;
@@ -21,10 +22,6 @@ describe('Series', function() {
                 values: [[20], [40]],
                 formattedValues: [[20], [40]],
                 scale: {min: 0, max: 160}
-            },
-            bound: {
-                dimension: {width: 200, height: 100},
-                position: {top: 50, left: 50}
             },
             theme: {
                 label: {
@@ -163,12 +160,12 @@ describe('Series', function() {
                 }
             );
 
-            if (renderUtil.isIE8()) {
+            if (renderUtil.isOldBrowser()) {
                 expect(elSeries.style.top).toBe('18px');
-                expect(elSeries.style.left).toBe('9px');
+                expect(elSeries.style.left).toBe('19px');
             } else {
                 expect(elSeries.style.top).toBe('20px');
-                expect(elSeries.style.left).toBe('10px');
+                expect(elSeries.style.left).toBe('20px');
             }
         });
     });
@@ -186,19 +183,31 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
-            var elSeries = series.render();
+            var elSeries = series.render({
+                dimension: {width: 200, height: 100},
+                position: {top: 50, left: 50}
+            });
 
             expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
             expect(elSeries.style.width).toBe('220px');
             expect(elSeries.style.height).toBe('110px');
 
-            if (renderUtil.isIE8()) {
+            if (renderUtil.isOldBrowser()) {
                 expect(elSeries.style.top).toBe('48px');
                 expect(elSeries.style.left).toBe('39px');
             } else {
                 expect(elSeries.style.top).toBe('50px');
                 expect(elSeries.style.left).toBe('40px');
             }
+        });
+    });
+
+    describe('_findLabelElement()', function() {
+        it('대상 엘리먼트가 시리즈 라벨(series label) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
+            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_SERIES_LABEL),
+                actual = series._findLabelElement(elTarget),
+                expected = elTarget;
+            expect(actual).toBe(expected);
         });
     });
 });

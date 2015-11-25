@@ -7,7 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
-    LineTypeEventHandleLayer = require('../eventHandleLayers/lineTypeEventHandleLayer');
+    AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -20,60 +20,53 @@ var lineTypeMixer = {
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
+     * @private
      */
-    lineTypeInit: function(userData, theme, options, initedData) {
-        var baseData = initedData || this.makeBaseData(userData, theme, options, {
-                isVertical: true,
-                hasAxes: true
-            }),
-            convertedData = baseData.convertedData,
-            bounds = baseData.bounds,
-            axesData = this._makeAxesData(convertedData, bounds, options, initedData);
-
+    _lineTypeInit: function(userData, theme, options) {
         ChartBase.call(this, {
-            bounds: bounds,
-            axesData: axesData,
+            userData: userData,
             theme: theme,
             options: options,
-            isVertical: true,
-            initedData: initedData
+            hasAxes: true,
+            isVertical: true
         });
 
-        if (!this.isSubChart && !this.isGroupedTooltip) {
-            this.addComponent('eventHandleLayer', LineTypeEventHandleLayer, {
-                tickCount: axesData.xAxis ? axesData.xAxis.tickCount : -1
-            });
-        }
+        this._addComponents(this.convertedData, options.chartType);
+    },
 
-        this._addComponents(convertedData, axesData, options);
+    _addCustomEventComponentForNormalTooltip: function() {
+        this._addComponent('customEvent', AreaTypeCustomEvent, {
+            chartType: this.chartType,
+            isVertical: this.isVertical
+        });
     },
 
     /**
      * Add components
      * @param {object} convertedData converted data
-     * @param {object} axesData axes data
-     * @param {object} options chart options
+     * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, axesData) {
-        var plotData, seriesData;
-
-        plotData = this.makePlotData(convertedData.plotData, axesData);
-        seriesData = {
+    _addComponents: function(convertedData, chartType) {
+        var seriesData = {
             data: {
                 values: tui.util.pivot(convertedData.values),
                 formattedValues: tui.util.pivot(convertedData.formattedValues),
-                scale: axesData.yAxis.scale,
-                xTickCount: axesData.xAxis && axesData.xAxis.tickCount || -1
+                formatFunctions: convertedData.formatFunctions,
+                joinLegendLabels: convertedData.joinLegendLabels
             }
         };
-        this.addAxisComponents({
+        this._addComponentsForAxisType({
             convertedData: convertedData,
-            axes: axesData,
-            plotData: plotData,
-            Series: this.Series,
-            seriesData: seriesData,
-            aligned: axesData.xAxis && axesData.xAxis.aligned
+            axes: ['yAxis', 'xAxis'],
+            chartType: chartType,
+            serieses: [
+                {
+                    name: 'series',
+                    SeriesClass: this.Series,
+                    data: seriesData
+                }
+            ]
         });
     },
 
@@ -82,21 +75,7 @@ var lineTypeMixer = {
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        if (!this.isSubChart && !this.isGroupedTooltip) {
-            this._attachLineTypeCoordinateEvent();
-        }
         return ChartBase.prototype.render.apply(this, arguments);
-    },
-
-    /**
-     * To attach coordinate event of line type.
-     * @private
-     */
-    _attachLineTypeCoordinateEvent: function() {
-        var eventHandleLayer = this.componentMap.eventHandleLayer,
-            series = this.componentMap.series;
-        eventHandleLayer.on('overTickSector', series.onLineTypeOverTickSector, series);
-        eventHandleLayer.on('outTickSector', series.onLineTypeOutTickSector, series);
     },
 
     /**

@@ -31,18 +31,42 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Render plot.
-     * @param {{width: number, height: number, top: number, right: number}} bound plot area bound
+     * To render plot area.
+     * @param {HTMLElement} elPlotArea plot area element
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
+     * @param {object} data rendering data
+     * @private
+     */
+    _renderPlotArea: function(elPlotArea, bound, data) {
+        this.bound = bound;
+        this.data = data;
+
+        renderUtil.renderDimension(elPlotArea, bound.dimension);
+        renderUtil.renderPosition(elPlotArea, bound.position);
+        this._renderLines(elPlotArea, bound.dimension);
+    },
+
+    /**
+     * To render plot component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
+     * @param {object} data rendering data
      * @returns {HTMLElement} plot element
      */
-    render: function() {
-        var el = dom.create('DIV', this.className),
-            bound = this.bound;
-        renderUtil.renderDimension(el, bound.dimension);
-        renderUtil.renderPosition(el, bound.position);
-        this._renderLines(el, bound.dimension);
-
+    render: function(bound, data) {
+        var el = dom.create('DIV', this.className);
+        this._renderPlotArea(el, bound, data);
+        this.elPlotArea = el;
         return el;
+    },
+
+    /**
+     * To resize plot component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
+     * @param {object} data rendering data
+     */
+    resize: function(bound, data) {
+        this.elPlotArea.innerHTML = '';
+        this._renderPlotArea(this.elPlotArea, bound, data);
     },
 
     /**
@@ -116,7 +140,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeVerticalPixelPositions: function(height) {
-        var positions = calculator.makeTickPixelPositions(height, this.vTickCount);
+        var positions = calculator.makeTickPixelPositions(height, this.data.vTickCount);
         positions.shift();
         return positions;
     },
@@ -128,7 +152,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeHorizontalPixelPositions: function(width) {
-        var positions = calculator.makeTickPixelPositions(width, this.hTickCount);
+        var positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
         positions.shift();
         return positions;
     }

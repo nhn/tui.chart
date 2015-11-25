@@ -12,6 +12,7 @@ var chartConst = require('./const'),
 
 var _createChart;
 
+require('./polyfill');
 require('./code-snippet-util');
 require('./registerCharts');
 require('./registerThemes');
@@ -87,14 +88,18 @@ _createChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {number} options.series.barWidth bar width
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
- *          @param {string} options.tooltip.position tooltip position type
- *          @param {object} options.tooltip.addPosition add position
- *              @param {number} options.tooltip.addPosition.left add left position
- *              @param {number} options.tooltip.addPosition.top add top position
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -163,14 +168,18 @@ tui.chart.barChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {number} options.series.barWidth bar width
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
- *          @param {string} options.tooltip.position tooltip position type
- *          @param {object} options.tooltip.addPosition add position
- *              @param {number} options.tooltip.addPosition.left add left position
- *              @param {number} options.tooltip.addPosition.top add top position
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
@@ -239,14 +248,17 @@ tui.chart.columnChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
- *          @param {string} options.tooltip.position tooltip position type
- *          @param {object} options.tooltip.addPosition add position
- *              @param {number} options.tooltip.addPosition.left add left position
- *              @param {number} options.tooltip.addPosition.top add top position
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -318,14 +330,17 @@ tui.chart.lineChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
- *          @param {string} options.tooltip.position tooltip position type
- *          @param {object} options.tooltip.addPosition add position
- *              @param {number} options.tooltip.addPosition.left add left position
- *              @param {number} options.tooltip.addPosition.top add top position
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -395,18 +410,23 @@ tui.chart.areaChart = function(container, data, options) {
  *          @param {object} options.series.column options of column series
  *              @param {string} options.series.column.stacked stacked type
  *              @param {boolean} options.series.column.showLabel whether show label or not
+ *              @param {number} options.series.column.barWidth bar width
+ *              @param {boolean} options.series.column.hasSelection whether has selection or not
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
+ *              @param {boolean} options.series.line.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
  *              @param {string} options.tooltip.column.suffix suffix of tooltip
  *              @param {string} options.tooltip.column.template template of tooltip
- *              @param {string} options.tooltip.column.position tooltip position type
- *              @param {object} options.tooltip.column.addPosition add position
- *                  @param {number} options.tooltip.column.addPosition.left add left position
- *                  @param {number} options.tooltip.column.addPosition.top add top position
+ *              @param {string} options.tooltip.column.align tooltip align option
+ *              @param {object} options.tooltip.column.position relative position
+ *                  @param {number} options.tooltip.column.position.left position left
+ *                  @param {number} options.tooltip.column.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -482,15 +502,17 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
  *      @param {object} options.series options of series
- *          @param {string} options.series.legendType legend type
  *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {string} options.tooltip.template template of tooltip
- *          @param {string} options.tooltip.position tooltip position type
- *          @param {object} options.tooltip.addPosition add position
- *              @param {number} options.tooltip.addPosition.left add left position
- *              @param {number} options.tooltip.addPosition.top add top position
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -599,7 +621,8 @@ tui.chart.pieChart = function(container, data, options) {
  *     },
  *     series: {
  *       colors: ['#40abb4', '#e78a31', '#c1c452', '#795224', '#f5f5f5'],
- *       borderColor: '#8e6535'
+ *       borderColor: '#8e6535',
+ *       selectionColor: '#cccccc',
  *     },
  *     legend: {
  *       label: {

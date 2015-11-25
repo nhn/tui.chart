@@ -8,6 +8,7 @@
 
 var chartConst = require('../const'),
     calculator = require('./calculator'),
+    predicate = require('./predicate'),
     renderUtil = require('./renderUtil');
 
 var concat = Array.prototype.concat;
@@ -158,22 +159,33 @@ var boundsMaker = {
     },
 
     /**
+     * Whether skipped legend sizing or not.
+     * @param {string} chartType chart type
+     * @param {?object} options legend options
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isSkippedLegendSizing: function(chartType, options) {
+        return (predicate.isPieChart(chartType) && predicate.isPieLegendAlign(options.align)) || options.hidden;
+    },
+
+    /**
      * To make legend dimension.
      * @memberOf module:boundsMaker
      * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @param {string} chartType chart type
-     * @param {object} seriesOption series option
+     * @param {object} legendOptions series option
      * @returns {{width: number}} legend dimension
      * @private
      */
-    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, seriesOption) {
+    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, legendOptions) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
-        seriesOption = seriesOption || {};
+        legendOptions = legendOptions || {};
 
-        if (chartType !== chartConst.CHART_TYPE_PIE || !seriesOption.legendType) {
+        if (!this._isSkippedLegendSizing(chartType, legendOptions)) {
             legendLabels = tui.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });
@@ -270,7 +282,7 @@ var boundsMaker = {
             chartDimension = this._makeChartDimension(chartOptions),
             titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
             axesDimension = this._makeAxesDimension(params),
-            legendDimension = this._makeLegendDimension(params.convertedData.joinLegendLabels, params.theme.legend.label, params.chartType, params.options.series),
+            legendDimension = this._makeLegendDimension(params.convertedData.joinLegendLabels, params.theme.legend.label, params.options.chartType, params.options.legend),
             seriesDimension = this._makeSeriesDimension({
                 chartDimension: chartDimension,
                 axesDimension: axesDimension,
@@ -633,6 +645,21 @@ var boundsMaker = {
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
+    _makeCustomEventBound: function(bound) {
+        var dimension = bound.dimension,
+            position = bound.position;
+        return {
+            dimension: {
+                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+            },
+            position: {
+                left: position.left - chartConst.SERIES_EXPAND_SIZE,
+                top: position.top
+            }
+        }
+    },
+
     /**
      * To make bounds about chart components.
      * @memberOf module:boundsMaker
@@ -694,12 +721,13 @@ var boundsMaker = {
             top: top,
             left: left
         });
+
         bounds = tui.util.extend({
             chart: this._makeChartBound(dimensions.chart),
             series: seriesBound,
             legend: this._makeLegendBound(dimensions),
             tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
-            eventHandleLayer: seriesBound
+            customEvent: seriesBound
         }, axesBounds);
         return bounds;
     }

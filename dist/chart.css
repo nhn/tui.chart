@@ -56,11 +56,8 @@
   top: 0;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
-.tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area,
-.tui-chart .tui-chart-axis-area.vertical .tui-chart-label-area {
-  right: 0;
-}
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area {
+  right: 0;
   border-right: 1px solid #000000;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area .tui-chart-tick {
@@ -68,10 +65,13 @@
   width: 5px;
   height: 1px;
 }
+.tui-chart .tui-chart-axis-area.vertical .tui-chart-label-area {
+  right: 10px;
+}
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-label-area .tui-chart-label {
+  left: 0;
   width: 100%;
   text-align: right;
-  padding-right: 10px;
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-title-area {
   -webkit-transform-origin: top left;
@@ -152,7 +152,7 @@
   transform: rotate(-25deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation25 span {
-  filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.90630779, M12=0.42261826, M21=-0.42261826, M22=0.90630779);
+  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45 {
   -webkit-transform: rotate(-45deg);
@@ -162,7 +162,7 @@
   transform: rotate(-45deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45 span {
-  filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65 {
   -webkit-transform: rotate(-65deg);
@@ -172,7 +172,7 @@
   transform: rotate(-65deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65 span {
-  filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826, M12=0.90630779, M21=-0.90630779, M22=0.42261826);
+  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 {
   -webkit-transform: rotate(-85deg);
@@ -182,7 +182,7 @@
   transform: rotate(-85deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 span {
-  filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574, M12=0.9961947, M21=-0.9961947, M22=0.08715574);
+  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
 }
 .tui-chart .tui-chart-plot-area {
   position: absolute;
@@ -215,7 +215,7 @@
   top: 0px;
   display: none;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=(0));
+  filter: alpha(opacity=0);
   opacity: 0;
 }
 .tui-chart .tui-chart-series-area .tui-chart-series-label-area .tui-chart-series-label {
@@ -228,11 +228,15 @@
 .tui-chart .tui-chart-series-area .tui-chart-series-label-area.show {
   display: block;
 }
-.tui-chart .tui-chart-series-coordinate-area {
+.tui-chart .tui-chart-series-custom-event-area {
   z-index: 1000;
   position: absolute;
   left: 10px;
   top: 0;
+  background-color: #fff;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
+  opacity: 0;
 }
 .tui-chart .tui-chart-legend-rect {
   margin-top: 2px;
@@ -244,7 +248,7 @@
 }
 .tui-chart .tui-chart-legend-rect.area {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-  filter: alpha(opacity=(50));
+  filter: alpha(opacity=50);
   opacity: 0.5;
 }
 .tui-chart .tui-chart-legend-area {
@@ -260,6 +264,9 @@
 }
 .tui-chart .tui-chart-legend-area .tui-chart-legend .tui-chart-legend-label {
   padding: 2px 0 2px 5px;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
   line-height: 1;
 }
 .tui-chart .tui-chart-tooltip-area {
@@ -282,12 +289,13 @@
   -webkit-border-radius: 5px;
   border-radius: 5px;
   background-clip: padding-box;
-  background-color: #555;
   background-color: rgba(0, 0, 0, 0.7);
+  background-color: #555\9;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > * {
   padding: 2px 7px;
   text-align: center;
+  white-space: nowrap;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > :first-child {
   backgound-color: #fff;
@@ -319,7 +327,7 @@
   position: absolute;
   background-color: #aaa;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-  filter: alpha(opacity=(30));
+  filter: alpha(opacity=30);
   opacity: 0.3;
   display: none;
 }

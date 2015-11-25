@@ -7,7 +7,6 @@
 'use strict';
 
 var chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -25,19 +24,20 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             width = dimension.width,
             height = dimension.height,
             len = groupValues[0].length,
-            step, start, result;
-        if (this.aligned) {
+            start = chartConst.SERIES_EXPAND_SIZE,
+            step, result;
+
+        if (this.data.aligned) {
             step = width / (len - 1);
-            start = 0;
         } else {
             step = width / len;
-            start = step / 2;
+            start += (step / 2);
         }
 
         result = tui.util.map(groupValues, function(values) {
             return tui.util.map(values, function(value, index) {
                 return {
-                    left: start + (step * index) + chartConst.SERIES_EXPAND_SIZE,
+                    left: start + (step * index),
                     top: height - (value * height)
                 };
             });
@@ -52,18 +52,16 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupPositions group positions
      *      @param {array.<array>} params.formattedValues formatted values
-     * @return {HTMLElement} series area element
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params) {
-        var groupPositions, labelHeight, elSeriesLabelArea, html;
-
+    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+        var groupPositions, labelHeight, html;
         if (!this.options.showLabel) {
-            return null;
+            return;
         }
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
-        elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area');
 
         html = tui.util.map(params.formattedValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
@@ -78,9 +76,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**
@@ -138,33 +133,27 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * On over tick sector.
-     * @param {number} groupIndex groupIndex
-     * @param {number} layerY layerY
+     * To call showGroupTooltipLine function of graphRenderer.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound bound
      */
-    onLineTypeOverTickSector: function(groupIndex, layerY) {
-        var index, prevIndexes;
-
-        index = this._findIndex(groupIndex, layerY);
-        prevIndexes = this.prevIndexes;
-
-        if (!this._isChanged(groupIndex, index)) {
+    onShowGroupTooltipLine: function(bound) {
+        if (!this.graphRenderer.showGroupTooltipLine) {
             return;
         }
-
-        if (prevIndexes) {
-            this.outCallback();
-        }
-
-        this.inCallback(this._getBound(groupIndex, index), groupIndex, index);
+        this.graphRenderer.showGroupTooltipLine(bound);
     },
 
     /**
-     * On out tick sector.
+     * To call hideGroupTooltipLine function of graphRenderer.
      */
-    onLineTypeOutTickSector: function() {
-        delete this.prevIndexes;
-        this.outCallback();
+    onHideGroupTooltipLine: function() {
+        if (!this.graphRenderer.hideGroupTooltipLine) {
+            return;
+        }
+        this.graphRenderer.hideGroupTooltipLine();
     }
 });
 

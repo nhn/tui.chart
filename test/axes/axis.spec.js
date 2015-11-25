@@ -22,11 +22,6 @@ describe('Axis', function() {
 
     beforeEach(function() {
         axis = new Axis({
-            data: {
-                labels: ['label1', 'label2', 'label3'],
-                tickCount: 4,
-                isLabelAxis: true
-            },
             theme: {
                 title: {
                     fontSize: 12
@@ -35,15 +30,6 @@ describe('Axis', function() {
                     fontSize: 12
                 },
                 tickColor: 'black'
-            },
-            bound: {
-                dimension: {
-                    width: 100,
-                    height: 200
-                },
-                position: {
-                    top: 20
-                }
             },
             options: {
                 title: 'Axis Title'
@@ -61,7 +47,7 @@ describe('Axis', function() {
             expect(elTitle.style.left).toBe('0px');
 
             // IE8에서는 회전 방법 이슈로 인해 top값을 설정하지 않습니다.
-            if (!renderUtil.isIE8()) {
+            if (!renderUtil.isOldBrowser()) {
                 expect(elTitle.style.top).toBe('50px');
             }
         });
@@ -152,12 +138,12 @@ describe('Axis', function() {
         it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
             var elTickArea, childNodes;
 
-            axis.aligned = true;
             axis.data = {
                 tickCount: 5,
                 labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
                 isLabelAxis: true,
-                isVertical: false
+                isVertical: false,
+                aligned: true
             };
 
             elTickArea = axis._renderTickArea(300);
@@ -182,14 +168,12 @@ describe('Axis', function() {
         it('axis 영역의 너비가 300인 레이블 타입 x축 레이블 영역은 너비 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 isLabelAxis: true,
                 isVertical: false
-            };
-
-            elLabelArea = axis._renderLabelArea(300);
+            }, 300);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -207,8 +191,12 @@ describe('Axis', function() {
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data.isVertical = true;
-            elLabelArea = axis._renderLabelArea(300, 100);
+            elLabelArea = axis._renderLabelArea({
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4,
+                isLabelAxis: true,
+                isVertical: true
+            }, 300, 100);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -229,12 +217,10 @@ describe('Axis', function() {
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['0.00', '30.00', '60.00'],
                 tickCount: 3
-            };
-
-            elLabelArea = axis._renderLabelArea(300);
+            }, 300);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -254,13 +240,11 @@ describe('Axis', function() {
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
             var elLabelArea, childNodes;
 
-            axis.data = {
+            elLabelArea = axis._renderLabelArea({
                 labels: ['0.00', '30.00', '60.00'],
                 tickCount: 3,
                 isVertical: true
-            };
-
-            elLabelArea = axis._renderLabelArea(300, 100);
+            }, 300, 100);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -387,7 +371,7 @@ describe('Axis', function() {
     describe('_makeCssTextForRotationMoving()', function() {
         it('_calculateRotationMovingPosition() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
             var actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             spyOn(axis, '_calculateRotationMovingPosition').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
             expected = 'left:10px;top:10px';
@@ -396,7 +380,7 @@ describe('Axis', function() {
 
         it('IE8의 경우는 _calculateRotationMovingPositionForIE8() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
             var actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(true);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
             spyOn(axis, '_calculateRotationMovingPositionForIE8').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
             expected = 'left:10px;top:10px';
@@ -455,7 +439,7 @@ describe('Axis', function() {
 
         it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
             var params, actual, expected;
-            spyOn(renderUtil, 'isIE8').and.returnValue(false);
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             params = {
                 positions: [30, 80, 130],
                 labels: ['label1', 'label2', 'label3'],
@@ -511,9 +495,20 @@ describe('Axis', function() {
 
     describe('render()', function() {
         it('레이블 타입 axis의 전체 영역을 렌더링 합니다.', function() {
-            var el;
-            axis.data.isVertical = false;
-            el = axis.render();
+            var el = axis.render({
+                dimension: {
+                    width: 100,
+                    height: 200
+                },
+                position: {
+                    top: 20
+                }
+            }, {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4,
+                isLabelAxis: true,
+                isVertical: false
+            });
 
             expect(el.style.width).toBe('100px');
             expect(el.style.height).toBe('200px');

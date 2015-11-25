@@ -37,6 +37,7 @@ describe('PieChartSeries', function() {
             },
             options: {}
         });
+        spyOn(series.graphRenderer, 'renderLegendLines');
     });
 
     describe('_makePercentValues()', function() {
@@ -49,7 +50,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeSectorsInfo()', function() {
-        it('percentValues를 이용하여 angle 정보와 center position 정보를 계산하여 반환합니다.', function() {
+        it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
             var actual = series._makeSectorsInfo([0.25, 0.125, 0.1, 0.35, 0.175], {
                 cx: 100,
                 cy: 100,
@@ -62,13 +63,17 @@ describe('PieChartSeries', function() {
             expect(actual[0].angles.start.endAngle).toBe(0);
             expect(actual[0].angles.end.startAngle).toBe(0);
             expect(actual[0].angles.end.endAngle).toBe(90);
-            expect(actual[0].popupPosition).toEqual({
-                left: 177.78174593052023,
-                top: 22.21825406947977
-            });
             expect(actual[0].centerPosition).toEqual({
                 left: 142.42640687119285,
                 top: 57.57359312880715
+            });
+            expect(actual[0].outerPosition.start).toEqual({
+                left: 170.71067811865476,
+                top: 29.289321881345245
+            });
+            expect(actual[0].outerPosition.middle).toEqual({
+                left: 177.78174593052023,
+                top: 22.21825406947977
             });
         });
     });
@@ -93,7 +98,7 @@ describe('PieChartSeries', function() {
                 height: 300
             }, {
                 showLabel: true,
-                legendType: 'outer'
+                legendAlign: 'outer'
             });
 
             expect(actual.r).toBe(97.5);
@@ -121,10 +126,10 @@ describe('PieChartSeries', function() {
             var actual = series._getSeriesLabel({
                     legend: 'legend',
                     options: {
-                        legendType: 'outer'
+                        legendAlign: 'outer'
                     }
                 }),
-                expected = 'legend';
+                expected = '<span class="tui-chart-series-legend">legend</span>';
             expect(actual).toBe(expected);
         });
 
@@ -145,11 +150,11 @@ describe('PieChartSeries', function() {
                     label: 'label',
                     separator: ':&nbsp;',
                     options: {
-                        legendType: 'outer',
+                        legendAlign: 'outer',
                         showLabel: true
                     }
                 }),
-                expected = 'legend:&nbsp;label';
+                expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
             expect(actual).toBe(expected);
         });
     });
@@ -171,11 +176,10 @@ describe('PieChartSeries', function() {
 
     describe('_renderCenterLegend()', function() {
         it('legend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea, children;
+            var elLabelArea = dom.create('div'),
+                children;
 
-            elLabelArea = series._renderCenterLegend({
-                container: container,
+            series._renderCenterLegend({
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
@@ -199,21 +203,24 @@ describe('PieChartSeries', function() {
                     }
                 ],
                 options: {
-                    legendType: 'center'
+                    legendAlign: 'center'
                 }
-            });
+            }, elLabelArea);
 
             children = elLabelArea.childNodes;
 
             expect(children[0].style.left).toBe('80px');
             expect(children[0].style.top).toBe('40px');
-            expect(children[0].innerHTML).toBe('legend1');
+            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[0].firstChild.innerHTML).toBe('legend1');
             expect(children[1].style.left).toBe('80px');
             expect(children[1].style.top).toBe('90px');
-            expect(children[1].innerHTML).toBe('legend2');
+            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[1].firstChild.innerHTML).toBe('legend2');
             expect(children[2].style.left).toBe('80px');
             expect(children[2].style.top).toBe('140px');
-            expect(children[2].innerHTML).toBe('legend3');
+            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[2].firstChild.innerHTML).toBe('legend3');
         });
     });
 
@@ -279,11 +286,9 @@ describe('PieChartSeries', function() {
 
     describe('_renderOuterLegend()', function() {
         it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea, children;
-
-            elLabelArea = series._renderOuterLegend({
-                container: container,
+            var elLabelArea = dom.create('div'),
+                children;
+            series._renderOuterLegend({
                 legendLabels: ['legend1', 'legend2', 'legend3'],
                 formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
@@ -313,30 +318,33 @@ describe('PieChartSeries', function() {
                     }
                 ],
                 options: {
-                    legendType: 'outer'
+                    legendAlign: 'outer'
                 },
                 chartWidth: 220
-            });
+            }, elLabelArea);
 
             children = elLabelArea.childNodes;
 
             expect(children[0].style.left).toBe('35px');
             expect(children[0].style.top).toBe('40px');
-            expect(children[0].innerHTML).toBe('legend1');
+            expect(children[0].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[0].firstChild.innerHTML).toBe('legend1');
             expect(children[1].style.left).toBe('175px');
             expect(children[1].style.top).toBe('90px');
-            expect(children[1].innerHTML).toBe('legend2');
+            expect(children[1].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[1].firstChild.innerHTML).toBe('legend2');
             expect(children[2].style.left).toBe('35px');
             expect(children[2].style.top).toBe('140px');
-            expect(children[2].innerHTML).toBe('legend3');
+            expect(children[2].firstChild.className).toBe('tui-chart-series-legend');
+            expect(children[2].firstChild.innerHTML).toBe('legend3');
         });
     });
 
     describe('_renderSeriesLabel()', function() {
         it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
-            var container = dom.create('div'),
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
                 params = {
-                    container: container,
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
                     sectorsInfo: [
@@ -366,18 +374,19 @@ describe('PieChartSeries', function() {
                         }
                     ],
                     options: {
-                        legendType: 'outer'
+                        legendAlign: 'outer'
                     },
                     chartWidth: 220
-                },
-                actual = series._renderSeriesLabel(params),
-                expected = series._renderOuterLegend(params);
-            expect(actual).toEqual(expected);
+                };
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderOuterLegend(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var container = dom.create('div'),
+            var elLabelArea = dom.create('div'),
+                elExpected = dom.create('div'),
                 params = {
-                    container: container,
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
                     sectorsInfo: [
@@ -401,12 +410,13 @@ describe('PieChartSeries', function() {
                         }
                     ],
                     options: {
-                        legendType: 'center'
+                        legendAlign: 'center'
                     }
-                },
-                actual = series._renderSeriesLabel(params),
-                expected = series._renderCenterLegend(params);
-            expect(actual).toEqual(expected);
+                };
+            series._renderSeriesLabel(params, elLabelArea);
+            series._renderCenterLegend(params, elExpected);
+            expect(elLabelArea.className).toEqual(elExpected.className);
+            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
     });
 });

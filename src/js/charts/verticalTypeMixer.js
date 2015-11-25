@@ -7,7 +7,7 @@
 'use strict';
 
 var axisDataMaker = require('../helpers/axisDataMaker'),
-    state = require('../helpers/state');
+    predicate = require('../helpers/predicate');
 
 /**
  * verticalTypeMixer is mixer of vertical type chart(column, line, area).
@@ -19,31 +19,31 @@ var verticalTypeMixer = {
      * @param {object} convertedData converted data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertedData, bounds, options, initedData) {
-        var axesData = {};
-        if (initedData) {
-            axesData = initedData.axes;
-        } else {
-            axesData.yAxis = axisDataMaker.makeValueAxisData({
+    _makeAxesData: function(convertedData, bounds, options) {
+        var aligned = predicate.isLineTypeChart(options.chartType),
+            xAxisData = axisDataMaker.makeLabelAxisData({
+                labels: convertedData.labels,
+                aligned: aligned,
+                options: options.xAxis
+            }),
+            yAxisData = axisDataMaker.makeValueAxisData({
                 values: convertedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
                 formatFunctions: convertedData.formatFunctions,
                 options: options.yAxis,
-                isVertical: true
+                isVertical: true,
+                aligned: aligned
             });
-            axesData.xAxis = axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels,
-                aligned: state.isLineTypeChart(options.chartType),
-                options: options.xAxis
-            });
-        }
-        return axesData;
+
+        return {
+            xAxis: xAxisData,
+            yAxis: yAxisData
+        };
     },
 
     /**

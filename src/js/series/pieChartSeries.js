@@ -8,8 +8,10 @@
 
 var Series = require('./series'),
     chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil');
+    renderUtil = require('../helpers/renderUtil'),
+    eventListener = require('../helpers/eventListener');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -79,9 +81,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return {
                 percentValue: percentValue,
                 angles: angles,
-                popupPosition: this._getArcPosition(tui.util.extend({
-                    r: r + delta
-                }, positionData)),
                 centerPosition: this._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
                 }, positionData)),
@@ -101,21 +100,22 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * To make series data.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
      * @returns {{
-     *      formattedValues: array,
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
      *      sectorsInfo: array.<object>
      * }} add data for graph rendering
      */
-    makeSeriesData: function() {
-        var circleBound = this._makeCircleBound(this.bound.dimension, {
+    makeSeriesData: function(bound) {
+        var circleBound = this._makeCircleBound(bound.dimension, {
                 showLabel: this.options.showLabel,
-                legendType: this.options.legendType
+                legendAlign: this.legendAlign
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
-
-        this.popupPositions = tui.util.pluck(sectorsInfo, 'popupPosition');
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
@@ -126,14 +126,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * To make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
-     * @param {{showLabel: boolean, legendType: string}} options options
+     * @param {{showLabel: boolean, legendAlign: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
      * @private
      */
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER && options.showLabel,
+            isSmallPie = predicate.isOuterLegendAlign(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
         return {
@@ -163,27 +163,129 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * To make add data for series label.
-     * @param {HTMLElement} container container
+     * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
      *      legendLabels: array.<string>,
-     *      options: {legendType: string, showLabel: boolean},
+     *      options: {legendAlign: string, showLabel: boolean},
      *      chartWidth: number,
      *      formattedValues: array
      * }} add data for make series label
      * @private
      */
-    _makeSeriesDataForSeriesLabel: function(container) {
-        return {
-            container: container,
+    _makeSeriesDataForSeriesLabel: function(seriesData) {
+        return tui.util.extend({
             legendLabels: this.data.legendLabels,
             options: {
-                legendType: this.options.legendType,
+                legendAlign: this.legendAlign,
                 showLabel: this.options.showLabel
             },
             chartWidth: this.data.chartWidth,
             formattedValues: this.data.formattedValues[0]
+        }, seriesData);
+    },
+
+    /**
+     * To render raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     * @override
+     */
+    _renderGraph: function(dimension, seriesData) {
+        var funcShowTooltip = tui.util.bind(this.showTooltip, this, {
+                allowNegativeTooltip: !!this.allowNegativeTooltip,
+                chartType: this.chartType
+            }),
+            callbacks = {
+                funcShowTooltip: funcShowTooltip,
+                funcHideTooltip: tui.util.bind(this.hideTooltip, this),
+                funcSelectSeries: tui.util.bind(this.selectSeries, this)
+            },
+            params = this._makeParamsForGraphRendering(dimension, seriesData);
+
+        this.graphRenderer.render(this.elSeriesArea, params, callbacks);
+
+        // series label mouse event 동작 시 사용
+        this.showTooltip = funcShowTooltip;
+    },
+
+    /**
+     * To render series component of pie chart.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @param {object} data data for rendering
+     * @returns {HTMLElement} series element
+     * @override
+     */
+    render: function() {
+        var el = Series.prototype.render.apply(this, arguments);
+        this.attachEvent(el);
+
+        return el;
+    },
+
+    /**
+     * showTooltip is mouseover event callback on series graph.
+     * @param {object} params parameters
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
+     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {{clientX: number, clientY: number}} eventPosition mouse event position
+     */
+    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
+        this.fire('showTooltip', tui.util.extend({
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
+            bound: bound,
+            eventPosition: eventPosition
+        }, params));
+    },
+
+    /**
+     * hideTooltip is mouseout event callback on series graph.
+     * @param {string} id tooltip id
+     */
+    hideTooltip: function() {
+        this.fire('hideTooltip');
+    },
+
+    /**
+     * To make series data by selection.
+     * @param {number} index index
+     * @returns {{indexes: {index: number, groupIndex: number}}} series data
+     * @private
+     */
+    _makeSeriesDataBySelection: function(index) {
+        return {
+            indexes: {
+                index: index,
+                groupIndex: index
+            }
         };
+    },
+
+    /**
+     * selectSeries is click event callback on series graph.
+     * @param {number} index index
+     */
+    selectSeries: function(index) {
+        var seriesData = this._makeSeriesDataBySelection(index);
+        if (this.selectedIndex === index) {
+            this.onUnselectSeries(seriesData);
+            delete this.selectedIndex;
+        } else {
+            if (!tui.util.isUndefined(this.selectedIndex)) {
+                this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
+            }
+            this.onSelectSeries(seriesData);
+            this.selectedIndex = index;
+        }
     },
 
     /**
@@ -192,14 +294,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {string} params.legend legend
      *      @param {string} params.label label
      *      @param {string} params.separator separator
-     *      @param {{legendType: boolean, showLabel: boolean}} params.options options
+     *      @param {{legendAlign: ?string, showLabel: boolean}} params.options options
      * @returns {string} series label
      * @private
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
-        if (params.options.legendType) {
-            seriesLabel = params.legend;
+        if (params.options.legendAlign) {
+            seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
 
         if (params.options.showLabel) {
@@ -212,18 +314,19 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} series area element
+     *      @param {array.<object>} params.positions positions
+     *      @param {array.<string>} params.legends legendLabels
+     *      @param {array.<string>} params.formattedValues formatted values
+     *      @param {string} params.separator separator
+     *      @param {object} params.options options
+     *      @param {function} params.funcMoveToPosition function
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderLegendLabel: function(params) {
+    _renderLegendLabel: function(params, elSeriesLabelArea) {
         var positions = params.positions,
             formattedValues = params.formattedValues,
-            elSeriesLabelArea = dom.create('div', 'tui-chart-series-label-area'),
             html;
-
         html = tui.util.map(params.legendLabels, function(legend, index) {
             var label = this._getSeriesLabel({
                     legend: legend,
@@ -231,14 +334,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     separator: params.separator,
                     options: params.options
                 }),
-                position = params.moveToPosition(positions[index], label);
+                position = params.funcMoveToPosition(positions[index], label);
             return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-        params.container.appendChild(elSeriesLabelArea);
-
-        return elSeriesLabelArea;
     },
 
     /**
@@ -260,20 +360,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} area element
+     *      @param {object} params.sectorsInfo sector info
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderCenterLegend: function(params) {
-        var elArea = this._renderLegendLabel(tui.util.extend({
+    _renderCenterLegend: function(params, elSeriesLabelArea) {
+        this._renderLegendLabel(tui.util.extend({
             positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
-            moveToPosition: tui.util.bind(this._moveToCenterPosition, this),
+            funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
-        }, params));
-
-        return elArea;
+        }, params), elSeriesLabelArea);
     },
 
     /**
@@ -322,68 +418,168 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render outer legend.
      * @param {object} params parameters
-     *      @param {HTMLElement} container container
-     *      @param {array.<string>} legends legends
-     *      @param {array.<object>} centerPositions center positions
-     * @return {HTMLElement} area element
+     *      @param {object} params.sectorsInfo sector info
+     *      @param {number} params.chartWidth chart width
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderOuterLegend: function(params) {
+    _renderOuterLegend: function(params, elSeriesLabelArea) {
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
-            centerLeft = params.chartWidth / 2,
-            elArea;
-
+            centerLeft = params.chartWidth / 2;
         this._addEndPosition(centerLeft, outerPositions);
-        elArea = this._renderLegendLabel(tui.util.extend({
+        this._renderLegendLabel(tui.util.extend({
             positions: outerPositions,
-            moveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
+            funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, params));
-
-        if (this.paper) {
-            this.graphRenderer.renderLegendLines(this.paper, outerPositions);
-        }
-
-        return elArea;
+        }, params), elSeriesLabelArea);
+        this.graphRenderer.renderLegendLines(outerPositions);
     },
 
     /**
      * Render series label.
      * @param {object} params parameters
-     * @returns {HTMLElement} area element
+     * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params) {
-        var elArea;
-        if (params.options.legendType === chartConst.SERIES_LEGEND_TYPE_OUTER) {
-            elArea = this._renderOuterLegend(params);
-        } else {
-            elArea = this._renderCenterLegend(params);
+    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+        var legendAlign = params.options.legendAlign;
+        if (predicate.isOuterLegendAlign(legendAlign)) {
+            this._renderOuterLegend(params, elSeriesLabelArea);
+        } else if (predicate.isCenterLegendAlign(legendAlign)) {
+            this._renderCenterLegend(params, elSeriesLabelArea);
         }
-        return elArea;
     },
 
     /**
      * Get bound.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {{left: number, top: number}} bound
+     * @returns {null} bound
      * @private
      */
-    _getBound: function(groupIndex, index) {
-        if (groupIndex === -1 || index === -1) {
-            return null;
-        }
-        return this.popupPositions[index];
+    _getBound: function() {
+        return null;
+    },
+
+    /**
+     * Animate showing about series label area.
+     * @override
+     */
+    animateShowingAboutSeriesLabelArea: function() {
+        this.graphRenderer.animateLegendLines();
+        Series.prototype.animateShowingAboutSeriesLabelArea.call(this);
     },
 
     /**
      * Show series label area.
+     * @param {object} seriesData series data
+     * @override
      */
-    showSeriesLabelArea: function() {
-        this.graphRenderer.animateLegendLines();
+    showSeriesLabelArea: function(seriesData) {
+        var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
+            centerLeft = this.data.chartWidth / 2;
+        this._addEndPosition(centerLeft, outerPositions);
+        this.graphRenderer.moveLegendLines(outerPositions);
         Series.prototype.showSeriesLabelArea.call(this);
+    },
+
+    /**
+     * To handle mouse event.
+     * @param {MouseEvent} e mouse event
+     * @param {function} callback callback
+     * @private
+     */
+    _handleMouseEvent: function(e, callback) {
+        var elTarget = e.target || e.srcElement,
+            elLabel = this._findLabelElement(elTarget),
+            groupIndex, index;
+
+        if (!elLabel) {
+            return;
+        }
+
+        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
+        index = parseInt(elLabel.getAttribute('data-index'), 10);
+
+        if (groupIndex === -1 || index === -1) {
+            return;
+        }
+
+        callback(groupIndex, index, elTarget);
+    },
+
+    /**
+     * Find legend element.
+     * @param {HTMLElement} elTarget target element
+     * @returns {HTMLElement} legend element
+     * @private
+     */
+    _findLegendElement: function(elTarget) {
+        var elLegend;
+        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LEGEND)) {
+            elLegend = elTarget;
+        }
+
+        return elLegend;
+    },
+
+    /**
+     * On click event handler.
+     * @param {MouseEvent} e mouse event
+     * @override
+     */
+    onClick: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index, elTarget) {
+            var elLegend = that._findLegendElement(elTarget),
+                legendData;
+
+            if (!elLegend) {
+                that.selectSeries(index);
+            } else {
+                legendData = that.data.joinLegendLabels[index];
+                that.userEvent.fire('selectLegend', {
+                    legend: legendData.label,
+                    chartType: legendData.chartType,
+                    legendIndex: index,
+                    index: index
+                });
+            }
+        });
+    },
+
+    /**
+     * This is event handler for mouseover.
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseover: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index) {
+            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
+            that.showTooltip(bound, groupIndex, index);
+        });
+    },
+
+    /**
+     * This is event handler for mouseout.
+     * @param {MouseEvent} e mouse event
+     */
+    onMouseout: function(e) {
+        var that = this;
+        this._handleMouseEvent(e, function(groupIndex, index) {
+            that.hideTooltip(groupIndex, index);
+        });
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     */
+    attachEvent: function(el) {
+        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
     }
 });
+
+tui.util.CustomEvents.mixin(PieChartSeries);
 
 module.exports = PieChartSeries;

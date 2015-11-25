@@ -20,14 +20,11 @@ var Raphael = window.Raphael,
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
      * Render function of line chart.
-     * @param {object} paper raphael paper
      * @param {HTMLElement} container container
      * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @param {function} inCallback in callback
-     * @param {function} outCallback out callback
      * @return {object} paper raphael paper
      */
-    render: function(paper, container, data, inCallback, outCallback) {
+    render: function(container, data) {
         var dimension = data.dimension,
             groupPositions = data.groupPositions,
             theme = data.theme,
@@ -36,25 +33,28 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPaths = this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            groupLines, tooltipLine, groupDots;
+            paper, groupLines, tooltipLine, selectionDot, groupDots;
 
-        if (!paper) {
-            paper = Raphael(container, dimension.width, dimension.height);
-        }
+        this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         groupLines = this._renderLines(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        groupDots = this.renderDots(paper, groupPositions, colors, borderStyle);
+        selectionDot = this._makeSelectionDot(paper);
+        groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
+
+        if (data.options.hasSelection) {
+            this.selectionDot = selectionDot;
+            this.selectionColor = theme.selectionColor;
+        }
 
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
+        this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.groupLines = groupLines;
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
-
-        this.attachEvent(groupDots, groupPositions, outDotStyle, inCallback, outCallback);
 
         return paper;
     },
@@ -103,34 +103,68 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @param {function} callback callback
      */
     animate: function(callback) {
-        var groupLines = this.groupLines,
-            groupPaths = this.groupPaths,
-            borderStyle = this.borderStyle,
-            opacity = this.dotOpacity,
-            time = ANIMATION_TIME / groupLines[0].length,
-            startTime;
-        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
+        var time = ANIMATION_TIME / this.groupLines[0].length,
+            that = this,
             startTime = 0;
-            tui.util.forEachArray(dots, function(dot, index) {
-                var line, path;
-                if (index) {
-                    line = groupLines[groupIndex][index - 1];
-                    path = groupPaths[groupIndex][index - 1].end;
-                    this.animateLine(line, path, time, startTime);
-                    startTime += time;
-                }
+        this.renderItems(function(dot, groupIndex, index) {
+            var line, path;
 
-                if (opacity) {
-                    setTimeout(function() {
-                        dot.attr(tui.util.extend({'fill-opacity': opacity}, borderStyle));
-                    }, startTime);
-                }
-            }, this);
-        }, this);
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                path = that.groupPaths[groupIndex][index - 1].end;
+                that.animateLine(line, path, time, startTime);
+                startTime += time;
+            } else {
+                startTime = 0;
+            }
+
+            if (that.dotOpacity) {
+                setTimeout(function() {
+                    dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
+                }, startTime);
+            }
+        });
 
         if (callback) {
             setTimeout(callback, startTime);
         }
+    },
+
+    /**
+     * To resize graph of line chart.
+     * @param {object} params parameters
+     *      @param {{width: number, height:number}} params.dimension dimension
+     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     */
+    resize: function(params) {
+        var dimension = params.dimension,
+            groupPositions = params.groupPositions,
+            that = this;
+
+        this.groupPositions = groupPositions;
+        this.groupPaths = this._getLinesPath(groupPositions);
+        this.paper.setSize(dimension.width, dimension.height);
+        this.tooltipLine.attr({top: dimension.height});
+
+        this.renderItems(function(dot, groupIndex, index) {
+            var position = groupPositions[groupIndex][index],
+                dotAttrs = {
+                    cx: position.left,
+                    cy: position.top
+                },
+                line, path;
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                path = that.groupPaths[groupIndex][index - 1].end;
+                line.attr({path: path});
+            }
+
+            if (that.dotOpacity) {
+                dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
+            }
+
+            dot.attr(dotAttrs);
+        });
     }
 });
 

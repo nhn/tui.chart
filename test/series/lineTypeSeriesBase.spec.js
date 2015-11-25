@@ -29,6 +29,9 @@ describe('LineTypeSeriesBase', function() {
         it('라인차트의 position 정보를 생성합니다.', function () {
             var bounds;
             series.percentValues = [[0.25, 0.5, 0.4]];
+            series.data = {
+                aligned: false
+            };
             bounds = series.makePositions({
                 width: 300,
                 height: 200
@@ -54,7 +57,9 @@ describe('LineTypeSeriesBase', function() {
         it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function () {
             var bounds;
             series.percentValues = [[0.25, 0.5, 0.4]];
-            series.aligned = true;
+            series.data = {
+                aligned: true
+            };
             bounds = series.makePositions({
                 width: 300,
                 height: 200
@@ -80,8 +85,7 @@ describe('LineTypeSeriesBase', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
-            var container = dom.create('div'),
-                elLabelArea;
+            var elLabelArea = dom.create('div');
             series.options = {
                 showLabel: true
             };
@@ -89,8 +93,7 @@ describe('LineTypeSeriesBase', function() {
                 label: {}
             };
 
-            elLabelArea = series._renderSeriesLabel({
-                container: container,
+            series._renderSeriesLabel({
                 groupPositions: [
                     [
                         {
@@ -110,7 +113,7 @@ describe('LineTypeSeriesBase', function() {
                 formattedValues: [
                     ['1.5', '2.2']
                 ]
-            });
+            }, elLabelArea);
 
             expect(elLabelArea.childNodes.length).toBe(2);
         });

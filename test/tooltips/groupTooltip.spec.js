@@ -1,5 +1,5 @@
 /**
- * @fileoverview test groupTooltip
+ * @fileoverview test GroupTooltip
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -7,7 +7,6 @@
 'use strict';
 
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
-    chartConst = require('../../src/js/const'),
     defaultTheme = require('../../src/js/themes/defaultTheme'),
     dom = require('../../src/js/helpers/domHandler');
 
@@ -97,145 +96,124 @@ describe('GroupTooltip', function() {
         });
     });
 
-    describe('_calculateVerticalPosition()', function() {
-        it('세로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
-            var actual = tooltip._calculateVerticalPosition({
-                    width: 80,
-                    height: 100
-                }, {
-                    range: {
-                        start: 0,
-                        end: 100
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_FORWORD,
-                    size: 200
-                }),
-                expected = {
-                    left: 115,
-                    top: 50
-                };
-            expect(actual).toEqual(expected);
-        });
-        it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
-            var actual = tooltip._calculateVerticalPosition({
-                    width: 80,
-                    height: 100
-                }, {
-                    range: {
-                        start: 100,
-                        end: 200
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_BACKWORD,
-                    size: 200
-                }),
-                expected = {
-                    left: 24,
-                    top: 50
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_calculateHorizontalPosition()', function() {
-        it('가로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
-            var actual = tooltip._calculateHorizontalPosition({
-                    width: 80,
-                    height: 100
-                }, {
-                    range: {
-                        start: 0,
-                        end: 100
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_FORWORD,
-                    size: 200
-                }),
-                expected = {
-                    left: 70,
-                    top: 0
-                };
-            expect(actual).toEqual(expected);
-        });
-        it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
-            var actual = tooltip._calculateHorizontalPosition({
-                    width: 80,
-                    height: 100
-                }, {
-                    range: {
-                        start: 100,
-                        end: 200
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_BACKWORD,
-                    size: 200
-                }),
-                expected = {
-                    left: 70,
-                    top: 100
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_calculateTooltipPosition()', function() {
-        it('세로 툴팁의 경우 _calculateVerticalPosition()의 계산 결과의 값을 반환합니다.', function() {
-            var dimension = {
-                    width: 80,
-                    height: 100
-                },
-                params = {
-                    range: {
-                        start: 0,
-                        end: 100
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_FORWORD,
-                    size: 200,
-                    isVertical: true
-                },
-                actual, expected;
-            actual = tooltip._calculateTooltipPosition(dimension, params);
-            expected = tooltip._calculateVerticalPosition(dimension, params);
-            expect(actual).toEqual(expected);
-        });
-
-        it('가로 툴팁의 경우 _calculateHorizontalPosition()의 계산 결과의 값을 반환합니다.', function() {
-            var dimension = {
-                    width: 80,
-                    height: 100
-                },
-                params = {
-                    range: {
-                        start: 0,
-                        end: 100
-                    },
-                    direction: chartConst.TOOLTIP_DIRECTION_FORWORD,
-                    size: 200
-                },
-                actual, expected;
-            actual = tooltip._calculateTooltipPosition(dimension, params);
-            expected = tooltip._calculateHorizontalPosition(dimension, params);
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_createTooltipSectorElement()', function() {
-        it('툴팁 섹터 엘리먼트를 생성합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual;
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipSectorElement();
-            expect(actual).toBeDefined();
-            expect(actual.className).toBe('tui-chart-group-tooltip-sector');
-        });
-
-        it('기존에 레이아웃 엘리먼트에 자식이 존재 할 경우 해당 자식을 툴팁 섹터 엘리먼트로 반환합니다.', function() {
-            var elLayout = dom.create('DIV'),
-                actual, expected;
-            elLayout.innerHTML = '<div></div><div class="tui-chart-group-tooltip-sector"></div>';
-            tooltip.elLayout = elLayout;
-            actual = tooltip._createTooltipSectorElement();
-            expected = elLayout.lastChild;
-            expect(actual).toBe(expected);
-        });
-    });
+    //describe('_calculateVerticalPosition()', function() {
+    //    it('세로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
+    //        var actual = tooltip._calculateVerticalPosition({
+    //                width: 80,
+    //                height: 100
+    //            }, {
+    //                range: {
+    //                    start: 0,
+    //                    end: 100
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+    //                size: 200
+    //            }),
+    //            expected = {
+    //                left: 115,
+    //                top: 50
+    //            };
+    //        expect(actual).toEqual(expected);
+    //    });
+    //    it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
+    //        var actual = tooltip._calculateVerticalPosition({
+    //                width: 80,
+    //                height: 100
+    //            }, {
+    //                range: {
+    //                    start: 100,
+    //                    end: 200
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
+    //                size: 200
+    //            }),
+    //            expected = {
+    //                left: 24,
+    //                top: 50
+    //            };
+    //        expect(actual).toEqual(expected);
+    //    });
+    //});
+    //
+    //describe('_calculateHorizontalPosition()', function() {
+    //    it('가로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
+    //        var actual = tooltip._calculateHorizontalPosition({
+    //                width: 80,
+    //                height: 100
+    //            }, {
+    //                range: {
+    //                    start: 0,
+    //                    end: 100
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+    //                size: 200
+    //            }),
+    //            expected = {
+    //                left: 70,
+    //                top: 0
+    //            };
+    //        expect(actual).toEqual(expected);
+    //    });
+    //    it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
+    //        var actual = tooltip._calculateHorizontalPosition({
+    //                width: 80,
+    //                height: 100
+    //            }, {
+    //                range: {
+    //                    start: 100,
+    //                    end: 200
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
+    //                size: 200
+    //            }),
+    //            expected = {
+    //                left: 70,
+    //                top: 100
+    //            };
+    //        expect(actual).toEqual(expected);
+    //    });
+    //});
+    //
+    //describe('_calculateTooltipPosition()', function() {
+    //    it('세로 툴팁의 경우 _calculateVerticalPosition()의 계산 결과의 값을 반환합니다.', function() {
+    //        var dimension = {
+    //                width: 80,
+    //                height: 100
+    //            },
+    //            params = {
+    //                range: {
+    //                    start: 0,
+    //                    end: 100
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+    //                size: 200,
+    //                isVertical: true
+    //            },
+    //            actual, expected;
+    //        actual = tooltip._calculateTooltipPosition(dimension, params);
+    //        expected = tooltip._calculateVerticalPosition(dimension, params);
+    //        expect(actual).toEqual(expected);
+    //    });
+    //
+    //    it('가로 툴팁의 경우 _calculateHorizontalPosition()의 계산 결과의 값을 반환합니다.', function() {
+    //        var dimension = {
+    //                width: 80,
+    //                height: 100
+    //            },
+    //            params = {
+    //                range: {
+    //                    start: 0,
+    //                    end: 100
+    //                },
+    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+    //                size: 200
+    //            },
+    //            actual, expected;
+    //        actual = tooltip._calculateTooltipPosition(dimension, params);
+    //        expected = tooltip._calculateHorizontalPosition(dimension, params);
+    //        expect(actual).toEqual(expected);
+    //    });
+    //});
 
     describe('_getTooltipSectorElement', function() {
         it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
@@ -247,12 +225,12 @@ describe('GroupTooltip', function() {
             expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
-        it('this.elTooltipBlock이 존재하면 그대로 반환합니다.', function() {
-            var elTooltipBlock = dom.create('DIV'),
+        it('this.elTooltipSector이 존재하면 그대로 반환합니다.', function() {
+            var elTooltipSector = dom.create('DIV'),
                 actual, expected;
-            tooltip.elTooltipBlock = elTooltipBlock;
+            tooltip.elTooltipSector = elTooltipSector;
             actual = tooltip._getTooltipSectorElement();
-            expected = elTooltipBlock;
+            expected = elTooltipSector;
             expect(actual).toBe(expected);
         });
     });
@@ -283,11 +261,11 @@ describe('GroupTooltip', function() {
                 }, false),
                 expected = {
                     dimension: {
-                        width: 51,
+                        width: 50,
                         height: 200
                     },
                     position: {
-                        left: 9,
+                        left: 10,
                         top: 0
                     }
                 };
@@ -307,7 +285,7 @@ describe('GroupTooltip', function() {
                         height: 51
                     },
                     position: {
-                        left: 10,
+                        left: 9,
                         top: 0
                     }
                 };

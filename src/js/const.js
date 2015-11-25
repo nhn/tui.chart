@@ -10,14 +10,14 @@
  * @enum {number}
  */
 var chartConst = {
-    /** chart id prefix
+    /** tui class names
      * @type {string}
      */
-    CHAR_ID_PREFIX: 'tui-chart',
-    /** tooltip id prefix
-     * @type {string}
-     */
-    TOOLTIP_ID_PREFIX: 'tui-chart-tooltip',
+    CLASS_NAME_LEGEND: 'tui-chart-legend',
+    /** @type {string} */
+    CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
+    /** @type {string} */
+    CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** chart types
      * @type {string}
      */
@@ -84,13 +84,17 @@ var chartConst = {
     /** series legend types
      * @type {string}
      */
-    SERIES_LEGEND_TYPE_OUTER: 'outer',
+    LEGEND_ALIGN_OUTER: 'outer',
+    /** @type {string} */
+    LEGEND_TYPE_CENTER: 'center',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default rate of pie graph */
     PIE_GRAPH_DEFAULT_RATE: 0.8,
     /** small rate of pie graph */
     PIE_GRAPH_SMALL_RATE: 0.65,
+    /** dot radius */
+    DOT_RADIUS: 4,
     /** yAxis properties
      * @type {array.<string>}
      */
@@ -98,7 +102,7 @@ var chartConst = {
     /** series properties
      * @type {array.<string>}
      */
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors'], // series theme의 속성 - chart type filtering할 때 사용됨
+    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors', 'selectionColor'], // series theme의 속성 - chart type filtering할 때 사용됨
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
     /** top margin of x axis label */
@@ -152,15 +156,21 @@ var chartConst = {
     /** tooltip direction
      * @type {string}
      */
-    TOOLTIP_DIRECTION_FORWORD: 'forword',
+    TOOLTIP_DIRECTION_FORWARD: 'forword',
     /** @type {string} */
-    TOOLTIP_DIRECTION_BACKWORD: 'backword',
-    /** tooltip default position option
+    TOOLTIP_DIRECTION_CENTER: 'center',
+    /** @type {string} */
+    TOOLTIP_DIRECTION_BACKWARD: 'backword',
+    /** tooltip align options
      * @type {string}
      */
-    TOOLTIP_DEFAULT_POSITION_OPTION: 'center top',
+    TOOLTIP_DEFAULT_ALIGN_OPTION: 'center top',
     /** @type {string} */
-    TOOLTIP_DEFAULT_HORIZONTAL_POSITION_OPTION: 'right middle',
+    TOOLTIP_DEFAULT_HORIZONTAL_ALIGN_OPTION: 'right middle',
+    /** @type {string} */
+    TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION: 'right middle',
+    /** @type {string} */
+    TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION: 'center bottom',
     /** hide delay */
     HIDE_DELAY: 200
 };

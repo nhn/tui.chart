@@ -22,20 +22,23 @@ describe('Tooltip', function() {
     describe('makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
             var actual, expected;
+            tooltip.chartType = 'column';
             tooltip.labels = [
                 'Silver',
                 'Gold'
             ];
-            tooltip.values = [
+            tooltip.formattedValues = [
                 [10, 20]
             ];
             tooltip.legendLabels = ['Density1', 'Density2'];
 
             actual = tooltip.makeTooltipData();
-            expected = [[
-                {category: 'Silver', value: 10, legend: 'Density1'},
-                {category: 'Silver', value: 20, legend: 'Density2'}
-            ]];
+            expected = {
+                column: [[
+                    {category: 'Silver', value: 10, legend: 'Density1'},
+                    {category: 'Silver', value: 20, legend: 'Density2'}
+                ]]
+            };
             expect(actual).toEqual(expected);
         });
     });
@@ -48,8 +51,8 @@ describe('Tooltip', function() {
                 groupIndex: 0,
                 index: 1
             });
-            expect(elTooltip.getAttribute('data-groupIndex')).toBe('0');
-            expect(elTooltip.getAttribute('data-index')).toBe('1');
+            expect(parseInt(elTooltip.getAttribute('data-groupIndex'), 10)).toBe(0);
+            expect(parseInt(elTooltip.getAttribute('data-index'), 10)).toBe(1);
         });
     });
 
@@ -68,9 +71,11 @@ describe('Tooltip', function() {
 
     describe('_setShowedCustomAttribute()', function() {
         it('툴팁 엘리먼트에 showed custom attribute 값을 설정합니다.', function() {
-            var elTooltip = dom.create('DIV');
+            var elTooltip = dom.create('DIV'),
+                isShowed;
             tooltip._setShowedCustomAttribute(elTooltip, true);
-            expect(elTooltip.getAttribute('data-showed')).toBe('true');
+            isShowed = elTooltip.getAttribute('data-showed') === 'true' || elTooltip.getAttribute('data-showed') === true;
+            expect(isShowed).toBe(true);
         });
     });
 
@@ -87,30 +92,17 @@ describe('Tooltip', function() {
     describe('_getValueByIndexes()', function() {
         it('indexes 정보를 이용하여 value를 얻어냅니다.', function() {
             var actual, expected;
-            tooltip.values = [
-                [1, 2, 3],
-                [4, 5, 6]
-            ];
+            tooltip.values = {
+                'column': [
+                    [1, 2, 3],
+                    [4, 5, 6]
+                ]
+            };
             actual = tooltip._getValueByIndexes({
                 groupIndex: 0,
                 index: 2
-            });
+            }, 'column');
             expected = 3;
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_getTooltipId()', function() {
-        it('툴팁 아이디가 없을 경우에는 생성하여 반환합니다.', function() {
-            var actual = tooltip._getTooltipId();
-            expect(actual.indexOf(chartConst.TOOLTIP_ID_PREFIX) > -1).toBe(true);
-        });
-
-        it('기존에 this.tooltipId가 있을 경우에는 그대로 반환합니다.', function() {
-            var actual, expected;
-            tooltip.tooltipId = 'tooltip-id';
-            actual = tooltip._getTooltipId();
-            expected = 'tooltip-id';
             expect(actual).toBe(expected);
         });
     });
@@ -118,12 +110,14 @@ describe('Tooltip', function() {
     describe('_makeTooltipHtml()', function() {
         it('툴팁 html을 생성합니다.', function() {
             var actual, expected;
-            tooltip.data = [[
-                {category: 'Silver', value: 10, legend: 'Density1'},
-                {category: 'Silver', value: 20, legend: 'Density2'}
-            ]];
+            tooltip.data = {
+                'column': [[
+                    {category: 'Silver', value: 10, legend: 'Density1'},
+                    {category: 'Silver', value: 20, legend: 'Density2'}
+                ]]
+            };
             tooltip.suffix = 'suffix';
-            actual = tooltip._makeTooltipHtml({
+            actual = tooltip._makeTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
@@ -148,8 +142,8 @@ describe('Tooltip', function() {
                         width: 50,
                         height: 30
                     },
-                    positionOption: '',
-                    addPosition: {
+                    alignOption: '',
+                    positionOption: {
                         left: 0,
                         top: 0
                     }
@@ -180,8 +174,8 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                positionOption: {
                     left: 0,
                     top: 0
                 }
@@ -209,8 +203,8 @@ describe('Tooltip', function() {
                         width: 50,
                         height: 30
                     },
-                    positionOption: '',
-                    addPosition: {
+                    alignOption: '',
+                    positionOption: {
                         left: 0,
                         top: 0
                     }
@@ -227,10 +221,12 @@ describe('Tooltip', function() {
     describe('_moveToSymmetry', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var result;
-            tooltip.values = [
-                [1, 2, -3],
-                [4, 5, 6]
-            ];
+            tooltip.values = {
+                'column': [
+                    [1, 2, -3],
+                    [4, 5, 6]
+                ]
+            };
             result = tooltip._moveToSymmetry(
                 {
                     left: 120
@@ -249,7 +245,8 @@ describe('Tooltip', function() {
                     dimension: {
                         width: 50
                     },
-                    addPadding: 0
+                    addPadding: 0,
+                    chartType: 'column'
                 }
             );
 
@@ -259,9 +256,108 @@ describe('Tooltip', function() {
         });
     });
 
+    describe('_adjustPosition()', function() {
+        it('차트 왼쪽 영역을 넘어가는 툴팁 포지션의 left값을 보정합니다.', function() {
+            var chartDimension = {
+                    width: 200,
+                    height: 100
+                },
+                areaPosition = {
+                    left: 10,
+                    top: 10
+                },
+                tooltipDimension = {
+                    width: 50,
+                    height: 50
+                },
+                position = {
+                    left: -20,
+                    top: 10
+                },
+                actual, expected;
+            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            expected = -10;
+            expect(actual.left).toBe(expected);
+        });
+
+        it('차트 오른쪽 영역을 넘어가는 툴팁 포지션의 left값을 보정합니다.', function() {
+            var chartDimension = {
+                    width: 200,
+                    height: 100
+                },
+                areaPosition = {
+                    left: 10,
+                    top: 10
+                },
+                tooltipDimension = {
+                    width: 50,
+                    height: 50
+                },
+                position = {
+                    left: 180,
+                    top: 10
+                },
+                actual, expected;
+            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            expected = 140;
+            expect(actual.left).toBe(expected);
+        });
+
+        it('차트 위쪽 영역을 넘어가는 툴팁 포지션의 top값을 보정합니다.', function() {
+            var chartDimension = {
+                    width: 200,
+                    height: 100
+                },
+                areaPosition = {
+                    left: 10,
+                    top: 10
+                },
+                tooltipDimension = {
+                    width: 50,
+                    height: 50
+                },
+                position = {
+                    left: 10,
+                    top: -20
+                },
+                actual, expected;
+            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            expected = -10;
+            expect(actual.top).toBe(expected);
+        });
+
+        it('차트 아래쪽 영역을 넘어가는 툴팁 포지션의 top값을 보정합니다.', function() {
+            var chartDimension = {
+                    width: 200,
+                    height: 100
+                },
+                areaPosition = {
+                    left: 10,
+                    top: 10
+                },
+                tooltipDimension = {
+                    width: 50,
+                    height: 50
+                },
+                position = {
+                    left: 10,
+                    top: 80
+                },
+                actual, expected;
+            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            expected = 40;
+            expect(actual.top).toBe(expected);
+        });
+    });
+
     describe('_calculateTooltipPosition()', function() {
         it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculateTooltipPosition({
+            var actual, expected;
+            tooltip.bound = {};
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(chartDimension, areaPosition, tooltimDimension, position) {
+                return position;
+            });
+            actual = tooltip._calculateTooltipPosition({
                 bound: {
                     width: 25,
                     height: 50,
@@ -272,21 +368,27 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                positionOption: {
                     left: 0,
                     top: 0
                 }
             });
-
-            expect(result).toEqual({
+            expected = {
                 left: 10,
                 top: 15
-            });
+            };
+
+            expect(actual).toEqual(expected);
         });
 
         it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var result = tooltip._calculateTooltipPosition({
+            var actual, expected;
+            tooltip.bound = {};
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(chartDimension, areaPosition, tooltimDimension, position) {
+                return position;
+            });
+            actual = tooltip._calculateTooltipPosition({
                 bound: {
                     width: 50,
                     height: 25,
@@ -299,17 +401,17 @@ describe('Tooltip', function() {
                     width: 50,
                     height: 30
                 },
-                positionOption: '',
-                addPosition: {
+                alignOption: '',
+                positionOption: {
                     left: 0,
                     top: 0
                 }
             });
-
-            expect(result).toEqual({
+            expected = {
                 left: 55,
                 top: 10
-            });
+            };
+            expect(actual).toEqual(expected);
         });
     });
 });

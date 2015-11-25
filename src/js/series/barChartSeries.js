@@ -25,7 +25,6 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         Series.apply(this, arguments);
     },
 
-
     /**
      * To make bound of bar chart.
      * @param {object} params parameters
@@ -57,7 +56,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @param {{
      *      dimension: {width: number, height: number},
      *      groupValues: array.<array.<number>>,
-     *      groupSize: number, barPadding: number, barSize: number, step: number,
+     *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} baseInfo base info
      * @param {number} value value
@@ -99,7 +98,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             bounds;
 
         bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
-            var paddingTop = (baseInfo.groupSize * groupIndex) + (baseInfo.barSize / 2);
+            var paddingTop = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
             return tui.util.map(values, function (value, index) {
                 return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
             }, this);
@@ -115,12 +114,16 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeStackedBarChartBounds: function(dimension) {
-        var groupValues, groupHeight, barHeight, bounds;
+        var groupValues, groupHeight, barHeight,
+            optionHeight, additionPadding, bounds;
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;
+        optionHeight = this._makeOptionSize(barHeight, this.options.barWidth);
+        additionPadding = this._makeAdditionPadding(barHeight, optionHeight, 1);
+        barHeight = optionHeight || barHeight;
         bounds = tui.util.map(groupValues, function (values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + (barHeight / 2),
+            var paddingTop = (groupHeight * groupIndex) + additionPadding,
                 endLeft = chartConst.SERIES_EXPAND_SIZE;
             return tui.util.map(values, function (value) {
                 var endWidth, baseBound, bound;
@@ -132,7 +135,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 endWidth = value * dimension.width;
                 baseBound = {
                     top: paddingTop,
-                    height: barHeight
+                    height: optionHeight || barHeight
                 };
                 bound = this._makeBarChartBound({
                     baseBound: baseBound,

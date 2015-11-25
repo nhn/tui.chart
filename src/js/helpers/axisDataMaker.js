@@ -7,8 +7,8 @@
 'use strict';
 
 var chartConst = require('../const'),
-    calculator = require('./calculator'),
-    state = require('./state');
+    predicate = require('./predicate'),
+    calculator = require('./calculator');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -115,7 +115,8 @@ var axisDataMaker = {
             scale: tickInfo.scale,
             step: tickInfo.step,
             isVertical: isVertical,
-            isPositionRight: isPositionRight
+            isPositionRight: isPositionRight,
+            aligned: !!params.aligned
         };
     },
 
@@ -168,8 +169,8 @@ var axisDataMaker = {
      */
     _getCandidateTickCounts: function(chartDimension, isVertical) {
         var baseSize = this._getBaseSize(chartDimension, isVertical),
-            start = parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10),
-            end = parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10) + 1,
+            start = tui.util.max([3, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10)]),
+            end = tui.util.max([start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)]) + 1,
             tickCounts = tui.util.range(start, end);
         return tickCounts;
     },
@@ -267,11 +268,11 @@ var axisDataMaker = {
         multipleNum = tui.util.findMultipleNum(min, max);
         changedOptions = {};
 
-        if (options.min) {
+        if (!tui.util.isUndefined(options.min)) {
             changedOptions.min = options.min * multipleNum;
         }
 
-        if (options.max) {
+        if (!tui.util.isUndefined(options.max)) {
             changedOptions.max = options.max * multipleNum;
         }
 
@@ -469,7 +470,7 @@ var axisDataMaker = {
     _addMinPadding: function(params) {
         var min = params.min;
 
-        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
+        if ((!predicate.isLineChart(params.chartType) && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
             return min;
         }
         // normalize된 scale min값이 user min값과 같을 경우 step 감소
@@ -493,7 +494,7 @@ var axisDataMaker = {
     _addMaxPadding: function(params) {
         var max = params.max;
 
-        if ((params.chartType !== chartConst.CHART_TYPE_LINE && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
+        if ((!predicate.isLineChart(params.chartType) && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
             return max;
         }
 
@@ -625,8 +626,8 @@ var axisDataMaker = {
             scale.max = -tmpMin;
         }
 
-        scale.min = options.min || scale.min;
-        scale.max = options.max || scale.max;
+        scale.min = !tui.util.isUndefined(options.min) ? options.min : scale.min;
+        scale.max = !tui.util.isUndefined(options.max) ? options.max : scale.max;
 
         return scale;
     },

@@ -10,7 +10,7 @@ var dom = require('./domHandler'),
     chartConst = require('./../const');
 
 var browser = tui.util.browser,
-    isIE8 = browser.msie && browser.version === 8;
+    isOldBrowser = browser.msie && browser.version <= 8;
 
 /**
  * Util for rendering.
@@ -273,12 +273,36 @@ var renderUtil = {
     },
 
     /**
+     * To expand dimension.
+     * @param {{width: number, height: number}} dimension series dimension
+     * @returns {{width: number, height: number}} expended dimension
+     */
+    expandBound: function(bound) {
+        var dimension = bound.dimension,
+            position = bound.position;
+        return {
+            dimension: {
+                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+            },
+            position: {
+                left: position.left - chartConst.SERIES_EXPAND_SIZE,
+                top: position.top
+            }
+        };
+    },
+
+    makeCustomEventName: function(prefix, str, suffix) {
+        return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
+    },
+
+    /**
      * Whether IE8 or not.
      * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */
-    isIE8: function() {
-        return isIE8;
+    isOldBrowser: function() {
+        return isOldBrowser;
     }
 };
 
