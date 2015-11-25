@@ -98,7 +98,7 @@ describe('PieChartSeries', function() {
                 height: 300
             }, {
                 showLabel: true,
-                legendType: 'outer'
+                legendAlign: 'outer'
             });
 
             expect(actual.r).toBe(97.5);
@@ -126,7 +126,7 @@ describe('PieChartSeries', function() {
             var actual = series._getSeriesLabel({
                     legend: 'legend',
                     options: {
-                        legendType: 'outer'
+                        legendAlign: 'outer'
                     }
                 }),
                 expected = '<span class="tui-chart-series-legend">legend</span>';
@@ -150,7 +150,7 @@ describe('PieChartSeries', function() {
                     label: 'label',
                     separator: ':&nbsp;',
                     options: {
-                        legendType: 'outer',
+                        legendAlign: 'outer',
                         showLabel: true
                     }
                 }),
@@ -203,7 +203,7 @@ describe('PieChartSeries', function() {
                     }
                 ],
                 options: {
-                    legendType: 'center'
+                    legendAlign: 'center'
                 }
             }, elLabelArea);
 
@@ -318,7 +318,7 @@ describe('PieChartSeries', function() {
                     }
                 ],
                 options: {
-                    legendType: 'outer'
+                    legendAlign: 'outer'
                 },
                 chartWidth: 220
             }, elLabelArea);
@@ -374,7 +374,7 @@ describe('PieChartSeries', function() {
                         }
                     ],
                     options: {
-                        legendType: 'outer'
+                        legendAlign: 'outer'
                     },
                     chartWidth: 220
                 };
@@ -410,7 +410,7 @@ describe('PieChartSeries', function() {
                         }
                     ],
                     options: {
-                        legendType: 'center'
+                        legendAlign: 'center'
                     }
                 };
             series._renderSeriesLabel(params, elLabelArea);
