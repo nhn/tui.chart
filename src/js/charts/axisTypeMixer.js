@@ -76,7 +76,8 @@ var axisTypeMixer = {
                 labels: convertedData.labels,
                 joinFormattedValues: convertedData.joinFormattedValues,
                 joinLegendLabels: convertedData.joinLegendLabels,
-                isVertical: this.isVertical
+                isVertical: this.isVertical,
+                userEvent: this.userEvent
             });
         } else {
             this._addComponent('tooltip', Tooltip, {

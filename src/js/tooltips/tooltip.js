@@ -472,9 +472,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         this._setIndexesCustomAttribute(elTooltip, indexes);
         this._setShowedCustomAttribute(elTooltip, true);
 
-        dom.addClass(elTooltip, 'show');
-
         this._fireBeforeShowTooltip(indexes);
+
+        dom.addClass(elTooltip, 'show');
 
         position = this._calculateTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
