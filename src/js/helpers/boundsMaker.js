@@ -161,12 +161,12 @@ var boundsMaker = {
     /**
      * Whether skipped legend sizing or not.
      * @param {string} chartType chart type
-     * @param {?string} legendType legend type
+     * @param {?object} options legend options
      * @returns {boolean} result boolean
      * @private
      */
-    _isSkippedLegendSizing: function(chartType, legendType) {
-        return (predicate.isPieChart(chartType) && predicate.isPieLegendType(legendType)) || predicate.isHiddenLegendType(legendType);
+    _isSkippedLegendSizing: function(chartType, options) {
+        return (predicate.isPieChart(chartType) && predicate.isPieLegendAlign(options.align)) || options.hidden;
     },
 
     /**
@@ -185,7 +185,7 @@ var boundsMaker = {
 
         legendOptions = legendOptions || {};
 
-        if (!this._isSkippedLegendSizing(chartType, legendOptions.legendType)) {
+        if (!this._isSkippedLegendSizing(chartType, legendOptions)) {
             legendLabels = tui.util.map(joinLegendLabels, function(item) {
                 return item.label;
             });

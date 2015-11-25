@@ -102,7 +102,7 @@ var axisTypeMixer = {
      * @private
      */
     _addLegendComponent: function(convertedData, seriesChartTypes, chartType, legendOptions) {
-        if (!legendOptions || !predicate.isHiddenLegendType(legendOptions.legendType)) {
+        if (!legendOptions || !legendOptions.hidden) {
             this._addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,

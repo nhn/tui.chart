@@ -113,7 +113,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     makeSeriesData: function(bound) {
         var circleBound = this._makeCircleBound(bound.dimension, {
                 showLabel: this.options.showLabel,
-                legendType: this.legendType
+                legendAlign: this.legendAlign
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
         return {
@@ -126,14 +126,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * To make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
-     * @param {{showLabel: boolean, legendType: string}} options options
+     * @param {{showLabel: boolean, legendAlign: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
      * @private
      */
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = predicate.isOuterLegendType(options.legendType) && options.showLabel,
+            isSmallPie = predicate.isOuterLegendAlign(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
         return {
@@ -167,7 +167,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @returns {{
      *      container: HTMLElement,
      *      legendLabels: array.<string>,
-     *      options: {legendType: string, showLabel: boolean},
+     *      options: {legendAlign: string, showLabel: boolean},
      *      chartWidth: number,
      *      formattedValues: array
      * }} add data for make series label
@@ -177,7 +177,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         return tui.util.extend({
             legendLabels: this.data.legendLabels,
             options: {
-                legendType: this.legendType,
+                legendAlign: this.legendAlign,
                 showLabel: this.options.showLabel
             },
             chartWidth: this.data.chartWidth,
@@ -294,13 +294,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {string} params.legend legend
      *      @param {string} params.label label
      *      @param {string} params.separator separator
-     *      @param {{legendType: boolean, showLabel: boolean}} params.options options
+     *      @param {{legendAlign: ?string, showLabel: boolean}} params.options options
      * @returns {string} series label
      * @private
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
-        if (params.options.legendType) {
+        if (params.options.legendAlign) {
             seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
 
@@ -442,10 +442,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderSeriesLabel: function(params, elSeriesLabelArea) {
-        var legendType = params.options.legendType;
-        if (predicate.isOuterLegendType(legendType)) {
+        var legendAlign = params.options.legendAlign;
+        if (predicate.isOuterLegendAlign(legendAlign)) {
             this._renderOuterLegend(params, elSeriesLabelArea);
-        } else if (predicate.isCenterLegendType(legendType)) {
+        } else if (predicate.isCenterLegendAlign(legendAlign)) {
             this._renderCenterLegend(params, elSeriesLabelArea);
         }
     },

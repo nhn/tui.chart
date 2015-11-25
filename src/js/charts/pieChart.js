@@ -49,9 +49,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @private
      */
     _addComponents: function(convertedData, chartBackground, options) {
-        var legendType = options.legend && options.legend.legendType,
-            isPieLegendType = predicate.isPieLegendType(legendType);
-        if (convertedData.joinLegendLabels && !isPieLegendType && !predicate.isHiddenLegendType(legendType)) {
+        var legendAlign, isPieLegendType;
+        options.legend = options.legend || {};
+        legendAlign = options.legend && options.legend.align;
+        isPieLegendType = predicate.isPieLegendAlign(legendAlign);
+        if (convertedData.joinLegendLabels && !isPieLegendType && !options.legend.hidden) {
             this._addComponent('legend', Legend, {
                 joinLegendLabels: convertedData.joinLegendLabels,
                 legendLabels: convertedData.legendLabels,
@@ -76,7 +78,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             componentType: 'series',
             chartBackground: chartBackground,
             userEvent: this.userEvent,
-            legendType: isPieLegendType ? legendType : null,
+            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null,
             data: {
                 values: convertedData.values,
                 formattedValues: convertedData.formattedValues,

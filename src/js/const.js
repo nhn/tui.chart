@@ -84,11 +84,9 @@ var chartConst = {
     /** series legend types
      * @type {string}
      */
-    LEGEND_TYPE_OUTER: 'outer',
+    LEGEND_ALIGN_OUTER: 'outer',
     /** @type {string} */
     LEGEND_TYPE_CENTER: 'center',
-    /** @type {string} */
-    LEGEND_TYPE_HIDDEN: 'hidden',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default rate of pie graph */

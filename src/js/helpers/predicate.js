@@ -54,47 +54,37 @@ var predicate = {
     },
 
     /**
-     * Whether outer legend type or not.
+     * Whether outer legend align or not.
      * @memberOf module:predicate
-     * @param {string} legendType legend type
+     * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isOuterLegendType: function(legendType) {
-        return legendType === chartConst.LEGEND_TYPE_OUTER;
+    isOuterLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_OUTER;
     },
 
     /**
-     * Whether center legend type or not.
+     * Whether center legend align or not.
      * @memberOf module:predicate
-     * @param {string} legendType legend type
+     * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isCenterLegendType: function(legendType) {
-        return legendType === chartConst.LEGEND_TYPE_CENTER;
+    isCenterLegendAlign: function(align) {
+        return align === chartConst.LEGEND_TYPE_CENTER;
     },
 
     /**
-     * Whether pie legend type or not.
+     * Whether legend align of pie chart or not.
      * @memberOf module:predicate
-     * @param {?string} legendType chart type
+     * @param {?string} align chart type
      * @returns {boolean} result boolean
      */
-    isPieLegendType: function(legendType) {
+    isPieLegendAlign: function(align) {
         var result = false;
-        if (legendType) {
-            result = this.isOuterLegendType(legendType) || this.isCenterLegendType(legendType);
+        if (align) {
+            result = this.isOuterLegendAlign(align) || this.isCenterLegendAlign(align);
         }
         return result;
-    },
-
-    /**
-     * Whether hidden legend type or not.
-     * @memberOf module:predicate
-     * @param {string} legendType legend type
-     * @returns {boolean} result boolean
-     */
-    isHiddenLegendType: function(legendType) {
-        return legendType === chartConst.LEGEND_TYPE_HIDDEN;
     }
 };
 

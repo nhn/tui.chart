@@ -99,7 +99,7 @@ _createChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -179,7 +179,7 @@ tui.chart.barChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
@@ -258,7 +258,7 @@ tui.chart.columnChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -340,7 +340,7 @@ tui.chart.lineChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -426,7 +426,7 @@ tui.chart.areaChart = function(container, data, options) {
  *                  @param {number} options.tooltip.column.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -512,7 +512,7 @@ tui.chart.comboChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.left position left
  *              @param {number} options.tooltip.position.top position top
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.legendType legend type
+ *          @param {string} options.legend.align legend align
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart

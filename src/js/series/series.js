@@ -474,7 +474,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Animate showing about series label area.
      */
     animateShowingAboutSeriesLabelArea: function() {
-        if ((!this.options.showLabel && !this.legendType) || !this.elSeriesLabelArea) {
+        if ((!this.options.showLabel && !this.legendAlign) || !this.elSeriesLabelArea) {
             return;
         }
 
