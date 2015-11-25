@@ -15,6 +15,7 @@ var chartConst = require('../const');
 var predicate = {
     /**
      * Whether bar chart or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -24,6 +25,7 @@ var predicate = {
 
     /**
      * Whether line chart or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -33,6 +35,7 @@ var predicate = {
 
     /**
      * Whether line type chart or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -42,6 +45,7 @@ var predicate = {
 
     /**
      * Whether pie chart or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -51,6 +55,7 @@ var predicate = {
 
     /**
      * Whether outer legend type or not.
+     * @memberOf module:predicate
      * @param {string} legendType legend type
      * @returns {boolean} result boolean
      */
@@ -60,6 +65,7 @@ var predicate = {
 
     /**
      * Whether center legend type or not.
+     * @memberOf module:predicate
      * @param {string} legendType legend type
      * @returns {boolean} result boolean
      */
@@ -69,6 +75,7 @@ var predicate = {
 
     /**
      * Whether pie legend type or not.
+     * @memberOf module:predicate
      * @param {?string} legendType chart type
      * @returns {boolean} result boolean
      */
@@ -82,6 +89,7 @@ var predicate = {
 
     /**
      * Whether hidden legend type or not.
+     * @memberOf module:predicate
      * @param {string} legendType legend type
      * @returns {boolean} result boolean
      */
