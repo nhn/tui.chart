@@ -492,6 +492,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             position: position
         });
     },
+    /*
 
     /**
      * To make parameters for show tooltip user event.

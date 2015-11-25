@@ -523,7 +523,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} seriesData series data.
      */
     onUnselectSeries: function(seriesData) {
-        this.userEvent.fire('unselectSeries', seriesData.indexes);
+        this.userEvent.fire('unselectSeries', this._makeExportationSeriesData(seriesData));
         if (this.options.hasSelection) {
             this.graphRenderer.unselectSeries(seriesData.indexes);
         }
