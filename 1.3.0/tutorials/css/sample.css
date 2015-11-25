@@ -1,0 +1,48 @@
+body {
+    min-width: 700px;
+    min-height: 850px;
+}
+
+body > div {
+    float: left;
+}
+.custom-area {
+    margin-top: 5px;
+    width: 650px;
+    position:relative;
+}
+
+.apply-btn-area {
+    width: 100%;
+    height: 35px;
+    position: relative;
+}
+
+#btn {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.custom-area > div {
+    float: left;
+    margin-left: 10px;
+}
+
+textarea {
+    width: 200px;
+    height: 350px;
+}
+
+.btn-area {
+    width: 100%;
+    height: 25px;
+    text-align: right;
+}
+
+#hidden-options, #theme-area {
+    display:none;
+}
+
+#theme-area.show {
+    display:block;
+}
