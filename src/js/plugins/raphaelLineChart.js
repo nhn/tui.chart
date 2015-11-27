@@ -69,12 +69,14 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
+
             return tui.util.map(rest, function(position) {
                 var result = this.makeLinePath(fromPos, position);
                 fromPos = position;
                 return result;
             }, this);
         }, this);
+
         return groupPaths;
     },
 
@@ -90,6 +92,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
         var groupLines = tui.util.map(groupPaths, function(paths, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
+
             return tui.util.map(paths, function(path) {
                 return raphaelRenderUtil.renderLine(paper, path.start, color, strokeWidth);
             }, this);
@@ -106,6 +109,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var time = ANIMATION_TIME / this.groupLines[0].length,
             that = this,
             startTime = 0;
+
         this.renderItems(function(dot, groupIndex, index) {
             var line, path;
 
@@ -153,6 +157,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                     cy: position.top
                 },
                 line, path;
+
             if (index) {
                 line = that.groupLines[groupIndex][index - 1];
                 path = that.groupPaths[groupIndex][index - 1].end;

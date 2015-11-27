@@ -26,6 +26,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     makeLinePath: function(fromPos, toPos) {
         var startLinePath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
             endLinePath = raphaelRenderUtil.makeLinePath(fromPos, toPos);
+
         return {
             start: startLinePath,
             end: endLinePath
@@ -47,6 +48,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 left: 10,
                 top: 0
             });
+
         return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
     },
 
@@ -58,6 +60,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     makeBorderStyle: function(borderColor, opacity) {
         var borderStyle;
+
         if (borderColor) {
             borderStyle = {
                 stroke: borderColor,
@@ -65,6 +68,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 'stroke-opacity': opacity
             };
         }
+
         return borderStyle;
     },
 
@@ -169,6 +173,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             item = this.groupDots[groupIndex][index];
+
         this._showDot(item.dot);
     },
 
@@ -192,6 +197,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _showGroupDots: function(index) {
         var groupDots = this._getPivotGroupDots();
+
         tui.util.forEachArray(groupDots[index], function(item) {
             this._showDot(item.dot);
         }, this);
@@ -212,6 +218,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             left: bound.position.left,
             top: bound.position.top
         });
+
         this.tooltipLine.attr({
             path: linePath,
             stroke: '#999',
@@ -244,6 +251,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             item = this.groupDots[groupIndex][index];
+
         if (item) {
             this._hideDot(item.dot);
         }
@@ -256,6 +264,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _hideGroupDots: function(index) {
         var dots = this._getPivotGroupDots();
+
         tui.util.forEachArray(dots[index], function(item) {
             this._hideDot(item.dot);
         }, this);
@@ -312,6 +321,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     _makeSelectionDot: function(paper) {
         var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIOUS);
+
         selectionDot.attr({
             'fill': '#ffffff',
             'fill-opacity': 0,
@@ -328,6 +338,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     selectSeries: function(indexes) {
         var item = this.groupDots[indexes.index][indexes.groupIndex],
             position = this.groupPositions[indexes.index][indexes.groupIndex];
+
         this.selectedItem = item;
         this.selectionDot.attr({
             cx: position.left,

@@ -36,10 +36,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _makePercentValues: function(data) {
         var result = tui.util.map(data.values, function(values) {
             var sum = tui.util.sum(values);
+
             return tui.util.map(values, function(value) {
                 return value / sum;
             });
         });
+
         return result;
     },
 
@@ -77,7 +79,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     cy: cy,
                     angle: popupAngle
                 };
+
             angle = endAngle;
+
             return {
                 percentValue: percentValue,
                 angles: angles,
@@ -116,6 +120,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 legendAlign: this.legendAlign
             }),
             sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
+
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
@@ -136,6 +141,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             isSmallPie = predicate.isOuterLegendAlign(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
+
         return {
             cx: tui.util.division(width, 2),
             cy: tui.util.division(height, 2),
@@ -300,6 +306,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
+
         if (params.options.legendAlign) {
             seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
@@ -327,6 +334,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var positions = params.positions,
             formattedValues = params.formattedValues,
             html;
+
         html = tui.util.map(params.legendLabels, function(legend, index) {
             var label = this._getSeriesLabel({
                     legend: legend,
@@ -351,6 +359,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _moveToCenterPosition: function(position, label) {
         var left = position.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
             top = position.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+
         return {
             left: left,
             top: top
@@ -426,6 +435,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderOuterLegend: function(params, elSeriesLabelArea) {
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
             centerLeft = params.chartWidth / 2;
+
         this._addEndPosition(centerLeft, outerPositions);
         this._renderLegendLabel(tui.util.extend({
             positions: outerPositions,
@@ -443,6 +453,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _renderSeriesLabel: function(params, elSeriesLabelArea) {
         var legendAlign = params.options.legendAlign;
+
         if (predicate.isOuterLegendAlign(legendAlign)) {
             this._renderOuterLegend(params, elSeriesLabelArea);
         } else if (predicate.isCenterLegendAlign(legendAlign)) {
@@ -476,6 +487,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     showSeriesLabelArea: function(seriesData) {
         var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
             centerLeft = this.data.chartWidth / 2;
+
         this._addEndPosition(centerLeft, outerPositions);
         this.graphRenderer.moveLegendLines(outerPositions);
         Series.prototype.showSeriesLabelArea.call(this);
@@ -514,6 +526,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _findLegendElement: function(elTarget) {
         var elLegend;
+
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LEGEND)) {
             elLegend = elTarget;
         }
@@ -552,6 +565,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     onMouseover: function(e) {
         var that = this;
+
         this._handleMouseEvent(e, function(groupIndex, index) {
             var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
             that.showTooltip(bound, groupIndex, index);
@@ -564,6 +578,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     onMouseout: function(e) {
         var that = this;
+
         this._handleMouseEvent(e, function(groupIndex, index) {
             that.hideTooltip(groupIndex, index);
         });

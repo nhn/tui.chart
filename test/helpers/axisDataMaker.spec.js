@@ -8,7 +8,7 @@
 
 var maker = require('../../src/js/helpers/axisDataMaker.js'),
     chartConst = require('../../src/js/const'),
-    converter = require('../../src/js/helpers/dataConverter.js');
+    dataProcessor = require('../../src/js/helpers/dataProcessor.js');
 
 describe('axisDataMaker', function() {
     describe('_makeLabels()', function() {
@@ -508,13 +508,13 @@ describe('axisDataMaker', function() {
 
     describe('formatLabels()', function() {
         it('전달된 labels를 "1,000.00"타입으로 포맷팅하여 반환합니다.', function () {
-            var fns = converter._findFormatFunctions('1,000.00'),
+            var fns = dataProcessor._findFormatFunctions('1,000.00'),
                 result = maker.formatLabels([1000, 2000.2222, 300000.555555, 4, 5.55], fns);
             expect(result).toEqual(['1,000.00', '2,000.22', '300,000.56', '4.00', '5.55']);
         });
 
         it('전달된 labels를 "0001"타입으로 포맷팅하여 반환합니다.', function () {
-            var fns = converter._findFormatFunctions('0001'),
+            var fns = dataProcessor._findFormatFunctions('0001'),
                 result = maker.formatLabels([1, 2, 3], fns);
             expect(result).toEqual(['0001', '0002', '0003']);
         });

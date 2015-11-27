@@ -32,18 +32,18 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * To render event handle layer area
-     * @param {HTMLElement} elCoordinateArea coordinate area element
+     * @param {HTMLElement} customEventContainer custom event container element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
      * @private
      */
-    _renderCustomEventArea: function(elCoordinateArea, bound, data) {
+    _renderCustomEventArea: function(customEventContainer, bound, data) {
         var expandedBound;
         this.bound = bound;
         this.tickBaseDataModel = new TickBaseDataModel(bound.dimension, data.tickCount, this.chartType, this.isVertical);
         expandedBound = renderUtil.expandBound(bound);
-        renderUtil.renderDimension(elCoordinateArea, expandedBound.dimension);
-        renderUtil.renderPosition(elCoordinateArea, expandedBound.position);
+        renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
+        renderUtil.renderPosition(customEventContainer, expandedBound.position);
     },
 
     /**
@@ -57,7 +57,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
         this._renderCustomEventArea(el, bound, data);
         this.attachEvent(el);
-        this.elCoordinateArea = el;
+        this.customEventContainer = el;
         return el;
     },
 
@@ -75,7 +75,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data data
      */
     resize: function(bound, data) {
-        this._renderCustomEventArea(this.elCoordinateArea, bound, data);
+        this._renderCustomEventArea(this.customEventContainer, bound, data);
     },
 
     /**

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test dataConverter.
+ * @fileoverview Test boundsMaker.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -82,7 +82,7 @@ describe('boundsMaker', function() {
     describe('_getYRAxisWidth()', function() {
         it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
             var result = maker._getYRAxisWidth({
-                convertedData: {
+                processedData: {
                     values: {
                         line: [
                             [60, 50, 10],
@@ -127,7 +127,7 @@ describe('boundsMaker', function() {
 
         it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, yrAxis의 너비 값을 계산하여 반환합니다.', function() {
             var result = maker._makeAxesDimension({
-                convertedData: {
+                processedData: {
                     labels: ['label1', 'label12'],
                     joinValues: [
                         [20, 30, 50],
@@ -262,7 +262,7 @@ describe('boundsMaker', function() {
     describe('_getComponentsDimension()', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
             var result = maker._getComponentsDimensions({
-                convertedData: {
+                processedData: {
                     labels: ['label1', 'label12'],
                     joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
                     joinValues: [
@@ -515,7 +515,7 @@ describe('boundsMaker', function() {
             var actual = maker._makeAxesLabelInfo({
                     hasAxes: true,
                     optionChartTypes: ['column'],
-                    convertedData: {
+                    processedData: {
                         values: {
                             'column': [10, 20, 30]
                         },
@@ -535,7 +535,7 @@ describe('boundsMaker', function() {
             var actual = maker._makeAxesLabelInfo({
                     hasAxes: true,
                     optionChartTypes: ['column'],
-                    convertedData: {
+                    processedData: {
                         values: {
                             'column': [10, 20, 30]
                         },
@@ -707,7 +707,7 @@ describe('boundsMaker', function() {
     describe('make()', function() {
         it('차트를 구성하는 컴포넌트들의 bounds 정보를 계산하여 반환합니다.', function () {
             var result = maker.make({
-                convertedData: {
+                processedData: {
                     values: [
                         [20, 30, 50],
                         [40, 40, 60],

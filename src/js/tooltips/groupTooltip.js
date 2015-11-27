@@ -84,6 +84,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeColors: function(legendLabels, theme) {
         var colorIndex = 0,
             defaultColors, colors, prevChartType;
+
         if (theme.colors) {
             return theme.colors;
         }
@@ -140,10 +141,12 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _getTooltipSectorElement: function() {
         var elTooltipSector;
+
         if (!this.elTooltipSector) {
             this.elTooltipSector = elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
             dom.append(this.elTooltipArea, elTooltipSector);
         }
+
         return this.elTooltipSector;
     },
 
@@ -157,12 +160,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeVerticalTooltipSectorBound: function(height, range, isLine) {
         var width;
+
         if (isLine) {
             width = 1;
             height += 6;
         } else {
             width = range.end - range.start;
         }
+
         return {
             dimension: {
                 width: width,
@@ -206,11 +211,13 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeTooltipSectorBound: function(size, range, isVertical, isLine) {
         var bound;
+
         if (isVertical) {
             bound = this._makeVerticalTooltipSectorBound(size, range, isLine);
         } else {
             bound = this._makeHorizontalTooltipSectorBound(size, range);
         }
+
         return bound;
     },
 
@@ -226,6 +233,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var elTooltipSector = this._getTooltipSectorElement(),
             isLine = (range.start === range.end),
             bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
+
         if (isLine) {
             this.fire('showGroupTooltipLine', bound);
         } else {
@@ -244,6 +252,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _hideTooltipSector: function(index) {
         var elTooltipSector = this._getTooltipSectorElement();
+
         dom.removeClass(elTooltipSector, 'show');
         this.fire('hideGroupAnimation', index);
         this.fire('hideGroupTooltipLine');

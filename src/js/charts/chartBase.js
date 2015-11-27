@@ -8,7 +8,7 @@
 
 var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    dataConverter = require('../helpers/dataConverter'),
+    dataProcessor = require('../helpers/dataProcessor'),
     boundsMaker = require('../helpers/boundsMaker'),
     UserEventListener = require('../helpers/userEventListener');
 
@@ -25,10 +25,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     init: function(params) {
         /**
-         * converted data
+         * processed data
          * @type {object}
          */
-        this.convertedData = this._makeConvertedData(params);
+        this.processedData = this._makeProcessedData(params);
 
         /**
          * component array
@@ -84,18 +84,19 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To make converted data.
+     * To make processed data.
      * @param {object} params parameters
-     *      @params {object} userData user data
+     *      @params {object} rawData raw data
      *      @params {{chart: object, chartType: string}} options chart options
      *      @params {array} seriesChartTypes series chart types
-     * @returns {object} converted data
+     * @returns {object} processed data
      * @private
      */
-    _makeConvertedData: function(params) {
+    _makeProcessedData: function(params) {
         var options = params.options,
-            convertedData = dataConverter.convert(params.userData, options.chart, options.chartType, params.seriesChartTypes);
-        return convertedData;
+            processedData = dataProcessor.process(params.rawData, options.chart, options.chartType, params.seriesChartTypes);
+
+        return processedData;
     },
 
     /**
@@ -117,13 +118,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _addComponent: function(name, Component, params) {
         var commonParams = {},
-            options, index, theme, component;
+            options, index, theme,
+            component, componentType;
 
         params = params || {};
 
-        options = params.options || this.options[params && params.componentType || name];
-        theme = params.theme || this.theme[params && params.componentType || name];
-        index = params && params.index || 0;
+        componentType = params.componentType || name;
+        options = params.options || this.options[componentType];
+        theme = params.theme || this.theme[componentType];
+        index = params.index || 0;
 
         commonParams.theme = tui.util.isArray(theme) ? theme[index] : theme;
         commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
@@ -134,7 +137,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.components.push({
             name: name,
-            componentType: params.componentType,
+            componentType: componentType,
             instance: component
         });
         this.componentMap[name] = component;
@@ -148,7 +151,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _makeBounds: function(boundsParams) {
         return boundsMaker.make(tui.util.extend({
-            convertedData: this.convertedData,
+            processedData: this.processedData,
             theme: this.theme,
             options: this.options,
             hasAxes: this.hasAxes,
@@ -159,7 +162,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * To make rendering data for axis type chart.
      * @param {object} bounds chart bounds
-     * @param {object} convertedData convertedData
+     * @param {object} processedData processedData
      * @param {object} options options
      * @private
      * @abstract
@@ -188,7 +191,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         dom.addClass(el, 'tui-chart');
         bounds = this._makeBounds();
-        renderingData = this._makeRenderingData(bounds, this.convertedData, this.options);
+        renderingData = this._makeRenderingData(bounds, this.processedData, this.options);
 
         this._renderTitle(el);
         renderUtil.renderDimension(el, bounds.chart.dimension);
@@ -197,7 +200,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._renderComponents(el, this.components, bounds, renderingData);
         this._sendSeriesData();
         this._attachCustomEvent();
-        this.elChart = el;
+        this.chartContainer = el;
 
         return el;
     },
@@ -210,22 +213,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _renderTitle: function(el) {
         var chartOptions = this.options.chart || {},
             elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
-        dom.append(el, elTitle);
-    },
 
-    /**
-     * Find bound about component
-     * @param {object} bounds components bounds
-     * @param {string} name component name
-     * @param {string} componentType component type
-     * @returns {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} found bound
-     * @private
-     */
-    _findBound: function(bounds, name, componentType) {
-        return bounds[name] || (componentType && bounds[componentType]);
+        dom.append(el, elTitle);
     },
 
     /**
@@ -238,10 +227,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderComponents: function(container, components, bounds, renderingData) {
         var elements;
+
         elements = tui.util.map(components, function(component) {
-            var name = component.name,
-                bound = this._findBound(bounds, name, component.componentType),
-                data = renderingData[name],
+            var bound = bounds[component.componentType],
+                data = renderingData[component.name],
                 elComponent;
             if (!bound) {
                 return null;
@@ -310,22 +299,23 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Update dimension.
      * @param {{width: number, height: number}} dimension dimension
-     * @returns {boolean} whether changed or not
+     * @returns {boolean} whether updated or not
      * @private
      */
     _updateDimension: function(dimension) {
-        var changed = false;
+        var updated = false;
+
         if (dimension.width) {
             this.options.chart.width = dimension.width;
-            changed = true;
+            updated = true;
         }
 
         if (dimension.height) {
             this.options.chart.height = dimension.height;
-            changed = true;
+            updated = true;
         }
 
-        return changed;
+        return updated;
     },
 
     /**
@@ -354,22 +344,21 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {{width: number, height: number}} dimension dimension
      */
     resize: function(dimension) {
-        var changed, bounds, renderingData;
+        var updated, bounds, renderingData;
 
         if (!dimension) {
             return;
         }
 
-        changed = this._updateDimension(dimension);
+        updated = this._updateDimension(dimension);
 
-        if (!changed) {
+        if (!updated) {
             return;
         }
 
         bounds = this._makeBounds();
-
-        renderingData = this._makeRenderingData(bounds, this.convertedData, this.options);
-        renderUtil.renderDimension(this.elChart, bounds.chart.dimension);
+        renderingData = this._makeRenderingData(bounds, this.processedData, this.options);
+        renderUtil.renderDimension(this.chartContainer, bounds.chart.dimension);
         this._resizeComponents(this.components, bounds, renderingData);
         this._sendSeriesData();
     },

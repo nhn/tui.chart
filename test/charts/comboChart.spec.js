@@ -109,7 +109,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertedData: {
+                processedData: {
                     joinValues: [
                         [20, 30, 50],
                         [40, 40, 60],
@@ -148,7 +148,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
                 index: 0,
-                convertedData: {
+                processedData: {
                     values: {
                         column: [
                             [20, 30, 50],
@@ -202,11 +202,11 @@ describe('ComboChart', function() {
 
     describe('_makeAxesData()', function() {
         it('y axis 옵션 정보가 하나일 경우에는 xAxis와 더불어 하나의 yAxis data만 생성합니다.', function() {
-            var convertedData, bounds, actual;
+            var processedData, bounds, actual;
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
             comboChart.optionChartTypes = [];
-            convertedData = {
+            processedData = {
                 formatFunctions: [],
                 labels: []
             };
@@ -215,18 +215,18 @@ describe('ComboChart', function() {
                     dimension: {}
                 }
             };
-            actual = comboChart._makeAxesData(convertedData, bounds, {});
+            actual = comboChart._makeAxesData(processedData, bounds, {});
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
             expect(actual.yrAxis).not.toBeDefined();
         });
 
         it('y axis 옵션 정보가 하나일 경우에는 yrAxis data도 생성합니다.', function() {
-            var convertedData, bounds, actual;
+            var processedData, bounds, actual;
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
             comboChart.optionChartTypes = ['column', 'line'];
-            convertedData = {
+            processedData = {
                 formatFunctions: [],
                 labels: []
             };
@@ -235,7 +235,7 @@ describe('ComboChart', function() {
                     dimension: {}
                 }
             };
-            actual = comboChart._makeAxesData(convertedData, bounds, {});
+            actual = comboChart._makeAxesData(processedData, bounds, {});
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
             expect(actual.yrAxis).toBeDefined();

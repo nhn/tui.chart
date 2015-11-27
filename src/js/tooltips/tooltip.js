@@ -28,6 +28,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     init: function(params) {
         var values;
+
         TooltipBase.call(this, params);
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
         if (tui.util.isArray(this.values)) {
@@ -135,6 +136,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _fireShowAnimation: function(indexes, chartType) {
         var eventName = renderUtil.makeCustomEventName('show', chartType, 'animation');
+
         this.fire(eventName, indexes);
     },
 
@@ -146,6 +148,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _fireHideAnimation: function(indexes, chartType) {
         var eventName = renderUtil.makeCustomEventName('hide', chartType, 'animation');
+
         this.fire(eventName, indexes);
     },
 
@@ -198,6 +201,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _isShowedTooltip: function(elTooltip) {
         var isShowed = elTooltip.getAttribute('data-showed');
+
         return isShowed === 'true' || isShowed === true; // ie7에서는 boolean형태의 true를 반환함
     },
 
@@ -226,7 +230,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     onMouseout: function(e) {
         var elTarget = e.target || e.srcElement;
-
 
         if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
             elTarget = dom.findParentByClass(elTarget, chartConst.TOOLTIP_PREFIX);
@@ -266,6 +269,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
             result = {};
+
         result.left = bound.left + positionOption.left;
         result.top = bound.top - tooltipHeight + positionOption.top;
 
@@ -420,6 +424,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             positionType = params.positionType,
             value = this._getValueByIndexes(params.indexes, params.chartType),
             center;
+
         if (value < 0) {
             center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
             position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
@@ -436,7 +441,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeTooltipHtml: function(chartType, indexes) {
         var data = this.data[chartType][indexes.groupIndex][indexes.index];
+
         data.suffix = this.suffix;
+
         return this.tplTooltip(data);
     },
 
@@ -461,6 +468,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var indexes = params.indexes,
             prevIndexes = this._getIndexesCustomAttribute(elTooltip),
             prevChartType, position;
+
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
             this._fireHideAnimation(prevIndexes, prevChartType);
@@ -504,6 +512,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var legendIndex = indexes.index,
             legendData = this.joinLegendLabels[legendIndex],
             params;
+
         params = tui.util.extend({
             chartType: legendData.chartType,
             legend: legendData.label,
@@ -520,6 +529,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _fireBeforeShowTooltip: function(indexes) {
         var params = this._makeShowTooltipParams(indexes);
+
         this.userEvent.fire('beforeShowTooltip', params);
     },
 
@@ -531,6 +541,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _fireAfterShowTooltip: function(indexes, additionParams) {
         var params = this._makeShowTooltipParams(indexes, additionParams);
+
         this.userEvent.fire('afterShowTooltip', params);
     },
 

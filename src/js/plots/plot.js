@@ -32,18 +32,18 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * To render plot area.
-     * @param {HTMLElement} elPlotArea plot area element
+     * @param {HTMLElement} plotContainer plot area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @private
      */
-    _renderPlotArea: function(elPlotArea, bound, data) {
+    _renderPlotArea: function(plotContainer, bound, data) {
         this.bound = bound;
         this.data = data;
 
-        renderUtil.renderDimension(elPlotArea, bound.dimension);
-        renderUtil.renderPosition(elPlotArea, bound.position);
-        this._renderLines(elPlotArea, bound.dimension);
+        renderUtil.renderDimension(plotContainer, bound.dimension);
+        renderUtil.renderPosition(plotContainer, bound.position);
+        this._renderLines(plotContainer, bound.dimension);
     },
 
     /**
@@ -55,7 +55,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     render: function(bound, data) {
         var el = dom.create('DIV', this.className);
         this._renderPlotArea(el, bound, data);
-        this.elPlotArea = el;
+        this.plotContainer = el;
         return el;
     },
 
@@ -65,8 +65,8 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data rendering data
      */
     resize: function(bound, data) {
-        this.elPlotArea.innerHTML = '';
-        this._renderPlotArea(this.elPlotArea, bound, data);
+        this.plotContainer.innerHTML = '';
+        this._renderPlotArea(this.plotContainer, bound, data);
     },
 
     /**

@@ -20,12 +20,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * Combo chart.
      * @constructs ComboChart
      * @extends ChartBase
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(userData, theme, options) {
-        var seriesChartTypes = tui.util.keys(userData.series).sort(),
+    init: function(rawData, theme, options) {
+        var seriesChartTypes = tui.util.keys(rawData.series).sort(),
             optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, options.yAxis),
             chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes;
 
@@ -35,7 +35,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         this.className = 'tui-combo-chart';
 
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options,
             seriesChartTypes: seriesChartTypes,
@@ -43,7 +43,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             isVertical: true
         });
 
-        this._addComponents(this.convertedData, this.options, this.theme);
+        this._addComponents(this.processedData, this.options, this.theme);
     },
 
     /**
@@ -73,6 +73,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     _makeThemeMap: function(chartTypes, theme, legendLabels) {
         var themeMap = {},
             colorCount = 0;
+
         tui.util.forEachArray(chartTypes, function(chartType) {
             var chartTheme = JSON.parse(JSON.stringify(theme)),
                 removedColors;
@@ -89,29 +90,31 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 colorCount += legendLabels[chartType].length;
             }
         });
+
         return themeMap;
     },
 
     /**
      * To make serieses
      * @param {array.<string>} chartTypes chart types
-     * @param {object} convertedData converted data.
+     * @param {object} processedData processed data.
      * @param {object} options chart options
      * @param {object} theme chart theme
      * @returns {array.<object>} serieses
      * @private
      */
-    _makeSerieses: function(chartTypes, convertedData, options, theme) {
+    _makeSerieses: function(chartTypes, processedData, options, theme) {
         var seriesClasses = {
                 column: ColumnChartSeries,
                 line: LineChartSeries
             },
             optionsMap = this._makeOptionsMap(chartTypes, options),
-            themeMap = this._makeThemeMap(chartTypes, theme, convertedData.legendLabels),
+            themeMap = this._makeThemeMap(chartTypes, theme, processedData.legendLabels),
             serieses;
+
         serieses = tui.util.map(chartTypes, function(chartType) {
-            var values = convertedData.values[chartType],
-                formattedValues = convertedData.formattedValues[chartType],
+            var values = processedData.values[chartType],
+                formattedValues = processedData.formattedValues[chartType],
                 data;
 
             if (predicate.isLineTypeChart(chartType)) {
@@ -128,8 +131,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 data: {
                     values: values,
                     formattedValues: formattedValues,
-                    formatFunctions: convertedData.formatFunctions,
-                    joinLegendLabels: convertedData.joinLegendLabels
+                    formatFunctions: processedData.formatFunctions,
+                    joinLegendLabels: processedData.joinLegendLabels
                 }
             };
 
@@ -145,21 +148,21 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Add components
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {object} options chart options
      * @param {object} theme chart theme
      * @private
      */
-    _addComponents: function(convertedData, options, theme) {
+    _addComponents: function(processedData, options, theme) {
         var axes = ['yAxis', 'xAxis'],
-            serieses = this._makeSerieses(this.seriesChartTypes, convertedData, options, theme);
+            serieses = this._makeSerieses(this.seriesChartTypes, processedData, options, theme);
 
         if (this.optionChartTypes.length) {
             axes.push('yrAxis');
         }
 
         this._addComponentsForAxisType({
-            convertedData: convertedData,
+            processedData: processedData,
             axes: axes,
             seriesChartTypes: this.seriesChartTypes,
             chartType: options.chartType,
@@ -204,7 +207,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * To make y axis data.
      * @param {object} params parameters
      *      @param {number} params.index chart index
-     *      @param {object} params.convertedData converted data
+     *      @param {object} params.processedData processed data
      *      @param {{width: number, height: number}} params.seriesDimension series dimension
      *      @param {array.<string>} chartTypes chart type
      *      @param {boolean} isOneYAxis whether one series or not
@@ -214,17 +217,17 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _makeYAxisData: function(params) {
-        var convertedData = params.convertedData,
+        var processedData = params.processedData,
             index = params.index,
             chartType = params.chartTypes[index],
             options = params.options,
             yAxisValues, yAxisOptions, seriesOption;
 
         if (params.isOneYAxis) {
-            yAxisValues = convertedData.joinValues;
+            yAxisValues = processedData.joinValues;
             yAxisOptions = [options.yAxis];
         } else {
-            yAxisValues = convertedData.values[chartType];
+            yAxisValues = processedData.values[chartType];
             yAxisOptions = options.yAxis || [];
         }
 
@@ -236,30 +239,30 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             options: yAxisOptions[index],
             chartType: chartType,
             seriesDimension: params.seriesDimension,
-            formatFunctions: convertedData.formatFunctions,
+            formatFunctions: processedData.formatFunctions,
             isVertical: true
         }, params.addParams));
     },
 
     /**
      * To make axes data
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertedData, bounds, options) {
-        var formatFunctions = convertedData.formatFunctions,
+    _makeAxesData: function(processedData, bounds, options) {
+        var formatFunctions = processedData.formatFunctions,
             yAxisParams = {
-                convertedData: convertedData,
+                processedData: processedData,
                 seriesDimension: bounds.series.dimension,
                 chartTypes: this.chartTypes,
                 isOneYAxis: !this.optionChartTypes.length,
                 options: options
             },
             xAxisData = axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels
+                labels: processedData.labels
             }),
             yAxisData = this._makeYAxisData(tui.util.extend({
                 index: 0
@@ -310,7 +313,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @returns {HTMLElement} chart element
      */
     render: function() {
-        //this._attachComboChartCoordinateEvent();
         return ChartBase.prototype.render.call(this, {
             seriesChartTypes: this.seriesChartTypes,
             optionChartTypes: this.optionChartTypes

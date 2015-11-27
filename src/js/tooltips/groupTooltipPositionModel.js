@@ -62,6 +62,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _getHorizontalDirection: function(alignOption) {
         var direction;
+
         alignOption = alignOption || '';
         if (alignOption.indexOf('left') > -1) {
             direction = chartConst.TOOLTIP_DIRECTION_BACKWARD;
@@ -70,6 +71,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             direction = chartConst.TOOLTIP_DIRECTION_FORWARD;
         }
+
         return direction;
     },
 
@@ -90,6 +92,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _makeVerticalData: function(chartDimension, areaBound, alignOption) {
         var hDirection = this._getHorizontalDirection(alignOption);
+
         return {
             positionType: 'left',
             sizeType: 'width',
@@ -109,7 +112,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _getVerticalDirection: function(alignOption) {
         var direction;
+
         alignOption = alignOption || '';
+
         if (alignOption.indexOf('top') > -1) {
             direction = chartConst.TOOLTIP_DIRECTION_BACKWARD;
         } else if (alignOption.indexOf('bottom') > -1) {
@@ -117,6 +122,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             direction = chartConst.TOOLTIP_DIRECTION_CENTER;
         }
+
         return direction;
     },
 
@@ -137,6 +143,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _makeHorizontalData: function(chartDimension, areaBound, alignOption) {
         var vDirection = this._getVerticalDirection(alignOption);
+
         return {
             positionType: 'top',
             sizeType: 'height',
@@ -162,6 +169,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _setData: function(chartDimension, areaBound, isVertical, options) {
         var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align),
             horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+
         if (isVertical) {
             this.mainData = verticalData;
             this.subData = horizontalData;
@@ -192,6 +200,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         var isLine = (range.start === range.end),
             padding = isLine ? 9 : 5,
             value = data.basePosition;
+
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value += range.end + padding;
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
@@ -201,6 +210,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value += range.start + ((range.end - range.start - tooltipSize) / 2);
         }
+
         return value;
     },
 
@@ -217,6 +227,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _calculateSubPositionValue: function(tooltipSize, data) {
         var middle = data.areaSize / 2,
             value;
+
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value = middle + data.basePosition;
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
@@ -224,6 +235,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value = middle - (tooltipSize / 2) + data.basePosition;
         }
+
         return value;
     },
 
@@ -255,6 +267,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _adjustBackwardPositionValue: function(value, range, tooltipSize, data) {
         var changedValue;
+
         if (value < -data.areaPosition) {
             changedValue = this._calculateMainPositionValue(tooltipSize, range, {
                 direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
@@ -266,6 +279,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
                 value = changedValue;
             }
         }
+
         return value;
     },
 
@@ -284,6 +298,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _adjustForwardPositionValue: function(value, range, tooltipSize, data) {
         var diff = this._makePositionValueDiff(value, tooltipSize, data),
             changedValue;
+
         if (diff > 0) {
             changedValue = this._calculateMainPositionValue(tooltipSize, range, {
                 direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
@@ -295,6 +310,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
                 value = changedValue;
             }
         }
+
         return value;
     },
 
@@ -318,6 +334,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             value = tui.util.max([value, -data.areaPosition]);
             value = tui.util.min([value, data.chartSize - data.areaPosition - tooltipSize]);
         }
+
         return value;
     },
 
@@ -338,6 +355,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value = tui.util.max([value, -data.areaPosition]);
         }
+
         return value;
     },
 

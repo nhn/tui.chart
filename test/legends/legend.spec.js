@@ -38,7 +38,7 @@ describe('test Legend', function() {
 
     describe('render()', function() {
         it('legend 영역 렌더링', function () {
-            var elLegend = legend.render({
+            var legendContainer = legend.render({
                     position: {
                         top: 20,
                         right: 10
@@ -61,10 +61,10 @@ describe('test Legend', function() {
 
             tempChildren = elTemp.childNodes;
 
-            expect(elLegend.className).toBe('tui-chart-legend-area');
-            expect(elLegend.style.cssText).toBe(elTemp.style.cssText);
+            expect(legendContainer.className).toBe('tui-chart-legend-area');
+            expect(legendContainer.style.cssText).toBe(elTemp.style.cssText);
 
-            tui.util.forEachArray(elLegend.childNodes, function (child, index) {
+            tui.util.forEachArray(legendContainer.childNodes, function (child, index) {
                 var elTempChild = tempChildren[index];
                 expect(child.firstChild.cssText).toBe(elTempChild.firstChild.cssText);
                 expect(child.lastChild.cssText).toBe(elTempChild.lastChild.cssText);

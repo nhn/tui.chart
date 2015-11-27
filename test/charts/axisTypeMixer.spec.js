@@ -79,7 +79,7 @@ describe('ComboChart', function() {
             axisTypeMixer.options = {};
             axisTypeMixer._addComponentsForAxisType({
                 axes: ['xAxis', 'yAxis'],
-                convertedData: {},
+                processedData: {},
                 serieses: [
                     {
                         name: 'columnSreies',

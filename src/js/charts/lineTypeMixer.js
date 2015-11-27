@@ -16,22 +16,22 @@ var ChartBase = require('./chartBase'),
 var lineTypeMixer = {
     /**
      * Initialize line type chart.
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      * @private
      */
-    _lineTypeInit: function(userData, theme, options) {
+    _lineTypeInit: function(rawData, theme, options) {
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options,
             hasAxes: true,
             isVertical: true
         });
 
-        this._addComponents(this.convertedData, options.chartType);
+        this._addComponents(this.processedData, options.chartType);
     },
 
     _addCustomEventComponentForNormalTooltip: function() {
@@ -43,21 +43,21 @@ var lineTypeMixer = {
 
     /**
      * Add components
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, chartType) {
+    _addComponents: function(processedData, chartType) {
         var seriesData = {
             data: {
-                values: tui.util.pivot(convertedData.values),
-                formattedValues: tui.util.pivot(convertedData.formattedValues),
-                formatFunctions: convertedData.formatFunctions,
-                joinLegendLabels: convertedData.joinLegendLabels
+                values: tui.util.pivot(processedData.values),
+                formattedValues: tui.util.pivot(processedData.formattedValues),
+                formatFunctions: processedData.formatFunctions,
+                joinLegendLabels: processedData.joinLegendLabels
             }
         };
         this._addComponentsForAxisType({
-            convertedData: convertedData,
+            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [

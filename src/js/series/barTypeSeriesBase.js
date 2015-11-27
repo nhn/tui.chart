@@ -39,6 +39,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeBarGutter: function(groupSize, itemCount) {
         var baseSize = groupSize / (itemCount + 1) / 2,
             gutter;
+
         if (baseSize <= 2) {
             gutter = 0;
         } else if (baseSize <= 6) {
@@ -86,9 +87,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeAdditionPadding: function(barSize, optionSize, itemCount) {
         var padding = 0;
+
         if (optionSize && optionSize < barSize) {
             padding = (barSize - optionSize) * itemCount / 2;
         }
+
         return (barSize / 2) + padding;
     },
 
@@ -113,7 +116,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             optionSize = this._makeOptionSize(barSize, this.options.barWidth),
             additionPadding = this._makeAdditionPadding(barSize, optionSize, itemCount),
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension[sizeType], this.data.scale);
+
         barSize = optionSize || barSize;
+
         return {
             dimension: dimension,
             groupValues: groupValues,
@@ -140,6 +145,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             formattedValues = params.formattedValues,
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
             html;
+
         html = tui.util.map(params.values, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 var bound, formattedValue, renderingPosition;
@@ -235,6 +241,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             formatFunctions = params.formatFunctions || [],
             labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
             html;
+
         html = tui.util.map(params.values, function(values, index) {
             var labelsHtml = this._makeStackedLabelsHtml({
                 groupIndex: index,

@@ -57,9 +57,11 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _renderSeriesLabel: function(params, elSeriesLabelArea) {
         var groupPositions, labelHeight, html;
+
         if (!this.options.showLabel) {
             return;
         }
+
         groupPositions = params.groupPositions;
         labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
 

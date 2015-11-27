@@ -29,10 +29,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.className = 'tui-chart-tooltip-area';
 
         /**
-         * TooltipBase container.
+         * Tooltip container.
          * @type {HTMLElement}
          */
-        this.elLayout = null;
+        this.tooltipContainer = null;
 
         /**
          * TooltipBase base data.
@@ -84,7 +84,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
         this.bound = bound;
         this.chartDimension = data.chartDimension;
-        this.elTooltipArea = el;
+        this.tooltipContainer = el;
 
         return el;
     },
@@ -96,7 +96,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     resize: function(bound) {
         this.bound = bound;
-        renderUtil.renderPosition(this.elTooltipArea, bound.position);
+        renderUtil.renderPosition(this.tooltipContainer, bound.position);
         if (this.positionModel) {
             this.positionModel.updateBound(bound);
         }
@@ -108,12 +108,14 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _getTooltipElement: function() {
-        var elTooltip;
-        if (!this.elTooltip) {
-            this.elTooltip = elTooltip = dom.create('DIV', 'tui-chart-tooltip');
-            dom.append(this.elTooltipArea, elTooltip);
+        var tooltipElement;
+
+        if (!this.tooltipElement) {
+            this.tooltipElement = tooltipElement = dom.create('DIV', 'tui-chart-tooltip');
+            dom.append(this.tooltipContainer, tooltipElement);
         }
-        return this.elTooltip;
+
+        return this.tooltipElement;
     },
 
     /**
@@ -121,27 +123,28 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {object} params coordinate event parameters
      */
     onShow: function(params) {
-        var elTooltip = this._getTooltipElement(),
+        var tooltipElement = this._getTooltipElement(),
             prevPosition;
-        if (elTooltip.offsetWidth) {
+
+        if (tooltipElement.offsetWidth) {
             prevPosition = {
-                left: elTooltip.offsetLeft,
-                top: elTooltip.offsetTop
+                left: tooltipElement.offsetLeft,
+                top: tooltipElement.offsetTop
             };
         }
 
-        this.showTooltip(elTooltip, params, prevPosition);
+        this.showTooltip(tooltipElement, params, prevPosition);
     },
 
     /**
      * Get tooltip dimension
-     * @param {HTMLElement} elTooltip tooltip element
+     * @param {HTMLElement} tooltipElement tooltip element
      * @returns {{width: number, height: number}} rendered tooltip dimension
      */
-    getTooltipDimension: function(elTooltip) {
+    getTooltipDimension: function(tooltipElement) {
         return {
-            width: elTooltip.offsetWidth,
-            height: elTooltip.offsetHeight
+            width: tooltipElement.offsetWidth,
+            height: tooltipElement.offsetHeight
         };
     },
 
@@ -175,17 +178,17 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Move to Position.
-     * @param {HTMLElement} elTooltip tooltip element
+     * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} position position
      * @param {{left: number, top: number}} prevPosition prev position
      */
-    moveToPosition: function(elTooltip, position, prevPosition) {
+    moveToPosition: function(tooltipElement, position, prevPosition) {
         if (prevPosition) {
             this._cancelHide();
             this._cancelSlide();
-            this._slideTooltip(elTooltip, prevPosition, position);
+            this._slideTooltip(tooltipElement, prevPosition, position);
         } else {
-            renderUtil.renderPosition(elTooltip, position);
+            renderUtil.renderPosition(tooltipElement, position);
         }
     },
 
@@ -208,6 +211,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
                 duration: 100
             });
         }
+
         return this.slider[type];
     },
 
@@ -221,14 +225,14 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Slide tooltip
-     * @param {HTMLElement} elTooltip tooltip element
+     * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} prevPosition prev position
      * @param {{left: number, top: number}} position position
      * @private
      */
-    _slideTooltip: function(elTooltip, prevPosition, position) {
-        var vSlider = this._getSlider(elTooltip, 'vertical'),
-            hSlider = this._getSlider(elTooltip, 'horizontal'),
+    _slideTooltip: function(tooltipElement, prevPosition, position) {
+        var vSlider = this._getSlider(tooltipElement, 'vertical'),
+            hSlider = this._getSlider(tooltipElement, 'horizontal'),
             moveTop = prevPosition.top - position.top,
             moveLeft = prevPosition.left - position.left,
             vDirection = moveTop > 0 ? 'forword' : 'backword',
@@ -266,8 +270,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {number} index index
      */
     onHide: function(index) {
-        var elTooltip = this._getTooltipElement();
-        this.hideTooltip(elTooltip, index);
+        var tooltipElement = this._getTooltipElement();
+
+        this.hideTooltip(tooltipElement, index);
     },
 
     /**
@@ -289,16 +294,16 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * To hide animation.
-     * @param {HTMLElement} elTooltip tooltip element
+     * @param {HTMLElement} tooltipElement tooltip element
      */
-    hideAnimation: function(elTooltip) {
-        this.activeHider = this._getHider(elTooltip);
+    hideAnimation: function(tooltipElement) {
+        this.activeHider = this._getHider(tooltipElement);
         this.activeHider.action({
             start: 1,
             end: 0,
             complete: function() {
-                dom.removeClass(elTooltip, 'show');
-                elTooltip.style.cssText = '';
+                dom.removeClass(tooltipElement, 'show');
+                tooltipElement.style.cssText = '';
             }
         });
     },
@@ -330,6 +335,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     resetAlign: function() {
         var align = this.orgPositionOptions.align;
+
         this.options.align = align;
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
@@ -341,6 +347,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     resetPosition: function() {
         var position = this.orgPositionOptions.position;
+
         this.options.position = position;
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);

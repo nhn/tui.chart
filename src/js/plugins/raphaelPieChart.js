@@ -87,6 +87,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _renderSector: function (params) {
         var circleBound = params.circleBound,
             angles = params.angles;
+
         return params.paper.path().attr({
             sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
         }).attr(params.attrs);
@@ -167,6 +168,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 'Z'
             ].join('');
         }, this);
+
         return paths;
     },
 
@@ -218,6 +220,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _expandSector: function(sector) {
         var cx = this.circleBound.cx,
             cy = this.circleBound.cy;
+
         sector.animate({
             transform: "s1.1 1.1 " + cx + " " + cy
         }, ANIMATION_TIME, "elastic");
@@ -256,6 +259,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     animate: function(callback) {
         var delayTime = 0,
             circleBound = this.circleBound;
+
         tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles,
                 animationTime = LOADING_ANIMATION_TIME * item.percentValue,
@@ -278,6 +282,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         if (!this.legendLines) {
             return;
         }
+
         tui.util.forEachArray(this.legendLines, function(line) {
             line.animate({
                 'stroke': 'black',
@@ -314,6 +319,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     moveLegendLines: function(outerPositions) {
         var paths;
+
         if (!this.legendLines) {
             return;
         }
@@ -333,6 +339,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var item = this.sectors[indexes.index],
             objColor = Raphael.color(item.color),
             color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+
         item.sector.attr({
             fill: color
         });
@@ -344,6 +351,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     unselectSeries: function(indexes) {
         var sector = this.sectors[indexes.index];
+
         sector.sector.attr({
             fill: sector.color
         });

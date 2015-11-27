@@ -116,6 +116,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     _makeStackedBarChartBounds: function(dimension) {
         var groupValues, groupHeight, barHeight,
             optionHeight, additionPadding, bounds;
+
         groupValues = this.percentValues;
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;

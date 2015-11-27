@@ -331,6 +331,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                     cy: position.top
                 },
                 area, areaPath;
+
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
                 areaPath = that.groupPaths[groupIndex][index - 1];

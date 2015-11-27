@@ -10,7 +10,7 @@ var ChartBase = require('../../src/js/charts/chartBase'),
     chartConst = require('../../src/js/const'),
     Legend = require('../../src/js/legends/legend'),
     dom = require('../../src/js/helpers/domHandler'),
-    dataConverter = require('../../src/js/helpers/dataConverter'),
+    dataProcessor = require('../../src/js/helpers/dataProcessor'),
     boundsMaker = require('../../src/js/helpers/boundsMaker'),
     UserEventListener = require('../../src/js/helpers/userEventListener');
 
@@ -19,7 +19,7 @@ describe('ChartBase', function() {
 
     beforeEach(function() {
         chartBase = new ChartBase({
-            userData: {
+            rawData: {
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
                     {
@@ -53,12 +53,12 @@ describe('ChartBase', function() {
         });
     });
 
-    describe('_makeConvertedData()', function() {
+    describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            spyOn(dataConverter, 'convert').and.returnValue({'values': [1, 2, 3]});
-            actual = chartBase._makeConvertedData({
-                userData: {},
+            spyOn(dataProcessor, 'process').and.returnValue({'values': [1, 2, 3]});
+            actual = chartBase._makeProcessedData({
+                rawData: {},
                 options: {}
             });
             expect(actual.values).toEqual([1, 2, 3]);

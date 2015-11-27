@@ -65,6 +65,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBar: function(params) {
         var bound = params.bound,
             rect;
+
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
@@ -89,6 +90,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBars: function(params) {
         var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
             colors = params.theme.colors;
+
         this.groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
             return tui.util.map(bounds, function(bound, index) {
@@ -214,9 +216,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBorderLines: function(params) {
         var borderLinePaths = this._makeBorderLinesPaths(params.bound, params.chartType, params.value),
             lines = {};
+
         tui.util.forEach(borderLinePaths, function(path, name) {
             lines[name] = raphaelRenderUtil.renderLine(params.paper, path, params.borderColor, 1);
         });
+
         return lines;
     },
 
@@ -230,9 +234,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _renderBarBorders: function(params) {
         var borderColor = params.theme.borderColor;
+
         if (!borderColor) {
             return;
         }
+
         this.groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
                 var value;
@@ -279,6 +285,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _animateBorders: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
+
         tui.util.forEach(lines, function(line, name) {
             line.animate({path: paths[name]}, ANIMATION_TIME);
         });
@@ -291,6 +298,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     animate: function(callback) {
         tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
             var borders = this.groupBorders && this.groupBorders[groupIndex];
+
             tui.util.forEachArray(bars, function(bar, index) {
                 var lines = borders && borders[index];
                 this._animateRect(bar.rect, bar.bound);
@@ -330,6 +338,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _updateBordersAttr: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
+
         tui.util.forEach(lines, function(line, name) {
             line.attr({path: paths[name]});
         });

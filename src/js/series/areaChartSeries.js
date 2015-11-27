@@ -36,6 +36,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         var dimension = bound.dimension,
             scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
             zeroTop = scaleDistance.toMax;
+
         if (this.data.scale.min >= 0 && !zeroTop) {
             zeroTop = dimension.height;
         }

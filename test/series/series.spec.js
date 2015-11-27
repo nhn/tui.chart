@@ -153,19 +153,19 @@ describe('Series', function() {
 
     describe('renderBounds()', function() {
         it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
-            var elSeries = dom.create('DIV');
-            series._renderPosition(elSeries, {
+            var seriesContainer = dom.create('DIV');
+            series._renderPosition(seriesContainer, {
                     top: 20,
                     left: 20
                 }
             );
 
             if (renderUtil.isOldBrowser()) {
-                expect(elSeries.style.top).toBe('18px');
-                expect(elSeries.style.left).toBe('19px');
+                expect(seriesContainer.style.top).toBe('18px');
+                expect(seriesContainer.style.left).toBe('19px');
             } else {
-                expect(elSeries.style.top).toBe('20px');
-                expect(elSeries.style.left).toBe('20px');
+                expect(seriesContainer.style.top).toBe('20px');
+                expect(seriesContainer.style.left).toBe('20px');
             }
         });
     });
@@ -183,21 +183,21 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
-            var elSeries = series.render({
+            var seriesContainer = series.render({
                 dimension: {width: 200, height: 100},
                 position: {top: 50, left: 50}
             });
 
-            expect(elSeries.className.indexOf('series-area') > -1).toBe(true);
-            expect(elSeries.style.width).toBe('220px');
-            expect(elSeries.style.height).toBe('110px');
+            expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
+            expect(seriesContainer.style.width).toBe('220px');
+            expect(seriesContainer.style.height).toBe('110px');
 
             if (renderUtil.isOldBrowser()) {
-                expect(elSeries.style.top).toBe('48px');
-                expect(elSeries.style.left).toBe('39px');
+                expect(seriesContainer.style.top).toBe('48px');
+                expect(seriesContainer.style.left).toBe('39px');
             } else {
-                expect(elSeries.style.top).toBe('50px');
-                expect(elSeries.style.left).toBe('40px');
+                expect(seriesContainer.style.top).toBe('50px');
+                expect(seriesContainer.style.left).toBe('40px');
             }
         });
     });

@@ -36,6 +36,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _makeStartEndTops: function(endTop, endHeight, value) {
         var startTop;
+
         if (value < 0) {
             startTop = endTop;
         } else {
@@ -105,6 +106,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             },
             endHeight: endHeight
         }, startEndTops));
+
         return bound;
     },
 

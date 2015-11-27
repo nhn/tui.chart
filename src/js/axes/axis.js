@@ -37,12 +37,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * To render axis area.
-     * @param {HTMLElement} elAxisArea axis area element
+     * @param {HTMLElement} axisContainer axis area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      * @private
      */
-    _renderAxisArea: function(elAxisArea, bound, data) {
+    _renderAxisArea: function(axisContainer, bound, data) {
         var theme = this.theme,
             isVertical = !!data.isVertical,
             isPositionRight = !!data.isPositionRight,
@@ -65,11 +65,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (!isVertical || !data.aligned) {
             elTickArea = this._renderTickArea(size);
         }
-        renderUtil.renderDimension(elAxisArea, dimension);
-        renderUtil.renderPosition(elAxisArea, bound.position);
-        dom.addClass(elAxisArea, isVertical ? 'vertical' : 'horizontal');
-        dom.addClass(elAxisArea, isPositionRight ? 'right' : '');
-        dom.append(elAxisArea, [elTitleArea, elTickArea, elLabelArea]);
+
+        renderUtil.renderDimension(axisContainer, dimension);
+        renderUtil.renderPosition(axisContainer, bound.position);
+        dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(axisContainer, isPositionRight ? 'right' : '');
+        dom.append(axisContainer, [elTitleArea, elTickArea, elLabelArea]);
     },
 
     /**
@@ -80,8 +81,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     render: function(bound, data) {
         var el = dom.create('DIV', this.className);
+
         this._renderAxisArea(el, bound, data);
-        this.elAxisArea = el;
+        this.axisContainer = el;
         return el;
     },
 
@@ -91,8 +93,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {object} data rendering data
      */
     resize: function(bound, data) {
-        this.elAxisArea.innerHTML = '';
-        this._renderAxisArea(this.elAxisArea, bound, data);
+        this.axisContainer.innerHTML = '';
+        this._renderAxisArea(this.axisContainer, bound, data);
     },
 
     /**
@@ -249,6 +251,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var title = this.options.title,
             theme = this.theme.title,
             result = title ? renderUtil.getRenderedLabelHeight(title, theme) : 0;
+
         return result;
     },
 
@@ -287,6 +290,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPosition: function(params) {
         var moveLeft = params.moveLeft;
+
         if (params.degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
         }
@@ -342,11 +346,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeCssTextForRotationMoving: function(params) {
         var position;
+
         if (renderUtil.isOldBrowser()) {
             position = this._calculateRotationMovingPositionForIE8(params);
         } else {
             position = this._calculateRotationMovingPosition(params);
         }
+
         return renderUtil.concatStr('left:', position.left, 'px', ';top:', position.top, 'px');
     },
 
@@ -412,6 +418,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                     label: params.labels[index]
                 });
             }, this).join('');
+
         return labelsHtml;
     },
 
@@ -427,6 +434,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeLabelsHtml: function(params) {
         var labelsHtml;
+
         if (params.degree) {
             labelsHtml = this._makeRotationLabelsHtml(params);
         } else {

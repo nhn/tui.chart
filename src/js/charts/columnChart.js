@@ -18,12 +18,12 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @extends ChartBase
      * @mixes axisTypeMixer
      * @mixes verticalTypeMixer
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      */
-    init: function(userData, theme, options) {
+    init: function(rawData, theme, options) {
         /**
          * className
          * @type {string}
@@ -31,34 +31,35 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         this.className = 'tui-column-chart';
 
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options,
             hasAxes: true,
             isVertical: true
         });
 
-        this._addComponents(this.convertedData, options.chartType);
+        this._addComponents(this.processedData, options.chartType);
     },
 
     /**
      * Add components
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, chartType) {
+    _addComponents: function(processedData, chartType) {
         var seriesData = {
             allowNegativeTooltip: true,
             data: {
-                values: convertedData.values,
-                formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions,
-                joinLegendLabels: convertedData.joinLegendLabels
+                values: processedData.values,
+                formattedValues: processedData.formattedValues,
+                formatFunctions: processedData.formatFunctions,
+                joinLegendLabels: processedData.joinLegendLabels
             }
         };
+
         this._addComponentsForAxisType({
-            convertedData: convertedData,
+            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [

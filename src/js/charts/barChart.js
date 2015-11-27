@@ -17,11 +17,11 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @constructs BarChart
      * @extends ChartBase
      * @mixes axisTypeMixer
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(userData, theme, options) {
+    init: function(rawData, theme, options) {
         /**
          * className
          * @type {string}
@@ -29,34 +29,34 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.className = 'tui-bar-chart';
 
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options,
             hasAxes: true
         });
 
-        this._addComponents(this.convertedData, options.chartType);
+        this._addComponents(this.processedData, options.chartType);
     },
 
     /**
      * To make axes data
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertedData, bounds, options) {
+    _makeAxesData: function(processedData, bounds, options) {
         var xAxisData = axisDataMaker.makeValueAxisData({
-                values: convertedData.values,
+                values: processedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
-                formatFunctions: convertedData.formatFunctions,
+                formatFunctions: processedData.formatFunctions,
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels,
+                labels: processedData.labels,
                 isVertical: true
             });
 
@@ -68,23 +68,23 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * Add components
-     * @param {object} convertedData converted data
+     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, chartType) {
+    _addComponents: function(processedData, chartType) {
         var seriesData = {
             allowNegativeTooltip: true,
             data: {
-                values: convertedData.values,
-                formattedValues: convertedData.formattedValues,
-                formatFunctions: convertedData.formatFunctions,
-                joinLegendLabels: convertedData.joinLegendLabels
+                values: processedData.values,
+                formattedValues: processedData.formattedValues,
+                formatFunctions: processedData.formatFunctions,
+                joinLegendLabels: processedData.joinLegendLabels
             }
         };
 
         this._addComponentsForAxisType({
-            convertedData: convertedData,
+            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [

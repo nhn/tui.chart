@@ -56,7 +56,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         var el = dom.create('DIV', this.className);
         this._renderLegendArea(el, bound);
         this._attachEvent(el);
-        this.elLegendArea = el;
+        this.legendContainer = el;
         return el;
     },
 
@@ -65,7 +65,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      */
     resize: function(bound) {
-        this._renderLegendArea(this.elLegendArea, bound);
+        this._renderLegendArea(this.legendContainer, bound);
     },
 
     /**
@@ -176,15 +176,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _findLegendElement: function(elTarget) {
-        var elLegend;
+        var legendContainer;
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND)) {
-            elLegend = elTarget;
+            legendContainer = elTarget;
         } else {
-            elLegend = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_LEGEND);
+            legendContainer = dom.findParentByClass(elTarget, chartConst.CLASS_NAME_LEGEND);
         }
 
-        return elLegend;
+        return legendContainer;
     },
 
     /**
@@ -208,14 +208,14 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _onClick: function(e) {
         var elTarget = e.target || e.srcElement,
-            elLegend = this._findLegendElement(elTarget),
+            legendContainer = this._findLegendElement(elTarget),
             index;
 
-        if (!elLegend) {
+        if (!legendContainer) {
             return;
         }
 
-        index = parseInt(elLegend.getAttribute('data-index'), 10);
+        index = parseInt(legendContainer.getAttribute('data-index'), 10);
         this._selectLegend(index);
     },
 
