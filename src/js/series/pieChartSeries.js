@@ -29,7 +29,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * To make percent value.
-     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
      */
@@ -537,9 +537,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * On click event handler.
      * @param {MouseEvent} e mouse event
+     * @private
      * @override
      */
-    onClick: function(e) {
+    _onClick: function(e) {
         var that = this;
         this._handleMouseEvent(e, function(groupIndex, index, elTarget) {
             var elLegend = that._findLegendElement(elTarget),
@@ -561,9 +562,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * This is event handler for mouseover.
+     * @private
      * @param {MouseEvent} e mouse event
      */
-    onMouseover: function(e) {
+    _onMouseover: function(e) {
         var that = this;
 
         this._handleMouseEvent(e, function(groupIndex, index) {
@@ -574,9 +576,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * This is event handler for mouseout.
+     * @private
      * @param {MouseEvent} e mouse event
      */
-    onMouseout: function(e) {
+    _onMouseout: function(e) {
         var that = this;
 
         this._handleMouseEvent(e, function(groupIndex, index) {
@@ -589,9 +592,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
-        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

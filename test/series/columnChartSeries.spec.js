@@ -24,7 +24,7 @@ describe('ColumnChartSeries', function() {
             data: {
                 values: [],
                 formattedValues: [],
-                scale: {min: 0, max: 0}
+                limit: {min: 0, max: 0}
             },
             bound: {
                 dimension: {width: 200, height: 100}
@@ -138,7 +138,7 @@ describe('ColumnChartSeries', function() {
         it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 위아래로 설정됩니다.', function () {
             var result;
             series.percentValues = [[-0.25], [0.5]];
-            series.data.scale = {
+            series.data.limit = {
                 min: -40,
                 max: 60
             };

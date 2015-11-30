@@ -103,63 +103,63 @@ describe('ComboChart', function() {
         });
     });
 
-    describe('_getScales()', function() {
-        it('가로형 차트에서는 xAxis의 scale 정보를 chart type을 키로하여 반환합니다.', function() {
+    describe('_getLimitMap()', function() {
+        it('가로형 차트에서는 xAxis의 limit 정보를 chart type을 키로하여 반환합니다.', function() {
             var xAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
-                actual = axisTypeMixer._getScales({
+                actual = axisTypeMixer._getLimitMap({
                     xAxis: xAxis,
                     yAxis: yAxis
                 }, ['bar'], false);
-            expect(actual.bar).toBe(xAxis.scale);
+            expect(actual.bar).toBe(xAxis.limit);
         });
 
-        it('세로형 차트에서는 yAxis의 scale 정보를 chart type을 키로하여 반환합니다.', function() {
+        it('세로형 차트에서는 yAxis의 limit 정보를 chart type을 키로하여 반환합니다.', function() {
             var xAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
-                actual = axisTypeMixer._getScales({
+                actual = axisTypeMixer._getLimitMap({
                     xAxis: xAxis,
                     yAxis: yAxis
                 }, ['column'], true);
-            expect(actual.column).toBe(yAxis.scale);
+            expect(actual.column).toBe(yAxis.limit);
         });
 
-        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 yrAxis의 scale 정보를 포함하는 데이터도 포함됩니다.', function() {
+        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 yrAxis의 limit 정보를 포함하는 데이터도 포함됩니다.', function() {
             var xAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 yrAxis = {
-                    scale: {}
+                    limit: {}
                 },
-                actual = axisTypeMixer._getScales({
+                actual = axisTypeMixer._getLimitMap({
                     xAxis: xAxis,
                     yAxis: yAxis,
                     yrAxis: yrAxis
                 }, ['column', 'line'], true);
-            expect(actual.column).toBe(yAxis.scale);
-            expect(actual.line).toBe(yrAxis.scale);
+            expect(actual.column).toBe(yAxis.limit);
+            expect(actual.line).toBe(yrAxis.limit);
         });
     });
 
     describe('_makeSeriesDataForRendering()', function() {
-        it('가로형(!!isVertical === false) 차트의 시리즈 데이터는 x axis의 scale과 aligned를 반환합니다.', function() {
+        it('가로형(!!isVertical === false) 차트의 시리즈 데이터는 x axis의 limit과 aligned를 반환합니다.', function() {
             var xAxis = {
-                    scale: {},
+                    limit: {},
                     aligned: true
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 actual;
 
@@ -168,16 +168,16 @@ describe('ComboChart', function() {
                 yAxis: yAxis
             }, ['bar'], false);
 
-            expect(actual.series.scale).toBe(xAxis.scale);
+            expect(actual.series.limit).toBe(xAxis.limit);
             expect(actual.series.aligned).toBe(xAxis.aligned);
         });
 
-        it('세로형 단일 차트의 시리즈 데이터는 y axis scale과 x axis의 aligned를 반환합니다.', function() {
+        it('세로형 단일 차트의 시리즈 데이터는 y axis limit과 x axis의 aligned를 반환합니다.', function() {
             var xAxis = {
                     aligned: true
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 actual;
 
@@ -186,19 +186,19 @@ describe('ComboChart', function() {
                 yAxis: yAxis
             }, ['column'], true);
 
-            expect(actual.series.scale).toBe(yAxis.scale);
+            expect(actual.series.limit).toBe(yAxis.limit);
             expect(actual.series.aligned).toBe(xAxis.aligned);
         });
 
-        it('세로형 다중 차트의 시리즈 데이터는 option chart type 순서에 따라 chartType + "series" 조합을 key로하는 y axis scale, yr axis scale을 반환합니다.', function() {
+        it('세로형 다중 차트의 시리즈 데이터는 option chart type 순서에 따라 chartType + "series" 조합을 key로하는 y axis limit, yr axis limit을 반환합니다.', function() {
             var xAxis = {
                     aligned: true
                 },
                 yAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 yrAxis = {
-                    scale: {}
+                    limit: {}
                 },
                 actual;
 
@@ -209,9 +209,9 @@ describe('ComboChart', function() {
                 yrAxis: yrAxis
             }, ['column', 'line'], true);
 
-            expect(actual.columnSeries.scale).toBe(yAxis.scale);
+            expect(actual.columnSeries.limit).toBe(yAxis.limit);
             expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
-            expect(actual.lineSeries.scale).toBe(yrAxis.scale);
+            expect(actual.lineSeries.limit).toBe(yrAxis.limit);
             expect(actual.lineSeries.aligned).toBe(xAxis.aligned);
         });
     });
@@ -221,7 +221,7 @@ describe('ComboChart', function() {
             var actual;
             axisTypeMixer._makeAxesData = jasmine.createSpy('_makeAxesData').and.returnValue({
                 xAxis: {
-                    scale: {},
+                    limit: {},
                     aligned: true,
                     validTickCount: 0
                 },
@@ -236,7 +236,7 @@ describe('ComboChart', function() {
             expect(actual.plot.vTickCount).toBe(3);
             expect(actual.plot.hTickCount).toBe(0);
             expect(actual.customEvent.tickCount).toBe(3);
-            expect(actual.series.scale).toBeDefined();
+            expect(actual.series.limit).toBeDefined();
             expect(actual.series.aligned).toBe(true);
         });
     });

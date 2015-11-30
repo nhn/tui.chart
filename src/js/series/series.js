@@ -241,7 +241,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To make percent value.
-     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @param {string} stacked stacked option
      * @returns {array.<array.<number>>} percent values
      * @private
@@ -262,13 +262,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To make percent values about normal stacked option.
-     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array} percent values about normal stacked option.
      * @private
      */
     _makeNormalStackedPercentValues: function(data) {
-        var min = data.scale.min,
-            max = data.scale.max,
+        var min = data.limit.min,
+            max = data.limit.max,
             distance = max - min,
             percentValues = tui.util.map(data.values, function(values) {
                 var plusValues = tui.util.filter(values, function(value) {
@@ -286,7 +286,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To make percent values about percent stacked option.
-     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array} percent values about percent stacked option
      * @private
      */
@@ -306,13 +306,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To make normal percent value.
-     * @param {{values: array, scale: {min: number, max: number}}} data series data
+     * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
      */
     _makeNormalPercentValues: function(data) {
-        var min = data.scale.min,
-            max = data.scale.max,
+        var min = data.limit.min,
+            max = data.limit.max,
             distance = max - min,
             isLineTypeChart = predicate.isLineTypeChart(this.chartType),
             flag = 1,
@@ -337,14 +337,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Get scale distance from zero point.
+     * Get limit distance from zero point.
      * @param {number} size chart size (width or height)
-     * @param {{min: number, max: number}} scale scale
+     * @param {{min: number, max: number}} limit limit
      * @returns {{toMax: number, toMin: number}} pixel distance
      */
-    getScaleDistanceFromZeroPoint: function(size, scale) {
-        var min = scale.min,
-            max = scale.max,
+    getLimitDistanceFromZeroPoint: function(size, limit) {
+        var min = limit.min,
+            max = limit.max,
             distance = max - min,
             toMax = 0,
             toMin = 0;

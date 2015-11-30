@@ -20,7 +20,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * To make area type data for custom event.
      * @param {array.<array.<group>>} groupPositions group positions
      * @param {string} chartType cahrt type
-     * @returns {array} area type data for custom even
+     * @returns {array} area type data for custom event
      * @private
      */
     _makeData: function(groupPositions, chartType) {
@@ -46,7 +46,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object} index
      */
     findData: function(groupIndex, layerY) {
-        var result,
+        var result = null,
             min = 10000;
         tui.util.forEach(this.data[groupIndex], function(data) {
             var diff = Math.abs(layerY - data.bound.top);

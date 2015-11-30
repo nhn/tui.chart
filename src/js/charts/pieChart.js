@@ -91,7 +91,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     /**
      * To make rendering data for pie chart.
      * @param {object} bounds chart bounds
-     * * @param {object} bounds chart bounds
      * @return {object} data for rendering
      * @private
      * @override

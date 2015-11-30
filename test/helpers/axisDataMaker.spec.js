@@ -108,7 +108,7 @@ describe('axisDataMaker', function() {
     describe('_getComparingValue()', function() {
         it('tick info를 선정하는 기준이 되는 비교값을 계산하여 반환합니다.', function () {
             var value = maker._getComparingValue(10, 90, {
-                scale: {
+                limit: {
                     min: 0,
                     max: 80
                 },
@@ -122,13 +122,13 @@ describe('axisDataMaker', function() {
         it('후보군들의 비교값 중 비교값이 제일 작은 tick info를 선정하여 반환합니다.', function () {
             var tickInfo = maker._selectTickInfo(10, 90, [
                 {
-                    scale: {min: 0, max: 105},
+                    limit: {min: 0, max: 105},
                     tickCount: 4,
                     step: 35,
                     labels: [0, 35, 70, 105]
                 },
                 {
-                    scale: {min: 0, max: 100},
+                    limit: {min: 0, max: 100},
                     tickCount: 5,
                     step: 25,
                     labels: [0, 25, 50, 75, 100]
@@ -136,7 +136,7 @@ describe('axisDataMaker', function() {
             ]);
 
             expect(tickInfo).toEqual({
-                scale: {min: 0, max: 100},
+                limit: {min: 0, max: 100},
                 tickCount: 5,
                 step: 25,
                 labels: [0, 25, 50, 75, 100]
@@ -154,7 +154,7 @@ describe('axisDataMaker', function() {
                 }
             }, {});
             expect(tickInfo).toEqual({
-                scale: {min: 0, max: 100},
+                limit: {min: 0, max: 100},
                 tickCount: 6,
                 step: 20,
                 labels: [0, 20, 40, 60, 80, 100]
@@ -198,7 +198,7 @@ describe('axisDataMaker', function() {
         it('애초에 정수형 변환이 없었던 tick info는 되돌리는 작업이 수행되지 않은 결과값을 반환합니다.', function () {
             var tickInfo = maker._revertOriginalTypeTickInfo({
                 step: 5,
-                scale: {
+                limit: {
                     min: 1,
                     max: 10
                 },
@@ -206,7 +206,7 @@ describe('axisDataMaker', function() {
             }, 1);
             expect(tickInfo).toEqual({
                 step: 5,
-                scale: {
+                limit: {
                     min: 1,
                     max: 10
                 },
@@ -217,7 +217,7 @@ describe('axisDataMaker', function() {
         it('정수형으로 변환되었던 tick info를 원래 형태의 값으로 되롤린 결과값을 반환합니다.', function () {
             var tickInfo = maker._revertOriginalTypeTickInfo({
                 step: 5,
-                scale: {
+                limit: {
                     min: 1,
                     max: 10
                 },
@@ -225,7 +225,7 @@ describe('axisDataMaker', function() {
             }, 10);
             expect(tickInfo).toEqual({
                 step: 0.5,
-                scale: {
+                limit: {
                     min: 0.1,
                     max: 1
                 },
@@ -234,13 +234,13 @@ describe('axisDataMaker', function() {
         });
     });
 
-    describe('_minimizeTickScale()', function() {
-        it('사용자 값 범위를 넘어서는 scale에 대해 범위를 넘어서지 않게 조절된 결과값을 반환합니다.', function () {
-            var tickInfo = maker._minimizeTickScale({
+    describe('_minimizeTickLimit()', function() {
+        it('사용자 값 범위를 넘어서는 limit에 대해 범위를 넘어서지 않게 조절된 결과값을 반환합니다.', function () {
+            var tickInfo = maker._minimizeTickLimit({
                 userMin: 10,
                 userMax: 90,
                 tickInfo: {
-                    scale: {min: 0, max: 100},
+                    limit: {min: 0, max: 100},
                     step: 25,
                     tickCount: 6
                 },
@@ -248,7 +248,7 @@ describe('axisDataMaker', function() {
             });
 
             expect(tickInfo).toEqual({
-                scale: {min: 0, max: 100},
+                limit: {min: 0, max: 100},
                 step: 25,
                 tickCount: 5,
                 labels: [0, 25, 50, 75, 100]
@@ -256,11 +256,11 @@ describe('axisDataMaker', function() {
         });
 
         it('음수가 포함된 경우에 대해 처리한 결과값을 반환합니다.', function () {
-            var tickInfo = maker._minimizeTickScale({
+            var tickInfo = maker._minimizeTickLimit({
                 userMin: -6,
                 userMax: -1,
                 tickInfo: {
-                    scale: {min: -10, max: 10},
+                    limit: {min: -10, max: 10},
                     step: 5,
                     tickCount: 6
                 },
@@ -268,7 +268,7 @@ describe('axisDataMaker', function() {
             });
 
             expect(tickInfo).toEqual({
-                scale: {min: -10, max: 10},
+                limit: {min: -10, max: 10},
                 step: 5,
                 tickCount: 5,
                 labels: [-10, -5, 0, 5, 10]
@@ -280,7 +280,7 @@ describe('axisDataMaker', function() {
         it('step을 반으로 나누었을 때의 tickCount가 초기 tickCount와 인접하면 step을 변경하여 결과값을 반환합니다.', function () {
             var result = maker._divideTickStep({
                 step: 50,
-                scale: {
+                limit: {
                     min: 0,
                     max: 100
                 },
@@ -289,7 +289,7 @@ describe('axisDataMaker', function() {
 
             expect(result).toEqual({
                 step: 25,
-                scale: {
+                limit: {
                     min: 0,
                     max: 100
                 },
@@ -308,12 +308,12 @@ describe('axisDataMaker', function() {
                 userMin: 10,
                 userMax: 90,
                 isMinus: false,
-                scale: maker._makeBaseScale(0, 100, {}),
+                limit: maker._makeBaseLimit(0, 100, {}),
                 options: {}
             });
 
             expect(result).toEqual({
-                scale: {
+                limit: {
                     min: 0,
                     max: 120
                 },
@@ -453,13 +453,14 @@ describe('axisDataMaker', function() {
         });
     });
 
-    describe('_normalizeScale()', function() {
-        it('정규화된 scale 값을 반환합니다.', function () {
-            var result = maker._makeNormalizedMax({
-                min: 0,
+    describe('normalizeLimit()', function() {
+        it('정규화된 limit 값을 반환합니다.', function () {
+            var result = maker.normalizeLimit({
+                min: 10,
                 max: 110
             }, 20, 5);
-            expect(result).toBe(120);
+            expect(result.min).toBe(0);
+            expect(result.max).toBe(120);
         });
     });
 
@@ -472,13 +473,13 @@ describe('axisDataMaker', function() {
             }, {});
             expect(candidates).toEqual([
                 {
-                    scale: {min: 0, max: 120},
+                    limit: {min: 0, max: 120},
                     tickCount: 4,
                     step: 40,
                     labels: [0, 40, 80, 120]
                 },
                 {
-                    scale: {min: 0, max: 120},
+                    limit: {min: 0, max: 120},
                     tickCount: 5,
                     step: 30,
                     labels: [0, 30, 60, 90, 120]
@@ -487,17 +488,17 @@ describe('axisDataMaker', function() {
         });
     });
 
-    describe('_makeBaseScale()', function() {
-        it('기본 scale 값을 계산하여 반환합니다.', function () {
-            var result = maker._makeBaseScale(-90, 0, {});
+    describe('_makeBaseLimit()', function() {
+        it('기본 limit 값을 계산하여 반환합니다.', function () {
+            var result = maker._makeBaseLimit(-90, 0, {});
             expect(result).toEqual({
                 min: -94.5,
                 max: -0
             });
         });
 
-        it('옵션이 있는 경우에는 계산된 기본 scale에 옵션 정보를 적용하여 반환합니다.', function () {
-            var result = maker._makeBaseScale(-90, 0, {min: -90, max: 10});
+        it('옵션이 있는 경우에는 계산된 기본 limit에 옵션 정보를 적용하여 반환합니다.', function () {
+            var result = maker._makeBaseLimit(-90, 0, {min: -90, max: 10});
             expect(result).toEqual({
                 min: -90,
                 max: 10
@@ -521,7 +522,7 @@ describe('axisDataMaker', function() {
     });
 
     describe('makeValueAxisData()', function() {
-        it('stacked 옵션이 없는 value 타입 axis data를 생성합니다. scale.max는 입력 값 중 최대값에 영향을 받습니다.', function () {
+        it('stacked 옵션이 없는 value 타입 axis data를 생성합니다. limit.max는 입력 값 중 최대값에 영향을 받습니다.', function () {
             var result = maker.makeValueAxisData({
                 values: [
                     [70, 10],
@@ -539,7 +540,7 @@ describe('axisDataMaker', function() {
                 labels: [0, 30, 60, 90],
                 tickCount: 4,
                 validTickCount: 4,
-                scale: {
+                limit: {
                     min: 0,
                     max: 90
                 },
@@ -550,7 +551,7 @@ describe('axisDataMaker', function() {
             });
         });
 
-        it('stacked 옵션이 "normal"인 value 타입 axis data를 생성합니다. scale.max는 행(ex: [80, 30]) 의 합산값에 영향을 받습니다.', function () {
+        it('stacked 옵션이 "normal"인 value 타입 axis data를 생성합니다. limit.max는 행(ex: [80, 30]) 의 합산값에 영향을 받습니다.', function () {
             var result = maker.makeValueAxisData({
                 values: [
                     [70, 10],
@@ -569,7 +570,7 @@ describe('axisDataMaker', function() {
                 labels: [0, 30, 60, 90, 120],
                 tickCount: 5,
                 validTickCount: 5,
-                scale: {
+                limit: {
                     min: 0,
                     max: 120
                 },
@@ -580,7 +581,7 @@ describe('axisDataMaker', function() {
             });
         });
 
-        it('stacked 옵션이 "percent"인 값 타입의 axis data를 생성합니다. scale은 %에 대한 정보를 제공하며 항상 [0, 25, 50, 70, 100]의 레이블을 제공합니다.', function () {
+        it('stacked 옵션이 "percent"인 값 타입의 axis data를 생성합니다. limit은 %에 대한 정보를 제공하며 항상 [0, 25, 50, 70, 100]의 레이블을 제공합니다.', function () {
             var result = maker.makeValueAxisData({
                 values: [
                     [70, 10],
@@ -599,7 +600,7 @@ describe('axisDataMaker', function() {
                 labels: [0, 25, 50, 75, 100],
                 tickCount: 5,
                 validTickCount: 5,
-                scale: {
+                limit: {
                     min: 0,
                     max: 100
                 },

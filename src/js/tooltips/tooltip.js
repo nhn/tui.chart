@@ -207,9 +207,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * On mouseover event handler for tooltip area
+     * @private
      * @param {MouseEvent} e mouse event
      */
-    onMouseover: function(e) {
+    _onMouseover: function(e) {
         var elTarget = e.target || e.srcElement,
             indexes, chartType;
 
@@ -226,9 +227,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * On mouseout event handler for tooltip area
+     * @private
      * @param {MouseEvent} e mouse event
      */
-    onMouseout: function(e) {
+    _onMouseout: function(e) {
         var elTarget = e.target || e.srcElement;
 
         if (!dom.hasClass(elTarget, chartConst.TOOLTIP_PREFIX)) {
@@ -578,8 +580,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        eventListener.bindEvent('mouseover', el, tui.util.bind(this.onMouseover, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

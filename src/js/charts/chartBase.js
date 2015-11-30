@@ -112,7 +112,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * The component types are axis, legend, plot, series and customEvent.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
      * @param {string} name component name
-     * @param {function} Component component function
+     * @param {function} Component component constructor
      * @param {object} params parameters
      * @private
      */

@@ -21,7 +21,7 @@ describe('Series', function() {
             data: {
                 values: [[20], [40]],
                 formattedValues: [[20], [40]],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             },
             theme: {
                 label: {
@@ -38,7 +38,7 @@ describe('Series', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makePercentValues({
                 values: [[20], [40], [80], [120]],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
@@ -48,7 +48,7 @@ describe('Series', function() {
                 values: [
                     [20, 80], [40, 60], [60, 40], [80, 20]
                 ],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             }, 'normal');
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
@@ -58,7 +58,7 @@ describe('Series', function() {
                 values: [
                     [20, 80], [40, 60], [60, 40], [80, 20]
                 ],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             }, 'percent');
             expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
@@ -68,7 +68,7 @@ describe('Series', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var result = series._makeNormalPercentValues({
                 values: [[20], [40], [80], [120]],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
@@ -76,17 +76,17 @@ describe('Series', function() {
         it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
             var result = series._makeNormalPercentValues({
                 values: [[-20], [-40], [-80], [-120]],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             });
             expect(result).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
         });
 
-        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 scale 최소값을 빼고 계산합니다.', function () {
+        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
             var result;
             series.chartType = 'line';
             result = series._makeNormalPercentValues({
                 values: [[60], [40], [80], [120]],
-                scale: {min: 20, max: 180}
+                limit: {min: 20, max: 180}
             });
             expect(result).toEqual([[0.25], [0.125], [0.375], [0.625]]);
         });
@@ -98,7 +98,7 @@ describe('Series', function() {
                 values: [
                     [20, 80], [40, 60], [60, 40], [80, 20]
                 ],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
@@ -110,15 +110,15 @@ describe('Series', function() {
                 values: [
                     [20, 80], [40, 60], [60, 40], [80, 20]
                 ],
-                scale: {min: 0, max: 160}
+                limit: {min: 0, max: 160}
             });
             expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
     });
 
-    describe('getScaleDistanceFromZeroPoint()', function() {
-        it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 scale min, max까지의 거리를 구합니다.', function() {
-            var result = series.getScaleDistanceFromZeroPoint(100, {
+    describe('getLimitDistanceFromZeroPoint()', function() {
+        it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 limit min, max까지의 거리를 구합니다.', function() {
+            var result = series.getLimitDistanceFromZeroPoint(100, {
                 min: -20,
                 max: 80
             });
@@ -129,7 +129,7 @@ describe('Series', function() {
         });
 
         it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
-            var result = series.getScaleDistanceFromZeroPoint(100, {
+            var result = series.getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
             });
@@ -140,7 +140,7 @@ describe('Series', function() {
         });
 
         it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
-            var result = series.getScaleDistanceFromZeroPoint(100, {
+            var result = series.getLimitDistanceFromZeroPoint(100, {
                 min: -80,
                 max: -20
             });

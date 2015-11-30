@@ -15,6 +15,12 @@ var renderUtil = require('../helpers/renderUtil'),
     Tooltip = require('../tooltips/tooltip'),
     GroupTooltip = require('../tooltips/groupTooltip');
 
+
+/**
+ * Axis limit value.
+ * @typedef {{min: number, max: number}} axisLimit
+ */
+
 /**
  * axisTypeMixer is base class of axis type chart(bar, column, line, area).
  * @mixin
@@ -134,24 +140,24 @@ var axisTypeMixer = {
     },
 
     /**
-     * Get scales.
+     * Get limit map.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
      * @param {array.<string>} chartTypes chart types
-     * @returns {array.<{min: number, max: number}>} scales
      * @param {boolean} isVertical whether vertical or not
+     * @returns {{column: ?axisLimit, line: ?axisLimit}} limit map
      * @private
      */
-    _getScales: function(axesData, chartTypes, isVertical) {
-        var scales = {},
-            yAxisScale = axesData.yAxis.scale;
+    _getLimitMap: function(axesData, chartTypes, isVertical) {
+        var limitMap = {},
+            yAxisLimit = axesData.yAxis.limit;
 
-        scales[chartTypes[0]] = isVertical ? yAxisScale : axesData.xAxis.scale;
+        limitMap[chartTypes[0]] = isVertical ? yAxisLimit : axesData.xAxis.limit;
 
         if (chartTypes.length > 1) {
-            scales[chartTypes[1]] = axesData.yrAxis ? axesData.yrAxis.scale : yAxisScale;
+            limitMap[chartTypes[1]] = axesData.yrAxis ? axesData.yrAxis.limit : yAxisLimit;
         }
 
-        return scales;
+        return limitMap;
     },
 
     /**
@@ -163,14 +169,14 @@ var axisTypeMixer = {
      * @private
      */
     _makeSeriesDataForRendering: function(axesData, chartTypes, isVertical) {
-        var scales = this._getScales(axesData, chartTypes, isVertical),
+        var limitMap = this._getLimitMap(axesData, chartTypes, isVertical),
             aligned = axesData.xAxis.aligned,
             seriesData = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             var key = chartTypes.length > 1 ? chartType + 'Series' : 'series';
             seriesData[key] = {
-                scale: scales[chartType],
+                limit: limitMap[chartType],
                 aligned: aligned
             };
         });

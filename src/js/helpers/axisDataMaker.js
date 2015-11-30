@@ -85,7 +85,7 @@ var axisDataMaker = {
      *      tickCount: number,
      *      validTickCount: number,
      *      isLabelAxis: boolean,
-     *      scale: {min: number, max: number},
+     *      limit: {min: number, max: number},
      *      isVertical: boolean
      * }} axis data
      */
@@ -112,7 +112,7 @@ var axisDataMaker = {
             labels: this.formatLabels(tickInfo.labels, formatFunctions),
             tickCount: tickInfo.tickCount,
             validTickCount: tickInfo.tickCount,
-            scale: tickInfo.scale,
+            limit: tickInfo.limit,
             step: tickInfo.step,
             isVertical: isVertical,
             isPositionRight: isPositionRight,
@@ -180,13 +180,13 @@ var axisDataMaker = {
      * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
-     * @param {{scale: {min: number, max: number}, step: number}} tickInfo tick info
+     * @param {{limit: {min: number, max: number}, step: number}} tickInfo tick info
      * @returns {number} comparing value
      * @private
      */
     _getComparingValue: function(min, max, tickInfo) {
-        var diffMax = abs(tickInfo.scale.max - max),
-            diffMin = abs(min - tickInfo.scale.min),
+        var diffMax = abs(tickInfo.limit.max - max),
+            diffMin = abs(min - tickInfo.limit.min),
             weight = Math.pow(10, tui.util.lengthAfterPoint(tickInfo.step));
         return (diffMax + diffMin) * weight;
     },
@@ -197,7 +197,7 @@ var axisDataMaker = {
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {array.<object>} candidates tick info candidates
-     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} selected tick info
+     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} selected tick info
      * @private
      */
     _selectTickInfo: function(min, max, candidates) {
@@ -207,7 +207,7 @@ var axisDataMaker = {
     },
 
     /**
-     * Get tick count and scale.
+     * Get tick count and limit.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.values base values
@@ -215,7 +215,7 @@ var axisDataMaker = {
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {string} params.chartType chat type
      * @param {{min: number, max:number}} options axis options
-     * @returns {{tickCount: number, scale: object}} tick info
+     * @returns {{tickCount: number, limit: object}} tick info
      * @private
      */
     _getTickInfo: function(params, options) {
@@ -287,9 +287,9 @@ var axisDataMaker = {
     /**
      * Revert tick info to original type.
      * @memberOf module:axisDataMaker
-     * @param {{step: number, scale: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
+     * @param {{step: number, limit: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
      * @param {number} divideNum divide num
-     * @returns {{step: number, scale: {min: number, max: number}, labels: array.<number>}} divided tick info
+     * @returns {{step: number, limit: {min: number, max: number}, labels: array.<number>}} divided tick info
      * @private
      */
     _revertOriginalTypeTickInfo: function(tickInfo, divideNum) {
@@ -298,8 +298,8 @@ var axisDataMaker = {
         }
 
         tickInfo.step = tui.util.division(tickInfo.step, divideNum);
-        tickInfo.scale.min = tui.util.division(tickInfo.scale.min, divideNum);
-        tickInfo.scale.max = tui.util.division(tickInfo.scale.max, divideNum);
+        tickInfo.limit.min = tui.util.division(tickInfo.limit.min, divideNum);
+        tickInfo.limit.max = tui.util.division(tickInfo.limit.max, divideNum);
         tickInfo.labels = tui.util.map(tickInfo.labels, function(label) {
             return tui.util.division(label, divideNum);
         });
@@ -319,24 +319,24 @@ var axisDataMaker = {
     },
 
     /**
-     * To minimize tick scale.
+     * To minimize tick limit.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.userMin user min
      *      @param {number} params.userMax user max
-     *      @param {{tickCount: number, scale: object}} params.tickInfo tick info
+     *      @param {{tickCount: number, limit: object}} params.tickInfo tick info
      *      @param {{min: number, max:number}} params.options axis options
-     * @returns {{tickCount: number, scale: object, labels: array}} corrected tick info
+     * @returns {{tickCount: number, limit: object, labels: array}} corrected tick info
      * @private
      */
-    _minimizeTickScale: function(params) {
+    _minimizeTickLimit: function(params) {
         var tickInfo = params.tickInfo,
             ticks = tui.util.range(1, tickInfo.tickCount),
             options = params.options,
             step = tickInfo.step,
-            scale = tickInfo.scale,
-            tickMax = scale.max,
-            tickMin = scale.min,
+            limit = tickInfo.limit,
+            tickMax = limit.max,
+            tickMin = limit.min,
             isUndefinedMin = tui.util.isUndefined(options.min),
             isUndefinedMax = tui.util.isUndefined(options.max),
             labels;
@@ -353,17 +353,17 @@ var axisDataMaker = {
             // min 값에 변경 여유가 있을 경우
             if ((isUndefinedMin && params.userMin > curMin) ||
                 (!isUndefinedMin && options.min >= curMin)) {
-                scale.min = curMin;
+                limit.min = curMin;
             }
 
             // max 값에 변경 여유가 있을 경우
             if ((isUndefinedMin && params.userMax < curMax) ||
                 (!isUndefinedMax && options.max <= curMax)) {
-                scale.max = curMax;
+                limit.max = curMax;
             }
         });
 
-        labels = calculator.makeLabelsFromScale(scale, step);
+        labels = calculator.makeLabelsFromLimit(limit, step);
         tickInfo.labels = labels;
         tickInfo.step = step;
         tickInfo.tickCount = labels.length;
@@ -373,20 +373,20 @@ var axisDataMaker = {
     /**
      * To divide tick step.
      * @memberOf module:axisDataMaker
-     * @param {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
+     * @param {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
      * @param {number} orgTickCount original tickCount
-     * @returns {{scale: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
+     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
      * @private
      */
     _divideTickStep: function(tickInfo, orgTickCount) {
         var step = tickInfo.step,
-            scale = tickInfo.scale,
+            limit = tickInfo.limit,
             tickCount = tickInfo.tickCount;
         // step 2의 배수 이면서 변경된 tickCount의 두배수-1이 tickCount보다 orgTickCount와 차이가 덜나거나 같으면 step을 반으로 변경한다.
         if ((step % 2 === 0) &&
             abs(orgTickCount - ((tickCount * 2) - 1)) <= abs(orgTickCount - tickCount)) {
             step = step / 2;
-            tickInfo.labels = calculator.makeLabelsFromScale(scale, step);
+            tickInfo.labels = calculator.makeLabelsFromLimit(limit, step);
             tickInfo.tickCount = tickInfo.labels.length;
             tickInfo.step = step;
         }
@@ -398,15 +398,15 @@ var axisDataMaker = {
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.tickCount tick count
-     *      @param {number} params.min scale min
-     *      @param {number} params.max scale max
+     *      @param {number} params.min limit min
+     *      @param {number} params.max limit max
      *      @param {number} params.userMin minimum value of user data
      *      @param {number} params.userMax maximum value of user data
-     *      @param {boolean} params.isMinus whether scale is minus or not
+     *      @param {boolean} params.isMinus whether limit is minus or not
      *      @param {string} params.chartType chart type
      *      @param {{min: number, max: number}} params.options axis options
      * @returns {{
-     *      scale: {min: number, max: number},
+     *      limit: {min: number, max: number},
      *      tickCount: number,
      *      step: number,
      *      labels: array.<number>
@@ -414,21 +414,21 @@ var axisDataMaker = {
      * @private
      */
     _makeTickInfo: function(params) {
-        var scale = params.scale,
+        var limit = params.limit,
             step, tickInfo;
 
-        // 01. 기본 scale 정보로 step 얻기
-        step = calculator.getScaleStep(scale, params.tickCount);
+        // 01. 기본 limit 정보로 step 얻기
+        step = calculator.calculateStepFromLimit(limit, params.tickCount);
 
         // 02. step 정규화 시키기 (ex: 0.3 --> 0.5, 7 --> 10)
         step = this._normalizeStep(step);
 
-        // 03. scale 정규화 시키기
-        scale = this._normalizeScale(scale, step, params.tickCount);
+        // 03. limit 정규화 시키기
+        limit = this.normalizeLimit(limit, step, params.tickCount);
 
-        // 04. line차트의 경우 사용자의 min값이 scale의 min값과 같을 경우, min값을 1 step 감소 시킴
-        scale.min = this._addMinPadding({
-            min: scale.min,
+        // 04. line차트의 경우 사용자의 min값이 limit의 min값과 같을 경우, min값을 1 step 감소 시킴
+        limit.min = this._addMinPadding({
+            min: limit.min,
             step: step,
             userMin: params.userMin,
             minOption: params.options.min,
@@ -436,19 +436,19 @@ var axisDataMaker = {
         });
 
         // 04. 사용자의 max값이 scael max와 같을 경우, max값을 1 step 증가 시킴
-        scale.max = this._addMaxPadding({
-            max: scale.max,
+        limit.max = this._addMaxPadding({
+            max: limit.max,
             step: step,
             userMax: params.userMax,
             maxOption: params.options.max,
             chartType: params.chartType
         });
 
-        // 05. axis scale이 사용자 min, max와 거리가 멀 경우 조절
-        tickInfo = this._minimizeTickScale({
+        // 05. axis limit이 사용자 min, max와 거리가 멀 경우 조절
+        tickInfo = this._minimizeTickLimit({
             userMin: params.userMin,
             userMax: params.userMax,
-            tickInfo: {scale: scale, step: step, tickCount: params.tickCount},
+            tickInfo: {limit: limit, step: step, tickCount: params.tickCount},
             options: params.options
         });
 
@@ -457,14 +457,14 @@ var axisDataMaker = {
     },
 
     /**
-     * Add scale min padding.
+     * Add limit min padding.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @prams {number} params.min scale min
+     *      @prams {number} params.min limit min
      *      @param {number} params.userMin minimum value of user data
      *      @param {number} params.minOption min option
      *      @param {number} params.step tick step
-     * @returns {number} scale min
+     * @returns {number} limit min
      * @private
      */
     _addMinPadding: function(params) {
@@ -473,7 +473,7 @@ var axisDataMaker = {
         if ((!predicate.isLineChart(params.chartType) && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
             return min;
         }
-        // normalize된 scale min값이 user min값과 같을 경우 step 감소
+        // normalize된 limit min값이 user min값과 같을 경우 step 감소
         if (params.min === params.userMin) {
             min -= params.step;
         }
@@ -481,14 +481,14 @@ var axisDataMaker = {
     },
 
     /**
-     * Add scale max padding.
+     * Add limit max padding.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @prams {number} params.max scale max
+     *      @prams {number} params.max limit max
      *      @param {number} params.userMax maximum value of user data
      *      @param {number} params.maxOption max option
      *      @param {number} params.step tick step
-     * @returns {number} scale max
+     * @returns {number} limit max
      * @private
      */
     _addMaxPadding: function(params) {
@@ -498,7 +498,7 @@ var axisDataMaker = {
             return max;
         }
 
-        // normalize된 scale max값이 user max값과 같을 경우 step 증가
+        // normalize된 limit max값이 user max값과 같을 경우 step 증가
         if (tui.util.isUndefined(params.maxOption) && (params.max === params.userMax)) {
             max += params.step;
         }
@@ -528,16 +528,16 @@ var axisDataMaker = {
     /**
      * To make normalized max.
      * @memberOf module:axisDataMaker
-     * @param {{min: number, max: number}} scale scale
+     * @param {{min: number, max: number}} limit limit
      * @param {number} step tick step
      * @param {number} tickCount tick count
      * @returns {number} normalized max
      * @private
      */
-    _makeNormalizedMax: function(scale, step, tickCount) {
+    _makeNormalizedMax: function(limit, step, tickCount) {
         var minMaxDiff = tui.util.multiplication(step, tickCount - 1),
-            normalizedMax = tui.util.addition(scale.min, minMaxDiff),
-            maxDiff = scale.max - normalizedMax,
+            normalizedMax = tui.util.addition(limit.min, minMaxDiff),
+            maxDiff = limit.max - normalizedMax,
             modDiff, divideDiff;
         // normalize된 max값이 원래의 max값 보다 작을 경우 step을 증가시켜 큰 값으로 만들기
         if (maxDiff > 0) {
@@ -549,18 +549,18 @@ var axisDataMaker = {
     },
 
     /**
-     * To normalize scale.
+     * To normalize limit.
      * @memberOf module:axisDataMaker
-     * @param {{min: number, max: number}} scale base scale
+     * @param {{min: number, max: number}} limit base limit
      * @param {number} step tick step
      * @param {number} tickCount tick count
-     * @returns {{min: number, max: number}} normalized scale
+     * @returns {{min: number, max: number}} normalized limit
      * @private
      */
-    _normalizeScale: function(scale, step, tickCount) {
-        scale.min = this._normalizeMin(scale.min, step);
-        scale.max = this._makeNormalizedMax(scale, step, tickCount);
-        return scale;
+    normalizeLimit: function(limit, step, tickCount) {
+        limit.min = this._normalizeMin(limit.min, step);
+        limit.max = this._makeNormalizedMax(limit, step, tickCount);
+        return limit;
     },
 
     /**
@@ -580,15 +580,15 @@ var axisDataMaker = {
             userMax = params.max,
             min = params.min,
             max = params.max,
-            scale, candidates;
+            limit, candidates;
 
-        // min, max만으로 기본 scale 얻기
-        scale = this._makeBaseScale(min, max, options);
+        // min, max만으로 기본 limit 얻기
+        limit = this._makeBaseLimit(min, max, options);
 
         candidates = tui.util.map(params.tickCounts, function(tickCount) {
             return this._makeTickInfo({
                 tickCount: tickCount,
-                scale: tui.util.extend({}, scale),
+                limit: tui.util.extend({}, limit),
                 userMin: userMin,
                 userMax: userMax,
                 chartType: params.chartType,
@@ -599,17 +599,17 @@ var axisDataMaker = {
     },
 
     /**
-     * To make base scale
+     * To make base limit
      * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {{min: number, max: number}} options axis options
-     * @returns {{min: number, max: number}} base scale
+     * @returns {{min: number, max: number}} base limit
      * @private
      */
-    _makeBaseScale: function(min, max, options) {
+    _makeBaseLimit: function(min, max, options) {
         var isMinus = false,
-            tmpMin, scale;
+            tmpMin, limit;
 
         if (min < 0 && max <= 0) {
             isMinus = true;
@@ -618,18 +618,18 @@ var axisDataMaker = {
             max = -tmpMin;
         }
 
-        scale = calculator.calculateScale(min, max);
+        limit = calculator.calculateLimit(min, max);
 
         if (isMinus) {
-            tmpMin = scale.min;
-            scale.min = -scale.max;
-            scale.max = -tmpMin;
+            tmpMin = limit.min;
+            limit.min = -limit.max;
+            limit.max = -tmpMin;
         }
 
-        scale.min = !tui.util.isUndefined(options.min) ? options.min : scale.min;
-        scale.max = !tui.util.isUndefined(options.max) ? options.max : scale.max;
+        limit.min = !tui.util.isUndefined(options.min) ? options.min : limit.min;
+        limit.max = !tui.util.isUndefined(options.max) ? options.max : limit.max;
 
-        return scale;
+        return limit;
     },
 
     /**

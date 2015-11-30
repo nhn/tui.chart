@@ -32,9 +32,9 @@ var boundsMaker = {
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
             max = tui.util.max(flattenValues),
-            scale = calculator.calculateScale(min, max),
-            minLabel = calculator.normalizeAxisNumber(scale.min),
-            maxLabel = calculator.normalizeAxisNumber(scale.max),
+            limit = calculator.calculateLimit(min, max),
+            minLabel = calculator.normalizeAxisNumber(limit.min),
+            maxLabel = calculator.normalizeAxisNumber(limit.max),
             fns = formatFunctions && formatFunctions.slice() || [];
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
         fns.unshift(maxLabel);

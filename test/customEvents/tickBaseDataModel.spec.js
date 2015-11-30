@@ -18,7 +18,7 @@ describe('TickBaseDataModel', function() {
     });
 
     describe('_makeLineTypeData()', function() {
-        it('line type 차트의 경우는 tick과 tick 사이를 경계로 분할하여 scale 데이터를 생성합니다.', function() {
+        it('line type 차트의 경우는 tick과 tick 사이를 경계로 분할하여 limit 데이터를 생성합니다.', function() {
             var actual = dataModel._makeLineTypeData(200, 3),
                 expected = [{min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 250}];
             expect(actual).toEqual(expected);
@@ -26,7 +26,7 @@ describe('TickBaseDataModel', function() {
     });
 
     describe('_makeNormalData()', function() {
-        it('line type 차트가 아닌 경우에는 tick 지점을 기준으로 분할하여 scale 데이터를 생성합니다.', function() {
+        it('line type 차트가 아닌 경우에는 tick 지점을 기준으로 분할하여 limit 데이터를 생성합니다.', function() {
             var actual = dataModel._makeNormalData(200, 3),
                 expected = [{min: 0, max: 100}, {min: 100, max: 200}];
             expect(actual).toEqual(expected);
@@ -78,7 +78,7 @@ describe('TickBaseDataModel', function() {
     });
 
     describe('makeRange()', function() {
-        it('라인타입인 경우에는 index에 해당하는 data(scale)의 중간값을 툴팁 범위로 반환합니다.', function() {
+        it('라인타입인 경우에는 index에 해당하는 data(limit)의 중간값을 툴팁 범위로 반환합니다.', function() {
             var actual, expected;
             dataModel.data = [
                 {min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 250}

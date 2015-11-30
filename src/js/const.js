@@ -121,7 +121,7 @@ var chartConst = {
      * @type {object}
      */
     PERCENT_STACKED_TICK_INFO: {
-        scale: {
+        limit: {
             min: 0,
             max: 100
         },

@@ -17,14 +17,21 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
      */
     init: function() {
         CustomEventBase.apply(this, arguments);
+
+        /**
+         * previous found data
+         * @type {null | object}
+         */
+        this.prevFoundData = null;
     },
 
     /**
      * On mousemove.
      * @param {MouseEvent} e mouse event object
+     * @private
      * @override
      */
-    onMousemove: function(e) {
+    _onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
             clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
             foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
@@ -35,13 +42,13 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
 
         if (this.prevFoundData) {
             this.fire('hideTooltip', this.prevFoundData);
-            delete this.prevFoundData;
         }
 
         if (foundData) {
             this.fire('showTooltip', foundData);
-            this.prevFoundData = foundData;
         }
+
+        this.prevFoundData = foundData;
     },
 
     /**
@@ -52,7 +59,7 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
     onMouseout: function() {
         if (this.prevFoundData) {
             this.fire('hideTooltip', this.prevFoundData);
-            delete this.prevFoundData;
+            this.prevFoundData = null;
         }
     }
 });

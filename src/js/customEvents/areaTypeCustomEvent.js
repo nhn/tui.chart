@@ -19,11 +19,18 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      */
     init: function(params) {
         CustomEventBase.call(this, params);
+
+        /**
+         * previous found data
+         * @type {null | object}
+         */
+        this.prevFoundData = null;
     },
 
     /**
      * Initialize data of custom event
      * @param {array.<object>} seriesInfos series infos
+     * @override
      */
     initCustomEventData: function(seriesInfos) {
         var seriesInfo = seriesInfos[0];
@@ -34,9 +41,10 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     /**
      * On mousemove.
      * @param {MouseEvent} e mouse event object
+     * @private
      * @override
      */
-    onMousemove: function(e) {
+    _onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
             bound = elTarget.getBoundingClientRect(),
             layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
@@ -50,22 +58,22 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
         if (foundData) {
             this.fire('showTooltip', foundData);
-            this.prevFoundData = foundData;
         } else if (this.prevFoundData) {
             this.fire('hideTooltip', this.prevFoundData);
-            delete this.prevFoundData;
         }
+        this.prevFoundData = foundData;
     },
 
     /**
      * On mouseout.
      * @param {MouseEvent} e mouse event object
+     * @private
      * @override
      */
-    onMouseout: function() {
+    _onMouseout: function() {
         if (this.prevFoundData) {
             this.fire('hideTooltip', this.prevFoundData);
-            delete this.prevFoundData;
+            this.prevFoundData = null;
         }
     }
 });

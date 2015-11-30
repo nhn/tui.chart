@@ -119,14 +119,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     /**
      * On click
      * @param {mouseevent} e mouse event
+     * @private
      */
-    onClick: function(e) {
+    _onClick: function(e) {
         var elTarget = e.target || e.srcElement,
             clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
             foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
         if (!this._isChanged(this.selectedData, foundData)) {
             this._unselectSelectedData();
-            return;
         } else if (foundData) {
             if (this.selectedData) {
                 this._unselectSelectedData();
@@ -138,24 +138,26 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * On mouse move
+     * @private
      * @abstract
      */
-    onMousemove: function() {},
+    _onMousemove: function() {},
 
     /**
      * On mouse out
+     * @private
      * @abstract
      */
-    onMouseout: function() {},
+    _onMouseout: function() {},
 
     /**
      * Attach event
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
-        eventListener.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('mousemove', el, tui.util.bind(this._onMousemove, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

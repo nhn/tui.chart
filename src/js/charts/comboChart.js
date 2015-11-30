@@ -302,8 +302,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _increaseYAxisTickCount: function(increaseTickCount, toData, formatFunctions) {
-        toData.scale.max += toData.step * increaseTickCount;
-        toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromScale(toData.scale, toData.step), formatFunctions);
+        toData.limit.max += toData.step * increaseTickCount;
+        toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromLimit(toData.limit, toData.step), formatFunctions);
         toData.tickCount += increaseTickCount;
         toData.validTickCount += increaseTickCount;
     },

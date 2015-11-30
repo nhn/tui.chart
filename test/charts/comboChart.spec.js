@@ -134,7 +134,7 @@ describe('ComboChart', function() {
                 labels: [0, 30, 60, 90],
                 tickCount: 4,
                 validTickCount: 4,
-                scale: {
+                limit: {
                     min: 0,
                     max: 90
                 },
@@ -188,7 +188,7 @@ describe('ComboChart', function() {
                 labels: [10, 20, 30, 40, 50, 60, 70],
                 tickCount: 7,
                 validTickCount: 7,
-                scale: {
+                limit: {
                     min: 10,
                     max: 70
                 },
@@ -322,12 +322,12 @@ describe('ComboChart', function() {
         });
     });
 
-    describe('_increaseYAxisScaleMax()', function() {
-        it('전달 인자 만큼의 tick count를 증가시킵니다.(label, scale.max 정보도 동시에 업데이트합니다)', function () {
+    describe('_increaseYAxisTickCount()', function() {
+        it('전달 인자 만큼의 tick count를 증가시킵니다.(label, limit.max 정보도 동시에 업데이트합니다)', function () {
             var targetTickInfo = {
                 tickCount: 4,
                 validTickCount: 4,
-                scale: {
+                limit: {
                     min: 0,
                     max: 60
                 },
@@ -340,7 +340,7 @@ describe('ComboChart', function() {
                 labels: [0, 20, 40, 60, 80],
                 tickCount: 5,
                 validTickCount: 5,
-                scale: {
+                limit: {
                     min: 0,
                     max: 80
                 },

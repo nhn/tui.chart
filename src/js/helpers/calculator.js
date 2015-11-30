@@ -14,17 +14,17 @@ var chartConst = require('../const');
  */
 var calculator = {
     /**
-     * To calculate scale from chart min, max data.
+     * To calculate limit from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
-     * @returns {{min: number, max: number}} scale axis scale
+     * @returns {{min: number, max: number}} limit axis limit
      */
-    calculateScale: function(min, max) {
+    calculateLimit: function(min, max) {
         var saveMin = 0,
-            scale = {},
+            limit = {},
             iodValue; // increase or decrease value;
 
         if (min < 0) {
@@ -34,14 +34,14 @@ var calculator = {
         }
 
         iodValue = (max - min) / 20;
-        scale.max = max + iodValue + saveMin;
+        limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
-            scale.min = 0 + saveMin;
+            limit.min = 0 + saveMin;
         } else {
-            scale.min = min - iodValue + saveMin;
+            limit.min = min - iodValue + saveMin;
         }
-        return scale;
+        return limit;
     },
 
     /**
@@ -93,11 +93,11 @@ var calculator = {
      */
     makeTickPixelPositions: function(size, count) {
         var positions = [],
-            pxScale, pxStep;
+            pxLimit, pxStep;
 
         if (count > 0) {
-            pxScale = {min: 0, max: size - 1};
-            pxStep = this.getScaleStep(pxScale, count);
+            pxLimit = {min: 0, max: size - 1};
+            pxStep = this.calculateStepFromLimit(pxLimit, count);
             positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
                 return Math.round(position);
             });
@@ -107,17 +107,17 @@ var calculator = {
     },
 
     /**
-     * To make labels from scale.
+     * To make labels from limit.
      * @memberOf module:calculator
-     * @param {{min: number, max: number}} scale axis scale
+     * @param {{min: number, max: number}} limit axis limit
      * @param {number} step step between max and min
      * @returns {string[]} labels
      * @private
      */
-    makeLabelsFromScale: function(scale, step) {
+    makeLabelsFromLimit: function(limit, step) {
         var multipleNum = tui.util.findMultipleNum(step),
-            min = scale.min * multipleNum,
-            max = scale.max * multipleNum,
+            min = limit.min * multipleNum,
+            max = limit.max * multipleNum,
             labels = tui.util.range(min, max + 1, step * multipleNum);
         labels = tui.util.map(labels, function(label) {
             return label / multipleNum;
@@ -126,14 +126,14 @@ var calculator = {
     },
 
     /**
-     * Get scale step.
+     * To calculate step from limit.
      * @memberOf module:calculator
-     * @param {{min: number, max: number}} scale axis scale
+     * @param {{min: number, max: number}} limit axis limit
      * @param {number} count value count
-     * @returns {number} scale step
+     * @returns {number} step
      */
-    getScaleStep: function(scale, count) {
-        return (scale.max - scale.min) / (count - 1);
+    calculateStepFromLimit: function(limit, count) {
+        return (limit.max - limit.min) / (count - 1);
     },
 
     /**

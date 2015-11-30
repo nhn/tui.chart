@@ -52,12 +52,12 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
             prev = 0;
         return tui.util.map(tui.util.range(0, len), function(index) {
             var max = tui.util.min([size, (index + 1) * tickInterval]),
-                scale = {
+                limit = {
                     min: prev,
                     max: max
                 };
             prev = max;
-            return scale;
+            return limit;
         });
     },
 
@@ -89,8 +89,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      */
     findIndex: function(pointValue) {
         var foundIndex = -1;
-        tui.util.forEachArray(this.data, function(scale, index) {
-            if (scale.min < pointValue && scale.max >= pointValue) {
+        tui.util.forEachArray(this.data, function(limit, index) {
+            if (limit.min < pointValue && limit.max >= pointValue) {
                 foundIndex = index;
                 return false;
             }
@@ -115,18 +115,18 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @private
      */
     makeRange: function(index, chartType) {
-        var scale = this.data[index],
+        var limit = this.data[index],
             range, center;
         if (predicate.isLineTypeChart(chartType)) {
-            center = parseInt(scale.max - (scale.max - scale.min) / 2, 10);
+            center = parseInt(limit.max - (limit.max - limit.min) / 2, 10);
             range = {
                 start: center,
                 end: center
             };
         } else {
             range = {
-                start: scale.min,
-                end: scale.max
+                start: limit.min,
+                end: limit.max
             };
         }
 

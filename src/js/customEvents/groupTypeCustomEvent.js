@@ -40,9 +40,10 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     /**
      * On mousemove.
      * @param {MouseEvent} e mouse event object
+     * @private
      * @override
      */
-    onMousemove: function(e) {
+    _onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
             bound = elTarget.getBoundingClientRect(),
             layerPositionValue = this._getLayerPositionValue(e, bound, this.isVertical),
