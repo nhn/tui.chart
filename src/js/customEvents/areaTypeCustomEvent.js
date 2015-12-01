@@ -66,7 +66,6 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
     /**
      * On mouseout.
-     * @param {MouseEvent} e mouse event object
      * @private
      * @override
      */
@@ -77,7 +76,5 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
         }
     }
 });
-
-tui.util.CustomEvents.mixin(AreaTypeCustomEvent);
 
 module.exports = AreaTypeCustomEvent;

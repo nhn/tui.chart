@@ -8,8 +8,8 @@ var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
     HTML_LEGEND: '<div class="tui-chart-legend" style="height:{{ height }}px" data-index="{{ index }}">' +
-        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
-        '<div class="tui-chart-legend-label" style="height:{{ labelHeight }}px">{{ label }}</div></div>'
+        '<div class="tui-chart-legend-rect {{ iconType }}" style="{{ rectCssText }}"></div>' +
+        '<div class="tui-chart-legend-label" style="height:{{ labelHeight }}px{{ labelFontWeight }}">{{ label }}</div></div>'
 };
 
 module.exports = {

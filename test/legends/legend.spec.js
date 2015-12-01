@@ -8,10 +8,15 @@
 
 var Legend = require('../../src/js/legends/legend'),
     chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler');
+    dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('test Legend', function() {
     var legend;
+
+    beforeAll(function() {
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+    });
 
     beforeEach(function() {
         legend = new Legend({
@@ -36,18 +41,160 @@ describe('test Legend', function() {
         });
     });
 
-    describe('render()', function() {
-        it('legend 영역 렌더링', function () {
-            var legendContainer = legend.render({
-                    position: {
-                        top: 20,
-                        right: 10
-                    }
-                }),
-                elTemp = document.createElement('DIV'),
-                tempChildren;
+    describe('_makeLabelInfoAppliedTheme()', function() {
+        it('테마가 전달받은 레이블 정보에 테마 정보와 index를 적용하여 반환합니다.', function() {
+            var labelInfos = [{}, {}],
+                theme = {
+                    colors: ['red', 'blue'],
+                    singleColors: ['yellow', 'green'],
+                    borderColor: 'black'
+                },
+                actual = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
 
-            elTemp.innerHTML = '<div class="tui-chart-legend">' +
+            expect(actual[0]).toEqual({
+                theme: {
+                    color: 'red',
+                    singleColor: 'yellow',
+                    borderColor: 'black'
+                },
+                index: 0
+            });
+            expect(actual[1]).toEqual({
+                theme: {
+                    color: 'blue',
+                    singleColor: 'green',
+                    borderColor: 'black'
+                },
+                index: 1
+            });
+        });
+    });
+
+    describe('_makeLegendData()', function() {
+        it('chartTypes 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
+            var labelInfos = [{}, {}],
+                theme = {
+                    colors: ['red', 'blue'],
+                    singleColors: ['yellow', 'green'],
+                    borderColor: 'black'
+                },
+                actual = legend._makeLegendData(labelInfos, theme),
+                expected = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
+            expect(actual).toEqual(expected);
+        });
+
+        it('chartTypes값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
+            var labelInfos = [{}, {}],
+                chartTypes = ['column', 'line'],
+                labelMap = {
+                    column: ['legend1'],
+                    line: ['lgend2']
+                },
+                theme = {
+                    column: {
+                        colors: ['red']
+                    },
+                    line: {
+                        colors: ['blue']
+                    }
+                },
+                actual = legend._makeLegendData(labelInfos, theme, chartTypes, labelMap),
+                expected = [
+                    {
+                        theme: {
+                            color: 'red'
+                        },
+                        index: 0
+                    },
+                    {
+                        theme: {
+                            color: 'blue'
+                        },
+                        index: 0
+                    }
+                ];
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_renderLabelTheme()', function() {
+        it('전달하는 엘리먼트에 전달하는 theme의 cssText속성을 셋팅합니다.', function() {
+            var el = dom.create('DIV'),
+                theme = {
+                    fontSize: 14,
+                    color: 'red'
+                };
+            legend._renderLabelTheme(el, theme);
+            expect(el.style.fontSize).toBe('14px');
+            expect(el.style.color).toBe('red');
+        });
+    });
+
+    describe('_makeLegendRectCssText()', function() {
+        it('범례 앞쪽의 사각 영역에 대한 cssText를 생성합니다.', function() {
+            var actual = legend._makeLegendRectCssText({
+                    iconType: 'rect',
+                    theme: {
+                        borderColor: 'black',
+                        color: 'red'
+                    }
+                }, 5),
+                expected = 'background-color:red;border:1px solid black;margin-top:5px';
+            expect(actual).toBe(expected);
+        });
+
+        it('iconType이 line인 경우에는 5px정도 margin-top 값을 더하여 적용합니다.', function() {
+            var actual = legend._makeLegendRectCssText({
+                    iconType: 'line',
+                    theme: {
+                        borderColor: 'black',
+                        color: 'red'
+                    }
+                }, 5),
+                expected = 'background-color:red;border:1px solid black;margin-top:10px';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeLegendHtml()', function() {
+        it('렌더링 될 범례 html을 생성합니다.', function() {
+            var actual, expected;
+            spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
+            actual = legend._makeLegendHtml([
+                {
+                    label: 'legend1',
+                    theme: {}
+                },
+                {
+                    label: 'legend2'
+                }
+            ]);
+            expected = '<div class="tui-chart-legend" style="height:24px" data-index="0">' +
+                    '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                    '<div class="tui-chart-legend-label" style="height:20px">legend1</div>' +
+                '</div>' +
+                '<div class="tui-chart-legend" style="height:24px" data-index="1">' +
+                    '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                    '<div class="tui-chart-legend-label" style="height:20px">legend2</div>' +
+                '</div>';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_renderLegendArea()', function() {
+        it('legend 영역 렌더링', function () {
+            var legendContainer = document.createElement('DIV'),
+                expectedElement = document.createElement('DIV'),
+                expectedChildren;
+
+            legend._renderLegendArea(legendContainer, {
+                position: {
+                    top: 20,
+                    right: 10
+                }
+            });
+
+            expectedElement.innerHTML = '<div class="tui-chart-legend">' +
                 '<div class="tui-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
                 '<div class="tui-chart-legend-label" style="height:19px">legend1</div>' +
             '</div>' +
@@ -55,73 +202,37 @@ describe('test Legend', function() {
                 '<div class="tui-chart-legend-rect" style="background-color:orange;margin-top:2px"></div>' +
                 '<div class="tui-chart-legend-label" style="height:19px">legend2</div>' +
             '</div>';
-            elTemp.style.top = '20px';
-            elTemp.style.right = '10px';
-            elTemp.style.fontSize = '12px';
+            expectedElement.style.top = '20px';
+            expectedElement.style.right = '10px';
+            expectedElement.style.fontSize = '12px';
 
-            tempChildren = elTemp.childNodes;
+            expectedChildren = expectedElement.childNodes;
 
-            expect(legendContainer.className).toBe('tui-chart-legend-area');
-            expect(legendContainer.style.cssText).toBe(elTemp.style.cssText);
+            expect(legendContainer.style.cssText).toBe(expectedElement.style.cssText);
 
             tui.util.forEachArray(legendContainer.childNodes, function (child, index) {
-                var elTempChild = tempChildren[index];
-                expect(child.firstChild.cssText).toBe(elTempChild.firstChild.cssText);
-                expect(child.lastChild.cssText).toBe(elTempChild.lastChild.cssText);
+                var tempChild = expectedChildren[index];
+                expect(child.firstChild.cssText).toBe(tempChild.firstChild.cssText);
+                expect(child.lastChild.cssText).toBe(tempChild.lastChild.cssText);
             });
         });
     });
 
-    describe('_setThemeForLabels()', function() {
-        it('레이블 렌더링을 위한 위한 테마 정보를 설정합니다.', function () {
-            var actual = legend._setThemeForLabels(
-                    [
-                        {
-                            label: 'label1'
-                        },
-                        {
-                            label: 'label2'
-                        }
-                    ], {
-                        colors: ['black', 'white'],
-                        singleColors: ['red', 'orange'],
-                        borderColor: 'blue'
+    describe('render()', function() {
+        it('render를 수행하면 legendContainer에 className 설정, _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
+            var bound = {
+                    position: {
+                        top: 20,
+                        right: 10
                     }
-                ),
-                expected = [
-                    {
-                        label: 'label1',
-                        theme: {
-                            color: 'black',
-                            singleColor: 'red',
-                            borderColor: 'blue'
-                        },
-                        index: 0
-                    },
-                    {
-                        label: 'label2',
-                        theme: {
-                            color: 'white',
-                            singleColor: 'orange',
-                            borderColor: 'blue'
-                        },
-                        index: 1
-                    }
-                ];
+                },
+                actual = legend.render(bound),
+                exepcted = document.createElement('DIV');
+            legend._renderLegendArea(exepcted, bound);
 
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('renderLabelTheme()', function() {
-        it('레이블 테마를 렌더링합니다.', function () {
-            var el = document.createElement('DIV');
-            legend._renderLabelTheme(el, {
-                fontSize: 14,
-                color: 'red'
-            });
-            expect(el.style.fontSize).toBe('14px');
-            expect(el.style.color).toBe('red');
+            expect(actual.className).toBe('tui-chart-legend-area');
+            expect(actual.innerHTML).toBe(exepcted.innerHTML);
+            expect(legend.legendContainer).toBe(actual);
         });
     });
 

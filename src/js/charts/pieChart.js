@@ -113,10 +113,14 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function (component) {
-                return component.componentType === 'series';
-            });
+        var tooltip, serieses;
+
+        ChartBase.prototype._attachCustomEvent.call(this);
+
+        tooltip = this.componentMap.tooltip;
+        serieses = tui.util.filter(this.componentMap, function (component) {
+            return component.componentType === 'series';
+        });
         tui.util.forEach(serieses, function (series) {
             series.on('showTooltip', tooltip.onShow, tooltip);
             series.on('hideTooltip', tooltip.onHide, tooltip);

@@ -10,7 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
-    SELECTION_DOT_RADIOUS = 7;
+    SELECTION_DOT_RADIOUS = 7,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -237,10 +238,19 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Hide dot.
      * @param {object} dot raphael object
+     * @param {?number} opacity opacity
      * @private
      */
-    _hideDot: function(dot) {
-        dot.attr(this.outDotStyle);
+    _hideDot: function(dot, opacity) {
+        var outDotStyle = this.outDotStyle;
+
+        if (!tui.util.isUndefined(opacity)) {
+            outDotStyle = tui.util.extend({}, this.outDotStyle, {
+                'fill-opacity': opacity
+            });
+        }
+
+        dot.attr(outDotStyle);
     },
 
     /**
@@ -250,10 +260,15 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            item = this.groupDots[groupIndex][index];
+            item = this.groupDots[groupIndex][index],
+            opacity;
+
+        if (!tui.util.isUndefined(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+            opacity = DE_EMPHASIS_OPACITY;
+        }
 
         if (item) {
-            this._hideDot(item.dot);
+            this._hideDot(item.dot, opacity);
         }
     },
 
@@ -299,18 +314,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         setTimeout(function() {
             line.animate({path: linePath}, time);
         }, startTime);
-    },
-
-    /**
-     * To render items of line type chart.
-     * @param {function} funcRenderItem function
-     */
-    renderItems: function(funcRenderItem) {
-        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            tui.util.forEachArray(dots, function(item, index) {
-                funcRenderItem(item.dot, groupIndex, index);
-            }, this);
-        }, this);
     },
 
     /**

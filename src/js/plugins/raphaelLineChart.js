@@ -10,7 +10,9 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
-    ANIMATION_TIME = 700;
+    ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelLineCharts is graph renderer for line chart.
@@ -47,6 +49,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             this.selectionColor = theme.selectionColor;
         }
 
+        this.colors = colors;
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
@@ -110,7 +113,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             that = this,
             startTime = 0;
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var line, path;
 
             if (index) {
@@ -124,7 +127,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             if (that.dotOpacity) {
                 setTimeout(function() {
-                    dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
+                    item.dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
                 }, startTime);
             }
         });
@@ -150,7 +153,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var position = groupPositions[groupIndex][index],
                 dotAttrs = {
                     cx: position.left,
@@ -168,7 +171,30 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
             }
 
-            dot.attr(dotAttrs);
+            item.dot.attr(dotAttrs);
+        });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var that = this,
+            isNull = tui.util.isNull(legendIndex);
+
+        this.selectedLegendIndex = legendIndex;
+
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
+            var opacity = (isNull || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
+                line;
+
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                line.attr({'stroke-opacity': opacity});
+            }
+
+            item.dot.attr({'fill-opacity': opacity});
         });
     }
 });

@@ -64,6 +64,4 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
     }
 });
 
-tui.util.CustomEvents.mixin(PointTypeCustomEven);
-
 module.exports = PointTypeCustomEven;

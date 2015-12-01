@@ -10,7 +10,10 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
-    ANIMATION_TIME = 700;
+    ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_LINE_OPACITY = 0.3,
+    DE_EMPHASIS_AREA_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
 
@@ -270,7 +273,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             that = this,
             startTime = 0;
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var area, areaPath;
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
@@ -284,7 +287,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             if (that.dotOpacity) {
                 setTimeout(function() {
-                    dot.attr({'fill-opacity': that.dotOpacity});
+                    item.dot.attr({'fill-opacity': that.dotOpacity});
                 }, startTime);
             }
         });
@@ -295,12 +298,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To update area attribute
+     * To update area path
      * @param {object} area raphael object
      * @param {string} areaPath area path
      * @private
      */
-    _updateAreaAttr: function(area, areaPath) {
+    _updateAreaPath: function(area, areaPath) {
         var areaAddEndPath = areaPath.addEnd;
         area[0].attr({path: areaPath.end});
         if (areaAddEndPath) {
@@ -324,7 +327,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var position = groupPositions[groupIndex][index],
                 dotAttrs = {
                     cx: position.left,
@@ -336,14 +339,43 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 area = that.groupAreas[groupIndex][index - 1];
                 areaPath = that.groupPaths[groupIndex][index - 1];
                 area.line.attr({path: areaPath.line.end});
-                that._updateAreaAttr(area.area, areaPath.area);
+                that._updateAreaPath(area.area, areaPath.area);
             }
 
             if (that.dotOpacity) {
                 dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
             }
 
-            dot.attr(dotAttrs);
+            item.dot.attr(dotAttrs);
+        });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var that = this,
+            isNull = tui.util.isNull(legendIndex);
+
+        this.selectedLegendIndex = legendIndex;
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
+            var area, lineOpacity, areaOpacity;
+
+            if (isNull || legendIndex === groupIndex) {
+                lineOpacity = areaOpacity = EMPHASIS_OPACITY;
+            } else {
+                lineOpacity = DE_EMPHASIS_LINE_OPACITY;
+                areaOpacity = DE_EMPHASIS_AREA_OPACITY;
+            }
+
+            if (index) {
+                area = that.groupAreas[groupIndex][index - 1];
+                area.line.attr({'stroke-opacity': lineOpacity});
+                area.area[0].attr({'fill-opacity': areaOpacity});
+            }
+
+            item.dot.attr({'fill-opacity': lineOpacity});
         });
     }
 });

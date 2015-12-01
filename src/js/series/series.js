@@ -39,6 +39,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {string}
          */
         this.className = 'tui-chart-series-area';
+
+        /**
+         * Selected legend index
+         * @type {?number}
+         */
+        this.selectedLegendIndex = null;
     },
 
     /**
@@ -119,7 +125,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
         this._renderPosition(seriesContainer, expandedBound.position, this.chartType);
-        funcRenderGraph(expandedBound.dimension, seriesData);
+        if (funcRenderGraph) {
+            funcRenderGraph(expandedBound.dimension, seriesData);
+        }
 
         seriesLabelContainer = this._renderSeriesLabelArea(expandedBound.dimension, seriesData, this.seriesLabelContainer);
 
@@ -169,7 +177,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var el = dom.create('DIV', this.className);
 
         this.seriesContainer = el;
-
+        this.bound = bound;
         this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
 
         return el;
@@ -185,7 +193,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.graphRenderer.resize(tui.util.extend({
             dimension: dimension
         }, seriesData));
-        this.showSeriesLabelArea(seriesData);
     },
 
     /**
@@ -197,9 +204,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     resize: function(bound, data) {
-        var el = this.seriesContainer;
-
-        this._renderSeriesArea(el, bound, data, tui.util.bind(this._resizeGraph, this));
+        this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -445,6 +450,21 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
     },
 
+    _makeOpacityCssText: function(opacity) {
+        var funcMakeOpacityCssText;
+        if (renderUtil.isOldBrowser()) {
+            funcMakeOpacityCssText = function(_opacity) {
+                return ';filter: alpha(opacity=' + (_opacity * 100) + ')';
+            };
+        } else {
+            funcMakeOpacityCssText = function(_opacity) {
+                return ';opacity: ' + _opacity;
+            };
+        }
+        this._makeOpacityCssText = funcMakeOpacityCssText;
+        return funcMakeOpacityCssText(opacity);
+    },
+
     /**
      * To make html about series label.
      * @param {{left: number, top: number}} position position
@@ -455,24 +475,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
+        if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
+            cssObj.opacity = this._makeOpacityCssText(0.3);
+        } else {
+            cssObj.opacity = '';
+        }
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
             groupIndex: groupIndex,
             index: index
         });
-    },
-
-    /**
-     * Show series label area.
-     */
-    showSeriesLabelArea: function() {
-        if (renderUtil.isOldBrowser()) {
-            this.seriesLabelContainer.style.filter = 'alpha(opacity=' + 100 + ')';
-        } else {
-            this.seriesLabelContainer.style.opacity = 1;
-        }
-        dom.addClass(this.seriesLabelContainer, 'show');
     },
 
     /**
@@ -533,6 +546,21 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (this.options.hasSelection) {
             this.graphRenderer.unselectSeries(seriesData.indexes);
         }
+    },
+
+    /**
+     *On select legend.
+     * @param {string} chartType chart type
+     * @param {?number} legendIndex legend index
+     */
+    onSelectLegend: function(chartType, legendIndex) {
+        if (this.chartType !== chartType && !tui.util.isUndefined(legendIndex)) {
+            legendIndex = -1;
+        }
+
+        this.selectedLegendIndex = legendIndex;
+        this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
+        this.graphRenderer.selectLegend(legendIndex);
     }
 });
 

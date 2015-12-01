@@ -174,7 +174,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      * @abstract
      */
-    _attachCustomEvent: function() {},
+    _attachCustomEvent: function() {
+        var legend = this.componentMap.legend,
+            serieses = tui.util.filter(this.componentMap, function (component) {
+                return component.componentType === 'series';
+            });
+
+        if (legend) {
+            tui.util.forEach(serieses, function (series) {
+                legend.on(renderUtil.makeCustomEventName('select', series.chartType, 'legend'), series.onSelectLegend, series);
+            }, this);
+        }
+    },
 
     /**
      * Render chart.
@@ -328,7 +339,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _resizeComponents: function(components, bounds, renderingData) {
         tui.util.forEachArray(components, function(component) {
             var name = component.name,
-                bound = this._findBound(bounds, name, component.componentType),
+                bound = bounds[component.componentType],
                 data = renderingData[name];
 
             if (!component.instance.resize) {

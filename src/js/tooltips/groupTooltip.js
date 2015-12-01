@@ -331,6 +331,4 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     }
 });
 
-tui.util.CustomEvents.mixin(GroupTooltip);
-
 module.exports = GroupTooltip;

@@ -59,6 +59,19 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * To render items of line type chart.
+     * @param {array.<array.<object>>} groupItems group items
+     * @param {function} funcRenderItem function
+     */
+    renderItems: function(groupItems, funcRenderItem) {
+        tui.util.forEachArray(groupItems, function(items, groupIndex) {
+            tui.util.forEachArray(items, function(item, index) {
+                funcRenderItem(item, groupIndex, index);
+            }, this);
+        }, this);
+    },
+
+    /**
      * To make changed luminance color.
      * http://www.sitepoint.com/javascript-generate-lighter-darker-color/
      * @param {string} hex hax color

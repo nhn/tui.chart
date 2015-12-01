@@ -94,8 +94,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{position: object}} bound tooltip bound
      * @override
      */
-    resize: function(bound) {
+    resize: function(bound, data) {
         this.bound = bound;
+        this.chartDimension = data.chartDimension;
         renderUtil.renderPosition(this.tooltipContainer, bound.position);
         if (this.positionModel) {
             this.positionModel.updateBound(bound);

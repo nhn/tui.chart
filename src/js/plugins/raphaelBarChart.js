@@ -9,7 +9,9 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael;
 
-var ANIMATION_TIME = 700;
+var ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -296,17 +298,19 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {function} callback callback
      */
     animate: function(callback) {
-        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
-            var borders = this.groupBorders && this.groupBorders[groupIndex];
+        var that = this,
+            groupBorders = this.groupBorders || [];
 
-            tui.util.forEachArray(bars, function(bar, index) {
-                var lines = borders && borders[index];
-                this._animateRect(bar.rect, bar.bound);
-                if (lines) {
-                    this._animateBorders(lines, bar.bound, this.chartType, bar.value);
-                }
-            }, this);
-        }, this);
+        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+            var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            if (!bar) {
+                return;
+            }
+            that._animateRect(bar.rect, bar.bound);
+            if (lines) {
+                that._animateBorders(lines, bar.bound, that.chartType, bar.value);
+            }
+        });
 
         if (callback) {
             setTimeout(callback, ANIMATION_TIME);
@@ -314,12 +318,12 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * To update rect attribute
+     * To update rect bound
      * @param {object} rect raphael object
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @private
      */
-    _updateRectAttr: function(rect, bound) {
+    _updateRectBound: function(rect, bound) {
         rect.attr({
             x: bound.left,
             y: bound.top,
@@ -336,7 +340,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {number} value value
      * @private
      */
-    _updateBordersAttr: function(lines, bound, chartType, value) {
+    _updateBordersPath: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
 
         tui.util.forEach(lines, function(line, name) {
@@ -351,24 +355,30 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      *      @param {array.<array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
      */
     resize: function(params) {
-        var dimension = params.dimension,
+        var that = this,
+            groupBorders = this.groupBorders || [],
+            dimension = params.dimension,
             groupBounds = params.groupBounds;
 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
-            var borders = this.groupBorders && this.groupBorders[groupIndex];
-            tui.util.forEachArray(bars, function(bar, index) {
-                var lines = borders && borders[index],
-                    bound = groupBounds[groupIndex][index].end;
-                bar.bound = bound;
-                this._updateRectAttr(bar.rect, bound);
-                if (lines) {
-                    this._updateBordersAttr(lines, bound, this.chartType, bar.value);
-                }
-            }, this);
-        }, this);
+        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+            var lines, bound;
+
+            if (!bar) {
+                return;
+            }
+
+            lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            bound = groupBounds[groupIndex][index].end;
+            bar.bound = bound;
+            that._updateRectBound(bar.rect, bound);
+
+            if (lines) {
+                this._updateBordersPath(lines, bound, that.chartType, bar.value);
+            }
+        });
     },
 
     /**
@@ -431,6 +441,33 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var bar = this.groupBars[indexes.groupIndex][indexes.index],
             borderColor = this.theme.borderColor;
         this._changeBarColor(indexes, bar.color, borderColor);
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var groupBorders = this.groupBorders || [],
+            isNull = tui.util.isNull(legendIndex);
+
+        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+            var lines, opacity;
+
+            if (!bar) {
+                return;
+            }
+
+            lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            bar.rect.attr({'fill-opacity': opacity});
+            if (lines) {
+                tui.util.forEach(lines, function(line) {
+                    line.attr({'stroke-opacity': opacity});
+                });
+            }
+        });
     }
 });
 

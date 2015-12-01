@@ -83,6 +83,4 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     }
 });
 
-tui.util.CustomEvents.mixin(GroupTypeCustomEvent);
-
 module.exports = GroupTypeCustomEvent;

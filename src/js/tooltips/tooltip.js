@@ -79,7 +79,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this.seriesPosition = data.seriesPosition;
         }
 
-        this.attachEvent(el);
+        this._attachEvent(el);
         return el;
     },
 
@@ -93,7 +93,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (data) {
             this.seriesPosition = data.seriesPosition;
         }
-        TooltipBase.prototype.resize.call(this, bound);
+        TooltipBase.prototype.resize.call(this, bound, data);
     },
 
     /**
@@ -578,13 +578,12 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Attach event
      * @param {HTMLElement} el target element
+     * @private
      */
-    attachEvent: function(el) {
+    _attachEvent: function(el) {
         eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
         eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
-
-tui.util.CustomEvents.mixin(Tooltip);
 
 module.exports = Tooltip;

@@ -210,7 +210,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.graphRenderer.render(this.elSeriesArea, params, callbacks);
+        this.graphRenderer.render(this.seriesContainer, params, callbacks);
 
         // series label mouse event 동작 시 사용
         this.showTooltip = funcShowTooltip;
@@ -231,6 +231,15 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.attachEvent(el);
 
         return el;
+    },
+
+    /**
+     * Resize.
+     * @override
+     */
+    resize: function() {
+        Series.prototype.resize.apply(this, arguments);
+        this._moveLegendLines(this.seriesData);
     },
 
     /**
@@ -327,10 +336,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {string} params.separator separator
      *      @param {object} params.options options
      *      @param {function} params.funcMoveToPosition function
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderLegendLabel: function(params, elSeriesLabelArea) {
+    _renderLegendLabel: function(params, seriesLabelContainer) {
         var positions = params.positions,
             formattedValues = params.formattedValues,
             html;
@@ -346,7 +355,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
 
-        elSeriesLabelArea.innerHTML = html;
+        seriesLabelContainer.innerHTML = html;
     },
 
     /**
@@ -370,15 +379,15 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * Render center legend.
      * @param {object} params parameters
      *      @param {object} params.sectorsInfo sector info
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderCenterLegend: function(params, elSeriesLabelArea) {
+    _renderCenterLegend: function(params, seriesLabelContainer) {
         this._renderLegendLabel(tui.util.extend({
             positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
             funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
-        }, params), elSeriesLabelArea);
+        }, params), seriesLabelContainer);
     },
 
     /**
@@ -429,10 +438,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {object} params parameters
      *      @param {object} params.sectorsInfo sector info
      *      @param {number} params.chartWidth chart width
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderOuterLegend: function(params, elSeriesLabelArea) {
+    _renderOuterLegend: function(params, seriesLabelContainer) {
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
             centerLeft = params.chartWidth / 2;
 
@@ -441,23 +450,23 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             positions: outerPositions,
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, params), elSeriesLabelArea);
+        }, params), seriesLabelContainer);
         this.graphRenderer.renderLegendLines(outerPositions);
     },
 
     /**
      * Render series label.
      * @param {object} params parameters
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+    _renderSeriesLabel: function(params, seriesLabelContainer) {
         var legendAlign = params.options.legendAlign;
 
         if (predicate.isOuterLegendAlign(legendAlign)) {
-            this._renderOuterLegend(params, elSeriesLabelArea);
-        } else if (predicate.isCenterLegendAlign(legendAlign)) {
-            this._renderCenterLegend(params, elSeriesLabelArea);
+            this._renderOuterLegend(params, seriesLabelContainer);
+        } else {
+            this._renderCenterLegend(params, seriesLabelContainer);
         }
     },
 
@@ -480,17 +489,17 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Show series label area.
+     * Move legend lines.
      * @param {object} seriesData series data
+     * @private
      * @override
      */
-    showSeriesLabelArea: function(seriesData) {
+    _moveLegendLines: function(seriesData) {
         var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
             centerLeft = this.data.chartWidth / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
         this.graphRenderer.moveLegendLines(outerPositions);
-        Series.prototype.showSeriesLabelArea.call(this);
     },
 
     /**

@@ -12,7 +12,9 @@ var Raphael = window.Raphael,
     ANGLE_180 = 180,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
-    LOADING_ANIMATION_TIME = 700;
+    LOADING_ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
@@ -355,6 +357,24 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         sector.sector.attr({
             fill: sector.color
         });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var isNull = tui.util.isNull(legendIndex);
+
+        tui.util.forEachArray(this.sectors, function(item, index) {
+            var opacity;
+
+            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            item.sector.attr({
+                'fill-opacity': opacity
+            });
+        }, this);
     }
 });
 

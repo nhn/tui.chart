@@ -7,6 +7,7 @@
 'use strict';
 
 var renderUtil = require('../helpers/renderUtil'),
+    ChartBase = require('./chartBase'),
     Axis = require('../axes/axis'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
@@ -101,17 +102,17 @@ var axisTypeMixer = {
     /**
      * Add legend component.
      * @param {object} processedData processedData
-     * @param {array.<string>} seriesChartTypes series chart types
+     * @param {array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
      * @param {object} legendOptions legend options
      * @private
      */
-    _addLegendComponent: function(processedData, seriesChartTypes, chartType, legendOptions) {
+    _addLegendComponent: function(processedData, chartTypes, chartType, legendOptions) {
         if (!legendOptions || !legendOptions.hidden) {
             this._addComponent('legend', Legend, {
                 joinLegendLabels: processedData.joinLegendLabels,
                 legendLabels: processedData.legendLabels,
-                seriesChartTypes: seriesChartTypes,
+                chartTypes: chartTypes,
                 chartType: chartType,
                 userEvent: this.userEvent
             });
@@ -317,6 +318,8 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
+        ChartBase.prototype._attachCustomEvent.call(this);
+
         if (this.hasGroupTooltip) {
             this._attachCustomEventForGroupTooltip();
         } else {
