@@ -25,7 +25,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * To make series data.
+     * Make series data.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}

@@ -31,7 +31,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * To render event handle layer area
+     * Render event handle layer area
      * @param {HTMLElement} customEventContainer custom event container element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
@@ -47,7 +47,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * To render event handle layer component.
+     * Render event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
      * @return {HTMLElement} coordinate area
@@ -70,7 +70,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * To resize event handle layer component.
+     * Resize event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
      * @param {{tickCount: number}} data data
      */
@@ -111,7 +111,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _unselectSelectedData: function() {
-        var eventName = this.fire(renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series'), this.selectedData);
+        var eventName = renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series');
         this.fire(eventName, this.selectedData);
         delete this.selectedData;
     },

@@ -38,7 +38,7 @@ var axisTypeMixer = {
             var axisParams = {
                 aligned: aligned
             };
-            if (name === 'yrAxis') {
+            if (name === 'rightYAxis') {
                 axisParams.componentType = 'yAxis';
                 axisParams.index = 1;
             }
@@ -155,14 +155,14 @@ var axisTypeMixer = {
         limitMap[chartTypes[0]] = isVertical ? yAxisLimit : axesData.xAxis.limit;
 
         if (chartTypes.length > 1) {
-            limitMap[chartTypes[1]] = axesData.yrAxis ? axesData.yrAxis.limit : yAxisLimit;
+            limitMap[chartTypes[1]] = axesData.rightYAxis ? axesData.rightYAxis.limit : yAxisLimit;
         }
 
         return limitMap;
     },
 
     /**
-     * To make series data for rendering.
+     * Make series data for rendering.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
      * @param {array.<string>} chartTypes chart types
      * @param {boolean} isVertical whether vertical or not
@@ -185,7 +185,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * To make rendering data for axis type chart.
+     * Make rendering data for axis type chart.
      * @param {object} bounds chart bounds
      * @param {object} processedData processedData
      * @param {object} options options
@@ -275,7 +275,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * To attach custom event for normal tooltip.
+     * Attach custom event for normal tooltip.
      * @private
      */
     _attachCustomEventForNormalTooltip: function() {
@@ -297,7 +297,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * To attach custom event for series selection.
+     * Attach custom event for series selection.
      * @private
      */
     _attachCustomEventForSeriesSelection: function() {

@@ -36,7 +36,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To render axis area.
+     * Render axis area.
      * @param {HTMLElement} axisContainer axis area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
@@ -74,7 +74,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To render axis component.
+     * Render axis component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      * @returns {HTMLElement} axis area base element
@@ -88,7 +88,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To resize axis component.
+     * Resize axis component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      */
@@ -177,7 +177,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make cssText of vertical label.
+     * Make cssText of vertical label.
      * @param {number} axisWidth axis width
      * @param {number} titleAreaWidth title area width
      * @returns {string} cssText
@@ -256,7 +256,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make cssTexts of label.
+     * Make cssTexts of label.
      * @param {object} params parameter
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {boolean} params.isLabelAxis whether label axis or not
@@ -278,7 +278,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To calculate rotation moving position.
+     * Calculate rotation moving position.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelHeight label height
@@ -302,7 +302,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To calculate rotation moving position for ie8.
+     * Calculate rotation moving position for ie8.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
@@ -331,7 +331,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make cssText for rotation moving.
+     * Make cssText for rotation moving.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
@@ -357,7 +357,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of rotation labels.
+     * Make html of rotation labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
@@ -398,7 +398,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of normal labels.
+     * Make html of normal labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
@@ -423,7 +423,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of labels.
+     * Make html of labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array

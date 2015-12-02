@@ -39,7 +39,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To render legend area.
+     * Render legend area.
      * @param {HTMLElement} legendContainer legend area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @private
@@ -54,7 +54,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To render legend component.
+     * Render legend component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
      */
@@ -67,7 +67,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To resize legend component.
+     * Resize legend component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      */
     resize: function(bound) {
@@ -75,7 +75,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To make label info that applied theme.
+     * Make label info that applied theme.
      * @param {array.<object>} labelInfo labels
      * @param {{colors: array.<number>, singleColor: ?string, bordercolor: ?string}} theme legend theme
      * @returns {array.<object>} labels
@@ -100,7 +100,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To make legend labels.
+     * Make legend labels.
      * @param {array.<object>} labelInfos label infos
      * @param {{colors: array.<number>, singleColor: ?string, borderColor: ?string}} theme legend theme
      * @param {?array.<string>} chartTypes chart types
@@ -130,7 +130,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To make cssText of legend rect.
+     * Make cssText of legend rect.
      * @param {{
      *      chartType: string,
      *      theme: {color: string, borderColor: ?string, singleColor: ?string}
@@ -156,7 +156,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
-     * To make legend html.
+     * Make legend html.
      * @param {array.<{chartType: ?string, }>} legendInfos legend infos
      * @returns {string} legend html
      * @private

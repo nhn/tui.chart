@@ -39,7 +39,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     },
 
     /**
-     * To make axes data
+     * Make axes data
      * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @param {object} options chart options

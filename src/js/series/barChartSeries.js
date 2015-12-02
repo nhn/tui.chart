@@ -26,7 +26,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make bound of bar chart.
+     * Make bound of bar chart.
      * @param {object} params parameters
      *      @param {{top: number, height: number}} params.baseBound base bound
      *      @param {number} params.startLeft start left
@@ -52,7 +52,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make normal bar chart bound.
+     * Make normal bar chart bound.
      * @param {{
      *      dimension: {width: number, height: number},
      *      groupValues: array.<array.<number>>,
@@ -88,7 +88,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make bounds of normal bar chart.
+     * Make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -108,7 +108,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make bounds of stacked bar chart.
+     * Make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -154,7 +154,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
 
     /**
-     * To make bounds of bar chart.
+     * Make bounds of bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -168,7 +168,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make series rendering position
+     * Make series rendering position
      * @param {obeject} params parameters
      *      @param {number} params.value value
      *      @param {{left: number, top: number, width:number, height: number}} params.bound bound
@@ -195,7 +195,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * To make sum label html.
+     * Make sum label html.
      * @param {object} params parameters
      *      @param {array.<number>} params.values values
      *      @param {array.<function>} params.formatFunctions formatting functions

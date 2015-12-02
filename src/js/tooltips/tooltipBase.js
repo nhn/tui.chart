@@ -55,7 +55,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _setDefaultTooltipPositionOption: function() {},
 
     /**
-     * To save position options.
+     * Save position options.
      * @private
      */
     _saveOriginalPositionOptions: function() {
@@ -66,13 +66,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To make tooltip data.
+     * Make tooltip data.
      * @abstract
      */
     makeTooltipData: function() {},
 
     /**
-     * To render tooltip component.
+     * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
@@ -90,7 +90,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To resize tooltip component.
+     * Resize tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @override
      */
@@ -294,7 +294,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To hide animation.
+     * Hide animation.
      * @param {HTMLElement} tooltipElement tooltip element
      */
     hideAnimation: function(tooltipElement) {

@@ -15,7 +15,7 @@ var chartConst = require('../const'),
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
-     * To make positions of line chart.
+     * Make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
      * @returns {array.<array.<object>>} positions
      */

@@ -12,7 +12,7 @@
  */
 var raphaelRenderUtil = {
     /**
-     * To make line path.
+     * Make line path.
      * @memberOf module:raphaelRenderUtil
      * @param {{top: number, left: number}} fromPos from position
      * @param {{top: number, left: number}} toPos to position
@@ -59,7 +59,7 @@ var raphaelRenderUtil = {
     },
 
     /**
-     * To render items of line type chart.
+     * Render items of line type chart.
      * @param {array.<array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
      */
@@ -72,7 +72,7 @@ var raphaelRenderUtil = {
     },
 
     /**
-     * To make changed luminance color.
+     * Make changed luminance color.
      * http://www.sitepoint.com/javascript-generate-lighter-darker-color/
      * @param {string} hex hax color
      * @param {number} lum luminance

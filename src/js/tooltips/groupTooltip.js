@@ -47,7 +47,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To render tooltip component.
+     * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
@@ -61,7 +61,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make tooltip data.
+     * Make tooltip data.
      * @returns {array.<object>} tooltip data
      * @override
      */
@@ -75,7 +75,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make colors.
+     * Make colors.
      * @param {array.<string>} legendLabels legend labels
      * @param {object} theme tooltip theme
      * @returns {array.<string>} colors
@@ -105,7 +105,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make tooltip html.
+     * Make tooltip html.
      * @param {number} groupIndex group index
      * @returns {string} tooltip html
      * @private
@@ -151,7 +151,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make bound about tooltip sector of vertical type chart.
+     * Make bound about tooltip sector of vertical type chart.
      * @param {number} height height
      * @param {{start: number, end: number}} range range
      * @param {boolean} isLine whether line or not
@@ -181,7 +181,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make bound about tooltip sector of horizontal type chart.
+     * Make bound about tooltip sector of horizontal type chart.
      * @param {number} width width
      * @param {{start: number, end:number}} range range
      * @returns {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound
@@ -201,7 +201,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * To make bound about tooltip sector.
+     * Make bound about tooltip sector.
      * @param {number} size width or height
      * @param {{start: number, end:number}} range range
      * @param {boolean} isVertical whether vertical or not

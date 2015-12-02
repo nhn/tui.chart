@@ -19,7 +19,7 @@ var DEFAULT_DOT_RADIUS = 3,
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
-     * To make line paths.
+     * Make line paths.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @returns {{start: string, end: string}} line paths.
@@ -54,7 +54,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To make border style.
+     * Make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
      * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
@@ -74,7 +74,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To make dot style for mouseout event.
+     * Make dot style for mouseout event.
      * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {{fill-opacity: number, stroke-opacity: number, r: number}} style
@@ -287,7 +287,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Hide line for group tooltip.
-     * @private
      */
     hideGroupTooltipLine: function() {
         this.tooltipLine.attr({
@@ -317,7 +316,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To make selection dot.
+     * Make selection dot.
      * @param {object} paper raphael paper
      * @returns {object} selection dot
      * @private

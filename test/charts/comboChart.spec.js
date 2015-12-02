@@ -218,10 +218,10 @@ describe('ComboChart', function() {
             actual = comboChart._makeAxesData(processedData, bounds, {});
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
-            expect(actual.yrAxis).not.toBeDefined();
+            expect(actual.rightYAxis).not.toBeDefined();
         });
 
-        it('y axis 옵션 정보가 하나일 경우에는 yrAxis data도 생성합니다.', function() {
+        it('y axis 옵션 정보가 하나일 경우에는 rightYAxis data도 생성합니다.', function() {
             var processedData, bounds, actual;
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
@@ -238,7 +238,7 @@ describe('ComboChart', function() {
             actual = comboChart._makeAxesData(processedData, bounds, {});
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
-            expect(actual.yrAxis).toBeDefined();
+            expect(actual.rightYAxis).toBeDefined();
         });
     });
 

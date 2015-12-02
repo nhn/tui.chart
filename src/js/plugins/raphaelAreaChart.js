@@ -137,7 +137,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To make height.
+     * Make height.
      * @param {number} top top
      * @param {number} zeroTop zero position top
      * @returns {number} height
@@ -172,7 +172,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To make area path.
+     * Make area path.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @param {number} zeroTop zero position top
@@ -188,7 +188,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To make area paths.
+     * Make area paths.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @param {number} zeroTop zero position top
@@ -298,7 +298,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To update area path
+     * Update area path
      * @param {object} area raphael object
      * @param {string} areaPath area path
      * @private
@@ -312,7 +312,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * To resize graph of area chart.
+     * Resize graph of area chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions

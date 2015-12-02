@@ -22,7 +22,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make tick base data about line type chart.
+     * Make tick base data about line type chart.
      * @param {number} width width
      * @param {number} tickCount tick count
      * @returns {array} tick base data
@@ -40,7 +40,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make tick base data about non line type chart.
+     * Make tick base data about non line type chart.
      * @param {number} size width or height
      * @param {number} tickCount tick count
      * @returns {array} tick base data
@@ -62,7 +62,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make tick base data for custom event.
+     * Make tick base data for custom event.
      * @param {{width: number, height: number}} dimension dimension
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
@@ -108,7 +108,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make range of tooltip position.
+     * Make range of tooltip position.
      * @param {number} index index
      * @param {string} chartType chart type
      * @returns {{start: number, end: number}} range type value

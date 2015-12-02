@@ -84,7 +84,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To make processed data.
+     * Make processed data.
      * @param {object} params parameters
      *      @params {object} rawData raw data
      *      @params {{chart: object, chartType: string}} options chart options
@@ -107,7 +107,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _addCustomEventComponent: function() {},
 
     /**
-     * To add component.
+     * Add component.
      * The component refers to a component of the chart.
      * The component types are axis, legend, plot, series and customEvent.
      * Chart Component Description : https://i-msdn.sec.s-msft.com/dynimg/IC267997.gif
@@ -144,7 +144,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To make bounds.
+     * Make bounds.
      * @param {object} boundsParams parameters for making bounds
      * @returns {object} chart bounds
      * @private
@@ -160,7 +160,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To make rendering data for axis type chart.
+     * Make rendering data for axis type chart.
      * @param {object} bounds chart bounds
      * @param {object} processedData processedData
      * @param {object} options options
@@ -277,7 +277,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To make event name for animation.
+     * Make event name for animation.
      * @param {string} chartType chart type
      * @param {string} prefix prefix
      * @returns {string} event name
@@ -299,7 +299,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * To register of user event.
+     * Register of user event.
      * @param {string} eventName event name
      * @param {function} func event callback
      */

@@ -49,7 +49,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To make sector path.
+     * Make sector path.
      * @param {number} cx center x
      * @param {number} cy center y
      * @param {number} r radius
@@ -157,7 +157,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To make line paths.
+     * Make line paths.
      * @param {array.<object>} outerPositions outer positions
      * @returns {Array} line paths.
      * @private
@@ -216,7 +216,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To expand selector radius.
+     * Expand selector radius.
      * @param {object} sector pie sector
      */
     _expandSector: function(sector) {
@@ -229,7 +229,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To restore selector radius.
+     * Restore selector radius.
      * @param {object} sector pie sector
      */
     _restoreSector: function(sector) {
@@ -295,7 +295,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
 
     /**
-     * To resize graph of pie chart.
+     * Resize graph of pie chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {{cx:number, cy:number, r: number}} params.circleBound circle bound
@@ -316,7 +316,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To move legend lines.
+     * Move legend lines.
      * @param {array.<object>} outerPositions outer positions
      */
     moveLegendLines: function(outerPositions) {

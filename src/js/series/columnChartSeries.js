@@ -26,7 +26,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make start end tops.
+     * Make start end tops.
      * @param {number} endTop end top
      * @param {number} endHeight end height
      * @param {number} value value
@@ -51,7 +51,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make bound of column chart.
+     * Make bound of column chart.
      * @param {object} params parameters
      *      @param {{left: number, width: number}} params.baseBound base bound
      *      @param {number} params.startTop start top
@@ -77,7 +77,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make normal column chart bound.
+     * Make normal column chart bound.
      * @param {{
      *      dimension: {width: number, height: number},
      *      groupValues: array.<array.<number>>,
@@ -111,7 +111,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make bounds of normal column chart.
+     * Make bounds of normal column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -131,7 +131,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make bounds of stacked column chart.
+     * Make bounds of stacked column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -175,7 +175,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make bounds of column chart.
+     * Make bounds of column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {array.<array.<object>>} bounds
      * @private
@@ -189,7 +189,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make series rendering position
+     * Make series rendering position
      * @param {obeject} params parameters
      *      @param {number} params.value value
      *      @param {{left: number, top: number, width:number, width:number, height: number}} params.bound bound
@@ -216,7 +216,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * To make sum label html.
+     * Make sum label html.
      * @param {object} params parameters
      *      @param {array.<number>} params.values values
      *      @param {array.<function>} params.formatFunctions formatting functions

@@ -76,7 +76,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make vertical data.
+     * Make vertical data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -127,7 +127,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make horizontal data.
+     * Make horizontal data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -187,7 +187,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate main position value.
+     * Calculate main position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {{start: number, end: number}} range range
      * @param {object} data data
@@ -215,7 +215,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate sub position value.
+     * Calculate sub position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
      *      @param {number} data.areaSize tooltip area size (width or height)
@@ -240,7 +240,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make position value diff.
+     * Make position value diff.
      * @param {number} value positoin value
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
@@ -360,7 +360,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make caching key.
+     * Make caching key.
      * @param {{start: number, end: number}} range range
      * @returns {string} key
      * @private
@@ -381,7 +381,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate group tooltip position.
+     * Calculate group tooltip position.
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{start: number, end: number}} range tooltip sector range
      * @returns {{left: number, top: number}} group tooltip position

@@ -31,7 +31,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To render plot area.
+     * Render plot area.
      * @param {HTMLElement} plotContainer plot area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
@@ -47,7 +47,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To render plot component.
+     * Render plot component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @returns {HTMLElement} plot element
@@ -60,7 +60,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To resize plot component.
+     * Resize plot component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      */
@@ -104,7 +104,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make html of plot line.
+     * Make html of plot line.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions positions
      *      @param {number} params.size width or height
@@ -134,7 +134,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make pixel value of vertical positions
+     * Make pixel value of vertical positions
      * @param {number} height plot height
      * @returns {array.<number>} positions
      * @private
@@ -146,7 +146,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make pixel value of horizontal positions.
+     * Make pixel value of horizontal positions.
      * @param {number} width plot width
      * @returns {array.<number>} positions
      * @private

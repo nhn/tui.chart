@@ -66,7 +66,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To render tooltip component.
+     * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
@@ -84,7 +84,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To resize tooltip component.
+     * Resize tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @override
@@ -97,7 +97,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To make tooltip data.
+     * Make tooltip data.
      * @returns {array.<object>} tooltip data
      * @override
      */
@@ -241,7 +241,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To calculate tooltip position abount pie chart.
+     * Calculate tooltip position abount pie chart.
      * @param {object} params parameters
      *      @param {{left: number, top: number}} params.bound bound
      *      @param {{clientX: number, clientY: number}} params.eventPosition mouse position
@@ -255,7 +255,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To calculate tooltip position about not bar chart.
+     * Calculate tooltip position about not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -295,7 +295,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To calculate tooltip position about bar chart.
+     * Calculate tooltip position about bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -435,7 +435,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To make tooltip html.
+     * Make tooltip html.
      * @param {string} chartType chart type
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @returns {string} tooltip html
@@ -504,7 +504,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To make parameters for show tooltip user event.
+     * Make parameters for show tooltip user event.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @param {object} additionParams addition parameters
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip

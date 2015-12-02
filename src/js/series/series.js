@@ -48,7 +48,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make series data.
+     * Make series data.
      * @returns {object} add data
      */
     makeSeriesData: function() {
@@ -86,7 +86,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To render series label area
+     * Render series label area
      * @param {{width: number, height: number}} dimension series dimension
      * @param {object} seriesData series data
      * @param {?HTMLElement} seriesLabelContainer series label area element
@@ -105,7 +105,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To render series area.
+     * Render series area.
      * @param {HTMLElement} seriesContainer series area element
      * @param {{
      *      dimension: {width: number, height: number},
@@ -138,7 +138,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make parameters for graph rendering.
+     * Make parameters for graph rendering.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
      * @returns {object} parameters for graph rendering
@@ -154,7 +154,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To render raphael graph.
+     * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
      * @private
@@ -165,7 +165,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To render series component.
+     * Render series component.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -184,7 +184,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To resize raphael graph.
+     * Resize raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
      * @private
@@ -196,7 +196,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To resize series component.
+     * Resize series component.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -208,7 +208,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make add data for series label.
+     * Make add data for series label.
      * @param {object} seriesData series data
      * @param {{width: number, height: number}} dimension dimension
      * @returns {{
@@ -245,7 +245,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make percent value.
+     * Make percent value.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @param {string} stacked stacked option
      * @returns {array.<array.<number>>} percent values
@@ -266,7 +266,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make percent values about normal stacked option.
+     * Make percent values about normal stacked option.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array} percent values about normal stacked option.
      * @private
@@ -290,7 +290,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make percent values about percent stacked option.
+     * Make percent values about percent stacked option.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array} percent values about percent stacked option
      * @private
@@ -310,7 +310,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make normal percent value.
+     * Make normal percent value.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
@@ -366,7 +366,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make label bound.
+     * Make label bound.
      * @param {number} clientX clientX
      * @param {number} clientY clientY
      * @returns {{left: number, top: number}} bound
@@ -466,7 +466,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make html about series label.
+     * Make html about series label.
      * @param {{left: number, top: number}} position position
      * @param {string} value value
      * @param {number} groupIndex group index
@@ -509,7 +509,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * To make exportation data for series type userEvent.
+     * Make exportation data for series type userEvent.
      * @param {object} seriesData series data
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
      * @private

@@ -47,7 +47,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make options map
+     * Make options map
      * @param {object} chartTypes chart types
      * @param {object} options chart options
      * @param {object} orderInfo chart order
@@ -63,7 +63,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make theme map
+     * Make theme map
      * @param {object} chartTypes chart types
      * @param {object} theme chart theme
      * @param {object} legendLabels legend labels
@@ -95,7 +95,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make serieses
+     * Make serieses
      * @param {array.<string>} chartTypes chart types
      * @param {object} processedData processed data.
      * @param {object} options chart options
@@ -158,7 +158,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             serieses = this._makeSerieses(this.seriesChartTypes, processedData, options, theme);
 
         if (this.optionChartTypes.length) {
-            axes.push('yrAxis');
+            axes.push('rightYAxis');
         }
 
         this._addComponentsForAxisType({
@@ -204,7 +204,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make y axis data.
+     * Make y axis data.
      * @param {object} params parameters
      *      @param {number} params.index chart index
      *      @param {object} params.processedData processed data
@@ -245,7 +245,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * To make axes data
+     * Make axes data
      * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
@@ -267,7 +267,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             yAxisData = this._makeYAxisData(tui.util.extend({
                 index: 0
             }, yAxisParams)),
-            axesData, yrAxisData;
+            axesData, rightYAxisData;
 
         axesData = {
             yAxis: yAxisData,
@@ -275,20 +275,20 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         };
 
         if (!yAxisParams.isOneYAxis) {
-            yrAxisData = this._makeYAxisData(tui.util.extend({
+            rightYAxisData = this._makeYAxisData(tui.util.extend({
                 index: 1,
                 addParams: {
                     isPositionRight: true
                 }
             }, yAxisParams));
-            if (yAxisData.tickCount < yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yrAxisData.tickCount - yAxisData.tickCount, yAxisData, formatFunctions);
-            } else if (yAxisData.tickCount > yrAxisData.tickCount) {
-                this._increaseYAxisTickCount(yAxisData.tickCount - yrAxisData.tickCount, yrAxisData, formatFunctions);
+            if (yAxisData.tickCount < rightYAxisData.tickCount) {
+                this._increaseYAxisTickCount(rightYAxisData.tickCount - yAxisData.tickCount, yAxisData, formatFunctions);
+            } else if (yAxisData.tickCount > rightYAxisData.tickCount) {
+                this._increaseYAxisTickCount(yAxisData.tickCount - rightYAxisData.tickCount, rightYAxisData, formatFunctions);
             }
 
-            yrAxisData.aligned = xAxisData.aligned;
-            axesData.yrAxis = yrAxisData;
+            rightYAxisData.aligned = xAxisData.aligned;
+            axesData.rightYAxis = rightYAxisData;
         }
 
         return axesData;

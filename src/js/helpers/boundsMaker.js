@@ -85,7 +85,7 @@ var boundsMaker = {
     },
 
     /**
-     * Get width about y right axis.
+     * Get width about right y axis.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {array.<string>} params.chartTypes y axis chart types
@@ -94,7 +94,7 @@ var boundsMaker = {
      * @returns {number} y right axis width
      * @private
      */
-    _getYRAxisWidth: function(params) {
+    _getRightYAxisWidth: function(params) {
         var chartTypes = params.chartTypes || [],
             len = chartTypes.length,
             width = 0,
@@ -110,7 +110,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make axes dimension.
+     * Make axes dimension.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.processedData processed data
@@ -120,7 +120,7 @@ var boundsMaker = {
      *      *      @param {object} params.axesLabelInfo axes label info
      * @returns {{
      *      yAxis: {width: number},
-     *      yrAxis: {width: number},
+     *      rightYAxis: {width: number},
      *      xAxis: {height: number}
      * }} axes dimension
      * @private
@@ -128,7 +128,7 @@ var boundsMaker = {
     _makeAxesDimension: function(params) {
         var yAxisWidth = 0,
             xAxisHeight = 0,
-            yrAxisWidth = 0,
+            rightYAxisWidth = 0,
             axesLabelInfo, chartType;
 
         // axis 영역이 필요 있는 경우에만 처리
@@ -137,7 +137,7 @@ var boundsMaker = {
             chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
             yAxisWidth = this._getYAxisWidth(params.options.yAxis, axesLabelInfo.yAxis, params.theme.yAxis[chartType] || params.theme.yAxis);
             xAxisHeight = this._getXAxisHeight(params.options.xAxis, axesLabelInfo.xAxis, params.theme.xAxis);
-            yrAxisWidth = this._getYRAxisWidth({
+            rightYAxisWidth = this._getRightYAxisWidth({
                 processedData: params.processedData,
                 chartTypes: params.optionChartTypes,
                 theme: params.theme.yAxis,
@@ -149,8 +149,8 @@ var boundsMaker = {
             yAxis: {
                 width: yAxisWidth
             },
-            yrAxis: {
-                width: yrAxisWidth
+            rightYAxis: {
+                width: rightYAxisWidth
             },
             xAxis: {
                 height: xAxisHeight
@@ -170,7 +170,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make legend dimension.
+     * Make legend dimension.
      * @memberOf module:boundsMaker
      * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
@@ -200,14 +200,14 @@ var boundsMaker = {
     },
 
     /**
-     * To make series dimension.
+     * Make series dimension.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {{width: number, height: number}} params.chartDimension chart dimension
      *      @param {{
      *          yAxis: {width: number, height:number},
      *          xAxis: {width: number, height:number},
-     *          yrAxis: {width: number, height:number}
+     *          rightYAxis: {width: number, height:number}
      *      }} params.axesDimension axes dimension
      *      @param {number} params.legendWidth legend width
      *      @param {number} params.titleHeight title height
@@ -216,7 +216,7 @@ var boundsMaker = {
      */
     _makeSeriesDimension: function(params) {
         var axesDimension = params.axesDimension,
-            rightAreaWidth = params.legendWidth + axesDimension.yrAxis.width,
+            rightAreaWidth = params.legendWidth + axesDimension.rightYAxis.width,
             width = params.chartDimension.width - (chartConst.CHART_PADDING * 2) - axesDimension.yAxis.width - rightAreaWidth,
             height = params.chartDimension.height - (chartConst.CHART_PADDING * 2) - params.titleHeight - axesDimension.xAxis.height;
 
@@ -227,7 +227,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make chart dimension.
+     * Make chart dimension.
      * @param {{width: number, height: number}} chartOptions chart options
      * @returns {{width: (number), height: (number)}} chart dimension
      * @private
@@ -240,7 +240,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make title dimension
+     * Make title dimension
      * @param {{title: string}} option title option
      * @param {{fontFamily: string, fontSize: number}} theme title theme
      * @returns {{height: number}} title dimension
@@ -253,7 +253,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make plot dimention
+     * Make plot dimention
      * @param {{width: number, height: number}} seriesDimension series dimension
      * @returns {{width: number, height: number}} plot dimension
      * @private
@@ -300,7 +300,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make basic bound.
+     * Make basic bound.
      * @param {{width: number, height: number}} dimension series dimension.
      * @param {number} top top
      * @param {number} left left
@@ -318,7 +318,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make yAxis bound.
+     * Make yAxis bound.
      * @param {{yAxis: {width: number}, plot: {height: number}}} dimensions dimensions
      * @param {number} top top
      * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yAxis bound
@@ -338,7 +338,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make xAxis bound.
+     * Make xAxis bound.
      * @param {{xAxis: {height: number}, plot: {width: number}}} dimensions dimensions
      * @param {number} top top
      * @param {number} left left
@@ -366,16 +366,16 @@ var boundsMaker = {
     },
 
     /**
-     * To make yrAxis bound.
-     * @param {{yrAxis: {width: number}, plot: {height: number}, legend: {width: number}}} dimensions dimensions
+     * Make right y axis bound.
+     * @param {{rightYAxis: {width: number}, plot: {height: number}, legend: {width: number}}} dimensions dimensions
      * @param {number} top top
-     * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yrAxis bound
+     * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} rightYAxis bound
      * @private
      */
-    _makeYRAxisBound: function(dimensions, top) {
+    _makeRightYAxisBound: function(dimensions, top) {
         return {
             dimension: {
-                width: dimensions.yrAxis.width,
+                width: dimensions.rightYAxis.width,
                 height: dimensions.plot.height
             },
             position: {
@@ -386,7 +386,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make axes bounds.
+     * Make axes bounds.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axed or not
@@ -414,14 +414,14 @@ var boundsMaker = {
 
         // 우측 y axis 영역 bounds 정보 추가
         if (params.optionChartTypes && params.optionChartTypes.length) {
-            bounds.yrAxis = this._makeYRAxisBound(params.dimensions, params.top);
+            bounds.rightYAxis = this._makeRightYAxisBound(params.dimensions, params.top);
         }
 
         return bounds;
     },
 
     /**
-     * To make chart bound.
+     * Make chart bound.
      * @param {{width: number, height: number}} dimension chart dimension.
      * @returns {{dimension: {width: number, height: number}}} chart bound
      * @private
@@ -433,8 +433,8 @@ var boundsMaker = {
     },
 
     /**
-     * To make legend bound.
-     * @param {{title: {height: number}, series: {width: number}, yrAxis: {width: number}}} dimensions dimensions
+     * Make legend bound.
+     * @param {{title: {height: number}, series: {width: number}, rightYAxis: {width: number}}} dimensions dimensions
      * @param {number} yAxisWidth yAxis width
      * @returns {{position: {top: number, left: number}}} legend bound
      * @private
@@ -443,13 +443,13 @@ var boundsMaker = {
         return {
             position: {
                 top: dimensions.title.height,
-                left: dimensions.yAxis.width + dimensions.series.width + dimensions.yrAxis.width + this.chartLeftPadding
+                left: dimensions.yAxis.width + dimensions.series.width + dimensions.rightYAxis.width + this.chartLeftPadding
             }
         };
     },
 
     /**
-     * To make axes label info.
+     * Make axes label info.
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axes or not
      *      @param {array} params.optionChartTypes chart types
@@ -511,7 +511,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make rotation info about horizontal label.
+     * Make rotation info about horizontal label.
      * @param {number} seriesWidth series area width
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis label theme
@@ -538,7 +538,7 @@ var boundsMaker = {
     },
 
     /**
-     * To calculate overflow position left.
+     * Calculate overflow position left.
      * @param {number} yAxisWidth yAxis width
      * @param {{degree: number, labelHeight: number}} rotationInfo rotation info
      * @param {string} firstLabel firstLabel
@@ -557,7 +557,7 @@ var boundsMaker = {
 
 
     /**
-     * To calculate height of xAxis.
+     * Calculate height of xAxis.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} xAxis height
      * @private
@@ -571,7 +571,7 @@ var boundsMaker = {
     },
 
     /**
-     * To calculate height difference between origin label and rotation label.
+     * Calculate height difference between origin label and rotation label.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} height difference
      * @private
@@ -661,7 +661,7 @@ var boundsMaker = {
     },
 
     /**
-     * To make bounds about chart components.
+     * Make bounds about chart components.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.processedData processed data

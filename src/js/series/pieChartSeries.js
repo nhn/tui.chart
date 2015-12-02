@@ -28,7 +28,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make percent value.
+     * Make percent value.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
@@ -46,7 +46,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make sectors information.
+     * Make sectors information.
      * @param {array.<number>} percentValues percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
      * @returns {array.<object>} sectors information
@@ -103,7 +103,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make series data.
+     * Make series data.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -129,7 +129,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make circle bound
+     * Make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
      * @param {{showLabel: boolean, legendAlign: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
@@ -168,7 +168,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
 
     /**
-     * To make add data for series label.
+     * Make add data for series label.
      * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
@@ -192,7 +192,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To render raphael graph.
+     * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
      * @private
@@ -217,7 +217,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To render series component of pie chart.
+     * Render series component of pie chart.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -271,7 +271,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make series data by selection.
+     * Make series data by selection.
      * @param {number} index index
      * @returns {{indexes: {index: number, groupIndex: number}}} series data
      * @private
@@ -503,7 +503,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To handle mouse event.
+     * Handle mouse event.
      * @param {MouseEvent} e mouse event
      * @param {function} callback callback
      * @private

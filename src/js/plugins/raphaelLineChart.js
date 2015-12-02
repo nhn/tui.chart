@@ -138,7 +138,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     },
 
     /**
-     * To resize graph of line chart.
+     * Resize graph of line chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
