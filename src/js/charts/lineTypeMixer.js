@@ -34,6 +34,10 @@ var lineTypeMixer = {
         this._addComponents(this.processedData, options.chartType);
     },
 
+    /**
+     * Add custom event component for normal tooltip.
+     * @private
+     */
     _addCustomEventComponentForNormalTooltip: function() {
         this._addComponent('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
