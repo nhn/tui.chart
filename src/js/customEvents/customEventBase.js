@@ -70,16 +70,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Render.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
+     * @param {{tickCount: number}} data data
+     */
+    rerender: function(bound, data) {
+        this._renderCustomEventArea(this.customEventContainer, bound, data);
+    },
+
+    /**
      * Resize event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
      * @param {{tickCount: number}} data data
      */
     resize: function(bound, data) {
-        this._renderCustomEventArea(this.customEventContainer, bound, data);
-    },
-
-    reRender: function(bound, data) {
-        this.resize(bound, data);
+        this.rerender(bound, data);
     },
 
     /**

@@ -128,6 +128,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @param {object} processedData processed data
      * @param {array.<string>} chartTypes chart types
      * @returns {object} series data
+     * @override
      * @private
      */
     _makeSeriesData: function(processedData, chartTypes) {

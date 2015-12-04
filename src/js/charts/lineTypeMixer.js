@@ -45,6 +45,13 @@ var lineTypeMixer = {
         });
     },
 
+    /**
+     * Make data for series component.
+     * @param {object} processedData processed data
+     * @returns {object} series data
+     * @override
+     * @private
+     */
     _makeSeriesData: function(processedData) {
         return {
             values: tui.util.pivot(processedData.values),

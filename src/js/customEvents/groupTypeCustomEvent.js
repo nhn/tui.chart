@@ -52,7 +52,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             sizeType = this.isVertical ? 'height' : 'width';
 
         if (index === -1) {
-            this.onMouseout();
+            this._onMouseout();
             return;
         }
 
@@ -75,7 +75,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @param {MouseEvent} e mouse event object
      * @override
      */
-    onMouseout: function() {
+    _onMouseout: function() {
         if (!tui.util.isUndefined(this.prevIndex)) {
             this.fire('hideGroupTooltip', this.prevIndex);
             delete this.prevIndex;

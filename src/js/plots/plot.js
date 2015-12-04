@@ -59,6 +59,11 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         return el;
     },
 
+    /**
+     * Rerender.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
+     * @param {object} data rendering
+     */
     rerender: function(bound, data) {
         this.plotContainer.innerHTML = '';
         this._renderPlotArea(this.plotContainer, bound, data);

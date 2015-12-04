@@ -140,14 +140,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _getTooltipSectorElement: function() {
-        var elTooltipSector;
+        var groupTooltipSector;
 
-        if (!this.elTooltipSector) {
-            this.elTooltipSector = elTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
-            dom.append(this.elTooltipArea, elTooltipSector);
+        if (!this.groupTooltipSector) {
+            this.groupTooltipSector = groupTooltipSector = dom.create('DIV', 'tui-chart-group-tooltip-sector');
+            dom.append(this.tooltipContainer, groupTooltipSector);
         }
 
-        return this.elTooltipSector;
+        return this.groupTooltipSector;
     },
 
     /**
@@ -230,16 +230,16 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _showTooltipSector: function(size, range, isVertical, index) {
-        var elTooltipSector = this._getTooltipSectorElement(),
+        var groupTooltipSector = this._getTooltipSectorElement(),
             isLine = (range.start === range.end),
             bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
 
         if (isLine) {
             this.fire('showGroupTooltipLine', bound);
         } else {
-            renderUtil.renderDimension(elTooltipSector, bound.dimension);
-            renderUtil.renderPosition(elTooltipSector, bound.position);
-            dom.addClass(elTooltipSector, 'show');
+            renderUtil.renderDimension(groupTooltipSector, bound.dimension);
+            renderUtil.renderPosition(groupTooltipSector, bound.position);
+            dom.addClass(groupTooltipSector, 'show');
         }
 
         this.fire('showGroupAnimation', index);
@@ -251,9 +251,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _hideTooltipSector: function(index) {
-        var elTooltipSector = this._getTooltipSectorElement();
+        var groupTooltipSector = this._getTooltipSectorElement();
 
-        dom.removeClass(elTooltipSector, 'show');
+        dom.removeClass(groupTooltipSector, 'show');
         this.fire('hideGroupAnimation', index);
         this.fire('hideGroupTooltipLine');
     },
