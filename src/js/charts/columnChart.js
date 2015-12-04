@@ -50,12 +50,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     _addComponents: function(processedData, chartType) {
         var seriesData = {
             allowNegativeTooltip: true,
-            data: {
-                values: processedData.values,
-                formattedValues: processedData.formattedValues,
-                formatFunctions: processedData.formatFunctions,
-                joinLegendLabels: processedData.joinLegendLabels
-            }
+            data: this._makeSeriesData(processedData)
         };
 
         this._addComponentsForAxisType({

@@ -13,7 +13,9 @@ var chartConst = {
     /** tui class names
      * @type {string}
      */
-    CLASS_NAME_LEGEND: 'tui-chart-legend',
+    CLASS_NAME_LEGEND_LABEL: 'tui-chart-legend-label',
+    /** @type {string} */
+    CLASS_NAME_LEGEND_CHECKBOX: 'tui-chart-legend-checkbox',
     /** @type {string} */
     CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
     /** @type {string} */
@@ -133,6 +135,8 @@ var chartConst = {
     TITLE_PADDING: 20,
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
+    /** legend checkbox width */
+    LEGEND_CHECKBOX_WIDTH: 20,
     /** legend rect width */
     LEGEND_RECT_WIDTH: 12,
     /** lgend label left padding */

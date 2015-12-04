@@ -179,7 +179,7 @@ describe('boundsMaker', function() {
                     }
                 ],
                 {});
-            expect(acutal.width).toBe(87);
+            expect(acutal.width).toBe(107);
         });
     });
 
@@ -308,10 +308,10 @@ describe('boundsMaker', function() {
             });
 
             expect(result.title.height).toBe(40);
-            expect(result.series.width).toBe(296);
+            expect(result.series.width).toBe(276);
             expect(result.series.height).toBe(280);
 
-            expect(result.legend.width).toBe(87);
+            expect(result.legend.width).toBe(107);
 
             expect(result.yAxis.width).toBe(97);
             expect(result.rightYAxis.width).toBe(0);
@@ -735,18 +735,18 @@ describe('boundsMaker', function() {
             });
             expect(result.chart.dimension.width).toBe(500);
             expect(result.chart.dimension.height).toBe(400);
-            expect(result.series.dimension.width).toBe(296);
+            expect(result.series.dimension.width).toBe(276);
             expect(result.series.dimension.height).toBe(280);
             expect(result.series.position.top).toBe(50);
             expect(result.series.position.left).toBe(107);
             expect(result.yAxis.dimension.width).toBe(97);
             expect(result.yAxis.dimension.height).toBe(281);
             expect(result.yAxis.position.top).toBe(50);
-            expect(result.xAxis.dimension.width).toBe(297);
+            expect(result.xAxis.dimension.width).toBe(277);
             expect(result.xAxis.dimension.height).toBe(60);
             expect(result.xAxis.position.top).toBe(330);
             expect(result.legend.position.top).toBe(40);
-            expect(result.legend.position.left).toBe(403);
+            expect(result.legend.position.left).toBe(383);
             expect(result.tooltip.position.top).toBe(50);
             expect(result.tooltip.position.left).toBe(97);
         });

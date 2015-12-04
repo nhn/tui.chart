@@ -18,6 +18,7 @@ describe('ComboChart', function() {
         axisTypeMixer._addComponent = jasmine.createSpy('_addComponent').and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
+        axisTypeMixer._makeTooltipData = jasmine.createSpy('_makeTooltipData').and.returnValue({});
     });
 
     beforeEach(function() {

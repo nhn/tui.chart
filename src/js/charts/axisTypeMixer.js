@@ -73,30 +73,13 @@ var axisTypeMixer = {
     /**
      * Add tooltip component
      * @param {object} processedData processedData
-     * @param {object} options options
+     * @param {string} chartType chart type
      * @private
      */
-    _addTooltipComponent: function(processedData, options) {
-        if (this.hasGroupTooltip) {
-            this._addComponent('tooltip', GroupTooltip, {
-                labels: processedData.labels,
-                joinFormattedValues: processedData.joinFormattedValues,
-                joinLegendLabels: processedData.joinLegendLabels,
-                isVertical: this.isVertical,
-                userEvent: this.userEvent
-            });
-        } else {
-            this._addComponent('tooltip', Tooltip, {
-                values: processedData.values,
-                formattedValues: processedData.formattedValues,
-                labels: processedData.labels,
-                legendLabels: processedData.legendLabels,
-                joinLegendLabels: processedData.joinLegendLabels,
-                chartType: options.chartType,
-                isVertical: this.isVertical,
-                userEvent: this.userEvent
-            });
-        }
+    _addTooltipComponent: function(processedData, chartType) {
+        var data = this._makeTooltipData(processedData, chartType),
+            TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
+        this._addComponent('tooltip', TooltipClass, data);
     },
 
     /**
@@ -137,7 +120,7 @@ var axisTypeMixer = {
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(processedData, params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options, aligned);
-        this._addTooltipComponent(processedData, options);
+        this._addTooltipComponent(processedData, options.chartType);
     },
 
     /**
@@ -187,16 +170,17 @@ var axisTypeMixer = {
     /**
      * Make rendering data for axis type chart.
      * @param {object} bounds chart bounds
-     * @param {object} processedData processedData
-     * @param {object} options options
+     * @param {?object} processedData processedData
      * @return {object} data for rendering
      * @private
      * @override
      */
-    _makeRenderingData: function(bounds, processedData, options) {
-        var axesData = this._makeAxesData(processedData, bounds, options),
-            optionChartTypes = this.chartTypes || [this.chartType],
-            seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
+    _makeRenderingData: function(bounds, processedData) {
+        var axesData, optionChartTypes, seriesData;
+
+        axesData = this._makeAxesData(processedData || this.processedData, bounds);
+        optionChartTypes = this.chartTypes || [this.chartType];
+        seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
 
         return tui.util.extend({
             plot: {

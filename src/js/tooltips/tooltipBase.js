@@ -90,8 +90,23 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
+     * Rerender.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     */
+    rerender: function(bound, data) {
+        this.bound = bound;
+        tui.util.extend(this, data);
+        this.data = this.makeTooltipData();
+        if (this.positionModel) {
+            this.positionModel.updateBound(bound);
+        }
+    },
+
+    /**
      * Resize tooltip component.
      * @param {{position: object}} bound tooltip bound
+     * @param {{chartDimension: object}} data data for resize
      * @override
      */
     resize: function(bound, data) {

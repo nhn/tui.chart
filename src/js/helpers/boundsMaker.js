@@ -99,7 +99,8 @@ var boundsMaker = {
             len = chartTypes.length,
             width = 0,
             index, chartType, theme, label;
-        if (len > 0) {
+
+        if (len > 1) {
             index = len - 1;
             chartType = chartTypes[index];
             theme = params.theme[chartType] || params.theme;
@@ -190,7 +191,7 @@ var boundsMaker = {
                 return item.label;
             });
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
-            legendWidth = maxLabelWidth + chartConst.LEGEND_RECT_WIDTH +
+            legendWidth = maxLabelWidth + chartConst.LEGEND_CHECKBOX_WIDTH + chartConst.LEGEND_RECT_WIDTH +
                 chartConst.LEGEND_LABEL_LEFT_PADDING + (chartConst.LEGEND_AREA_PADDING * 2);
         }
 
@@ -413,10 +414,7 @@ var boundsMaker = {
         };
 
         // 우측 y axis 영역 bounds 정보 추가
-        if (params.optionChartTypes && params.optionChartTypes.length) {
-            bounds.rightYAxis = this._makeRightYAxisBound(params.dimensions, params.top);
-        }
-
+        bounds.rightYAxis = this._makeRightYAxisBound(params.dimensions, params.top);
         return bounds;
     },
 

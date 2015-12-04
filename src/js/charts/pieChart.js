@@ -62,15 +62,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             });
         }
 
-        this._addComponent('tooltip', Tooltip, {
-            values: processedData.values,
-            formattedValues: processedData.formattedValues,
-            labels: processedData.labels,
-            legendLabels: processedData.legendLabels,
-            joinLegendLabels: processedData.joinLegendLabels,
-            userEvent: this.userEvent,
-            chartType: options.chartType
-        });
+        this._addComponent('tooltip', Tooltip, this._makeTooltipData(processedData, options.chartType));
 
         this._addComponent('series', Series, {
             libType: options.libType,
@@ -79,12 +71,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             chartBackground: chartBackground,
             userEvent: this.userEvent,
             legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null,
-            data: {
-                values: processedData.values,
-                formattedValues: processedData.formattedValues,
-                legendLabels: processedData.legendLabels,
-                joinLegendLabels: processedData.joinLegendLabels
-            }
+            data: this._makeSeriesData(processedData)
         });
     },
 

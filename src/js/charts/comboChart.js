@@ -25,53 +25,82 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        var seriesChartTypes = tui.util.keys(rawData.series).sort(),
-            optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, options.yAxis),
-            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes;
+        var chartTypesMap;
 
-        this.chartTypes = chartTypes;
-        this.seriesChartTypes = seriesChartTypes;
-        this.optionChartTypes = optionChartTypes;
         this.className = 'tui-combo-chart';
+
+        chartTypesMap = this._makeChartTypesMap(rawData.series, options.yAxis);
+
+        tui.util.extend(this, chartTypesMap);
 
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
             options: options,
-            seriesChartTypes: seriesChartTypes,
             hasAxes: true,
-            isVertical: true
+            isVertical: true,
+            seriesChartTypes: chartTypesMap.seriesChartTypes
         });
 
-        this._addComponents(this.processedData, this.options, this.theme);
+        this._addComponents(chartTypesMap);
+    },
+
+    /**
+     * Make chart types map.
+     * @param {object} rawSeriesData raw series data
+     * @param {object} yAxisOption option for y axis
+     * @returns {object} chart types map
+     * @private
+     */
+    _makeChartTypesMap: function(rawSeriesData, yAxisOption) {
+        var seriesChartTypes = tui.util.keys(rawSeriesData).sort(),
+            optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, yAxisOption),
+            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes,
+            validChartTypes = tui.util.filter(optionChartTypes, function(chartType) {
+                return rawSeriesData[chartType].length;
+            }),
+            chartTypesMap;
+
+        if (validChartTypes.length === 1) {
+            chartTypesMap = {
+                chartTypes: validChartTypes,
+                seriesChartTypes: validChartTypes,
+                optionChartTypes: !optionChartTypes.length ? optionChartTypes : validChartTypes
+            };
+        } else {
+            chartTypesMap = {
+                chartTypes: chartTypes,
+                seriesChartTypes: seriesChartTypes,
+                optionChartTypes: optionChartTypes
+            };
+        }
+
+        return chartTypesMap;
     },
 
     /**
      * Make options map
      * @param {object} chartTypes chart types
-     * @param {object} options chart options
-     * @param {object} orderInfo chart order
      * @returns {object} options map
      * @private
      */
-    _makeOptionsMap: function(chartTypes, options) {
+    _makeOptionsMap: function(chartTypes) {
         var optionsMap = {};
         tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = options.series && options.series[chartType];
-        });
+            optionsMap[chartType] = this.options.series && this.options.series[chartType];
+        }, this);
         return optionsMap;
     },
 
     /**
      * Make theme map
      * @param {object} chartTypes chart types
-     * @param {object} theme chart theme
-     * @param {object} legendLabels legend labels
      * @returns {object} theme map
      * @private
      */
-    _makeThemeMap: function(chartTypes, theme, legendLabels) {
-        var themeMap = {},
+    _makeThemeMap: function(chartTypes) {
+        var theme = this.theme,
+            themeMap = {},
             colorCount = 0;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
@@ -87,53 +116,66 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 removedColors = chartTheme.series.colors.splice(0, colorCount);
                 chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);
                 themeMap[chartType] = chartTheme.series;
-                colorCount += legendLabels[chartType].length;
+                colorCount += this.processedData.legendLabels[chartType].length;
             }
-        });
+        }, this);
 
         return themeMap;
     },
 
     /**
-     * Make serieses
+     * Make series data.
+     * @param {object} processedData processed data
      * @param {array.<string>} chartTypes chart types
-     * @param {object} processedData processed data.
-     * @param {object} options chart options
-     * @param {object} theme chart theme
-     * @returns {array.<object>} serieses
+     * @returns {object} series data
      * @private
      */
-    _makeSerieses: function(chartTypes, processedData, options, theme) {
-        var seriesClasses = {
-                column: ColumnChartSeries,
-                line: LineChartSeries
-            },
-            optionsMap = this._makeOptionsMap(chartTypes, options),
-            themeMap = this._makeThemeMap(chartTypes, theme, processedData.legendLabels),
-            serieses;
+    _makeSeriesData: function(processedData, chartTypes) {
+        var seriesData = {};
 
-        serieses = tui.util.map(chartTypes, function(chartType) {
+        tui.util.forEachArray(chartTypes, function(chartType) {
             var values = processedData.values[chartType],
-                formattedValues = processedData.formattedValues[chartType],
-                data;
+                formattedValues = processedData.formattedValues[chartType];
 
             if (predicate.isLineTypeChart(chartType)) {
                 values = tui.util.pivot(values);
                 formattedValues = tui.util.pivot(formattedValues);
             }
 
-            data = {
+            seriesData[chartType] = {
+                values: values,
+                formattedValues: formattedValues,
+                formatFunctions: processedData.formatFunctions,
+                joinLegendLabels: processedData.joinLegendLabels
+            };
+        });
+        return seriesData;
+    },
+
+    /**
+     * Make serieses
+     * @param {array.<string>} chartTypes chart types
+     * @returns {array.<object>} serieses
+     * @private
+     */
+    _makeSerieses: function(chartTypes) {
+        var seriesClasses = {
+                column: ColumnChartSeries,
+                line: LineChartSeries
+            },
+            seriesData = this._makeSeriesData(this.processedData, chartTypes),
+            optionsMap = this._makeOptionsMap(chartTypes),
+            themeMap = this._makeThemeMap(chartTypes),
+            serieses;
+
+        serieses = tui.util.map(chartTypes, function(chartType) {
+            var data = {
                 allowNegativeTooltip: true,
                 componentType: 'series',
                 chartType: chartType,
                 options: optionsMap[chartType],
                 theme: themeMap[chartType],
-                data: {
-                    values: values,
-                    formattedValues: formattedValues,
-                    formatFunctions: processedData.formatFunctions,
-                    joinLegendLabels: processedData.joinLegendLabels
-                }
+                data: seriesData[chartType]
             };
 
             return {
@@ -148,24 +190,22 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Add components
-     * @param {object} processedData processed data
-     * @param {object} options chart options
-     * @param {object} theme chart theme
+     * @param {object} chartTypesMap chart types map
      * @private
      */
-    _addComponents: function(processedData, options, theme) {
+    _addComponents: function(chartTypesMap) {
         var axes = ['yAxis', 'xAxis'],
-            serieses = this._makeSerieses(this.seriesChartTypes, processedData, options, theme);
+            serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
 
-        if (this.optionChartTypes.length) {
+        if (chartTypesMap.optionChartTypes.length) {
             axes.push('rightYAxis');
         }
 
         this._addComponentsForAxisType({
-            processedData: processedData,
+            processedData: this.processedData,
             axes: axes,
-            seriesChartTypes: this.seriesChartTypes,
-            chartType: options.chartType,
+            seriesChartTypes: chartTypesMap.seriesChartTypes,
+            chartType: this.options.chartType,
             serieses: serieses
         });
     },
@@ -248,12 +288,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * Make axes data
      * @param {object} processedData processed data
      * @param {object} bounds chart bounds
-     * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(processedData, bounds, options) {
-        var formatFunctions = processedData.formatFunctions,
+    _makeAxesData: function(processedData, bounds) {
+        var options = this.options,
+            formatFunctions = processedData.formatFunctions,
             yAxisParams = {
                 processedData: processedData,
                 seriesDimension: bounds.series.dimension,
@@ -314,9 +354,21 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      */
     render: function() {
         return ChartBase.prototype.render.call(this, {
-            seriesChartTypes: this.seriesChartTypes,
             optionChartTypes: this.optionChartTypes
         });
+    },
+
+    /**
+     * On change selected legend.
+     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     */
+    onChangeSelectedLegends: function(checkedLegends) {
+        var rawData = this._filterRawData(this.rawData, checkedLegends),
+            chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
+
+        tui.util.extend(this, chartTypesMap);
+
+        ChartBase.prototype.onChangeSelectedLegends.call(this, checkedLegends, rawData, chartTypesMap);
     }
 });
 

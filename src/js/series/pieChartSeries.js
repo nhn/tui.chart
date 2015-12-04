@@ -211,9 +211,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
         this.graphRenderer.render(this.seriesContainer, params, callbacks);
-
-        // series label mouse event 동작 시 사용
-        this.showTooltip = funcShowTooltip;
     },
 
     /**
@@ -354,7 +351,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 position = params.funcMoveToPosition(positions[index], label);
             return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
-
         seriesLabelContainer.innerHTML = html;
     },
 
@@ -579,7 +575,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
         this._handleMouseEvent(e, function(groupIndex, index) {
             var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
-            that.showTooltip(bound, groupIndex, index);
+            that.showTooltip({
+                allowNegativeTooltip: !!that.allowNegativeTooltip,
+                chartType: that.chartType
+            }, bound, groupIndex, index);
         });
     },
 

@@ -301,6 +301,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var that = this,
             groupBorders = this.groupBorders || [];
 
+        if (this.callbackTimeout) {
+            clearTimeout(this.callbackTimeout);
+            delete this.callbackTimeout;
+        }
         raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
             var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             if (!bar) {
@@ -313,7 +317,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         });
 
         if (callback) {
-            setTimeout(callback, ANIMATION_TIME);
+            this.callbackTimeout = setTimeout(function() {
+                callback();
+                delete this.callbackTimeout;
+            }, ANIMATION_TIME);
         }
     },
 
@@ -376,7 +383,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             that._updateRectBound(bar.rect, bound);
 
             if (lines) {
-                this._updateBordersPath(lines, bound, that.chartType, bar.value);
+                that._updateBordersPath(lines, bound, that.chartType, bar.value);
             }
         });
     },

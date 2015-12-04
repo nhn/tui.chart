@@ -7,9 +7,10 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_LEGEND: '<div class="tui-chart-legend" style="height:{{ height }}px" data-index="{{ index }}">' +
+    HTML_LEGEND: '<div class="tui-chart-legend" style="height:{{ height }}px">' +
+        '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="{{ index }}"{{ checked }} /></div>' +
         '<div class="tui-chart-legend-rect {{ iconType }}" style="{{ rectCssText }}"></div>' +
-        '<div class="tui-chart-legend-label" style="height:{{ labelHeight }}px{{ labelFontWeight }}">{{ label }}</div></div>'
+        '<div class="tui-chart-legend-label" style="height:{{ labelHeight }}px{{ labelFontWeight }}" data-index="{{ index }}">{{ label }}</div></div>'
 };
 
 module.exports = {

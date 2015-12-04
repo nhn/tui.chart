@@ -27,10 +27,16 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        var values;
 
         TooltipBase.call(this, params);
+
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
+        this.initValues();
+    },
+
+    initValues: function() {
+        var values;
+
         if (tui.util.isArray(this.values)) {
             values = this.values;
             this.values = {};
@@ -81,6 +87,16 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         this._attachEvent(el);
         return el;
+    },
+
+    /**
+     * Rerender.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     */
+    rerender: function(bound, data) {
+        TooltipBase.prototype.rerender.call(this, bound, data);
+        this.initValues();
     },
 
     /**

@@ -100,6 +100,10 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
      * @private
      */
     _makeDotTypeCoordinateData: function(groupPositions, chartType) {
+        if (!groupPositions) {
+            return [];
+        }
+
         return tui.util.map(tui.util.pivot(groupPositions), function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
                 return {

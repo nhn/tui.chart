@@ -78,6 +78,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this._renderCustomEventArea(this.customEventContainer, bound, data);
     },
 
+    reRender: function(bound, data) {
+        this.resize(bound, data);
+    },
+
     /**
      * Whether changed or not.
      * @param {object} prev previous data

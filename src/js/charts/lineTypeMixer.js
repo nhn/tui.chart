@@ -45,6 +45,15 @@ var lineTypeMixer = {
         });
     },
 
+    _makeSeriesData: function(processedData) {
+        return {
+            values: tui.util.pivot(processedData.values),
+            formattedValues: tui.util.pivot(processedData.formattedValues),
+            formatFunctions: processedData.formatFunctions,
+            joinLegendLabels: processedData.joinLegendLabels
+        };
+    },
+
     /**
      * Add components
      * @param {object} processedData processed data

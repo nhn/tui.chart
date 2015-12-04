@@ -88,13 +88,24 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Rerender axis component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
+     * @param {object} data rendering data
+     */
+    rerender: function(bound, data) {
+        this.axisContainer.innerHTML = '';
+        if (bound.dimension.width > 0) {
+            this._renderAxisArea(this.axisContainer, bound, data);
+        }
+    },
+
+    /**
      * Resize axis component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      */
     resize: function(bound, data) {
-        this.axisContainer.innerHTML = '';
-        this._renderAxisArea(this.axisContainer, bound, data);
+        this.rerender(bound, data);
     },
 
     /**

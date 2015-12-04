@@ -126,8 +126,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             }
 
             if (that.dotOpacity) {
+                item.dot.attr(tui.util.extend({'fill-opacity': 0}, that.borderStyle));
                 setTimeout(function() {
-                    item.dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
+                    item.dot.attr(tui.util.extend({'fill-opacity': item.opacity || that.dotOpacity}, that.borderStyle));
                 }, startTime);
             }
         });
@@ -178,8 +179,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
+     * @param {boolean} isAsapShow whether asap show or not
      */
-    selectLegend: function(legendIndex) {
+    selectLegend: function(legendIndex, isAsapShow) {
         var that = this,
             isNull = tui.util.isNull(legendIndex);
 
@@ -194,7 +196,11 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 line.attr({'stroke-opacity': opacity});
             }
 
-            item.dot.attr({'fill-opacity': opacity});
+            item.opacity = opacity;
+
+            if (isAsapShow) {
+                item.dot.attr({'fill-opacity': opacity});
+            }
         });
     }
 });

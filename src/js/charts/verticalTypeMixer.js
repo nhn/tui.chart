@@ -22,8 +22,9 @@ var verticalTypeMixer = {
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(processedData, bounds, options) {
-        var aligned = predicate.isLineTypeChart(options.chartType),
+    _makeAxesData: function(processedData, bounds) {
+        var options = this.options,
+            aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: processedData.labels,
                 aligned: aligned,

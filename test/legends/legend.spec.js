@@ -57,7 +57,8 @@ describe('test Legend', function() {
                     singleColor: 'yellow',
                     borderColor: 'black'
                 },
-                index: 0
+                index: 0,
+                seriesIndex: 0
             });
             expect(actual[1]).toEqual({
                 theme: {
@@ -65,7 +66,8 @@ describe('test Legend', function() {
                     singleColor: 'green',
                     borderColor: 'black'
                 },
-                index: 1
+                index: 1,
+                seriesIndex: 1
             });
         });
     });
@@ -78,8 +80,14 @@ describe('test Legend', function() {
                     singleColors: ['yellow', 'green'],
                     borderColor: 'black'
                 },
-                actual = legend._makeLegendData(labelInfos, theme),
-                expected = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
+                actual, expected;
+
+            legend.joinLegendLabels = labelInfos;
+            legend.theme = theme;
+
+            actual = legend._makeLegendData(labelInfos, theme);
+            expected = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
+
             expect(actual).toEqual(expected);
         });
 
@@ -98,21 +106,31 @@ describe('test Legend', function() {
                         colors: ['blue']
                     }
                 },
-                actual = legend._makeLegendData(labelInfos, theme, chartTypes, labelMap),
-                expected = [
-                    {
-                        theme: {
-                            color: 'red'
-                        },
-                        index: 0
+                actual, expected;
+
+            legend.joinLegendLabels = labelInfos;
+            legend.theme = theme;
+            legend.chartTypes = chartTypes;
+            legend.legendLabels = labelMap;
+
+            actual = legend._makeLegendData();
+            expected = [
+                {
+                    theme: {
+                        color: 'red'
                     },
-                    {
-                        theme: {
-                            color: 'blue'
-                        },
-                        index: 0
-                    }
-                ];
+                    index: 0,
+                    seriesIndex: 0
+                },
+                {
+                    theme: {
+                        color: 'blue'
+                    },
+                    index: 0,
+                    seriesIndex: 0
+                }
+            ];
+
             expect(actual).toEqual(expected);
         });
     });
@@ -133,7 +151,7 @@ describe('test Legend', function() {
     describe('_makeLegendRectCssText()', function() {
         it('범례 앞쪽의 사각 영역에 대한 cssText를 생성합니다.', function() {
             var actual = legend._makeLegendRectCssText({
-                    iconType: 'rect',
+                    chartType: 'bar',
                     theme: {
                         borderColor: 'black',
                         color: 'red'
@@ -145,7 +163,7 @@ describe('test Legend', function() {
 
         it('iconType이 line인 경우에는 5px정도 margin-top 값을 더하여 적용합니다.', function() {
             var actual = legend._makeLegendRectCssText({
-                    iconType: 'line',
+                    chartType: 'line',
                     theme: {
                         borderColor: 'black',
                         color: 'red'
@@ -168,14 +186,16 @@ describe('test Legend', function() {
                 {
                     label: 'legend2'
                 }
-            ]);
-            expected = '<div class="tui-chart-legend" style="height:24px" data-index="0">' +
+            ], []);
+            expected = '<div class="tui-chart-legend" style="height:24px">' +
+                    '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" checked /></div>' +
                     '<div class="tui-chart-legend-rect rect" style=""></div>' +
-                    '<div class="tui-chart-legend-label" style="height:20px">legend1</div>' +
+                    '<div class="tui-chart-legend-label" style="height:20px" data-index="0">legend1</div>' +
                 '</div>' +
-                '<div class="tui-chart-legend" style="height:24px" data-index="1">' +
+                '<div class="tui-chart-legend" style="height:24px">' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" checked /></div>' +
                     '<div class="tui-chart-legend-rect rect" style=""></div>' +
-                    '<div class="tui-chart-legend-label" style="height:20px">legend2</div>' +
+                    '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });
@@ -187,12 +207,14 @@ describe('test Legend', function() {
                 expectedElement = document.createElement('DIV'),
                 expectedChildren;
 
-            legend._renderLegendArea(legendContainer, {
+            legend.bound = {
                 position: {
                     top: 20,
                     right: 10
                 }
-            });
+            };
+
+            legend._renderLegendArea(legendContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-legend">' +
                 '<div class="tui-chart-legend-rect" style="background-color:red;margin-top:2px"></div>' +
@@ -228,7 +250,7 @@ describe('test Legend', function() {
                 },
                 actual = legend.render(bound),
                 exepcted = document.createElement('DIV');
-            legend._renderLegendArea(exepcted, bound);
+            legend._renderLegendArea(exepcted);
 
             expect(actual.className).toBe('tui-chart-legend-area');
             expect(actual.innerHTML).toBe(exepcted.innerHTML);
@@ -236,34 +258,34 @@ describe('test Legend', function() {
         });
     });
 
-    describe('_findLegendElement()', function() {
-        it('대상 엘리먼트가 범례(legend) 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
-            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_LEGEND),
-                actual = legend._findLegendElement(elTarget),
+    describe('_findLegendLabelElement()', function() {
+        it('대상 엘리먼트가 범례(legend) label 엘리먼트이면 대상 엘리먼트를 반환합니다.', function() {
+            var elTarget = dom.create('DIV', chartConst.CLASS_NAME_LEGEND_LABEL),
+                actual = legend._findLegendLabelElement(elTarget),
                 expected = elTarget;
             expect(actual).toBe(expected);
         });
 
-        it('대상 엘리먼트의 부모가 범례(legend) 엘리먼트이면 부모 엘리먼트를 반환합니다.', function() {
-            var elParent = dom.create('DIV', chartConst.CLASS_NAME_LEGEND),
+        it('대상 엘리먼트의 부모가 범례(legend) label 엘리먼트이면 부모 엘리먼트를 반환합니다.', function() {
+            var elParent = dom.create('DIV', chartConst.CLASS_NAME_LEGEND_LABEL),
                 elTarget = dom.create('DIV'),
                 actual, expected;
 
             dom.append(elParent, elTarget);
 
-            actual = legend._findLegendElement(elTarget);
+            actual = legend._findLegendLabelElement(elTarget);
             expected = elParent;
             expect(actual).toBe(expected);
         });
 
-        it('대상 엘리먼트와 부모 모두 범례(legend) 엘리먼트가 아니면 null을 반환합니다.', function() {
+        it('대상 엘리먼트와 부모 모두 범례(legend) label 엘리먼트가 아니면 null을 반환합니다.', function() {
             var elParent = dom.create('DIV'),
                 elTarget = dom.create('DIV'),
                 actual;
 
             dom.append(elParent, elTarget);
 
-            actual = legend._findLegendElement(elTarget);
+            actual = legend._findLegendLabelElement(elTarget);
             expect(actual).toBeNull();
         });
     });

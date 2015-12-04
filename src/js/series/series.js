@@ -28,6 +28,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         tui.util.extend(this, params);
         libType = params.libType || chartConst.DEFAULT_PLUGIN;
 
+        this.orgTheme = this.theme;
+
         /**
          * Graph renderer
          * @type {object}
@@ -39,6 +41,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {string}
          */
         this.className = 'tui-chart-series-area';
+
+        this.seriesContainer = null;
+
+        this.seriesLabelContainer = null;
+
+        this.seriesData = [];
 
         /**
          * Selected legend index
@@ -181,6 +189,38 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
 
         return el;
+    },
+
+    _updateTheme: function(theme, checkedLegends) {
+        var cloneTheme;
+
+        if (!checkedLegends.length) {
+            return theme;
+        }
+
+        cloneTheme = JSON.parse(JSON.stringify(theme));
+        cloneTheme.colors = tui.util.filter(cloneTheme.colors, function(color, index) {
+            return checkedLegends[index];
+        });
+
+        return cloneTheme;
+    },
+
+    rerender: function(bound, data) {
+        var that = this;
+        this.seriesContainer.innerHTML = '';
+        this.seriesLabelContainer = null;
+        this.selectedLegendIndex = null;
+        this.seriesData = [];
+
+        if (data.values && data.values.length) {
+            this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
+            this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(that._renderGraph, this));
+            if (this.labelShower) {
+                clearInterval(this.labelShower.timerId);
+            }
+            this.animateComponent();
+        }
     },
 
     /**
@@ -492,19 +532,24 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Animate showing about series label area.
      */
     animateShowingAboutSeriesLabelArea: function() {
+        var that = this;
+
         if ((!this.options.showLabel && !this.legendAlign) || !this.seriesLabelContainer) {
             return;
         }
 
         dom.addClass(this.seriesLabelContainer, 'show');
-
-        (new tui.component.Effects.Fade({
+        this.labelShower = new tui.component.Effects.Fade({
             element: this.seriesLabelContainer,
             duration: 300
-        })).action({
+        });
+        this.labelShower.action({
             start: 0,
             end: 1,
-            complete: function() {}
+            complete: function() {
+                clearInterval(that.labelShower.timerId);
+                delete that.labelShower;
+            }
         });
     },
 
@@ -552,15 +597,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *On select legend.
      * @param {string} chartType chart type
      * @param {?number} legendIndex legend index
+     * @param {boolean} isAsapShow whether asap show or not
      */
-    onSelectLegend: function(chartType, legendIndex) {
+    onSelectLegend: function(chartType, legendIndex, isAsapShow) {
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 
         this.selectedLegendIndex = legendIndex;
         this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
-        this.graphRenderer.selectLegend(legendIndex);
+        this.graphRenderer.selectLegend(legendIndex, isAsapShow);
     }
 });
 
