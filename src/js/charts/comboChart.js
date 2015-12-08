@@ -133,7 +133,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      */
     _makeSeriesData: function(processedData, chartTypes) {
         var seriesData = {};
-
         tui.util.forEachArray(chartTypes, function(chartType) {
             var values = processedData.values[chartType],
                 formattedValues = processedData.formattedValues[chartType];

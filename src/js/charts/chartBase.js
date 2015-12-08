@@ -338,7 +338,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             theme: this.theme,
             options: this.options,
             hasAxes: this.hasAxes,
-            seriesChartTypes: boundsParams.seriesChartTypes
+            seriesChartTypes: this.seriesChartTypes
         });
 
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함

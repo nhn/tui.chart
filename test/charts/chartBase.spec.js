@@ -7,12 +7,10 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    chartConst = require('../../src/js/const'),
     Legend = require('../../src/js/legends/legend'),
     dom = require('../../src/js/helpers/domHandler'),
     dataProcessor = require('../../src/js/helpers/dataProcessor'),
-    boundsMaker = require('../../src/js/helpers/boundsMaker'),
-    UserEventListener = require('../../src/js/helpers/userEventListener');
+    boundsMaker = require('../../src/js/helpers/boundsMaker');
 
 describe('ChartBase', function() {
     var chartBase;

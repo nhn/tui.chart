@@ -70,6 +70,23 @@ describe('test Legend', function() {
                 seriesIndex: 1
             });
         });
+
+        it('세번째 파라미터(checkedIndexes)에 값이 있을 경우 해당하는 index에 대해서는 증가값을 부여하고 해당하지 않는 index에 대해서는 -1을 할당합니다.', function() {
+            var labelInfos = [{}, {}],
+                theme = {
+                    colors: ['red', 'blue'],
+                    singleColors: ['yellow', 'green'],
+                    borderColor: 'black'
+                },
+                checkedIndexes = [],
+                actual;
+
+                checkedIndexes[1] = true;
+                actual = legend._makeLabelInfoAppliedTheme(labelInfos, theme, checkedIndexes);
+
+            expect(actual[0].seriesIndex).toEqual(-1);
+            expect(actual[1].seriesIndex).toEqual(0);
+        });
     });
 
     describe('_makeLegendData()', function() {
@@ -188,14 +205,40 @@ describe('test Legend', function() {
                 }
             ], []);
             expected = '<div class="tui-chart-legend" style="height:24px">' +
-                    '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" checked /></div>' +
+                    '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" /></div>' +
                     '<div class="tui-chart-legend-rect rect" style=""></div>' +
                     '<div class="tui-chart-legend-label" style="height:20px" data-index="0">legend1</div>' +
                 '</div>' +
                 '<div class="tui-chart-legend" style="height:24px">' +
-                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" checked /></div>' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" /></div>' +
                     '<div class="tui-chart-legend-rect rect" style=""></div>' +
                     '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
+                '</div>';
+            expect(actual).toBe(expected);
+        });
+
+        it('checkedIndex 값이 존재하면 checked를 표시합니다.', function() {
+            var actual, expected;
+            spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
+            legend.checkedIndexes = [true, true];
+            actual = legend._makeLegendHtml([
+                {
+                    label: 'legend1',
+                    theme: {}
+                },
+                {
+                    label: 'legend2'
+                }
+            ], []);
+            expected = '<div class="tui-chart-legend" style="height:24px">' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" checked /></div>' +
+                '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                '<div class="tui-chart-legend-label" style="height:20px" data-index="0">legend1</div>' +
+                '</div>' +
+                '<div class="tui-chart-legend" style="height:24px">' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" checked /></div>' +
+                '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
                 '</div>';
             expect(actual).toBe(expected);
         });
@@ -287,6 +330,56 @@ describe('test Legend', function() {
 
             actual = legend._findLegendLabelElement(elTarget);
             expect(actual).toBeNull();
+        });
+    });
+
+    describe('_fireLegendEvent()', function() {
+        it('시리즈에 전달할 legend custom event를 발생시킵니다.', function() {
+            var data = {
+                        chartType: 'column',
+                        seriesIndex: 0
+                },
+                called = false,
+                args;
+
+            spyOn(legend, 'fire').and.callFake(function() {
+                called = true;
+                args = arguments;
+            });
+
+            legend._fireLegendEvent(data, 0, true);
+            expect(called).toBe(true);
+            expect(args[0]).toBe('selectColumnLegend');
+            expect(args[1]).toBe('column');
+            expect(args[2]).toBe(0);
+            expect(args[3]).toBe(true);
+        });
+    });
+
+    describe('_fireUserEvent()', function() {
+        it('selectLegend 사용자 이벤트를 발생시킵니다.', function() {
+            var data = {
+                    label: 'legend',
+                    chartType: 'bar',
+                    index: 1
+                },
+                called = false,
+                args;
+
+            legend.userEvent = {
+                fire: jasmine.createSpy('fire').and.callFake(function () {
+                    called = true;
+                    args = arguments;
+                })
+            };
+
+            legend._fireUserEvent(data);
+
+            expect(called).toBe(true);
+            expect(args[0]).toBe('selectLegend');
+            expect(args[1].legend).toBe(data.label);
+            expect(args[1].chartType).toBe(data.chartType);
+            expect(args[1].index).toBe(data.index);
         });
     });
 });

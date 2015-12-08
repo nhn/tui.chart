@@ -104,7 +104,6 @@ describe('ComboChart', function() {
         });
     });
 
-
     describe('_makeYAxisData()', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
@@ -337,6 +336,27 @@ describe('ComboChart', function() {
 
             expect(actual.column.colors).toEqual(['green', 'blue']);
             expect(actual.line.colors).toEqual(['blue', 'gray', 'red']);
+        });
+    });
+
+    describe('_makeSeriesData()', function() {
+        it('chart type별로 series컴포넌트에 필요한 data를 생성합니다. line차트는 values가 pivot됩니다.', function() {
+            var processedData = {
+                        values: {
+                            column: [[1, 2]],
+                            line: [[3, 4]]
+                        },
+                        formattedValues: {
+                            column: [['01', '02']],
+                            line: [['03', '04']]
+                        }
+                },
+                actual = comboChart._makeSeriesData(processedData, ['column', 'line']);
+
+            expect(actual.column.values).toEqual([[1, 2]]);
+            expect(actual.column.formattedValues).toEqual([['01', '02']]);
+            expect(actual.line.values).toEqual([[3], [4]]);
+            expect(actual.line.formattedValues).toEqual([['03'], ['04']]);
         });
     });
 

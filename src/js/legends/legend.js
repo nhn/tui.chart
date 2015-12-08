@@ -66,6 +66,22 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
+     * Initialize checked data.
+     */
+    initCheckedData: function() {
+        var sendingData = {},
+            checkedIndexes = [];
+
+        tui.util.forEachArray(this.joinLegendLabels, function(legendData, index) {
+            this._addSendingData(sendingData, legendData);
+            checkedIndexes[index] = true;
+        }, this);
+
+        this.sendingData = sendingData;
+        this.checkedIndexes = checkedIndexes;
+    },
+
+    /**
      * Render legend component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
@@ -75,6 +91,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.legendContainer = el;
         this.bound = bound;
+        this.legendData = this._makeLegendData();
+        this.initCheckedData();
         this._renderLegendArea(el);
         this._attachEvent(el);
         return el;
@@ -108,13 +126,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             if (theme.singleColors) {
                 itemTheme.singleColor = theme.singleColors[index];
             }
+
             if (theme.borderColor) {
                 itemTheme.borderColor = theme.borderColor;
             }
+
             item.theme = itemTheme;
             item.index = index;
 
-            if (!checkedIndexes || checkedIndexes[index]) {
+            if (!checkedIndexes || !tui.util.isUndefined(checkedIndexes[index])) {
                 item.seriesIndex = seriesIndex;
                 seriesIndex += 1;
             } else {
@@ -190,7 +210,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendInfos, function(legendInfo, index) {
                 var rectCssText = this._makeLegendRectCssText(legendInfo, baseMarginTop),
-                    checked = (!this.checkedIndexes.length || this.checkedIndexes[index]),
+                    checked = !tui.util.isUndefined(this.checkedIndexes[index]),
                     data;
 
                 data = {
@@ -267,6 +287,19 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     /**
+     * Add sending data.
+     * @param {{column: ?array.<?boolean>}} sendingData sending data
+     * @param {{chartType: string, index: number}} legendData legend data
+     * @private
+     */
+    _addSendingData: function(sendingData, legendData) {
+        if (!sendingData[legendData.chartType]) {
+            sendingData[legendData.chartType] = [];
+        }
+        sendingData[legendData.chartType][legendData.index] = true;
+    },
+
+    /**
      * Select legend.
      * @param {number} index index
      * @private
@@ -281,13 +314,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this.selectedIndex = index;
         }
 
-        if (!tui.util.isNull(this.selectedIndex) && (this.checkedIndexes.length && !this.checkedIndexes[this.selectedIndex])) {
+        if (!tui.util.isNull(this.selectedIndex) && !this.checkedIndexes[this.selectedIndex]) {
             isAsapShow = false;
             this.checkedIndexes[this.selectedIndex] = true;
-            if (!this.sendingData[data.chartType]) {
-                this.sendingData[data.chartType] = [];
-            }
-            this.sendingData[data.chartType][data.index] = true;
+            this._addSendingData(this.sendingData, data);
             this.fire('changeSelectedLegends', this.sendingData[this.chartType] || this.sendingData);
         }
 
@@ -308,36 +338,30 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         tui.util.forEachArray(this.legendContainer.getElementsByTagName('input'), function(checkbox, index) {
             if (checkbox.checked) {
-                data = this.legendData[index];
                 checkedIndexes[parseInt(checkbox.value, 10)] = true;
-
-                if (!sendingData[data.chartType]) {
-                    sendingData[data.chartType] = [];
-                }
-
-                sendingData[data.chartType][data.index] = true;
+                this._addSendingData(sendingData, this.legendData[index]);
                 checkedCount += 1;
             }
         }, this);
 
         if ((predicate.isPieChart(this.chartType) && checkedCount === 1) || checkedCount === 0) {
             this._renderLegendArea(this.legendContainer);
-            return;
-        }
+        } else {
+            if (!checkedIndexes[this.selectedIndex]) {
+                data = this.legendData[this.selectedIndex];
+                this.selectedIndex = null;
+            }
 
-        if (!checkedIndexes[this.selectedIndex]) {
-            data = this.legendData[this.selectedIndex];
-            this.selectedIndex = null;
-        }
+            this.checkedIndexes = checkedIndexes;
+            this.sendingData = sendingData;
 
-        this.checkedIndexes = checkedIndexes;
-        this.sendingData = sendingData;
+            this._renderLegendArea(this.legendContainer);
 
-        this._renderLegendArea(this.legendContainer);
-        this.fire('changeSelectedLegends', sendingData[this.chartType] || sendingData);
+            this.fire('changeSelectedLegends', sendingData[this.chartType] || sendingData);
 
-        if (data) {
-            this._fireLegendEvent(data, this.selectedIndex, false);
+            if (data) {
+                this._fireLegendEvent(data, this.selectedIndex, false);
+            }
         }
     },
 
