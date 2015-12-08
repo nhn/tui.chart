@@ -358,10 +358,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _adjustPosition: function(chartDimension, areaPosition, tooltipDimension, position) {
-        position.left = tui.util.max([position.left, -areaPosition.left]);
-        position.left = tui.util.min([position.left, chartDimension.width - areaPosition.left - tooltipDimension.width]);
-        position.top = tui.util.max([position.top, -areaPosition.top]);
-        position.top = tui.util.min([position.top, chartDimension.height - areaPosition.top - tooltipDimension.height]);
+        position.left = Math.max(position.left, -areaPosition.left);
+        position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
+        position.top = Math.max(position.top, -areaPosition.top);
+        position.top = Math.min(position.top, chartDimension.height - areaPosition.top - tooltipDimension.height);
         return position;
     },
 

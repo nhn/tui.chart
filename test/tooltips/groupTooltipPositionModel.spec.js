@@ -373,7 +373,76 @@ describe('GroupTooltipPositionModel', function() {
         });
     });
 
-    describe('calculatePosition()', function() {
+    describe('_makeMainPositionValue()', function() {
+        it('main에 해당하는 position값을 구합니다.', function() {
+            var tooltipDimension = {
+                    width: 50
+                },
+                range = {
+                    start: 50,
+                    end: 100
+                },
+                data = {
+                    basePosition: 0,
+                    direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+                    sizeType: 'width',
+                    positionType: 'left'
+                },
+                actual, expected;
 
+            positionModel.positionOption = {
+                left: 10
+            };
+
+            actual = positionModel._makeMainPositionValue(tooltipDimension, range, data);
+            expected = 115;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeSubPositionValue()', function() {
+        it('sub에 해당하는 position값을 구합니다.', function() {
+            var tooltipDimension = {
+                    width: 50
+                },
+                data = {
+                    basePosition: 0,
+                    areaSize: 100,
+                    direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
+                    sizeType: 'width',
+                    positionType: 'left'
+                },
+                actual, expected;
+
+            positionModel.positionOption = {
+                left: 10
+            };
+
+            actual = positionModel._makeSubPositionValue(tooltipDimension, data);
+            expected = 60;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculatePosition()', function() {
+        it('그룹 툴팁의 position을 계산합니다.', function() {
+            var actual;
+            positionModel.mainData = {
+                positionType: 'left'
+            };
+            positionModel.subData = {
+                positionType: 'top'
+            };
+            spyOn(positionModel, '_makeMainPositionValue').and.returnValue(10);
+            spyOn(positionModel, '_makeSubPositionValue').and.returnValue(20);
+            actual = positionModel.calculatePosition({}, {
+                start: 10,
+                end: 100
+            });
+
+            expect(actual.left).toBe(10);
+            expect(actual.top).toBe(20);
+            expect(actual).toBe(positionModel.positions['10-100']);
+        });
     });
 });
