@@ -406,20 +406,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Make label bound.
-     * @param {number} clientX clientX
-     * @param {number} clientY clientY
-     * @returns {{left: number, top: number}} bound
-     * @private
-     */
-    _makeLabelBound: function(clientX, clientY) {
-        return {
-            left: clientX - this.bound.position.left,
-            top: clientY - this.bound.position.top
-        };
-    },
-
-    /**
      * Find label element.
      * @param {HTMLElement} elTarget target element
      * @returns {HTMLElement} label element
