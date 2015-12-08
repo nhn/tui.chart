@@ -166,7 +166,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         };
     },
 
-
     /**
      * Make add data for series label.
      * @param {object} seriesData series data
@@ -467,15 +466,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Get bound.
-     * @returns {null} bound
-     * @private
-     */
-    _getBound: function() {
-        return null;
-    },
-
-    /**
      * Animate showing about series label area.
      * @override
      */
@@ -566,6 +556,33 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Get series container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getSeriesContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.seriesContainer.getBoundingClientRect();
+        }
+        return this.containerBound;
+    },
+
+    /**
+     * Make label bound.
+     * @param {number} clientX clientX
+     * @param {number} clientY clientY
+     * @returns {{left: number, top: number}} bound
+     * @private
+     */
+    _makeLabelBound: function(clientX, clientY) {
+        var containerBound = this._getSeriesContainerBound();
+        return {
+            left: clientX - containerBound.left,
+            top: clientY - containerBound.top
+        };
+    },
+
+    /**
      * This is event handler for mouseover.
      * @private
      * @param {MouseEvent} e mouse event
@@ -574,7 +591,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var that = this;
 
         this._handleMouseEvent(e, function(groupIndex, index) {
-            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
+            var bound = that._makeLabelBound(e.clientX, e.clientY - 10);
             that.showTooltip({
                 allowNegativeTooltip: !!that.allowNegativeTooltip,
                 chartType: that.chartType

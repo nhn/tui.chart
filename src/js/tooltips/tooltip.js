@@ -32,6 +32,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
         this.initValues();
+
+        this.containerBound = null;
     },
 
     initValues: function() {
@@ -109,6 +111,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (data) {
             this.seriesPosition = data.seriesPosition;
         }
+
+        this.containerBound = null;
         TooltipBase.prototype.resize.call(this, bound, data);
     },
 
@@ -257,6 +261,18 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Get tooltip container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getTooltipContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.tooltipContainer.getBoundingClientRect();
+        }
+        return this.containerBound;
+    },
+
+    /**
      * Calculate tooltip position abount pie chart.
      * @param {object} params parameters
      *      @param {{left: number, top: number}} params.bound bound
@@ -265,8 +281,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _calculateTooltipPositionAboutPieChart: function(params) {
-        params.bound.left = params.eventPosition.clientX - this.seriesPosition.left;
-        params.bound.top = params.eventPosition.clientY - this.seriesPosition.top;
+        var containerBound = this._getTooltipContainerBound();
+        params.bound.left = params.eventPosition.clientX - containerBound.left;
+        params.bound.top = params.eventPosition.clientY - containerBound.top;
         return this._calculateTooltipPositionAboutNotBarChart(params);
     },
 
