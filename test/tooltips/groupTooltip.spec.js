@@ -70,6 +70,39 @@ describe('GroupTooltip', function() {
         });
     });
 
+    describe('_makeItemRenderingData()', function() {
+        it('렌더링에 사용할 item data를 생성합니다.', function() {
+            var actual, expected;
+
+            tooltip.joinLegendLabels = [{
+                chartType: 'column',
+                label: 'legend1'
+            }, {
+                chartType: 'line',
+                label: 'legend2'
+            }];
+            tooltip.suffix = 'suffix';
+
+            actual = tooltip._makeItemRenderingData(['20', '30']);
+            expected = [
+                {
+                    value: '20',
+                    legend: 'legend1',
+                    chartType: 'column',
+                    suffix: 'suffix'
+                },
+                {
+                    value: '30',
+                    legend: 'legend2',
+                    chartType: 'line',
+                    suffix: 'suffix'
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeTooltipHtml()', function() {
         it('기본 툴팁 data에서 전달하는 index에 해당하는 data를 추출하여 툴팁 html을 생성합니다.', function() {
             var actual, expected;
@@ -92,6 +125,40 @@ describe('GroupTooltip', function() {
                         '&nbsp;<span>legend1</span>:&nbsp;<span>30</span><span></span>' +
                     '</div>' +
                 '</div>';
+            expect(actual).toBe(expected);
+        });
+
+        it('tmeplate 툴팁 html을 생성합니다.', function() {
+            var actual, expected;
+            tooltip.options = {
+               template: function(category, items) {
+                   var head = '<div>' + category + '</div>',
+                       body = tui.util.map(items, function(item) {
+                           return '<div>' + item.legend + ': ' + item.value + '</div>';
+                       }).join('');
+                   return head + body;
+               }
+            };
+            tooltip.data = [
+                {category: 'Silver', values: ['10']},
+                {category: 'Gold', values: ['30', '20']}
+            ];
+            tooltip.joinLegendLabels = [{
+                chartType: 'column',
+                label: 'legend1'
+            }, {
+                chartType: 'line',
+                label: 'legend2'
+            }];
+            tooltip.theme = {
+                colors: ['red']
+            };
+
+            actual = tooltip._makeTooltipHtml(1);
+            expected = '<div>Gold</div>' +
+                '<div>legend1: 30</div>' +
+                '<div>legend2: 20</div>';
+
             expect(actual).toBe(expected);
         });
     });

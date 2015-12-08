@@ -127,6 +127,26 @@ describe('Tooltip', function() {
                 '</div>';
             expect(actual).toBe(expected);
         });
+
+        it('템플릿 옵션으로 툴팁 html을 생성합니다.', function() {
+            var actual, expected;
+            tooltip.data = {
+                'column': [[
+                    {category: 'Silver', value: 10, legend: 'Density1'},
+                    {category: 'Silver', value: 20, legend: 'Density2'}
+                ]]
+            };
+            tooltip.suffix = 'suffix';
+            tooltip.options.template = function(category, series) {
+                return '<div>' + category + '</div><div>' + series.value + '</div><div>' + series.legend + '</div>';
+            };
+            actual = tooltip._makeTooltipHtml('column', {
+                groupIndex: 0,
+                index: 1
+            });
+            expected = '<div>Silver</div><div>20</div><div>Density2</div>';
+            expect(actual).toBe(expected);
+        });
     });
 
     describe('_calculateTooltipPositionAboutNotBarChart()', function() {

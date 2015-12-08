@@ -12,7 +12,6 @@ var TooltipBase = require('./tooltipBase'),
     dom = require('../helpers/domHandler'),
     eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
-    templateMaker = require('../helpers/templateMaker'),
     tooltipTemplate = require('./tooltipTemplate');
 
 var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ {
@@ -30,7 +29,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
         TooltipBase.call(this, params);
 
-        this.tplTooltip = this._getTooltipTemplate(this.options.template);
         this.initValues();
 
         this.containerBound = null;
@@ -44,16 +42,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this.values = {};
             this.values[this.chartType] = values;
         }
-    },
-
-    /**
-     * Get tooltip template.
-     * @param {object} optionTemplate template option
-     * @returns {object} template
-     * @private
-     */
-    _getTooltipTemplate: function(optionTemplate) {
-        return optionTemplate ? templateMaker.template(optionTemplate) : tooltipTemplate.tplDefault;
     },
 
     /**
@@ -475,11 +463,20 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipHtml: function(chartType, indexes) {
-        var data = this.data[chartType][indexes.groupIndex][indexes.index];
+        var data = this.data[chartType][indexes.groupIndex][indexes.index],
+            html;
 
         data.suffix = this.suffix;
 
-        return this.tplTooltip(data);
+        if (this.options.template) {
+            html = this.options.template(data.category, {
+                value: data.value,
+                legend: data.legend
+            });
+        } else {
+            html = tooltipTemplate.tplDefault(data);
+        }
+        return html;
     },
 
     /**
