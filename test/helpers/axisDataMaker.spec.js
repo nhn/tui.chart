@@ -504,6 +504,22 @@ describe('axisDataMaker', function() {
                 max: 10
             });
         });
+
+        it('min, max값이 같고 양수라면 min을 0으로 변경하고 그대로 반환합니다.', function () {
+            var result = maker._makeBaseLimit(20, 20, {min: 20, max: 20});
+            expect(result).toEqual({
+                min: 0,
+                max: 20
+            });
+        });
+
+        it('min, max값이 같고 음수라면 max을 0으로 변경하고 그대로 반환합니다.', function () {
+            var result = maker._makeBaseLimit(-20, -20, {min: -20, max: -20});
+            expect(result).toEqual({
+                min: -20,
+                max: 0
+            });
+        });
     });
 
 

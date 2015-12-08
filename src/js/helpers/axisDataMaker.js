@@ -611,6 +611,19 @@ var axisDataMaker = {
         var isMinus = false,
             tmpMin, limit;
 
+        if (min === max) {
+            if (min > 0) {
+                min = 0;
+            } else {
+                max = 0;
+            }
+
+            return {
+                min: min,
+                max: max
+            };
+        }
+
         if (min < 0 && max <= 0) {
             isMinus = true;
             tmpMin = min;
