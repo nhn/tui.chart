@@ -14,12 +14,20 @@ var Raphael = window.Raphael,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
-/**
- * @classdesc RaphaelLineCharts is graph renderer for line chart.
- * @class RaphaelLineChart
- * @extends RaphaelLineTypeBase
- */
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
+    /**
+     * RaphaelLineCharts is graph renderer for line chart.
+     * @constructs RaphaelLineChart
+     * @extends RaphaelLineTypeBase
+     */
+    init: function() {
+        /**
+         * selected legend index
+         * @type {?number}
+         */
+        this.selectedLegendIndex = null;
+    },
+
     /**
      * Render function of line chart.
      * @param {HTMLElement} container container

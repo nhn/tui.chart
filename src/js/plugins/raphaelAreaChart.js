@@ -17,12 +17,20 @@ var Raphael = window.Raphael,
 
 var concat = Array.prototype.concat;
 
-/**
- * @classdesc RaphaelAreaChart is graph renderer for area chart.
- * @class RaphaelAreaChart
- * @extends RaphaelLineTypeBase
- */
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+    /**
+     * RaphaelAreaChart is graph renderer for area chart.
+     * @constructs RaphaelAreaChart
+     * @extends RaphaelLineTypeBase
+     */
+    init: function() {
+        /**
+         * selected legend index
+         * @type {?number}
+         */
+        this.selectedLegendIndex = null;
+    },
+
     /**
      * Render function of area chart.
      * @param {HTMLElement} container container
