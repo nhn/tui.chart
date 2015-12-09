@@ -362,13 +362,13 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * On change selected legend.
      * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
      */
-    onChangeSelectedLegends: function(checkedLegends) {
+    onChangeCheckedLegends: function(checkedLegends) {
         var rawData = this._filterRawData(this.rawData, checkedLegends),
             chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);
 
-        ChartBase.prototype.onChangeSelectedLegends.call(this, checkedLegends, rawData, chartTypesMap);
+        ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, chartTypesMap);
     }
 });
 

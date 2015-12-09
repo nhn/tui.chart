@@ -206,7 +206,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             item.opacity = opacity;
 
-            if (isAsapShow) {
+            if (that.dotOpacity && isAsapShow) {
                 item.dot.attr({'fill-opacity': opacity});
             }
         });

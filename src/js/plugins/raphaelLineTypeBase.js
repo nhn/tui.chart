@@ -263,7 +263,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             item = this.groupDots[groupIndex][index],
             opacity;
 
-        if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+        if (this.dotOpacity === 0) {
+            opacity = this.dotOpacity;
+        } else if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
         }
 

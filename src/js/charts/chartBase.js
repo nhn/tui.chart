@@ -223,7 +223,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Attach custom evnet.
      * @private
-     * @abstract
      */
     _attachCustomEvent: function() {
         var legend = this.componentMap.legend,
@@ -232,7 +231,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             });
 
         if (legend) {
-            legend.on('changeSelectedLegends', this.onChangeSelectedLegends, this);
+            legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
             tui.util.forEach(serieses, function (series) {
                 legend.on(renderUtil.makeCustomEventName('select', series.chartType, 'legend'), series.onSelectLegend, series);
             }, this);
@@ -354,12 +353,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * On change selected legend.
+     * On change checked legend.
      * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      */
-    onChangeSelectedLegends: function(checkedLegends, rawData, boundsParams) {
+    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._rerender(checkedLegends, rawData, boundsParams);
     },
 

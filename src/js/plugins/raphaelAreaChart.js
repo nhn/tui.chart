@@ -383,7 +383,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 area.area[0].attr({'fill-opacity': areaOpacity});
             }
 
-            item.dot.attr({'fill-opacity': lineOpacity});
+            if (that.dotOpacity) {
+                item.dot.attr({'fill-opacity': lineOpacity});
+            }
         });
     }
 });

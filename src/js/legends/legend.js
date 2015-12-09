@@ -21,9 +21,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @param {object} params parameters
      *      @param {array.<string> | {column: ?array.<string>, line: ?array.<string>}} params.legendLabels legend labels
      *      @param {object} params.theme axis theme
-     *      @param {array.<{chartType: string, label: string, index: number}>} joinLegendLabels
-     *      @param {?array.<string>} chartTypes chart types
-     *      @param {string} chart type
+     *      @param {array.<{chartType: string, label: string, index: number}>} params.joinLegendLabels legend label infos
+     *      @param {?array.<string>} params.chartTypes chart types
+     *      @param {string} params.chart type
      */
     init: function(params) {
         /**
@@ -196,7 +196,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     },
 
     _fireLegendCheckboxEvent: function() {
-        this.fire('changeSelectedLegends', this.legendModel.getSendingData());
+        this.fire('changeCheckedLegends', this.legendModel.getSendingData());
     },
 
     /**

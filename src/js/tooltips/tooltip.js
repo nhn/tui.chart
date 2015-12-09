@@ -36,6 +36,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         this.containerBound = null;
     },
 
+    /**
+     * Initialize values.
+     */
     initValues: function() {
         var values;
 

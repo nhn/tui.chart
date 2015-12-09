@@ -42,10 +42,22 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          */
         this.className = 'tui-chart-series-area';
 
+        /**
+         * series container
+         * @type {HTMLElement}
+         */
         this.seriesContainer = null;
 
+        /**
+         * series label container
+         * @type {HTMLElement}
+         */
         this.seriesLabelContainer = null;
 
+        /**
+         * series data
+         * @type {array.<object>}
+         */
         this.seriesData = [];
 
         /**
@@ -191,6 +203,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return el;
     },
 
+    /**
+     * Update theme.
+     * @param {object} theme legend theme
+     * @param {?array.<?boolean>} checkedLegends checked legends
+     * @returns {object} updated theme
+     * @private
+     */
     _updateTheme: function(theme, checkedLegends) {
         var cloneTheme;
 
@@ -206,6 +225,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return cloneTheme;
     },
 
+    /**
+     * Rerender
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @param {object} data data for rendering
+     */
     rerender: function(bound, data) {
         var that = this;
         this.seriesContainer.innerHTML = '';
@@ -476,6 +503,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
     },
 
+    /**
+     * Make opacity cssText.
+     * @param {number} opacity opacity
+     * @returns {string} cssText
+     * @private
+     */
     _makeOpacityCssText: function(opacity) {
         var funcMakeOpacityCssText;
         if (renderUtil.isOldBrowser()) {
