@@ -236,6 +236,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     resize: function() {
         Series.prototype.resize.apply(this, arguments);
         this._moveLegendLines(this.seriesData);
+        this._updateContainerBound();
     },
 
     /**
@@ -556,13 +557,21 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Update container bound.
+     * @private
+     */
+    _updateContainerBound: function() {
+        this.containerBound = this.seriesContainer.getBoundingClientRect();
+    },
+
+    /**
      * Get series container bound.
      * @returns {{left: number, top: number}} container bound
      * @private
      */
-    _getSeriesContainerBound: function() {
+    _getContainerBound: function() {
         if (!this.containerBound) {
-            this.containerBound = this.seriesContainer.getBoundingClientRect();
+            this._updateContainerBound();
         }
         return this.containerBound;
     },
@@ -575,7 +584,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeLabelBound: function(clientX, clientY) {
-        var containerBound = this._getSeriesContainerBound();
+        var containerBound = this._getContainerBound();
         return {
             left: clientX - containerBound.left,
             top: clientY - containerBound.top

@@ -112,8 +112,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this.seriesPosition = data.seriesPosition;
         }
 
-        this.containerBound = null;
         TooltipBase.prototype.resize.call(this, bound, data);
+        this._updateContainerBound();
     },
 
     /**
@@ -261,13 +261,21 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Update container bound.
+     * @private
+     */
+    _updateContainerBound: function() {
+        this.containerBound = this.tooltipContainer.getBoundingClientRect();
+    },
+
+    /**
      * Get tooltip container bound.
      * @returns {{left: number, top: number}} container bound
      * @private
      */
     _getTooltipContainerBound: function() {
         if (!this.containerBound) {
-            this.containerBound = this.tooltipContainer.getBoundingClientRect();
+            this._updateContainerBound();
         }
         return this.containerBound;
     },
