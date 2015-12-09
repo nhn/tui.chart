@@ -41,117 +41,6 @@ describe('test Legend', function() {
         });
     });
 
-    describe('_makeLabelInfoAppliedTheme()', function() {
-        it('테마가 전달받은 레이블 정보에 테마 정보와 index를 적용하여 반환합니다.', function() {
-            var labelInfos = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                actual = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
-
-            expect(actual[0]).toEqual({
-                theme: {
-                    color: 'red',
-                    singleColor: 'yellow',
-                    borderColor: 'black'
-                },
-                index: 0,
-                seriesIndex: 0
-            });
-            expect(actual[1]).toEqual({
-                theme: {
-                    color: 'blue',
-                    singleColor: 'green',
-                    borderColor: 'black'
-                },
-                index: 1,
-                seriesIndex: 1
-            });
-        });
-
-        it('세번째 파라미터(checkedIndexes)에 값이 있을 경우 해당하는 index에 대해서는 증가값을 부여하고 해당하지 않는 index에 대해서는 -1을 할당합니다.', function() {
-            var labelInfos = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                checkedIndexes = [],
-                actual;
-
-                checkedIndexes[1] = true;
-                actual = legend._makeLabelInfoAppliedTheme(labelInfos, theme, checkedIndexes);
-
-            expect(actual[0].seriesIndex).toEqual(-1);
-            expect(actual[1].seriesIndex).toEqual(0);
-        });
-    });
-
-    describe('_makeLegendData()', function() {
-        it('chartTypes 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
-            var labelInfos = [{}, {}],
-                theme = {
-                    colors: ['red', 'blue'],
-                    singleColors: ['yellow', 'green'],
-                    borderColor: 'black'
-                },
-                actual, expected;
-
-            legend.joinLegendLabels = labelInfos;
-            legend.theme = theme;
-
-            actual = legend._makeLegendData(labelInfos, theme);
-            expected = legend._makeLabelInfoAppliedTheme(labelInfos, theme);
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('chartTypes값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
-            var labelInfos = [{}, {}],
-                chartTypes = ['column', 'line'],
-                labelMap = {
-                    column: ['legend1'],
-                    line: ['lgend2']
-                },
-                theme = {
-                    column: {
-                        colors: ['red']
-                    },
-                    line: {
-                        colors: ['blue']
-                    }
-                },
-                actual, expected;
-
-            legend.joinLegendLabels = labelInfos;
-            legend.theme = theme;
-            legend.chartTypes = chartTypes;
-            legend.legendLabels = labelMap;
-
-            actual = legend._makeLegendData();
-            expected = [
-                {
-                    theme: {
-                        color: 'red'
-                    },
-                    index: 0,
-                    seriesIndex: 0
-                },
-                {
-                    theme: {
-                        color: 'blue'
-                    },
-                    index: 0,
-                    seriesIndex: 0
-                }
-            ];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_renderLabelTheme()', function() {
         it('전달하는 엘리먼트에 전달하는 theme의 cssText속성을 셋팅합니다.', function() {
             var el = dom.create('DIV'),
@@ -195,32 +84,7 @@ describe('test Legend', function() {
         it('렌더링 될 범례 html을 생성합니다.', function() {
             var actual, expected;
             spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
-            actual = legend._makeLegendHtml([
-                {
-                    label: 'legend1',
-                    theme: {}
-                },
-                {
-                    label: 'legend2'
-                }
-            ], []);
-            expected = '<div class="tui-chart-legend" style="height:24px">' +
-                    '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" /></div>' +
-                    '<div class="tui-chart-legend-rect rect" style=""></div>' +
-                    '<div class="tui-chart-legend-label" style="height:20px" data-index="0">legend1</div>' +
-                '</div>' +
-                '<div class="tui-chart-legend" style="height:24px">' +
-                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" /></div>' +
-                    '<div class="tui-chart-legend-rect rect" style=""></div>' +
-                    '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
-                '</div>';
-            expect(actual).toBe(expected);
-        });
 
-        it('checkedIndex 값이 존재하면 checked를 표시합니다.', function() {
-            var actual, expected;
-            spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
-            legend.checkedIndexes = [true, true];
             actual = legend._makeLegendHtml([
                 {
                     label: 'legend1',
@@ -230,6 +94,7 @@ describe('test Legend', function() {
                     label: 'legend2'
                 }
             ], []);
+
             expected = '<div class="tui-chart-legend" style="height:24px">' +
                 '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" checked /></div>' +
                 '<div class="tui-chart-legend-rect rect" style=""></div>' +
@@ -239,7 +104,37 @@ describe('test Legend', function() {
                 '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" checked /></div>' +
                 '<div class="tui-chart-legend-rect rect" style=""></div>' +
                 '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
-                '</div>';
+            '</div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('checkedIndex 값이 존재하지 않으면 checked를 표시하지 않습니다.', function() {
+            var actual, expected;
+            spyOn(legend, '_makeLegendRectCssText').and.returnValue('');
+            spyOn(legend.legendModel, 'isCheckedIndex').and.returnValue(false);
+
+            actual = legend._makeLegendHtml([
+                {
+                    label: 'legend1',
+                    theme: {}
+                },
+                {
+                    label: 'legend2'
+                }
+            ], []);
+
+            expected = '<div class="tui-chart-legend" style="height:24px">' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="0" /></div>' +
+                '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                '<div class="tui-chart-legend-label" style="height:20px" data-index="0">legend1</div>' +
+                '</div>' +
+                '<div class="tui-chart-legend" style="height:24px">' +
+                '<div class="tui-chart-legend-checkbox-area"><input class="tui-chart-legend-checkbox" type="checkbox" value="1" /></div>' +
+                '<div class="tui-chart-legend-rect rect" style=""></div>' +
+                '<div class="tui-chart-legend-label" style="height:20px" data-index="1">legend2</div>' +
+            '</div>';
+
             expect(actual).toBe(expected);
         });
     });
@@ -333,7 +228,7 @@ describe('test Legend', function() {
         });
     });
 
-    describe('_fireLegendEvent()', function() {
+    describe('_fireLegendSelectionEvent()', function() {
         it('시리즈에 전달할 legend custom event를 발생시킵니다.', function() {
             var data = {
                         chartType: 'column',
@@ -346,8 +241,9 @@ describe('test Legend', function() {
                 called = true;
                 args = arguments;
             });
+            spyOn(legend.legendModel, 'getSelectedIndex').and.returnValue(0);
 
-            legend._fireLegendEvent(data, 0, true);
+            legend._fireLegendSelectionEvent(data, true);
             expect(called).toBe(true);
             expect(args[0]).toBe('selectColumnLegend');
             expect(args[1]).toBe('column');
@@ -380,6 +276,23 @@ describe('test Legend', function() {
             expect(args[1].legend).toBe(data.label);
             expect(args[1].chartType).toBe(data.chartType);
             expect(args[1].index).toBe(data.index);
+        });
+    });
+
+    describe('_getCheckedIndexes()', function() {
+        it('체크가된 체크박스의 index정보를 모아서 반환합니다.', function() {
+            var legendContainer = dom.create('DIV'),
+                actual, expected;
+
+            legendContainer.innerHTML = '<input type="checkbox" checked />' +
+                '<input type="checkbox" />' +
+                '<input type="checkbox" checked />';
+            legend.legendContainer = legendContainer;
+
+            actual = legend._getCheckedIndexes();
+            expected = [0, 2];
+
+            expect(actual).toEqual(expected);
         });
     });
 });
