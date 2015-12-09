@@ -26,7 +26,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-
         TooltipBase.call(this, params);
 
         this.initValues();
