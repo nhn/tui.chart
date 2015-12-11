@@ -72,29 +72,23 @@ var axisTypeMixer = {
 
     /**
      * Add tooltip component
-     * @param {object} processedData processedData
-     * @param {string} chartType chart type
      * @private
      */
-    _addTooltipComponent: function(processedData, chartType) {
-        var data = this._makeTooltipData(processedData, chartType),
-            TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
-        this._addComponent('tooltip', TooltipClass, data);
+    _addTooltipComponent: function() {
+        var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
+        this._addComponent('tooltip', TooltipClass, this._makeTooltipData());
     },
 
     /**
      * Add legend component.
-     * @param {object} processedData processedData
      * @param {array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
      * @param {object} legendOptions legend options
      * @private
      */
-    _addLegendComponent: function(processedData, chartTypes, chartType, legendOptions) {
+    _addLegendComponent: function(chartTypes, chartType, legendOptions) {
         if (!legendOptions || !legendOptions.hidden) {
             this._addComponent('legend', Legend, {
-                joinLegendLabels: processedData.joinLegendLabels,
-                legendLabels: processedData.legendLabels,
                 chartTypes: chartTypes,
                 chartType: chartType,
                 userEvent: this.userEvent
@@ -105,22 +99,20 @@ var axisTypeMixer = {
     /**
      * Add components for axis type chart.
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.axes axes data
      *      @param {object} params.plotData plot data
      *      @param {function} params.serieses serieses
      * @private
      */
     _addComponentsForAxisType: function(params) {
-        var processedData = params.processedData,
-            options = this.options,
+        var options = this.options,
             aligned = !!params.aligned;
 
         this._addComponent('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
-        this._addLegendComponent(processedData, params.seriesChartTypes, params.chartType, this.options.legend);
+        this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options, aligned);
-        this._addTooltipComponent(processedData, options.chartType);
+        this._addTooltipComponent(options.chartType);
     },
 
     /**
@@ -170,15 +162,14 @@ var axisTypeMixer = {
     /**
      * Make rendering data for axis type chart.
      * @param {object} bounds chart bounds
-     * @param {?object} processedData processedData
      * @return {object} data for rendering
      * @private
      * @override
      */
-    _makeRenderingData: function(bounds, processedData) {
+    _makeRenderingData: function(bounds) {
         var axesData, optionChartTypes, seriesData;
 
-        axesData = this._makeAxesData(processedData || this.processedData, bounds);
+        axesData = this._makeAxesData(bounds);
         optionChartTypes = this.chartTypes || [this.chartType];
         seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
 

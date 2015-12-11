@@ -28,24 +28,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Make percent value.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array.<array.<number>>} percent values
-     * @private
-     */
-    _makePercentValues: function(data) {
-        var result = tui.util.map(data.values, function(values) {
-            var sum = tui.util.sum(values);
-
-            return tui.util.map(values, function(value) {
-                return value / sum;
-            });
-        });
-
-        return result;
-    },
-
-    /**
      * Make sectors information.
      * @param {array.<number>} percentValues percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
@@ -119,7 +101,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 showLabel: this.options.showLabel,
                 legendAlign: this.legendAlign
             }),
-            sectorsInfo = this._makeSectorsInfo(this.percentValues[0], circleBound);
+            sectorsInfo = this._makeSectorsInfo(this._getPercentValues()[0], circleBound);
 
         return {
             chartBackground: this.chartBackground,
@@ -171,22 +153,18 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
-     *      legendLabels: array.<string>,
      *      options: {legendAlign: string, showLabel: boolean},
-     *      chartWidth: number,
-     *      formattedValues: array
+     *      chartWidth: number
      * }} add data for make series label
      * @private
      */
     _makeSeriesDataForSeriesLabel: function(seriesData) {
         return tui.util.extend({
-            legendLabels: this.data.legendLabels,
             options: {
                 legendAlign: this.legendAlign,
                 showLabel: this.options.showLabel
             },
-            chartWidth: this.data.chartWidth,
-            formattedValues: this.data.formattedValues[0]
+            chartWidth: this.data.chartWidth
         }, seriesData);
     },
 
@@ -328,8 +306,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * Render center legend.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions positions
-     *      @param {array.<string>} params.legends legendLabels
-     *      @param {array.<string>} params.formattedValues formatted values
      *      @param {string} params.separator separator
      *      @param {object} params.options options
      *      @param {function} params.funcMoveToPosition function
@@ -338,13 +314,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _renderLegendLabel: function(params, seriesLabelContainer) {
         var positions = params.positions,
-            formattedValues = params.formattedValues,
             html;
 
-        html = tui.util.map(params.legendLabels, function(legend, index) {
+        html = tui.util.map(this.dataProcessor.getLegendLabels(), function(legend, index) {
             var label = this._getSeriesLabel({
                     legend: legend,
-                    label: formattedValues[index],
+                    label: this.dataProcessor.getFormattedValue(0, index, this.chartType),
                     separator: params.separator,
                     options: params.options
                 }),
@@ -545,7 +520,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             if (!elLegend) {
                 that.selectSeries(index);
             } else {
-                legendData = that.data.joinLegendLabels[index];
+                legendData = that.dataProcessor.getLegendData(index);
                 that.userEvent.fire('selectLegend', {
                     legend: legendData.label,
                     chartType: legendData.chartType,

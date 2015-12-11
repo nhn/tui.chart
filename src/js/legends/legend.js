@@ -65,8 +65,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.legendModel = new LegendModel({
             theme: params.theme,
-            labels: params.legendLabels,
-            labelInfos: params.joinLegendLabels,
+            labels: params.dataProcessor.getLegendLabels(),
+            legendData: params.dataProcessor.getFullLegendData(),
             chartTypes: params.chartTypes,
             chartType: params.chartType
         });

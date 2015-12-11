@@ -100,11 +100,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _setBaseData: function(bound, data) {
-        this.data = tui.util.extend(this.data, data);
+        //this.data = tui.util.extend(this.data, data);
+        this.data = data;
         this.bound = bound;
-        this.percentValues = this._makePercentValues(this.data, this.options.stacked);
+        this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
+        //this.percentValues = this._makePercentValues(this.data, this.options.stacked);
     },
 
+    _getPercentValues: function() {
+        return this.dataProcessor.getPercentValues(this.chartType);
+    },
     /**
      * Render series label area
      * @param {{width: number, height: number}} dimension series dimension
@@ -234,13 +239,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(bound, data) {
-        var that = this;
+        var groupValues = this.dataProcessor.getGroupValues(this.chartType),
+            that = this;
+
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (data.values && data.values.length) {
+        if (groupValues && groupValues.length) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(that._renderGraph, this));
             if (this.labelShower) {
@@ -289,9 +296,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeSeriesDataForSeriesLabel: function(seriesData, dimension) {
         return tui.util.extend({
-            values: this.data.values,
-            formattedValues: this.data.formattedValues,
-            formatFunctions: this.data.formatFunctions,
             dimension: dimension
         }, seriesData);
     },
@@ -580,7 +584,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index,
-            legendData = this.data.joinLegendLabels[legendIndex];
+            legendData = this.dataProcessor.getLegendData(legendIndex);
 
         return {
             chartType: legendData.chartType,
@@ -619,13 +623,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {boolean} isAsapShow whether asap show or not
      */
     onSelectLegend: function(chartType, legendIndex, isAsapShow) {
+        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
+
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 
         this.selectedLegendIndex = legendIndex;
-        this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
-        this.graphRenderer.selectLegend(legendIndex, isAsapShow);
+
+        if (groupValues && groupValues.length) {
+            this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
+            this.graphRenderer.selectLegend(legendIndex, isAsapShow);
+        }
     }
 });
 

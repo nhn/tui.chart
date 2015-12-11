@@ -36,7 +36,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * label infos
          * @type {array.<{chartType: string, label: string, index: number}>}
          */
-        this.labelInfos = params.labelInfos;
+        this.legendData = params.legendData;
 
         /**
          * chart types
@@ -54,7 +54,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * Legend data
          * @type {?array}
          */
-        this.legendData = null;
+        this.data = null;
 
         /**
          * Selected legend index.
@@ -96,7 +96,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      */
     _initCheckedIndexes: function() {
         var checkedIndexes = [];
-        tui.util.forEachArray(this.labelInfos, function(legendDatum, index) {
+        tui.util.forEachArray(this.legendData, function(legendDatum, index) {
             checkedIndexes[index] = true;
         }, this);
         this.checkedIndexes = checkedIndexes;
@@ -145,26 +145,26 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _setData: function() {
-        var labelInfos = this.labelInfos,
-            legendData, startIndex, defaultLegendTheme;
+        var legendData = this.legendData,
+            data, startIndex, defaultLegendTheme;
 
         if (!this.chartTypes) {
-            legendData = this._makeLabelInfoAppliedTheme(labelInfos, this.theme, this.sendingData[this.chartType]);
+            data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.sendingData[this.chartType]);
         } else {
             startIndex = 0;
             defaultLegendTheme = {
                 colors: defaultTheme.series.colors
             };
-            legendData = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
+            data = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
                 var chartTheme = this.theme[chartType] || defaultLegendTheme,
                     endIndex = startIndex + this.labels[chartType].length,
-                    data = this._makeLabelInfoAppliedTheme(labelInfos.slice(startIndex, endIndex), chartTheme, this.sendingData[chartType]);
+                    datum = this._makeLabelInfoAppliedTheme(legendData.slice(startIndex, endIndex), chartTheme, this.sendingData[chartType]);
                 startIndex = endIndex;
-                return data;
+                return datum;
             }, this));
         }
 
-        this.legendData = legendData;
+        this.data = data;
     },
 
     /**
@@ -172,7 +172,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @returns {array.<{chartType: string, label: string, theme: object}>} legend data
      */
     getData: function() {
-        return this.legendData;
+        return this.data;
     },
 
     /**
@@ -181,7 +181,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @returns {{chartType: string, label: string, theme: object}} legend datum
      */
     getDatum: function(index) {
-        return this.legendData[index];
+        return this.data[index];
     },
 
     /**

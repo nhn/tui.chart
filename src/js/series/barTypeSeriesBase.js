@@ -25,7 +25,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: groupBounds,
-            groupValues: this.percentValues
+            groupValues: this._getPercentValues()
         };
     },
 
@@ -108,7 +108,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * }} base info
      */
     makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
-        var groupValues = this.percentValues,
+        var groupValues = this._getPercentValues(),
             groupSize = dimension[anotherSizeType] / groupValues.length,
             itemCount = groupValues[0] && groupValues[0].length || 0,
             barGutter = this._makeBarGutter(groupSize, itemCount),
@@ -136,21 +136,20 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
     _renderNormalSeriesLabel: function(params, elSeriesLabelArea) {
         var groupBounds = params.groupBounds,
-            formattedValues = params.formattedValues,
-            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
+            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
 
-        html = tui.util.map(params.values, function(values, groupIndex) {
+        html = tui.util.map(this.dataProcessor.getGroupValues(this.chartType), function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 var bound, formattedValue, renderingPosition;
                 bound = groupBounds[groupIndex][index].end;
-                formattedValue = formattedValues[groupIndex][index];
+                formattedValue = this.dataProcessor.getFormattedValue(groupIndex, index, this.chartType);
                 renderingPosition = this.makeSeriesRenderingPosition({
                     value: value,
                     bound: bound,
@@ -166,12 +165,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Make sum values.
-     * @param {array.<number>} values values
-     * @param {array.<function>} formatFunctions format functions
      * @returns {number} sum result.
      */
-    makeSumValues: function(values, formatFunctions) {
-        var sum = tui.util.sum(tui.util.filter(values, function(value) {
+    makeSumValues: function(values) {
+        var formatFunctions = this.dataProcessor.getFormatFunctions(),
+            sum = tui.util.sum(tui.util.filter(values, function(value) {
                 return value > 0;
             })),
             fns = [sum].concat(formatFunctions || []);
@@ -185,10 +183,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Make stacked labels html.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
-     *      @param {array.<number>} params.values values,
-     *      @param {array.<function>} params.formatFunctions formatting functions,
      *      @param {array.<object>} params.bounds bounds,
-     *      @param {array} params.formattedValues formatted values,
      *      @param {number} params.labelHeight label height
      * @returns {string} labels html
      * @private
@@ -205,7 +200,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             }
 
             bound = params.bounds[index].end;
-            formattedValue = params.formattedValues[index];
+            formattedValue = this.dataProcessor.getFormattedValue(params.groupIndex, index, this.chartType);
             labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
             top = bound.top + ((bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2);
@@ -219,7 +214,6 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         if (this.options.stacked === 'normal' && bound) {
             htmls.push(this.makeSumLabelHtml({
                 values: values,
-                formatFunctions: params.formatFunctions,
                 bound: bound,
                 labelHeight: params.labelHeight
             }));
@@ -231,24 +225,21 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Render stacked series label.
      * @param {object} params parameters
      *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
     _renderStackedSeriesLabel: function(params, elSeriesLabelArea) {
         var groupBounds = params.groupBounds,
-            formattedValues = params.formattedValues,
-            formatFunctions = params.formatFunctions || [],
-            labelHeight = renderUtil.getRenderedLabelHeight(formattedValues[0][0], this.theme.label),
+            groupValues = this.dataProcessor.getGroupValues(this.chartType),
+            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
 
-        html = tui.util.map(params.values, function(values, index) {
+        html = tui.util.map(groupValues, function(values, index) {
             var labelsHtml = this._makeStackedLabelsHtml({
                 groupIndex: index,
                 values: values,
-                formatFunctions: formatFunctions,
                 bounds: groupBounds[index],
-                formattedValues: formattedValues[index],
                 labelHeight: labelHeight
             });
             return labelsHtml;
@@ -275,20 +266,6 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         } else {
             this._renderNormalSeriesLabel(params, elSeriesLabelArea);
         }
-    },
-
-    /**
-     * Get bound.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {{left: number, top: number}} bound
-     * @private
-     */
-    _getBound: function(groupIndex, index) {
-        if (groupIndex === -1 || index === -1) {
-            return null;
-        }
-        return this.groupBounds[groupIndex][index].end;
     }
 });
 

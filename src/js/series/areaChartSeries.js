@@ -42,7 +42,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         }
 
         return {
-            groupPositions: this.makePositions(dimension),
+            groupPositions: this._makePositions(dimension),
             zeroTop: zeroTop
         };
     }

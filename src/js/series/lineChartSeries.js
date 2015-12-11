@@ -31,7 +31,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
      */
     makeSeriesData: function(bound) {
         return {
-            groupPositions: this.makePositions(bound.dimension)
+            groupPositions: this._makePositions(bound.dimension)
         };
     }
 });

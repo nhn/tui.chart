@@ -35,28 +35,27 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             hasAxes: true
         });
 
-        this._addComponents(this.processedData, options.chartType);
+        this._addComponents(options.chartType);
     },
 
     /**
      * Make axes data
-     * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(processedData, bounds) {
+    _makeAxesData: function(bounds) {
         var options = this.options,
             xAxisData = axisDataMaker.makeValueAxisData({
-                values: processedData.values,
+                values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
-                formatFunctions: processedData.formatFunctions,
+                formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeLabelAxisData({
-                labels: processedData.labels,
+                labels: this.dataProcessor.getCategories(),
                 isVertical: true
             });
 
@@ -68,30 +67,17 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * Add components
-     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(processedData, chartType) {
-        var seriesData = {
-            allowNegativeTooltip: true,
-            data: {
-                values: processedData.values,
-                formattedValues: processedData.formattedValues,
-                formatFunctions: processedData.formatFunctions,
-                joinLegendLabels: processedData.joinLegendLabels
-            }
-        };
-
+    _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [
                 {
                     name: 'series',
-                    SeriesClass: Series,
-                    data: seriesData
+                    SeriesClass: Series
                 }
             ]
         });

@@ -19,9 +19,6 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * Group tooltip component.
      * @constructs GroupTooltip
      * @param {object} params parameters
-     *      @param {array.<number>} params.values converted values
-     *      @param {array} params.labels labels
-     *      @param {array} params.legendLabels legend labels
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
@@ -66,9 +63,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     makeTooltipData: function() {
-        return tui.util.map(this.joinFormattedValues, function(values, index) {
+        return tui.util.map(this.dataProcessor.getFullLegendData(), function(values, index) {
             return {
-                category: this.labels[index],
+                category: this.dataProcessor.getCategory[index],
                 values: values
             };
         }, this);
@@ -76,13 +73,13 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Make colors.
-     * @param {array.<string>} legendLabels legend labels
      * @param {object} theme tooltip theme
      * @returns {array.<string>} colors
      * @private
      */
-    _makeColors: function(legendLabels, theme) {
+    _makeColors: function(theme) {
         var colorIndex = 0,
+            legendLabels = this.dataProcessor.getLegendLabels(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {
@@ -112,7 +109,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeItemRenderingData: function(values) {
         return tui.util.map(values, function(value, index) {
-            var legendLabel = this.joinLegendLabels[index];
+            var legendLabel = this.dataProcessor.getLegendData(index);
             return {
                 value: value,
                 legend: legendLabel.label,
@@ -132,7 +129,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var data = this.data[groupIndex],
             template = tooltipTemplate.tplGroupItem,
             cssTextTemplate = tooltipTemplate.tplGroupCssText,
-            colors = this._makeColors(this.joinLegendLabels, this.theme),
+            colors = this._makeColors(this.theme),
             items = this._makeItemRenderingData(data.values),
             html, itemsHtml;
 

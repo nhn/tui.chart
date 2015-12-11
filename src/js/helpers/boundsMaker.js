@@ -21,14 +21,13 @@ var boundsMaker = {
     /**
      * Get max label of value axis.
      * @memberOf module:boundsMaker
-     * @param {object} processedData convert data
      * @param {string} chartType chart type
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(processedData, chartType) {
-        var values = chartType && processedData.values[chartType] || processedData.joinValues,
-            formatFunctions = processedData.formatFunctions,
+    _getValueAxisMaxLabel: function(chartType) {
+        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getFullGroupValues() : this.dataProcessor.getGroupValues(chartType),
+            formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
             max = tui.util.max(flattenValues),
@@ -104,7 +103,7 @@ var boundsMaker = {
             index = len - 1;
             chartType = chartTypes[index];
             theme = params.theme[chartType] || params.theme;
-            label = this._getValueAxisMaxLabel(params.processedData, chartType);
+            label = this._getValueAxisMaxLabel(chartType);
             width = this._getYAxisWidth(params.options, [label], theme, index);
         }
         return width;
@@ -114,7 +113,6 @@ var boundsMaker = {
      * Make axes dimension.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -139,7 +137,6 @@ var boundsMaker = {
             yAxisWidth = this._getYAxisWidth(params.options.yAxis, axesLabelInfo.yAxis, params.theme.yAxis[chartType] || params.theme.yAxis);
             xAxisHeight = this._getXAxisHeight(params.options.xAxis, axesLabelInfo.xAxis, params.theme.xAxis);
             rightYAxisWidth = this._getRightYAxisWidth({
-                processedData: params.processedData,
                 chartTypes: params.optionChartTypes,
                 theme: params.theme.yAxis,
                 options: params.options.yAxis
@@ -173,21 +170,20 @@ var boundsMaker = {
     /**
      * Make legend dimension.
      * @memberOf module:boundsMaker
-     * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @param {string} chartType chart type
      * @param {object} legendOptions series option
      * @returns {{width: number}} legend dimension
      * @private
      */
-    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, legendOptions) {
+    _makeLegendDimension: function(labelTheme, chartType, legendOptions) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
         legendOptions = legendOptions || {};
 
         if (!this._isSkippedLegendSizing(chartType, legendOptions)) {
-            legendLabels = tui.util.map(joinLegendLabels, function(item) {
+            legendLabels = tui.util.map(this.dataProcessor.getFullLegendData(), function(item) {
                 return item.label;
             });
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
@@ -270,7 +266,6 @@ var boundsMaker = {
      * Get components dimension
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -283,7 +278,7 @@ var boundsMaker = {
             chartDimension = this._makeChartDimension(chartOptions),
             titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
             axesDimension = this._makeAxesDimension(params),
-            legendDimension = this._makeLegendDimension(params.processedData.joinLegendLabels, params.theme.legend.label, params.options.chartType, params.options.legend),
+            legendDimension = this._makeLegendDimension(params.theme.legend.label, params.options.chartType, params.options.legend),
             seriesDimension = this._makeSeriesDimension({
                 chartDimension: chartDimension,
                 axesDimension: axesDimension,
@@ -451,13 +446,12 @@ var boundsMaker = {
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axes or not
      *      @param {array} params.optionChartTypes chart types
-     *      @param {object} processedData processed data
      *      @param {boolean} isVertical whether vertical or not
      * @returns {{xAxis: array, yAxis: array}} label info
      * @private
      */
     _makeAxesLabelInfo: function(params) {
-        var chartType, maxValueLabel, yLabels, xLabels;
+        var chartType, maxValueLabel, categories, yLabels, xLabels;
 
         if (!params.hasAxes) {
             return null;
@@ -466,14 +460,15 @@ var boundsMaker = {
         chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
 
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
-        maxValueLabel = this._getValueAxisMaxLabel(params.processedData, chartType);
+        maxValueLabel = this._getValueAxisMaxLabel(chartType);
 
+        categories = this.dataProcessor.getCategories();
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
         if (params.isVertical) {
             yLabels = [maxValueLabel];
-            xLabels = params.processedData.labels;
+            xLabels = categories;
         } else {
-            yLabels = params.processedData.labels;
+            yLabels = categories;
             xLabels = [maxValueLabel];
         }
 
@@ -627,7 +622,7 @@ var boundsMaker = {
             returnedHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
                 cssText: 'line-height:1.2;width:' + limitWidth + 'px'
             }, theme));
-        //console.log('returnedHeight', labels, returnedHeight, labelHeight)
+
         return returnedHeight - labelHeight;
     },
 
@@ -661,7 +656,6 @@ var boundsMaker = {
      * Make bounds about chart components.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -695,7 +689,6 @@ var boundsMaker = {
      */
     make: function(dataProcessor, params) {
         this.dataProcessor = dataProcessor;
-        params.processedData = dataProcessor.getData();
         var axesLabelInfo = this._makeAxesLabelInfo(params),
             dimensions = this._makeComponentsDimensions(tui.util.extend({
                 axesLabelInfo: axesLabelInfo

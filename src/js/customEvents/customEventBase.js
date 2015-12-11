@@ -28,6 +28,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     init: function(params) {
         this.chartType = params.chartType;
         this.isVertical = params.isVertical;
+        this.dataProcessor = params.dataProcessor;
     },
 
     /**
