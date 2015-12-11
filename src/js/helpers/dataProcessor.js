@@ -6,18 +6,27 @@
 
 'use strict';
 
+var chartConst = require('../const'),
+    predicate = require('./predicate'),
+    renderUtil = require('./renderUtil');
+
 var concat = Array.prototype.concat;
 
 /**
  * Data processor.
- * @module dataProcessor
+ * @module DataProcessor
  */
-var dataProcessor = {
+var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
+    init: function(rawData) {
+        this.orgRawData = rawData;
+        this.processedData = null;
+    },
+
     /**
      * Process raw data.
-     * @memberOf module:dataProcessor
+     * @memberOf module:DataProcessor
      * @param {array.<array>} rawData raw data
-     * @param {object} chartOptions chart option
+     * @param {object} options options
      * @param {string} chartType chart type
      * @param {array.<string>} seriesChartTypes chart types
      * @returns {{
@@ -28,18 +37,19 @@ var dataProcessor = {
      *      formattedValues: array.<string>
      * }} processed data
      */
-    process: function(rawData, chartOptions, chartType, seriesChartTypes) {
-        var labels = rawData.categories,
+    process: function(rawData, options, chartType, seriesChartTypes) {
+        var labels = this._processCategories(rawData.categories, options.xAxis),
             seriesData = rawData.series,
             values = this._pickValues(seriesData),
             joinValues = this._joinValues(values, seriesChartTypes),
             legendLabels = this._pickLegendLabels(seriesData),
             joinLegendLabels = this._joinLegendLabels(legendLabels, chartType, seriesChartTypes),
-            format = chartOptions && chartOptions.format || '',
+            format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
             formattedValues = format ? this._formatValues(values, formatFunctions) : values,
             joinFormattedValues = this._joinValues(formattedValues, seriesChartTypes);
-        return {
+
+        this.data = {
             labels: labels,
             values: values,
             joinValues: joinValues,
@@ -51,6 +61,13 @@ var dataProcessor = {
         };
     },
 
+    getRawData: function() {
+        return this.orgRawData;
+    },
+
+    getData: function() {
+        return this.data;
+    },
     /**
      * Separate label.
      * @memberOf module:dataProcessor
@@ -399,6 +416,38 @@ var dataProcessor = {
         }
 
         return funcs;
+    },
+
+    _makeMultilineCategory: function(category, limitWidth, theme) {
+        var words = category.split(' '),
+            lineWords = words[0],
+            lines = [];
+
+        tui.util.forEachArray(words.slice(1), function(word) {
+            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+            if (width > limitWidth) {
+                lines.push(lineWords);
+                lineWords = word;
+            } else {
+                lineWords += ' ' + word;
+            }
+        });
+
+        if (lineWords) {
+            lines.push(lineWords);
+        }
+
+        return lines.join('</br>');
+    },
+
+    getMultilineCategories: function(limitWidth, theme) {
+        if (!this.data.multilineCategorie) {
+            this.data.multilineCategorie = tui.util.map(this.data.labels, function(category) {
+                return this._makeMultilineCategory(category, limitWidth, theme);
+            }, this);
+        }
+
+        return this.data.multilineCategorie;
     }
 };
 

@@ -278,7 +278,7 @@ var boundsMaker = {
      * @returns {Object} components dimensions
      * @private
      */
-    _getComponentsDimensions: function(params) {
+    _makeComponentsDimensions: function(params) {
         var chartOptions = params.options.chart || {},
             chartDimension = this._makeChartDimension(chartOptions),
             titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
@@ -510,15 +510,14 @@ var boundsMaker = {
 
     /**
      * Make rotation info about horizontal label.
-     * @param {number} seriesWidth series area width
+     * @param {number} limitWidth limit width
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis label theme
      * @returns {?object} rotation info
      * @private
      */
-    _makeHorizontalLabelRotationInfo: function(seriesWidth, labels, theme) {
+    _makeHorizontalLabelRotationInfo: function(limitWidth, labels, theme) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            limitWidth = seriesWidth / labels.length - chartConst.XAXIS_LABEL_GUTTER,
             degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
@@ -553,14 +552,13 @@ var boundsMaker = {
         return diffLeft;
     },
 
-
     /**
-     * Calculate height of xAxis.
+     * Calculate rotated height of xAxis.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} xAxis height
      * @private
      */
-    _calculateXAxisHeight: function(rotationInfo) {
+    _calculateXAxisRotatedHeight: function(rotationInfo) {
         var degree = rotationInfo.degree,
             maxLabelWidth = rotationInfo.maxLabelWidth,
             labelHeight = rotationInfo.labelHeight,
@@ -574,9 +572,9 @@ var boundsMaker = {
      * @returns {number} height difference
      * @private
      */
-    _calculateHeightDifference: function(rotationInfo) {
-        var xAxisHeight = this._calculateXAxisHeight(rotationInfo);
-        return xAxisHeight - rotationInfo.labelHeight;
+    _calculateDiffWithRotatedHeight: function(rotationInfo) {
+        var rotatedHeight = this._calculateXAxisRotatedHeight(rotationInfo);
+        return rotatedHeight - rotationInfo.labelHeight;
     },
 
     /**
@@ -623,6 +621,16 @@ var boundsMaker = {
         dimensions.xAxis.height += diffHeight;
     },
 
+
+    _calculateDiffWithMultilineHeight: function(multilineLabels, labels, theme, limitWidth) {
+        var labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
+            returnedHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
+                cssText: 'line-height:1.2;width:' + limitWidth + 'px'
+            }, theme));
+        //console.log('returnedHeight', labels, returnedHeight, labelHeight)
+        return returnedHeight - labelHeight;
+    },
+
     /**
      * Update dimensions and degree.
      * @param {{plot: {width: number, height: number}, series: {width: number, height: number}, xAxis: {width: number, height: number}}} dimensions dimensions
@@ -631,31 +639,22 @@ var boundsMaker = {
      * @param {object} theme theme
      * @private
      */
-    _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme) {
-        var overflowLeft, diffHeight;
-        if (!rotationInfo) {
-            return;
+    _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme, limitWidth) {
+        var overflowLeft, diffHeight, multiLineCategories;
+        if (rotationInfo) {
+            overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
+            this._updateDimensionsWidth(dimensions, overflowLeft);
+            this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
+            diffHeight = this._calculateDiffWithRotatedHeight(rotationInfo);
+        } else {
+            multiLineCategories = this.dataProcessor.getMultilineCategories(limitWidth, theme);
+            diffHeight = this._calculateDiffWithMultilineHeight(multiLineCategories, labels, theme, limitWidth);
         }
-        overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
-        this._updateDimensionsWidth(dimensions, overflowLeft);
-        this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
-        diffHeight = this._calculateHeightDifference(rotationInfo);
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
-    _makeCustomEventBound: function(bound) {
-        var dimension = bound.dimension,
-            position = bound.position;
-        return {
-            dimension: {
-                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
-            },
-            position: {
-                left: position.left - chartConst.SERIES_EXPAND_SIZE,
-                top: position.top
-            }
-        }
+    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount) {
+        return seriesWidth / (labelCount - 1);
     },
 
     /**
@@ -694,17 +693,23 @@ var boundsMaker = {
      *   }
      * }} bounds
      */
-    make: function(params) {
+    make: function(dataProcessor, params) {
+        this.dataProcessor = dataProcessor;
+        params.processedData = dataProcessor.getData();
         var axesLabelInfo = this._makeAxesLabelInfo(params),
-            dimensions = this._getComponentsDimensions(tui.util.extend({
+            dimensions = this._makeComponentsDimensions(tui.util.extend({
                 axesLabelInfo: axesLabelInfo
             }, params)),
-            rotationInfo, top, left, seriesBound, axesBounds, bounds;
+            xAxisOptions = params.options.xAxis || {},
+            limitWidth, rotationInfo, top, left, seriesBound, axesBounds, bounds;
 
         this.chartLeftPadding = chartConst.CHART_PADDING;
         if (params.hasAxes) {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(dimensions.series.width, axesLabelInfo.xAxis, params.theme.label);
-            this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.label);
+            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length);
+            if (xAxisOptions.rotation !== false) {
+                rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, axesLabelInfo.xAxis, params.theme.xAxis.label);
+            }
+            this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.xAxis.label, limitWidth);
         }
 
         top = dimensions.title.height + chartConst.CHART_PADDING;

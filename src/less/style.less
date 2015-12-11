@@ -50,6 +50,9 @@
     .tui-chart-label-area {
       .tui-chart-label {
         position: absolute;
+        > span {
+          line-height: 1.2;
+        }
       }
     }
 
@@ -142,15 +145,18 @@
         .tui-chart-label {
           top: 10px;
           text-align: center;
-          white-space: nowrap;
-          &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+          word-wrap: break-word;
+          word-break: keep-all;
+          &.rotation {
             text-align: right;
             span {
               position:absolute;
               right:0;
               top:0;
             }
+            white-space: nowrap;
           }
+
           &.rotation25 {
             .rotate(-25deg);
             span {
@@ -346,12 +352,19 @@
 .tui-chart-size-check-element {
   clear:both;
   position:absolute;
-  top:100000px;
-  left:100000px;
+  word-wrap: break-word;
+  word-break: keep-all;
+  top:100px;
+  left:100px;
   width:1000px;
   height:100px;
-  line-height:1;
+  padding:0;
   z-index: 10000000;
+  line-height:1;
+  span {
+    box-sizing: border-box;
+    text-align:center;
+  }
 }
 
 :root .tui-chart .tui-chart-axis-area {

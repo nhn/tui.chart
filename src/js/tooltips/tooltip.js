@@ -113,18 +113,19 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     makeTooltipData: function() {
         var labels = this.labels,
-            tooltipData = {},
-            legendLabels = {};
+            formateedValues = {},
+            legendLabels = {},
+            tooltipData = {};
 
         if (tui.util.isArray(this.formattedValues)) {
-            tooltipData[this.chartType] = this.formattedValues;
+            formateedValues[this.chartType] = this.formattedValues;
             legendLabels[this.chartType] = this.legendLabels;
         } else {
-            tooltipData = this.formattedValues;
+            formateedValues = this.formattedValues;
             legendLabels = this.legendLabels;
         }
 
-        tui.util.forEach(tooltipData, function(groupValues, chartType) {
+        tui.util.forEach(formateedValues, function(groupValues, chartType) {
             tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
                 return tui.util.map(values, function(value, index) {
                     return {

@@ -218,19 +218,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             }),
             elLabelArea = dom.create('DIV', 'tui-chart-label-area'),
             areaCssText = renderUtil.makeFontCssText(this.theme.label),
+            categories = data.labels,
             labelsHtml, titleAreaWidth;
 
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
             areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
+        } else if (data.isLabelAxis && this.options.rotation === false) {
+            categories = this.dataProcessor.getMultilineCategories();
         }
 
-        tickPixelPositions.length = data.labels.length;
-
+        tickPixelPositions.length = categories.length;
         labelsHtml = this._makeLabelsHtml({
             positions: tickPixelPositions,
-            labels: data.labels,
+            labels: categories,
             posType: posType,
             cssTexts: cssTexts,
             labelSize: labelSize,
@@ -381,7 +383,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            addClass = ' rotation' + params.degree,
+            addClass = ' rotation rotation' + params.degree,
             halfWidth = params.labelSize / 2,
             moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
             top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,

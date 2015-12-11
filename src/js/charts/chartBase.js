@@ -9,7 +9,7 @@
 var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     predicate = require('../helpers/predicate'),
-    dataProcessor = require('../helpers/dataProcessor'),
+    DataProcessor = require('../helpers/dataProcessor'),
     boundsMaker = require('../helpers/boundsMaker'),
     UserEventListener = require('../helpers/userEventListener');
 
@@ -25,11 +25,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {boolean} param.isVertical whether vertical or not
      */
     init: function(params) {
+
         /**
          * processed data
          * @type {object}
          */
-        this.processedData = this._makeProcessedData(params);
+        this.dataProcessor = this._getDataProcessor(params);
+
+        this.processedData = this.dataProcessor.getData();
 
         /**
          * component array
@@ -99,10 +102,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {object} processed data
      * @private
      */
-    _makeProcessedData: function(params) {
-        var options = params.options,
-            processedData = dataProcessor.process(params.rawData, options.chart, options.chartType, params.seriesChartTypes);
-        return processedData;
+    _getDataProcessor: function(params) {
+        var dataProcessor = new DataProcessor(params.rawData),
+            options = params.options;
+        dataProcessor.process(params.rawData, options.chart, options.chartType, params.seriesChartTypes);
+        return dataProcessor;
     },
 
     /**
@@ -332,13 +336,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         rawData = rawData || this._filterRawData(this.rawData, checkedLegends);
 
-        processedData = this._makeProcessedData({
-            rawData: rawData,
-            theme: this.theme,
-            options: this.options,
-            hasAxes: this.hasAxes,
-            seriesChartTypes: this.seriesChartTypes
-        });
+        this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
+
+        processedData = this.dataProcessor.getData();
 
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
         processedData.joinLegendLabels = this.processedData.joinLegendLabels;
