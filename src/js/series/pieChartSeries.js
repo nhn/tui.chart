@@ -28,7 +28,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make percent value.
+     * Make percent value.
      * @param {{values: array, limit: {min: number, max: number}}} data series data
      * @returns {array.<array.<number>>} percent values
      * @private
@@ -46,7 +46,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make sectors information.
+     * Make sectors information.
      * @param {array.<number>} percentValues percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
      * @returns {array.<object>} sectors information
@@ -103,7 +103,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make series data.
+     * Make series data.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -129,7 +129,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make circle bound
+     * Make circle bound
      * @param {{width: number, height:number}} dimension chart dimension
      * @param {{showLabel: boolean, legendAlign: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
@@ -166,9 +166,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         };
     },
 
-
     /**
-     * To make add data for series label.
+     * Make add data for series label.
      * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
@@ -192,7 +191,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To render raphael graph.
+     * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
      * @private
@@ -210,14 +209,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.graphRenderer.render(this.elSeriesArea, params, callbacks);
-
-        // series label mouse event 동작 시 사용
-        this.showTooltip = funcShowTooltip;
+        this.graphRenderer.render(this.seriesContainer, params, callbacks);
     },
 
     /**
-     * To render series component of pie chart.
+     * Render series component of pie chart.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -231,6 +227,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.attachEvent(el);
 
         return el;
+    },
+
+    /**
+     * Resize.
+     * @override
+     */
+    resize: function() {
+        Series.prototype.resize.apply(this, arguments);
+        this._moveLegendLines(this.seriesData);
+        this._updateContainerBound();
     },
 
     /**
@@ -262,7 +268,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * To make series data by selection.
+     * Make series data by selection.
      * @param {number} index index
      * @returns {{indexes: {index: number, groupIndex: number}}} series data
      * @private
@@ -327,10 +333,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {string} params.separator separator
      *      @param {object} params.options options
      *      @param {function} params.funcMoveToPosition function
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderLegendLabel: function(params, elSeriesLabelArea) {
+    _renderLegendLabel: function(params, seriesLabelContainer) {
         var positions = params.positions,
             formattedValues = params.formattedValues,
             html;
@@ -345,8 +351,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 position = params.funcMoveToPosition(positions[index], label);
             return this.makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
-
-        elSeriesLabelArea.innerHTML = html;
+        seriesLabelContainer.innerHTML = html;
     },
 
     /**
@@ -370,15 +375,15 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * Render center legend.
      * @param {object} params parameters
      *      @param {object} params.sectorsInfo sector info
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderCenterLegend: function(params, elSeriesLabelArea) {
+    _renderCenterLegend: function(params, seriesLabelContainer) {
         this._renderLegendLabel(tui.util.extend({
             positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
             funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
-        }, params), elSeriesLabelArea);
+        }, params), seriesLabelContainer);
     },
 
     /**
@@ -429,10 +434,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {object} params parameters
      *      @param {object} params.sectorsInfo sector info
      *      @param {number} params.chartWidth chart width
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderOuterLegend: function(params, elSeriesLabelArea) {
+    _renderOuterLegend: function(params, seriesLabelContainer) {
         var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
             centerLeft = params.chartWidth / 2;
 
@@ -441,33 +446,24 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             positions: outerPositions,
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, params), elSeriesLabelArea);
+        }, params), seriesLabelContainer);
         this.graphRenderer.renderLegendLines(outerPositions);
     },
 
     /**
      * Render series label.
      * @param {object} params parameters
-     * @param {HTMLElement} elSeriesLabelArea series label area element
+     * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+    _renderSeriesLabel: function(params, seriesLabelContainer) {
         var legendAlign = params.options.legendAlign;
 
         if (predicate.isOuterLegendAlign(legendAlign)) {
-            this._renderOuterLegend(params, elSeriesLabelArea);
-        } else if (predicate.isCenterLegendAlign(legendAlign)) {
-            this._renderCenterLegend(params, elSeriesLabelArea);
+            this._renderOuterLegend(params, seriesLabelContainer);
+        } else {
+            this._renderCenterLegend(params, seriesLabelContainer);
         }
-    },
-
-    /**
-     * Get bound.
-     * @returns {null} bound
-     * @private
-     */
-    _getBound: function() {
-        return null;
     },
 
     /**
@@ -480,21 +476,21 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Show series label area.
+     * Move legend lines.
      * @param {object} seriesData series data
+     * @private
      * @override
      */
-    showSeriesLabelArea: function(seriesData) {
+    _moveLegendLines: function(seriesData) {
         var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
             centerLeft = this.data.chartWidth / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
         this.graphRenderer.moveLegendLines(outerPositions);
-        Series.prototype.showSeriesLabelArea.call(this);
     },
 
     /**
-     * To handle mouse event.
+     * Handle mouse event.
      * @param {MouseEvent} e mouse event
      * @param {function} callback callback
      * @private
@@ -561,6 +557,41 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Update container bound.
+     * @private
+     */
+    _updateContainerBound: function() {
+        this.containerBound = this.seriesContainer.getBoundingClientRect();
+    },
+
+    /**
+     * Get series container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getContainerBound: function() {
+        if (!this.containerBound) {
+            this._updateContainerBound();
+        }
+        return this.containerBound;
+    },
+
+    /**
+     * Make label bound.
+     * @param {number} clientX clientX
+     * @param {number} clientY clientY
+     * @returns {{left: number, top: number}} bound
+     * @private
+     */
+    _makeLabelBound: function(clientX, clientY) {
+        var containerBound = this._getContainerBound();
+        return {
+            left: clientX - containerBound.left,
+            top: clientY - containerBound.top
+        };
+    },
+
+    /**
      * This is event handler for mouseover.
      * @private
      * @param {MouseEvent} e mouse event
@@ -569,8 +600,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var that = this;
 
         this._handleMouseEvent(e, function(groupIndex, index) {
-            var bound = that._getBound(groupIndex, index) || that._makeLabelBound(e.clientX, e.clientY - 10);
-            that.showTooltip(bound, groupIndex, index);
+            var bound = that._makeLabelBound(e.clientX, e.clientY - 10);
+            that.showTooltip({
+                allowNegativeTooltip: !!that.allowNegativeTooltip,
+                chartType: that.chartType
+            }, bound, groupIndex, index);
         });
     },
 

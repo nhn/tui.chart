@@ -79,9 +79,9 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getYRAxisWidth()', function() {
+    describe('_getRightYAxisWidth()', function() {
         it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
-            var result = maker._getYRAxisWidth({
+            var result = maker._getRightYAxisWidth({
                 processedData: {
                     values: {
                         line: [
@@ -100,7 +100,7 @@ describe('boundsMaker', function() {
                         title: 'YAxis title'
                     },
                     {
-                        title: 'YRAxis title'
+                        title: 'RightYAxis title'
                     }
                 ]
             });
@@ -116,7 +116,7 @@ describe('boundsMaker', function() {
                 yAxis: {
                     width: 0
                 },
-                yrAxis: {
+                rightYAxis: {
                     width: 0
                 },
                 xAxis: {
@@ -125,7 +125,7 @@ describe('boundsMaker', function() {
             });
         });
 
-        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, yrAxis의 너비 값을 계산하여 반환합니다.', function() {
+        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, rightYAxis의 너비 값을 계산하여 반환합니다.', function() {
             var result = maker._makeAxesDimension({
                 processedData: {
                     labels: ['label1', 'label12'],
@@ -163,7 +163,7 @@ describe('boundsMaker', function() {
                 }
             });
             expect(result.yAxis.width).toBe(97);
-            expect(result.yrAxis.width).toBe(0);
+            expect(result.rightYAxis.width).toBe(0);
             expect(result.xAxis.height).toBe(60);
         });
     });
@@ -179,7 +179,7 @@ describe('boundsMaker', function() {
                     }
                 ],
                 {});
-            expect(acutal.width).toBe(87);
+            expect(acutal.width).toBe(107);
         });
     });
 
@@ -194,7 +194,7 @@ describe('boundsMaker', function() {
                         yAxis: {
                             width: 50
                         },
-                        yrAxis: {
+                        rightYAxis: {
                             width: 0
                         },
                         xAxis: {
@@ -308,13 +308,13 @@ describe('boundsMaker', function() {
             });
 
             expect(result.title.height).toBe(40);
-            expect(result.series.width).toBe(296);
+            expect(result.series.width).toBe(276);
             expect(result.series.height).toBe(280);
 
-            expect(result.legend.width).toBe(87);
+            expect(result.legend.width).toBe(107);
 
             expect(result.yAxis.width).toBe(97);
-            expect(result.yrAxis.width).toBe(0);
+            expect(result.rightYAxis.width).toBe(0);
             expect(result.xAxis.height).toBe(60);
         });
     });
@@ -390,10 +390,10 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_makeYRAxisBound()', function() {
-        it('yrAxis width, plot height, legend width, top 정보를 받아 yrAxis bound정보를 생성합니다.', function() {
-            var actual = maker._makeYRAxisBound({
-                    yrAxis: {
+    describe('_makeRightYAxisBound()', function() {
+        it('rightYAxis width, plot height, legend width, top 정보를 받아 rightYAxis bound정보를 생성합니다.', function() {
+            var actual = maker._makeRightYAxisBound({
+                    rightYAxis: {
                         width: 100
                     },
                     plot: {
@@ -426,7 +426,7 @@ describe('boundsMaker', function() {
                     series: {width: 299, height: 199},
                     legend: {width: 70},
                     yAxis: {width: 50},
-                    yrAxis: {width: 0},
+                    rightYAxis: {width: 0},
                     xAxis: {height: 50}
                 },
                 top: 20,
@@ -456,15 +456,15 @@ describe('boundsMaker', function() {
                     series: {width: 299, height: 199},
                     legend: {width: 70},
                     yAxis: {width: 50},
-                    yrAxis: {width: 50},
+                    rightYAxis: {width: 50},
                     xAxis: {height: 50}
                 },
                 top: 20,
                 left: 20
             });
-            expect(actual.yrAxis.dimension.height).toBe(200);
-            expect(actual.yrAxis.position.top).toBe(20);
-            expect(actual.yrAxis.position.right).toBe(81);
+            expect(actual.rightYAxis.dimension.height).toBe(200);
+            expect(actual.rightYAxis.position.top).toBe(20);
+            expect(actual.rightYAxis.position.right).toBe(81);
         });
     });
 
@@ -485,7 +485,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeLegendBound()', function() {
-        it('title height, yAxis width, series width, yrAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
+        it('title height, yAxis width, series width, rightYAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
             var actual = maker._makeLegendBound({
                     title: {
                         height: 20
@@ -496,7 +496,7 @@ describe('boundsMaker', function() {
                     series: {
                         width: 200
                     },
-                    yrAxis: {
+                    rightYAxis: {
                         width: 30
                     }
                 }),
@@ -735,18 +735,18 @@ describe('boundsMaker', function() {
             });
             expect(result.chart.dimension.width).toBe(500);
             expect(result.chart.dimension.height).toBe(400);
-            expect(result.series.dimension.width).toBe(296);
+            expect(result.series.dimension.width).toBe(276);
             expect(result.series.dimension.height).toBe(280);
             expect(result.series.position.top).toBe(50);
             expect(result.series.position.left).toBe(107);
             expect(result.yAxis.dimension.width).toBe(97);
             expect(result.yAxis.dimension.height).toBe(281);
             expect(result.yAxis.position.top).toBe(50);
-            expect(result.xAxis.dimension.width).toBe(297);
+            expect(result.xAxis.dimension.width).toBe(277);
             expect(result.xAxis.dimension.height).toBe(60);
             expect(result.xAxis.position.top).toBe(330);
             expect(result.legend.position.top).toBe(40);
-            expect(result.legend.position.left).toBe(403);
+            expect(result.legend.position.left).toBe(383);
             expect(result.tooltip.position.top).toBe(50);
             expect(result.tooltip.position.left).toBe(97);
         });

@@ -98,20 +98,20 @@ describe('GroupTooltip', function() {
 
     describe('_getTooltipSectorElement', function() {
         it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
-            var elLayout = dom.create('DIV'),
+            var tooltipContainer = dom.create('DIV'),
                 actual;
-            tooltip.elLayout = elLayout;
+            tooltip.tooltipContainer = tooltipContainer;
             actual = tooltip._getTooltipSectorElement();
             expect(actual).toBeDefined();
             expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
         it('this.elTooltipSector이 존재하면 그대로 반환합니다.', function() {
-            var elTooltipSector = dom.create('DIV'),
+            var groupTooltipSector = dom.create('DIV'),
                 actual, expected;
-            tooltip.elTooltipSector = elTooltipSector;
+            tooltip.groupTooltipSector = groupTooltipSector;
             actual = tooltip._getTooltipSectorElement();
-            expected = elTooltipSector;
+            expected = groupTooltipSector;
             expect(actual).toBe(expected);
         });
     });

@@ -10,14 +10,24 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
-    ANIMATION_TIME = 700;
+    ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
-/**
- * @classdesc RaphaelLineCharts is graph renderer for line chart.
- * @class RaphaelLineChart
- * @extends RaphaelLineTypeBase
- */
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
+    /**
+     * RaphaelLineCharts is graph renderer for line chart.
+     * @constructs RaphaelLineChart
+     * @extends RaphaelLineTypeBase
+     */
+    init: function() {
+        /**
+         * selected legend index
+         * @type {?number}
+         */
+        this.selectedLegendIndex = null;
+    },
+
     /**
      * Render function of line chart.
      * @param {HTMLElement} container container
@@ -47,6 +57,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             this.selectionColor = theme.selectionColor;
         }
 
+        this.colors = colors;
         this.borderStyle = borderStyle;
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
@@ -110,7 +121,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             that = this,
             startTime = 0;
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var line, path;
 
             if (index) {
@@ -123,8 +134,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             }
 
             if (that.dotOpacity) {
+                item.dot.attr(tui.util.extend({'fill-opacity': 0}, that.borderStyle));
                 setTimeout(function() {
-                    dot.attr(tui.util.extend({'fill-opacity': that.dotOpacity}, that.borderStyle));
+                    item.dot.attr(tui.util.extend({'fill-opacity': item.opacity || that.dotOpacity}, that.borderStyle));
                 }, startTime);
             }
         });
@@ -135,7 +147,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     },
 
     /**
-     * To resize graph of line chart.
+     * Resize graph of line chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
@@ -150,7 +162,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        this.renderItems(function(dot, groupIndex, index) {
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var position = groupPositions[groupIndex][index],
                 dotAttrs = {
                     cx: position.left,
@@ -168,7 +180,35 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
             }
 
-            dot.attr(dotAttrs);
+            item.dot.attr(dotAttrs);
+        });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     * @param {boolean} isAsapShow whether asap show or not
+     */
+    selectLegend: function(legendIndex, isAsapShow) {
+        var that = this,
+            isNull = tui.util.isNull(legendIndex);
+
+        this.selectedLegendIndex = legendIndex;
+
+        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
+            var opacity = (isNull || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
+                line;
+
+            if (index) {
+                line = that.groupLines[groupIndex][index - 1];
+                line.attr({'stroke-opacity': opacity});
+            }
+
+            item.opacity = opacity;
+
+            if (that.dotOpacity && isAsapShow) {
+                item.dot.attr({'fill-opacity': opacity});
+            }
         });
     }
 });

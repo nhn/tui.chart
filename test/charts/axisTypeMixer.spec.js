@@ -18,6 +18,7 @@ describe('ComboChart', function() {
         axisTypeMixer._addComponent = jasmine.createSpy('_addComponent').and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
+        axisTypeMixer._makeTooltipData = jasmine.createSpy('_makeTooltipData').and.returnValue({});
     });
 
     beforeEach(function() {
@@ -29,14 +30,14 @@ describe('ComboChart', function() {
             axisTypeMixer._addAxisComponents(['xAxis', 'yAxis'], true);
             expect(componentMap.yAxis).toBeDefined();
             expect(componentMap.xAxis).toBeDefined();
-            expect(componentMap.yrAxis).not.toBeDefined();
+            expect(componentMap.rightYAxis).not.toBeDefined();
         });
 
-        it('yrAxis을 목록에 포함시키면 컴포넌트로 등록됩니다.', function() {
-            axisTypeMixer._addAxisComponents(['xAxis', 'yAxis', 'yrAxis'], true);
+        it('rightYAxis을 목록에 포함시키면 컴포넌트로 등록됩니다.', function() {
+            axisTypeMixer._addAxisComponents(['xAxis', 'yAxis', 'rightYAxis'], true);
             expect(componentMap.xAxis).toBeDefined();
             expect(componentMap.yAxis).toBeDefined();
-            expect(componentMap.yrAxis).toBeDefined();
+            expect(componentMap.rightYAxis).toBeDefined();
         });
     });
 
@@ -132,23 +133,23 @@ describe('ComboChart', function() {
             expect(actual.column).toBe(yAxis.limit);
         });
 
-        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 yrAxis의 limit 정보를 포함하는 데이터도 포함됩니다.', function() {
+        it('chart type이 두가지인(콤보차트) 세로형 차트에서는 마지막에 오는 chartType을 키로 rightYAxis의 limit 정보를 포함하는 데이터도 포함됩니다.', function() {
             var xAxis = {
                     limit: {}
                 },
                 yAxis = {
                     limit: {}
                 },
-                yrAxis = {
+                rightYAxis = {
                     limit: {}
                 },
                 actual = axisTypeMixer._getLimitMap({
                     xAxis: xAxis,
                     yAxis: yAxis,
-                    yrAxis: yrAxis
+                    rightYAxis: rightYAxis
                 }, ['column', 'line'], true);
             expect(actual.column).toBe(yAxis.limit);
-            expect(actual.line).toBe(yrAxis.limit);
+            expect(actual.line).toBe(rightYAxis.limit);
         });
     });
 
@@ -197,7 +198,7 @@ describe('ComboChart', function() {
                 yAxis = {
                     limit: {}
                 },
-                yrAxis = {
+                rightYAxis = {
                     limit: {}
                 },
                 actual;
@@ -206,12 +207,12 @@ describe('ComboChart', function() {
             actual = axisTypeMixer._makeSeriesDataForRendering({
                 xAxis: xAxis,
                 yAxis: yAxis,
-                yrAxis: yrAxis
+                rightYAxis: rightYAxis
             }, ['column', 'line'], true);
 
             expect(actual.columnSeries.limit).toBe(yAxis.limit);
             expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
-            expect(actual.lineSeries.limit).toBe(yrAxis.limit);
+            expect(actual.lineSeries.limit).toBe(rightYAxis.limit);
             expect(actual.lineSeries.aligned).toBe(xAxis.aligned);
         });
     });

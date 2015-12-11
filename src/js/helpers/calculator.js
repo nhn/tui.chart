@@ -14,7 +14,7 @@ var chartConst = require('../const');
  */
 var calculator = {
     /**
-     * To calculate limit from chart min, max data.
+     * Calculate limit from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
@@ -45,7 +45,7 @@ var calculator = {
     },
 
     /**
-     * To normalize number.
+     * Normalize number.
      * @memberOf module:calculator
      * @param {number} value target value
      * @returns {number} normalized number
@@ -85,7 +85,7 @@ var calculator = {
     },
 
     /**
-     * To make tick positions of pixel type.
+     * Make tick positions of pixel type.
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
@@ -107,7 +107,7 @@ var calculator = {
     },
 
     /**
-     * To make labels from limit.
+     * Make labels from limit.
      * @memberOf module:calculator
      * @param {{min: number, max: number}} limit axis limit
      * @param {number} step step between max and min
@@ -126,7 +126,7 @@ var calculator = {
     },
 
     /**
-     * To calculate step from limit.
+     * Calculate step from limit.
      * @memberOf module:calculator
      * @param {{min: number, max: number}} limit axis limit
      * @param {number} count value count
@@ -137,7 +137,7 @@ var calculator = {
     },
 
     /**
-     * To calculate adjacent.
+     * Calculate adjacent.
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse
      * @returns {number} adjacent
@@ -160,7 +160,7 @@ var calculator = {
     },
 
     /**
-     * To calculate opposite.
+     * Calculate opposite.
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse
      * @returns {number} opposite

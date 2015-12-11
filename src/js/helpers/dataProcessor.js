@@ -194,7 +194,7 @@ var dataProcessor = {
     },
 
     /**
-     * To format group values.
+     * Format group values.
      * @memberOf module:dataProcessor
      * @param {array.<array>} groupValues group values
      * @param {function[]} formatFunctions format functions
@@ -213,7 +213,7 @@ var dataProcessor = {
     },
 
     /**
-     * To format converted values.
+     * Format converted values.
      * @memberOf module:dataProcessor
      * @param {array.<array>} chartValues chart values
      * @param {function[]} formatFunctions format functions

@@ -164,6 +164,8 @@ describe('Tooltip', function() {
                 left: 10,
                 top: 0
             };
+
+            tooltip.containerBound = {left: 10, top: 0};
             actual = tooltip._calculateTooltipPositionAboutPieChart({
                 bound: {},
                 eventPosition: {

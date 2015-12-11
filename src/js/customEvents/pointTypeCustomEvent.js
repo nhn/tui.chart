@@ -56,14 +56,12 @@ var PointTypeCustomEven = tui.util.defineClass(CustomEventBase, /** @lends Point
      * @param {MouseEvent} e mouse event object
      * @override
      */
-    onMouseout: function() {
+    _onMouseout: function() {
         if (this.prevFoundData) {
             this.fire('hideTooltip', this.prevFoundData);
             this.prevFoundData = null;
         }
     }
 });
-
-tui.util.CustomEvents.mixin(PointTypeCustomEven);
 
 module.exports = PointTypeCustomEven;

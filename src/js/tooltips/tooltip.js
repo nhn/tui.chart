@@ -27,10 +27,21 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        var values;
 
         TooltipBase.call(this, params);
+
         this.tplTooltip = this._getTooltipTemplate(this.options.template);
+        this.initValues();
+
+        this.containerBound = null;
+    },
+
+    /**
+     * Initialize values.
+     */
+    initValues: function() {
+        var values;
+
         if (tui.util.isArray(this.values)) {
             values = this.values;
             this.values = {};
@@ -66,7 +77,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To render tooltip component.
+     * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
@@ -79,12 +90,22 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this.seriesPosition = data.seriesPosition;
         }
 
-        this.attachEvent(el);
+        this._attachEvent(el);
         return el;
     },
 
     /**
-     * To resize tooltip component.
+     * Rerender.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     */
+    rerender: function(bound, data) {
+        TooltipBase.prototype.rerender.call(this, bound, data);
+        this.initValues();
+    },
+
+    /**
+     * Resize tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @override
@@ -93,11 +114,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (data) {
             this.seriesPosition = data.seriesPosition;
         }
-        TooltipBase.prototype.resize.call(this, bound);
+
+        TooltipBase.prototype.resize.call(this, bound, data);
+        this._updateContainerBound();
     },
 
     /**
-     * To make tooltip data.
+     * Make tooltip data.
      * @returns {array.<object>} tooltip data
      * @override
      */
@@ -241,7 +264,27 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To calculate tooltip position abount pie chart.
+     * Update container bound.
+     * @private
+     */
+    _updateContainerBound: function() {
+        this.containerBound = this.tooltipContainer.getBoundingClientRect();
+    },
+
+    /**
+     * Get tooltip container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getTooltipContainerBound: function() {
+        if (!this.containerBound) {
+            this._updateContainerBound();
+        }
+        return this.containerBound;
+    },
+
+    /**
+     * Calculate tooltip position abount pie chart.
      * @param {object} params parameters
      *      @param {{left: number, top: number}} params.bound bound
      *      @param {{clientX: number, clientY: number}} params.eventPosition mouse position
@@ -249,13 +292,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _calculateTooltipPositionAboutPieChart: function(params) {
-        params.bound.left = params.eventPosition.clientX - this.seriesPosition.left;
-        params.bound.top = params.eventPosition.clientY - this.seriesPosition.top;
+        var containerBound = this._getTooltipContainerBound();
+        params.bound.left = params.eventPosition.clientX - containerBound.left;
+        params.bound.top = params.eventPosition.clientY - containerBound.top;
         return this._calculateTooltipPositionAboutNotBarChart(params);
     },
 
     /**
-     * To calculate tooltip position about not bar chart.
+     * Calculate tooltip position about not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -295,7 +339,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To calculate tooltip position about bar chart.
+     * Calculate tooltip position about bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -342,10 +386,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _adjustPosition: function(chartDimension, areaPosition, tooltipDimension, position) {
-        position.left = tui.util.max([position.left, -areaPosition.left]);
-        position.left = tui.util.min([position.left, chartDimension.width - areaPosition.left - tooltipDimension.width]);
-        position.top = tui.util.max([position.top, -areaPosition.top]);
-        position.top = tui.util.min([position.top, chartDimension.height - areaPosition.top - tooltipDimension.height]);
+        position.left = Math.max(position.left, -areaPosition.left);
+        position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
+        position.top = Math.max(position.top, -areaPosition.top);
+        position.top = Math.min(position.top, chartDimension.height - areaPosition.top - tooltipDimension.height);
         return position;
     },
 
@@ -435,7 +479,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To make tooltip html.
+     * Make tooltip html.
      * @param {string} chartType chart type
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @returns {string} tooltip html
@@ -504,7 +548,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * To make parameters for show tooltip user event.
+     * Make parameters for show tooltip user event.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @param {object} additionParams addition parameters
      * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
@@ -578,13 +622,12 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Attach event
      * @param {HTMLElement} el target element
+     * @private
      */
-    attachEvent: function(el) {
+    _attachEvent: function(el) {
         eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
         eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
-
-tui.util.CustomEvents.mixin(Tooltip);
 
 module.exports = Tooltip;

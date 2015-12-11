@@ -55,7 +55,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _setDefaultTooltipPositionOption: function() {},
 
     /**
-     * To save position options.
+     * Save position options.
      * @private
      */
     _saveOriginalPositionOptions: function() {
@@ -66,13 +66,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To make tooltip data.
+     * Make tooltip data.
      * @abstract
      */
     makeTooltipData: function() {},
 
     /**
-     * To render tooltip component.
+     * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
@@ -90,12 +90,28 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To resize tooltip component.
+     * Rerender.
      * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     */
+    rerender: function(bound, data) {
+        this.bound = bound;
+        tui.util.extend(this, data);
+        this.data = this.makeTooltipData();
+        if (this.positionModel) {
+            this.positionModel.updateBound(bound);
+        }
+    },
+
+    /**
+     * Resize tooltip component.
+     * @param {{position: object}} bound tooltip bound
+     * @param {{chartDimension: object}} data data for resize
      * @override
      */
-    resize: function(bound) {
+    resize: function(bound, data) {
         this.bound = bound;
+        this.chartDimension = data.chartDimension;
         renderUtil.renderPosition(this.tooltipContainer, bound.position);
         if (this.positionModel) {
             this.positionModel.updateBound(bound);
@@ -293,7 +309,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * To hide animation.
+     * Hide animation.
      * @param {HTMLElement} tooltipElement tooltip element
      */
     hideAnimation: function(tooltipElement) {

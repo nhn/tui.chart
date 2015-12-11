@@ -10,7 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
-    SELECTION_DOT_RADIOUS = 7;
+    SELECTION_DOT_RADIOUS = 7,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -18,7 +19,7 @@ var DEFAULT_DOT_RADIUS = 3,
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
-     * To make line paths.
+     * Make line paths.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @returns {{start: string, end: string}} line paths.
@@ -53,7 +54,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To make border style.
+     * Make border style.
      * @param {string} borderColor border color
      * @param {number} opacity opacity
      * @returns {{stroke: string, stroke-width: number, strike-opacity: number}} border style
@@ -73,7 +74,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To make dot style for mouseout event.
+     * Make dot style for mouseout event.
      * @param {number} opacity opacity
      * @param {object} borderStyle border style
      * @returns {{fill-opacity: number, stroke-opacity: number, r: number}} style
@@ -237,10 +238,19 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Hide dot.
      * @param {object} dot raphael object
+     * @param {?number} opacity opacity
      * @private
      */
-    _hideDot: function(dot) {
-        dot.attr(this.outDotStyle);
+    _hideDot: function(dot, opacity) {
+        var outDotStyle = this.outDotStyle;
+
+        if (!tui.util.isUndefined(opacity)) {
+            outDotStyle = tui.util.extend({}, this.outDotStyle, {
+                'fill-opacity': opacity
+            });
+        }
+
+        dot.attr(outDotStyle);
     },
 
     /**
@@ -250,10 +260,17 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            item = this.groupDots[groupIndex][index];
+            item = this.groupDots[groupIndex][index],
+            opacity;
+
+        if (this.dotOpacity === 0) {
+            opacity = this.dotOpacity;
+        } else if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+            opacity = DE_EMPHASIS_OPACITY;
+        }
 
         if (item) {
-            this._hideDot(item.dot);
+            this._hideDot(item.dot, opacity);
         }
     },
 
@@ -272,7 +289,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Hide line for group tooltip.
-     * @private
      */
     hideGroupTooltipLine: function() {
         this.tooltipLine.attr({
@@ -302,19 +318,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
-     * To render items of line type chart.
-     * @param {function} funcRenderItem function
-     */
-    renderItems: function(funcRenderItem) {
-        tui.util.forEachArray(this.groupDots, function(dots, groupIndex) {
-            tui.util.forEachArray(dots, function(item, index) {
-                funcRenderItem(item.dot, groupIndex, index);
-            }, this);
-        }, this);
-    },
-
-    /**
-     * To make selection dot.
+     * Make selection dot.
      * @param {object} paper raphael paper
      * @returns {object} selection dot
      * @private

@@ -104,7 +104,6 @@ describe('ComboChart', function() {
         });
     });
 
-
     describe('_makeYAxisData()', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var result = comboChart._makeYAxisData({
@@ -205,7 +204,9 @@ describe('ComboChart', function() {
             var processedData, bounds, actual;
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
+
             comboChart.optionChartTypes = [];
+
             processedData = {
                 formatFunctions: [],
                 labels: []
@@ -215,17 +216,19 @@ describe('ComboChart', function() {
                     dimension: {}
                 }
             };
-            actual = comboChart._makeAxesData(processedData, bounds, {});
+            actual = comboChart._makeAxesData(processedData, bounds);
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
-            expect(actual.yrAxis).not.toBeDefined();
+            expect(actual.rightYAxis).not.toBeDefined();
         });
 
-        it('y axis 옵션 정보가 하나일 경우에는 yrAxis data도 생성합니다.', function() {
+        it('y axis 옵션 정보가 하나일 경우에는 rightYAxis data도 생성합니다.', function() {
             var processedData, bounds, actual;
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
+
             comboChart.optionChartTypes = ['column', 'line'];
+
             processedData = {
                 formatFunctions: [],
                 labels: []
@@ -238,13 +241,15 @@ describe('ComboChart', function() {
             actual = comboChart._makeAxesData(processedData, bounds, {});
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
-            expect(actual.yrAxis).toBeDefined();
+            expect(actual.rightYAxis).toBeDefined();
         });
     });
 
     describe('_makeOptionsMap()', function() {
         it('옵션이 있을 경우에는 각 chartType에 맞는 옵션을 추출하여 chartType을 key로 하는 y축 옵션 정보 맵을 생성합니다.', function () {
-            var actual = comboChart._makeOptionsMap(['column', 'line'], {
+            var actual;
+
+            comboChart.options = {
                 series: {
                     column: {
                         stacked: 'normal'
@@ -262,7 +267,9 @@ describe('ComboChart', function() {
                     }
                 },
                 chartType: 'combo'
-            });
+            };
+
+            actual = comboChart._makeOptionsMap(['column', 'line']);
 
             expect(actual.column).toEqual({
                 stacked: 'normal'
@@ -275,35 +282,46 @@ describe('ComboChart', function() {
 
     describe('_makeThemeMap()', function() {
         it('chartType을 key로 하는 테마 맵을 생성합니다.', function () {
-            var result = comboChart._makeThemeMap(['column', 'line'], {
+            var actual;
+
+            comboChart.theme = {
                 series: {
                     colors: ['red', 'orange', 'green', 'blue', 'gray']
                 }
-            }, {
-                column: ['Legend1', 'Legend2'],
-                line: ['Legend1', 'Legend2', 'Legend3']
-            });
+            };
 
-            expect(result.column).toBeTruthy();
-            expect(result.line).toBeTruthy();
+            actual = comboChart._makeThemeMap(['column', 'line']);
+
+            expect(actual.column).toBeTruthy();
+            expect(actual.line).toBeTruthy();
         });
 
         it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
-            var result = comboChart._makeThemeMap(['column', 'line'], {
+            var actual;
+
+            comboChart.theme = {
                 series: {
                     colors: ['green', 'blue', 'gray', 'red', 'orange']
                 }
-            }, {
-                column: ['Legend1', 'Legend2'],
-                line: ['Legend1', 'Legend2', 'Legend3']
-            });
+            };
 
-            expect(result.column.colors).toEqual(['green', 'blue', 'gray', 'red', 'orange']);
-            expect(result.line.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
+            comboChart.processedData = {
+                legendLabels: {
+                    column: ['Legend1', 'Legend2'],
+                    line: ['Legend1', 'Legend2', 'Legend3']
+                }
+            };
+
+            actual = comboChart._makeThemeMap(['column', 'line']);
+
+            expect(actual.column.colors).toEqual(['green', 'blue', 'gray', 'red', 'orange']);
+            expect(actual.line.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
         });
 
         it('series의 colors는 차트별로 설정하게 되면 그대로 할당되게 됩니다.', function () {
-            var result = comboChart._makeThemeMap(['column', 'line'], {
+            var actual;
+
+            comboChart.theme = {
                 series: {
                     column: {
                         colors: ['green', 'blue']
@@ -312,13 +330,33 @@ describe('ComboChart', function() {
                         colors: ['blue', 'gray', 'red']
                     }
                 }
-            }, {
-                column: ['Legend1', 'Legend2'],
-                line: ['Legend1', 'Legend2', 'Legend3']
-            });
+            };
 
-            expect(result.column.colors).toEqual(['green', 'blue']);
-            expect(result.line.colors).toEqual(['blue', 'gray', 'red']);
+            actual = comboChart._makeThemeMap(['column', 'line']);
+
+            expect(actual.column.colors).toEqual(['green', 'blue']);
+            expect(actual.line.colors).toEqual(['blue', 'gray', 'red']);
+        });
+    });
+
+    describe('_makeSeriesData()', function() {
+        it('chart type별로 series컴포넌트에 필요한 data를 생성합니다. line차트는 values가 pivot됩니다.', function() {
+            var processedData = {
+                        values: {
+                            column: [[1, 2]],
+                            line: [[3, 4]]
+                        },
+                        formattedValues: {
+                            column: [['01', '02']],
+                            line: [['03', '04']]
+                        }
+                },
+                actual = comboChart._makeSeriesData(processedData, ['column', 'line']);
+
+            expect(actual.column.values).toEqual([[1, 2]]);
+            expect(actual.column.formattedValues).toEqual([['01', '02']]);
+            expect(actual.line.values).toEqual([[3], [4]]);
+            expect(actual.line.formattedValues).toEqual([['03'], ['04']]);
         });
     });
 

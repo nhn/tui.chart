@@ -5,6 +5,13 @@
 @legend-rect-width: 12px;
 @hidden-padding: 1px;
 
+.user-select() {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .tui-chart {
   position: relative;
   &, * {
@@ -199,6 +206,7 @@
     &:first-child {
       overflow: visible;
     }
+    .user-select();
     .tui-chart-series-label-area {
       position: absolute;
       left: 0px;
@@ -243,11 +251,21 @@
     z-index: 300;
     position: absolute;
     padding: 10px;
+    .user-select();
     .tui-chart-legend {
       clear: both;
+      cursor: pointer;
       > div {
         float: left;
       }
+
+      .tui-chart-legend-checkbox-area {
+        width: 20px;
+        input {
+          margin: 2px;
+        }
+      }
+
       .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
         .content-box();

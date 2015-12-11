@@ -62,15 +62,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             });
         }
 
-        this._addComponent('tooltip', Tooltip, {
-            values: processedData.values,
-            formattedValues: processedData.formattedValues,
-            labels: processedData.labels,
-            legendLabels: processedData.legendLabels,
-            joinLegendLabels: processedData.joinLegendLabels,
-            userEvent: this.userEvent,
-            chartType: options.chartType
-        });
+        this._addComponent('tooltip', Tooltip, this._makeTooltipData(processedData, options.chartType));
 
         this._addComponent('series', Series, {
             libType: options.libType,
@@ -79,17 +71,12 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             chartBackground: chartBackground,
             userEvent: this.userEvent,
             legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null,
-            data: {
-                values: processedData.values,
-                formattedValues: processedData.formattedValues,
-                legendLabels: processedData.legendLabels,
-                joinLegendLabels: processedData.joinLegendLabels
-            }
+            data: this._makeSeriesData(processedData)
         });
     },
 
     /**
-     * To make rendering data for pie chart.
+     * Make rendering data for pie chart.
      * @param {object} bounds chart bounds
      * @return {object} data for rendering
      * @private
@@ -113,10 +100,14 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function (component) {
-                return component.componentType === 'series';
-            });
+        var tooltip, serieses;
+
+        ChartBase.prototype._attachCustomEvent.call(this);
+
+        tooltip = this.componentMap.tooltip;
+        serieses = tui.util.filter(this.componentMap, function (component) {
+            return component.componentType === 'series';
+        });
         tui.util.forEach(serieses, function (series) {
             series.on('showTooltip', tooltip.onShow, tooltip);
             series.on('hideTooltip', tooltip.onHide, tooltip);

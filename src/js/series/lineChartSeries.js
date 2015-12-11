@@ -25,7 +25,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
     },
 
     /**
-     * To make series data.
+     * Make series data.
      * @param {{dimension: {width: number, height: number}}} bound bound
      * @returns {object} series data
      */

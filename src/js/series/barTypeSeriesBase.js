@@ -11,7 +11,7 @@ var chartConst = require('../const'),
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
-     * To make series data.
+     * Make series data.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -30,7 +30,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make bar gutter.
+     * Make bar gutter.
      * @param {number} groupSize bar group size
      * @param {number} itemCount group item count
      * @returns {number} bar gutter
@@ -51,7 +51,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make bar size.
+     * Make bar size.
      * @param {number} groupSize bar group size
      * @param {number} barGutter bar padding
      * @param {number} itemCount group item count
@@ -63,7 +63,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make option size.
+     * Make option size.
      * @param {number} barSize bar size
      * @param {?number} optionBarWidth barWidth option
      * @returns {number} option size
@@ -78,7 +78,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make addition padding.
+     * Make addition padding.
      * @param {number} barSize bar size
      * @param {number} optionSize option size
      * @param {number} itemCount item count
@@ -96,7 +96,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make base info for normal chart bounds.
+     * Make base info for normal chart bounds.
      * @param {{width: number, height: number}} dimension series dimension
      * @param {string} sizeType size type (width or height)
      * @param {string} anotherSizeType another size type (width or height)
@@ -165,7 +165,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make sum values.
+     * Make sum values.
      * @param {array.<number>} values values
      * @param {array.<function>} formatFunctions format functions
      * @returns {number} sum result.
@@ -182,7 +182,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * To make stacked labels html.
+     * Make stacked labels html.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
      *      @param {array.<number>} params.values values,

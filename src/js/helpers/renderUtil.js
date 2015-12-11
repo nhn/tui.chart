@@ -28,7 +28,7 @@ var renderUtil = {
     },
 
     /**
-     * To make cssText for font.
+     * Make cssText for font.
      * @memberOf module:renderUtil
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
@@ -273,7 +273,7 @@ var renderUtil = {
     },
 
     /**
-     * To expand dimension.
+     * Expand dimension.
      * @param {{width: number, height: number}} dimension series dimension
      * @returns {{width: number, height: number}} expended dimension
      */

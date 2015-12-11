@@ -519,4 +519,33 @@ describe('Axis', function() {
             expect(el.childNodes[2].className).toBe('tui-chart-label-area');
         });
     });
+
+    describe('rerender()', function() {
+        it('변경된 bound 정보를 전달하여 rerendering합니다.', function() {
+            var bound = {
+                    dimension: {
+                        width: 100,
+                        height: 200
+                    },
+                    position: {
+                        top: 20
+                    }
+                },
+                data = {
+                    labels: ['label1', 'label2', 'label3'],
+                    tickCount: 4,
+                    isLabelAxis: true,
+                    isVertical: false
+                },
+                container = axis.render(bound, data);
+            bound.dimension = {
+                width: 200,
+                height: 100
+            };
+            axis.rerender(bound, data);
+
+            expect(container.style.width).toBe('200px');
+            expect(container.style.height).toBe('100px');
+        });
+    });
 });

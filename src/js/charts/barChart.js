@@ -39,15 +39,15 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     },
 
     /**
-     * To make axes data
+     * Make axes data
      * @param {object} processedData processed data
      * @param {object} bounds chart bounds
-     * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(processedData, bounds, options) {
-        var xAxisData = axisDataMaker.makeValueAxisData({
+    _makeAxesData: function(processedData, bounds) {
+        var options = this.options,
+            xAxisData = axisDataMaker.makeValueAxisData({
                 values: processedData.values,
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',

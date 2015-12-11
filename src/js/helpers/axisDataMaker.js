@@ -19,7 +19,7 @@ var abs = Math.abs,
  */
 var axisDataMaker = {
     /**
-     * To make labels.
+     * Make labels.
      * @param {array.<string>} labels labels
      * @param {number} labelInterval label interval
      * @returns {array.<string>} labels
@@ -41,7 +41,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make data about label axis.
+     * Make data about label axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {array.<string>} labels chart labels
@@ -72,7 +72,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make data about value axis.
+     * Make data about value axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {array.<array.<number>>} params.values chart values
@@ -121,7 +121,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make base values.
+     * Make base values.
      * @memberOf module:axisDataMaker
      * @param {array.<number>} groupValues group values
      * @param {string} stacked stacked option.
@@ -245,7 +245,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make integer type info
+     * Make integer type info
      * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
@@ -319,7 +319,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To minimize tick limit.
+     * Minimize tick limit.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.userMin user min
@@ -371,7 +371,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To divide tick step.
+     * Divide tick step.
      * @memberOf module:axisDataMaker
      * @param {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
      * @param {number} orgTickCount original tickCount
@@ -394,7 +394,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make tick info
+     * Make tick info
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {number} params.tickCount tick count
@@ -506,7 +506,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To normalize min.
+     * Normalize min.
      * @memberOf module:axisDataMaker
      * @param {number} min original min
      * @param {number} step tick step
@@ -526,7 +526,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make normalized max.
+     * Make normalized max.
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} limit limit
      * @param {number} step tick step
@@ -549,7 +549,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To normalize limit.
+     * Normalize limit.
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} limit base limit
      * @param {number} step tick step
@@ -599,7 +599,7 @@ var axisDataMaker = {
     },
 
     /**
-     * To make base limit
+     * Make base limit
      * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
@@ -610,6 +610,19 @@ var axisDataMaker = {
     _makeBaseLimit: function(min, max, options) {
         var isMinus = false,
             tmpMin, limit;
+
+        if (min === max) {
+            if (min > 0) {
+                min = 0;
+            } else {
+                max = 0;
+            }
+
+            return {
+                min: min,
+                max: max
+            };
+        }
 
         if (min < 0 && max <= 0) {
             isMinus = true;

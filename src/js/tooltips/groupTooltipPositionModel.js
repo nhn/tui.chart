@@ -49,7 +49,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
          * For caching
          * @type {object}
          */
-        this.positions;
+        this.positions = {};
 
         this._setData(chartDimension, areaBound, isVertical, options);
     },
@@ -76,7 +76,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make vertical data.
+     * Make vertical data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -127,7 +127,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make horizontal data.
+     * Make horizontal data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -138,7 +138,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      *      positionType: string, sizeType: string, direction: (string),
      *      areaPosition: number, areaSize: number, chartSize: number,
      *      basePosition: (number)
-     * }} vertical data
+     * }} horizontal data
      * @private
      */
     _makeHorizontalData: function(chartDimension, areaBound, alignOption) {
@@ -187,7 +187,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate main position value.
+     * Calculate main position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {{start: number, end: number}} range range
      * @param {object} data data
@@ -215,7 +215,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate sub position value.
+     * Calculate sub position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
      *      @param {number} data.areaSize tooltip area size (width or height)
@@ -240,7 +240,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make position value diff.
+     * Make position value diff.
      * @param {number} value positoin value
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
@@ -360,7 +360,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To make caching key.
+     * Make caching key.
      * @param {{start: number, end: number}} range range
      * @returns {string} key
      * @private
@@ -381,7 +381,50 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate group tooltip position.
+     * Make main position value.
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{start: number, end: number}} range tooltip sector range
+     * @param {{
+     *      positionType: string, sizeType: string, direction: (string),
+     *      areaPosition: number, areaSize: number, chartSize: number,
+     *      basePosition: (number)
+     * }} main main data
+     * @returns {number} position value
+     * @private
+     */
+    _makeMainPositionValue: function(tooltipDimension, range, main) {
+        var value;
+
+        value = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
+        value = this._addPositionOptionValue(value, main.positionType);
+        value = this._adjustMainPositionValue(value, range, tooltipDimension[main.sizeType], main);
+
+        return value;
+    },
+
+    /**
+     * Make sub position value.
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{
+     *      positionType: string, sizeType: string, direction: (string),
+     *      areaPosition: number, areaSize: number, chartSize: number,
+     *      basePosition: (number)
+     * }} sub sub data
+     * @returns {number} position value
+     * @private
+     */
+    _makeSubPositionValue: function(tooltipDimension, sub) {
+        var value;
+
+        value = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
+        value = this._addPositionOptionValue(value, sub.positionType);
+        value = this._adjustSubPositionValue(value, tooltipDimension[sub.sizeType], sub);
+
+        return value;
+    },
+
+    /**
+     * Calculate group tooltip position.
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{start: number, end: number}} range tooltip sector range
      * @returns {{left: number, top: number}} group tooltip position
@@ -390,19 +433,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         var key = this._makeCachingKey(range),
             main = this.mainData,
             sub = this.subData,
-            position = this.positions[key],
-            mainPosition, subPosition;
+            position = this.positions[key];
 
         if (!position) {
             position = {};
-            mainPosition = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
-            subPosition = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
-
-            mainPosition = this._addPositionOptionValue(mainPosition, main.positionType);
-            subPosition = this._addPositionOptionValue(subPosition, sub.positionType);
-
-            position[main.positionType] = this._adjustMainPositionValue(mainPosition, range, tooltipDimension[main.sizeType], main);
-            position[sub.positionType] = this._adjustSubPositionValue(subPosition, tooltipDimension[sub.sizeType], sub);
+            position[main.positionType] = this._makeMainPositionValue(tooltipDimension, range, main);
+            position[sub.positionType] = this._makeSubPositionValue(tooltipDimension, sub);
             this.positions[key] = position;
         }
 

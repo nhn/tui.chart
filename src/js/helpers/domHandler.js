@@ -6,6 +6,8 @@
 
 'use strict';
 
+var aps = Array.prototype.slice;
+
 /**
  * DOM Handler.
  * @module domHandler
@@ -36,8 +38,15 @@ var domHandler = {
      * @private
      */
     _getClassNames: function(el) {
-        var className = el.className || '',
+        var className, classNames;
+
+        if (el.classList) {
+            classNames = aps.call(el.classList);
+        } else {
+            className = el.className || '';
             classNames = className && tui.util.isString(className) ? className.split(' ') : [];
+        }
+
         return classNames;
     },
 

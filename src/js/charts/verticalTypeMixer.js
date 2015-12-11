@@ -15,15 +15,16 @@ var axisDataMaker = require('../helpers/axisDataMaker'),
  */
 var verticalTypeMixer = {
     /**
-     * To make axes data
+     * Make axes data
      * @param {object} processedData processed data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(processedData, bounds, options) {
-        var aligned = predicate.isLineTypeChart(options.chartType),
+    _makeAxesData: function(processedData, bounds) {
+        var options = this.options,
+            aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: processedData.labels,
                 aligned: aligned,
