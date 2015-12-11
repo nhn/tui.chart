@@ -449,6 +449,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         return this.data.multilineCategorie;
     }
-};
+});
 
-module.exports = dataProcessor;
+module.exports = DataProcessor;
