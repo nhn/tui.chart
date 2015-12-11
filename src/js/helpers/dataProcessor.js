@@ -68,6 +68,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getData: function() {
         return this.data;
     },
+    _processCategories: function(categories, xAxisOptions) {
+        categories = tui.util.map(categories, function(category) {
+            return renderUtil.escape(category);
+        });
+        return categories;
+    },
+
     /**
      * Separate label.
      * @memberOf module:dataProcessor
