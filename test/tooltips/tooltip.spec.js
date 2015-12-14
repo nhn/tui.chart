@@ -14,7 +14,7 @@ describe('Tooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getGroupValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getValue']);
         dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
         dataProcessor.getFormattedGroupValues.and.returnValue([['10', '20']]);
         dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
@@ -226,7 +226,7 @@ describe('Tooltip', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var actual;
 
-            dataProcessor.getGroupValue.and.returnValue(-3);
+            dataProcessor.getValue.and.returnValue(-3);
 
             actual = tooltip._moveToSymmetry(
                 {

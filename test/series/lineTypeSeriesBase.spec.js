@@ -11,7 +11,7 @@ var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml, _getPercentValues;
+    var series, makeSeriesLabelHtml, _getPercentValues, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -19,13 +19,14 @@ describe('LineTypeSeriesBase', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
         _getPercentValues = jasmine.createSpy('_getPercentValues').and.returnValue([]);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormattedGroupValues', 'getFirstFormattedValue']);
     });
 
     beforeEach(function() {
         series = new LineTypeSeriesBase();
         series.makeSeriesLabelHtml = makeSeriesLabelHtml;
         series._getPercentValues = _getPercentValues;
-        series.dataProcessor = {};
+        series.dataProcessor = dataProcessor;
     });
 
     describe('_makePositions()', function() {
@@ -102,10 +103,10 @@ describe('LineTypeSeriesBase', function() {
                 label: {}
             };
 
-            series.dataProcessor.getFormattedGroupValues = jasmine.createSpy('getFormattedGroupValues').and.returnValue([
+            dataProcessor.getFormattedGroupValues.and.returnValue([
                 ['1.5'], ['2.2']
             ]);
-            series.dataProcessor.getFirstFormattedValue = jasmine.createSpy('.getFirstFormattedValue').and.returnValue('1.5');
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
 
             series._renderSeriesLabel({
                 groupPositions: [

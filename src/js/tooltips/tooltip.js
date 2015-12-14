@@ -447,7 +447,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this.dataProcessor.getGroupValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
+            value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
             center;
 
         if (value < 0) {

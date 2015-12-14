@@ -15,6 +15,17 @@ describe('test DataProcessor', function() {
         dataProcessor = new DataProcessor();
     });
 
+    describe('_processCategories()', function() {
+        it('카테고리에 대해 escaping 처리를 합니다.', function() {
+            var actual = dataProcessor._processCategories([
+                    '<div>ABC</div>', 'EFG'
+                ]),
+                expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_pickValues()', function() {
         it('사용자가 입력한 data에서 value를 추출합니다.', function () {
             var result = DataProcessor.prototype._pickValues([
@@ -257,86 +268,144 @@ describe('test DataProcessor', function() {
         });
     });
 
+    describe('_makeMultilineCategory()', function() {
+        it('카테고리의 너비가 limitWidth를 넘어가지 않으면 그대로 반환합니다.', function() {
+            var actual = dataProcessor._makeMultilineCategory('ABCDE FGHIJK', 100, {
+                    fontSize: 12,
+                    fontFamily: 'Verdana'
+                }),
+                expected = 'ABCDE FGHIJK';
+            expect(actual).toBe(expected);
+        });
 
-    //describe('_makePercentValues()', function() {
-    //    it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makePercentValues({
-    //            values: [[20], [40], [80], [120]],
-    //            limit: {min: 0, max: 160}
-    //        });
-    //        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-    //    });
-    //
-    //    it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makePercentValues({
-    //            values: [
-    //                [20, 80], [40, 60], [60, 40], [80, 20]
-    //            ],
-    //            limit: {min: 0, max: 160}
-    //        }, 'normal');
-    //        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
-    //    });
-    //
-    //    it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makePercentValues({
-    //            values: [
-    //                [20, 80], [40, 60], [60, 40], [80, 20]
-    //            ],
-    //            limit: {min: 0, max: 160}
-    //        }, 'percent');
-    //        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
-    //    });
-    //});
+        it('category를 공백으로 나누고 하나씩 붙여가면서 limitWidth를 넘어가는 부분에 대해 개행처리(<br>)하여 반환합니다.', function() {
+            var actual = dataProcessor._makeMultilineCategory('ABCDE FGHIJK HIJKLMN', 40, {
+                    fontSize: 12,
+                    fontFamily: 'Verdana'
+                }),
+                expected = 'ABCDE</br>FGHIJK</br>HIJKLMN';
+            expect(actual).toBe(expected);
+        });
 
-    //describe('_makeNormalPercentValues()', function() {
-    //    it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makeNormalPercentValues({
-    //            values: [[20], [40], [80], [120]],
-    //            limit: {min: 0, max: 160}
-    //        });
-    //        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-    //    });
-    //
-    //    it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
-    //        var result = series._makeNormalPercentValues({
-    //            values: [[-20], [-40], [-80], [-120]],
-    //            limit: {min: 0, max: 160}
-    //        });
-    //        expect(result).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
-    //    });
-    //
-    //    it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
-    //        var result;
-    //        series.chartType = 'line';
-    //        result = series._makeNormalPercentValues({
-    //            values: [[60], [40], [80], [120]],
-    //            limit: {min: 20, max: 180}
-    //        });
-    //        expect(result).toEqual([[0.25], [0.125], [0.375], [0.625]]);
-    //    });
-    //});
-    //
-    //describe('_makeNormalStackedPercentValues()', function() {
-    //    it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makeNormalStackedPercentValues({
-    //            values: [
-    //                [20, 80], [40, 60], [60, 40], [80, 20]
-    //            ],
-    //            limit: {min: 0, max: 160}
-    //        });
-    //        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
-    //    });
-    //});
-    //
-    //describe('_makeNormalStackedPercentValues()', function() {
-    //    it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
-    //        var result = series._makePercentStackedPercentValues({
-    //            values: [
-    //                [20, 80], [40, 60], [60, 40], [80, 20]
-    //            ],
-    //            limit: {min: 0, max: 160}
-    //        });
-    //        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
-    //    });
-    //});
+        it('category이 없는 경우에는 개행처리를 하지 않습니다.(공백이 없는 개행처리를 css에서 합니다.)', function() {
+            var actual = dataProcessor._makeMultilineCategory('ABCDEFGHIJKHIJKLMN', 40, {
+                    fontSize: 12,
+                    fontFamily: 'Verdana'
+                }),
+                expected = 'ABCDEFGHIJKHIJKLMN';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('getMultilineCategories()', function() {
+        it('cateogry들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.data = {
+                categories: ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
+            };
+
+            actual = dataProcessor.getMultilineCategories(50, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+            expected = ['ABCDEF</br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('캐쉬가 되어있는 경우에는 캐쉬된 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.data = {
+                multilineCategories: ['ABCDEF</br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
+            };
+
+            actual = dataProcessor.getMultilineCategories(50, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+            expected = dataProcessor.data.multilineCategories;
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeNormalPercentValues()', function() {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makeNormalPercentValues([[20], [40], [80], [120]], {min: 0, max: 160});
+            expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+        });
+
+        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
+            var actual = dataProcessor._makeNormalPercentValues([[-20], [-40], [-80], [-120]], {min: 0, max: 160});
+            expect(actual).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
+        });
+
+        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
+            var actual = dataProcessor._makeNormalPercentValues([[60], [40], [80], [120]], {min: 20, max: 180}, true);
+            expect(actual).toEqual([[0.25], [0.125], [0.375], [0.625]]);
+        });
+    });
+
+    describe('_makeNormalStackedPercentValues()', function() {
+        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]], {min: 0, max: 160});
+            expect(actual).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+        });
+    });
+
+    describe('_makePercentStackedPercentValues()', function() {
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makePercentStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]]);
+            expect(actual).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+        });
+    });
+
+    describe('setPercentValues()', function() {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+            var actual;
+
+            dataProcessor.data = {
+                values: [[20], [40], [80], [120]],
+                percentValues: {}
+            };
+
+            dataProcessor.setPercentValues({min: 0, max: 160}, null, 'column');
+
+            actual = dataProcessor.data.percentValues.column;
+
+            expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+        });
+
+        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
+            var actual;
+
+            dataProcessor.data = {
+                values: [[20, 80], [40, 60], [60, 40], [80, 20]],
+                percentValues: {}
+            };
+
+            dataProcessor.setPercentValues({min: 0, max: 160}, 'normal', 'column');
+
+            actual = dataProcessor.data.percentValues.column;
+
+            expect(actual).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+        });
+
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+            var actual;
+
+            dataProcessor.data = {
+                values: [[20, 80], [40, 60], [60, 40], [80, 20]],
+                percentValues: {}
+            };
+
+            dataProcessor.setPercentValues({min: 0, max: 160}, 'percent', 'column');
+
+            actual = dataProcessor.data.percentValues.column;
+
+            expect(actual).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+        });
+    });
 });

@@ -105,9 +105,9 @@ describe('BarTypeSeriesBase', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
             var labelContainer = dom.create('div');
 
-            series.dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            series.dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
-            series.dataProcessor.getFormattedValue.and.returnValue('1.5');
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
+            dataProcessor.getFormattedValue.and.returnValue('1.5');
 
             series._renderNormalSeriesLabel({
                 groupBounds: [
@@ -134,7 +134,7 @@ describe('BarTypeSeriesBase', function() {
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {
             var actual;
 
-            series.dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
+            dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
 
             actual = series.makeSumValues([10, 20, 30]);
             expect(actual).toBe('0060');

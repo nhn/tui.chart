@@ -173,8 +173,8 @@ describe('PieChartSeries', function() {
             var elLabelArea = dom.create('div'),
                 children;
 
-            series.dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            series.dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
@@ -287,8 +287,8 @@ describe('PieChartSeries', function() {
             var labelContainer = dom.create('div'),
                 children;
 
-            series.dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            series.dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
@@ -382,8 +382,8 @@ describe('PieChartSeries', function() {
                     chartWidth: 220
                 };
 
-            series.dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            series.dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });

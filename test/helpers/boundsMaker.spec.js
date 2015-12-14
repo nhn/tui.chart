@@ -17,15 +17,14 @@ describe('boundsMaker', function() {
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
-        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-
+        spyOn(renderUtil, 'getRenderedLabelHeight');
         maker.chartLeftPadding = chartConst.CHART_PADDING;
     });
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getFullGroupValues', 'getFullLegendData',
-                'getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories']);
+            ['getFormatFunctions', 'getGroupValues', 'getFullGroupValues', 'getFullLegendData', 'getCategories',
+                'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         maker.dataProcessor = dataProcessor;
@@ -59,13 +58,18 @@ describe('boundsMaker', function() {
 
     describe('_getXAxisHeight()', function() {
         it('x축 영역의 높이를 계산하여 반환합니다.', function () {
-            var result = maker._getXAxisHeight({
+            var actual;
+
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+
+            actual = maker._getXAxisHeight({
                 title: 'title'
             }, ['label1', 'label12'], {
                 title: {},
                 label: {}
             });
-            expect(result).toBe(60);
+
+            expect(actual).toBe(60);
         });
     });
 
@@ -87,15 +91,14 @@ describe('boundsMaker', function() {
 
     describe('_getRightYAxisWidth()', function() {
         it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
-            var result = maker._getRightYAxisWidth({
-                processedData: {
-                    values: {
-                        line: [
-                            [60, 50, 10],
-                            [80, 10, 70]
-                        ]
-                    }
-                },
+            var actual, expected;
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [80, 10, 70]
+            ]);
+
+            actual = maker._getRightYAxisWidth({
                 chartTypes: ['column', 'line'],
                 theme: {
                     title: {},
@@ -110,8 +113,9 @@ describe('boundsMaker', function() {
                     }
                 ]
             });
+            expected = 97;
 
-            expect(result).toBe(97);
+            expect(actual).toBe(expected);
         });
     });
 
@@ -583,6 +587,10 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeHorizontalLabelRotationInfo', function() {
+        beforeEach(function() {
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+        });
+
         it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
             var actual, expected;
 
@@ -655,6 +663,32 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_calculateDiffWithMultilineHeight()', function() {
+        it('개행처리된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
+            var actual, expected;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if (value.indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
+            });
+
+            dataProcessor.getMultilineCategories.and.returnValue([
+               'AAAA</br>BBBB'
+            ]);
+
+            actual = maker._calculateDiffWithMultilineHeight(['AAAA BBBB'], 50, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+            expected = 20;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
     describe('_updateDegree()', function() {
         it('overflowLeft값이 0보다 크면 degree를 재계산하여 rotationInfo.degree의 값을 갱신합니다.', function() {
             var rotationInfo = {
@@ -716,6 +750,14 @@ describe('boundsMaker', function() {
     describe('make()', function() {
         it('차트를 구성하는 컴포넌트들의 bounds 정보를 계산하여 반환합니다.', function () {
             var actual;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if ((value + '').indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
+            });
 
             dataProcessor.getFullGroupValues.and.returnValue([
                 [20, 30, 50],

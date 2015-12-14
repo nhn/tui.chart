@@ -109,7 +109,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeItemRenderingData: function(values) {
         return tui.util.map(values, function(value, index) {
-            var legendLabel = this.dataProcessor.getFullLegendData(index);
+            var legendLabel = this.dataProcessor.getLegendData(index);
             return {
                 value: value,
                 legend: legendLabel.label,

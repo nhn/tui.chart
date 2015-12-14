@@ -14,7 +14,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFullFormattedValues', 'getCategory', 'getFullLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFullFormattedValues', 'getCategory', 'getFullLegendData', 'getLegendData']);
     });
 
     beforeEach(function() {
@@ -87,7 +87,7 @@ describe('GroupTooltip', function() {
         it('렌더링에 사용할 item data를 생성합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.callFake(function(index) {
+            dataProcessor.getLegendData.and.callFake(function(index) {
                 var legendData = [{
                     chartType: 'column',
                     label: 'legend1'

@@ -451,7 +451,7 @@ var boundsMaker = {
      * @private
      */
     _makeAxesLabelInfo: function(params) {
-        var chartType, maxValueLabel, categories, yLabels, xLabels;
+        var chartType, maxValueLabel, labels, yLabels, xLabels;
 
         if (!params.hasAxes) {
             return null;
@@ -460,14 +460,14 @@ var boundsMaker = {
         chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
         maxValueLabel = this._getValueAxisMaxLabel(chartType);
-        categories = this.dataProcessor.getCategories();
+        labels = this.dataProcessor.getCategories();
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
         if (params.isVertical) {
             yLabels = [maxValueLabel];
-            xLabels = categories;
+            xLabels = labels;
         } else {
-            yLabels = categories;
+            yLabels = labels;
             xLabels = [maxValueLabel];
         }
 
@@ -561,7 +561,7 @@ var boundsMaker = {
     },
 
     /**
-     * Calculate height difference between origin label and rotation label.
+     * Calculate height difference between origin category and rotation category.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} height difference
      * @private
@@ -589,7 +589,7 @@ var boundsMaker = {
     },
 
     /**
-     * Update width of dimentios.
+     * Update width of dimensions.
      * @param {{plot: {width: number}, series: {width: number}, xAxis: {width: number}}} dimensions dimensions
      * @param {number} overflowLeft overflow left
      * @private
@@ -615,14 +615,22 @@ var boundsMaker = {
         dimensions.xAxis.height += diffHeight;
     },
 
-
-    _calculateDiffWithMultilineHeight: function(multilineLabels, labels, theme, limitWidth) {
-        var labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
-            returnedHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
+    /**
+     * Calculate height difference between origin category and multiline category.
+     * @param {array.<string>} labels labels
+     * @param {{fontSize: number, fontFamily: string}} theme axis label theme
+     * @param {number} limitWidth limit width
+     * @returns {number} calculated height
+     * @private
+     */
+    _calculateDiffWithMultilineHeight: function(labels, theme, limitWidth) {
+        var multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme),
+            normalHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
+            multilineHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
                 cssText: 'line-height:1.2;width:' + limitWidth + 'px'
             }, theme));
 
-        return returnedHeight - labelHeight;
+        return multilineHeight - normalHeight;
     },
 
     /**
@@ -631,18 +639,18 @@ var boundsMaker = {
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @param {array} labels labels
      * @param {object} theme theme
+     * @param {number} limitWidth limit width
      * @private
      */
     _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme, limitWidth) {
-        var overflowLeft, diffHeight, multiLineCategories;
+        var overflowLeft, diffHeight;
         if (rotationInfo) {
             overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
             this._updateDimensionsWidth(dimensions, overflowLeft);
             this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
             diffHeight = this._calculateDiffWithRotatedHeight(rotationInfo);
         } else {
-            multiLineCategories = this.dataProcessor.getMultilineCategories(limitWidth, theme);
-            diffHeight = this._calculateDiffWithMultilineHeight(multiLineCategories, labels, theme, limitWidth);
+            diffHeight = this._calculateDiffWithMultilineHeight(labels, theme, limitWidth);
         }
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
@@ -654,6 +662,7 @@ var boundsMaker = {
     /**
      * Make bounds about chart components.
      * @memberOf module:boundsMaker
+     * @param {object} dataProcessor data processor
      * @param {object} params parameters
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not

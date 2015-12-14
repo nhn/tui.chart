@@ -306,8 +306,14 @@ var renderUtil = {
 
     /**
      * Expand dimension.
-     * @param {{width: number, height: number}} dimension series dimension
-     * @returns {{width: number, height: number}} expended dimension
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} expended bound
      */
     expandBound: function(bound) {
         var dimension = bound.dimension,
@@ -324,12 +330,24 @@ var renderUtil = {
         };
     },
 
-    makeCustomEventName: function(prefix, str, suffix) {
-        return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
+    /**
+     * Make custom event name.
+     * @param {string} prefix prefix
+     * @param {string} value value
+     * @param {string} suffix suffix
+     * @returns {string} custom event name
+     */
+    makeCustomEventName: function(prefix, value, suffix) {
+        return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
     },
 
-    escape: function(str) {
-        return str.replace(/</g, '&lt;').replace(/>/g, '&gt');
+    /**
+     * Escape
+     * @param {string} value value
+     * @returns {string}
+     */
+    escape: function(value) {
+        return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     },
 
     /**

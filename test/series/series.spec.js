@@ -107,7 +107,7 @@ describe('Series', function() {
 
             seriesContainer = series.render({
                 dimension: {width: 200, height: 100},
-                position: {top: 50, left: 50},
+                position: {top: 50, left: 50}
             }, {});
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);

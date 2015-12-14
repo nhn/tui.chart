@@ -144,7 +144,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 chartType: chartType,
                 options: optionsMap[chartType],
                 theme: themeMap[chartType]
-                //data: seriesData[chartType]
             };
 
             return {
