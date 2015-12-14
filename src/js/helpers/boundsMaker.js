@@ -263,7 +263,7 @@ var boundsMaker = {
     },
 
     /**
-     * Get components dimension
+     * Make components dimensions.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {object} params.theme chart theme
@@ -458,11 +458,10 @@ var boundsMaker = {
         }
 
         chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
-
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
         maxValueLabel = this._getValueAxisMaxLabel(chartType);
-
         categories = this.dataProcessor.getCategories();
+
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
         if (params.isVertical) {
             yLabels = [maxValueLabel];
@@ -688,13 +687,16 @@ var boundsMaker = {
      * }} bounds
      */
     make: function(dataProcessor, params) {
+        var axesLabelInfo, dimensions, xAxisOptions, limitWidth,
+            rotationInfo, top, left, seriesBound, axesBounds, bounds;
+
         this.dataProcessor = dataProcessor;
-        var axesLabelInfo = this._makeAxesLabelInfo(params),
-            dimensions = this._makeComponentsDimensions(tui.util.extend({
-                axesLabelInfo: axesLabelInfo
-            }, params)),
-            xAxisOptions = params.options.xAxis || {},
-            limitWidth, rotationInfo, top, left, seriesBound, axesBounds, bounds;
+
+        axesLabelInfo = this._makeAxesLabelInfo(params);
+        dimensions = this._makeComponentsDimensions(tui.util.extend({
+            axesLabelInfo: axesLabelInfo
+        }, params));
+        xAxisOptions = params.options.xAxis || {};
 
         this.chartLeftPadding = chartConst.CHART_PADDING;
         if (params.hasAxes) {
@@ -725,6 +727,7 @@ var boundsMaker = {
             tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
             customEvent: seriesBound
         }, axesBounds);
+
         return bounds;
     }
 };

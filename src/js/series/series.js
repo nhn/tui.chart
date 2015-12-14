@@ -100,11 +100,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _setBaseData: function(bound, data) {
-        //this.data = tui.util.extend(this.data, data);
         this.data = data;
         this.bound = bound;
         this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
-        //this.percentValues = this._makePercentValues(this.data, this.options.stacked);
     },
 
     _getPercentValues: function() {
@@ -313,103 +311,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             top: position.top - (hiddenWidth * 2),
             left: position.left - hiddenWidth
         });
-    },
-
-    /**
-     * Make percent value.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @param {string} stacked stacked option
-     * @returns {array.<array.<number>>} percent values
-     * @private
-     */
-    _makePercentValues: function(data, stacked) {
-        var result;
-
-        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            result = this._makeNormalStackedPercentValues(data);
-        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
-            result = this._makePercentStackedPercentValues(data);
-        } else {
-            result = this._makeNormalPercentValues(data);
-        }
-
-        return result;
-    },
-
-    /**
-     * Make percent values about normal stacked option.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array} percent values about normal stacked option.
-     * @private
-     */
-    _makeNormalStackedPercentValues: function(data) {
-        var min = data.limit.min,
-            max = data.limit.max,
-            distance = max - min,
-            percentValues = tui.util.map(data.values, function(values) {
-                var plusValues = tui.util.filter(values, function(value) {
-                        return value > 0;
-                    }),
-                    sum = tui.util.sum(plusValues),
-                    groupPercent = (sum - min) / distance;
-                return tui.util.map(values, function(value) {
-                    return value === 0 ? 0 : groupPercent * (value / sum);
-                });
-            });
-
-        return percentValues;
-    },
-
-    /**
-     * Make percent values about percent stacked option.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array} percent values about percent stacked option
-     * @private
-     */
-    _makePercentStackedPercentValues: function(data) {
-        var percentValues = tui.util.map(data.values, function(values) {
-            var plusValues = tui.util.filter(values, function(value) {
-                    return value > 0;
-                }),
-                sum = tui.util.sum(plusValues);
-            return tui.util.map(values, function(value) {
-                return value === 0 ? 0 : value / sum;
-            });
-        });
-
-        return percentValues;
-    },
-
-    /**
-     * Make normal percent value.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array.<array.<number>>} percent values
-     * @private
-     */
-    _makeNormalPercentValues: function(data) {
-        var min = data.limit.min,
-            max = data.limit.max,
-            distance = max - min,
-            isLineTypeChart = predicate.isLineTypeChart(this.chartType),
-            flag = 1,
-            subValue = 0,
-            percentValues;
-
-        if (!isLineTypeChart && min < 0 && max <= 0) {
-            flag = -1;
-            subValue = max;
-            distance = min - max;
-        } else if (isLineTypeChart || min >= 0) {
-            subValue = min;
-        }
-
-        percentValues = tui.util.map(data.values, function(values) {
-            return tui.util.map(values, function(value) {
-                return (value - subValue) * flag / distance;
-            });
-        });
-
-        return percentValues;
     },
 
     /**

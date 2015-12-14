@@ -10,7 +10,6 @@ var calculator = require('../helpers/calculator'),
     ChartBase = require('./chartBase'),
     axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
-    predicate = require('../helpers/predicate'),
     defaultTheme = require('../themes/defaultTheme'),
     ColumnChartSeries = require('../series/columnChartSeries'),
     LineChartSeries = require('../series/lineChartSeries');

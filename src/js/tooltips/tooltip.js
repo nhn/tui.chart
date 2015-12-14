@@ -431,17 +431,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Get value by indexes.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @returns {(string | number)} value
-     * @private
-     */
-    _getValueByIndexes: function(indexes, chartType) {
-        return this.values[chartType][indexes.groupIndex][indexes.index];
-    },
-
-    /**
      * Move to symmetry.
      * @param {{left: number, top: number}} position tooltip position
      * @param {object} params parameters
@@ -458,7 +447,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this.dataProcessor.getGroupValues(params.indexes.groupIndex, params.indexes.index, params.chartType),
+            value = this.dataProcessor.getGroupValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
             center;
 
         if (value < 0) {

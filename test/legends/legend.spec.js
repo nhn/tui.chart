@@ -12,26 +12,29 @@ var Legend = require('../../src/js/legends/legend'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('test Legend', function() {
-    var legend;
+    var legend, dataProcessor;
 
     beforeAll(function() {
-        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-    });
-
-    beforeEach(function() {
-        legend = new Legend({
-            legendLabels: [
+        dataProcessor = {
+            getLegendLabels: jasmine.createSpy('getLegendLabels').and.returnValue([
                 'legend1',
                 'legend2'
-            ],
-            joinLegendLabels: [
+            ]),
+            getFullLegendData: jasmine.createSpy('getFullLegendData').and.returnValue([
                 {
                     label: 'legend1'
                 },
                 {
                     label: 'legend2'
                 }
-            ],
+            ])
+        };
+        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+    });
+
+    beforeEach(function() {
+        legend = new Legend({
+            dataProcessor: dataProcessor,
             theme: {
                 label: {
                     fontSize: 12

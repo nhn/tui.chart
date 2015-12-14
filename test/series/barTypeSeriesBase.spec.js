@@ -11,12 +11,18 @@ var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarTypeSeriesBase', function() {
-    var series, makeSeriesRenderingPosition, makeSeriesLabelHtml, makeSumLabelHtml;
+    var series, dataProcessor, makeSeriesRenderingPosition, makeSeriesLabelHtml, makeSumLabelHtml;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getFormatFunctions', 'getFirstFormattedValue', 'getGroupValues', 'getFormattedValue']);
+
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
         makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
             left: 0,
             top: 0
@@ -33,6 +39,7 @@ describe('BarTypeSeriesBase', function() {
                 fontSize: 11
             }
         };
+        series.dataProcessor = dataProcessor;
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
         series.makeSumLabelHtml = makeSumLabelHtml;
         series.makeSeriesLabelHtml = makeSeriesLabelHtml;
@@ -96,7 +103,12 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var elLabelArea = dom.create('div');
+            var labelContainer = dom.create('div');
+
+            series.dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            series.dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
+            series.dataProcessor.getFormattedValue.and.returnValue('1.5');
+
             series._renderNormalSeriesLabel({
                 groupBounds: [
                     [
@@ -107,15 +119,9 @@ describe('BarTypeSeriesBase', function() {
                             end: {}
                         }
                     ]
-                ],
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
                 ]
-            }, elLabelArea);
-            expect(elLabelArea.childNodes.length).toEqual(2);
+            }, labelContainer);
+            expect(labelContainer.childNodes.length).toEqual(2);
         });
     });
 
@@ -126,10 +132,11 @@ describe('BarTypeSeriesBase', function() {
         });
 
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {
-            var actual = series.makeSumValues(
-                [10, 20, 30],
-                [function(value) { return '00' + value; }]
-            );
+            var actual;
+
+            series.dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
+
+            actual = series.makeSumValues([10, 20, 30]);
             expect(actual).toBe('0060');
         });
     });

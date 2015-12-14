@@ -8,7 +8,6 @@
 
 var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    predicate = require('../helpers/predicate'),
     DataProcessor = require('../helpers/dataProcessor'),
     boundsMaker = require('../helpers/boundsMaker'),
     UserEventListener = require('../helpers/userEventListener');
@@ -25,7 +24,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {boolean} param.isVertical whether vertical or not
      */
     init: function(params) {
-
         /**
          * data processor
          * @type {object}

@@ -10,12 +10,16 @@ var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
-    var series;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor.getFirstFormattedValue.and.returnValue('1');
+        dataProcessor.getFormatFunctions.and.returnValue([]);
     });
 
     beforeEach(function() {
@@ -37,6 +41,10 @@ describe('ColumnChartSeries', function() {
             },
             options: {}
         });
+
+        series.dataProcessor = dataProcessor;
+
+        spyOn(series, '_getPercentValues');
     });
 
     describe('_makeStartEndTops()', function() {
@@ -123,7 +131,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeNormalColumnChartBounds()', function() {
         it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function () {
             var actual;
-            series.percentValues = [[0.25], [0.5]];
+
+            series._getPercentValues.and.returnValue([[0.25], [0.5]]);
+
             actual = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
@@ -137,7 +147,9 @@ describe('ColumnChartSeries', function() {
 
         it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 위아래로 설정됩니다.', function () {
             var result;
-            series.percentValues = [[-0.25], [0.5]];
+
+            series._getPercentValues.and.returnValue([[-0.25], [0.5]]);
+
             series.data.limit = {
                 min: -40,
                 max: 60
@@ -165,7 +177,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeStackedColumnChartBounds()', function() {
         it('stacked 옵션이 있는 Column차트의 bounds 정보는 end.top이 end.height 만큼씩 감소합니다.', function () {
             var bounds;
-            series.percentValues = [[0.2, 0.3, 0.5]];
+
+            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
+
             bounds = series._makeStackedColumnChartBounds({
                 width: 100,
                 height: 400
@@ -184,7 +198,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeBounds()', function() {
         it('stacked 옵션이 없으면 _makeNormalColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
-            series.percentValues = [[0.25], [0.5]];
+
+            series._getPercentValues.and.returnValue([[0.25], [0.5]]);
+
             actual = series._makeBounds({
                 width: 200,
                 height: 400
@@ -198,7 +214,9 @@ describe('ColumnChartSeries', function() {
 
         it('stacked 옵션이 있으면 _makeStackedColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
-            series.percentValues = [[0.2, 0.3, 0.5]];
+
+            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
+
             series.options.stacked = 'normal';
             actual = series._makeBounds({
                 width: 100,

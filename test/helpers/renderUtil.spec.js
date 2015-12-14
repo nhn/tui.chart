@@ -109,11 +109,11 @@ describe('renderUtil', function() {
             var acutal = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label']);
 
             if (isOldBrowser || isFirefox) {
-                expect(acutal).toBe(42);
+                expect(acutal).toBe(34);
             } else if (isMac && isChrome) {
-                expect(acutal).toBe(40);
+                expect(acutal).toBe(32);
             } else {
-                expect(acutal).toBe(39);
+                expect(acutal).toBe(31);
             }
         });
     });

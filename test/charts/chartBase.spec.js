@@ -9,7 +9,7 @@
 var ChartBase = require('../../src/js/charts/chartBase'),
     Plot = require('../../src/js/plots/plot'),
     dom = require('../../src/js/helpers/domHandler'),
-    dataProcessor = require('../../src/js/helpers/dataProcessor'),
+    DataProcessor = require('../../src/js/helpers/dataProcessor'),
     boundsMaker = require('../../src/js/helpers/boundsMaker');
 
 describe('ChartBase', function() {
@@ -54,12 +54,17 @@ describe('ChartBase', function() {
     describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            spyOn(dataProcessor, 'process').and.returnValue({'values': [1, 2, 3]});
-            actual = chartBase._makeProcessedData({
-                rawData: {},
+            spyOn(DataProcessor.prototype, 'process').and.returnValue();
+            actual = chartBase._getDataProcessor({
+                rawData: {
+                    categories: ['a', 'b', 'c']
+                },
                 options: {}
             });
-            expect(actual.values).toEqual([1, 2, 3]);
+            expect(actual instanceof DataProcessor).toBe(true);
+            expect(actual.orgRawData).toEqual({
+                categories: ['a', 'b', 'c']
+            });
         });
     });
 
@@ -92,11 +97,7 @@ describe('ChartBase', function() {
 
     describe('_makeRerenderingData()', function() {
         it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
-            var processedData = {
-                    values: [1, 2, 3],
-                    labels: ['lable1', 'label2', 'label3']
-                },
-                renderingData = {
+            var renderingData = {
                     series: {
                         bound: 'seriesBound'
                     },
@@ -104,7 +105,6 @@ describe('ChartBase', function() {
                         bound: 'tooltipBound'
                     }
                 },
-                chartTypesMap = {},
                 checkedLegends = [true],
                 actual;
 
@@ -115,12 +115,10 @@ describe('ChartBase', function() {
                }
             };
 
-            actual = chartBase._makeRerenderingData(processedData, renderingData, chartTypesMap, checkedLegends);
-
-            expect(actual.tooltip.labels).toEqual(['lable1', 'label2', 'label3']);
+            actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
             expect(actual.tooltip.bound).toEqual('tooltipBound');
-            expect(actual.series.values).toEqual([1, 2, 3]);
             expect(actual.series.bound).toEqual('seriesBound');
+            expect(actual.series.checkedLegends).toEqual([true]);
         });
     });
 

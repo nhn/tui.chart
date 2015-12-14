@@ -1,17 +1,23 @@
 /**
- * @fileoverview Test dataProcessor.
+ * @fileoverview Test DataProcessor.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var dataProcessor = require('../../src/js/helpers/dataProcessor.js');
+var DataProcessor = require('../../src/js/helpers/dataProcessor.js');
 
-describe('test dataProcessor', function() {
+describe('test DataProcessor', function() {
+    var dataProcessor;
+
+    beforeEach(function() {
+        dataProcessor = new DataProcessor();
+    });
+
     describe('_pickValues()', function() {
         it('사용자가 입력한 data에서 value를 추출합니다.', function () {
-            var result = dataProcessor._pickValues([
+            var result = DataProcessor.prototype._pickValues([
                 {
                     name: 'Legend1',
                     data: [20, 30, 50]
@@ -175,9 +181,11 @@ describe('test dataProcessor', function() {
         });
     });
 
-    describe('convert()', function() {
+    describe('process()', function() {
         it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function () {
-            var actual = dataProcessor.process({
+            var actual;
+
+            dataProcessor.process({
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
                     {
@@ -198,29 +206,32 @@ describe('test dataProcessor', function() {
                     }
                 ]
             }, {
-                format: '0.0'
+                chart: {
+                    format: '0.0'
+                }
             }, 'column');
 
-            // formatFunctions는 currying된 functions들로 구성되어있어 function 비교가 불가하여 삭제합니다.
-            delete actual.formatFunctions;
-            expect(actual.labels).toEqual(['cate1', 'cate2', 'cate3']);
+            actual = dataProcessor.data;
+
+            expect(actual.categories).toEqual(['cate1', 'cate2', 'cate3']);
             expect(actual.values).toEqual([
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
             ]);
-            expect(actual.joinValues).toEqual([
+            expect(actual.fullValues).toEqual([
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
             ]);
-            expect(actual.joinFormattedValues).toEqual([
+
+            expect(actual.formattedValues).toEqual([
                 ['20.0', '40.0', '60.0', '80.0'],
                 ['30.0', '40.0', '50.0', '10.0'],
                 ['50.0', '60.0', '10.0', '70.0']
             ]);
             expect(actual.legendLabels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
-            expect(actual.joinLegendLabels).toEqual([
+            expect(actual.fullLegendData).toEqual([
                 {
                     chartType: 'column',
                     label: 'Legend1'
@@ -245,4 +256,87 @@ describe('test dataProcessor', function() {
             ]);
         });
     });
+
+
+    //describe('_makePercentValues()', function() {
+    //    it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makePercentValues({
+    //            values: [[20], [40], [80], [120]],
+    //            limit: {min: 0, max: 160}
+    //        });
+    //        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+    //    });
+    //
+    //    it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makePercentValues({
+    //            values: [
+    //                [20, 80], [40, 60], [60, 40], [80, 20]
+    //            ],
+    //            limit: {min: 0, max: 160}
+    //        }, 'normal');
+    //        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+    //    });
+    //
+    //    it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makePercentValues({
+    //            values: [
+    //                [20, 80], [40, 60], [60, 40], [80, 20]
+    //            ],
+    //            limit: {min: 0, max: 160}
+    //        }, 'percent');
+    //        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+    //    });
+    //});
+
+    //describe('_makeNormalPercentValues()', function() {
+    //    it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makeNormalPercentValues({
+    //            values: [[20], [40], [80], [120]],
+    //            limit: {min: 0, max: 160}
+    //        });
+    //        expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+    //    });
+    //
+    //    it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
+    //        var result = series._makeNormalPercentValues({
+    //            values: [[-20], [-40], [-80], [-120]],
+    //            limit: {min: 0, max: 160}
+    //        });
+    //        expect(result).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
+    //    });
+    //
+    //    it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
+    //        var result;
+    //        series.chartType = 'line';
+    //        result = series._makeNormalPercentValues({
+    //            values: [[60], [40], [80], [120]],
+    //            limit: {min: 20, max: 180}
+    //        });
+    //        expect(result).toEqual([[0.25], [0.125], [0.375], [0.625]]);
+    //    });
+    //});
+    //
+    //describe('_makeNormalStackedPercentValues()', function() {
+    //    it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makeNormalStackedPercentValues({
+    //            values: [
+    //                [20, 80], [40, 60], [60, 40], [80, 20]
+    //            ],
+    //            limit: {min: 0, max: 160}
+    //        });
+    //        expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+    //    });
+    //});
+    //
+    //describe('_makeNormalStackedPercentValues()', function() {
+    //    it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+    //        var result = series._makePercentStackedPercentValues({
+    //            values: [
+    //                [20, 80], [40, 60], [60, 40], [80, 20]
+    //            ],
+    //            limit: {min: 0, max: 160}
+    //        });
+    //        expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+    //    });
+    //});
 });

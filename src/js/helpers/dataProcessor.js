@@ -31,26 +31,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {array.<string>} seriesChartTypes chart types
      */
     process: function(rawData, options, chartType, seriesChartTypes) {
-        var labels = this._processCategories(rawData.categories, options.xAxis),
+        var categories = this._processCategories(rawData.categories),
             seriesData = rawData.series,
             values = this._pickValues(seriesData),
-            joinValues = this._joinValues(values, seriesChartTypes),
+            fullValues = this._makeFullValues(values, seriesChartTypes),
             legendLabels = this._pickLegendLabels(seriesData),
-            joinLegendLabels = this._joinLegendLabels(legendLabels, chartType, seriesChartTypes),
+            fullLegendData = this._makeFullLegendData(legendLabels, chartType, seriesChartTypes),
             format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
             formattedValues = format ? this._formatValues(values, formatFunctions) : values,
-            joinFormattedValues = this._joinValues(formattedValues, seriesChartTypes);
+            fullFormattedValues = this._makeFullValues(formattedValues, seriesChartTypes);
 
         this.data = {
-            labels: labels,
+            categories: categories,
             values: values,
-            joinValues: joinValues,
+            fullValues: fullValues,
             legendLabels: legendLabels,
-            joinLegendLabels: joinLegendLabels,
+            fullLegendData: fullLegendData,
             formatFunctions: formatFunctions,
             formattedValues: formattedValues,
-            joinFormattedValues: joinFormattedValues,
+            fullFormattedValues: fullFormattedValues,
             percentValues: {}
         };
     },
@@ -64,11 +64,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     getCategories: function() {
-        return this.data.labels;
+        return this.data.categories;
     },
 
     getCategory: function(index) {
-        return this.data.labels[index];
+        return this.data.categories[index];
     },
 
     getGroupValues: function(chartType) {
@@ -81,7 +81,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     getFullGroupValues: function() {
-        return this.data.joinValues;
+        return this.data.fullValues;
     },
 
     getLegendLabels: function(chartType) {
@@ -89,15 +89,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     getFullLegendData: function() {
-        return this.data.joinLegendLabels;
+        return this.data.fullLegendData;
     },
 
     setFullLegendData: function(fullLegendData) {
-        this.data.joinLegendLabels = fullLegendData;
+        this.data.fullLegendData = fullLegendData;
     },
 
     getLegendData: function(index) {
-        return this.data.joinLegendLabels[index];
+        return this.data.fullLegendData[index];
     },
 
     getFormatFunctions: function() {
@@ -122,29 +122,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         return this.getFormattedValue(0, 0, chartType);
     },
     getFullFormattedValues: function() {
-        return this.data.joinFormattedValues;
+        return this.data.fullFormattedValues;
     },
 
-    _processCategories: function(categories, xAxisOptions) {
+    _processCategories: function(categories) {
         categories = tui.util.map(categories, function(category) {
             return renderUtil.escape(category);
         });
         return categories;
-    },
-
-    /**
-     * Separate label.
-     * @memberOf module:DataProcessor
-     * @param {array.<array.<array>>} rawData raw data
-     * @returns {{labels: (array.<string>), sourceData: array.<array.<array>>}} result data
-     * @private
-     */
-    _separateLabel: function(rawData) {
-        var labels = rawData[0].pop();
-        return {
-            labels: labels,
-            sourceData: rawData
-        };
     },
 
     /**
@@ -187,28 +172,28 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {array.<number>} join values
      * @private
      */
-    _joinValues: function(groupValues, seriesChartTypes) {
-        var joinValues;
+    _makeFullValues: function(groupValues, seriesChartTypes) {
+        var fullValues;
 
         if (!seriesChartTypes) {
             return groupValues;
         }
 
-        joinValues = tui.util.map(groupValues, function(values) {
+        fullValues = tui.util.map(groupValues, function(values) {
             return values;
         }, this);
 
-        joinValues = [];
+        fullValues = [];
         tui.util.forEachArray(seriesChartTypes, function(_chartType) {
             tui.util.forEach(groupValues[_chartType], function(values, index) {
-                if (!joinValues[index]) {
-                    joinValues[index] = [];
+                if (!fullValues[index]) {
+                    fullValues[index] = [];
                 }
-                joinValues[index] = joinValues[index].concat(values);
+                fullValues[index] = fullValues[index].concat(values);
             });
         });
 
-        return joinValues;
+        return fullValues;
     },
 
     /**
@@ -242,7 +227,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Join legend labels.
+     * Make full legend data.
      * @memberOf module:DataProcessor
      * @param {array} legendLabels legend labels
      * @param {string} chartType chart type
@@ -250,17 +235,17 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {array} labels
      * @private
      */
-    _joinLegendLabels: function(legendLabels, chartType, seriesChartTypes) {
-        var joinLabels;
+    _makeFullLegendData: function(legendLabels, chartType, seriesChartTypes) {
+        var fullLabels;
         if (!seriesChartTypes || !seriesChartTypes.length) {
-            joinLabels = tui.util.map(legendLabels, function(label) {
+            fullLabels = tui.util.map(legendLabels, function(label) {
                 return {
                     chartType: chartType,
                     label: label
                 };
             });
         } else {
-            joinLabels = [];
+            fullLabels = [];
             tui.util.forEachArray(seriesChartTypes, function(_chartType) {
                 var labels = tui.util.map(legendLabels[_chartType], function(label) {
                     return {
@@ -268,10 +253,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                         label: label
                     };
                 });
-                joinLabels = joinLabels.concat(labels);
+                fullLabels = fullLabels.concat(labels);
             });
         }
-        return joinLabels;
+        return fullLabels;
     },
 
     /**
@@ -506,7 +491,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     getMultilineCategories: function(limitWidth, theme) {
         if (!this.data.multilineCategorie) {
-            this.data.multilineCategorie = tui.util.map(this.data.labels, function(category) {
+            this.data.multilineCategorie = tui.util.map(this.data.categories, function(category) {
                 return this._makeMultilineCategory(category, limitWidth, theme);
             }, this);
         }

@@ -22,7 +22,7 @@ describe('test Legend', function() {
                 'legend1',
                 'legend2'
             ],
-            labelInfos: [
+            legendData: [
                 {
                     label: 'legend1'
                 },
@@ -43,11 +43,10 @@ describe('test Legend', function() {
         it('chartType이 column이고 index가 1인 sending datum을 하나 추가합니다.', function() {
             var actual, expected;
 
-            legendModel.legendData[1] = {
+            legendModel.data[1] = {
                 chartType: 'column',
                 index: 1
             };
-
             legendModel._addSendingDatum(1);
 
             actual = legendModel.sendingData.column[1];
@@ -133,7 +132,7 @@ describe('test Legend', function() {
 
     describe('_setData()', function() {
         it('chartTypes 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
-            var labelInfos = [{}, {}],
+            var legendData = [{}, {}],
                 theme = {
                     colors: ['red', 'blue'],
                     singleColors: ['yellow', 'green'],
@@ -141,19 +140,19 @@ describe('test Legend', function() {
                 },
                 actual, expected;
 
-            legendModel.labelInfos = labelInfos;
+            legendModel.legendData = legendData;
             legendModel.theme = theme;
 
             legendModel._setData();
 
-            actual = legendModel.legendData;
-            expected = legendModel._makeLabelInfoAppliedTheme(labelInfos, theme);
+            actual = legendModel.data;
+            expected = legendModel._makeLabelInfoAppliedTheme(legendData, theme);
 
             expect(actual).toEqual(expected);
         });
 
         it('chartTypes값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
-            var labelInfos = [{}, {}],
+            var legendData = [{}, {}],
                 chartTypes = ['column', 'line'],
                 labelMap = {
                     column: ['legend1'],
@@ -169,14 +168,14 @@ describe('test Legend', function() {
                 },
                 actual, expected;
 
-            legendModel.labelInfos = labelInfos;
+            legendModel.legendData = legendData;
             legendModel.theme = theme;
             legendModel.chartTypes = chartTypes;
             legendModel.labels = labelMap;
 
             legendModel._setData();
 
-            actual = legendModel.legendData;
+            actual = legendModel.data;
             expected = [
                 {
                     theme: {
@@ -259,7 +258,7 @@ describe('test Legend', function() {
             var actualSendingData, actualCheckedIndexes,
                 expectedSendingData, expectedCheckedIndexes;
 
-            legendModel.legendData = [
+            legendModel.data = [
                 {
                     chartType: 'column',
                     index: 0

@@ -63,9 +63,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     makeTooltipData: function() {
-        return tui.util.map(this.dataProcessor.getFullLegendData(), function(values, index) {
+        return tui.util.map(this.dataProcessor.getFullFormattedValues(), function(values, index) {
             return {
-                category: this.dataProcessor.getCategory[index],
+                category: this.dataProcessor.getCategory(index),
                 values: values
             };
         }, this);
@@ -79,7 +79,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeColors: function(theme) {
         var colorIndex = 0,
-            legendLabels = this.dataProcessor.getLegendLabels(),
+            legendLabels = this.dataProcessor.getFullLegendData(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {
@@ -109,7 +109,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeItemRenderingData: function(values) {
         return tui.util.map(values, function(value, index) {
-            var legendLabel = this.dataProcessor.getLegendData(index);
+            var legendLabel = this.dataProcessor.getFullLegendData(index);
             return {
                 value: value,
                 legend: legendLabel.label,

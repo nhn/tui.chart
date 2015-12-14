@@ -11,10 +11,18 @@ var Tooltip = require('../../src/js/tooltips/tooltip'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('Tooltip', function() {
-    var tooltip;
+    var tooltip, dataProcessor;
+
+    beforeAll(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getGroupValue']);
+        dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
+        dataProcessor.getFormattedGroupValues.and.returnValue([['10', '20']]);
+        dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
+    });
 
     beforeEach(function() {
         tooltip = new Tooltip({
+            dataProcessor: dataProcessor,
             options: {}
         });
     });
@@ -23,20 +31,12 @@ describe('Tooltip', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
             var actual, expected;
             tooltip.chartType = 'column';
-            tooltip.labels = [
-                'Silver',
-                'Gold'
-            ];
-            tooltip.formattedValues = [
-                [10, 20]
-            ];
-            tooltip.legendLabels = ['Density1', 'Density2'];
 
             actual = tooltip.makeTooltipData();
             expected = {
                 column: [[
-                    {category: 'Silver', value: 10, legend: 'Density1'},
-                    {category: 'Silver', value: 20, legend: 'Density2'}
+                    {category: 'Silver', value: '10', legend: 'Density1'},
+                    {category: 'Silver', value: '20', legend: 'Density2'}
                 ]]
             };
             expect(actual).toEqual(expected);
@@ -86,24 +86,6 @@ describe('Tooltip', function() {
             elTooltip.setAttribute('data-showed', true);
             actual = tooltip._isShowedTooltip(elTooltip);
             expect(actual).toBe(true);
-        });
-    });
-
-    describe('_getValueByIndexes()', function() {
-        it('indexes 정보를 이용하여 value를 얻어냅니다.', function() {
-            var actual, expected;
-            tooltip.values = {
-                'column': [
-                    [1, 2, 3],
-                    [4, 5, 6]
-                ]
-            };
-            actual = tooltip._getValueByIndexes({
-                groupIndex: 0,
-                index: 2
-            }, 'column');
-            expected = 3;
-            expect(actual).toBe(expected);
         });
     });
 
@@ -242,14 +224,11 @@ describe('Tooltip', function() {
 
     describe('_moveToSymmetry', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
-            var result;
-            tooltip.values = {
-                'column': [
-                    [1, 2, -3],
-                    [4, 5, 6]
-                ]
-            };
-            result = tooltip._moveToSymmetry(
+            var actual;
+
+            dataProcessor.getGroupValue.and.returnValue(-3);
+
+            actual = tooltip._moveToSymmetry(
                 {
                     left: 120
                 },
@@ -272,7 +251,7 @@ describe('Tooltip', function() {
                 }
             );
 
-            expect(result).toEqual({
+            expect(actual).toEqual({
                 left: 10
             });
         });
