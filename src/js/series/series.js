@@ -414,20 +414,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {string} cssText
      * @private
      */
-    _makeOpacityCssText: function(opacity) {
+    _makeOpacityCssText: (function() {
         var funcMakeOpacityCssText;
         if (renderUtil.isOldBrowser()) {
-            funcMakeOpacityCssText = function(_opacity) {
-                return ';filter: alpha(opacity=' + (_opacity * 100) + ')';
+            funcMakeOpacityCssText = function(opacity) {
+                return ';filter: alpha(opacity=' + (opacity * 100) + ')';
             };
         } else {
             funcMakeOpacityCssText = function(_opacity) {
                 return ';opacity: ' + _opacity;
             };
         }
-        this._makeOpacityCssText = funcMakeOpacityCssText;
-        return funcMakeOpacityCssText(opacity);
-    },
+        return funcMakeOpacityCssText;
+    })(),
 
     /**
      * Make html about series label.
@@ -521,9 +520,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *On select legend.
      * @param {string} chartType chart type
      * @param {?number} legendIndex legend index
-     * @param {boolean} isAsapShow whether asap show or not
+     * @param {boolean} isDelayShow whether delay show or not
      */
-    onSelectLegend: function(chartType, legendIndex, isAsapShow) {
+    onSelectLegend: function(chartType, legendIndex, isDelayShow) {
         var groupValues = this.dataProcessor.getGroupValues(this.chartType);
 
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
@@ -534,7 +533,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (groupValues && groupValues.length) {
             this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
-            this.graphRenderer.selectLegend(legendIndex, isAsapShow);
+            this.graphRenderer.selectLegend(legendIndex, isDelayShow);
         }
     }
 });

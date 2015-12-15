@@ -239,9 +239,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _filterRawData: function(rawData, checkedLegends) {
-        var cloneData;
-
-        cloneData = JSON.parse(JSON.stringify(rawData));
+        var cloneData = JSON.parse(JSON.stringify(rawData));
 
         if (tui.util.isArray(cloneData.series)) {
             cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
@@ -344,8 +342,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(bounds, renderingData, funcName, container) {
-        var elements;
-        elements = tui.util.map(this.components, function(component) {
+        var elements = tui.util.map(this.components, function(component) {
             var bound = bounds[component.name] || bounds[component.componentType],
                 data = renderingData[component.name],
                 element = null;

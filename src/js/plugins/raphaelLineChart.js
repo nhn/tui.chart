@@ -187,9 +187,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
-     * @param {boolean} isAsapShow whether asap show or not
+     * @param {boolean} isDelayShow whether delay show or not
      */
-    selectLegend: function(legendIndex, isAsapShow) {
+    selectLegend: function(legendIndex, isDelayShow) {
         var that = this,
             isNull = tui.util.isNull(legendIndex);
 
@@ -206,7 +206,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             item.opacity = opacity;
 
-            if (that.dotOpacity && isAsapShow) {
+            if (that.dotOpacity && !isDelayShow) {
                 item.dot.attr({'fill-opacity': opacity});
             }
         });

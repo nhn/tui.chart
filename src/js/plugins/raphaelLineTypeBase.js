@@ -10,7 +10,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
-    SELECTION_DOT_RADIOUS = 7,
+    SELECTION_DOT_RADIUS = 7,
     DE_EMPHASIS_OPACITY = 0.3;
 
 /**
@@ -324,7 +324,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _makeSelectionDot: function(paper) {
-        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIOUS);
+        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIUS);
 
         selectionDot.attr({
             'fill': '#ffffff',

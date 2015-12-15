@@ -49,7 +49,7 @@ describe('test Legend', function() {
             };
             legendModel._addSendingDatum(1);
 
-            actual = legendModel.sendingData.column[1];
+            actual = legendModel.checkedIndexesMap.column[1];
             expected = true;
 
             expect(actual).toBe(expected);
@@ -75,7 +75,7 @@ describe('test Legend', function() {
 
             legendModel._initCheckedIndexes();
 
-            actual = legendModel.checkedIndexes;
+            actual = legendModel.checkedWholeIndexes;
             expected = [true, true];
 
             expect(actual).toEqual(expected);
@@ -219,16 +219,16 @@ describe('test Legend', function() {
         });
     });
 
-    describe('getSendingData()', function() {
+    describe('getCheckedIndexes()', function() {
         it('단일 차트의 경우는 체크여부 정보가 담겨있는 단순 배열을 반환합니다.', function() {
             var actual, expected;
 
-            legendModel.sendingData = {
+            legendModel.checkedIndexesMap = {
                 'pie': [true, true]
             };
             legendModel.chartType = 'pie';
 
-            actual = legendModel.getSendingData();
+            actual = legendModel.getCheckedIndexes();
             expected = [true, true];
 
             expect(actual).toEqual(expected);
@@ -237,13 +237,13 @@ describe('test Legend', function() {
         it('콤보 차트의 경우는 차트 종류를 키로하는 체크여부 정보가 담겨있는 배열을 담고있는 객체를 반환합니다.', function() {
             var actual, expected;
 
-            legendModel.sendingData = {
+            legendModel.checkedIndexesMap = {
                 'column': [true, true],
                 'line': [true]
             };
             legendModel.chartType = 'combo';
 
-            actual = legendModel.getSendingData();
+            actual = legendModel.getCheckedIndexes();
             expected = {
                 'column': [true, true],
                 'line': [true]
@@ -255,8 +255,8 @@ describe('test Legend', function() {
 
     describe('updateCheckedData()', function() {
         it('checkbox 기능에 해당하는 data를 update 합니다.', function() {
-            var actualSendingData, actualCheckedIndexes,
-                expectedSendingData, expectedCheckedIndexes;
+            var actualCheckedIndexesMap, actualCheckedWholeIndexes,
+                expectedCheckedIndexesMap, expectedCheckedIndexes;
 
             legendModel.data = [
                 {
@@ -275,15 +275,15 @@ describe('test Legend', function() {
 
             legendModel.updateCheckedData([0, 2]);
 
-            actualSendingData = legendModel.sendingData;
-            actualCheckedIndexes = legendModel.checkedIndexes;
-            expectedSendingData = {column: [true], line: [true]};
+            actualCheckedIndexesMap = legendModel.checkedIndexesMap;
+            actualCheckedWholeIndexes = legendModel.checkedWholeIndexes;
+            expectedCheckedIndexesMap = {column: [true], line: [true]};
             expectedCheckedIndexes = [];
             expectedCheckedIndexes[0] = true;
             expectedCheckedIndexes[2] = true;
 
-            expect(actualSendingData).toEqual(expectedSendingData);
-            expect(actualCheckedIndexes).toEqual(expectedCheckedIndexes);
+            expect(actualCheckedIndexesMap).toEqual(expectedCheckedIndexesMap);
+            expect(actualCheckedWholeIndexes).toEqual(expectedCheckedIndexes);
         });
     });
 });

@@ -456,7 +456,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     selectLegend: function(legendIndex) {
         var groupBorders = this.groupBorders || [],
-            isNull = tui.util.isNull(legendIndex);
+            isWithoutSelection = tui.util.isNull(legendIndex);
 
         raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
             var lines, opacity;
@@ -466,7 +466,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             }
 
             lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
-            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            opacity = (isWithoutSelection || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             bar.rect.attr({'fill-opacity': opacity});
             if (lines) {

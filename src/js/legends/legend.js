@@ -229,22 +229,22 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendCheckboxEvent: function() {
-        this.fire('changeCheckedLegends', this.legendModel.getSendingData());
+        this.fire('changeCheckedLegends', this.legendModel.getCheckedIndexes());
     },
 
     /**
      * Fire legend event.
      * @param {{chartType: string, index: number}} data data
-     * @param {boolean} isAsapShow whther asap show or not
+     * @param {boolean} isDelayShow whether delay show or not
      * @private
      */
-    _fireLegendSelectionEvent: function(data, isAsapShow) {
+    _fireLegendSelectionEvent: function(data, isDelayShow) {
         var chartTypes = this.chartTypes || [data.chartType],
             index = this.legendModel.getSelectedIndex(),
             legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            this.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex, isAsapShow);
+            this.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex, isDelayShow);
         }, this);
     },
 
@@ -268,19 +268,19 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _selectLegend: function(index) {
         var data = this.legendModel.getDatum(index),
-            isAsapShow = true;
+            isDelayShow = false;
 
         this.legendModel.toggleSelectedIndex(index);
 
         if (!tui.util.isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
-            isAsapShow = false;
+            isDelayShow = true;
             this.legendModel.checkSelectedIndex();
             this._fireLegendCheckboxEvent();
         }
 
         this._renderLegendArea(this.legendContainer);
 
-        this._fireLegendSelectionEvent(data, isAsapShow);
+        this._fireLegendSelectionEvent(data, isDelayShow);
         this._fireUserEvent(data);
     },
 
@@ -324,7 +324,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             this._fireLegendCheckboxEvent();
 
             if (data) {
-                this._fireLegendSelectionEvent(data, false);
+                this._fireLegendSelectionEvent(data, true);
             }
         }
     },
