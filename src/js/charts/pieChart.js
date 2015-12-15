@@ -61,7 +61,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
         this._addComponent('tooltip', Tooltip, this._makeTooltipData());
 
-        this._addComponent('series', Series, {
+        this._addComponent('pieSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
@@ -84,7 +84,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 seriesPosition: bounds.series.position,
                 chartDimension: bounds.chart.dimension
             },
-            series: {
+            pieSeries: {
                 chartWidth: bounds.chart.dimension.width
             }
         };

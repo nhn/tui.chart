@@ -76,7 +76,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             chartType: chartType,
             serieses: [
                 {
-                    name: 'series',
+                    name: 'barSeries',
                     SeriesClass: Series
                 }
             ]

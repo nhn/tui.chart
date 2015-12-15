@@ -150,12 +150,12 @@ var axisTypeMixer = {
             seriesData = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            var key = chartTypes.length > 1 ? chartType + 'Series' : 'series';
-            seriesData[key] = {
+            seriesData[chartType + 'Series'] = {
                 limit: limitMap[chartType],
                 aligned: aligned
             };
         });
+
         return seriesData;
     },
 

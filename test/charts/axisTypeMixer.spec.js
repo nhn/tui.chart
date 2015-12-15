@@ -13,12 +13,17 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     PointTypeCustomEvent = require('../../src/js/customEvents/pointTypeCustomEvent');
 
 describe('ComboChart', function() {
-    var componentMap = {};
+    var componentMap = {},
+        spyObjs = {};
+
     beforeAll(function() {
-        axisTypeMixer._addComponent = jasmine.createSpy('_addComponent').and.callFake(function(name, ComponentClass) {
+        spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
+        spyObjs._addComponent.and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
-        axisTypeMixer._makeTooltipData = jasmine.createSpy('_makeTooltipData').and.returnValue({});
+        spyObjs._makeTooltipData.and.returnValue({});
+
+        tui.util.extend(axisTypeMixer, spyObjs);
     });
 
     beforeEach(function() {
@@ -169,8 +174,8 @@ describe('ComboChart', function() {
                 yAxis: yAxis
             }, ['bar'], false);
 
-            expect(actual.series.limit).toBe(xAxis.limit);
-            expect(actual.series.aligned).toBe(xAxis.aligned);
+            expect(actual.barSeries.limit).toBe(xAxis.limit);
+            expect(actual.barSeries.aligned).toBe(xAxis.aligned);
         });
 
         it('세로형 단일 차트의 시리즈 데이터는 y axis limit과 x axis의 aligned를 반환합니다.', function() {
@@ -187,8 +192,8 @@ describe('ComboChart', function() {
                 yAxis: yAxis
             }, ['column'], true);
 
-            expect(actual.series.limit).toBe(yAxis.limit);
-            expect(actual.series.aligned).toBe(xAxis.aligned);
+            expect(actual.columnSeries.limit).toBe(yAxis.limit);
+            expect(actual.columnSeries.aligned).toBe(xAxis.aligned);
         });
 
         it('세로형 다중 차트의 시리즈 데이터는 option chart type 순서에 따라 chartType + "series" 조합을 key로하는 y axis limit, yr axis limit을 반환합니다.', function() {
@@ -220,7 +225,8 @@ describe('ComboChart', function() {
     describe('_makeRenderingData()', function() {
         it('axis type chart의 renderingData를 생성합니다.', function() {
             var actual;
-            axisTypeMixer._makeAxesData = jasmine.createSpy('_makeAxesData').and.returnValue({
+
+            spyObjs._makeAxesData.and.returnValue({
                 xAxis: {
                     limit: {},
                     aligned: true,
@@ -231,14 +237,18 @@ describe('ComboChart', function() {
                     validTickCount: 3
                 }
             });
+
+            axisTypeMixer.chartType = 'column';
+
             actual = axisTypeMixer._makeRenderingData({
                 chart: {}
             });
+
             expect(actual.plot.vTickCount).toBe(3);
             expect(actual.plot.hTickCount).toBe(0);
             expect(actual.customEvent.tickCount).toBe(3);
-            expect(actual.series.limit).toBeDefined();
-            expect(actual.series.aligned).toBe(true);
+            expect(actual.columnSeries.limit).toBeDefined();
+            expect(actual.columnSeries.aligned).toBe(true);
         });
     });
 

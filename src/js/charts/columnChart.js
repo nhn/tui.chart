@@ -52,7 +52,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             chartType: chartType,
             serieses: [
                 {
-                    name: 'series',
+                    name: 'columnSeries',
                     SeriesClass: Series,
                     data: {
                         allowNegativeTooltip: true
