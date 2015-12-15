@@ -178,9 +178,132 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_makeLegendWidth()', function() {
+        it('체크박스, 아이콘, 여백이 포함된 범례 너비를 반환합니다.', function() {
+            var actual = maker._makeLegendWidth(40),
+                expected = 87;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateLegendsWidthSum()', function() {
+        it('여러 범례 길이의 합을 구합니다.', function() {
+            var actual = maker._calculateLegendsWidthSum(['legend1', 'legend2']),
+                expected = 194;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_divideLegendLabels()', function() {
+        it('입력 배열을 count만큼으로 나누어 2차원 배열로 반환합니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 2),
+                expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4']];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('앞쪽에서부터 나추어진 숫자 만큼씩 차례대로 채워나갑니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3),
+                expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('1로 나눌 경우에는 그대로 반환됩니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 1),
+                expected = [['ABC1', 'ABC2', 'ABC3', 'ABC4']];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeDividedLabelsAndMaxLineWidth()', function() {
+        it('차트의 너비를 넘어서지 않을때 까지 레이블들을 나누고 나눈 결과와 그때의 최대 너비를 반환합니다.', function() {
+            var actual = maker._makeDividedLabelsAndMaxLineWidth(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 250),
+                expected = {
+                    dividedLabels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
+                    maxLineWidth: 194
+                };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('차트의 너비가 레이블 너비보다 작다면 현재의 레이블 정보와 최대 너비를 반환합니다.', function() {
+            var actual = maker._makeDividedLabelsAndMaxLineWidth(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 100),
+                expected = {
+                    dividedLabels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
+                    maxLineWidth: 97
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calculateHorizontalLegendHeight()', function() {
+        it('가로 범례의 높이를 구합니다.', function() {
+            var actual = maker._calculateHorizontalLegendHeight([['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']]),
+                expected = 60;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeHorizontalLegendDimension()', function() {
+        it('가로타입 범례의 Dimension을 구합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.getFullLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeHorizontalLegendDimension(250);
+            expected = {
+                width: 194,
+                height: 40
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeVerticalLegendDimension()', function() {
+        it('세로타입 범례의 Dimension을 구합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.getFullLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeVerticalLegendDimension();
+            expected = 97;
+
+            expect(actual.width).toBe(expected);
+        });
+    });
+
     describe('_makeLegendDimension()', function() {
-        it('legend 영역의 dimension을 계산하여 반환합니다.', function () {
+        it('_isSkippedLegendSizing()가 true를 반환하면 0을 반환합니다.', function () {
             var actual;
+
+            spyOn(maker, '_isSkippedLegendSizing').and.returnValue(true);
+
+            actual = maker._makeLegendDimension({});
+            expect(actual.width).toBe(0);
+        });
+
+        it('세로타입 범례의 dimension을 계산하여 반환합니다.', function () {
+            var actual, expected;
 
             dataProcessor.getFullLegendData.and.returnValue([
                 {
@@ -192,21 +315,40 @@ describe('boundsMaker', function() {
             ]);
 
             actual = maker._makeLegendDimension({});
-            expect(actual.width).toBe(107);
+            expected = {
+                width: 97,
+                height: 0
+            };
+
+            expect(actual).toEqual(expected);
         });
 
-        it('_isSkippedLegendSizing()가 true를 반환하면 0을 반환합니다.', function () {
-            var actual;
+        it('가로타입 범례의 dimension을 계산하여 반환합니다.', function () {
+            var actual, expected;
 
-            spyOn(maker, '_isSkippedLegendSizing').and.returnValue(true);
+            dataProcessor.getFullLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
 
-            actual = maker._makeLegendDimension({});
-            expect(actual.width).toBe(0);
+            actual = maker._makeLegendDimension({}, 'column', 250, {
+                align: 'top'
+            });
+            expected = {
+                width: 194,
+                height: 40
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
             var actual = maker._makeSeriesDimension({
                     chartDimension: {
                         width: 500,
@@ -223,12 +365,46 @@ describe('boundsMaker', function() {
                             height: 50
                         }
                     },
-                    legendWidth: 50,
+                    legendDimension: {
+                        width: 50
+                    },
                     titleHeight: 50
                 }),
                 expected = {
                     width: 380,
                     height: 280
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+            var actual = maker._makeSeriesDimension({
+                    chartDimension: {
+                        width: 500,
+                        height: 400
+                    },
+                    axesDimension: {
+                        yAxis: {
+                            width: 50
+                        },
+                        rightYAxis: {
+                            width: 0
+                        },
+                        xAxis: {
+                            height: 50
+                        }
+                    },
+                    legendDimension: {
+                        height: 50
+                    },
+                    titleHeight: 50,
+                    legendOption: {
+                        align: 'bottom'
+                    }
+                }),
+                expected = {
+                    width: 430,
+                    height: 230
                 };
             expect(actual).toEqual(expected);
         });
@@ -323,10 +499,10 @@ describe('boundsMaker', function() {
             });
 
             expect(actual.title.height).toBe(40);
-            expect(actual.series.width).toBe(276);
+            expect(actual.series.width).toBe(286);
             expect(actual.series.height).toBe(280);
 
-            expect(actual.legend.width).toBe(107);
+            expect(actual.legend.width).toBe(97);
 
             expect(actual.yAxis.width).toBe(97);
             expect(actual.rightYAxis.width).toBe(0);
@@ -363,7 +539,7 @@ describe('boundsMaker', function() {
                    plot: {
                        height: 200
                    }
-               }, 20),
+               }, 20, 0),
                expected = {
                    dimension: {
                        width: 100,
@@ -411,13 +587,19 @@ describe('boundsMaker', function() {
                     rightYAxis: {
                         width: 100
                     },
+                    yAxis: {
+                        width: 100
+                    },
                     plot: {
                         height: 200
+                    },
+                    series: {
+                        width: 300
                     },
                     legend: {
                         width: 50
                     }
-                }, 20),
+                }, 20, 0),
                 expected = {
                     dimension: {
                         width: 100,
@@ -425,7 +607,7 @@ describe('boundsMaker', function() {
                     },
                     position: {
                         top: 20,
-                        right: 61
+                        left: 411
                     }
                 };
             expect(actual).toEqual(expected);
@@ -445,7 +627,8 @@ describe('boundsMaker', function() {
                     xAxis: {height: 50}
                 },
                 top: 20,
-                left: 20
+                left: 20,
+                leftLegendWidth: 0
             });
 
             expect(actual.plot.position).toEqual({top: 20, left: 19});
@@ -475,11 +658,12 @@ describe('boundsMaker', function() {
                     xAxis: {height: 50}
                 },
                 top: 20,
-                left: 20
+                left: 20,
+                leftLegendWidth: 0
             });
             expect(actual.rightYAxis.dimension.height).toBe(200);
             expect(actual.rightYAxis.position.top).toBe(20);
-            expect(actual.rightYAxis.position.right).toBe(81);
+            expect(actual.rightYAxis.position.left).toBe(360);
         });
     });
 
@@ -513,9 +697,15 @@ describe('boundsMaker', function() {
                     },
                     rightYAxis: {
                         width: 30
+                    },
+                    legend: {
+                        width: 50
                     }
-                }),
+                }, {}),
                 expected = {
+                    dimension: {
+                        width: 50
+                    },
                     position: {
                         top: 20,
                         left: 270
@@ -795,18 +985,18 @@ describe('boundsMaker', function() {
 
             expect(actual.chart.dimension.width).toBe(500);
             expect(actual.chart.dimension.height).toBe(400);
-            expect(actual.series.dimension.width).toBe(276);
+            expect(actual.series.dimension.width).toBe(286);
             expect(actual.series.dimension.height).toBe(280);
             expect(actual.series.position.top).toBe(50);
             expect(actual.series.position.left).toBe(107);
             expect(actual.yAxis.dimension.width).toBe(97);
             expect(actual.yAxis.dimension.height).toBe(281);
             expect(actual.yAxis.position.top).toBe(50);
-            expect(actual.xAxis.dimension.width).toBe(277);
+            expect(actual.xAxis.dimension.width).toBe(287);
             expect(actual.xAxis.dimension.height).toBe(60);
             expect(actual.xAxis.position.top).toBe(330);
             expect(actual.legend.position.top).toBe(40);
-            expect(actual.legend.position.left).toBe(383);
+            expect(actual.legend.position.left).toBe(393);
             expect(actual.tooltip.position.top).toBe(50);
             expect(actual.tooltip.position.left).toBe(97);
         });

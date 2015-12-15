@@ -19,8 +19,8 @@ describe('TickBaseDataModel', function() {
 
     describe('_makeLineTypeData()', function() {
         it('line type 차트의 경우는 tick과 tick 사이를 경계로 분할하여 limit 데이터를 생성합니다.', function() {
-            var actual = dataModel._makeLineTypeData(200, 3),
-                expected = [{min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 250}];
+            var actual = dataModel._makeLineTypeData(199, 3),
+                expected = [{min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 249}];
             expect(actual).toEqual(expected);
         });
     });

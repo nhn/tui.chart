@@ -29,14 +29,16 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @private
      */
     _makeLineTypeData: function(width, tickCount) {
-        var tickInterval = width / (tickCount - 1),
-            halfInterval = tickInterval / 2;
-        return tui.util.map(tui.util.range(0, tickCount), function(index) {
-            return {
-                min: index * tickInterval - halfInterval,
-                max: index * tickInterval + halfInterval
-            };
-        });
+        var tickInterval = (width + 1) / (tickCount - 1),
+            halfInterval = tickInterval / 2,
+            ranges = tui.util.map(tui.util.range(0, tickCount), function(index) {
+                return {
+                    min: index * tickInterval - halfInterval,
+                    max: index * tickInterval + halfInterval
+                };
+            });
+        ranges[tickCount - 1].max -= 1;
+        return ranges;
     },
 
     /**

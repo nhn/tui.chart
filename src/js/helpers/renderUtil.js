@@ -107,11 +107,12 @@ var renderUtil = {
         var key, div, span, labelSize;
 
         theme = theme || {};
-        label += '';
 
         if (!label) {
             return 0;
         }
+
+        label += '';
 
         key = this._makeCachingKey(label, theme, offsetType);
         labelSize = this.sizeCacher[key];
@@ -240,10 +241,6 @@ var renderUtil = {
 
         if (position.left) {
             el.style.left = position.left + 'px';
-        }
-
-        if (position.right) {
-            el.style.right = position.right + 'px';
         }
     },
 
