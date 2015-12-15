@@ -63,7 +63,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     makeTooltipData: function() {
-        return tui.util.map(this.dataProcessor.getFullFormattedValues(), function(values, index) {
+        return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
             return {
                 category: this.dataProcessor.getCategory(index),
                 values: values
@@ -79,7 +79,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeColors: function(theme) {
         var colorIndex = 0,
-            legendLabels = this.dataProcessor.getFullLegendData(),
+            legendLabels = this.dataProcessor.getWholeLegendData(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {

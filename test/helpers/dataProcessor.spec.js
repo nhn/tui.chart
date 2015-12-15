@@ -231,7 +231,7 @@ describe('test DataProcessor', function() {
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
             ]);
-            expect(actual.fullValues).toEqual([
+            expect(actual.wholeValues).toEqual([
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
@@ -243,7 +243,7 @@ describe('test DataProcessor', function() {
                 ['50.0', '60.0', '10.0', '70.0']
             ]);
             expect(actual.legendLabels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
-            expect(actual.fullLegendData).toEqual([
+            expect(actual.wholeLegendData).toEqual([
                 {
                     chartType: 'column',
                     label: 'Legend1'

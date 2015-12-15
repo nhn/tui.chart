@@ -20,7 +20,7 @@ describe('test Legend', function() {
                 'legend1',
                 'legend2'
             ]),
-            getFullLegendData: jasmine.createSpy('getFullLegendData').and.returnValue([
+            getWholeLegendData: jasmine.createSpy('getWholeLegendData').and.returnValue([
                 {
                     label: 'legend1'
                 },

@@ -111,7 +111,7 @@ describe('ComboChart', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
             var actual, expected;
 
-            spyOn(comboChart.dataProcessor, 'getFullGroupValues').and.returnValue([
+            spyOn(comboChart.dataProcessor, 'getWholeGroupValues').and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60],
                 [60, 50, 10],

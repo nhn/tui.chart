@@ -26,7 +26,7 @@ var boundsMaker = {
      * @private
      */
     _getValueAxisMaxLabel: function(chartType) {
-        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getFullGroupValues() : this.dataProcessor.getGroupValues(chartType),
+        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getWholeGroupValues() : this.dataProcessor.getGroupValues(chartType),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
@@ -277,7 +277,7 @@ var boundsMaker = {
      * @private
      */
     _getFullLegendLabels: function() {
-        return tui.util.map(this.dataProcessor.getFullLegendData(), function(item) {
+        return tui.util.map(this.dataProcessor.getWholeLegendData(), function(item) {
             return item.label;
         });
     },

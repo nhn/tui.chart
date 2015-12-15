@@ -256,7 +256,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         }
 
         if (params.isOneYAxis) {
-            yAxisValues = this.dataProcessor.getFullGroupValues();
+            yAxisValues = this.dataProcessor.getWholeGroupValues();
         } else {
             yAxisValues = this.dataProcessor.getGroupValues(chartType);
         }

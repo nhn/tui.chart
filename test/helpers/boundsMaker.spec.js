@@ -24,7 +24,7 @@ describe('boundsMaker', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getFullGroupValues', 'getFullLegendData', 'getCategories',
+            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getWholeLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -47,7 +47,7 @@ describe('boundsMaker', function() {
         it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
             var actual;
 
-            dataProcessor.getFullGroupValues.and.returnValue([
+            dataProcessor.getWholeGroupValues.and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60]
             ]);
@@ -256,7 +256,7 @@ describe('boundsMaker', function() {
         it('가로타입 범례의 Dimension을 구합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -279,7 +279,7 @@ describe('boundsMaker', function() {
         it('세로타입 범례의 Dimension을 구합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -308,7 +308,7 @@ describe('boundsMaker', function() {
         it('세로타입 범례의 dimension을 계산하여 반환합니다.', function () {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -329,7 +329,7 @@ describe('boundsMaker', function() {
         it('가로타입 범례의 dimension을 계산하여 반환합니다.', function () {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -464,7 +464,7 @@ describe('boundsMaker', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
             var actual;
 
-            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
             actual = maker._makeComponentsDimensions({
                 optionChartTypes: [],
                 isVertical: true,
@@ -952,7 +952,7 @@ describe('boundsMaker', function() {
                 }
             });
 
-            dataProcessor.getFullGroupValues.and.returnValue([
+            dataProcessor.getWholeGroupValues.and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60],
                 [60, 50, 10],
@@ -976,7 +976,7 @@ describe('boundsMaker', function() {
             dataProcessor.getLegendLabels.and.returnValue(['label1', 'label2', 'label3']);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             dataProcessor.getMultilineCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
-            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
 
             actual = maker.make(dataProcessor,
                 {
