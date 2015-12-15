@@ -219,8 +219,9 @@ describe('test DataProcessor', function() {
             }, {
                 chart: {
                     format: '0.0'
-                }
-            }, 'column');
+                },
+                chartType: 'column'
+            });
 
             actual = dataProcessor.data;
 

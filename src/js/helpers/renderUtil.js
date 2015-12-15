@@ -10,6 +10,7 @@ var dom = require('./domHandler'),
     chartConst = require('./../const');
 
 var browser = tui.util.browser,
+    isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
 
 /**
@@ -242,6 +243,10 @@ var renderUtil = {
         if (position.left) {
             el.style.left = position.left + 'px';
         }
+
+        if (position.right) {
+            el.style.right = position.right + 'px';
+        }
     },
 
     /**
@@ -339,16 +344,24 @@ var renderUtil = {
     },
 
     /**
-     * Escape
+     * Escape.
      * @param {string} value value
-     * @returns {string}
+     * @returns {string} escaped value.
      */
     escape: function(value) {
         return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     },
 
     /**
-     * Whether IE8 or not.
+     * Whether IE7 or not.
+     * @returns {boolean} result boolean
+     */
+    isIE7: function() {
+        return isIE7;
+    },
+
+    /**
+     * Whether oldBrowser or not.
      * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */

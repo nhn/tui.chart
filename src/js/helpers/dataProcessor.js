@@ -46,8 +46,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {string} chartType chart type
      * @param {array.<string>} seriesChartTypes chart types
      */
-    process: function(rawData, options, chartType, seriesChartTypes) {
-        var categories = this._processCategories(rawData.categories),
+    process: function(rawData, options, seriesChartTypes) {
+        var chartType = options.chartType,
+            categories = this._processCategories(rawData.categories),
             seriesData = rawData.series,
             values = this._pickValues(seriesData),
             fullValues = this._makeFullValues(values, seriesChartTypes),

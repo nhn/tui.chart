@@ -476,6 +476,7 @@ var boundsMaker = {
      * Make yAxis bound.
      * @param {{yAxis: {width: number}, plot: {height: number}}} dimensions dimensions
      * @param {number} top top
+     * @param {number} leftLegendWidth left legend width
      * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yAxis bound
      * @private
      */
@@ -524,10 +525,12 @@ var boundsMaker = {
      * Make right y axis bound.
      * @param {{rightYAxis: {width: number}, plot: {height: number}, legend: {width: number}}} dimensions dimensions
      * @param {number} top top
+     * @param {number} leftLegendWidth left legend width
      * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} rightYAxis bound
      * @private
      */
     _makeRightYAxisBound: function(dimensions, top, leftLegendWidth) {
+        var rightLegendWidth = !leftLegendWidth ? dimensions.legend.width : 0;
         return {
             dimension: {
                 width: dimensions.rightYAxis.width,
@@ -535,7 +538,7 @@ var boundsMaker = {
             },
             position: {
                 top: top,
-                left: this.chartLeftPadding + dimensions.yAxis.width + dimensions.series.width + leftLegendWidth + chartConst.HIDDEN_WIDTH
+                right: this.chartLeftPadding + rightLegendWidth + chartConst.HIDDEN_WIDTH
             }
         };
     },

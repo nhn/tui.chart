@@ -102,7 +102,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var dataProcessor = new DataProcessor(params.rawData),
             options = params.options;
 
-        dataProcessor.process(params.rawData, options.chart, options.chartType, params.seriesChartTypes);
+        dataProcessor.process(params.rawData, options, params.seriesChartTypes);
         return dataProcessor;
     },
 
@@ -299,7 +299,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
-        this.dataProcessor.process(rawData, this.options, this.chartType, this.seriesChartTypes);
+        this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
 
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
         this.dataProcessor.setFullLegendData(prevFullLegendData);

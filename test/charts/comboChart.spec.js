@@ -37,7 +37,7 @@ describe('ComboChart', function() {
                         chartType: 'line'
                     },
                     {
-                        title: 'XX Axis'
+                        title: 'Right Y Axis'
                     }
                 ],
                 series: {
@@ -109,7 +109,7 @@ describe('ComboChart', function() {
         });
 
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
-            var actual;
+            var actual, expected;
 
             spyOn(comboChart.dataProcessor, 'getFullGroupValues').and.returnValue([
                 [20, 30, 50],
@@ -117,6 +117,10 @@ describe('ComboChart', function() {
                 [60, 50, 10],
                 [80, 10, 70]
             ]);
+
+            comboChart.yAxisOptionsMap = {
+                'column': 'yAxisOptions'
+            };
 
             actual = comboChart._makeYAxisData({
                 index: 0,
@@ -132,8 +136,7 @@ describe('ComboChart', function() {
                     }
                 }
             });
-
-            expect(actual).toEqual({
+            expected = {
                 labels: [0, 30, 60, 90],
                 tickCount: 4,
                 validTickCount: 4,
@@ -144,17 +147,24 @@ describe('ComboChart', function() {
                 step: 30,
                 isVertical: true,
                 isPositionRight: false,
-                aligned: false
-            });
+                aligned: false,
+                options: 'yAxisOptions'
+            };
+
+            expect(actual).toEqual(expected);
         });
 
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
-            var actual;
+            var actual, expected;
 
             spyOn(comboChart.dataProcessor, 'getGroupValues').and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60]
             ]);
+
+            comboChart.yAxisOptionsMap = {
+                'column': 'yAxisOptions'
+            };
 
             actual = comboChart._makeYAxisData({
                 index: 0,
@@ -176,7 +186,7 @@ describe('ComboChart', function() {
                 }
             });
 
-            expect(actual).toEqual({
+            expected = {
                 labels: [10, 20, 30, 40, 50, 60, 70],
                 tickCount: 7,
                 validTickCount: 7,
@@ -187,8 +197,11 @@ describe('ComboChart', function() {
                 step: 10,
                 isVertical: true,
                 isPositionRight: false,
-                aligned: false
-            });
+                aligned: false,
+                options: 'yAxisOptions'
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
