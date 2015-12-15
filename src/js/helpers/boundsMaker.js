@@ -530,7 +530,6 @@ var boundsMaker = {
      * @private
      */
     _makeRightYAxisBound: function(dimensions, top, leftLegendWidth) {
-        var rightLegendWidth = !leftLegendWidth ? dimensions.legend.width : 0;
         return {
             dimension: {
                 width: dimensions.rightYAxis.width,
@@ -538,7 +537,7 @@ var boundsMaker = {
             },
             position: {
                 top: top,
-                right: this.chartLeftPadding + rightLegendWidth + chartConst.HIDDEN_WIDTH
+                left: this.chartLeftPadding + dimensions.yAxis.width + dimensions.series.width + leftLegendWidth - chartConst.HIDDEN_WIDTH
             }
         };
     },
@@ -572,6 +571,7 @@ var boundsMaker = {
 
         // 우측 y axis 영역 bounds 정보 추가
         bounds.rightYAxis = this._makeRightYAxisBound(params.dimensions, params.top, params.leftLegendWidth);
+
         return bounds;
     },
 

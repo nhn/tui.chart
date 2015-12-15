@@ -610,7 +610,7 @@ describe('boundsMaker', function() {
                     },
                     position: {
                         top: 20,
-                        right: 61
+                        left: 409
                     }
                 };
             expect(actual).toEqual(expected);
@@ -666,7 +666,7 @@ describe('boundsMaker', function() {
             });
             expect(actual.rightYAxis.dimension.height).toBe(200);
             expect(actual.rightYAxis.position.top).toBe(20);
-            expect(actual.rightYAxis.position.right).toBe(81);
+            expect(actual.rightYAxis.position.left).toBe(358);
         });
     });
 
