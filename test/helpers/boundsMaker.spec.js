@@ -19,6 +19,7 @@ describe('boundsMaker', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight');
         maker.chartLeftPadding = chartConst.CHART_PADDING;
+        maker.legendCheckboxWidth = chartConst.LEGEND_CHECKBOX_WIDTH;
     });
 
     beforeEach(function() {
@@ -180,8 +181,10 @@ describe('boundsMaker', function() {
 
     describe('_makeLegendWidth()', function() {
         it('체크박스, 아이콘, 여백이 포함된 범례 너비를 반환합니다.', function() {
-            var actual = maker._makeLegendWidth(40),
-                expected = 87;
+            var actual, expected;
+
+            actual = maker._makeLegendWidth(40);
+            expected = 87;
 
             expect(actual).toBe(expected);
         });

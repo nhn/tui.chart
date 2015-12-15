@@ -174,7 +174,7 @@ var boundsMaker = {
      * @private
      */
     _makeLegendWidth: function(labelWidth) {
-        return labelWidth + chartConst.LEGEND_CHECKBOX_WIDTH + chartConst.LEGEND_RECT_WIDTH +
+        return labelWidth + this.legendCheckboxWidth + chartConst.LEGEND_RECT_WIDTH +
             chartConst.LEGEND_LABEL_LEFT_PADDING + chartConst.LEGEND_AREA_PADDING;
     },
 
@@ -872,19 +872,20 @@ var boundsMaker = {
      */
     make: function(dataProcessor, params) {
         var legendOption = params.options.legend || {},
-            axesLabelInfo, dimensions, xAxisOptions, limitWidth,
-            rotationInfo, top, left, topLegendHeight, leftLegendWidth,
-            seriesBound, axesBounds, bounds;
+            xAxisOptions = params.options.xAxis || {},
+            axesLabelInfo, dimensions, limitWidth, rotationInfo, top,
+            left, topLegendHeight, leftLegendWidth, seriesBound, axesBounds, bounds;
 
         this.dataProcessor = dataProcessor;
+        this.chartLeftPadding = chartConst.CHART_PADDING;
+        this.legendCheckboxWidth = legendOption.hasCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
 
         axesLabelInfo = this._makeAxesLabelInfo(params);
         dimensions = this._makeComponentsDimensions(tui.util.extend({
             axesLabelInfo: axesLabelInfo
         }, params));
-        xAxisOptions = params.options.xAxis || {};
 
-        this.chartLeftPadding = chartConst.CHART_PADDING;
+
         if (params.hasAxes) {
             limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length);
             if (xAxisOptions.rotation !== false) {

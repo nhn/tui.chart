@@ -165,6 +165,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _makeLegendHtml: function(legendData) {
         var template = legendTemplate.tplLegend,
+            checkBoxTemplate = legendTemplate.tplCheckbox,
             labelsWidth = this._makeLabelsWidth(legendData),
             labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme),
             isHorizontalLegend = predicate.isHorizontalLegend(this.options.align),
@@ -172,8 +173,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendData, function(legendDatum, index) {
                 var rectCssText = this._makeLegendRectCssText(legendDatum, baseMarginTop),
-                    checked = this.legendModel.isCheckedIndex(index),
+                    checkbox = this.options.hasCheckbox === false ? '' : checkBoxTemplate({
+                        index: index,
+                        checked: this.legendModel.isCheckedIndex(index) ? ' checked' : ''
+                    }),
                     data;
+
                 data = {
                     rectCssText: rectCssText,
                     height: height,
@@ -182,7 +187,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                     labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
                     iconType: legendDatum.chartType || 'rect',
                     label: legendDatum.label,
-                    checked: checked ? ' checked' : '',
+                    checkbox: checkbox,
                     index: index
                 };
                 return template(data);

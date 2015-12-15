@@ -319,7 +319,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         if (callback) {
             this.callbackTimeout = setTimeout(function() {
                 callback();
-                delete this.callbackTimeout;
+                delete that.callbackTimeout;
             }, ANIMATION_TIME);
         }
     },
