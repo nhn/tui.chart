@@ -53,13 +53,10 @@ var axisTypeMixer = {
      * @param {boolean} aligned whether aligned or not
      * @private
      */
-    _addSeriesComponents: function(serieses, options, aligned) {
+    _addSeriesComponents: function(serieses, options) {
         var seriesBaseParams = {
             libType: options.libType,
             chartType: options.chartType,
-            parentChartType: options.parentChartType,
-            aligned: aligned,
-            hasGroupTooltip: this.hasGroupTooltip,
             userEvent: this.userEvent,
             componentType: 'series'
         };
@@ -111,7 +108,7 @@ var axisTypeMixer = {
         this._addComponent('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
-        this._addSeriesComponents(params.serieses, options, aligned);
+        this._addSeriesComponents(params.serieses, options);
         this._addTooltipComponent(options.chartType);
     },
 

@@ -23,12 +23,37 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *      @param {object} params.theme series theme
      */
     init: function(params) {
-        var libType;
+        var libType = params.libType || chartConst.DEFAULT_PLUGIN;
 
-        tui.util.extend(this, params);
-        libType = params.libType || chartConst.DEFAULT_PLUGIN;
+        /**
+         * Chart type
+         * @type {string}
+         */
+        this.chartType = params.chartType;
 
-        this.orgTheme = this.theme;
+        /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
+         * User event listener
+         * @type {UserEventListener}
+         */
+        this.userEvent = params.userEvent;
+
+        /**
+         * Options
+         * @type {object}
+         */
+        this.options = params.options || {};
+
+        /**
+         * Theme
+         * @type {object}
+         */
+        this.orgTheme = this.theme = params.theme;
 
         /**
          * Graph renderer
