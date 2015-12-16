@@ -274,7 +274,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             });
 
         renderingData.tooltip = tui.util.extend(tooltipData, renderingData.tooltip);
-
+console.log('serieses', serieses, this.componentMap);
         tui.util.forEach(serieses, function(series, seriesName) {
             renderingData[seriesName] = tui.util.extend({
                 checkedLegends: checkedLegends[series.chartType] || checkedLegends

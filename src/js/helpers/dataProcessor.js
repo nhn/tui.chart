@@ -610,7 +610,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                     sum = tui.util.sum(plusValues),
                     groupPercent = (sum - min) / distance;
                 return tui.util.map(values, function(value) {
-                    return value === 0 ? 0 : groupPercent * (value / sum);
+                    return sum === 0 ? 0 : groupPercent * (value / sum);
                 });
             });
 
@@ -630,7 +630,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 }),
                 sum = tui.util.sum(plusValues);
             return tui.util.map(values, function(value) {
-                return value === 0 ? 0 : value / sum;
+                return sum === 0 ? 0 : value / sum;
             });
         });
 
@@ -682,8 +682,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             groupValues = this.getGroupValues(chartType),
             isLineTypeChart = predicate.isLineTypeChart(chartType);
 
-        groupValues = isLineTypeChart ? tui.util.pivot(groupValues) : groupValues;
-
         if (predicate.isPieChart(chartType)) {
             result = this._makePieChartPercentValues(groupValues);
         } else if (stacked === chartConst.STACKED_NORMAL_TYPE) {
@@ -694,7 +692,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             result = this._makeNormalPercentValues(groupValues, limit, isLineTypeChart);
         }
 
-        this.data.percentValues[chartType] = result;
+        this.data.percentValues[chartType] = isLineTypeChart ? tui.util.pivot(result) : result;
     },
 
     /**

@@ -106,6 +106,7 @@ var axisDataMaker = {
                 isPositionRight: isPositionRight,
                 chartType: params.chartType
             }, options);
+            console.log('tickInfo', tickInfo);
         }
 
         return {
@@ -129,15 +130,20 @@ var axisDataMaker = {
      * @private
      */
     _makeBaseValues: function(groupValues, stacked) {
-        var baseValues = concat.apply([], groupValues); // flatten array
+        var baseValues;
+
         if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            baseValues = baseValues.concat(tui.util.map(groupValues, function(values) {
+            groupValues = tui.util.map(groupValues, function(values) {
                 var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;
                 });
-                return tui.util.sum(plusValues);
-            }));
+                plusValues.push(tui.util.sum(plusValues));
+                return plusValues;
+            });
         }
+
+        baseValues = concat.apply([], groupValues);
+
         return baseValues;
     },
 

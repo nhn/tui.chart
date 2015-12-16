@@ -32,6 +32,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.chartType = params.chartType;
 
         /**
+         * Component type
+         * @type {string}
+         */
+        this.componentType = params.componentType;
+
+        /**
          * Data processor
          * @type {DataProcessor}
          */

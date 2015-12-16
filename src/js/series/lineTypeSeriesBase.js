@@ -20,7 +20,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @returns {array.<array.<object>>} positions
      * @private
      */
-    _makePositions: function(dimension) {
+    _makeBasicPositions: function(dimension) {
         var groupValues = this._getPercentValues(),
             width = dimension.width,
             height = dimension.height,
@@ -43,8 +43,21 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                 };
             });
         });
-
         return result;
+    },
+
+    _makePositionTop: function(position, value, labelHeight) {
+        var positionTop;
+
+        if (this.options.stacked && position.startTop) {
+            positionTop = (position.startTop + position.top - labelHeight) / 2 + 1;
+        } else if (value < 0 && !tui.util.isUndefined(position.startTop)) {
+            positionTop = position.top + chartConst.SERIES_LABEL_PADDING;
+        } else {
+            positionTop = position.top - labelHeight - chartConst.SERIES_LABEL_PADDING;
+        }
+
+        return positionTop;
     },
 
     /**
@@ -70,11 +83,16 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         html = tui.util.map(formattedValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
-                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label),
+                    labelHtml = '',
+                    labelWidth;
+
+                if (position.top !== position.startTop) {
+                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
                     labelHtml = this.makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
+                        top: this._makePositionTop(position, value, labelHeight)
                     }, value, index, groupIndex);
+                }
                 return labelHtml;
             }, this).join('');
         }, this).join('');

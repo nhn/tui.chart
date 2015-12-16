@@ -24,6 +24,63 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         Series.apply(this, arguments);
     },
 
+    _makeStackedPositions: function(groupPositions) {
+        var firstStartTop = this._makeZeroTop(this.bound.dimension),
+            prevPositionTops = [];
+
+        return tui.util.map(groupPositions, function(positions) {
+            return tui.util.map(positions, function(position, index) {
+                var startTop = prevPositionTops[index] || firstStartTop,
+                    stackedHeight = firstStartTop - startTop;
+
+                position.startTop = startTop;
+
+                if (position.top > firstStartTop) {
+                    position.top = startTop;
+                } else {
+                    position.top -= stackedHeight;
+                }
+
+                prevPositionTops[index] = position.top;
+                return position;
+            });
+        });
+    },
+
+    _makeNormalPositions: function(groupPositions) {
+        var zeroTop = this._makeZeroTop(this.bound.dimension);
+        return tui.util.map(groupPositions, function(positions) {
+            return tui.util.map(positions, function(position, index) {
+                position.startTop = zeroTop;
+                return position;
+            });
+        });
+    },
+
+    _makePositions: function(dimension) {
+        var groupPositions = this._makeBasicPositions(dimension);
+
+        if (this.options.stacked) {
+            groupPositions = this._makeStackedPositions(groupPositions);
+        } else {
+            groupPositions = this._makeNormalPositions(groupPositions);
+        }
+
+        return groupPositions;
+    },
+
+    _makeZeroTop: function(dimension) {
+        var limit = this.data.limit,
+            limitDistance = this.getLimitDistanceFromZeroPoint(dimension.height, limit),
+            zeroTop = limitDistance.toMax;
+
+        if (limit.min >= 0 && !zeroTop) {
+            zeroTop = dimension.height;
+        }
+
+        return zeroTop;
+    },
+
     /**
      * Make series data.
      * @param {{
@@ -33,17 +90,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @returns {object} series data
      */
     makeSeriesData: function(bound) {
-        var dimension = bound.dimension,
-            limitDistance = this.getLimitDistanceFromZeroPoint(dimension.height, this.data.limit),
-            zeroTop = limitDistance.toMax;
-
-        if (this.data.limit.min >= 0 && !zeroTop) {
-            zeroTop = dimension.height;
-        }
-
         return {
-            groupPositions: this._makePositions(dimension),
-            zeroTop: zeroTop
+            groupPositions: this._makePositions(bound.dimension)
         };
     }
 });

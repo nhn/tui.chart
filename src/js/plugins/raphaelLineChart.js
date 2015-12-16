@@ -191,12 +191,12 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      */
     selectLegend: function(legendIndex, isDelayShow) {
         var that = this,
-            isNull = tui.util.isNull(legendIndex);
+            isWithoutSelection = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
         raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var opacity = (isNull || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
+            var opacity = (isWithoutSelection || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
                 line;
 
             if (index) {
