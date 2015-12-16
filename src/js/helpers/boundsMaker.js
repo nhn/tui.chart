@@ -272,11 +272,11 @@ var boundsMaker = {
     },
 
     /**
-     * Get full legend labels.
+     * Get whole legend labels.
      * @returns {array.<string>} labels
      * @private
      */
-    _getFullLegendLabels: function() {
+    _getWholeLegendLabels: function() {
         return tui.util.map(this.dataProcessor.getWholeLegendData(), function(item) {
             return item.label;
         });
@@ -290,7 +290,7 @@ var boundsMaker = {
      * @private
      */
     _makeHorizontalLegendDimension: function(chartWidth, labelTheme) {
-        var labels = this._getFullLegendLabels(),
+        var labels = this._getWholeLegendLabels(),
             labelsAndMaxWidth = this._makeDividedLabelsAndMaxLineWidth(labels, chartWidth, labelTheme),
             legendHeight = this._calculateHorizontalLegendHeight(labelsAndMaxWidth.dividedLabels, labelTheme) + (chartConst.LEGEND_AREA_PADDING * 2);
 
@@ -307,7 +307,7 @@ var boundsMaker = {
      * @private
      */
     _makeVerticalLegendDimension: function(labelTheme) {
-        var labels = this._getFullLegendLabels(),
+        var labels = this._getWholeLegendLabels(),
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, labelTheme),
             legendWidth = this._makeLegendWidth(maxLabelWidth);
         return {
