@@ -115,7 +115,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             barSize = this._makeBarSize(groupSize, barGutter, itemCount),
             optionSize = this._makeOptionSize(barSize, this.options.barWidth),
             additionPadding = this._makeAdditionPadding(barSize, optionSize, itemCount),
-            limitDistance = this.getLimitDistanceFromZeroPoint(dimension[sizeType], this.data.limit);
+            limitDistance = this._getLimitDistanceFromZeroPoint(dimension[sizeType], this.data.limit);
 
         barSize = optionSize || barSize;
 

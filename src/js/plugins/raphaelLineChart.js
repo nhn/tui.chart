@@ -81,6 +81,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             var fromPos = positions[0],
                 rest = positions.slice(1);
 
+            fromPos.left -= 1;
             return tui.util.map(rest, function(position) {
                 var result = this.makeLinePath(fromPos, position);
                 fromPos = position;

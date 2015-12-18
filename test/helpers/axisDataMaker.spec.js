@@ -64,8 +64,8 @@ describe('axisDataMaker', function() {
                 [70, 10],
                 [20, 20],
                 [80, 30]
-            ], 'normal');
-            expect(values).toEqual([70, 10, 20, 20, 80, 30, 80, 40, 110]);
+            ], true, 'normal');
+            expect(values).toEqual([70, 10, 80, 20, 20, 40, 80, 30, 110]);
         });
     });
 
@@ -579,6 +579,7 @@ describe('axisDataMaker', function() {
                     height: 320
                 },
                 stacked: 'normal',
+                chartType: 'column',
                 options: {}
             });
 
@@ -609,6 +610,7 @@ describe('axisDataMaker', function() {
                     height: 320
                 },
                 stacked: 'percent',
+                chartType: 'bar',
                 options: {}
             });
 

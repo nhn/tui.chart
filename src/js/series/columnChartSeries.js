@@ -97,7 +97,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var endHeight, endTop, startEndTops, bound;
 
         endHeight = Math.abs(value * baseInfo.dimension.height);
-        endTop = baseInfo.isMinus ? 0 : baseInfo.dimension.height - baseInfo.distanceToMin;
+        endTop = (baseInfo.isMinus ? 0 : baseInfo.dimension.height - baseInfo.distanceToMin) + chartConst.SERIES_EXPAND_SIZE;
         startEndTops = this._makeStartEndTops(endTop, endHeight, value);
         bound = this._makeColumnChartBound(tui.util.extend({
             baseBound: {
@@ -148,7 +148,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         barWidth = optionWidth || barWidth;
         bounds = tui.util.map(groupValues, function(values, groupIndex) {
             var paddingLeft = (groupWidth * groupIndex) + additionPadding + chartConst.SERIES_EXPAND_SIZE,
-                top = 0;
+                top = -chartConst.SERIES_EXPAND_SIZE;
             return tui.util.map(values, function (value) {
                 var endHeight, baseBound, bound;
                 if (value < 0) {
@@ -162,7 +162,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 };
                 bound = this._makeColumnChartBound({
                     baseBound: baseBound,
-                    startTop: dimension.height,
+                    startTop: dimension.height + chartConst.SERIES_EXPAND_SIZE,
                     endTop: dimension.height - endHeight - top,
                     endHeight: endHeight
                 });

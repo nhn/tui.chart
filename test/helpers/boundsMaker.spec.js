@@ -1000,7 +1000,7 @@ describe('boundsMaker', function() {
             expect(actual.xAxis.position.top).toBe(330);
             expect(actual.legend.position.top).toBe(40);
             expect(actual.legend.position.left).toBe(393);
-            expect(actual.tooltip.position.top).toBe(50);
+            expect(actual.tooltip.position.top).toBe(40);
             expect(actual.tooltip.position.left).toBe(97);
         });
     });

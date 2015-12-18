@@ -919,7 +919,7 @@ var boundsMaker = {
             chart: this._makeChartBound(dimensions.chart),
             series: seriesBound,
             legend: this._makeLegendBound(dimensions, legendOption),
-            tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
+            tooltip: this._makeBasicBound(dimensions.series, top - chartConst.SERIES_EXPAND_SIZE, left - chartConst.SERIES_EXPAND_SIZE),
             customEvent: seriesBound
         }, axesBounds);
 

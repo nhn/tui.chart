@@ -349,8 +349,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} size chart size (width or height)
      * @param {{min: number, max: number}} limit limit
      * @returns {{toMax: number, toMin: number}} pixel distance
+     * @private
      */
-    getLimitDistanceFromZeroPoint: function(size, limit) {
+    _getLimitDistanceFromZeroPoint: function(size, limit) {
         var min = limit.min,
             max = limit.max,
             distance = max - min,

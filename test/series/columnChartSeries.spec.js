@@ -25,14 +25,6 @@ describe('ColumnChartSeries', function() {
     beforeEach(function() {
         series = new ColumnChartSeries({
             chartType: 'column',
-            data: {
-                values: [],
-                formattedValues: [],
-                limit: {min: 0, max: 0}
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -43,7 +35,12 @@ describe('ColumnChartSeries', function() {
         });
 
         series.dataProcessor = dataProcessor;
-
+        series.data = {
+            limit: {
+                min: 0,
+                max: 100
+            }
+        };
         spyOn(series, '_getPercentValues');
     });
 
@@ -113,13 +110,13 @@ describe('ColumnChartSeries', function() {
                 expected = {
                     start: {
                         left: 20,
-                        top: 200,
+                        top: 210,
                         width: 30,
                         height: 0
                     },
                     end: {
                         left: 20,
-                        top: 140,
+                        top: 150,
                         width: 30,
                         height: 60
                     }
@@ -161,15 +158,15 @@ describe('ColumnChartSeries', function() {
 
             // 0점의 위치가 top 240임
             // 음수의 경우 height만 변화됨
-            expect(result[0][0].start.top).toBe(240);
+            expect(result[0][0].start.top).toBe(250);
             expect(result[0][0].start.height).toBe(0);
-            expect(result[0][0].end.top).toBe(240);
+            expect(result[0][0].end.top).toBe(250);
             expect(result[0][0].end.height).toBe(100);
 
             // 양수의 경우는 top, height 값이 같이 변함
-            expect(result[1][0].start.top).toBe(240);
+            expect(result[1][0].start.top).toBe(250);
             expect(result[1][0].start.height).toBe(0);
-            expect(result[1][0].end.top).toBe(40);
+            expect(result[1][0].end.top).toBe(50);
             expect(result[1][0].end.height).toBe(200);
         });
     });
@@ -184,13 +181,13 @@ describe('ColumnChartSeries', function() {
                 width: 100,
                 height: 400
             }, 1);
-            expect(bounds[0][0].end.top).toBe(320);
+            expect(bounds[0][0].end.top).toBe(330);
             expect(bounds[0][0].end.height).toBe(80);
 
-            expect(bounds[0][1].end.top).toBe(200);
+            expect(bounds[0][1].end.top).toBe(210);
             expect(bounds[0][1].end.height).toBe(120);
 
-            expect(bounds[0][2].end.top).toBe(0);
+            expect(bounds[0][2].end.top).toBe(10);
             expect(bounds[0][2].end.height).toBe(200);
         });
     });

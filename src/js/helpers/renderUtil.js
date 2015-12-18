@@ -323,11 +323,11 @@ var renderUtil = {
         return {
             dimension: {
                 width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
             },
             position: {
                 left: position.left - chartConst.SERIES_EXPAND_SIZE,
-                top: position.top
+                top: position.top - chartConst.SERIES_EXPAND_SIZE
             }
         };
     },

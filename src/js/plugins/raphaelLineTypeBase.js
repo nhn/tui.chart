@@ -214,7 +214,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     showGroupTooltipLine: function(bound) {
         var linePath = raphaelRenderUtil.makeLinePath({
             left: bound.position.left,
-            top: bound.dimension.height
+            top: bound.position.top + bound.dimension.height
         }, {
             left: bound.position.left,
             top: bound.position.top

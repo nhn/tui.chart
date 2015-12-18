@@ -191,7 +191,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             },
             position: {
                 left: range.start + chartConst.SERIES_EXPAND_SIZE,
-                top: 0
+                top: chartConst.SERIES_EXPAND_SIZE
             }
         };
     },
@@ -211,7 +211,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             },
             position: {
                 left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
-                top: range.start
+                top: range.start + chartConst.SERIES_EXPAND_SIZE
             }
         };
     },

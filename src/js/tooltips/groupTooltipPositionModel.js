@@ -151,7 +151,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             areaPosition: areaBound.position.top,
             areaSize: areaBound.dimension.height,
             chartSize: chartDimension.height,
-            basePosition: 0
+            basePosition: chartConst.SERIES_EXPAND_SIZE
         };
     },
 

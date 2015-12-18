@@ -74,7 +74,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         startLeft = baseInfo.distanceToMin + chartConst.SERIES_EXPAND_SIZE;
         endWidth = Math.abs(value * baseInfo.dimension.width);
         baseBound = {
-            top: paddingTop + ((baseInfo.step) * index),
+            top: paddingTop + ((baseInfo.step) * index) + chartConst.SERIES_EXPAND_SIZE,
             height: baseInfo.barSize
         };
         bound = this._makeBarChartBound({

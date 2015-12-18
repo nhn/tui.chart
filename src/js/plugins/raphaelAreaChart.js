@@ -12,8 +12,7 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
 var Raphael = window.Raphael,
     ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3,
-    ZERO_OPACITY = 0;
+    DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
 
@@ -49,6 +48,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             paper, groupAreas, tooltipLine, selectionDot, groupDots;
 
         this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.stackedOption = data.options.stacked;
 
         groupAreas = this._renderAreas(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
@@ -111,11 +111,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     _renderAreas: function(paper, groupPaths, colors) {
         var groupAreas = tui.util.map(groupPaths, function(paths, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
+            var areaColor = colors[groupIndex] || 'transparent',
+                lineColor = this.stackedOption ? '#ffffff' : areaColor;
+
             return tui.util.map(paths, function(path) {
                 var result = {
-                    area: this._renderArea(paper, path.area, color),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.start, '#ffffff')
+                    area: this._renderArea(paper, path.area, areaColor),
+                    line: raphaelRenderUtil.renderLine(paper, path.line.start, lineColor)
                 };
                 return result;
             }, this);
@@ -234,6 +236,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
+            fromPos.left -= 1;
             return tui.util.map(rest, function(position) {
                 var result = {
                     area: this._makeAreaPaths(fromPos, position),
@@ -375,6 +378,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
                 area.area[0].attr({'fill-opacity': opacity});
+                if (!that.stackedOption) {
+                    area.line.attr({'stroke-opacity': opacity});
+                }
             }
 
             if (that.dotOpacity) {

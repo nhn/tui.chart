@@ -24,6 +24,16 @@ var predicate = {
     },
 
     /**
+     * Whether column chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isColumnChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_COLUMN;
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -44,13 +54,23 @@ var predicate = {
     },
 
     /**
+     * Whether area chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAreaChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_AREA;
+    },
+
+    /**
      * Whether line type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
     isLineTypeChart: function(chartType) {
-        return this.isLineChart(chartType) || chartType === chartConst.CHART_TYPE_AREA;
+        return this.isLineChart(chartType) || this.isAreaChart(chartType);
     },
 
     /**
@@ -134,6 +154,18 @@ var predicate = {
             result = this.isOuterLegendAlign(align) || this.isCenterLegendAlign(align);
         }
         return result;
+    },
+
+    isAllowedStack: function(chartType) {
+        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isAreaChart(chartType);
+    },
+
+    isNormalStacked: function(stacked) {
+        return stacked === chartConst.STACKED_NORMAL_TYPE;
+    },
+
+    isPercentStacked: function(stacked) {
+        return stacked === chartConst.STACKED_PERCENT_TYPE;
     }
 };
 

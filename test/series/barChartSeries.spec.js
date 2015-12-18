@@ -25,12 +25,6 @@ describe('BarChartSeries', function() {
     beforeEach(function() {
         series = new BarChartSeries({
             chartType: 'bar',
-            data: {
-                limit: {min: 0, max: 0}
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -41,6 +35,12 @@ describe('BarChartSeries', function() {
         });
 
         series.dataProcessor = dataProcessor;
+        series.data = {
+            limit: {
+                min: 0,
+                max: 100
+            }
+        };
 
         spyOn(series, '_getPercentValues');
     });
@@ -88,17 +88,18 @@ describe('BarChartSeries', function() {
                 expected = {
                     start: {
                         left: 10,
-                        top: 10,
+                        top: 20,
                         width: 0,
                         height: 30
                     },
                     end: {
                         left: 10,
-                        top: 10,
+                        top: 20,
                         width: 120,
                         height: 30
                     }
                 };
+
             expect(actual).toEqual(expected);
         });
     });

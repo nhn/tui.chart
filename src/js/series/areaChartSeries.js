@@ -7,7 +7,8 @@
 'use strict';
 
 var Series = require('./series'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase');
+    LineTypeSeriesBase = require('./lineTypeSeriesBase'),
+    chartConst = require('../const');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
@@ -24,8 +25,32 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         Series.apply(this, arguments);
     },
 
+    /**
+     * Make position top of zero point.
+     * @param {{height: number}} dimension dimension
+     * @returns {number} position top
+     * @private
+     */
+    _makePositionTopOfZeroPoint: function(dimension) {
+        var limit = this.data.limit,
+            limitDistance = this._getLimitDistanceFromZeroPoint(dimension.height, limit),
+            top = limitDistance.toMax;
+
+        if (limit.min >= 0 && !top) {
+            top = dimension.height;
+        }
+
+        return top + chartConst.SERIES_EXPAND_SIZE;
+    },
+
+    /**
+     * Make stacked positions.
+     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
     _makeStackedPositions: function(groupPositions) {
-        var firstStartTop = this._makeZeroTop(this.bound.dimension),
+        var firstStartTop = this._makePositionTopOfZeroPoint(this.bound.dimension),
             prevPositionTops = [];
 
         return tui.util.map(groupPositions, function(positions) {
@@ -47,16 +72,28 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         });
     },
 
+    /**
+     * Make normal positions.
+     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
     _makeNormalPositions: function(groupPositions) {
-        var zeroTop = this._makeZeroTop(this.bound.dimension);
+        var zeroTop = this._makePositionTopOfZeroPoint(this.bound.dimension);
         return tui.util.map(groupPositions, function(positions) {
-            return tui.util.map(positions, function(position, index) {
+            return tui.util.map(positions, function(position) {
                 position.startTop = zeroTop;
                 return position;
             });
         });
     },
 
+    /**
+     * Make positions.
+     * @param {{width: number, height: number}} dimension dimension
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
     _makePositions: function(dimension) {
         var groupPositions = this._makeBasicPositions(dimension);
 
@@ -67,18 +104,6 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         }
 
         return groupPositions;
-    },
-
-    _makeZeroTop: function(dimension) {
-        var limit = this.data.limit,
-            limitDistance = this.getLimitDistanceFromZeroPoint(dimension.height, limit),
-            zeroTop = limitDistance.toMax;
-
-        if (limit.min >= 0 && !zeroTop) {
-            zeroTop = dimension.height;
-        }
-
-        return zeroTop;
     },
 
     /**

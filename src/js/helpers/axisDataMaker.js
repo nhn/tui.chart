@@ -93,20 +93,20 @@ var axisDataMaker = {
         var options = params.options || {},
             isVertical = !!params.isVertical,
             isPositionRight = !!params.isPositionRight,
+            isAllowedStack = predicate.isAllowedStack(params.chartType),
             formatFunctions = params.formatFunctions,
             tickInfo;
-        if (params.stacked === 'percent') {
+        if (isAllowedStack && predicate.isPercentStacked(params.stacked)) {
             tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             formatFunctions = [];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, params.stacked),
+                values: this._makeBaseValues(params.values, isAllowedStack, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
                 chartType: params.chartType
             }, options);
-            console.log('tickInfo', tickInfo);
         }
 
         return {
@@ -125,14 +125,15 @@ var axisDataMaker = {
      * Make base values.
      * @memberOf module:axisDataMaker
      * @param {array.<number>} groupValues group values
+     * @param {boolean} isAllowedStack whether allowed stack or not.
      * @param {string} stacked stacked option.
      * @returns {array.<number>} base values
      * @private
      */
-    _makeBaseValues: function(groupValues, stacked) {
+    _makeBaseValues: function(groupValues, isAllowedStack, stacked) {
         var baseValues;
 
-        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
+        if (isAllowedStack && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
                 var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;

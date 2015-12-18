@@ -29,7 +29,7 @@ describe('LineTypeSeriesBase', function() {
         series.dataProcessor = dataProcessor;
     });
 
-    describe('_makePositions()', function() {
+    describe('_makeBasicPositions()', function() {
         it('라인차트의 position 정보를 생성합니다.', function () {
             var actual;
 
@@ -38,7 +38,7 @@ describe('LineTypeSeriesBase', function() {
             series.data = {
                 aligned: false
             };
-            actual = series._makePositions({
+            actual = series._makeBasicPositions({
                 width: 300,
                 height: 200
             });
@@ -46,15 +46,15 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual([
                 [
                     {
-                        top: 150,
+                        top: 160,
                         left: 60
                     },
                     {
-                        top: 100,
+                        top: 110,
                         left: 160
                     },
                     {
-                        top: 120,
+                        top: 130,
                         left: 260
                     }
                 ]
@@ -69,7 +69,7 @@ describe('LineTypeSeriesBase', function() {
             series.data = {
                 aligned: true
             };
-            actual = series._makePositions({
+            actual = series._makeBasicPositions({
                 width: 300,
                 height: 200
             });
@@ -77,19 +77,65 @@ describe('LineTypeSeriesBase', function() {
             expect(actual).toEqual([
                 [
                     {
-                        top: 150,
+                        top: 160,
                         left: 10
                     },
                     {
-                        top: 100,
+                        top: 110,
                         left: 160
                     },
                     {
-                        top: 120,
+                        top: 130,
                         left: 310
                     }
                 ]
             ]);
+        });
+    });
+
+    describe('_makeLabelPositionTop()', function() {
+        it('stacked인 영역 차트(startTop 존재)의 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {
+                stacked: 'normal'
+            };
+
+            actual = series._makeLabelPositionTop({
+                top: 10,
+                startTop: 40
+            }, 20, 16);
+            expected = 18;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('stacked가 아니면서 value가 음수이며 영역차트(startTop이 존재)인 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {};
+
+            actual = series._makeLabelPositionTop({
+                top: 10,
+                startTop: 40
+            }, -30);
+            expected = 15;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('stacked가 아니면서 value가 양수인 라인타입 차트의 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {};
+
+            actual = series._makeLabelPositionTop({
+                top: 60,
+                startTop: 40
+            }, 30, 16);
+            expected = 39;
+
+            expect(actual).toBe(expected);
         });
     });
 

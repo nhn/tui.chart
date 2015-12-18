@@ -26,7 +26,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             height = dimension.height,
             len = groupValues[0].length,
             start = chartConst.SERIES_EXPAND_SIZE,
-            step, result;
+            step;
 
         if (this.data.aligned) {
             step = width / (len - 1);
@@ -35,18 +35,25 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             start += (step / 2);
         }
 
-        result = tui.util.map(groupValues, function(values) {
+        return tui.util.map(groupValues, function(values) {
             return tui.util.map(values, function(value, index) {
                 return {
                     left: start + (step * index),
-                    top: height - (value * height)
+                    top: height - (value * height) + chartConst.SERIES_EXPAND_SIZE
                 };
             });
         });
-        return result;
     },
 
-    _makePositionTop: function(position, value, labelHeight) {
+    /**
+     * Make label position top.
+     * @param {{top: number, startTop: number}} position position
+     * @param {number} value value
+     * @param {number} labelHeight label height
+     * @returns {number} position top
+     * @private
+     */
+    _makeLabelPositionTop: function(position, value, labelHeight) {
         var positionTop;
 
         if (this.options.stacked && position.startTop) {
@@ -90,7 +97,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                     labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
                     labelHtml = this.makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: this._makePositionTop(position, value, labelHeight)
+                        top: this._makeLabelPositionTop(position, value, labelHeight)
                     }, value, index, groupIndex);
                 }
                 return labelHtml;

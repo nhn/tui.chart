@@ -213,7 +213,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -231,7 +231,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -251,7 +251,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 9,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
