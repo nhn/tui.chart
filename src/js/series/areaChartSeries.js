@@ -79,10 +79,10 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makeNormalPositions: function(groupPositions) {
-        var zeroTop = this._makePositionTopOfZeroPoint(this.bound.dimension);
+        var startTop = this._makePositionTopOfZeroPoint(this.bound.dimension);
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position) {
-                position.startTop = zeroTop;
+                position.startTop = startTop;
                 return position;
             });
         });

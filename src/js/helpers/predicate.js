@@ -156,14 +156,29 @@ var predicate = {
         return result;
     },
 
-    isAllowedStack: function(chartType) {
+    /**
+     * Whether allowed stacked option or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAllowedStackedOption: function(chartType) {
         return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isAreaChart(chartType);
     },
 
+    /**
+     * Whether normal stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
     isNormalStacked: function(stacked) {
         return stacked === chartConst.STACKED_NORMAL_TYPE;
     },
 
+    /**
+     * Whether percent stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
     isPercentStacked: function(stacked) {
         return stacked === chartConst.STACKED_PERCENT_TYPE;
     }

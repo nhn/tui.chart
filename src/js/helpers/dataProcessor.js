@@ -680,14 +680,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     setPercentValues: function(limit, stacked, chartType) {
         var result,
             groupValues = this.getGroupValues(chartType),
-            isAllowedStack = predicate.isAllowedStack(chartType),
+            isAllowedStackedOption = predicate.isAllowedStackedOption(chartType),
             isLineTypeChart = predicate.isLineTypeChart(chartType);
 
         if (predicate.isPieChart(chartType)) {
             result = this._makePieChartPercentValues(groupValues);
-        } else if (isAllowedStack && predicate.isNormalStacked(stacked)) {
+        } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
-        } else if (isAllowedStack && predicate.isPercentStacked(stacked)) {
+        } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             result = this._makePercentStackedPercentValues(groupValues);
         } else {
             result = this._makeNormalPercentValues(groupValues, limit, isLineTypeChart);

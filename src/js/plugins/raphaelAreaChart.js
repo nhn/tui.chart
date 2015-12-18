@@ -363,13 +363,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     selectLegend: function(legendIndex) {
         var that = this,
-            isWithoutSelection = tui.util.isNull(legendIndex);
+            noneSelected = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
         raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
             var area, opacity;
 
-            if (isWithoutSelection || legendIndex === groupIndex) {
+            if (noneSelected || legendIndex === groupIndex) {
                 opacity = EMPHASIS_OPACITY;
             } else {
                 opacity = DE_EMPHASIS_OPACITY;

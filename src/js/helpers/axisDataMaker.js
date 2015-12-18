@@ -93,15 +93,15 @@ var axisDataMaker = {
         var options = params.options || {},
             isVertical = !!params.isVertical,
             isPositionRight = !!params.isPositionRight,
-            isAllowedStack = predicate.isAllowedStack(params.chartType),
+            isAllowedStackedOption = predicate.isAllowedStackedOption(params.chartType),
             formatFunctions = params.formatFunctions,
             tickInfo;
-        if (isAllowedStack && predicate.isPercentStacked(params.stacked)) {
+        if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
             tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             formatFunctions = [];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, isAllowedStack, params.stacked),
+                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
@@ -125,15 +125,15 @@ var axisDataMaker = {
      * Make base values.
      * @memberOf module:axisDataMaker
      * @param {array.<number>} groupValues group values
-     * @param {boolean} isAllowedStack whether allowed stack or not.
+     * @param {boolean} isAllowedStackedOption whether allowed stacked option or not.
      * @param {string} stacked stacked option.
      * @returns {array.<number>} base values
      * @private
      */
-    _makeBaseValues: function(groupValues, isAllowedStack, stacked) {
+    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
         var baseValues;
 
-        if (isAllowedStack && predicate.isNormalStacked(stacked)) {
+        if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
                 var plusValues = tui.util.filter(values, function(value) {
                     return value > 0;
