@@ -105,33 +105,52 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
+     * Make rendering data about legend item.
+     * @param {array.<string>} values values
+     * @returns {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
+     * @private
+     */
+    _makeItemRenderingData: function(values) {
+        return tui.util.map(values, function(value, index) {
+            var legendLabel = this.joinLegendLabels[index];
+            return {
+                value: value,
+                legend: legendLabel.label,
+                chartType: legendLabel.chartType,
+                suffix: this.suffix
+            };
+        }, this);
+    },
+
+    /**
      * Make tooltip html.
      * @param {number} groupIndex group index
      * @returns {string} tooltip html
      * @private
      */
     _makeTooltipHtml: function(groupIndex) {
-        var item = this.data[groupIndex],
+        var data = this.data[groupIndex],
             template = tooltipTemplate.tplGroupItem,
             cssTextTemplate = tooltipTemplate.tplGroupCssText,
             colors = this._makeColors(this.joinLegendLabels, this.theme),
-            itemsHtml;
+            items = this._makeItemRenderingData(data.values),
+            html, itemsHtml;
 
-        itemsHtml = tui.util.map(item.values, function(value, index) {
-            var legendLabel = this.joinLegendLabels[index];
-            return template({
-                value: value,
-                legend: legendLabel.label,
-                chartType: legendLabel.chartType,
-                cssText: cssTextTemplate({color: colors[index]}),
-                suffix: this.suffix
+        if (this.options.template) {
+            html = this.options.template(data.category, items);
+        } else {
+            itemsHtml = tui.util.map(items, function(item, index) {
+                return template(tui.util.extend({
+                    cssText: cssTextTemplate({color: colors[index]})
+                }, item));
+            }, this).join('');
+
+            html = tooltipTemplate.tplGroup({
+                category: data.category,
+                items: itemsHtml
             });
-        }, this).join('');
-
-        return tooltipTemplate.tplGroup({
-            category: item.category,
-            items: itemsHtml
-        });
+        }
+        return html;
     },
 
     /**
