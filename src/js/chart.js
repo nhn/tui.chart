@@ -92,7 +92,7 @@ _createChart = function(container, data, options) {
  *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} options.tooltip.template template of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
  *              @param {number} options.tooltip.position.left position left
@@ -172,7 +172,7 @@ tui.chart.barChart = function(container, data, options) {
  *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} options.tooltip.template template of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
  *              @param {number} options.tooltip.position.left position left
@@ -251,7 +251,7 @@ tui.chart.columnChart = function(container, data, options) {
  *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} options.tooltip.template template of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
  *              @param {number} options.tooltip.position.left position left
@@ -333,7 +333,7 @@ tui.chart.lineChart = function(container, data, options) {
  *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} options.tooltip.template template of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
  *              @param {number} options.tooltip.position.left position left
@@ -419,7 +419,7 @@ tui.chart.areaChart = function(container, data, options) {
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
  *              @param {string} options.tooltip.column.suffix suffix of tooltip
- *              @param {function} options.tooltip.column.template template of tooltip
+ *              @param {function} [options.tooltip.column.template] template of tooltip
  *              @param {string} options.tooltip.column.align tooltip align option
  *              @param {object} options.tooltip.column.position relative position
  *                  @param {number} options.tooltip.column.position.left position left
@@ -506,7 +506,7 @@ tui.chart.comboChart = function(container, data, options) {
  *          @param {boolean} options.series.hasSelection whether has selection or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} options.tooltip.template template of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
  *              @param {number} options.tooltip.position.left position left
