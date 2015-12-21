@@ -130,41 +130,17 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeStackedColumnChartBounds: function(dimension) {
-        var groupValues, groupWidth, barWidth,
-            optionWidth, additionPadding, bounds;
-
-        groupValues = this._getPercentValues();
-        groupWidth = (dimension.width / groupValues.length);
-        barWidth = groupWidth / 2;
-        optionWidth = this._makeOptionSize(barWidth, this.options.barWidth);
-        additionPadding = this._makeAdditionPadding(barWidth, optionWidth, 1);
-        barWidth = optionWidth || barWidth;
-        bounds = tui.util.map(groupValues, function(values, groupIndex) {
-            var paddingLeft = (groupWidth * groupIndex) + additionPadding + chartConst.SERIES_EXPAND_SIZE,
-                top = -chartConst.SERIES_EXPAND_SIZE;
-            return tui.util.map(values, function (value) {
-                var endHeight, baseBound, bound;
-
-                if (value < 0) {
-                    return null;
-                }
-
-                endHeight = value * dimension.height;
-                baseBound = {
-                    left: paddingLeft,
-                    width: barWidth
-                };
-                bound = this._makeColumnChartBound({
+        var that = this,
+            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'height'),
+            bounds = this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
+                return that._makeColumnChartBound({
                     baseBound: baseBound,
                     startTop: dimension.height + chartConst.SERIES_EXPAND_SIZE,
-                    endTop: dimension.height - endHeight - top,
-                    endHeight: endHeight
+                    endTop: dimension.height - endSize - endPosition,
+                    endHeight: endSize
                 });
+            });
 
-                top += endHeight;
-                return bound;
-            }, this);
-        }, this);
         return bounds;
     },
 

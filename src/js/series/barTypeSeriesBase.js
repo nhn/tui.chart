@@ -154,6 +154,74 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
+     * Make base info for stacked chart bounds.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {string} sizeType size type (width or height)
+     * @returns {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} base info
+     * @private
+     */
+    _makeBaseInfoForStackedChartBounds: function(dimension, sizeType) {
+        var baseBound = {},
+            groupSize, barWidth, optionWidth, additionPadding,
+            anotherSizeType, positionTop, baseEndPosition;
+
+        if (sizeType === 'height') {
+            anotherSizeType = 'width';
+            positionTop = 'left';
+            baseEndPosition = -chartConst.SERIES_EXPAND_SIZE;
+        } else {
+            anotherSizeType = 'height';
+            positionTop = 'top';
+            baseEndPosition = chartConst.SERIES_EXPAND_SIZE;
+        }
+
+        groupSize = (dimension[anotherSizeType] / this._getPercentValues().length);
+        barWidth = groupSize / 2;
+        optionWidth = this._makeOptionSize(barWidth, this.options.barWidth);
+        additionPadding = this._makeAdditionPadding(barWidth, optionWidth, 1);
+        baseBound[anotherSizeType] = optionWidth || barWidth;
+
+        return {
+            groupSize: groupSize,
+            baseBound: baseBound,
+            additionPadding: additionPadding + chartConst.SERIES_EXPAND_SIZE,
+            dimensionSize: dimension[sizeType],
+            positionType: positionTop,
+            baseEndPosition: baseEndPosition
+        };
+    },
+
+    /**
+     * Make bounds of stacked column chart.
+     * @param {{width: number, height:number}} dimension column chart dimension
+     * @param {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} baseInfo base info
+     * @param {function} makeBoundFunc make bound function
+     * @returns {array.<array.<object>>} bounds
+     * @private
+     */
+    _makeStackedBounds: function(dimension, baseInfo, makeBoundFunc) {
+        var bounds = tui.util.map(this._getPercentValues(), function(values, groupIndex) {
+            var padding = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding,
+                endPosition = baseInfo.baseEndPosition;
+            return tui.util.map(values, function (value) {
+                var bound = null,
+                    endSize;
+
+                if (value >= 0) {
+                    endSize = value * baseInfo.dimensionSize;
+                    baseInfo.baseBound[baseInfo.positionType] = padding;
+                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPosition);
+                    endPosition += endSize;
+                }
+
+                return bound;
+            }, this);
+        }, this);
+
+        return bounds;
+    },
+
+    /**
      * Render normal series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container

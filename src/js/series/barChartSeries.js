@@ -107,44 +107,18 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeStackedBarChartBounds: function(dimension) {
-        var groupValues, groupHeight, barHeight,
-            optionHeight, additionPadding, bounds;
+        var that = this,
+            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'width');
 
-        groupValues = this._getPercentValues();
-        groupHeight = (dimension.height / groupValues.length);
-        barHeight = groupHeight / 2;
-        optionHeight = this._makeOptionSize(barHeight, this.options.barWidth);
-        additionPadding = this._makeAdditionPadding(barHeight, optionHeight, 1);
-        barHeight = optionHeight || barHeight;
-        bounds = tui.util.map(groupValues, function (values, groupIndex) {
-            var paddingTop = (groupHeight * groupIndex) + additionPadding,
-                endLeft = chartConst.SERIES_EXPAND_SIZE;
-            return tui.util.map(values, function (value) {
-                var endWidth, baseBound, bound;
-
-                if (value < 0) {
-                    return null;
-                }
-
-                endWidth = value * dimension.width;
-                baseBound = {
-                    top: paddingTop,
-                    height: barHeight
-                };
-                bound = this._makeBarChartBound({
-                    baseBound: baseBound,
-                    startLeft: chartConst.SERIES_EXPAND_SIZE,
-                    endLeft: endLeft,
-                    endWidth: endWidth
-                });
-
-                endLeft += endWidth;
-                return bound;
-            }, this);
-        }, this);
-        return bounds;
+        return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
+            return that._makeBarChartBound({
+                baseBound: baseBound,
+                startLeft: chartConst.SERIES_EXPAND_SIZE,
+                endLeft: endPosition,
+                endWidth: endSize
+            });
+        });
     },
-
 
     /**
      * Make bounds of bar chart.
