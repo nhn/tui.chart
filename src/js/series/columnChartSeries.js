@@ -117,15 +117,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeNormalColumnChartBounds: function(dimension) {
-        var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'height', 'width'),
-            bounds;
-
-        bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
-            var paddingLeft = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
-            return tui.util.map(values, function (value, index) {
-                return this._makeNormalColumnChartBound(baseInfo, value, paddingLeft, index);
-            }, this);
-        }, this);
+        var baseInfo = this._makeBaseInfoForNormalChartBounds(dimension, 'height', 'width'),
+            bounds = this._makeNormalBounds(baseInfo, tui.util.bind(this._makeNormalColumnChartBound, this));
 
         return bounds;
     },
@@ -151,6 +144,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 top = -chartConst.SERIES_EXPAND_SIZE;
             return tui.util.map(values, function (value) {
                 var endHeight, baseBound, bound;
+
                 if (value < 0) {
                     return null;
                 }
@@ -223,14 +217,14 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      *      @param {number} params.labelHeight label height
      * @returns {string} sum label html
      */
-    makeSumLabelHtml: function(params) {
-        var sum = this.makeSumValues(params.values),
+    _makeSumLabelHtml: function(params) {
+        var sum = this._makeSumValues(params.values),
             bound = params.bound,
             labelWidth = renderUtil.getRenderedLabelWidth(sum, this.theme.label),
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
             top = bound.top - params.labelHeight - chartConst.SERIES_LABEL_PADDING;
 
-        return this.makeSeriesLabelHtml({
+        return this._makeSeriesLabelHtml({
             left: left,
             top: top
         }, sum, -1, -1);

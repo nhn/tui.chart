@@ -131,21 +131,14 @@ var axisDataMaker = {
      * @private
      */
     _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
-        var baseValues;
-
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
-                var plusValues = tui.util.filter(values, function(value) {
-                    return value > 0;
-                });
-                plusValues.push(tui.util.sum(plusValues));
-                return plusValues;
-            });
+                var sum = calculator.sumPlusValues(values);
+                return values.concat([sum]);
+            }, this);
         }
 
-        baseValues = concat.apply([], groupValues);
-
-        return baseValues;
+        return concat.apply([], groupValues);
     },
 
     /**

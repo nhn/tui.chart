@@ -28,7 +28,7 @@ describe('BarTypeSeriesBase', function() {
             top: 0
         });
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        makeSumLabelHtml = jasmine.createSpy('makeSumLabelHtml').and.returnValue('<div></div>');
+        makeSumLabelHtml = jasmine.createSpy('_makeSumLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {
@@ -41,8 +41,8 @@ describe('BarTypeSeriesBase', function() {
         };
         series.dataProcessor = dataProcessor;
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
-        series.makeSumLabelHtml = makeSumLabelHtml;
-        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makeSumLabelHtml = makeSumLabelHtml;
+        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
     });
 
     describe('_makeBarGutter()', function() {
@@ -125,9 +125,9 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('makeSumValues()', function() {
+    describe('_makeSumValues()', function() {
         it('[10, 20, 30] values의 합은 60입니다.', function() {
-            var actual = series.makeSumValues([10, 20, 30]);
+            var actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe(60);
         });
 
@@ -136,7 +136,7 @@ describe('BarTypeSeriesBase', function() {
 
             dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
 
-            actual = series.makeSumValues([10, 20, 30]);
+            actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe('0060');
         });
     });

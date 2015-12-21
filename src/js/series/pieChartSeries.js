@@ -324,7 +324,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     options: params.options
                 }),
                 position = params.funcMoveToPosition(positions[index], label);
-            return this.makeSeriesLabelHtml(position, label, 0, index);
+            return this._makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
         seriesLabelContainer.innerHTML = html;
     },

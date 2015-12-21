@@ -7,7 +7,8 @@
 'use strict';
 
 var chartConst = require('../const'),
-    renderUtil = require('../helpers/renderUtil');
+    renderUtil = require('../helpers/renderUtil'),
+    calculator = require('../helpers/calculator');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
@@ -106,8 +107,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} base info
+     * @private
      */
-    makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
+    _makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
         var groupValues = this._getPercentValues(),
             groupSize = dimension[anotherSizeType] / groupValues.length,
             itemCount = groupValues[0] && groupValues[0].length || 0,
@@ -121,7 +123,6 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             dimension: dimension,
-            groupValues: groupValues,
             groupSize: groupSize,
             barSize: barSize,
             additionPadding: additionPadding,
@@ -129,6 +130,27 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             distanceToMin: limitDistance.toMin,
             isMinus: this.data.limit.min < 0 && this.data.limit.max <= 0
         };
+    },
+
+    /**
+     * Make normal bounds.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      groupValues: array.<array.<number>>,
+     *      groupSize: number, barSize: number, step: number,
+     *      distanceToMin: number, isMinus: boolean
+     * }} baseInfo base info
+     * @param {function} iteratee iteratee
+     * @returns {array} bounds
+     * @private
+     */
+    _makeNormalBounds: function(baseInfo, iteratee) {
+        return tui.util.map(this._getPercentValues(), function(values, groupIndex) {
+            var padding = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
+            return tui.util.map(values, function (value, index) {
+                return iteratee(baseInfo, value, padding, index);
+            }, this);
+        }, this);
     },
 
     /**
@@ -156,7 +178,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                     formattedValue: formattedValue,
                     labelHeight: labelHeight
                 });
-                return this.makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
+                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
             }, this).join('');
         }, this).join('');
 
@@ -165,13 +187,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Make sum values.
+     * @param {array.<number>} values values
      * @returns {number} sum result.
      */
-    makeSumValues: function(values) {
+    _makeSumValues: function(values) {
         var formatFunctions = this.dataProcessor.getFormatFunctions(),
-            sum = tui.util.sum(tui.util.filter(values, function(value) {
-                return value > 0;
-            })),
+            sum = calculator.sumPlusValues(values),
             fns = [sum].concat(formatFunctions || []);
 
         return tui.util.reduce(fns, function(stored, fn) {
@@ -204,7 +225,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
             top = bound.top + ((bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2);
-            labelHtml = this.makeSeriesLabelHtml({
+            labelHtml = this._makeSeriesLabelHtml({
                 left: left,
                 top: top
             }, formattedValue, params.groupIndex, index);
@@ -212,7 +233,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         }, this);
 
         if (this.options.stacked === 'normal' && bound) {
-            htmls.push(this.makeSumLabelHtml({
+            htmls.push(this._makeSumLabelHtml({
                 values: values,
                 bound: bound,
                 labelHeight: params.labelHeight

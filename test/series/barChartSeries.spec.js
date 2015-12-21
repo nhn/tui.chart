@@ -247,9 +247,9 @@ describe('BarChartSeries', function() {
         });
     });
 
-    describe('makeSumLabelHtml', function() {
+    describe('_makeSumLabelHtml', function() {
         it('합계 label html을 생성합니다.', function() {
-            var actual = series.makeSumLabelHtml({
+            var actual = series._makeSumLabelHtml({
                     values: [10, 20, 30],
                     bound: {
                         left: 10,

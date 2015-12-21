@@ -472,8 +472,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
+     * @private
      */
-    makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
         if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
             cssObj.opacity = this._makeOpacityCssText(0.3);

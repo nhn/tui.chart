@@ -6,9 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('./predicate'),
-    renderUtil = require('./renderUtil');
+var predicate = require('./predicate'),
+    renderUtil = require('./renderUtil'),
+    calculator = require('./calculator');
 
 var concat = Array.prototype.concat;
 
@@ -597,10 +597,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             max = limit.max,
             distance = max - min,
             percentValues = tui.util.map(groupValues, function(values) {
-                var plusValues = tui.util.filter(values, function(value) {
-                        return value > 0;
-                    }),
-                    sum = tui.util.sum(plusValues),
+                var sum = calculator.sumPlusValues(values),
                     groupPercent = (sum - min) / distance;
                 return tui.util.map(values, function(value) {
                     return sum === 0 ? 0 : groupPercent * (value / sum);
@@ -618,10 +615,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _makePercentStackedPercentValues: function(groupValues) {
         var percentValues = tui.util.map(groupValues, function(values) {
-            var plusValues = tui.util.filter(values, function(value) {
-                    return value > 0;
-                }),
-                sum = tui.util.sum(plusValues);
+            var sum = calculator.sumPlusValues(values);
             return tui.util.map(values, function(value) {
                 return sum === 0 ? 0 : value / sum;
             });

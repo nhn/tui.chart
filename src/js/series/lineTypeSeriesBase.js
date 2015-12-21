@@ -95,7 +95,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
                 if (position.top !== position.startTop) {
                     labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
-                    labelHtml = this.makeSeriesLabelHtml({
+                    labelHtml = this._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
                         top: this._makeLabelPositionTop(position, value, labelHeight)
                     }, value, index, groupIndex);

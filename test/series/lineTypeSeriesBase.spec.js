@@ -24,7 +24,7 @@ describe('LineTypeSeriesBase', function() {
 
     beforeEach(function() {
         series = new LineTypeSeriesBase();
-        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series._getPercentValues = _getPercentValues;
         series.dataProcessor = dataProcessor;
     });
