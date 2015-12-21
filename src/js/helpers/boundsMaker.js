@@ -833,7 +833,15 @@ var boundsMaker = {
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
-    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount, chartType) {
+    /**
+     * Calculate limit width of x axis.
+     * @param {number} seriesWidth series width
+     * @param {number} labelCount label count
+     * @param {string} chartType chart type
+     * @returns {number} limit width
+     * @private
+     */
+    _calculateXAxisLabelLimitWidth: function(seriesWidth, labelCount, chartType) {
         var isAlign = predicate.isLineTypeChart(chartType);
         return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
@@ -891,7 +899,7 @@ var boundsMaker = {
 
 
         if (params.hasAxes) {
-            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length, params.options.chartType);
+            limitWidth = this._calculateXAxisLabelLimitWidth(dimensions.series.width, axesLabelInfo.xAxis.length, params.options.chartType);
 
             if (xAxisOptions.rotation !== false) {
                 rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, axesLabelInfo.xAxis, params.theme.xAxis.label);
