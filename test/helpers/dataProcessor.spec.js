@@ -284,7 +284,7 @@ describe('test DataProcessor', function() {
                     fontSize: 12,
                     fontFamily: 'Verdana'
                 }),
-                expected = 'ABCDE</br>FGHIJK</br>HIJKLMN';
+                expected = 'ABCDE<br>FGHIJK<br>HIJKLMN';
             expect(actual).toBe(expected);
         });
 
@@ -299,7 +299,7 @@ describe('test DataProcessor', function() {
     });
 
     describe('getMultilineCategories()', function() {
-        it('cateogry들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
+        it('category들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
             var actual, expected;
 
             dataProcessor.data = {
@@ -310,7 +310,7 @@ describe('test DataProcessor', function() {
                 fontSize: 12,
                 fontFamily: 'Verdana'
             });
-            expected = ['ABCDEF</br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
+            expected = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
 
             expect(actual).toEqual(expected);
         });
@@ -319,7 +319,7 @@ describe('test DataProcessor', function() {
             var actual, expected;
 
             dataProcessor.data = {
-                multilineCategories: ['ABCDEF</br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
+                multilineCategories: ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
             };
 
             actual = dataProcessor.getMultilineCategories(50, {

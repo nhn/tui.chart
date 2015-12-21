@@ -530,12 +530,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makeMultilineCategory: function(category, limitWidth, theme) {
-        var words = category.split(' '),
+        var words = category.split(/\s+/),
             lineWords = words[0],
             lines = [];
 
         tui.util.forEachArray(words.slice(1), function(word) {
             var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+
             if (width > limitWidth) {
                 lines.push(lineWords);
                 lineWords = word;
@@ -548,7 +549,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             lines.push(lineWords);
         }
 
-        return lines.join('</br>');
+        return lines.join('<br>');
     },
 
     /**

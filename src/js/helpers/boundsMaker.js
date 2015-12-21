@@ -833,8 +833,9 @@ var boundsMaker = {
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
-    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount) {
-        return seriesWidth / (labelCount - 1);
+    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount, chartType) {
+        var isAlign = predicate.isLineTypeChart(chartType);
+        return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
 
     /**
@@ -890,10 +891,12 @@ var boundsMaker = {
 
 
         if (params.hasAxes) {
-            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length);
+            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length, params.options.chartType);
+
             if (xAxisOptions.rotation !== false) {
                 rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, axesLabelInfo.xAxis, params.theme.xAxis.label);
             }
+
             this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.xAxis.label, limitWidth);
         }
 

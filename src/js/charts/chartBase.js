@@ -26,9 +26,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     init: function(params) {
         /**
          * data processor
-         * @type {object}
+         * @type {DataProcessor}
          */
-        this.dataProcessor = this._getDataProcessor(params);
+        this.dataProcessor = this._createDataProcessor(params);
 
         /**
          * component array
@@ -90,7 +90,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Get data processor.
+     * Create dataProcessor.
      * @param {object} params parameters
      *      @params {object} rawData raw data
      *      @params {{chart: object, chartType: string}} options chart options
@@ -98,7 +98,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {object} data processor
      * @private
      */
-    _getDataProcessor: function(params) {
+    _createDataProcessor: function(params) {
         var dataProcessor = new DataProcessor(params.rawData),
             options = params.options;
 
