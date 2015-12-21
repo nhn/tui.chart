@@ -24,7 +24,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render function of pie chart.
      * @param {HTMLElement} container container
-     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorData: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {object} callbacks callbacks
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
@@ -98,7 +98,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render pie graph.
      * @param {object} paper raphael paper
-     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorData: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {object} callbacks callbacks
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
@@ -111,13 +111,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             chartBackground = data.chartBackground,
             sectors = [];
 
-        tui.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
-            var percentValue = sectorInfo.percentValue,
+        tui.util.forEachArray(data.sectorData, function(sectorDatum, index) {
+            var percentValue = sectorDatum.percentValue,
                 color = colors[index],
                 sector = this._renderSector({
                     paper: paper,
                     circleBound: circleBound,
-                    angles: sectorInfo.angles.start,
+                    angles: sectorDatum.angles.start,
                     attrs: {
                         fill: color,
                         stroke: chartBackground,
@@ -130,7 +130,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             sectors.push({
                 sector: sector,
                 color: color,
-                angles: sectorInfo.angles.end,
+                angles: sectorDatum.angles.end,
                 percentValue: percentValue
             });
         }, this);

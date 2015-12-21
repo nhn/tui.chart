@@ -334,17 +334,17 @@ describe('test DataProcessor', function() {
 
     describe('_makeNormalPercentValues()', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
-            var actual = dataProcessor._makeNormalPercentValues([[20], [40], [80], [120]], {min: 0, max: 160});
+            var actual = dataProcessor._makePercentValues([[20], [40], [80], [120]], {min: 0, max: 160});
             expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
         it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
-            var actual = dataProcessor._makeNormalPercentValues([[-20], [-40], [-80], [-120]], {min: 0, max: 160});
+            var actual = dataProcessor._makePercentValues([[-20], [-40], [-80], [-120]], {min: 0, max: 160});
             expect(actual).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
         });
 
         it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
-            var actual = dataProcessor._makeNormalPercentValues([[60], [40], [80], [120]], {min: 20, max: 180}, true);
+            var actual = dataProcessor._makePercentValues([[60], [40], [80], [120]], {min: 20, max: 180}, true);
             expect(actual).toEqual([[0.25], [0.125], [0.375], [0.625]]);
         });
     });

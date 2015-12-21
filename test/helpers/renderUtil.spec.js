@@ -182,12 +182,4 @@ describe('renderUtil', function() {
             expect(actual).toBe(expected);
         });
     });
-
-    describe('escape()', function() {
-        it('"<", ">" 문자에 대해 escaping 처리를 합니다.', function() {
-            var actual = renderUtil.escape('<div>'),
-                expected = '&lt;div&gt;';
-            expect(actual).toBe(expected);
-        });
-    });
 });

@@ -136,6 +136,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
     },
 
+    /**
+     * Get percent values.
+     * @returns {array.<array.<number>>} percent values.
+     * @private
+     */
     _getPercentValues: function() {
         return this.dataProcessor.getPercentValues(this.chartType);
     },

@@ -14,7 +14,7 @@ var concat = Array.prototype.concat;
 
 /**
  * Raw data.
- * @typedef array.<{name: string, data: array.<number>}> rawData
+ * @typedef array.<{name: string, data: array.<number>}> rawSeriesData
  */
 
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
@@ -23,7 +23,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @constructs DataProcessor
      * @param {{
      *      categories: array.<string>,
-     *      series: (rawData | {line: ?rawData, column: ?rawData})
+     *      series: (rawSeriesData | {line: ?rawSeriesData, column: ?rawSeriesData})
      * }} rawData raw data
      */
     init: function(rawData) {
@@ -33,7 +33,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get raw data.
-     * @returns {{categories: array.<string>, series: (rawData|{line: ?rawData, column: ?rawData})}} raw data
+     * @returns {{categories: array.<string>, series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})}} raw data
      */
     getRawData: function() {
         return this.orgRawData;
@@ -204,10 +204,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _processCategories: function(categories) {
-        categories = tui.util.map(categories, function(category) {
-            return renderUtil.escape(category);
-        });
-        return categories;
+        return tui.util.map(categories, tui.util.encodeHTMLEntity);
     },
 
     /**
@@ -248,25 +245,20 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makeWholeValues: function(groupValues, seriesChartTypes) {
-        var wholeValues;
+        var wholeValues = [];
 
         if (!seriesChartTypes) {
-            return groupValues;
-        }
-
-        wholeValues = tui.util.map(groupValues, function(values) {
-            return values;
-        }, this);
-
-        wholeValues = [];
-        tui.util.forEachArray(seriesChartTypes, function(_chartType) {
-            tui.util.forEach(groupValues[_chartType], function(values, index) {
-                if (!wholeValues[index]) {
-                    wholeValues[index] = [];
-                }
-                wholeValues[index] = wholeValues[index].concat(values);
+            wholeValues = groupValues;
+        } else {
+            tui.util.forEachArray(seriesChartTypes, function(_chartType) {
+                tui.util.forEach(groupValues[_chartType], function(values, index) {
+                    if (!wholeValues[index]) {
+                        wholeValues[index] = [];
+                    }
+                    wholeValues[index] = wholeValues[index].concat(values);
+                });
             });
-        });
+        }
 
         return wholeValues;
     },
@@ -278,7 +270,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pickLegendLabel: function(item) {
-        return renderUtil.escape(item.name);
+        return tui.util.encodeHTMLEntity(item.name);
     },
 
     /**
@@ -638,14 +630,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make normal percent value.
+     * Make percent value.
      * @param {array.<array.<number>>} groupValues gruop values
      * @param {{min: number, max: number}} limit axis limit
      * @param {boolean} isLineTypeChart whether line type chart or not.
      * @returns {array.<array.<number>>} percent values
      * @private
      */
-    _makeNormalPercentValues: function(groupValues, limit, isLineTypeChart) {
+    _makePercentValues: function(groupValues, limit, isLineTypeChart) {
         var min = limit.min,
             max = limit.max,
             distance = max - min,
@@ -690,7 +682,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             result = this._makePercentStackedPercentValues(groupValues);
         } else {
-            result = this._makeNormalPercentValues(groupValues, limit, isLineTypeChart);
+            result = this._makePercentValues(groupValues, limit, isLineTypeChart);
         }
 
         this.data.percentValues[chartType] = isLineTypeChart ? tui.util.pivot(result) : result;
