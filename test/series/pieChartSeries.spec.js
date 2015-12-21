@@ -11,12 +11,14 @@ var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('PieChartSeries', function() {
-    var series;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getFormattedValue']);
     });
 
     beforeEach(function() {
@@ -37,16 +39,8 @@ describe('PieChartSeries', function() {
             },
             options: {}
         });
-        spyOn(series.graphRenderer, 'renderLegendLines');
-    });
 
-    describe('_makePercentValues()', function() {
-        it('pie차트의 percent타입 value를 생성합니다.', function () {
-            var result = series._makePercentValues({
-                values: [[20, 30, 50]]
-            });
-            expect(result).toEqual([[0.2, 0.3, 0.5]]);
-        });
+        series.dataProcessor = dataProcessor;
     });
 
     describe('_makeSectorsInfo()', function() {
@@ -179,9 +173,13 @@ describe('PieChartSeries', function() {
             var elLabelArea = dom.create('div'),
                 children;
 
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+                var values = ['1.1', '2.2', '3.3'];
+                return values[index];
+            });
+
             series._renderCenterLegend({
-                legendLabels: ['legend1', 'legend2', 'legend3'],
-                formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
                     {
                         centerPosition: {
@@ -286,11 +284,18 @@ describe('PieChartSeries', function() {
 
     describe('_renderOuterLegend()', function() {
         it('lengend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var elLabelArea = dom.create('div'),
+            var labelContainer = dom.create('div'),
                 children;
+
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+                var values = ['1.1', '2.2', '3.3'];
+                return values[index];
+            });
+
+            spyOn(series.graphRenderer, 'renderLegendLines');
+
             series._renderOuterLegend({
-                legendLabels: ['legend1', 'legend2', 'legend3'],
-                formattedValues: ['1.1', '2.2', '3.3'],
                 sectorsInfo: [
                     {
                         outerPosition: {
@@ -321,9 +326,9 @@ describe('PieChartSeries', function() {
                     legendAlign: 'outer'
                 },
                 chartWidth: 220
-            }, elLabelArea);
+            }, labelContainer);
 
-            children = elLabelArea.childNodes;
+            children = labelContainer.childNodes;
 
             expect(children[0].style.left).toBe('35px');
             expect(children[0].style.top).toBe('40px');
@@ -342,11 +347,9 @@ describe('PieChartSeries', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                elExpected = dom.create('div'),
+            var actual = dom.create('div'),
+                expected = dom.create('div'),
                 params = {
-                    legendLabels: ['legend1', 'legend2', 'legend3'],
-                    formattedValues: ['1.1', '2.2', '3.3'],
                     sectorsInfo: [
                         {
                             outerPosition: {
@@ -378,10 +381,19 @@ describe('PieChartSeries', function() {
                     },
                     chartWidth: 220
                 };
-            series._renderSeriesLabel(params, elLabelArea);
-            series._renderOuterLegend(params, elExpected);
-            expect(elLabelArea.className).toEqual(elExpected.className);
-            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
+
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+                var values = ['1.1', '2.2', '3.3'];
+                return values[index];
+            });
+            spyOn(series.graphRenderer, 'renderLegendLines');
+
+            series._renderSeriesLabel(params, actual);
+            series._renderOuterLegend(params, expected);
+
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),

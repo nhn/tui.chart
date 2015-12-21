@@ -34,88 +34,6 @@ describe('Series', function() {
         });
     });
 
-    describe('_makePercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
-            var result = series._makePercentValues({
-                values: [[20], [40], [80], [120]],
-                limit: {min: 0, max: 160}
-            });
-            expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-        });
-
-        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
-            var result = series._makePercentValues({
-                values: [
-                    [20, 80], [40, 60], [60, 40], [80, 20]
-                ],
-                limit: {min: 0, max: 160}
-            }, 'normal');
-            expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
-        });
-
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
-            var result = series._makePercentValues({
-                values: [
-                    [20, 80], [40, 60], [60, 40], [80, 20]
-                ],
-                limit: {min: 0, max: 160}
-            }, 'percent');
-            expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
-        });
-    });
-
-    describe('_makeNormalPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
-            var result = series._makeNormalPercentValues({
-                values: [[20], [40], [80], [120]],
-                limit: {min: 0, max: 160}
-            });
-            expect(result).toEqual([[0.125], [0.25], [0.5], [0.75]]);
-        });
-
-        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
-            var result = series._makeNormalPercentValues({
-                values: [[-20], [-40], [-80], [-120]],
-                limit: {min: 0, max: 160}
-            });
-            expect(result).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
-        });
-
-        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
-            var result;
-            series.chartType = 'line';
-            result = series._makeNormalPercentValues({
-                values: [[60], [40], [80], [120]],
-                limit: {min: 20, max: 180}
-            });
-            expect(result).toEqual([[0.25], [0.125], [0.375], [0.625]]);
-        });
-    });
-
-    describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
-            var result = series._makeNormalStackedPercentValues({
-                values: [
-                    [20, 80], [40, 60], [60, 40], [80, 20]
-                ],
-                limit: {min: 0, max: 160}
-            });
-            expect(result).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
-        });
-    });
-
-    describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
-            var result = series._makePercentStackedPercentValues({
-                values: [
-                    [20, 80], [40, 60], [60, 40], [80, 20]
-                ],
-                limit: {min: 0, max: 160}
-            });
-            expect(result).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
-        });
-    });
-
     describe('getLimitDistanceFromZeroPoint()', function() {
         it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 limit min, max까지의 거리를 구합니다.', function() {
             var result = series.getLimitDistanceFromZeroPoint(100, {
@@ -183,10 +101,14 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
-            var seriesContainer = series.render({
+            var seriesContainer;
+
+            series.dataProcessor = jasmine.createSpyObj('dataProcessor', ['setPercentValues']);
+
+            seriesContainer = series.render({
                 dimension: {width: 200, height: 100},
                 position: {top: 50, left: 50}
-            });
+            }, {});
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
             expect(seriesContainer.style.width).toBe('220px');

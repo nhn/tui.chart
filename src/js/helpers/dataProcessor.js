@@ -6,69 +6,223 @@
 
 'use strict';
 
+var chartConst = require('../const'),
+    predicate = require('./predicate'),
+    renderUtil = require('./renderUtil');
+
 var concat = Array.prototype.concat;
 
 /**
- * Data processor.
- * @module dataProcessor
+ * Raw data.
+ * @typedef array.<{name: string, data: array.<number>}> rawData
  */
-var dataProcessor = {
+
+var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
+    /**
+     * Data processor.
+     * @constructs DataProcessor
+     * @param {{
+     *      categories: array.<string>,
+     *      series: (rawData | {line: ?rawData, column: ?rawData})
+     * }} rawData raw data
+     */
+    init: function(rawData) {
+        this.orgRawData = rawData;
+        this.data = null;
+    },
+
+    /**
+     * Get raw data.
+     * @returns {{categories: array.<string>, series: (rawData|{line: ?rawData, column: ?rawData})}} raw data
+     */
+    getRawData: function() {
+        return this.orgRawData;
+    },
+
     /**
      * Process raw data.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} rawData raw data
-     * @param {object} chartOptions chart option
+     * @param {object} options options
      * @param {string} chartType chart type
      * @param {array.<string>} seriesChartTypes chart types
-     * @returns {{
-     *      labels: array.<string>,
-     *      values: array.<number>,
-     *      legendLabels: array.<string>,
-     *      formatFunctions: array.<function>,
-     *      formattedValues: array.<string>
-     * }} processed data
      */
-    process: function(rawData, chartOptions, chartType, seriesChartTypes) {
-        var labels = rawData.categories,
+    process: function(rawData, options, chartType, seriesChartTypes) {
+        var categories = this._processCategories(rawData.categories),
             seriesData = rawData.series,
             values = this._pickValues(seriesData),
-            joinValues = this._joinValues(values, seriesChartTypes),
+            fullValues = this._makeFullValues(values, seriesChartTypes),
             legendLabels = this._pickLegendLabels(seriesData),
-            joinLegendLabels = this._joinLegendLabels(legendLabels, chartType, seriesChartTypes),
-            format = chartOptions && chartOptions.format || '',
+            fullLegendData = this._makeFullLegendData(legendLabels, chartType, seriesChartTypes),
+            format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
             formattedValues = format ? this._formatValues(values, formatFunctions) : values,
-            joinFormattedValues = this._joinValues(formattedValues, seriesChartTypes);
-        return {
-            labels: labels,
+            fullFormattedValues = this._makeFullValues(formattedValues, seriesChartTypes);
+
+        this.data = {
+            categories: categories,
             values: values,
-            joinValues: joinValues,
+            fullValues: fullValues,
             legendLabels: legendLabels,
-            joinLegendLabels: joinLegendLabels,
+            fullLegendData: fullLegendData,
             formatFunctions: formatFunctions,
             formattedValues: formattedValues,
-            joinFormattedValues: joinFormattedValues
+            fullFormattedValues: fullFormattedValues,
+            percentValues: {}
         };
     },
 
     /**
-     * Separate label.
-     * @memberOf module:dataProcessor
-     * @param {array.<array.<array>>} rawData raw data
-     * @returns {{labels: (array.<string>), sourceData: array.<array.<array>>}} result data
+     * Get Categories
+     * @returns {array.<string>}}
+     */
+    getCategories: function() {
+        return this.data.categories;
+    },
+
+    /**
+     * Get category.
+     * @param {number} index index
+     * @returns {string} category
+     */
+    getCategory: function(index) {
+        return this.data.categories[index];
+    },
+
+    /**
+     * Get group values.
+     * @param {string} chartType chart type
+     * @returns {array.array.<number>} group values
+     */
+    getGroupValues: function(chartType) {
+        return this.data.values[chartType] || this.data.values;
+    },
+
+    /**
+     * Get value.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {? string} chartType chart type
+     * @returns {number} value
+     */
+    getValue: function(groupIndex, index, chartType) {
+        var groupValues = this.getGroupValues(chartType);
+        return groupValues[groupIndex][index];
+    },
+
+    /**
+     * Get full group values.
+     * @returns {array.<array.<number>>} gruop values
+     */
+    getFullGroupValues: function() {
+        return this.data.fullValues;
+    },
+
+    /**
+     * Get legend labels.
+     * @param {?string} chartType chart type
+     * @returns {array.<string> | {column: ?array.<string>, line: ?array.<string>}} legend labels
+     */
+    getLegendLabels: function(chartType) {
+        return this.data.legendLabels[chartType] || this.data.legendLabels;
+    },
+
+    /**
+     * Get full legend data.
+     * @returns {array.<string>} legend data
+     */
+    getFullLegendData: function() {
+        return this.data.fullLegendData;
+    },
+
+    /**
+     * Set full legend data.
+     * @param {array.<{chartType: string, label: string}>} fullLegendData legend data
+     */
+    setFullLegendData: function(fullLegendData) {
+        this.data.fullLegendData = fullLegendData;
+    },
+
+    /**
+     * Get legend data.
+     * @param {number} index index
+     * @returns {{chartType: string, label: string}} legend data
+     */
+    getLegendData: function(index) {
+        return this.data.fullLegendData[index];
+    },
+
+    /**
+     * Get format functions.
+     * @returns {array.<function>} functions
+     */
+    getFormatFunctions: function() {
+        return this.data.formatFunctions;
+    },
+
+    /**
+     * Get formatted group values
+     * @param {string} chartType chart type
+     * @returns {array.<string>} group values
+     */
+    getFormattedGroupValues: function(chartType) {
+        return this.data.formattedValues[chartType] || this.data.formattedValues;
+    },
+
+    /**
+     * Get formatted values.
+     * @param {number} index index
+     * @param {?string} chartType chartType
+     * @returns {array.<string>} formatted values
+     */
+    getFormattedValues: function(index, chartType) {
+        var formattedGroupValues = this.getFormattedGroupValues(chartType);
+        return formattedGroupValues[index];
+    },
+
+    /**
+     * Get formatted value.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {?string} chartType chartType
+     * @returns {string} formatted value
+     */
+    getFormattedValue: function(groupIndex, index, chartType) {
+        var formattedGroupValues = this.getFormattedGroupValues(chartType);
+        return formattedGroupValues[groupIndex][index];
+    },
+
+    /**
+     * Get first formatted vlaue.
+     * @param {?string} chartType chartType
+     * @returns {string} formatted value
+     */
+    getFirstFormattedValue: function(chartType) {
+        return this.getFormattedValue(0, 0, chartType);
+    },
+
+    /**
+     * Get full formatted values.
+     * @returns {array.array.<string>} formatted values
+     */
+    getFullFormattedValues: function() {
+        return this.data.fullFormattedValues;
+    },
+
+    /**
+     * Process categories
+     * @param {array.<string>} categories categories
+     * @returns {array.<string>} processed categories
      * @private
      */
-    _separateLabel: function(rawData) {
-        var labels = rawData[0].pop();
-        return {
-            labels: labels,
-            sourceData: rawData
-        };
+    _processCategories: function(categories) {
+        categories = tui.util.map(categories, function(category) {
+            return renderUtil.escape(category);
+        });
+        return categories;
     },
 
     /**
      * Pick value.
-     * @memberOf module:dataProcessor
      * @param {{name: string, data: (array.<number> | number)}} items items
      * @returns {array} picked value
      * @private
@@ -79,7 +233,6 @@ var dataProcessor = {
 
     /**
      * Pick values from axis data.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} seriesData series data
      * @returns {string[]} values
      */
@@ -100,50 +253,47 @@ var dataProcessor = {
 
     /**
      * Join values.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} groupValues values
      * @param {array.<string>} seriesChartTypes chart types
      * @returns {array.<number>} join values
      * @private
      */
-    _joinValues: function(groupValues, seriesChartTypes) {
-        var joinValues;
+    _makeFullValues: function(groupValues, seriesChartTypes) {
+        var fullValues;
 
         if (!seriesChartTypes) {
             return groupValues;
         }
 
-        joinValues = tui.util.map(groupValues, function(values) {
+        fullValues = tui.util.map(groupValues, function(values) {
             return values;
         }, this);
 
-        joinValues = [];
+        fullValues = [];
         tui.util.forEachArray(seriesChartTypes, function(_chartType) {
             tui.util.forEach(groupValues[_chartType], function(values, index) {
-                if (!joinValues[index]) {
-                    joinValues[index] = [];
+                if (!fullValues[index]) {
+                    fullValues[index] = [];
                 }
-                joinValues[index] = joinValues[index].concat(values);
+                fullValues[index] = fullValues[index].concat(values);
             });
         });
 
-        return joinValues;
+        return fullValues;
     },
 
     /**
      * Pick legend label.
-     * @memberOf module:dataProcessor
      * @param {object} item item
      * @returns {string} label
      * @private
      */
     _pickLegendLabel: function(item) {
-        return item.name;
+        return renderUtil.escape(item.name);
     },
 
     /**
      * Pick legend labels from axis data.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} seriesData series data
      * @returns {string[]} labels
      */
@@ -161,25 +311,24 @@ var dataProcessor = {
     },
 
     /**
-     * Join legend labels.
-     * @memberOf module:dataProcessor
+     * Make full legend data.
      * @param {array} legendLabels legend labels
      * @param {string} chartType chart type
      * @param {array.<string>} seriesChartTypes chart types
      * @returns {array} labels
      * @private
      */
-    _joinLegendLabels: function(legendLabels, chartType, seriesChartTypes) {
-        var joinLabels;
+    _makeFullLegendData: function(legendLabels, chartType, seriesChartTypes) {
+        var fullLabels;
         if (!seriesChartTypes || !seriesChartTypes.length) {
-            joinLabels = tui.util.map(legendLabels, function(label) {
+            fullLabels = tui.util.map(legendLabels, function(label) {
                 return {
                     chartType: chartType,
                     label: label
                 };
             });
         } else {
-            joinLabels = [];
+            fullLabels = [];
             tui.util.forEachArray(seriesChartTypes, function(_chartType) {
                 var labels = tui.util.map(legendLabels[_chartType], function(label) {
                     return {
@@ -187,15 +336,14 @@ var dataProcessor = {
                         label: label
                     };
                 });
-                joinLabels = joinLabels.concat(labels);
+                fullLabels = fullLabels.concat(labels);
             });
         }
-        return joinLabels;
+        return fullLabels;
     },
 
     /**
      * Format group values.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} groupValues group values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
@@ -214,7 +362,6 @@ var dataProcessor = {
 
     /**
      * Format converted values.
-     * @memberOf module:dataProcessor
      * @param {array.<array>} chartValues chart values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
@@ -235,7 +382,6 @@ var dataProcessor = {
 
     /**
      * Pick max length under point.
-     * @memberOf module:dataProcessor
      * @param {string[]} values chart values
      * @returns {number} max length under point
      * @private
@@ -255,7 +401,6 @@ var dataProcessor = {
 
     /**
      * Whether zero fill format or not.
-     * @memberOf module:dataProcessor
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -266,7 +411,6 @@ var dataProcessor = {
 
     /**
      * Whether decimal format or not.
-     * @memberOf module:dataProcessor
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -278,7 +422,6 @@ var dataProcessor = {
 
     /**
      * Whether comma format or not.
-     * @memberOf module:dataProcessor
      * @param {string} format format
      * @returns {boolean} result boolean
      * @private
@@ -289,7 +432,6 @@ var dataProcessor = {
 
     /**
      * Format zero fill.
-     * @memberOf module:dataProcessor
      * @param {number} len length of result
      * @param {string} value target value
      * @returns {string} formatted value
@@ -314,7 +456,6 @@ var dataProcessor = {
 
     /**
      * Format Decimal.
-     * @memberOf module:dataProcessor
      * @param {number} len length of under decimal point
      * @param {string} value target value
      * @returns {string} formatted value
@@ -335,7 +476,6 @@ var dataProcessor = {
 
     /**
      * Format Comma.
-     * @memberOf module:dataProcessor
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
@@ -372,7 +512,6 @@ var dataProcessor = {
 
     /**
      * Find format functions.
-     * @memberOf module:dataProcessor
      * @param {string} format format
      * @param {string[]} values chart values
      * @returns {function[]} functions
@@ -399,7 +538,184 @@ var dataProcessor = {
         }
 
         return funcs;
-    }
-};
+    },
 
-module.exports = dataProcessor;
+    /**
+     * Make multiline category.
+     * @param {string} category category
+     * @param {number} limitWidth limit width
+     * @param {object} theme label theme
+     * @returns {string} multiline category
+     * @private
+     */
+    _makeMultilineCategory: function(category, limitWidth, theme) {
+        var words = category.split(' '),
+            lineWords = words[0],
+            lines = [];
+
+        tui.util.forEachArray(words.slice(1), function(word) {
+            var width = renderUtil.getRenderedLabelWidth(lineWords + ' ' + word, theme);
+            if (width > limitWidth) {
+                lines.push(lineWords);
+                lineWords = word;
+            } else {
+                lineWords += ' ' + word;
+            }
+        });
+
+        if (lineWords) {
+            lines.push(lineWords);
+        }
+
+        return lines.join('</br>');
+    },
+
+    /**
+     * Get multiline categories.
+     * @param {number} limitWidth limit width
+     * @param {object} theme label theme
+     * @returns {array} multiline categories
+     */
+    getMultilineCategories: function(limitWidth, theme) {
+        if (!this.data.multilineCategories) {
+            this.data.multilineCategories = tui.util.map(this.getCategories(), function(category) {
+                return this._makeMultilineCategory(category, limitWidth, theme);
+            }, this);
+        }
+
+        return this.data.multilineCategories;
+    },
+
+    /**
+     * Make percent value.
+     * @param {array.<array.<number>>} groupValues gruop values
+     * @returns {array.<array.<number>>} percent values
+     * @private
+     */
+    _makePieChartPercentValues: function(groupValues) {
+        var result = tui.util.map(groupValues, function(values) {
+            var sum = tui.util.sum(values);
+
+            return tui.util.map(values, function(value) {
+                return value / sum;
+            });
+        });
+        return result;
+    },
+
+    /**
+     * Make percent values about normal stacked option.
+     * @param {array.<array.<number>>} groupValues gruop values
+     * @param {{min: number, max: number}} limit axis limit
+     * @returns {array} percent values about normal stacked option.
+     * @private
+     */
+    _makeNormalStackedPercentValues: function(groupValues, limit) {
+        var min = limit.min,
+            max = limit.max,
+            distance = max - min,
+            percentValues = tui.util.map(groupValues, function(values) {
+                var plusValues = tui.util.filter(values, function(value) {
+                        return value > 0;
+                    }),
+                    sum = tui.util.sum(plusValues),
+                    groupPercent = (sum - min) / distance;
+                return tui.util.map(values, function(value) {
+                    return value === 0 ? 0 : groupPercent * (value / sum);
+                });
+            });
+
+        return percentValues;
+    },
+
+    /**
+     * Make percent values about percent stacked option.
+     * @param {array.<array.<number>>} groupValues gruop values
+     * @returns {array} percent values about percent stacked option
+     * @private
+     */
+    _makePercentStackedPercentValues: function(groupValues) {
+        var percentValues = tui.util.map(groupValues, function(values) {
+            var plusValues = tui.util.filter(values, function(value) {
+                    return value > 0;
+                }),
+                sum = tui.util.sum(plusValues);
+            return tui.util.map(values, function(value) {
+                return value === 0 ? 0 : value / sum;
+            });
+        });
+
+        return percentValues;
+    },
+
+    /**
+     * Make normal percent value.
+     * @param {array.<array.<number>>} groupValues gruop values
+     * @param {{min: number, max: number}} limit axis limit
+     * @param {boolean} isLineTypeChart whether line type chart or not.
+     * @returns {array.<array.<number>>} percent values
+     * @private
+     */
+    _makeNormalPercentValues: function(groupValues, limit, isLineTypeChart) {
+        var min = limit.min,
+            max = limit.max,
+            distance = max - min,
+            flag = 1,
+            subValue = 0,
+            percentValues;
+
+        if (!isLineTypeChart && min < 0 && max <= 0) {
+            flag = -1;
+            subValue = max;
+            distance = min - max;
+        } else if (isLineTypeChart || min >= 0) {
+            subValue = min;
+        }
+
+        percentValues = tui.util.map(groupValues, function(values) {
+            return tui.util.map(values, function(value) {
+                return (value - subValue) * flag / distance;
+            });
+        });
+
+        return percentValues;
+    },
+
+    /**
+     * Make percent value.
+     * @param {{min: number, max: number}} limit axis limit
+     * @param {string} stacked stacked option
+     * @param {string} chartType chart type
+     * @private
+     */
+    setPercentValues: function(limit, stacked, chartType) {
+        var result,
+            groupValues = this.getGroupValues(chartType),
+            isLineTypeChart = predicate.isLineTypeChart(chartType);
+
+        groupValues = isLineTypeChart ? tui.util.pivot(groupValues) : groupValues;
+
+        if (predicate.isPieChart(chartType)) {
+            result = this._makePieChartPercentValues(groupValues);
+        } else if (stacked === chartConst.STACKED_NORMAL_TYPE) {
+            result = this._makeNormalStackedPercentValues(groupValues, limit);
+        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
+            result = this._makePercentStackedPercentValues(groupValues);
+        } else {
+            result = this._makeNormalPercentValues(groupValues, limit, isLineTypeChart);
+        }
+
+        this.data.percentValues[chartType] = result;
+    },
+
+    /**
+     * Get percent values.
+     * @param {string} chartType chart type
+     * @returns {array.<array.<number>>} percent values
+     */
+    getPercentValues: function(chartType) {
+        return this.data.percentValues[chartType];
+    }
+});
+
+module.exports = DataProcessor;

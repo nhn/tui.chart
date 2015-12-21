@@ -38,31 +38,28 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             options: options
         });
 
-        this._addComponents(this.processedData, theme.chart.background, options);
+        this._addComponents(theme.chart.background, options);
     },
 
     /**
      * Add components
-     * @param {object} processedData processed data
      * @param {object} chartBackground chart background
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(processedData, chartBackground, options) {
+    _addComponents: function(chartBackground, options) {
         var legendAlign, isPieLegendType;
         options.legend = options.legend || {};
         legendAlign = options.legend && options.legend.align;
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
-        if (processedData.joinLegendLabels && !isPieLegendType && !options.legend.hidden) {
+        if (!isPieLegendType && !options.legend.hidden) {
             this._addComponent('legend', Legend, {
-                joinLegendLabels: processedData.joinLegendLabels,
-                legendLabels: processedData.legendLabels,
                 chartType: options.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this._addComponent('tooltip', Tooltip, this._makeTooltipData(processedData, options.chartType));
+        this._addComponent('tooltip', Tooltip, this._makeTooltipData());
 
         this._addComponent('series', Series, {
             libType: options.libType,
@@ -70,8 +67,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             componentType: 'series',
             chartBackground: chartBackground,
             userEvent: this.userEvent,
-            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null,
-            data: this._makeSeriesData(processedData)
+            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null
         });
     },
 

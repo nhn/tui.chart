@@ -12,54 +12,64 @@ var maker = require('../../src/js/helpers/boundsMaker'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('boundsMaker', function() {
+    var dataProcessor;
+
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
-        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+        spyOn(renderUtil, 'getRenderedLabelHeight');
         maker.chartLeftPadding = chartConst.CHART_PADDING;
+    });
+
+    beforeEach(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getFormatFunctions', 'getGroupValues', 'getFullGroupValues', 'getFullLegendData', 'getCategories',
+                'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
+        maker.dataProcessor = dataProcessor;
     });
 
     describe('_getValueAxisMaxLabel()', function() {
         it('단일 차트 value axis의 label 최대값을 반환합니다.', function () {
-            var result = maker._getValueAxisMaxLabel({
-                values: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ],
-                joinValues: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ]
-            });
-            expect(result).toBe(90);
+            var actual;
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [80, 10, 70]
+            ]);
+
+            actual = maker._getValueAxisMaxLabel('column');
+            expect(actual).toBe(90);
         });
 
         it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
-            var result = maker._getValueAxisMaxLabel({
-                values: {
-                    column: [
-                        [20, 30, 50],
-                        [40, 40, 60]
-                    ]
-                }
-            }, 'column');
-            expect(result).toBe(70);
+            var actual;
+
+            dataProcessor.getFullGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60]
+            ]);
+
+            actual = maker._getValueAxisMaxLabel('combo');
+            expect(actual).toBe(70);
         });
     });
 
     describe('_getXAxisHeight()', function() {
         it('x축 영역의 높이를 계산하여 반환합니다.', function () {
-            var result = maker._getXAxisHeight({
+            var actual;
+
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+
+            actual = maker._getXAxisHeight({
                 title: 'title'
             }, ['label1', 'label12'], {
                 title: {},
                 label: {}
             });
-            expect(result).toBe(60);
+
+            expect(actual).toBe(60);
         });
     });
 
@@ -81,15 +91,14 @@ describe('boundsMaker', function() {
 
     describe('_getRightYAxisWidth()', function() {
         it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
-            var result = maker._getRightYAxisWidth({
-                processedData: {
-                    values: {
-                        line: [
-                            [60, 50, 10],
-                            [80, 10, 70]
-                        ]
-                    }
-                },
+            var actual, expected;
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [80, 10, 70]
+            ]);
+
+            actual = maker._getRightYAxisWidth({
                 chartTypes: ['column', 'line'],
                 theme: {
                     title: {},
@@ -104,8 +113,9 @@ describe('boundsMaker', function() {
                     }
                 ]
             });
+            expected = 97;
 
-            expect(result).toBe(97);
+            expect(actual).toBe(expected);
         });
     });
 
@@ -170,16 +180,28 @@ describe('boundsMaker', function() {
 
     describe('_makeLegendDimension()', function() {
         it('legend 영역의 dimension을 계산하여 반환합니다.', function () {
-            var acutal = maker._makeLegendDimension([
-                    {
-                        label: 'label1'
-                    },
-                    {
-                        label: 'label12'
-                    }
-                ],
-                {});
-            expect(acutal.width).toBe(107);
+            var actual;
+
+            dataProcessor.getFullLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeLegendDimension({});
+            expect(actual.width).toBe(107);
+        });
+
+        it('_isSkippedLegendSizing()가 true를 반환하면 0을 반환합니다.', function () {
+            var actual;
+
+            spyOn(maker, '_isSkippedLegendSizing').and.returnValue(true);
+
+            actual = maker._makeLegendDimension({});
+            expect(actual.width).toBe(0);
         });
     });
 
@@ -259,19 +281,12 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getComponentsDimension()', function() {
+    describe('_makeComponentsDimensions()', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
-            var result = maker._getComponentsDimensions({
-                processedData: {
-                    labels: ['label1', 'label12'],
-                    joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
-                },
+            var actual;
+
+            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            actual = maker._makeComponentsDimensions({
                 optionChartTypes: [],
                 isVertical: true,
                 hasAxes: true,
@@ -302,20 +317,20 @@ describe('boundsMaker', function() {
                 }
             });
 
-            expect(result.chart).toEqual({
+            expect(actual.chart).toEqual({
                 width: 500,
                 height: 400
             });
 
-            expect(result.title.height).toBe(40);
-            expect(result.series.width).toBe(276);
-            expect(result.series.height).toBe(280);
+            expect(actual.title.height).toBe(40);
+            expect(actual.series.width).toBe(276);
+            expect(actual.series.height).toBe(280);
 
-            expect(result.legend.width).toBe(107);
+            expect(actual.legend.width).toBe(107);
 
-            expect(result.yAxis.width).toBe(97);
-            expect(result.rightYAxis.width).toBe(0);
-            expect(result.xAxis.height).toBe(60);
+            expect(actual.yAxis.width).toBe(97);
+            expect(actual.rightYAxis.width).toBe(0);
+            expect(actual.xAxis.height).toBe(60);
         });
     });
 
@@ -512,42 +527,40 @@ describe('boundsMaker', function() {
 
     describe('_makeAxesLabelInfo()', function() {
         it('세로 타입의 차트에서는 yAxis는 value, xAxis는 category가 label이 됩니다.', function() {
-            var actual = maker._makeAxesLabelInfo({
-                    hasAxes: true,
-                    optionChartTypes: ['column'],
-                    processedData: {
-                        values: {
-                            'column': [10, 20, 30]
-                        },
-                        labels: ['cate1', 'cate2', 'cate3'],
-                        formatFunctions: []
-                    },
-                    isVertical: true
-                }),
-                expected = {
-                    xAxis: ['cate1', 'cate2', 'cate3'],
-                    yAxis: [40]
-                };
+            var actual, expected;
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getGroupValues.and.returnValue([10, 20, 30]);
+
+            actual = maker._makeAxesLabelInfo({
+                hasAxes: true,
+                optionChartTypes: ['column'],
+                isVertical: true
+            });
+            expected = {
+                xAxis: ['cate1', 'cate2', 'cate3'],
+                yAxis: [40]
+            };
+
             expect(actual).toEqual(expected);
         });
 
         it('가로 타입의 차트에서는 yAxis는 category, xAxis는 value가 label이 됩니다.', function() {
-            var actual = maker._makeAxesLabelInfo({
-                    hasAxes: true,
-                    optionChartTypes: ['column'],
-                    processedData: {
-                        values: {
-                            'column': [10, 20, 30]
-                        },
-                        labels: ['cate1', 'cate2', 'cate3'],
-                        formatFunctions: []
-                    },
-                    isVertical: false
-                }),
-                expected = {
-                    xAxis: [40],
-                    yAxis: ['cate1', 'cate2', 'cate3']
-                };
+            var actual, expected;
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getGroupValues.and.returnValue([10, 20, 30]);
+
+            actual = maker._makeAxesLabelInfo({
+                hasAxes: true,
+                optionChartTypes: ['column'],
+                isVertical: false
+            });
+            expected = {
+                xAxis: [40],
+                yAxis: ['cate1', 'cate2', 'cate3']
+            };
+
             expect(actual).toEqual(expected);
         });
 
@@ -574,11 +587,15 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeHorizontalLabelRotationInfo', function() {
+        beforeEach(function() {
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+        });
+
         it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
-            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2', 'cate3'], {});
+            actual = maker._makeHorizontalLabelRotationInfo(100, ['cate1', 'cate2', 'cate3'], {});
             expected = {
                 maxLabelWidth: 120,
                 labelHeight: 20,
@@ -622,9 +639,9 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_calculateXAxisHeight()', function() {
+    describe('_calculateXAxisRotatedHeight()', function() {
         it('레이블 dimension과 degree 정보를 이용하여 x axis의 회전된 높이 정보를 구합니다.', function() {
-            var actual = maker._calculateXAxisHeight({
+            var actual = maker._calculateXAxisRotatedHeight({
                     degree: 25,
                     maxLabelWidth: 100,
                     labelHeight: 20
@@ -634,14 +651,40 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_calculateHeightDifference()', function() {
+    describe('_calculateDiffWithRotatedHeight()', function() {
         it('회전된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
-            var actual = maker._calculateHeightDifference({
+            var actual = maker._calculateDiffWithRotatedHeight({
                     degree: 25,
                     maxLabelWidth: 100,
                     labelHeight: 20
                 }),
                 expected = 40.38798191480294;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateDiffWithMultilineHeight()', function() {
+        it('개행처리된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
+            var actual, expected;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if (value.indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
+            });
+
+            dataProcessor.getMultilineCategories.and.returnValue([
+               'AAAA</br>BBBB'
+            ]);
+
+            actual = maker._calculateDiffWithMultilineHeight(['AAAA BBBB'], 50, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+            expected = 20;
+
             expect(actual).toBe(expected);
         });
     });
@@ -706,49 +749,66 @@ describe('boundsMaker', function() {
 
     describe('make()', function() {
         it('차트를 구성하는 컴포넌트들의 bounds 정보를 계산하여 반환합니다.', function () {
-            var result = maker.make({
-                processedData: {
-                    values: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    labels: ['label1', 'label2', 'label3'],
-                    joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
-                    formatValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
-                },
-                theme: defaultTheme,
-                hasAxes: true,
-                options: {}
+            var actual;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if ((value + '').indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
             });
-            expect(result.chart.dimension.width).toBe(500);
-            expect(result.chart.dimension.height).toBe(400);
-            expect(result.series.dimension.width).toBe(276);
-            expect(result.series.dimension.height).toBe(280);
-            expect(result.series.position.top).toBe(50);
-            expect(result.series.position.left).toBe(107);
-            expect(result.yAxis.dimension.width).toBe(97);
-            expect(result.yAxis.dimension.height).toBe(281);
-            expect(result.yAxis.position.top).toBe(50);
-            expect(result.xAxis.dimension.width).toBe(277);
-            expect(result.xAxis.dimension.height).toBe(60);
-            expect(result.xAxis.position.top).toBe(330);
-            expect(result.legend.position.top).toBe(40);
-            expect(result.legend.position.left).toBe(383);
-            expect(result.tooltip.position.top).toBe(50);
-            expect(result.tooltip.position.left).toBe(97);
+
+            dataProcessor.getFullGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]);
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]);
+
+            dataProcessor.getFormattedGroupValues.and.returnValue([
+                ['20', '30', '50'],
+                ['40', '40', '60'],
+                ['60', '50', '10'],
+                ['80', '10', '70']
+            ]);
+
+            dataProcessor.getLegendLabels.and.returnValue(['label1', 'label2', 'label3']);
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getMultilineCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+
+            actual = maker.make(dataProcessor,
+                {
+                    theme: defaultTheme,
+                    hasAxes: true,
+                    options: {}
+                }
+            );
+
+            expect(actual.chart.dimension.width).toBe(500);
+            expect(actual.chart.dimension.height).toBe(400);
+            expect(actual.series.dimension.width).toBe(276);
+            expect(actual.series.dimension.height).toBe(280);
+            expect(actual.series.position.top).toBe(50);
+            expect(actual.series.position.left).toBe(107);
+            expect(actual.yAxis.dimension.width).toBe(97);
+            expect(actual.yAxis.dimension.height).toBe(281);
+            expect(actual.yAxis.position.top).toBe(50);
+            expect(actual.xAxis.dimension.width).toBe(277);
+            expect(actual.xAxis.dimension.height).toBe(60);
+            expect(actual.xAxis.position.top).toBe(330);
+            expect(actual.legend.position.top).toBe(40);
+            expect(actual.legend.position.left).toBe(383);
+            expect(actual.tooltip.position.top).toBe(50);
+            expect(actual.tooltip.position.left).toBe(97);
         });
     });
 });

@@ -140,7 +140,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var groupValues, groupWidth, barWidth,
             optionWidth, additionPadding, bounds;
 
-        groupValues = this.percentValues;
+        groupValues = this._getPercentValues();
         groupWidth = (dimension.width / groupValues.length);
         barWidth = groupWidth / 2;
         optionWidth = this._makeOptionSize(barWidth, this.options.barWidth);
@@ -219,13 +219,12 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * Make sum label html.
      * @param {object} params parameters
      *      @param {array.<number>} params.values values
-     *      @param {array.<function>} params.formatFunctions formatting functions
      *      @param {{left: number, top: number}} params.bound bound
      *      @param {number} params.labelHeight label height
      * @returns {string} sum label html
      */
     makeSumLabelHtml: function(params) {
-        var sum = this.makeSumValues(params.values, params.formatFunctions),
+        var sum = this.makeSumValues(params.values),
             bound = params.bound,
             labelWidth = renderUtil.getRenderedLabelWidth(sum, this.theme.label),
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),

@@ -11,10 +11,15 @@ var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('GroupTooltip', function() {
-    var tooltip;
+    var tooltip, dataProcessor;
+
+    beforeAll(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFullFormattedValues', 'getCategory', 'getFullLegendData', 'getLegendData']);
+    });
 
     beforeEach(function() {
         tooltip = new GroupTooltip({
+            dataProcessor: dataProcessor,
             options: {}
         });
     });
@@ -22,14 +27,18 @@ describe('GroupTooltip', function() {
     describe('makeTooltipData()', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function () {
             var actual, expected;
-            tooltip.labels = [
-                'Silver',
-                'Gold'
-            ];
-            tooltip.joinFormattedValues = [
+
+            dataProcessor.getFullFormattedValues.and.returnValue([
                 ['10', '20'],
                 ['30', '40']
-            ];
+            ]);
+            dataProcessor.getCategory.and.callFake(function(index) {
+                var categories = [
+                    'Silver',
+                    'Gold'
+                ];
+                return categories[index];
+            });
 
             actual = tooltip.makeTooltipData();
             expected = [
@@ -42,17 +51,21 @@ describe('GroupTooltip', function() {
 
     describe('_makeColors()', function() {
         it('툴팁 테마에 colors가 설정되어있으면 그대로 반환합니다.', function() {
-            var legendLabels = [{
-                    chartType: 'column',
-                    label: 'legend1'
-                }, {
-                    chartType: 'column',
-                    label: 'legend2'
-                }],
-                actual = tooltip._makeColors(legendLabels, {
-                    colors: ['red', 'blue']
-                }),
-                expected = ['red', 'blue'];
+            var actual, expected;
+
+            dataProcessor.getFullLegendData.and.returnValue([{
+                chartType: 'column',
+                label: 'legend1'
+            }, {
+                chartType: 'column',
+                label: 'legend2'
+            }]);
+
+            actual = tooltip._makeColors({
+                colors: ['red', 'blue']
+            });
+            expected = ['red', 'blue'];
+
             expect(actual).toEqual(expected);
         });
 
@@ -74,13 +87,17 @@ describe('GroupTooltip', function() {
         it('렌더링에 사용할 item data를 생성합니다.', function() {
             var actual, expected;
 
-            tooltip.joinLegendLabels = [{
-                chartType: 'column',
-                label: 'legend1'
-            }, {
-                chartType: 'line',
-                label: 'legend2'
-            }];
+            dataProcessor.getLegendData.and.callFake(function(index) {
+                var legendData = [{
+                    chartType: 'column',
+                    label: 'legend1'
+                }, {
+                    chartType: 'line',
+                    label: 'legend2'
+                }];
+                return legendData[index];
+            });
+
             tooltip.suffix = 'suffix';
 
             actual = tooltip._makeItemRenderingData(['20', '30']);

@@ -416,9 +416,9 @@ describe('Axis', function() {
                 labelSize: 80,
                 degree: 45
             });
-            expected = '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
-                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
-                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+            expected = '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });

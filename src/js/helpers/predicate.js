@@ -24,6 +24,16 @@ var predicate = {
     },
 
     /**
+     * Whether combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isComboChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_COMBO;
+    },
+
+    /**
      * Whether line chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type

@@ -15,8 +15,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @constructs TooltipBase
      * @param {object} params parameters
      *      @param {array.<number>} params.values converted values
-     *      @param {array} params.labels labels
-     *      @param {array} params.legendLabels legend labels
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */

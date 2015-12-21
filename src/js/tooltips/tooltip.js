@@ -20,8 +20,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @constructs Tooltip
      * @param {object} params parameters
      *      @param {array.<number>} params.values converted values
-     *      @param {array} params.labels labels
-     *      @param {array} params.legendLabels legend labels
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
@@ -112,29 +110,34 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @override
      */
     makeTooltipData: function() {
-        var labels = this.labels,
-            tooltipData = {},
-            legendLabels = {};
+        var categories = this.dataProcessor.getCategories(),
+            orgFormattedValues = this.dataProcessor.getFormattedGroupValues(),
+            orgLegendLabels = this.dataProcessor.getLegendLabels(),
+            formattedValues = {},
+            legendLabels = {},
+            tooltipData = {};
 
-        if (tui.util.isArray(this.formattedValues)) {
-            tooltipData[this.chartType] = this.formattedValues;
-            legendLabels[this.chartType] = this.legendLabels;
+        if (tui.util.isArray(orgFormattedValues)) {
+            formattedValues[this.chartType] = orgFormattedValues;
+            legendLabels[this.chartType] = orgLegendLabels;
         } else {
-            tooltipData = this.formattedValues;
-            legendLabels = this.legendLabels;
+            formattedValues = orgFormattedValues;
+            legendLabels = orgLegendLabels;
         }
 
-        tui.util.forEach(tooltipData, function(groupValues, chartType) {
+
+        tui.util.forEach(formattedValues, function(groupValues, chartType) {
             tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
                 return tui.util.map(values, function(value, index) {
                     return {
-                        category: labels ? labels[groupIndex] : '',
+                        category: categories ? categories[groupIndex] : '',
                         legend: legendLabels[chartType][index],
                         value: value
                     };
                 });
             });
         });
+
         return tooltipData;
     },
 
@@ -428,17 +431,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Get value by indexes.
-     * @param {{groupIndex: number, index: number}} indexes indexes
-     * @param {string} chartType chart type
-     * @returns {(string | number)} value
-     * @private
-     */
-    _getValueByIndexes: function(indexes, chartType) {
-        return this.values[chartType][indexes.groupIndex][indexes.index];
-    },
-
-    /**
      * Move to symmetry.
      * @param {{left: number, top: number}} position tooltip position
      * @param {object} params parameters
@@ -455,7 +447,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var bound = params.bound,
             sizeType = params.sizeType,
             positionType = params.positionType,
-            value = this._getValueByIndexes(params.indexes, params.chartType),
+            value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
             center;
 
         if (value < 0) {
@@ -552,7 +544,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index,
-            legendData = this.joinLegendLabels[legendIndex],
+            legendData = this.dataProcessor.getLegendData(legendIndex),
             params;
 
         params = tui.util.extend({

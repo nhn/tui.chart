@@ -97,7 +97,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var baseInfo = this.makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
             bounds;
 
-        bounds = tui.util.map(baseInfo.groupValues, function(values, groupIndex) {
+        bounds = tui.util.map(this._getPercentValues(), function(values, groupIndex) {
             var paddingTop = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
             return tui.util.map(values, function (value, index) {
                 return this._makeNormalBarChartBound(baseInfo, value, paddingTop, index);
@@ -117,7 +117,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         var groupValues, groupHeight, barHeight,
             optionHeight, additionPadding, bounds;
 
-        groupValues = this.percentValues;
+        groupValues = this._getPercentValues();
         groupHeight = (dimension.height / groupValues.length);
         barHeight = groupHeight / 2;
         optionHeight = this._makeOptionSize(barHeight, this.options.barWidth);
@@ -198,13 +198,12 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * Make sum label html.
      * @param {object} params parameters
      *      @param {array.<number>} params.values values
-     *      @param {array.<function>} params.formatFunctions formatting functions
      *      @param {{left: number, top: number}} params.bound bound
      *      @param {number} params.labelHeight label height
      * @returns {string} sum label html
      */
     makeSumLabelHtml: function(params) {
-        var sum = this.makeSumValues(params.values, params.formatFunctions),
+        var sum = this.makeSumValues(params.values),
             bound = params.bound,
             labelHeight = renderUtil.getRenderedLabelHeight(sum, this.theme.label),
             top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2),

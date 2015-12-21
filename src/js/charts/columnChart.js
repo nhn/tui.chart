@@ -38,30 +38,25 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             isVertical: true
         });
 
-        this._addComponents(this.processedData, options.chartType);
+        this._addComponents(options.chartType);
     },
 
     /**
      * Add components
-     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(processedData, chartType) {
-        var seriesData = {
-            allowNegativeTooltip: true,
-            data: this._makeSeriesData(processedData)
-        };
-
+    _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [
                 {
                     name: 'series',
                     SeriesClass: Series,
-                    data: seriesData
+                    data: {
+                        allowNegativeTooltip: true
+                    }
                 }
             ]
         });

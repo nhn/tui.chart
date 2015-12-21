@@ -31,7 +31,7 @@ var lineTypeMixer = {
             isVertical: true
         });
 
-        this._addComponents(this.processedData, options.chartType);
+        this._addComponents(options.chartType);
     },
 
     /**
@@ -46,45 +46,18 @@ var lineTypeMixer = {
     },
 
     /**
-     * Make data for series component.
-     * @param {object} processedData processed data
-     * @returns {object} series data
-     * @override
-     * @private
-     */
-    _makeSeriesData: function(processedData) {
-        return {
-            values: tui.util.pivot(processedData.values),
-            formattedValues: tui.util.pivot(processedData.formattedValues),
-            formatFunctions: processedData.formatFunctions,
-            joinLegendLabels: processedData.joinLegendLabels
-        };
-    },
-
-    /**
      * Add components
-     * @param {object} processedData processed data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(processedData, chartType) {
-        var seriesData = {
-            data: {
-                values: tui.util.pivot(processedData.values),
-                formattedValues: tui.util.pivot(processedData.formattedValues),
-                formatFunctions: processedData.formatFunctions,
-                joinLegendLabels: processedData.joinLegendLabels
-            }
-        };
+    _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            processedData: processedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [
                 {
                     name: 'series',
-                    SeriesClass: this.Series,
-                    data: seriesData
+                    SeriesClass: this.Series
                 }
             ]
         });

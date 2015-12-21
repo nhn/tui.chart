@@ -63,18 +63,36 @@ var renderUtil = {
      * @private
      */
     _createSizeCheckEl: function() {
-        var elDiv, elSpan;
+        var div, span;
         if (this.checkEl) {
+            this.checkEl.style.cssText = '';
             return this.checkEl;
         }
 
-        elDiv = dom.create('DIV', 'tui-chart-size-check-element');
-        elSpan = dom.create('SPAN');
+        div = dom.create('DIV', 'tui-chart-size-check-element');
+        span = dom.create('SPAN');
 
-        elDiv.appendChild(elSpan);
-        this.checkEl = elDiv;
-        return elDiv;
+        div.appendChild(span);
+
+        this.checkEl = div;
+        return div;
     },
+
+    _makeCachingKey: function(label, theme, offsetType) {
+        var keys = [label, offsetType];
+
+        tui.util.forEach(theme, function(key, value) {
+            keys.push(key + value);
+        });
+
+        return keys.join('-');
+    },
+
+    /**
+     * Size cacher.
+     * @type {object}
+     */
+    sizeCacher: {},
 
     /**
      * Get rendered label size (width or height).
@@ -86,27 +104,41 @@ var renderUtil = {
      * @private
      */
     _getRenderedLabelSize: function(label, theme, offsetType) {
-        var elDiv, elSpan, labelSize;
+        var key, div, span, labelSize;
 
-        if (tui.util.isUndefined(label) || label === '') {
+        theme = theme || {};
+        label += '';
+
+        if (!label) {
             return 0;
         }
 
-        elDiv = this._createSizeCheckEl();
-        elSpan = elDiv.firstChild;
+        key = this._makeCachingKey(label, theme, offsetType);
+        labelSize = this.sizeCacher[key];
 
-        theme = theme || {};
-        elSpan.innerHTML = label;
-        elSpan.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        if (!labelSize) {
+            div = this._createSizeCheckEl();
+            span = div.firstChild;
 
-        if (theme.fontFamily) {
-            elSpan.style.padding = 0;
-            elSpan.style.fontFamily = theme.fontFamily;
+            span.innerHTML = label;
+
+            div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+
+            if (theme.fontFamily) {
+                div.style.fontFamily = theme.fontFamily;
+            }
+
+            if (theme.cssText) {
+                div.style.cssText += theme.cssText;
+            }
+
+            document.body.appendChild(div);
+            labelSize = span[offsetType];
+            document.body.removeChild(div);
+
+            this.sizeCacher[key] = labelSize;
         }
 
-        document.body.appendChild(elDiv);
-        labelSize = elSpan[offsetType];
-        document.body.removeChild(elDiv);
         return labelSize;
     },
 
@@ -274,8 +306,14 @@ var renderUtil = {
 
     /**
      * Expand dimension.
-     * @param {{width: number, height: number}} dimension series dimension
-     * @returns {{width: number, height: number}} expended dimension
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} expended bound
      */
     expandBound: function(bound) {
         var dimension = bound.dimension,
@@ -292,8 +330,24 @@ var renderUtil = {
         };
     },
 
-    makeCustomEventName: function(prefix, str, suffix) {
-        return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
+    /**
+     * Make custom event name.
+     * @param {string} prefix prefix
+     * @param {string} value value
+     * @param {string} suffix suffix
+     * @returns {string} custom event name
+     */
+    makeCustomEventName: function(prefix, value, suffix) {
+        return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
+    },
+
+    /**
+     * Escape
+     * @param {string} value value
+     * @returns {string}
+     */
+    escape: function(value) {
+        return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     },
 
     /**

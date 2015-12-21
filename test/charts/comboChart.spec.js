@@ -7,58 +7,57 @@
 'use strict';
 
 var ComboChart = require('../../src/js/charts/comboChart.js'),
+    DataProcessor = require('../../src/js/helpers/dataProcessor'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
 describe('ComboChart', function() {
     var comboChart;
 
+    beforeAll(function() {
+        spyOn(DataProcessor.prototype, 'init').and.returnValue();
+    });
+
     beforeEach(function() {
         comboChart = new ComboChart({
-            categories: ['cate1', 'cate2', 'cate3'],
-            series: {
-                column: [
-                    ['Legend1', 20, 30, 50],
-                    ['Legend2', 40, 40, 60],
-                    ['Legend3', 60, 50, 10],
-                    ['Legend4', 80, 10, 70]
+                series: {
+                    column: [],
+                    line: []
+                }
+            },
+            defaultTheme, {
+                chart: {
+                    width: 500,
+                    height: 400,
+                    title: 'Stacked Bar Chart'
+                },
+                yAxis: [
+                    {
+                        title: 'Y Axis',
+                        chartType: 'line'
+                    },
+                    {
+                        title: 'XX Axis'
+                    }
                 ],
-                line: [
-                    ['Legend2_1', 1, 2, 3]
-                ]
-            }
-        }, defaultTheme, {
-            chart: {
-                width: 500,
-                height: 400,
-                title: 'Stacked Bar Chart'
-            },
-            yAxis: [
-                {
-                    title: 'Y Axis',
-                    chartType: 'line'
+                series: {
+                    line: {
+                        hasDot: true
+                    }
                 },
-                {
-                    title: 'XX Axis'
-                }
-            ],
-            series: {
-                line: {
-                    hasDot: true
-                }
-            },
-            xAxis: {
-                title: 'X Axis'
-            },
-            tooltip: {
-                line: {
-                    suffix: 'px'
+                xAxis: {
+                    title: 'X Axis'
                 },
-                column: {
-                    suffix: '%'
+                tooltip: {
+                    line: {
+                        suffix: 'px'
+                    },
+                    column: {
+                        suffix: '%'
+                    }
                 }
             }
-        });
+        );
     });
 
     describe('_getYAxisOptionChartTypes() - y axis 영역 옵션에 설정된 차트 타입을 정렬하여 반환', function() {
@@ -105,18 +104,22 @@ describe('ComboChart', function() {
     });
 
     describe('_makeYAxisData()', function() {
+        beforeEach(function() {
+            spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
+        });
+
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
-            var result = comboChart._makeYAxisData({
+            var actual;
+
+            spyOn(comboChart.dataProcessor, 'getFullGroupValues').and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]);
+
+            actual = comboChart._makeYAxisData({
                 index: 0,
-                processedData: {
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    formatFunctions: []
-                },
                 seriesDimension: {
                     width: 300,
                     height: 300
@@ -129,7 +132,8 @@ describe('ComboChart', function() {
                     }
                 }
             });
-            expect(result).toEqual({
+
+            expect(actual).toEqual({
                 labels: [0, 30, 60, 90],
                 tickCount: 4,
                 validTickCount: 4,
@@ -145,27 +149,15 @@ describe('ComboChart', function() {
         });
 
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
-            var result = comboChart._makeYAxisData({
+            var actual;
+
+            spyOn(comboChart.dataProcessor, 'getGroupValues').and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60]
+            ]);
+
+            actual = comboChart._makeYAxisData({
                 index: 0,
-                processedData: {
-                    values: {
-                        column: [
-                            [20, 30, 50],
-                            [40, 40, 60]
-                        ],
-                        line: [
-                            [60, 50, 10],
-                            [80, 10, 70]
-                        ]
-                    },
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    formatFunctions: []
-                },
                 seriesDimension: {
                     width: 300,
                     height: 300
@@ -183,7 +175,8 @@ describe('ComboChart', function() {
                     ]
                 }
             });
-            expect(result).toEqual({
+
+            expect(actual).toEqual({
                 labels: [10, 20, 30, 40, 50, 60, 70],
                 tickCount: 7,
                 validTickCount: 7,
@@ -200,45 +193,41 @@ describe('ComboChart', function() {
     });
 
     describe('_makeAxesData()', function() {
-        it('y axis 옵션 정보가 하나일 경우에는 xAxis와 더불어 하나의 yAxis data만 생성합니다.', function() {
-            var processedData, bounds, actual;
+        beforeEach(function() {
             spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
+            spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
+            spyOn(comboChart.dataProcessor, 'getCategories').and.returnValue([]);
+        });
+
+        it('y axis 옵션 정보가 하나일 경우에는 xAxis와 더불어 하나의 yAxis data만 생성합니다.', function() {
+            var bounds, actual;
 
             comboChart.optionChartTypes = [];
-
-            processedData = {
-                formatFunctions: [],
-                labels: []
-            };
             bounds = {
                 series: {
                     dimension: {}
                 }
             };
-            actual = comboChart._makeAxesData(processedData, bounds);
+            actual = comboChart._makeAxesData(bounds);
+
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
             expect(actual.rightYAxis).not.toBeDefined();
         });
 
         it('y axis 옵션 정보가 하나일 경우에는 rightYAxis data도 생성합니다.', function() {
-            var processedData, bounds, actual;
-            spyOn(comboChart, '_makeYAxisData').and.returnValue({});
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
+            var bounds, actual;
 
             comboChart.optionChartTypes = ['column', 'line'];
 
-            processedData = {
-                formatFunctions: [],
-                labels: []
-            };
             bounds = {
                 series: {
                     dimension: {}
                 }
             };
-            actual = comboChart._makeAxesData(processedData, bounds, {});
+            actual = comboChart._makeAxesData(bounds);
+
             expect(actual.xAxis).toBeDefined();
             expect(actual.yAxis).toBeDefined();
             expect(actual.rightYAxis).toBeDefined();
@@ -299,16 +288,17 @@ describe('ComboChart', function() {
         it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
             var actual;
 
+            spyOn(comboChart.dataProcessor, 'getLegendLabels').and.callFake(function(chartType) {
+                var legendMap = {
+                    column: ['Legend1', 'Legend2'],
+                    line: ['Legend1', 'Legend2', 'Legend3']
+                };
+                return legendMap[chartType];
+            });
+
             comboChart.theme = {
                 series: {
                     colors: ['green', 'blue', 'gray', 'red', 'orange']
-                }
-            };
-
-            comboChart.processedData = {
-                legendLabels: {
-                    column: ['Legend1', 'Legend2'],
-                    line: ['Legend1', 'Legend2', 'Legend3']
                 }
             };
 
@@ -336,27 +326,6 @@ describe('ComboChart', function() {
 
             expect(actual.column.colors).toEqual(['green', 'blue']);
             expect(actual.line.colors).toEqual(['blue', 'gray', 'red']);
-        });
-    });
-
-    describe('_makeSeriesData()', function() {
-        it('chart type별로 series컴포넌트에 필요한 data를 생성합니다. line차트는 values가 pivot됩니다.', function() {
-            var processedData = {
-                        values: {
-                            column: [[1, 2]],
-                            line: [[3, 4]]
-                        },
-                        formattedValues: {
-                            column: [['01', '02']],
-                            line: [['03', '04']]
-                        }
-                },
-                actual = comboChart._makeSeriesData(processedData, ['column', 'line']);
-
-            expect(actual.column.values).toEqual([[1, 2]]);
-            expect(actual.column.formattedValues).toEqual([['01', '02']]);
-            expect(actual.line.values).toEqual([[3], [4]]);
-            expect(actual.line.formattedValues).toEqual([['03'], ['04']]);
         });
     });
 

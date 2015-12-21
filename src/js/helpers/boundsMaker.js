@@ -21,14 +21,13 @@ var boundsMaker = {
     /**
      * Get max label of value axis.
      * @memberOf module:boundsMaker
-     * @param {object} processedData convert data
      * @param {string} chartType chart type
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(processedData, chartType) {
-        var values = chartType && processedData.values[chartType] || processedData.joinValues,
-            formatFunctions = processedData.formatFunctions,
+    _getValueAxisMaxLabel: function(chartType) {
+        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getFullGroupValues() : this.dataProcessor.getGroupValues(chartType),
+            formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
             max = tui.util.max(flattenValues),
@@ -104,7 +103,7 @@ var boundsMaker = {
             index = len - 1;
             chartType = chartTypes[index];
             theme = params.theme[chartType] || params.theme;
-            label = this._getValueAxisMaxLabel(params.processedData, chartType);
+            label = this._getValueAxisMaxLabel(chartType);
             width = this._getYAxisWidth(params.options, [label], theme, index);
         }
         return width;
@@ -114,7 +113,6 @@ var boundsMaker = {
      * Make axes dimension.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -139,7 +137,6 @@ var boundsMaker = {
             yAxisWidth = this._getYAxisWidth(params.options.yAxis, axesLabelInfo.yAxis, params.theme.yAxis[chartType] || params.theme.yAxis);
             xAxisHeight = this._getXAxisHeight(params.options.xAxis, axesLabelInfo.xAxis, params.theme.xAxis);
             rightYAxisWidth = this._getRightYAxisWidth({
-                processedData: params.processedData,
                 chartTypes: params.optionChartTypes,
                 theme: params.theme.yAxis,
                 options: params.options.yAxis
@@ -173,21 +170,20 @@ var boundsMaker = {
     /**
      * Make legend dimension.
      * @memberOf module:boundsMaker
-     * @param {array.<string>} joinLegendLabels legend labels
      * @param {object} labelTheme label theme
      * @param {string} chartType chart type
      * @param {object} legendOptions series option
      * @returns {{width: number}} legend dimension
      * @private
      */
-    _makeLegendDimension: function(joinLegendLabels, labelTheme, chartType, legendOptions) {
+    _makeLegendDimension: function(labelTheme, chartType, legendOptions) {
         var legendWidth = 0,
             legendLabels, maxLabelWidth;
 
         legendOptions = legendOptions || {};
 
         if (!this._isSkippedLegendSizing(chartType, legendOptions)) {
-            legendLabels = tui.util.map(joinLegendLabels, function(item) {
+            legendLabels = tui.util.map(this.dataProcessor.getFullLegendData(), function(item) {
                 return item.label;
             });
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(legendLabels, labelTheme);
@@ -267,10 +263,9 @@ var boundsMaker = {
     },
 
     /**
-     * Get components dimension
+     * Make components dimensions.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -278,12 +273,12 @@ var boundsMaker = {
      * @returns {Object} components dimensions
      * @private
      */
-    _getComponentsDimensions: function(params) {
+    _makeComponentsDimensions: function(params) {
         var chartOptions = params.options.chart || {},
             chartDimension = this._makeChartDimension(chartOptions),
             titleDimension = this._makeTitleDimension(chartOptions.title, params.theme.title),
             axesDimension = this._makeAxesDimension(params),
-            legendDimension = this._makeLegendDimension(params.processedData.joinLegendLabels, params.theme.legend.label, params.options.chartType, params.options.legend),
+            legendDimension = this._makeLegendDimension(params.theme.legend.label, params.options.chartType, params.options.legend),
             seriesDimension = this._makeSeriesDimension({
                 chartDimension: chartDimension,
                 axesDimension: axesDimension,
@@ -451,29 +446,28 @@ var boundsMaker = {
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axes or not
      *      @param {array} params.optionChartTypes chart types
-     *      @param {object} processedData processed data
      *      @param {boolean} isVertical whether vertical or not
      * @returns {{xAxis: array, yAxis: array}} label info
      * @private
      */
     _makeAxesLabelInfo: function(params) {
-        var chartType, maxValueLabel, yLabels, xLabels;
+        var chartType, maxValueLabel, labels, yLabels, xLabels;
 
         if (!params.hasAxes) {
             return null;
         }
 
         chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
-
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
-        maxValueLabel = this._getValueAxisMaxLabel(params.processedData, chartType);
+        maxValueLabel = this._getValueAxisMaxLabel(chartType);
+        labels = this.dataProcessor.getCategories();
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
         if (params.isVertical) {
             yLabels = [maxValueLabel];
-            xLabels = params.processedData.labels;
+            xLabels = labels;
         } else {
-            yLabels = params.processedData.labels;
+            yLabels = labels;
             xLabels = [maxValueLabel];
         }
 
@@ -510,15 +504,14 @@ var boundsMaker = {
 
     /**
      * Make rotation info about horizontal label.
-     * @param {number} seriesWidth series area width
+     * @param {number} limitWidth limit width
      * @param {array.<string>} labels axis labels
      * @param {object} theme axis label theme
      * @returns {?object} rotation info
      * @private
      */
-    _makeHorizontalLabelRotationInfo: function(seriesWidth, labels, theme) {
+    _makeHorizontalLabelRotationInfo: function(limitWidth, labels, theme) {
         var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            limitWidth = seriesWidth / labels.length - chartConst.XAXIS_LABEL_GUTTER,
             degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
@@ -553,14 +546,13 @@ var boundsMaker = {
         return diffLeft;
     },
 
-
     /**
-     * Calculate height of xAxis.
+     * Calculate rotated height of xAxis.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} xAxis height
      * @private
      */
-    _calculateXAxisHeight: function(rotationInfo) {
+    _calculateXAxisRotatedHeight: function(rotationInfo) {
         var degree = rotationInfo.degree,
             maxLabelWidth = rotationInfo.maxLabelWidth,
             labelHeight = rotationInfo.labelHeight,
@@ -569,14 +561,14 @@ var boundsMaker = {
     },
 
     /**
-     * Calculate height difference between origin label and rotation label.
+     * Calculate height difference between origin category and rotation category.
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @returns {number} height difference
      * @private
      */
-    _calculateHeightDifference: function(rotationInfo) {
-        var xAxisHeight = this._calculateXAxisHeight(rotationInfo);
-        return xAxisHeight - rotationInfo.labelHeight;
+    _calculateDiffWithRotatedHeight: function(rotationInfo) {
+        var rotatedHeight = this._calculateXAxisRotatedHeight(rotationInfo);
+        return rotatedHeight - rotationInfo.labelHeight;
     },
 
     /**
@@ -597,7 +589,7 @@ var boundsMaker = {
     },
 
     /**
-     * Update width of dimentios.
+     * Update width of dimensions.
      * @param {{plot: {width: number}, series: {width: number}, xAxis: {width: number}}} dimensions dimensions
      * @param {number} overflowLeft overflow left
      * @private
@@ -624,45 +616,54 @@ var boundsMaker = {
     },
 
     /**
+     * Calculate height difference between origin category and multiline category.
+     * @param {array.<string>} labels labels
+     * @param {{fontSize: number, fontFamily: string}} theme axis label theme
+     * @param {number} limitWidth limit width
+     * @returns {number} calculated height
+     * @private
+     */
+    _calculateDiffWithMultilineHeight: function(labels, theme, limitWidth) {
+        var multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme),
+            normalHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
+            multilineHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
+                cssText: 'line-height:1.2;width:' + limitWidth + 'px'
+            }, theme));
+
+        return multilineHeight - normalHeight;
+    },
+
+    /**
      * Update dimensions and degree.
      * @param {{plot: {width: number, height: number}, series: {width: number, height: number}, xAxis: {width: number, height: number}}} dimensions dimensions
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
      * @param {array} labels labels
      * @param {object} theme theme
+     * @param {number} limitWidth limit width
      * @private
      */
-    _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme) {
+    _updateDimensionsAndDegree: function(dimensions, rotationInfo, labels, theme, limitWidth) {
         var overflowLeft, diffHeight;
-        if (!rotationInfo) {
-            return;
+        if (rotationInfo) {
+            overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
+            this._updateDimensionsWidth(dimensions, overflowLeft);
+            this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
+            diffHeight = this._calculateDiffWithRotatedHeight(rotationInfo);
+        } else {
+            diffHeight = this._calculateDiffWithMultilineHeight(labels, theme, limitWidth);
         }
-        overflowLeft = this._calculateOverflowLeft(dimensions.yAxis.width, rotationInfo, labels[0], theme);
-        this._updateDimensionsWidth(dimensions, overflowLeft);
-        this._updateDegree(dimensions.series.width, rotationInfo, labels.length, overflowLeft);
-        diffHeight = this._calculateHeightDifference(rotationInfo);
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
-    _makeCustomEventBound: function(bound) {
-        var dimension = bound.dimension,
-            position = bound.position;
-        return {
-            dimension: {
-                width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
-            },
-            position: {
-                left: position.left - chartConst.SERIES_EXPAND_SIZE,
-                top: position.top
-            }
-        }
+    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount) {
+        return seriesWidth / (labelCount - 1);
     },
 
     /**
      * Make bounds about chart components.
      * @memberOf module:boundsMaker
+     * @param {object} dataProcessor data processor
      * @param {object} params parameters
-     *      @param {object} params.processedData processed data
      *      @param {object} params.theme chart theme
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
@@ -694,17 +695,25 @@ var boundsMaker = {
      *   }
      * }} bounds
      */
-    make: function(params) {
-        var axesLabelInfo = this._makeAxesLabelInfo(params),
-            dimensions = this._getComponentsDimensions(tui.util.extend({
-                axesLabelInfo: axesLabelInfo
-            }, params)),
+    make: function(dataProcessor, params) {
+        var axesLabelInfo, dimensions, xAxisOptions, limitWidth,
             rotationInfo, top, left, seriesBound, axesBounds, bounds;
+
+        this.dataProcessor = dataProcessor;
+
+        axesLabelInfo = this._makeAxesLabelInfo(params);
+        dimensions = this._makeComponentsDimensions(tui.util.extend({
+            axesLabelInfo: axesLabelInfo
+        }, params));
+        xAxisOptions = params.options.xAxis || {};
 
         this.chartLeftPadding = chartConst.CHART_PADDING;
         if (params.hasAxes) {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(dimensions.series.width, axesLabelInfo.xAxis, params.theme.label);
-            this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.label);
+            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length);
+            if (xAxisOptions.rotation !== false) {
+                rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, axesLabelInfo.xAxis, params.theme.xAxis.label);
+            }
+            this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.xAxis.label, limitWidth);
         }
 
         top = dimensions.title.height + chartConst.CHART_PADDING;
@@ -727,6 +736,7 @@ var boundsMaker = {
             tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
             customEvent: seriesBound
         }, axesBounds);
+
         return bounds;
     }
 };

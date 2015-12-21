@@ -100,11 +100,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _setBaseData: function(bound, data) {
-        this.data = tui.util.extend(this.data, data);
+        this.data = data;
         this.bound = bound;
-        this.percentValues = this._makePercentValues(this.data, this.options.stacked);
+        this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
     },
 
+    _getPercentValues: function() {
+        return this.dataProcessor.getPercentValues(this.chartType);
+    },
     /**
      * Render series label area
      * @param {{width: number, height: number}} dimension series dimension
@@ -234,13 +237,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(bound, data) {
-        var that = this;
+        var groupValues = this.dataProcessor.getGroupValues(this.chartType),
+            that = this;
+
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (data.values && data.values.length) {
+        if (groupValues && groupValues.length) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(that._renderGraph, this));
             if (this.labelShower) {
@@ -289,9 +294,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeSeriesDataForSeriesLabel: function(seriesData, dimension) {
         return tui.util.extend({
-            values: this.data.values,
-            formattedValues: this.data.formattedValues,
-            formatFunctions: this.data.formatFunctions,
             dimension: dimension
         }, seriesData);
     },
@@ -309,103 +311,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             top: position.top - (hiddenWidth * 2),
             left: position.left - hiddenWidth
         });
-    },
-
-    /**
-     * Make percent value.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @param {string} stacked stacked option
-     * @returns {array.<array.<number>>} percent values
-     * @private
-     */
-    _makePercentValues: function(data, stacked) {
-        var result;
-
-        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            result = this._makeNormalStackedPercentValues(data);
-        } else if (stacked === chartConst.STACKED_PERCENT_TYPE) {
-            result = this._makePercentStackedPercentValues(data);
-        } else {
-            result = this._makeNormalPercentValues(data);
-        }
-
-        return result;
-    },
-
-    /**
-     * Make percent values about normal stacked option.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array} percent values about normal stacked option.
-     * @private
-     */
-    _makeNormalStackedPercentValues: function(data) {
-        var min = data.limit.min,
-            max = data.limit.max,
-            distance = max - min,
-            percentValues = tui.util.map(data.values, function(values) {
-                var plusValues = tui.util.filter(values, function(value) {
-                        return value > 0;
-                    }),
-                    sum = tui.util.sum(plusValues),
-                    groupPercent = (sum - min) / distance;
-                return tui.util.map(values, function(value) {
-                    return value === 0 ? 0 : groupPercent * (value / sum);
-                });
-            });
-
-        return percentValues;
-    },
-
-    /**
-     * Make percent values about percent stacked option.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array} percent values about percent stacked option
-     * @private
-     */
-    _makePercentStackedPercentValues: function(data) {
-        var percentValues = tui.util.map(data.values, function(values) {
-            var plusValues = tui.util.filter(values, function(value) {
-                    return value > 0;
-                }),
-                sum = tui.util.sum(plusValues);
-            return tui.util.map(values, function(value) {
-                return value === 0 ? 0 : value / sum;
-            });
-        });
-
-        return percentValues;
-    },
-
-    /**
-     * Make normal percent value.
-     * @param {{values: array, limit: {min: number, max: number}}} data series data
-     * @returns {array.<array.<number>>} percent values
-     * @private
-     */
-    _makeNormalPercentValues: function(data) {
-        var min = data.limit.min,
-            max = data.limit.max,
-            distance = max - min,
-            isLineTypeChart = predicate.isLineTypeChart(this.chartType),
-            flag = 1,
-            subValue = 0,
-            percentValues;
-
-        if (!isLineTypeChart && min < 0 && max <= 0) {
-            flag = -1;
-            subValue = max;
-            distance = min - max;
-        } else if (isLineTypeChart || min >= 0) {
-            subValue = min;
-        }
-
-        percentValues = tui.util.map(data.values, function(values) {
-            return tui.util.map(values, function(value) {
-                return (value - subValue) * flag / distance;
-            });
-        });
-
-        return percentValues;
     },
 
     /**
@@ -580,7 +485,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index,
-            legendData = this.data.joinLegendLabels[legendIndex];
+            legendData = this.dataProcessor.getLegendData(legendIndex);
 
         return {
             chartType: legendData.chartType,
@@ -619,13 +524,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {boolean} isAsapShow whether asap show or not
      */
     onSelectLegend: function(chartType, legendIndex, isAsapShow) {
+        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
+
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 
         this.selectedLegendIndex = legendIndex;
-        this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
-        this.graphRenderer.selectLegend(legendIndex, isAsapShow);
+
+        if (groupValues && groupValues.length) {
+            this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
+            this.graphRenderer.selectLegend(legendIndex, isAsapShow);
+        }
     }
 });
 
