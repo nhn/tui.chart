@@ -461,12 +461,17 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             sizeType = params.sizeType,
             positionType = params.positionType,
             value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
-            center;
+            movedPositionValue;
 
         if (value < 0) {
-            center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
-            position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
+            movedPositionValue = bound[sizeType] + params.dimension[sizeType] + (chartConst.TOOLTIP_GAP * 2);
+            if (positionType === 'left') {
+                position[positionType] -= movedPositionValue;
+            } else {
+                position[positionType] += movedPositionValue;
+            }
         }
+
         return position;
     },
 

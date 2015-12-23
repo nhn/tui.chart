@@ -9,7 +9,9 @@
 var Series = require('./series'),
     BarTypeSeriesBase = require('./barTypeSeriesBase'),
     chartConst = require('../const'),
-    renderUtil = require('../helpers/renderUtil');
+    predicate = require('../helpers/predicate'),
+    renderUtil = require('../helpers/renderUtil'),
+    calculator = require('../helpers/calculator');
 
 var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSeries.prototype */ {
     /**
@@ -97,7 +99,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var endHeight, endTop, startEndTops, bound;
 
         endHeight = Math.abs(value * baseInfo.dimension.height);
-        endTop = (baseInfo.isMinus ? 0 : baseInfo.dimension.height - baseInfo.distanceToMin) + chartConst.SERIES_EXPAND_SIZE;
+        endTop = (baseInfo.isMinus ? 0 : baseInfo.distance.toMax) + chartConst.SERIES_EXPAND_SIZE;
         startEndTops = this._makeStartEndTops(endTop, endHeight, value);
         bound = this._makeColumnChartBound(tui.util.extend({
             baseBound: {
@@ -135,8 +137,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             bounds = this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
                 return that._makeColumnChartBound({
                     baseBound: baseBound,
-                    startTop: dimension.height + chartConst.SERIES_EXPAND_SIZE,
-                    endTop: dimension.height - endSize - endPosition,
+                    startTop: baseInfo.distance.toMax + chartConst.SERIES_EXPAND_SIZE,
+                    endTop: baseInfo.distance.toMax - endSize - endPosition,
                     endHeight: endSize
                 });
             });
@@ -151,11 +153,15 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeBounds: function(dimension) {
-        if (!this.options.stacked) {
-            return this._makeNormalColumnChartBounds(dimension);
+        var bounds;
+
+        if (predicate.isValidStackedOption(this.options.stacked)) {
+            bounds = this._makeStackedColumnChartBounds(dimension);
         } else {
-            return this._makeStackedColumnChartBounds(dimension);
+            bounds = this._makeNormalColumnChartBounds(dimension);
         }
+
+        return bounds;
     },
 
     /**
@@ -186,24 +192,62 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Make sum label html.
-     * @param {object} params parameters
-     *      @param {array.<number>} params.values values
-     *      @param {{left: number, top: number}} params.bound bound
-     *      @param {number} params.labelHeight label height
-     * @returns {string} sum label html
+     * Calculate sum label left position.
+     * @param {{left: number, top: number}} bound bound
+     * @param {string} formattedSum formatted sum.
+     * @returns {number} left position value
+     * @private
      */
-    _makeSumLabelHtml: function(params) {
-        var sum = this._makeSumValues(params.values),
-            bound = params.bound,
-            labelWidth = renderUtil.getRenderedLabelWidth(sum, this.theme.label),
-            left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
-            top = bound.top - params.labelHeight - chartConst.SERIES_LABEL_PADDING;
+    _calculateSumLabelLeftPosition: function(bound, formattedSum) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
+        return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
+    },
 
-        return this._makeSeriesLabelHtml({
-            left: left,
-            top: top
-        }, sum, -1, -1);
+    /**
+     * Make plus sum label html.
+     * @param {array.<number>} values values
+     * @param {{left: number, top: number}} bound bound
+     * @param {number} labelHeight label height
+     * @returns {string} plus sum label html
+     * @private
+     */
+    _makePlusSumLabelHtml: function(values, bound, labelHeight) {
+        var sum, formattedSum,
+            html = '';
+
+        if (bound) {
+            sum = calculator.sumPlusValues(values);
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            html = this._makeSeriesLabelHtml({
+                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
+            }, formattedSum, -1, -1);
+        }
+
+        return html;
+    },
+
+    /**
+     * Make minus sum label html.
+     * @param {array.<number>} values values
+     * @param {{left: number, top: number}} bound bound
+     * @returns {string} plus minus label html
+     * @private
+     */
+    _makeMinusSumLabelHtml: function(values, bound) {
+        var sum, formattedSum,
+            html = '';
+
+        if (bound) {
+            sum = calculator.sumMinusValues(values);
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            html = this._makeSeriesLabelHtml({
+                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING
+            }, formattedSum, -1, -1);
+        }
+
+        return html;
     }
 });
 

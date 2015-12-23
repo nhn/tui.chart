@@ -363,7 +363,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             toMax = 0,
             toMin = 0;
 
-        if (min < 0 && max > 0) {
+        if (min <= 0 && max >= 0) {
             toMax = (distance + min) / distance * size;
             toMin = (distance - max) / distance * size;
         }

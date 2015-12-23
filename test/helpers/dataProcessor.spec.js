@@ -350,9 +350,19 @@ describe('test DataProcessor', function() {
     });
 
     describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
-            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]], {min: 0, max: 160});
-            expect(actual).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+        it('stacked 옵션이 "normal"이 모든 데이터가 양수인 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [60, 60], [60, 40], [80, 20]], {min: 0, max: 160});
+            expect(actual).toEqual([[0.125, 0.5], [0.375, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+        });
+
+        it('stacked 옵션이 "normal"이며 모든 데이터가 음수인 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makeNormalStackedPercentValues([[-20, -80], [-60, -60], [-60, -40], [-80, -20]], {min: 0, max: 160});
+            expect(actual).toEqual([[-0.125, -0.5], [-0.375, -0.375], [-0.375, -0.25], [-0.5, -0.125]]);
+        });
+
+        it('stacked 옵션이 "normal"이며 데이터와 양수와 음수가 섞여있는 percent타입의 values를 생성합니다.', function () {
+            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [-60, 60], [-60, -40], [80, -20]], {min: -160, max: 160});
+            expect(actual).toEqual([[0.0625, 0.25], [-0.1875, 0.1875], [-0.1875, -0.125], [0.25, -0.0625]]);
         });
     });
 

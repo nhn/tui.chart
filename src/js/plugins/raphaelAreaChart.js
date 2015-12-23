@@ -42,7 +42,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = this._getAreasPath(groupPositions),
+            groupPaths = this._getAreasPath(groupPositions, data.zeroTop),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper, groupAreas, tooltipLine, selectionDot, groupDots;
@@ -161,10 +161,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Find middle left
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
+     * @param {number} zeroTop top position of zero point
      * @returns {number} middle left
      * @private
      */
-    _findMiddleLeft: function(fromPos, toPos) {
+    _findMiddleLeft: function(fromPos, toPos, zeroTop) {
         var tops = [fromPos.startTop - fromPos.top, toPos.startTop - toPos.top],
             middleLeft, width, fromHeight, toHeight;
 
@@ -172,11 +173,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             return -1;
         }
 
-        fromHeight = this._makeHeight(fromPos.top, fromPos.startTop);
-        toHeight = this._makeHeight(toPos.top, toPos.startTop);
+        fromHeight = this._makeHeight(fromPos.top, zeroTop);
+        toHeight = this._makeHeight(toPos, zeroTop);
         width = toPos.left - fromPos.left;
 
         middleLeft = fromPos.left + (width * (fromHeight / (fromHeight + toHeight)));
+
         return middleLeft;
     },
 
@@ -199,6 +201,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Make area paths.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
+     * @param {number} zeroTop top position of zero point
      * @returns {{
      *      start: string,
      *      end: string,
@@ -207,15 +210,18 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * }} area paths
      * @private
      */
-    _makeAreaPaths: function(fromPos, toPos) {
-        var middleLeft = this._findMiddleLeft(fromPos, toPos),
+    _makeAreaPaths: function(fromPos, toPos, zeroTop) {
+        var middleLeft = this._findMiddleLeft(fromPos, toPos, zeroTop),
             result = {
                 start: this._makeAreaPath(fromPos, fromPos)
             },
-            middlePos;
+            middleTop, middleStartTop, middlePos;
 
         if (this._isPlus(middleLeft)) {
-            middlePos = {left: middleLeft, top: fromPos.startTop, startTop: fromPos.startTop};
+            middleTop = (fromPos.top + toPos.top) / 2;
+            middleStartTop = (fromPos.startTop + toPos.startTop) / 2;
+            middlePos = {left: middleLeft, top: middleTop, startTop: middleStartTop};
+
             result.end = this._makeAreaPath(fromPos, middlePos);
             result.addStart = this._makeAreaPath(middlePos, middlePos);
             result.addEnd = this._makeAreaPath(middlePos, toPos);
@@ -229,17 +235,18 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Get area path.
      * @param {array.<array.<object>>} groupPositions positions
+     * @param {number} zeroTop top position of zero point
      * @returns {array.<array.<string>>} paths
      * @private
      */
-    _getAreasPath: function(groupPositions) {
+    _getAreasPath: function(groupPositions, zeroTop) {
         var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
             fromPos.left -= 1;
             return tui.util.map(rest, function(position) {
                 var result = {
-                    area: this._makeAreaPaths(fromPos, position),
+                    area: this._makeAreaPaths(fromPos, position, zeroTop),
                     line: this.makeLinePath(fromPos, position)
                 };
                 fromPos = position;
@@ -330,7 +337,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             that = this;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this._getAreasPath(groupPositions);
+        this.groupPaths = this._getAreasPath(groupPositions, params.zeroTop);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 

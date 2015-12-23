@@ -33,14 +33,10 @@ var boundsMaker = {
             max = tui.util.max(flattenValues),
             limit = calculator.calculateLimit(min, max),
             minLabel = calculator.normalizeAxisNumber(limit.min),
-            maxLabel = calculator.normalizeAxisNumber(limit.max),
-            fns = formatFunctions && formatFunctions.slice() || [];
+            maxLabel = calculator.normalizeAxisNumber(limit.max);
+
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
-        fns.unshift(maxLabel);
-        maxLabel = tui.util.reduce(fns, function(stored, fn) {
-            return fn(stored);
-        });
-        return maxLabel;
+        return renderUtil.formatValue(maxLabel, formatFunctions);
     },
 
     /**

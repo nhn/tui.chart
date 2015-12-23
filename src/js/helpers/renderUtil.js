@@ -359,6 +359,13 @@ var renderUtil = {
         return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
     },
 
+    formatValue: function(value, formatFunctions) {
+        var fns = Array.prototype.concat.apply([value], formatFunctions || []);
+        return tui.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
+    },
+
     /**
      * Whether IE7 or not.
      * @returns {boolean} result boolean

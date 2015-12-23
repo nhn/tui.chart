@@ -8,7 +8,8 @@
 
 var chartConst = require('../const'),
     predicate = require('./predicate'),
-    calculator = require('./calculator');
+    calculator = require('./calculator'),
+    renderUtil = require('./renderUtil');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -97,11 +98,17 @@ var axisDataMaker = {
             formatFunctions = params.formatFunctions,
             tickInfo;
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
-            tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
-            formatFunctions = [];
+            if (calculator.sumMinusValues(concat.apply([], params.values)) < 0) {
+                tickInfo = chartConst.PERCENT_NEGATIVE_STACKED_TICK_INFO;
+            } else {
+                tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
+            }
+            formatFunctions = [function(value) {
+                return value + '%';
+            }];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
+                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked, params.chartType),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
@@ -127,17 +134,18 @@ var axisDataMaker = {
      * @param {array.<number>} groupValues group values
      * @param {boolean} isAllowedStackedOption whether allowed stacked option or not.
      * @param {string} stacked stacked option.
+     * @param {string} chartType chart type
      * @returns {array.<number>} base values
      * @private
      */
-    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
+    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked, chartType) {
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
-                var sum = calculator.sumPlusValues(values);
-                return values.concat([sum]);
+                var plusSum = calculator.sumPlusValues(values),
+                    minusSum = calculator.sumMinusValues(values);
+                return [plusSum, minusSum];
             }, this);
         }
-
         return concat.apply([], groupValues);
     },
 
@@ -658,10 +666,7 @@ var axisDataMaker = {
             return labels;
         }
         result = tui.util.map(labels, function(label) {
-            var fns = concat.apply([label], formatFunctions);
-            return tui.util.reduce(fns, function(stored, fn) {
-                return fn(stored);
-            });
+            return renderUtil.formatValue(label, formatFunctions);
         });
         return result;
     }

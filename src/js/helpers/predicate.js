@@ -181,6 +181,10 @@ var predicate = {
      */
     isPercentStacked: function(stacked) {
         return stacked === chartConst.STACKED_PERCENT_TYPE;
+    },
+
+    isValidStackedOption: function(stacked) {
+        return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
     }
 };
 

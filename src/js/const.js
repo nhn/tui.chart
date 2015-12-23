@@ -137,6 +137,16 @@ var chartConst = {
         tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     },
+
+    PERCENT_NEGATIVE_STACKED_TICK_INFO: {
+        limit: {
+            min: -100,
+            max: 100
+        },
+        step: 25,
+        tickCount: 9,
+        labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
+    },
     /** title add padding */
     TITLE_PADDING: 20,
     /** legend area padding */
