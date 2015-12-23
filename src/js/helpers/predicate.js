@@ -183,6 +183,11 @@ var predicate = {
         return stacked === chartConst.STACKED_PERCENT_TYPE;
     },
 
+    /**
+     * Whether valid stacked option or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
     isValidStackedOption: function(stacked) {
         return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
     }

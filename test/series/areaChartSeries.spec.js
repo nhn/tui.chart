@@ -33,9 +33,13 @@ describe('AreaChartSeries', function() {
                 limit: limit
             };
 
-            actual = series._makePositionTopOfZeroPoint({
-                height: height
-            });
+            series.bound = {
+                dimension: {
+                    height: height
+                }
+            };
+
+            actual = series._makePositionTopOfZeroPoint();
             expected = series._getLimitDistanceFromZeroPoint(height, limit).toMax + chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
@@ -53,9 +57,13 @@ describe('AreaChartSeries', function() {
                 limit: limit
             };
 
-            actual = series._makePositionTopOfZeroPoint({
-                height: height
-            });
+            series.bound = {
+                dimension: {
+                    height: height
+                }
+            };
+
+            actual = series._makePositionTopOfZeroPoint();
             expected = height + chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
@@ -73,9 +81,13 @@ describe('AreaChartSeries', function() {
                 limit: limit
             };
 
-            actual = series._makePositionTopOfZeroPoint({
-                height: height
-            });
+            series.bound = {
+                dimension: {
+                    height: height
+                }
+            };
+
+            actual = series._makePositionTopOfZeroPoint();
             expected = chartConst.SERIES_EXPAND_SIZE;
 
             expect(actual).toBe(expected);
@@ -86,7 +98,11 @@ describe('AreaChartSeries', function() {
         it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stacked position 정보를 구합니다.', function() {
             var actual, expected;
 
-            series.bound = {};
+            series.bound = {
+                dimension: {
+                    height: 190
+                }
+            };
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
             actual = series._makeStackedPositions([[{top: 150}], [{top: 100}], [{top: 180}]]);
@@ -100,7 +116,11 @@ describe('AreaChartSeries', function() {
         it('일반 영역 차트의 경우 기본 position값에 0점의 position top을 startTop으로 설정합니다.', function() {
             var actual, expected;
 
-            series.bound = {};
+            series.bound = {
+                dimension: {
+                    height: 190
+                }
+            };
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
             actual = series._makeNormalPositions([[{top: 150}], [{top: 100}], [{top: 180}]]);
@@ -115,7 +135,11 @@ describe('AreaChartSeries', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
-            series.bound = {};
+            series.bound = {
+                dimension: {
+                    height: 190
+                }
+            };
             spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
@@ -129,7 +153,11 @@ describe('AreaChartSeries', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
-            series.bound = {};
+            series.bound = {
+                dimension: {
+                    height: 190
+                }
+            };
             spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 

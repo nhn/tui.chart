@@ -596,30 +596,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var distance = Math.abs(limit.max - limit.min);
 
         return tui.util.map(groupValues, function(values) {
-            var plusSum = calculator.sumPlusValues(values),
-                minusSum = Math.abs(calculator.sumMinusValues(values)),
-                totalSum = plusSum + minusSum,
-                plusPercent = plusSum / distance,
-                minusPercent = minusSum / distance;
-
-            return tui.util.map(values, function(value) {
-                var percentValue;
-                if (totalSum === 0 || value === 0) {
-                    percentValue = 0;
-                } else if (value > 0) {
-                    percentValue = plusPercent * (value / plusSum);
-                } else {
-                    percentValue = minusPercent * (value / minusSum);
-                }
-                return percentValue;
-            });
-        });
-    },
-
-    _makeNormalStackedPercentValuesForAreaChart: function(groupValues, limit) {
-        var distance = Math.abs(limit.max - limit.min);
-
-        return tui.util.map(groupValues, function(values) {
             return tui.util.map(values, function(value) {
                 return value / distance;
             });
@@ -700,11 +676,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         if (predicate.isPieChart(chartType)) {
             result = this._makePieChartPercentValues(groupValues);
         } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
-            if (predicate.isAreaChart(chartType)) {
-                result = this._makeNormalStackedPercentValuesForAreaChart(groupValues, limit);
-            } else {
-                result = this._makeNormalStackedPercentValues(groupValues, limit);
-            }
+            result = this._makeNormalStackedPercentValues(groupValues, limit);
+            //if (predicate.isAreaChart(chartType)) {
+            //    result = this._makeNormalStackedPercentValuesForAreaChart(groupValues, limit);
+            //} else {
+            //    result = this._makeNormalStackedPercentValues(groupValues, limit);
+            //}
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             result = this._makePercentStackedPercentValues(groupValues);
         } else {

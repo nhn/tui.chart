@@ -99,7 +99,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeNormalColumnChartBound()', function() {
         it('normal column chart bar 하나의 bound정보를 생성합니다.', function() {
             var actual = series._makeNormalColumnChartBound({
-                    distanceToMin: 0,
+                    distance: {
+                        toMax: 200
+                    },
                     dimension: {
                         width: 400,
                         height: 200
@@ -267,20 +269,46 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_makeSumLabelHtml', function() {
-        it('합계 label html을 생성합니다.', function() {
-            var actual = series._makeSumLabelHtml({
-                    values: [10, 20, 30],
-                    bound: {
-                        left: 10,
-                        top: 30,
-                        width: 40,
-                        height: 20
-                    },
-                    formatFunctions: [],
-                    labelHeight: 20
-                }),
+    describe('_calculateSumLabelLeftPosition()', function() {
+        it('합계 레이블의 left position값을 계산합니다.', function() {
+            var actual = series._calculateSumLabelLeftPosition({
+                    left: 10,
+                    width: 30
+                }, 20),
+                expected = 6;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makePlusSumLabelHtml()', function() {
+        it('양수합계 레이블 html을 생성합니다.', function() {
+            var values = [10, 20, 30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
                 expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeMinusSumLabelHtml()', function() {
+        it('음수합계 레이블 html을 생성합니다.', function() {
+            var values = [-10, -20, -30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+
             expect(actual).toBe(expected);
         });
     });

@@ -297,9 +297,10 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         htmls = tui.util.map(values, function(value, index) {
             var bound = params.bounds[index],
-                boundEnd, formattedValue, position, labelHtml;
+                labelHtml = '',
+                boundEnd, formattedValue, position;
 
-            if (bound) {
+            if (bound && value) {
                 boundEnd = bound.end;
                 formattedValue = this.dataProcessor.getFormattedValue(params.groupIndex, index, this.chartType);
                 position = this._makeStackedLabelPosition(boundEnd, formattedValue, params.labelHeight);

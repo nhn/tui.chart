@@ -99,7 +99,7 @@ var axisDataMaker = {
             tickInfo;
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
             if (calculator.sumMinusValues(concat.apply([], params.values)) < 0) {
-                tickInfo = chartConst.PERCENT_NEGATIVE_STACKED_TICK_INFO;
+                tickInfo = chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
             } else {
                 tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             }
@@ -108,7 +108,7 @@ var axisDataMaker = {
             }];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked, params.chartType),
+                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
@@ -134,11 +134,10 @@ var axisDataMaker = {
      * @param {array.<number>} groupValues group values
      * @param {boolean} isAllowedStackedOption whether allowed stacked option or not.
      * @param {string} stacked stacked option.
-     * @param {string} chartType chart type
      * @returns {array.<number>} base values
      * @private
      */
-    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked, chartType) {
+    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
                 var plusSum = calculator.sumPlusValues(values),

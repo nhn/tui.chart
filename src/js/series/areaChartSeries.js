@@ -55,7 +55,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
             firstStartTop = this._makePositionTopOfZeroPoint(),
             prevPositionTops = [];
 
-        return tui.util.map(groupPositions, function(positions, groupIndex) {
+        return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position, index) {
                 var prevTop = prevPositionTops[index] || firstStartTop,
                     stackedHeight = height - position.top,
@@ -78,6 +78,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      */
     _makeNormalPositions: function(groupPositions) {
         var startTop = this._makePositionTopOfZeroPoint();
+
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position) {
                 position.startTop = startTop;
@@ -113,10 +114,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @returns {object} series data
      */
     makeSeriesData: function(bound) {
-        var zeroTop = this._makePositionTopOfZeroPoint();
         return {
-            groupPositions: this._makePositions(bound.dimension),
-            zeroTop: zeroTop
+            groupPositions: this._makePositions(bound.dimension)
         };
     }
 });

@@ -138,7 +138,10 @@ var chartConst = {
         labels: [0, 25, 50, 75, 100]
     },
 
-    PERCENT_NEGATIVE_STACKED_TICK_INFO: {
+    /** tick info of negative percent stacked option
+     * @type {object}
+     */
+    NEGATIVE_PERCENT_STACKED_TICK_INFO: {
         limit: {
             min: -100,
             max: 100

@@ -11,7 +11,7 @@ var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarTypeSeriesBase', function() {
-    var series, dataProcessor, makeSeriesRenderingPosition, makeSeriesLabelHtml, makeSumLabelHtml;
+    var series, dataProcessor, makeSeriesRenderingPosition, makeSeriesLabelHtml, makePlusSumLabelHtml, makeMinusSumLabelHtml;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -28,7 +28,8 @@ describe('BarTypeSeriesBase', function() {
             top: 0
         });
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        makeSumLabelHtml = jasmine.createSpy('_makeSumLabelHtml').and.returnValue('<div></div>');
+        makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');
+        makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {
@@ -41,8 +42,9 @@ describe('BarTypeSeriesBase', function() {
         };
         series.dataProcessor = dataProcessor;
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
-        series._makeSumLabelHtml = makeSumLabelHtml;
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makePlusSumLabelHtml = makePlusSumLabelHtml;
+        series._makeMinusSumLabelHtml = makeMinusSumLabelHtml;
     });
 
     describe('_makeBarGutter()', function() {
@@ -187,7 +189,7 @@ describe('BarTypeSeriesBase', function() {
                 labelHeight: 10
             });
             container.innerHTML = html;
-            expect(container.childNodes.length).toBe(3);
+            expect(container.childNodes.length).toBe(4);
         });
     });
 
@@ -216,7 +218,7 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             }, elLabelArea);
-            expect(elLabelArea.childNodes.length).toBe(3);
+            expect(elLabelArea.childNodes.length).toBe(4);
         });
     });
 
