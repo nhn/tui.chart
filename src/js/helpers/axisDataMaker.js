@@ -229,6 +229,12 @@ var axisDataMaker = {
         var min = tui.util.min(params.values),
             max = tui.util.max(params.values),
             intTypeInfo, tickCounts, candidates, tickInfo;
+
+        if (min === 0 && max === 0) {
+            max = 5;
+            min = 0;
+        }
+
         // 01. min, max, options 정보를 정수형으로 변경
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
 
