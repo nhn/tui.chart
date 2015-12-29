@@ -12,37 +12,45 @@ describe('GroupTypeCustomEvent', function() {
     var groupTypeCustomEvent;
 
     beforeEach(function() {
-        groupTypeCustomEvent = new GroupTypeCustomEvent({
-            bound: {
-                dimension: {
-                    width: 300,
-                    height: 300
-                }
-            }
-        });
-        groupTypeCustomEvent.tickBaseDataModel = {
-            getLength : jasmine.createSpy('getLength').and.returnValue(5)
-        };
+        groupTypeCustomEvent = new GroupTypeCustomEvent({});
     });
 
-    describe('_getLayerPositionValue()', function() {
-        it('세로차트에서 마우스 이벤트 지점의 index를 찾기위한 상대 좌표는 clientX와 bound.left의 차입니다.', function() {
-            var actual = groupTypeCustomEvent._getLayerPositionValue({
-                    clientX: 100
-                }, {
-                    left: 50
-                }, true),
-                expected = 40;
+    describe('_isOutPosition()', function() {
+
+        beforeEach(function() {
+            groupTypeCustomEvent.bound = {
+                dimension: {
+                    width: 300,
+                    height: 200
+                }
+            };
+        });
+
+        it('layerX 값이 음수이면 true를 반환합니다.', function() {
+            var actual = groupTypeCustomEvent._isOutPosition(-1, 0),
+                expected = true;
+
             expect(actual).toBe(expected);
         });
 
-        it('가로차트에서 마우스 이벤트 지점의 index를 찾기위한 상대 좌표는 clientY와 bound.top의 차입니다', function() {
-            var actual = groupTypeCustomEvent._getLayerPositionValue({
-                    clientY: 100
-                }, {
-                    top: 50
-                }),
-                expected = 50;
+        it('layerX 값이 dimension.width보다 크면 true를 반환합니다.', function() {
+            var actual = groupTypeCustomEvent._isOutPosition(301, 0),
+                expected = true;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('layerY 값이 음수이면 true를 반환합니다.', function() {
+            var actual = groupTypeCustomEvent._isOutPosition(0, -1),
+                expected = true;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('layerY 값이 dimension.height보다 크면 true를 반환합니다.', function() {
+            var actual = groupTypeCustomEvent._isOutPosition(0, 201),
+                expected = true;
+
             expect(actual).toBe(expected);
         });
     });

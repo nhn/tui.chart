@@ -75,7 +75,6 @@
           right: 0;
           width: 5px;
           height: 1px;
-          height: 1px;
         }
       }
 
@@ -95,7 +94,7 @@
           text-align: center;
           white-space: nowrap;
           top: 0;
-          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
         }
 
         .tui-chart-tick-area, .tui-chart-label-area {
@@ -147,7 +146,7 @@
           text-align: center;
           word-wrap: break-word;
           word-break: keep-all;
-          &.rotation {
+          &.tui-chart-xaxis-rotation {
             text-align: right;
             span {
               position:absolute;
@@ -157,25 +156,25 @@
             white-space: nowrap;
           }
 
-          &.rotation25 {
+          &.tui-chart-xaxis-rotation25 {
             .rotate(-25deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
             }
           }
-          &.rotation45 {
+          &.tui-chart-xaxis-rotation45 {
             .rotate(-45deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
             }
           }
-          &.rotation65 {
+          &.tui-chart-xaxis-rotation65 {
             .rotate(-65deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
             }
           }
-          &.rotation85 {
+          &.tui-chart-xaxis-rotation85 {
             .rotate(-85deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
@@ -260,7 +259,6 @@
     .user-select();
     .tui-chart-legend {
       clear: both;
-      cursor: pointer;
       > div {
         float: left;
       }
@@ -283,6 +281,7 @@
 
       .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
+        cursor: pointer;
         .content-box();
         line-height:1;
       }
@@ -388,7 +387,6 @@
   width:1000px;
   height:100px;
   padding:0;
-  z-index: 10000000;
   line-height:1;
   span {
     box-sizing: border-box;
@@ -403,7 +401,7 @@
   }
   &.horizontal {
     .tui-chart-label {
-      &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+      &.tui-chart-xaxis-rotation25, &.tui-chart-xaxis-rotation45, &.tui-chart-xaxis-rotation65, &.tui-chart-xaxis-rotation85 {
         span {
           filter: none\0;
         }

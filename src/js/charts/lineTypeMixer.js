@@ -56,7 +56,7 @@ var lineTypeMixer = {
             chartType: chartType,
             serieses: [
                 {
-                    name: 'series',
+                    name: this.options.chartType + 'Series',
                     SeriesClass: this.Series
                 }
             ]

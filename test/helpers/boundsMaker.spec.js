@@ -19,11 +19,12 @@ describe('boundsMaker', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight');
         maker.chartLeftPadding = chartConst.CHART_PADDING;
+        maker.legendCheckboxWidth = chartConst.LEGEND_CHECKBOX_WIDTH;
     });
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getFullGroupValues', 'getFullLegendData', 'getCategories',
+            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getWholeLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -46,7 +47,7 @@ describe('boundsMaker', function() {
         it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
             var actual;
 
-            dataProcessor.getFullGroupValues.and.returnValue([
+            dataProcessor.getWholeGroupValues.and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60]
             ]);
@@ -180,8 +181,10 @@ describe('boundsMaker', function() {
 
     describe('_makeLegendWidth()', function() {
         it('체크박스, 아이콘, 여백이 포함된 범례 너비를 반환합니다.', function() {
-            var actual = maker._makeLegendWidth(40),
-                expected = 87;
+            var actual, expected;
+
+            actual = maker._makeLegendWidth(40);
+            expected = 87;
 
             expect(actual).toBe(expected);
         });
@@ -253,7 +256,7 @@ describe('boundsMaker', function() {
         it('가로타입 범례의 Dimension을 구합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -276,7 +279,7 @@ describe('boundsMaker', function() {
         it('세로타입 범례의 Dimension을 구합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -305,7 +308,7 @@ describe('boundsMaker', function() {
         it('세로타입 범례의 dimension을 계산하여 반환합니다.', function () {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -326,7 +329,7 @@ describe('boundsMaker', function() {
         it('가로타입 범례의 dimension을 계산하여 반환합니다.', function () {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([
+            dataProcessor.getWholeLegendData.and.returnValue([
                 {
                     label: 'label1'
                 },
@@ -461,7 +464,7 @@ describe('boundsMaker', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
             var actual;
 
-            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
             actual = maker._makeComponentsDimensions({
                 optionChartTypes: [],
                 isVertical: true,
@@ -607,7 +610,7 @@ describe('boundsMaker', function() {
                     },
                     position: {
                         top: 20,
-                        left: 411
+                        left: 409
                     }
                 };
             expect(actual).toEqual(expected);
@@ -663,7 +666,7 @@ describe('boundsMaker', function() {
             });
             expect(actual.rightYAxis.dimension.height).toBe(200);
             expect(actual.rightYAxis.position.top).toBe(20);
-            expect(actual.rightYAxis.position.left).toBe(360);
+            expect(actual.rightYAxis.position.left).toBe(358);
         });
     });
 
@@ -949,7 +952,7 @@ describe('boundsMaker', function() {
                 }
             });
 
-            dataProcessor.getFullGroupValues.and.returnValue([
+            dataProcessor.getWholeGroupValues.and.returnValue([
                 [20, 30, 50],
                 [40, 40, 60],
                 [60, 50, 10],
@@ -973,7 +976,7 @@ describe('boundsMaker', function() {
             dataProcessor.getLegendLabels.and.returnValue(['label1', 'label2', 'label3']);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             dataProcessor.getMultilineCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
-            dataProcessor.getFullLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
 
             actual = maker.make(dataProcessor,
                 {
@@ -997,7 +1000,7 @@ describe('boundsMaker', function() {
             expect(actual.xAxis.position.top).toBe(330);
             expect(actual.legend.position.top).toBe(40);
             expect(actual.legend.position.left).toBe(393);
-            expect(actual.tooltip.position.top).toBe(50);
+            expect(actual.tooltip.position.top).toBe(40);
             expect(actual.tooltip.position.left).toBe(97);
         });
     });

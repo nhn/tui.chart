@@ -25,14 +25,6 @@ describe('ColumnChartSeries', function() {
     beforeEach(function() {
         series = new ColumnChartSeries({
             chartType: 'column',
-            data: {
-                values: [],
-                formattedValues: [],
-                limit: {min: 0, max: 0}
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -43,7 +35,12 @@ describe('ColumnChartSeries', function() {
         });
 
         series.dataProcessor = dataProcessor;
-
+        series.data = {
+            limit: {
+                min: 0,
+                max: 100
+            }
+        };
         spyOn(series, '_getPercentValues');
     });
 
@@ -102,7 +99,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeNormalColumnChartBound()', function() {
         it('normal column chart bar 하나의 bound정보를 생성합니다.', function() {
             var actual = series._makeNormalColumnChartBound({
-                    distanceToMin: 0,
+                    distance: {
+                        toMax: 200
+                    },
                     dimension: {
                         width: 400,
                         height: 200
@@ -113,13 +112,13 @@ describe('ColumnChartSeries', function() {
                 expected = {
                     start: {
                         left: 20,
-                        top: 200,
+                        top: 210,
                         width: 30,
                         height: 0
                     },
                     end: {
                         left: 20,
-                        top: 140,
+                        top: 150,
                         width: 30,
                         height: 60
                     }
@@ -161,15 +160,15 @@ describe('ColumnChartSeries', function() {
 
             // 0점의 위치가 top 240임
             // 음수의 경우 height만 변화됨
-            expect(result[0][0].start.top).toBe(240);
+            expect(result[0][0].start.top).toBe(250);
             expect(result[0][0].start.height).toBe(0);
-            expect(result[0][0].end.top).toBe(240);
+            expect(result[0][0].end.top).toBe(250);
             expect(result[0][0].end.height).toBe(100);
 
             // 양수의 경우는 top, height 값이 같이 변함
-            expect(result[1][0].start.top).toBe(240);
+            expect(result[1][0].start.top).toBe(250);
             expect(result[1][0].start.height).toBe(0);
-            expect(result[1][0].end.top).toBe(40);
+            expect(result[1][0].end.top).toBe(50);
             expect(result[1][0].end.height).toBe(200);
         });
     });
@@ -184,13 +183,13 @@ describe('ColumnChartSeries', function() {
                 width: 100,
                 height: 400
             }, 1);
-            expect(bounds[0][0].end.top).toBe(320);
+            expect(bounds[0][0].end.top).toBe(330);
             expect(bounds[0][0].end.height).toBe(80);
 
-            expect(bounds[0][1].end.top).toBe(200);
+            expect(bounds[0][1].end.top).toBe(210);
             expect(bounds[0][1].end.height).toBe(120);
 
-            expect(bounds[0][2].end.top).toBe(0);
+            expect(bounds[0][2].end.top).toBe(10);
             expect(bounds[0][2].end.height).toBe(200);
         });
     });
@@ -270,20 +269,46 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('makeSumLabelHtml', function() {
-        it('합계 label html을 생성합니다.', function() {
-            var actual = series.makeSumLabelHtml({
-                    values: [10, 20, 30],
-                    bound: {
-                        left: 10,
-                        top: 30,
-                        width: 40,
-                        height: 20
-                    },
-                    formatFunctions: [],
-                    labelHeight: 20
-                }),
+    describe('_calculateSumLabelLeftPosition()', function() {
+        it('합계 레이블의 left position값을 계산합니다.', function() {
+            var actual = series._calculateSumLabelLeftPosition({
+                    left: 10,
+                    width: 30
+                }, 20),
+                expected = 6;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makePlusSumLabelHtml()', function() {
+        it('양수합계 레이블 html을 생성합니다.', function() {
+            var values = [10, 20, 30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
                 expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeMinusSumLabelHtml()', function() {
+        it('음수합계 레이블 html을 생성합니다.', function() {
+            var values = [-10, -20, -30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+
             expect(actual).toBe(expected);
         });
     });

@@ -81,8 +81,9 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             var fromPos = positions[0],
                 rest = positions.slice(1);
 
+            fromPos.left -= 1;
             return tui.util.map(rest, function(position) {
-                var result = this.makeLinePath(fromPos, position);
+                var result = this._makeLinePath(fromPos, position);
                 fromPos = position;
                 return result;
             }, this);
@@ -187,16 +188,16 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
-     * @param {boolean} isAsapShow whether asap show or not
+     * @param {boolean} isDelayShow whether delay show or not
      */
-    selectLegend: function(legendIndex, isAsapShow) {
+    selectLegend: function(legendIndex, isDelayShow) {
         var that = this,
-            isNull = tui.util.isNull(legendIndex);
+            noneSelected = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
         raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var opacity = (isNull || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
+            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
                 line;
 
             if (index) {
@@ -206,7 +207,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             item.opacity = opacity;
 
-            if (that.dotOpacity && isAsapShow) {
+            if (that.dotOpacity && !isDelayShow) {
                 item.dot.attr({'fill-opacity': opacity});
             }
         });

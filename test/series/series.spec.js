@@ -34,9 +34,9 @@ describe('Series', function() {
         });
     });
 
-    describe('getLimitDistanceFromZeroPoint()', function() {
+    describe('_getLimitDistanceFromZeroPoint()', function() {
         it('min, max 사이에 0점이 존재하는 경우에 0점으로 부터 limit min, max까지의 거리를 구합니다.', function() {
-            var result = series.getLimitDistanceFromZeroPoint(100, {
+            var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -20,
                 max: 80
             });
@@ -47,7 +47,7 @@ describe('Series', function() {
         });
 
         it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
-            var result = series.getLimitDistanceFromZeroPoint(100, {
+            var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
             });
@@ -58,7 +58,7 @@ describe('Series', function() {
         });
 
         it('min, max 모두 음수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
-            var result = series.getLimitDistanceFromZeroPoint(100, {
+            var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: -80,
                 max: -20
             });
@@ -88,9 +88,9 @@ describe('Series', function() {
         });
     });
 
-    describe('makeSeriesLabelHtml()', function() {
+    describe('_makeSeriesLabelHtml()', function() {
         it('position, value 정보를 받아 series레이블이 표현될 html을 생성합니다.', function() {
-            var result = series.makeSeriesLabelHtml({
+            var result = series._makeSeriesLabelHtml({
                 left: 10,
                 top: 10
             }, 'label1', 0, 0);
@@ -112,13 +112,13 @@ describe('Series', function() {
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
             expect(seriesContainer.style.width).toBe('220px');
-            expect(seriesContainer.style.height).toBe('110px');
+            expect(seriesContainer.style.height).toBe('120px');
 
             if (renderUtil.isOldBrowser()) {
-                expect(seriesContainer.style.top).toBe('48px');
+                expect(seriesContainer.style.top).toBe('38px');
                 expect(seriesContainer.style.left).toBe('39px');
             } else {
-                expect(seriesContainer.style.top).toBe('50px');
+                expect(seriesContainer.style.top).toBe('40px');
                 expect(seriesContainer.style.left).toBe('40px');
             }
         });

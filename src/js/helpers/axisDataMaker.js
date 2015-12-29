@@ -8,7 +8,8 @@
 
 var chartConst = require('../const'),
     predicate = require('./predicate'),
-    calculator = require('./calculator');
+    calculator = require('./calculator'),
+    renderUtil = require('./renderUtil');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -93,14 +94,21 @@ var axisDataMaker = {
         var options = params.options || {},
             isVertical = !!params.isVertical,
             isPositionRight = !!params.isPositionRight,
+            isAllowedStackedOption = predicate.isAllowedStackedOption(params.chartType),
             formatFunctions = params.formatFunctions,
             tickInfo;
-        if (params.stacked === 'percent') {
-            tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
-            formatFunctions = [];
+        if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
+            if (calculator.sumMinusValues(concat.apply([], params.values)) < 0) {
+                tickInfo = chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+            } else {
+                tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
+            }
+            formatFunctions = [function(value) {
+                return value + '%';
+            }];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, params.stacked),
+                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
@@ -124,21 +132,20 @@ var axisDataMaker = {
      * Make base values.
      * @memberOf module:axisDataMaker
      * @param {array.<number>} groupValues group values
+     * @param {boolean} isAllowedStackedOption whether allowed stacked option or not.
      * @param {string} stacked stacked option.
      * @returns {array.<number>} base values
      * @private
      */
-    _makeBaseValues: function(groupValues, stacked) {
-        var baseValues = concat.apply([], groupValues); // flatten array
-        if (stacked === chartConst.STACKED_NORMAL_TYPE) {
-            baseValues = baseValues.concat(tui.util.map(groupValues, function(values) {
-                var plusValues = tui.util.filter(values, function(value) {
-                    return value > 0;
-                });
-                return tui.util.sum(plusValues);
-            }));
+    _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
+        if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
+            groupValues = tui.util.map(groupValues, function(values) {
+                var plusSum = calculator.sumPlusValues(values),
+                    minusSum = calculator.sumMinusValues(values);
+                return [plusSum, minusSum];
+            }, this);
         }
-        return baseValues;
+        return concat.apply([], groupValues);
     },
 
     /**
@@ -222,6 +229,12 @@ var axisDataMaker = {
         var min = tui.util.min(params.values),
             max = tui.util.max(params.values),
             intTypeInfo, tickCounts, candidates, tickInfo;
+
+        if (min === 0 && max === 0) {
+            max = 5;
+            min = 0;
+        }
+
         // 01. min, max, options 정보를 정수형으로 변경
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
 
@@ -658,10 +671,7 @@ var axisDataMaker = {
             return labels;
         }
         result = tui.util.map(labels, function(label) {
-            var fns = concat.apply([label], formatFunctions);
-            return tui.util.reduce(fns, function(stored, fn) {
-                return fn(stored);
-            });
+            return renderUtil.formatValue(label, formatFunctions);
         });
         return result;
     }

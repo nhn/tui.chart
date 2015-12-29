@@ -56,7 +56,12 @@ describe('Axis', function() {
             var elTitle = dom.create('DIV');
             axis._renderTitleAreaStyle(elTitle, 50, true);
             expect(elTitle.style.width).toBe('50px');
-            expect(elTitle.style.right).toBe('-50px');
+
+            if (renderUtil.isIE7()) {
+                expect(elTitle.style.right).toBe('0px');
+            } else {
+                expect(elTitle.style.right).toBe('-50px');
+            }
             expect(elTitle.style.top).toBe('0px');
         });
     });
@@ -416,9 +421,9 @@ describe('Axis', function() {
                 labelSize: 80,
                 degree: 45
             });
-            expected = '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
-                '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
-                '<div class="tui-chart-label rotation rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+            expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });

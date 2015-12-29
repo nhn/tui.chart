@@ -183,11 +183,13 @@ describe('renderUtil', function() {
         });
     });
 
-    describe('escape()', function() {
-        it('"<", ">" 문자에 대해 escaping 처리를 합니다.', function() {
-            var actual = renderUtil.escape('<div>'),
-                expected = '&lt;div&gt;';
-            expect(actual).toBe(expected);
+    describe('formatValue()', function() {
+        it('두번째인자인 포맷함수를 이용하여 첫번째 인자인 값을 포맷팅합니다.', function() {
+            var actual = renderUtil.formatValue(3, [function(value) {
+                    return '00' + value;
+                }]),
+                expected = '003';
+            expect(actual).toEqual(expected);
         });
     });
 });

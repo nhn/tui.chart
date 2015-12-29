@@ -34,7 +34,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @returns {array.<object>} sectors information
      * @private
      */
-    _makeSectorsInfo: function(percentValues, circleBound) {
+    _makeSectorData: function(percentValues, circleBound) {
         var cx = circleBound.cx,
             cy = circleBound.cy,
             r = circleBound.r,
@@ -93,7 +93,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @returns {{
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
-     *      sectorsInfo: array.<object>
+     *      sectorData: array.<object>
      * }} add data for graph rendering
      */
     makeSeriesData: function(bound) {
@@ -101,12 +101,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 showLabel: this.options.showLabel,
                 legendAlign: this.legendAlign
             }),
-            sectorsInfo = this._makeSectorsInfo(this._getPercentValues()[0], circleBound);
+            sectorData = this._makeSectorData(this._getPercentValues()[0], circleBound);
 
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
-            sectorsInfo: sectorsInfo
+            sectorData: sectorData
         };
     },
 
@@ -324,7 +324,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     options: params.options
                 }),
                 position = params.funcMoveToPosition(positions[index], label);
-            return this.makeSeriesLabelHtml(position, label, 0, index);
+            return this._makeSeriesLabelHtml(position, label, 0, index);
         }, this).join('');
         seriesLabelContainer.innerHTML = html;
     },
@@ -349,13 +349,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {object} params.sectorsInfo sector info
+     *      @param {object} params.sectorData sector info
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
     _renderCenterLegend: function(params, seriesLabelContainer) {
         this._renderLegendLabel(tui.util.extend({
-            positions: tui.util.pluck(params.sectorsInfo, 'centerPosition'),
+            positions: tui.util.pluck(params.sectorData, 'centerPosition'),
             funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
         }, params), seriesLabelContainer);
@@ -407,13 +407,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render outer legend.
      * @param {object} params parameters
-     *      @param {object} params.sectorsInfo sector info
+     *      @param {object} params.sectorData sector info
      *      @param {number} params.chartWidth chart width
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
     _renderOuterLegend: function(params, seriesLabelContainer) {
-        var outerPositions = tui.util.pluck(params.sectorsInfo, 'outerPosition'),
+        var outerPositions = tui.util.pluck(params.sectorData, 'outerPosition'),
             centerLeft = params.chartWidth / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
@@ -457,7 +457,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _moveLegendLines: function(seriesData) {
-        var outerPositions = tui.util.pluck(seriesData.sectorsInfo, 'outerPosition'),
+        var outerPositions = tui.util.pluck(seriesData.sectorData, 'outerPosition'),
             centerLeft = this.data.chartWidth / 2;
 
         this._addEndPosition(centerLeft, outerPositions);

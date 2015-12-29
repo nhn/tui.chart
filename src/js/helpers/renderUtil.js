@@ -10,6 +10,7 @@ var dom = require('./domHandler'),
     chartConst = require('./../const');
 
 var browser = tui.util.browser,
+    isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
 
 /**
@@ -64,20 +65,26 @@ var renderUtil = {
      */
     _createSizeCheckEl: function() {
         var div, span;
-        if (this.checkEl) {
+        if (!this.checkEl) {
+            div = dom.create('DIV', 'tui-chart-size-check-element');
+            span = dom.create('SPAN');
+            div.appendChild(span);
+            this.checkEl = div;
+        } else {
             this.checkEl.style.cssText = '';
-            return this.checkEl;
         }
 
-        div = dom.create('DIV', 'tui-chart-size-check-element');
-        span = dom.create('SPAN');
-
-        div.appendChild(span);
-
-        this.checkEl = div;
-        return div;
+        return this.checkEl;
     },
 
+    /**
+     * Make caching key.
+     * @param {string} label labek
+     * @param {{fontSize: number, fontFamily: string}} theme theme
+     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
+     * @returns {string} key
+     * @private
+     */
     _makeCachingKey: function(label, theme, offsetType) {
         var keys = [label, offsetType];
 
@@ -89,15 +96,33 @@ var renderUtil = {
     },
 
     /**
-     * Size cacher.
+     * Size cache.
      * @type {object}
      */
-    sizeCacher: {},
+    sizeCache: {},
+
+    /**
+     * Add css style.
+     * @param {HTMLElement} div div element
+     * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
+     * @private
+     */
+    _addCssStyle: function(div, theme) {
+        div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+
+        if (theme.fontFamily) {
+            div.style.fontFamily = theme.fontFamily;
+        }
+
+        if (theme.cssText) {
+            div.style.cssText += theme.cssText;
+        }
+    },
 
     /**
      * Get rendered label size (width or height).
      * @memberOf module:renderUtil
-     * @param {string} label label
+     * @param {string | number} label label
      * @param {object} theme theme
      * @param {string} offsetType offset type (offsetWidth or offsetHeight)
      * @returns {number} size
@@ -115,7 +140,7 @@ var renderUtil = {
         label += '';
 
         key = this._makeCachingKey(label, theme, offsetType);
-        labelSize = this.sizeCacher[key];
+        labelSize = this.sizeCache[key];
 
         if (!labelSize) {
             div = this._createSizeCheckEl();
@@ -123,21 +148,13 @@ var renderUtil = {
 
             span.innerHTML = label;
 
-            div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
-
-            if (theme.fontFamily) {
-                div.style.fontFamily = theme.fontFamily;
-            }
-
-            if (theme.cssText) {
-                div.style.cssText += theme.cssText;
-            }
+            this._addCssStyle(div, theme);
 
             document.body.appendChild(div);
             labelSize = span[offsetType];
             document.body.removeChild(div);
 
-            this.sizeCacher[key] = labelSize;
+            this.sizeCache[key] = labelSize;
         }
 
         return labelSize;
@@ -242,6 +259,10 @@ var renderUtil = {
         if (position.left) {
             el.style.left = position.left + 'px';
         }
+
+        if (position.right) {
+            el.style.right = position.right + 'px';
+        }
     },
 
     /**
@@ -318,11 +339,11 @@ var renderUtil = {
         return {
             dimension: {
                 width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
             },
             position: {
                 left: position.left - chartConst.SERIES_EXPAND_SIZE,
-                top: position.top
+                top: position.top - chartConst.SERIES_EXPAND_SIZE
             }
         };
     },
@@ -339,16 +360,28 @@ var renderUtil = {
     },
 
     /**
-     * Escape
-     * @param {string} value value
-     * @returns {string}
+     * Format value.
+     * @param {number} value value
+     * @param {array.<function>} formatFunctions functions for format
+     * @returns {string} formatted value
      */
-    escape: function(value) {
-        return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    formatValue: function(value, formatFunctions) {
+        var fns = Array.prototype.concat.apply([value], formatFunctions || []);
+        return tui.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
     },
 
     /**
-     * Whether IE8 or not.
+     * Whether IE7 or not.
+     * @returns {boolean} result boolean
+     */
+    isIE7: function() {
+        return isIE7;
+    },
+
+    /**
+     * Whether oldBrowser or not.
      * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */

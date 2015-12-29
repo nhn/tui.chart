@@ -89,7 +89,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeTooltipHtml()', function() {
+    describe('_makeSingleTooltipHtml()', function() {
         it('툴팁 html을 생성합니다.', function() {
             var actual, expected;
             tooltip.data = {
@@ -99,7 +99,7 @@ describe('Tooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
-            actual = tooltip._makeTooltipHtml('column', {
+            actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
@@ -119,10 +119,10 @@ describe('Tooltip', function() {
                 ]]
             };
             tooltip.suffix = 'suffix';
-            tooltip.options.template = function(category, series) {
+            tooltip.templateFunc = function(category, series) {
                 return '<div>' + category + '</div><div>' + series.value + '</div><div>' + series.legend + '</div>';
             };
-            actual = tooltip._makeTooltipHtml('column', {
+            actual = tooltip._makeSingleTooltipHtml('column', {
                 groupIndex: 0,
                 index: 1
             });
@@ -230,7 +230,7 @@ describe('Tooltip', function() {
 
             actual = tooltip._moveToSymmetry(
                 {
-                    left: 120
+                    left: 130
                 },
                 {
                     bound: {

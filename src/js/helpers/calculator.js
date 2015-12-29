@@ -6,7 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const');
+var chartConst = require('../const'),
+    predicate = require('./predicate');
 
 /**
  * Calculator.
@@ -167,6 +168,30 @@ var calculator = {
      */
     calculateOpposite: function(degree, hypotenuse) {
         return Math.sin(degree * chartConst.RAD) * hypotenuse;
+    },
+
+    /**
+     * Sum plus values.
+     * @param {array.<number>} values values
+     * @returns {number} sum
+     */
+    sumPlusValues: function(values) {
+        var plusValues = tui.util.filter(values, function(value) {
+            return value > 0;
+        });
+        return tui.util.sum(plusValues);
+    },
+
+    /**
+     * Sum minus values.
+     * @param {array.<number>} values values
+     * @returns {number} sum
+     */
+    sumMinusValues: function(values) {
+        var minusValues = tui.util.filter(values, function(value) {
+            return value < 0;
+        });
+        return tui.util.sum(minusValues);
     }
 };
 

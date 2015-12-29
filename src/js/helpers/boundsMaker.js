@@ -26,21 +26,17 @@ var boundsMaker = {
      * @private
      */
     _getValueAxisMaxLabel: function(chartType) {
-        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getFullGroupValues() : this.dataProcessor.getGroupValues(chartType),
+        var values = predicate.isComboChart(chartType) ? this.dataProcessor.getWholeGroupValues() : this.dataProcessor.getGroupValues(chartType),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
             max = tui.util.max(flattenValues),
             limit = calculator.calculateLimit(min, max),
             minLabel = calculator.normalizeAxisNumber(limit.min),
-            maxLabel = calculator.normalizeAxisNumber(limit.max),
-            fns = formatFunctions && formatFunctions.slice() || [];
+            maxLabel = calculator.normalizeAxisNumber(limit.max);
+
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
-        fns.unshift(maxLabel);
-        maxLabel = tui.util.reduce(fns, function(stored, fn) {
-            return fn(stored);
-        });
-        return maxLabel;
+        return renderUtil.formatValue(maxLabel, formatFunctions);
     },
 
     /**
@@ -174,7 +170,7 @@ var boundsMaker = {
      * @private
      */
     _makeLegendWidth: function(labelWidth) {
-        return labelWidth + chartConst.LEGEND_CHECKBOX_WIDTH + chartConst.LEGEND_RECT_WIDTH +
+        return labelWidth + this.legendCheckboxWidth + chartConst.LEGEND_RECT_WIDTH +
             chartConst.LEGEND_LABEL_LEFT_PADDING + chartConst.LEGEND_AREA_PADDING;
     },
 
@@ -272,12 +268,12 @@ var boundsMaker = {
     },
 
     /**
-     * Get full legend labels.
+     * Get whole legend labels.
      * @returns {array.<string>} labels
      * @private
      */
-    _getFullLegendLabels: function() {
-        return tui.util.map(this.dataProcessor.getFullLegendData(), function(item) {
+    _getWholeLegendLabels: function() {
+        return tui.util.map(this.dataProcessor.getWholeLegendData(), function(item) {
             return item.label;
         });
     },
@@ -290,7 +286,7 @@ var boundsMaker = {
      * @private
      */
     _makeHorizontalLegendDimension: function(chartWidth, labelTheme) {
-        var labels = this._getFullLegendLabels(),
+        var labels = this._getWholeLegendLabels(),
             labelsAndMaxWidth = this._makeDividedLabelsAndMaxLineWidth(labels, chartWidth, labelTheme),
             legendHeight = this._calculateHorizontalLegendHeight(labelsAndMaxWidth.dividedLabels, labelTheme) + (chartConst.LEGEND_AREA_PADDING * 2);
 
@@ -307,7 +303,7 @@ var boundsMaker = {
      * @private
      */
     _makeVerticalLegendDimension: function(labelTheme) {
-        var labels = this._getFullLegendLabels(),
+        var labels = this._getWholeLegendLabels(),
             maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, labelTheme),
             legendWidth = this._makeLegendWidth(maxLabelWidth);
         return {
@@ -476,6 +472,7 @@ var boundsMaker = {
      * Make yAxis bound.
      * @param {{yAxis: {width: number}, plot: {height: number}}} dimensions dimensions
      * @param {number} top top
+     * @param {number} leftLegendWidth left legend width
      * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} yAxis bound
      * @private
      */
@@ -524,6 +521,7 @@ var boundsMaker = {
      * Make right y axis bound.
      * @param {{rightYAxis: {width: number}, plot: {height: number}, legend: {width: number}}} dimensions dimensions
      * @param {number} top top
+     * @param {number} leftLegendWidth left legend width
      * @returns {{dimension: {width: number, height: (number)}, position: {top: number, left: number}}} rightYAxis bound
      * @private
      */
@@ -535,7 +533,7 @@ var boundsMaker = {
             },
             position: {
                 top: top,
-                left: this.chartLeftPadding + dimensions.yAxis.width + dimensions.series.width + leftLegendWidth + chartConst.HIDDEN_WIDTH
+                left: this.chartLeftPadding + dimensions.yAxis.width + dimensions.series.width + leftLegendWidth - chartConst.HIDDEN_WIDTH
             }
         };
     },
@@ -569,6 +567,7 @@ var boundsMaker = {
 
         // 우측 y axis 영역 bounds 정보 추가
         bounds.rightYAxis = this._makeRightYAxisBound(params.dimensions, params.top, params.leftLegendWidth);
+
         return bounds;
     },
 
@@ -830,8 +829,17 @@ var boundsMaker = {
         this._updateDimensionsHeight(dimensions, diffHeight);
     },
 
-    _makeLimitXAxisLabelWidth: function(seriesWidth, labelCount) {
-        return seriesWidth / (labelCount - 1);
+    /**
+     * Calculate limit width of x axis.
+     * @param {number} seriesWidth series width
+     * @param {number} labelCount label count
+     * @param {string} chartType chart type
+     * @returns {number} limit width
+     * @private
+     */
+    _calculateXAxisLabelLimitWidth: function(seriesWidth, labelCount, chartType) {
+        var isAlign = predicate.isLineTypeChart(chartType);
+        return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
 
     /**
@@ -872,24 +880,27 @@ var boundsMaker = {
      */
     make: function(dataProcessor, params) {
         var legendOption = params.options.legend || {},
-            axesLabelInfo, dimensions, xAxisOptions, limitWidth,
-            rotationInfo, top, left, topLegendHeight, leftLegendWidth,
-            seriesBound, axesBounds, bounds;
+            xAxisOptions = params.options.xAxis || {},
+            axesLabelInfo, dimensions, limitWidth, rotationInfo, top,
+            left, topLegendHeight, leftLegendWidth, seriesBound, axesBounds, bounds;
 
         this.dataProcessor = dataProcessor;
+        this.chartLeftPadding = chartConst.CHART_PADDING;
+        this.legendCheckboxWidth = legendOption.hasCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
 
         axesLabelInfo = this._makeAxesLabelInfo(params);
         dimensions = this._makeComponentsDimensions(tui.util.extend({
             axesLabelInfo: axesLabelInfo
         }, params));
-        xAxisOptions = params.options.xAxis || {};
 
-        this.chartLeftPadding = chartConst.CHART_PADDING;
+
         if (params.hasAxes) {
-            limitWidth = this._makeLimitXAxisLabelWidth(dimensions.series.width, axesLabelInfo.xAxis.length);
+            limitWidth = this._calculateXAxisLabelLimitWidth(dimensions.series.width, axesLabelInfo.xAxis.length, params.options.chartType);
+
             if (xAxisOptions.rotation !== false) {
                 rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, axesLabelInfo.xAxis, params.theme.xAxis.label);
             }
+
             this._updateDimensionsAndDegree(dimensions, rotationInfo, axesLabelInfo.xAxis, params.theme.xAxis.label, limitWidth);
         }
 
@@ -915,7 +926,7 @@ var boundsMaker = {
             chart: this._makeChartBound(dimensions.chart),
             series: seriesBound,
             legend: this._makeLegendBound(dimensions, legendOption),
-            tooltip: this._makeBasicBound(dimensions.series, top, left - chartConst.SERIES_EXPAND_SIZE),
+            tooltip: this._makeBasicBound(dimensions.series, top - chartConst.SERIES_EXPAND_SIZE, left - chartConst.SERIES_EXPAND_SIZE),
             customEvent: seriesBound
         }, axesBounds);
 

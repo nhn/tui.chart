@@ -32,6 +32,19 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Make tooltip html.
+     * @param {string} category category
+     * @param {{value: string, legend: string, chartType: string, suffix: ?string}} item item data
+     * @returns {string} tooltip html
+     * @private
+     */
+    _makeTooltipHtml: function(category, item) {
+        return tooltipTemplate.tplDefault(tui.util.extend({
+            category: category
+        }, item));
+    },
+
+    /**
      * Initialize values.
      */
     initValues: function() {
@@ -448,37 +461,35 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             sizeType = params.sizeType,
             positionType = params.positionType,
             value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
-            center;
+            movedPositionValue;
 
         if (value < 0) {
-            center = bound[positionType] + (bound[sizeType] / 2) + (params.addPadding || 0);
-            position[positionType] = position[positionType] - (position[positionType] - center) * 2 - params.dimension[sizeType];
+            movedPositionValue = bound[sizeType] + params.dimension[sizeType] + (chartConst.TOOLTIP_GAP * 2);
+            if (positionType === 'left') {
+                position[positionType] -= movedPositionValue;
+            } else {
+                position[positionType] += movedPositionValue;
+            }
         }
+
         return position;
     },
 
     /**
-     * Make tooltip html.
+     * Make single tooltip html.
      * @param {string} chartType chart type
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(chartType, indexes) {
-        var data = this.data[chartType][indexes.groupIndex][indexes.index],
-            html;
+    _makeSingleTooltipHtml: function(chartType, indexes) {
+        var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
 
-        data.suffix = this.suffix;
-
-        if (this.options.template) {
-            html = this.options.template(data.category, {
-                value: data.value,
-                legend: data.legend
-            });
-        } else {
-            html = tooltipTemplate.tplDefault(data);
-        }
-        return html;
+        return this.templateFunc(data.category, {
+            value: data.value,
+            legend: data.legend,
+            suffix: this.suffix
+        });
     },
 
     /**
@@ -508,7 +519,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             this._fireHideAnimation(prevIndexes, prevChartType);
         }
 
-        elTooltip.innerHTML = this._makeTooltipHtml(params.chartType, indexes);
+        elTooltip.innerHTML = this._makeSingleTooltipHtml(params.chartType, indexes);
 
         elTooltip.setAttribute('data-chart-type', params.chartType);
         this._setIndexesCustomAttribute(elTooltip, indexes);

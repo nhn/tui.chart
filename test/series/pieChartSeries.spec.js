@@ -43,9 +43,9 @@ describe('PieChartSeries', function() {
         series.dataProcessor = dataProcessor;
     });
 
-    describe('_makeSectorsInfo()', function() {
+    describe('_makeSectorData()', function() {
         it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
-            var actual = series._makeSectorsInfo([0.25, 0.125, 0.1, 0.35, 0.175], {
+            var actual = series._makeSectorData([0.25, 0.125, 0.1, 0.35, 0.175], {
                 cx: 100,
                 cy: 100,
                 r: 100
@@ -180,7 +180,7 @@ describe('PieChartSeries', function() {
             });
 
             series._renderCenterLegend({
-                sectorsInfo: [
+                sectorData: [
                     {
                         centerPosition: {
                             left: 100,
@@ -296,7 +296,7 @@ describe('PieChartSeries', function() {
             spyOn(series.graphRenderer, 'renderLegendLines');
 
             series._renderOuterLegend({
-                sectorsInfo: [
+                sectorData: [
                     {
                         outerPosition: {
                             middle: {
@@ -350,7 +350,7 @@ describe('PieChartSeries', function() {
             var actual = dom.create('div'),
                 expected = dom.create('div'),
                 params = {
-                    sectorsInfo: [
+                    sectorData: [
                         {
                             outerPosition: {
                                 middle: {
@@ -401,7 +401,7 @@ describe('PieChartSeries', function() {
                 params = {
                     legendLabels: ['legend1', 'legend2', 'legend3'],
                     formattedValues: ['1.1', '2.2', '3.3'],
-                    sectorsInfo: [
+                    sectorData: [
                         {
                             centerPosition: {
                                 left: 100,

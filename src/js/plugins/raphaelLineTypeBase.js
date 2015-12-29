@@ -10,7 +10,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
-    SELECTION_DOT_RADIOUS = 7,
+    SELECTION_DOT_RADIUS = 7,
     DE_EMPHASIS_OPACITY = 0.3;
 
 /**
@@ -23,8 +23,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @returns {{start: string, end: string}} line paths.
+     * @private
      */
-    makeLinePath: function(fromPos, toPos) {
+    _makeLinePath: function(fromPos, toPos) {
         var startLinePath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
             endLinePath = raphaelRenderUtil.makeLinePath(fromPos, toPos);
 
@@ -214,7 +215,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     showGroupTooltipLine: function(bound) {
         var linePath = raphaelRenderUtil.makeLinePath({
             left: bound.position.left,
-            top: bound.dimension.height
+            top: bound.position.top + bound.dimension.height
         }, {
             left: bound.position.left,
             top: bound.position.top
@@ -324,7 +325,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _makeSelectionDot: function(paper) {
-        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIOUS);
+        var selectionDot = paper.circle(0, 0, SELECTION_DOT_RADIUS);
 
         selectionDot.attr({
             'fill': '#ffffff',

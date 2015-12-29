@@ -66,28 +66,16 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * sending data to series
          * @type {object}
          */
-        this.sendingData = {};
+        this.checkedIndexesMap = {};
 
         /**
          * checked indexes
          * @type {array}
          */
-        this.checkedIndexes = [];
+        this.checkedWholeIndexes = [];
 
         this._initCheckedIndexes();
         this._setData();
-    },
-
-    /**
-     * Add sending datum.
-     * @param {number} index legend index
-     */
-    _addSendingDatum: function(index) {
-        var legendDatum = this.getDatum(index);
-        if (!this.sendingData[legendDatum.chartType]) {
-            this.sendingData[legendDatum.chartType] = [];
-        }
-        this.sendingData[legendDatum.chartType][legendDatum.index] = true;
     },
 
     /**
@@ -95,11 +83,11 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _initCheckedIndexes: function() {
-        var checkedIndexes = [];
+        var checkedWholeIndexes = [];
         tui.util.forEachArray(this.legendData, function(legendDatum, index) {
-            checkedIndexes[index] = true;
+            checkedWholeIndexes[index] = true;
         }, this);
-        this.checkedIndexes = checkedIndexes;
+        this.checkedWholeIndexes = checkedWholeIndexes;
     },
 
     /**
@@ -149,7 +137,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             data, startIndex, defaultLegendTheme;
 
         if (!this.chartTypes) {
-            data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.sendingData[this.chartType]);
+            data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.checkedIndexesMap[this.chartType]);
         } else {
             startIndex = 0;
             defaultLegendTheme = {
@@ -158,7 +146,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             data = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
                 var chartTheme = this.theme[chartType] || defaultLegendTheme,
                     endIndex = startIndex + this.labels[chartType].length,
-                    datum = this._makeLabelInfoAppliedTheme(legendData.slice(startIndex, endIndex), chartTheme, this.sendingData[chartType]);
+                    datum = this._makeLabelInfoAppliedTheme(legendData.slice(startIndex, endIndex), chartTheme, this.checkedIndexesMap[chartType]);
                 startIndex = endIndex;
                 return datum;
             }, this));
@@ -247,7 +235,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _updateCheckedIndex: function(index) {
-        this.checkedIndexes[index] = true;
+        this.checkedWholeIndexes[index] = true;
     },
 
     /**
@@ -256,7 +244,20 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @returns {boolean} true if checked
      */
     isCheckedIndex: function(index) {
-        return !!this.checkedIndexes[index];
+        return !!this.checkedWholeIndexes[index];
+    },
+
+
+    /**
+     * Add sending datum.
+     * @param {number} index legend index
+     */
+    _addSendingDatum: function(index) {
+        var legendDatum = this.getDatum(index);
+        if (!this.checkedIndexesMap[legendDatum.chartType]) {
+            this.checkedIndexesMap[legendDatum.chartType] = [];
+        }
+        this.checkedIndexesMap[legendDatum.chartType][legendDatum.index] = true;
     },
 
     /**
@@ -269,11 +270,11 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     },
 
     /**
-     * Get sending data.
+     * Get checked indexes.
      * @returns {{column: ?array.<boolean>, line: ?array.<boolean>} | array.<boolean>} sending data
      */
-    getSendingData: function() {
-        return this.sendingData[this.chartType] || this.sendingData;
+    getCheckedIndexes: function() {
+        return this.checkedIndexesMap[this.chartType] || this.checkedIndexesMap;
     },
 
     /**
@@ -281,8 +282,8 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _resetCheckedData: function() {
-        this.checkedIndexes = [];
-        this.sendingData = {};
+        this.checkedWholeIndexes = [];
+        this.checkedIndexesMap = {};
     },
 
     /**

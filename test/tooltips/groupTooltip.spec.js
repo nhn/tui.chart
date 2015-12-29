@@ -14,7 +14,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFullFormattedValues', 'getCategory', 'getFullLegendData', 'getLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeFormattedValues', 'getCategory', 'getWholeLegendData', 'getLegendData']);
     });
 
     beforeEach(function() {
@@ -28,7 +28,7 @@ describe('GroupTooltip', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function () {
             var actual, expected;
 
-            dataProcessor.getFullFormattedValues.and.returnValue([
+            dataProcessor.getWholeFormattedValues.and.returnValue([
                 ['10', '20'],
                 ['30', '40']
             ]);
@@ -53,7 +53,7 @@ describe('GroupTooltip', function() {
         it('툴팁 테마에 colors가 설정되어있으면 그대로 반환합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getFullLegendData.and.returnValue([{
+            dataProcessor.getWholeLegendData.and.returnValue([{
                 chartType: 'column',
                 label: 'legend1'
             }, {
@@ -88,13 +88,16 @@ describe('GroupTooltip', function() {
             var actual, expected;
 
             dataProcessor.getLegendData.and.callFake(function(index) {
-                var legendData = [{
-                    chartType: 'column',
-                    label: 'legend1'
-                }, {
-                    chartType: 'line',
-                    label: 'legend2'
-                }];
+                var legendData = [
+                    {
+                        chartType: 'column',
+                        label: 'legend1'
+                    },
+                    {
+                        chartType: 'line',
+                        label: 'legend2'
+                    }
+                ];
                 return legendData[index];
             });
 
@@ -120,21 +123,17 @@ describe('GroupTooltip', function() {
         });
     });
 
-    describe('_makeTooltipHtml()', function() {
-        it('기본 툴팁 data에서 전달하는 index에 해당하는 data를 추출하여 툴팁 html을 생성합니다.', function() {
+    describe('_makeGroupTooltipHtml()', function() {
+        it('전달하는 index에 해당하는 datum을 추출하여 기본 그룹 툴팁 html을 생성합니다.', function() {
             var actual, expected;
             tooltip.data = [
                 {category: 'Silver', values: ['10']},
                 {category: 'Gold', values: ['30']}
             ];
-            tooltip.joinLegendLabels = [{
-                chartType: 'column',
-                label: 'legend1'
-            }];
             tooltip.theme = {
                 colors: ['red']
             };
-            actual = tooltip._makeTooltipHtml(1);
+            actual = tooltip._makeGroupTooltipHtml(1);
             expected = '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
                 '<div>Gold</div>' +
                     '<div>' +
@@ -145,33 +144,26 @@ describe('GroupTooltip', function() {
             expect(actual).toBe(expected);
         });
 
-        it('tmeplate 툴팁 html을 생성합니다.', function() {
+        it('전달하는 index에 해당하는 datum을 추출하여 template 그룹 툴팁 html을 생성합니다.', function() {
             var actual, expected;
-            tooltip.options = {
-               template: function(category, items) {
-                   var head = '<div>' + category + '</div>',
-                       body = tui.util.map(items, function(item) {
-                           return '<div>' + item.legend + ': ' + item.value + '</div>';
-                       }).join('');
-                   return head + body;
-               }
+
+            tooltip.templateFunc = function(category, items) {
+               var head = '<div>' + category + '</div>',
+                   body = tui.util.map(items, function(item) {
+                       return '<div>' + item.legend + ': ' + item.value + '</div>';
+                   }).join('');
+               return head + body;
             };
+
             tooltip.data = [
                 {category: 'Silver', values: ['10']},
                 {category: 'Gold', values: ['30', '20']}
             ];
-            tooltip.joinLegendLabels = [{
-                chartType: 'column',
-                label: 'legend1'
-            }, {
-                chartType: 'line',
-                label: 'legend2'
-            }];
             tooltip.theme = {
                 colors: ['red']
             };
 
-            actual = tooltip._makeTooltipHtml(1);
+            actual = tooltip._makeGroupTooltipHtml(1);
             expected = '<div>Gold</div>' +
                 '<div>legend1: 30</div>' +
                 '<div>legend2: 20</div>';
@@ -213,7 +205,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -231,7 +223,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -251,7 +243,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 9,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);

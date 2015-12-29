@@ -95,6 +95,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     rerender: function(bound, data) {
         this.axisContainer.innerHTML = '';
         if (bound.dimension.width > 0) {
+            if (data.options) {
+                this.options = data.options;
+            }
             this._renderAxisArea(this.axisContainer, bound, data);
         }
     },
@@ -121,10 +124,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         ];
 
         if (isPositionRight) {
-            cssTexts.push(renderUtil.concatStr('right:', -size, 'px'));
-            cssTexts.push(renderUtil.concatStr('top:', 0, 'px'));
+            if (renderUtil.isIE7()) {
+                cssTexts.push(renderUtil.concatStr('right:', '0px'));
+            } else {
+                cssTexts.push(renderUtil.concatStr('right:', -size, 'px'));
+            }
+            cssTexts.push('top:0px');
         } else {
-            cssTexts.push(renderUtil.concatStr('left:', 0, 'px'));
+            cssTexts.push('left:0px');
             if (!renderUtil.isOldBrowser()) {
                 cssTexts.push(renderUtil.concatStr('top:', size, 'px'));
             }
@@ -383,7 +390,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            addClass = ' rotation rotation' + params.degree,
+            addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + params.degree,
             halfWidth = params.labelSize / 2,
             moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
             top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,

@@ -26,9 +26,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     init: function(params) {
         /**
          * data processor
-         * @type {object}
+         * @type {DataProcessor}
          */
-        this.dataProcessor = this._getDataProcessor(params);
+        this.dataProcessor = this._createDataProcessor(params);
 
         /**
          * component array
@@ -90,7 +90,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Get data processor.
+     * Create dataProcessor.
      * @param {object} params parameters
      *      @params {object} rawData raw data
      *      @params {{chart: object, chartType: string}} options chart options
@@ -98,11 +98,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @returns {object} data processor
      * @private
      */
-    _getDataProcessor: function(params) {
+    _createDataProcessor: function(params) {
         var dataProcessor = new DataProcessor(params.rawData),
             options = params.options;
 
-        dataProcessor.process(params.rawData, options.chart, options.chartType, params.seriesChartTypes);
+        dataProcessor.process(params.rawData, options, params.seriesChartTypes);
         return dataProcessor;
     },
 
@@ -239,9 +239,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _filterRawData: function(rawData, checkedLegends) {
-        var cloneData;
-
-        cloneData = JSON.parse(JSON.stringify(rawData));
+        var cloneData = JSON.parse(JSON.stringify(rawData));
 
         if (tui.util.isArray(cloneData.series)) {
             cloneData.series = tui.util.filter(cloneData.series, function(series, index) {
@@ -294,15 +292,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _rerender: function(checkedLegends, rawData, boundsParams) {
-        var prevFullLegendData = this.dataProcessor.getFullLegendData(),
+        var prevWholeLegendData = this.dataProcessor.getWholeLegendData(),
             bounds, renderingData;
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
-        this.dataProcessor.process(rawData, this.options, this.chartType, this.seriesChartTypes);
+        this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
 
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
-        this.dataProcessor.setFullLegendData(prevFullLegendData);
+        this.dataProcessor.setWholeLegendData(prevWholeLegendData);
 
         bounds = this._makeBounds(boundsParams);
         renderingData = this._makeRenderingData(bounds);
@@ -344,8 +342,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(bounds, renderingData, funcName, container) {
-        var elements;
-        elements = tui.util.map(this.components, function(component) {
+        var elements = tui.util.map(this.components, function(component) {
             var bound = bounds[component.name] || bounds[component.componentType],
                 data = renderingData[component.name],
                 element = null;

@@ -41,7 +41,29 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             seriesChartTypes: chartTypesMap.seriesChartTypes
         });
 
+        /**
+         * yAxis options map
+         * @type {object}
+         */
+        this.yAxisOptionsMap = this._makeYAxisOptionsMap(chartTypesMap.chartTypes, options.yAxis);
         this._addComponents(chartTypesMap);
+    },
+
+    /**
+     * Make yAxis options map.
+     * @param {array.<string>} chartTypes chart types
+     * @param {?object} yAxisOptions yAxis options
+     * @returns {{column: ?object, line: ?object}} options map
+     * @private
+     */
+    _makeYAxisOptionsMap: function(chartTypes, yAxisOptions) {
+        var optionMap = {};
+        yAxisOptions = yAxisOptions || {};
+        tui.util.forEachArray(chartTypes, function(chartType, index) {
+            optionMap[chartType] = yAxisOptions[index] || yAxisOptions;
+        });
+
+        return optionMap;
     },
 
     /**
@@ -226,27 +248,33 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         var index = params.index,
             chartType = params.chartTypes[index],
             options = params.options,
-            yAxisValues, yAxisOptions, seriesOption;
+            yAxisOptions = this.yAxisOptionsMap[chartType],
+            yAxisValues, seriesOption, yAxisData;
+
+        if (!chartType) {
+            return {};
+        }
 
         if (params.isOneYAxis) {
-            yAxisValues = this.dataProcessor.getFullGroupValues();
-            yAxisOptions = [options.yAxis];
+            yAxisValues = this.dataProcessor.getWholeGroupValues();
         } else {
             yAxisValues = this.dataProcessor.getGroupValues(chartType);
-            yAxisOptions = options.yAxis || [];
         }
 
         seriesOption = options.series && options.series[chartType] || options.series;
 
-        return axisDataMaker.makeValueAxisData(tui.util.extend({
+        yAxisData = axisDataMaker.makeValueAxisData(tui.util.extend({
             values: yAxisValues,
             stacked: seriesOption && seriesOption.stacked || '',
-            options: yAxisOptions[index],
+            options: yAxisOptions,
             chartType: chartType,
             seriesDimension: params.seriesDimension,
             formatFunctions: this.dataProcessor.getFormatFunctions(),
             isVertical: true
         }, params.addParams));
+        yAxisData.options = yAxisOptions;
+
+        return yAxisData;
     },
 
     /**

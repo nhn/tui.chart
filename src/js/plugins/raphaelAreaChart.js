@@ -12,8 +12,7 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
 var Raphael = window.Raphael,
     ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_LINE_OPACITY = 0.3,
-    DE_EMPHASIS_AREA_OPACITY = 0.3;
+    DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
 
@@ -43,12 +42,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = this._getAreasPath(groupPositions, data.zeroTop),
+            groupPaths = this._getAreasPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper, groupAreas, tooltipLine, selectionDot, groupDots;
 
         this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.stackedOption = data.options.stacked;
 
         groupAreas = this._renderAreas(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
@@ -74,31 +74,23 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Render area graph.
      * @param {object} paper paper
-     * @param {{start: string, addStart: string}} path path
+     * @param {{start: string}} path path
      * @param {string} color color
      * @returns {array.<object>} raphael object
      * @private
      */
     _renderArea: function(paper, path, color) {
-        var result = [],
-            area = paper.path([path.start]),
+        var area = paper.path([path.start]),
             fillStyle = {
                 fill: color,
                 opacity: 0.5,
                 stroke: color,
                 'stroke-opacity': 0
-            },
-            addArea;
+            };
 
         area.attr(fillStyle);
-        result.push(area);
 
-        if (path.addStart) {
-            addArea = paper.path([path.addStart]);
-            addArea.attr(fillStyle);
-            result.push(addArea);
-        }
-        return result;
+        return area;
     },
 
     /**
@@ -111,11 +103,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     _renderAreas: function(paper, groupPaths, colors) {
         var groupAreas = tui.util.map(groupPaths, function(paths, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
+            var areaColor = colors[groupIndex] || 'transparent',
+                lineColor = this.stackedOption ? '#ffffff' : areaColor;
+
             return tui.util.map(paths, function(path) {
                 var result = {
-                    area: this._renderArea(paper, path.area, color),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.start, color)
+                    area: this._renderArea(paper, path.area, areaColor),
+                    line: raphaelRenderUtil.renderLine(paper, path.line.start, lineColor)
                 };
                 return result;
             }, this);
@@ -147,51 +141,26 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Make height.
      * @param {number} top top
-     * @param {number} zeroTop zero position top
+     * @param {number} startTop start top
      * @returns {number} height
      * @private
      */
-    _makeHeight: function(top, zeroTop) {
-        return Math.abs(top - zeroTop);
-    },
-
-    /**
-     * Find middle left
-     * @param {{left: number, top: number}} fromPos from position
-     * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
-     * @returns {number} middle left
-     * @private
-     */
-    _findMiddleLeft: function(fromPos, toPos, zeroTop) {
-        var tops = [zeroTop - fromPos.top, zeroTop - toPos.top],
-            middleLeft, width, fromHeight, toHeight;
-
-        if (tui.util.all(tops, this._isMinus) || tui.util.all(tops, this._isPlus)) {
-            return -1;
-        }
-
-        fromHeight = this._makeHeight(fromPos.top, zeroTop);
-        toHeight = this._makeHeight(toPos.top, zeroTop);
-        width = toPos.left - fromPos.left;
-
-        middleLeft = fromPos.left + (width * (fromHeight / (fromHeight + toHeight)));
-        return middleLeft;
+    _makeHeight: function(top, startTop) {
+        return Math.abs(top - startTop);
     },
 
     /**
      * Make area path.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
      * @returns {string} area path
      * @private
      */
-    _makeAreaPath: function(fromPos, toPos, zeroTop) {
-        var fromStartPoint = ['M', fromPos.left, ' ', zeroTop],
-            fromEndPoint = zeroTop === fromPos.top ? [] : ['L', fromPos.left, ' ', fromPos.top],
+    _makeAreaPath: function(fromPos, toPos) {
+        var fromStartPoint = ['M', fromPos.left, ' ', fromPos.startTop],
+            fromEndPoint = fromPos.startTop === fromPos.top ? [] : ['L', fromPos.left, ' ', fromPos.top],
             toStartPoint = ['L', toPos.left, ' ', toPos.top],
-            toEndPoint = zeroTop === toPos.top ? [] : ['L', toPos.left, ' ', zeroTop];
+            toEndPoint = toPos.startTop === toPos.top ? [] : ['L', toPos.left, ' ', toPos.startTop];
         return concat.call([], fromStartPoint, fromEndPoint, toStartPoint, toEndPoint).join('');
     },
 
@@ -199,49 +168,34 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Make area paths.
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
      * @returns {{
      *      start: string,
-     *      end: string,
-     *      addStart: string,
-     *      addEnd: string
+     *      end: string
      * }} area paths
      * @private
      */
-    _makeAreaPaths: function(fromPos, toPos, zeroTop) {
-        var middleLeft = this._findMiddleLeft(fromPos, toPos, zeroTop),
-            result = {
-                start: this._makeAreaPath(fromPos, fromPos, zeroTop)
-            },
-            middlePos;
-
-        if (this._isPlus(middleLeft)) {
-            middlePos = {left: middleLeft, top: zeroTop};
-            result.end = this._makeAreaPath(fromPos, middlePos, zeroTop);
-            result.addStart = this._makeAreaPath(middlePos, middlePos, zeroTop);
-            result.addEnd = this._makeAreaPath(middlePos, toPos, zeroTop);
-        } else {
-            result.end = this._makeAreaPath(fromPos, toPos, zeroTop);
-        }
-
-        return result;
+    _makeAreaPaths: function(fromPos, toPos) {
+        return {
+            start: this._makeAreaPath(fromPos, fromPos),
+            end: this._makeAreaPath(fromPos, toPos)
+        };
     },
 
     /**
      * Get area path.
      * @param {array.<array.<object>>} groupPositions positions
-     * @param {number} zeroTop zero top
      * @returns {array.<array.<string>>} paths
      * @private
      */
-    _getAreasPath: function(groupPositions, zeroTop) {
+    _getAreasPath: function(groupPositions) {
         var groupPaths = tui.util.map(groupPositions, function(positions) {
             var fromPos = positions[0],
                 rest = positions.slice(1);
+            fromPos.left -= 1;
             return tui.util.map(rest, function(position) {
                 var result = {
-                    area: this._makeAreaPaths(fromPos, position, zeroTop),
-                    line: this.makeLinePath(fromPos, position)
+                    area: this._makeAreaPaths(fromPos, position),
+                    line: this._makeLinePath(fromPos, position)
                 };
                 fromPos = position;
                 return result;
@@ -259,16 +213,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _animateArea: function(area, areaPath, time, startTime) {
-        var areaAddEndPath = areaPath.addEnd,
-            areaEndPath = areaPath.end;
-        if (areaAddEndPath) {
-            time = time / 2;
-            setTimeout(function() {
-                area[1].animate({path: areaAddEndPath, 'stroke-opacity': 0.25}, time);
-            }, startTime + time);
-        }
         setTimeout(function() {
-            area[0].animate({path: areaEndPath, 'stroke-opacity': 0.25}, time);
+            area.animate({path: areaPath.end, 'stroke-opacity': 0.25}, time);
         }, startTime);
     },
 
@@ -312,11 +258,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _updateAreaPath: function(area, areaPath) {
-        var areaAddEndPath = areaPath.addEnd;
-        area[0].attr({path: areaPath.end});
-        if (areaAddEndPath) {
-            area[1].attr({path: areaAddEndPath});
-        }
+        area.attr({path: areaPath.end});
     },
 
     /**
@@ -331,7 +273,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             that = this;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this._getAreasPath(groupPositions, params.zeroTop);
+        this.groupPaths = this._getAreasPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
@@ -364,27 +306,28 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      */
     selectLegend: function(legendIndex) {
         var that = this,
-            isNull = tui.util.isNull(legendIndex);
+            noneSelected = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
         raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var area, lineOpacity, areaOpacity;
+            var area, opacity;
 
-            if (isNull || legendIndex === groupIndex) {
-                lineOpacity = areaOpacity = EMPHASIS_OPACITY;
+            if (noneSelected || legendIndex === groupIndex) {
+                opacity = EMPHASIS_OPACITY;
             } else {
-                lineOpacity = DE_EMPHASIS_LINE_OPACITY;
-                areaOpacity = DE_EMPHASIS_AREA_OPACITY;
+                opacity = DE_EMPHASIS_OPACITY;
             }
 
             if (index) {
                 area = that.groupAreas[groupIndex][index - 1];
-                area.line.attr({'stroke-opacity': lineOpacity});
-                area.area[0].attr({'fill-opacity': areaOpacity});
+                area.area.attr({'fill-opacity': opacity});
+                if (!that.stackedOption) {
+                    area.line.attr({'stroke-opacity': opacity});
+                }
             }
 
             if (that.dotOpacity) {
-                item.dot.attr({'fill-opacity': lineOpacity});
+                item.dot.attr({'fill-opacity': opacity});
             }
         });
     }

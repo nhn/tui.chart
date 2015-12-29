@@ -38,12 +38,20 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.data = this.makeTooltipData();
 
-
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
+
+        this.templateFunc = this.options.template || tui.util.bind(this._makeTooltipHtml, this);
 
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
     },
+
+    /**
+     * Make tooltip html.
+     * @private
+     * @abstract
+     */
+    _makeTooltipHtml: function() {},
 
     /**
      * Set default align option of tooltip.

@@ -27,6 +27,29 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
+     * Make tooltip html.
+     * @param {string} category category
+     * @param {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
+     * @returns {string} tooltip html
+     * @private
+     */
+    _makeTooltipHtml: function(category, items) {
+        var template = tooltipTemplate.tplGroupItem,
+            cssTextTemplate = tooltipTemplate.tplGroupCssText,
+            colors = this._makeColors(this.theme),
+            itemsHtml = tui.util.map(items, function(item, index) {
+                return template(tui.util.extend({
+                    cssText: cssTextTemplate({color: colors[index]})
+                }, item));
+            }, this).join('');
+
+        return tooltipTemplate.tplGroup({
+            category: category,
+            items: itemsHtml
+        });
+    },
+
+    /**
      * Set default align option of tooltip.
      * @private
      * @override
@@ -63,7 +86,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     makeTooltipData: function() {
-        return tui.util.map(this.dataProcessor.getFullFormattedValues(), function(values, index) {
+        return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
             return {
                 category: this.dataProcessor.getCategory(index),
                 values: values
@@ -79,7 +102,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeColors: function(theme) {
         var colorIndex = 0,
-            legendLabels = this.dataProcessor.getFullLegendData(),
+            legendLabels = this.dataProcessor.getWholeLegendData(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {
@@ -120,34 +143,16 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     },
 
     /**
-     * Make tooltip html.
+     * Make tooltip.
      * @param {number} groupIndex group index
      * @returns {string} tooltip html
      * @private
      */
-    _makeTooltipHtml: function(groupIndex) {
+    _makeGroupTooltipHtml: function(groupIndex) {
         var data = this.data[groupIndex],
-            template = tooltipTemplate.tplGroupItem,
-            cssTextTemplate = tooltipTemplate.tplGroupCssText,
-            colors = this._makeColors(this.theme),
-            items = this._makeItemRenderingData(data.values),
-            html, itemsHtml;
+            items = this._makeItemRenderingData(data.values);
 
-        if (this.options.template) {
-            html = this.options.template(data.category, items);
-        } else {
-            itemsHtml = tui.util.map(items, function(item, index) {
-                return template(tui.util.extend({
-                    cssText: cssTextTemplate({color: colors[index]})
-                }, item));
-            }, this).join('');
-
-            html = tooltipTemplate.tplGroup({
-                category: data.category,
-                items: itemsHtml
-            });
-        }
-        return html;
+        return this.templateFunc(data.category, items);
     },
 
     /**
@@ -191,7 +196,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             },
             position: {
                 left: range.start + chartConst.SERIES_EXPAND_SIZE,
-                top: 0
+                top: chartConst.SERIES_EXPAND_SIZE
             }
         };
     },
@@ -211,7 +216,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             },
             position: {
                 left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
-                top: range.start
+                top: range.start + chartConst.SERIES_EXPAND_SIZE
             }
         };
     },
@@ -288,7 +293,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         if (!tui.util.isUndefined(this.prevIndex)) {
             this.fire('hideGroupAnimation', this.prevIndex);
         }
-        elTooltip.innerHTML = this._makeTooltipHtml(params.index);
+        elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
         this._fireBeforeShowTooltip(params.index, params.range);
 

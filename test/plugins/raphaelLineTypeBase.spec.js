@@ -15,9 +15,9 @@ describe('RaphaelLineTypeBase', function() {
         lineTypeBase = new RaphaelLineTypeBase();
     });
 
-    describe('makeLinePath()', function() {
+    describe('_makeLinePath()', function() {
         it('from position, to position을 이용하여 line graph를 그리기 위한 line path를 생성합니다.', function() {
-            var actual = lineTypeBase.makeLinePath(
+            var actual = lineTypeBase._makeLinePath(
                     {
                         left: 10,
                         top: 10

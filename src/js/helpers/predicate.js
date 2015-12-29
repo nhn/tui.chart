@@ -24,6 +24,16 @@ var predicate = {
     },
 
     /**
+     * Whether column chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isColumnChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_COLUMN;
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -44,13 +54,23 @@ var predicate = {
     },
 
     /**
+     * Whether area chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAreaChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_AREA;
+    },
+
+    /**
      * Whether line type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
     isLineTypeChart: function(chartType) {
-        return this.isLineChart(chartType) || chartType === chartConst.CHART_TYPE_AREA;
+        return this.isLineChart(chartType) || this.isAreaChart(chartType);
     },
 
     /**
@@ -134,6 +154,42 @@ var predicate = {
             result = this.isOuterLegendAlign(align) || this.isCenterLegendAlign(align);
         }
         return result;
+    },
+
+    /**
+     * Whether allowed stacked option or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAllowedStackedOption: function(chartType) {
+        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isAreaChart(chartType);
+    },
+
+    /**
+     * Whether normal stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isNormalStacked: function(stacked) {
+        return stacked === chartConst.STACKED_NORMAL_TYPE;
+    },
+
+    /**
+     * Whether percent stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isPercentStacked: function(stacked) {
+        return stacked === chartConst.STACKED_PERCENT_TYPE;
+    },
+
+    /**
+     * Whether valid stacked option or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isValidStackedOption: function(stacked) {
+        return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
     }
 };
 
