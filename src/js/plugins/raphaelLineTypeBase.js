@@ -8,10 +8,13 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var DEFAULT_DOT_RADIUS = 3,
+var ANIMATION_TIME = 700,
+    DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
     SELECTION_DOT_RADIUS = 7,
     DE_EMPHASIS_OPACITY = 0.3;
+
+var concat = Array.prototype.concat;
 
 /**
  * @classdesc RaphaelLineTypeBase is base for line type renderer.
@@ -19,20 +22,77 @@ var DEFAULT_DOT_RADIUS = 3,
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
-     * Make line paths.
-     * @param {{left: number, top: number}} fromPos from position
-     * @param {{left: number, top: number}} toPos to position
-     * @returns {{start: string, end: string}} line paths.
+     * Make lines path.
+     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {array.<string | number>} paths
      * @private
      */
-    _makeLinePath: function(fromPos, toPos) {
-        var startLinePath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
-            endLinePath = raphaelRenderUtil.makeLinePath(fromPos, toPos);
+    _makeLinesPath: function(positions) {
+        var path = tui.util.map(positions, function(position) {
+            return ['L', position.left, position.top];
+        });
+
+        path = concat.apply([], path);
+        path[0] = 'M';
+
+        return path;
+    },
+
+    /**
+     * Get anchor. (http://raphaeljs.com/analytics.js)
+     * @param {{left: number, top: number}} fromPos from position
+     * @param {{left: number, top: number}} pos position
+     * @param {{left: number, top: number}} nextPos next position
+     * @returns {{x1: number, y1: number, x2: number, y2: number}} anchor
+     * @private
+     */
+    _getAnchor: function(fromPos, pos, nextPos) {
+        var l1 = (pos.left - fromPos.left) / 2,
+            l2 = (nextPos.left - pos.left) / 2,
+            a = Math.atan((pos.left - fromPos.left) / Math.abs(pos.top - fromPos.top)),
+            b = Math.atan((nextPos.left - pos.left) / Math.abs(pos.top - nextPos.top)),
+            alpha, dx1, dy1, dx2, dy2;
+
+        a = fromPos.top < pos.top ? Math.PI - a : a;
+        b = nextPos.top < pos.top ? Math.PI - b : b;
+        alpha = Math.PI / 2 - ((a + b) % (Math.PI * 2)) / 2;
+        dx1 = l1 * Math.sin(alpha + a);
+        dy1 = l1 * Math.cos(alpha + a);
+        dx2 = l2 * Math.sin(alpha + b);
+        dy2 = l2 * Math.cos(alpha + b);
 
         return {
-            start: startLinePath,
-            end: endLinePath
+            x1: pos.left - dx1,
+            y1: pos.top + dy1,
+            x2: pos.left + dx2,
+            y2: pos.top + dy2
         };
+    },
+
+    /**
+     * Make spline lines path.
+     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {array.<string | number>} paths
+     * @private
+     */
+    _makeSplineLinesPath: function(positions) {
+        var firstPos = positions[0],
+            positionsLen = positions.length,
+            fromPos = firstPos,
+            lastPos = positions[positionsLen - 1],
+            middlePositions = positions.slice(1).slice(0, positionsLen - 2),
+            path = tui.util.map(middlePositions, function(position, index) {
+                var nextPos = positions[index + 2],
+                    anchor = this._getAnchor(fromPos, position, nextPos);
+                fromPos = position;
+                return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
+            }, this);
+
+        firstPos.left -= 1;
+        path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
+        path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
+
+        return path;
     },
 
     /**
@@ -99,14 +159,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {object} paper raphael papaer
      * @param {{left: number, top: number}} position dot position
      * @param {string} color dot color
-     * @param {object} borderStyle border style
+     * @param {number} opacity opacity
      * @returns {object} raphael dot
      */
-    renderDot: function(paper, position, color) {
+    renderDot: function(paper, position, color, opacity) {
         var dot = paper.circle(position.left, position.top, DEFAULT_DOT_RADIUS),
             dotStyle = {
                 fill: color,
-                'fill-opacity': 0,
+                'fill-opacity': opacity,
                 'stroke-opacity': 0
             };
 
@@ -123,15 +183,15 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {object} paper raphael paper
      * @param {array.<array.<object>>} groupPositions positions
      * @param {string[]} colors colors
-     * @param {object} borderStyle border style
+     * @param {number} opacity opacity
      * @returns {array.<object>} dots
      * @private
      */
-    _renderDots: function(paper, groupPositions, colors) {
+    _renderDots: function(paper, groupPositions, colors, opacity) {
         var dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
             return tui.util.map(positions, function(position) {
-                var dot = this.renderDot(paper, position, color);
+                var dot = this.renderDot(paper, position, color, opacity);
                 return dot;
             }, this);
         }, this);
@@ -305,17 +365,39 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         this._hideGroupDots(index);
     },
 
+    _moveDot: function(dot, position) {
+        var dotAttrs = {
+                cx: position.left,
+                cy: position.top
+            };
+
+        if (this.dotOpacity) {
+            dotAttrs = tui.util.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
+        }
+
+        dot.attr(dotAttrs);
+    },
+
     /**
-     * Animate line.
-     * @param {object} line raphael object
-     * @param {string} linePath line path
-     * @param {number} time play time
-     * @param {number} startTime start time
+     * Animate.
+     * @param {function} callback callback
      */
-    animateLine: function(line, linePath, time, startTime) {
-        setTimeout(function() {
-            line.animate({path: linePath}, time);
-        }, startTime);
+    animate: function(callback) {
+        var that = this,
+            term = 26,
+            count = parseInt(ANIMATION_TIME / term, 10),
+            step = this.dimension.width / count,
+            height = this.dimension.height;
+
+        tui.util.forEachArray(tui.util.range(1, count + 1), function(tick) {
+            setTimeout(function() {
+                that.paper.setSize(step * tick, height);
+
+                if (tick === count) {
+                    callback();
+                }
+            }, term * tick);
+        });
     },
 
     /**

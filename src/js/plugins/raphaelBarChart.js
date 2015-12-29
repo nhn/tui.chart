@@ -170,7 +170,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _makeTopLinePath: function(leftTop, rightTop, chartType, value) {
         var cloneLeftTop = tui.util.extend({}, leftTop);
         cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
-        return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop);
+        return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop).join(' ');
     },
 
     /**
@@ -305,7 +305,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             clearTimeout(this.callbackTimeout);
             delete this.callbackTimeout;
         }
-        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
             var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             if (!bar) {
                 return;
@@ -370,7 +370,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
             var lines, bound;
 
             if (!bar) {
@@ -458,7 +458,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var groupBorders = this.groupBorders || [],
             noneSelected = tui.util.isNull(legendIndex);
 
-        raphaelRenderUtil.renderItems(this.groupBars, function(bar, groupIndex, index) {
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
             var lines, opacity;
 
             if (!bar) {

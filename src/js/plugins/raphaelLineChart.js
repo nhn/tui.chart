@@ -10,7 +10,6 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
-    ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
@@ -40,17 +39,19 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = this._getLinesPath(groupPositions),
+            groupPaths = data.options.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper, groupLines, tooltipLine, selectionDot, groupDots;
 
-        this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.isSpline = data.options.isSpline;
+        this.dimension = dimension;
 
         groupLines = this._renderLines(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
         selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
+        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
             this.selectionDot = selectionDot;
@@ -72,24 +73,26 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Get lines path.
-     * @param {array.<array.<object>>} groupPositions positions
-     * @returns {array.<array.<string>>} paths
+     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {array.<array.<string>>} path
      * @private
      */
     _getLinesPath: function(groupPositions) {
-        var groupPaths = tui.util.map(groupPositions, function(positions) {
-            var fromPos = positions[0],
-                rest = positions.slice(1);
+        return tui.util.map(groupPositions, function(positions) {
+            positions[0].left -= 1;
 
-            fromPos.left -= 1;
-            return tui.util.map(rest, function(position) {
-                var result = this._makeLinePath(fromPos, position);
-                fromPos = position;
-                return result;
-            }, this);
+            return this._makeLinesPath(positions);
         }, this);
+    },
 
-        return groupPaths;
+    /**
+     * Get spline lines path.
+     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {array} path
+     * @private
+     */
+    _getSplineLinesPath: function(groupPositions) {
+        return tui.util.map(groupPositions, this._makeSplineLinesPath, this);
     },
 
     /**
@@ -102,49 +105,12 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        var groupLines = tui.util.map(groupPaths, function(paths, groupIndex) {
+        var groupLines = tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
-
-            return tui.util.map(paths, function(path) {
-                return raphaelRenderUtil.renderLine(paper, path.start, color, strokeWidth);
-            }, this);
+            return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
         }, this);
 
         return groupLines;
-    },
-
-    /**
-     * Animate.
-     * @param {function} callback callback
-     */
-    animate: function(callback) {
-        var time = ANIMATION_TIME / this.groupLines[0].length,
-            that = this,
-            startTime = 0;
-
-        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var line, path;
-
-            if (index) {
-                line = that.groupLines[groupIndex][index - 1];
-                path = that.groupPaths[groupIndex][index - 1].end;
-                that.animateLine(line, path, time, startTime);
-                startTime += time;
-            } else {
-                startTime = 0;
-            }
-
-            if (that.dotOpacity) {
-                item.dot.attr(tui.util.extend({'fill-opacity': 0}, that.borderStyle));
-                setTimeout(function() {
-                    item.dot.attr(tui.util.extend({'fill-opacity': item.opacity || that.dotOpacity}, that.borderStyle));
-                }, startTime);
-            }
-        });
-
-        if (callback) {
-            setTimeout(callback, startTime);
-        }
     },
 
     /**
@@ -155,34 +121,20 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      */
     resize: function(params) {
         var dimension = params.dimension,
-            groupPositions = params.groupPositions,
-            that = this;
+            groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this._getLinesPath(groupPositions);
+        this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var position = groupPositions[groupIndex][index],
-                dotAttrs = {
-                    cx: position.left,
-                    cy: position.top
-                },
-                line, path;
+        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+            this.groupLines[groupIndex].attr({path: path.join(' ')});
 
-            if (index) {
-                line = that.groupLines[groupIndex][index - 1];
-                path = that.groupPaths[groupIndex][index - 1].end;
-                line.attr({path: path});
-            }
-
-            if (that.dotOpacity) {
-                dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
-            }
-
-            item.dot.attr(dotAttrs);
-        });
+            tui.util.forEachArray(this.groupDots[groupIndex], function(item, index) {
+                this._moveDot(item.dot, groupPositions[groupIndex][index]);
+            }, this);
+        }, this);
     },
 
     /**
@@ -196,21 +148,19 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
         this.selectedLegendIndex = legendIndex;
 
-        raphaelRenderUtil.renderItems(this.groupDots, function(item, groupIndex, index) {
-            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY,
-                line;
+        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            if (index) {
-                line = that.groupLines[groupIndex][index - 1];
-                line.attr({'stroke-opacity': opacity});
-            }
+            that.groupLines[groupIndex].attr({'stroke-opacity': opacity});
 
-            item.opacity = opacity;
+            tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
+                item.opacity = opacity;
 
-            if (that.dotOpacity && !isDelayShow) {
-                item.dot.attr({'fill-opacity': opacity});
-            }
-        });
+                if (that.dotOpacity && !isDelayShow) {
+                    item.dot.attr({'fill-opacity': opacity});
+                }
+            });
+        }, this);
     }
 });
 

@@ -114,8 +114,11 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @returns {object} series data
      */
     makeSeriesData: function(bound) {
+        var zeroTop = this._getLimitDistanceFromZeroPoint(bound.dimension.height, this.data.limit).toMax;
+
         return {
-            groupPositions: this._makePositions(bound.dimension)
+            groupPositions: this._makePositions(bound.dimension),
+            zeroTop: zeroTop
         };
     }
 });

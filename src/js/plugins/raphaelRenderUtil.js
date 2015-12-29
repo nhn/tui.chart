@@ -30,7 +30,7 @@ var raphaelRenderUtil = {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }
         });
-        return 'M' + fromPoint.join(' ') + 'L' + toPoint.join(' ');
+        return ['M'].concat(fromPoint).concat('L').concat(toPoint);
     },
 
     /**
@@ -63,7 +63,7 @@ var raphaelRenderUtil = {
      * @param {array.<array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
      */
-    renderItems: function(groupItems, funcRenderItem) {
+    forEach2dArray: function(groupItems, funcRenderItem) {
         tui.util.forEachArray(groupItems, function(items, groupIndex) {
             tui.util.forEachArray(items, function(item, index) {
                 funcRenderItem(item, groupIndex, index);
