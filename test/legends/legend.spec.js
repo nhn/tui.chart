@@ -151,7 +151,7 @@ describe('test Legend', function() {
             legend.bound = {
                 position: {
                     top: 20,
-                    right: 10
+                    left: 200
                 }
             };
 
@@ -166,7 +166,7 @@ describe('test Legend', function() {
                 '<div class="tui-chart-legend-label" style="height:19px">legend2</div>' +
             '</div>';
             expectedElement.style.top = '20px';
-            expectedElement.style.right = '10px';
+            expectedElement.style.left = '200px';
             expectedElement.style.fontSize = '12px';
 
             expectedChildren = expectedElement.childNodes;

@@ -31,6 +31,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.theme = params.theme;
 
         /**
+         * options
+         * @type {params.options|{legendAlign}|{}}
+         */
+        this.options = params.options || {};
+
+        /**
          * chart types
          * @type {?array.<string>}
          */
@@ -94,6 +100,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.legendContainer = el;
         this.bound = bound;
 
+        if (predicate.isHorizontalLegend(this.options.align)) {
+            dom.addClass(el, 'horizontal');
+        }
+
         this._renderLegendArea(el);
         this._attachEvent(el);
         return el;
@@ -133,6 +143,20 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         return renderUtil.concatStr('background-color:', theme.singleColor || theme.color, borderCssText, rectMargin);
     },
 
+
+    /**
+     * Make labels width.
+     * @param {array.<{chartType: ?string, label: string}>} legendData legend data
+     * @returns {array.<number>} labels width
+     * @private
+     */
+    _makeLabelsWidth: function(legendData) {
+        return tui.util.map(legendData, function(item) {
+            var labelWidth = renderUtil.getRenderedLabelWidth(item.label, this.theme.label);
+            return labelWidth + chartConst.LEGEND_AREA_PADDING;
+        }, this);
+    },
+
     /**
      * Make legend html.
      * @param {array.<{chartType: ?string, label: string}>} legendData legend data
@@ -141,19 +165,21 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _makeLegendHtml: function(legendData) {
         var template = legendTemplate.tplLegend,
+            labelsWidth = this._makeLabelsWidth(legendData),
             labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme),
+            isHorizontalLegend = predicate.isHorizontalLegend(this.options.align),
             height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2),
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendData, function(legendDatum, index) {
                 var rectCssText = this._makeLegendRectCssText(legendDatum, baseMarginTop),
                     checked = this.legendModel.isCheckedIndex(index),
                     data;
-
                 data = {
                     rectCssText: rectCssText,
                     height: height,
                     labelHeight: labelHeight,
-                    labelFontWeight: this.legendModel.isSelectedIndex(index) ? ';font-weight: bold' : '',
+                    unselected: this.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
+                    labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
                     iconType: legendDatum.chartType || 'rect',
                     label: legendDatum.label,
                     checked: checked ? ' checked' : '',
@@ -193,6 +219,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         return legendContainer;
     },
 
+    /**
+     * Fire legend checkbox event.
+     * @private
+     */
     _fireLegendCheckboxEvent: function() {
         this.fire('changeCheckedLegends', this.legendModel.getSendingData());
     },

@@ -267,15 +267,44 @@
 
       .tui-chart-legend-checkbox-area {
         width: 20px;
+        height: 20px;
+        position: relative;
         input {
-          margin: 2px;
+          left: 2px;
+          top:2px;
+          *left: -2px;
+          *top: -2px;
+          position:absolute;
+          padding:0;
+          margin: 0;
         }
+        .border-box();
       }
 
       .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
         .content-box();
         line-height:1;
+      }
+
+      &.unselected {
+        .tui-chart-legend-rect {
+          .opacity(0.3);
+        }
+
+        .tui-chart-legend-label {
+          .opacity(0.3);
+        }
+      }
+    }
+
+    &.horizontal {
+      padding-left:0;
+      padding-right:0;
+      .tui-chart-legend {
+        clear: none;
+        float: left;
+        white-space: nowrap;
       }
     }
   }
@@ -354,8 +383,8 @@
   position:absolute;
   word-wrap: break-word;
   word-break: keep-all;
-  top:100px;
-  left:100px;
+  top:100000px;
+  left:100000px;
   width:1000px;
   height:100px;
   padding:0;

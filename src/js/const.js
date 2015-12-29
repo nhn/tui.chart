@@ -83,12 +83,18 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
-    /** series legend types
+    /** series legend aligns
      * @type {string}
      */
     LEGEND_ALIGN_OUTER: 'outer',
     /** @type {string} */
-    LEGEND_TYPE_CENTER: 'center',
+    LEGEND_ALIGN_CENTER: 'center',
+    /** @type {string} */
+    LEGEND_ALIGN_TOP: 'top',
+    /** @type {string} */
+    LEGEND_ALIGN_BOTTOM: 'bottom',
+    /** @type {string} */
+    LEGEND_ALIGN_LEFT: 'left',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default rate of pie graph */

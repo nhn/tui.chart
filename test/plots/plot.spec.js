@@ -112,7 +112,7 @@ describe('test Plot', function() {
         it('vTickCount=5 width=400, height=200인 plot 영역은 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 렌더링합니다.', function () {
             var el = plot.render({
                     dimension: {width: 400, height: 200},
-                    position: {top: 5, right: 5}
+                    position: {top: 5, left: 5}
                 }, {
                     vTickCount: 5
                 }),
@@ -121,7 +121,7 @@ describe('test Plot', function() {
             expect(el.style.width).toBe('400px');
             expect(el.style.height).toBe('200px');
             expect(el.style.top).toBe('5px');
-            expect(el.style.right).toBe('5px');
+            expect(el.style.left).toBe('5px');
             expect(el.className).toBe('tui-chart-plot-area');
 
             childNodes = el.childNodes;

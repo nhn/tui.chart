@@ -80,7 +80,46 @@ var predicate = {
      * @returns {boolean} result boolean
      */
     isCenterLegendAlign: function(align) {
-        return align === chartConst.LEGEND_TYPE_CENTER;
+        return align === chartConst.LEGEND_ALIGN_CENTER;
+    },
+
+    /**
+     * Whether left legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isLeftLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_LEFT;
+    },
+
+    /**
+     * Whether top legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isTopLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_TOP;
+    },
+
+    /**
+     * Whether bottom legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isBottomLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_BOTTOM;
+    },
+
+    /**
+     * Whether horizontal legend align or not.
+     * @param {string} align align
+     * @returns {boolean} result boolean
+     */
+    isHorizontalLegend: function(align) {
+        return this.isTopLegendAlign(align) || this.isBottomLegendAlign(align);
     },
 
     /**

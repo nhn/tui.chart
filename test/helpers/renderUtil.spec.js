@@ -7,8 +7,9 @@
 'use strict';
 
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    isMac = navigator.userAgent.indexOf('Mac') > -1,
+    dom = require('../../src/js/helpers/domHandler.js');
+
+var isMac = navigator.userAgent.indexOf('Mac') > -1,
     browser = tui.util.browser,
     isOldBrowser = browser.msie && browser.version <= 8,
     isFirefox = browser.firefox,
@@ -149,10 +150,10 @@ describe('renderUtil', function() {
     describe('renderPosition()', function() {
         it('전달 받은 Element style에 전달 받은 위치(top, left)값을 설정합니다.', function () {
             var el = dom.create('DIV'),
-                position = {top: 50, right: 50};
+                position = {top: 50, left: 50};
             renderUtil.renderPosition(el, position);
             expect(el.style.top).toBe('50px');
-            expect(el.style.right).toBe('50px');
+            expect(el.style.left).toBe('50px');
         });
     });
 

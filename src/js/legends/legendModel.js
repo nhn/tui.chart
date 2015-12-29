@@ -225,12 +225,12 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
     },
 
     /**
-     * Whether selected index or not.
+     * Whether unselected index or not.
      * @param {number} index legend index
      * @returns {boolean} true if selected
      */
-    isSelectedIndex: function(index) {
-        return this.selectedIndex === index;
+    isUnselectedIndex: function(index) {
+        return !tui.util.isNull(this.selectedIndex) && this.selectedIndex !== index;
     },
 
     /**
