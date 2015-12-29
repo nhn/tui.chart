@@ -184,6 +184,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
         this._renderPosition(seriesContainer, expandedBound.position, this.chartType);
+
         if (funcRenderGraph) {
             funcRenderGraph(expandedBound.dimension, seriesData);
         }

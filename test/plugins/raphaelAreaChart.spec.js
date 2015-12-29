@@ -23,9 +23,9 @@ describe('RaphaelAreaChart', function() {
         });
     });
 
-    describe('_makeAreaPath()', function() {
-        it('from position, to position, zero top 정보를 이용하여 area graph의 path를 구합니다.', function() {
-            var actual = areaChart._makeAreaPath({
+    describe('_makeAreasPath()', function() {
+        it('positions의 left, top, startTop 정보를 이용하여 area graph의 path를 구합니다.', function() {
+            var actual = areaChart._makeAreasPath([{
                     left: 10,
                     top: 30,
                     startTop: 50
@@ -33,43 +33,15 @@ describe('RaphaelAreaChart', function() {
                     left: 30,
                     top: 40,
                     startTop: 50
-                }),
-                expected = 'M10 50L10 30L30 40L30 50';
-            expect(actual).toBe(expected);
-        });
-
-        it('from position이 zero top 위치에서 시작할 때에는 두번째 그리는 path 정보는 생략합니다.', function() {
-            var actual = areaChart._makeAreaPath({
-                    left: 10,
-                    top: 50,
-                    startTop: 50
-                }, {
-                    left: 30,
-                    top: 40,
-                    startTop: 50
-                }),
-                expected = 'M10 50L30 40L30 50';
-            expect(actual).toBe(expected);
-        });
-
-        it('to position이 zero top 위치에서 끝날 때에는 마지막으로 그리는 path 정보는 생략합니다.', function() {
-            var actual = areaChart._makeAreaPath({
-                    left: 10,
-                    top: 30,
-                    startTop: 50
-                }, {
-                    left: 30,
-                    top: 50,
-                    startTop: 50
-                }),
-                expected = 'M10 50L10 30L30 50';
-            expect(actual).toBe(expected);
+                }]),
+                expected = ['M', 10, 30, 'L', 30, 40, 'L', 30, 50, 'L', 10, 50];
+            expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeAreaPaths()', function() {
-        it('from position, to position 정보를 통해 start(랜더링에 사용), end(애니메이션에 사용) area path를 구합니다.', function() {
-            var actual = areaChart._makeAreaPaths({
+    describe('_getAreasPath()', function() {
+        it('영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
+            var actual = areaChart._getAreasPath([[{
                     left: 10,
                     top: 30,
                     startTop: 50
@@ -77,11 +49,48 @@ describe('RaphaelAreaChart', function() {
                     left: 30,
                     top: 40,
                     startTop: 50
-                }),
-                expected = {
-                    start: 'M10 50L10 30L10 30L10 50',
-                    end: 'M10 50L10 30L30 40L30 50'
-                };
+                }]]),
+                expected = [{
+                    area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 50, 'L', 9, 50],
+                    line: ['M', 9, 30, 'L', 30, 40]
+                }];
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeSplineAreaBottomPath()', function() {
+        it('position정보를 이용하여 영역 차트 하단의 path 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            areaChart.zeroTop = 50;
+            actual = areaChart._makeSplineAreaBottomPath([{
+                left: 10
+            }, {
+                left: 30
+            }]);
+            expected = [['L', 30, 50], ['L', 10, 50]];
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_getSplineAreasPath()', function() {
+        it('spline 영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
+            var actual, expected;
+
+            areaChart.zeroTop = 50;
+            actual = areaChart._getSplineAreasPath([[{
+                left: 10,
+                top: 30,
+                startTop: 50
+            }, {
+                left: 30,
+                top: 40,
+                startTop: 50
+            }]]);
+            expected = [{
+                area: [['M', 8, 30, 'C', 8, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 8, 50]],
+                line: [['M', 8, 30, 'C', 8, 30], [30, 40, 30, 40]]
+            }];
             expect(actual).toEqual(expected);
         });
     });

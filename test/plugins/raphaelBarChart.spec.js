@@ -54,7 +54,7 @@ describe('RaphaelBarChart', function() {
                     left: 50,
                     top: 10
                 }, 'bar'),
-                expected = 'M10 9.5L50 9.5';
+                expected = 'M 10 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
         it('top 영역의 line path의 left 정보는 column차트이거나 음수일 경우에는 1만큼 더 빼줍니다.', function() {
@@ -65,7 +65,7 @@ describe('RaphaelBarChart', function() {
                     left: 50,
                     top: 10
                 }, 'column'),
-                expected = 'M9 9.5L50 9.5';
+                expected = 'M 9 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
     });

@@ -20,8 +20,8 @@ describe('RaphaelLineTypeBase', function() {
                         top: 100
                     }
                 ),
-                expected = 'M10 10L100 100';
-            expect(actual).toBe(expected);
+                expected = ['M', 10, 10, 'L', 100, 100];
+            expect(actual).toEqual(expected);
         });
 
         it('from position, to position이 같으면 (line두께 % 2 / 2)를 뺀 path를 생성합니다.', function() {
@@ -34,8 +34,8 @@ describe('RaphaelLineTypeBase', function() {
                         top: 10
                     }
                 ),
-                expected = 'M9.5 9.5L9.5 9.5';
-            expect(actual).toBe(expected);
+                expected = ['M', 9.5, 9.5, 'L', 9.5, 9.5];
+            expect(actual).toEqual(expected);
         });
     });
 });
