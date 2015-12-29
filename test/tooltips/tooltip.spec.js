@@ -230,7 +230,7 @@ describe('Tooltip', function() {
 
             actual = tooltip._moveToSymmetry(
                 {
-                    left: 120
+                    left: 130
                 },
                 {
                     bound: {

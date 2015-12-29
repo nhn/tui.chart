@@ -23,8 +23,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{left: number, top: number}} fromPos from position
      * @param {{left: number, top: number}} toPos to position
      * @returns {{start: string, end: string}} line paths.
+     * @private
      */
-    makeLinePath: function(fromPos, toPos) {
+    _makeLinePath: function(fromPos, toPos) {
         var startLinePath = raphaelRenderUtil.makeLinePath(fromPos, fromPos),
             endLinePath = raphaelRenderUtil.makeLinePath(fromPos, toPos);
 

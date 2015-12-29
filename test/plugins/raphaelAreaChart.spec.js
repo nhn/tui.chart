@@ -23,50 +23,6 @@ describe('RaphaelAreaChart', function() {
         });
     });
 
-    describe('_findMiddleLeft()', function() {
-        it('top의 위치가 0점 기준으로 위 아래에 배치된 두 지점(position)의 중간 지점 left 값을 구합니다.', function() {
-            var actual = areaChart._findMiddleLeft({
-                    left: 10,
-                    top: 10,
-                    startTop: 20
-                }, {
-                    left: 30,
-                    top: 30,
-                    startTop: 20
-                }),
-                expected = 20;
-            expect(actual).toBe(expected);
-        });
-
-        it('두 지점이 모두 0점 위에 위치할 때에는 -1을 반환합니다.', function() {
-            var actual = areaChart._findMiddleLeft({
-                    left: 10,
-                    top: 10,
-                    startTop: 20
-                }, {
-                    left: 20,
-                    top: 15,
-                    startTop: 20
-                }),
-                expected = -1;
-            expect(actual).toBe(expected);
-        });
-
-        it('두 지점이 모두 0점 아래에 위치할 때에도 -1을 반환합니다.', function() {
-            var actual = areaChart._findMiddleLeft({
-                    left: 10,
-                    top: 30,
-                    startTop: 20
-                }, {
-                    left: 20,
-                    top: 40,
-                    startTop: 20
-                }),
-                expected = -1;
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_makeAreaPath()', function() {
         it('from position, to position, zero top 정보를 이용하여 area graph의 path를 구합니다.', function() {
             var actual = areaChart._makeAreaPath({
@@ -125,25 +81,6 @@ describe('RaphaelAreaChart', function() {
                 expected = {
                     start: 'M10 50L10 30L10 30L10 50',
                     end: 'M10 50L10 30L30 40L30 50'
-                };
-            expect(actual).toEqual(expected);
-        });
-
-        it('from position, to position 정보가 0점(zeroTop) 위 아래에 배치될 때에는 중간 값을 지정하여 두가지 영역 정보로 나누어(start, end, addStar, addEnd) 구합니다.', function() {
-            var actual = areaChart._makeAreaPaths({
-                    left: 10,
-                    top: 10,
-                    startTop: 20
-                }, {
-                    left: 30,
-                    top: 30,
-                    startTop: 20
-                }),
-                expected = {
-                    start: 'M10 20L10 10L10 10L10 20',
-                    end: 'M10 20L10 10L20 20',
-                    addStart: 'M20 20L20 20',
-                    addEnd: 'M20 20L30 30L30 20'
                 };
             expect(actual).toEqual(expected);
         });

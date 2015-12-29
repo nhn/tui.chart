@@ -31,8 +31,9 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @returns {number} position top
      * @private
      */
-    _makePositionTopOfZeroPoint: function(dimension) {
-        var limit = this.data.limit,
+    _makePositionTopOfZeroPoint: function() {
+        var dimension = this.bound.dimension,
+            limit = this.data.limit,
             limitDistance = this._getLimitDistanceFromZeroPoint(dimension.height, limit),
             top = limitDistance.toMax;
 
@@ -50,23 +51,20 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makeStackedPositions: function(groupPositions) {
-        var firstStartTop = this._makePositionTopOfZeroPoint(this.bound.dimension),
+        var height = this.bound.dimension.height + chartConst.SERIES_EXPAND_SIZE,
+            firstStartTop = this._makePositionTopOfZeroPoint(),
             prevPositionTops = [];
 
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position, index) {
-                var startTop = prevPositionTops[index] || firstStartTop,
-                    stackedHeight = firstStartTop - startTop;
+                var prevTop = prevPositionTops[index] || firstStartTop,
+                    stackedHeight = height - position.top,
+                    top = prevTop - stackedHeight;
 
-                position.startTop = startTop;
+                position.startTop = prevTop;
+                position.top = top;
 
-                if (position.top > firstStartTop) {
-                    position.top = startTop;
-                } else {
-                    position.top -= stackedHeight;
-                }
-
-                prevPositionTops[index] = position.top;
+                prevPositionTops[index] = top;
                 return position;
             });
         });
@@ -79,7 +77,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makeNormalPositions: function(groupPositions) {
-        var startTop = this._makePositionTopOfZeroPoint(this.bound.dimension);
+        var startTop = this._makePositionTopOfZeroPoint();
+
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position) {
                 position.startTop = startTop;

@@ -360,6 +360,19 @@ var renderUtil = {
     },
 
     /**
+     * Format value.
+     * @param {number} value value
+     * @param {array.<function>} formatFunctions functions for format
+     * @returns {string} formatted value
+     */
+    formatValue: function(value, formatFunctions) {
+        var fns = Array.prototype.concat.apply([value], formatFunctions || []);
+        return tui.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
+    },
+
+    /**
      * Whether IE7 or not.
      * @returns {boolean} result boolean
      */

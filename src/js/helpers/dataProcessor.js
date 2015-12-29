@@ -593,18 +593,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makeNormalStackedPercentValues: function(groupValues, limit) {
-        var min = limit.min,
-            max = limit.max,
-            distance = max - min,
-            percentValues = tui.util.map(groupValues, function(values) {
-                var sum = calculator.sumPlusValues(values),
-                    groupPercent = (sum - min) / distance;
-                return tui.util.map(values, function(value) {
-                    return sum === 0 ? 0 : groupPercent * (value / sum);
-                });
-            });
+        var distance = Math.abs(limit.max - limit.min);
 
-        return percentValues;
+        return tui.util.map(groupValues, function(values) {
+            return tui.util.map(values, function(value) {
+                return value / distance;
+            });
+        });
     },
 
     /**
@@ -614,10 +609,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makePercentStackedPercentValues: function(groupValues) {
+        var flattenValues = concat.apply([], groupValues),
+            plusSum = calculator.sumPlusValues(flattenValues),
+            minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
+            ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
+
         var percentValues = tui.util.map(groupValues, function(values) {
-            var sum = calculator.sumPlusValues(values);
+            var sum = tui.util.sum(tui.util.map(values, function(value) {
+                return Math.abs(value);
+            }));
+
             return tui.util.map(values, function(value) {
-                return sum === 0 ? 0 : value / sum;
+                return sum === 0 ? 0 : ratio * (value / sum);
             });
         });
 
@@ -674,6 +677,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             result = this._makePieChartPercentValues(groupValues);
         } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
+            //if (predicate.isAreaChart(chartType)) {
+            //    result = this._makeNormalStackedPercentValuesForAreaChart(groupValues, limit);
+            //} else {
+            //    result = this._makeNormalStackedPercentValues(groupValues, limit);
+            //}
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             result = this._makePercentStackedPercentValues(groupValues);
         } else {

@@ -8,7 +8,8 @@
 
 var chartConst = require('../const'),
     predicate = require('./predicate'),
-    calculator = require('./calculator');
+    calculator = require('./calculator'),
+    renderUtil = require('./renderUtil');
 
 var abs = Math.abs,
     concat = Array.prototype.concat;
@@ -97,8 +98,14 @@ var axisDataMaker = {
             formatFunctions = params.formatFunctions,
             tickInfo;
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
-            tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
-            formatFunctions = [];
+            if (calculator.sumMinusValues(concat.apply([], params.values)) < 0) {
+                tickInfo = chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+            } else {
+                tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
+            }
+            formatFunctions = [function(value) {
+                return value + '%';
+            }];
         } else {
             tickInfo = this._getTickInfo({
                 values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
@@ -133,11 +140,11 @@ var axisDataMaker = {
     _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             groupValues = tui.util.map(groupValues, function(values) {
-                var sum = calculator.sumPlusValues(values);
-                return values.concat([sum]);
+                var plusSum = calculator.sumPlusValues(values),
+                    minusSum = calculator.sumMinusValues(values);
+                return [plusSum, minusSum];
             }, this);
         }
-
         return concat.apply([], groupValues);
     },
 
@@ -222,6 +229,12 @@ var axisDataMaker = {
         var min = tui.util.min(params.values),
             max = tui.util.max(params.values),
             intTypeInfo, tickCounts, candidates, tickInfo;
+
+        if (min === 0 && max === 0) {
+            max = 5;
+            min = 0;
+        }
+
         // 01. min, max, options 정보를 정수형으로 변경
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
 
@@ -658,10 +671,7 @@ var axisDataMaker = {
             return labels;
         }
         result = tui.util.map(labels, function(label) {
-            var fns = concat.apply([label], formatFunctions);
-            return tui.util.reduce(fns, function(stored, fn) {
-                return fn(stored);
-            });
+            return renderUtil.formatValue(label, formatFunctions);
         });
         return result;
     }

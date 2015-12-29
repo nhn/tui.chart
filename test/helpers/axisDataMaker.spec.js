@@ -59,13 +59,13 @@ describe('axisDataMaker', function() {
             expect(values).toEqual([70, 10, 20, 20, 80, 30]);
         });
 
-        it('stacked 옵션이 "normal"인 경우의 기본 값을 생성합니다.', function () {
+        it('stacked 옵션이 "normal"인 경우 한 그룹에서의 양수합과 음수합을 기본 값으로 생성합니다.', function () {
             var values = maker._makeBaseValues([
                 [70, 10],
                 [20, 20],
                 [80, 30]
             ], true, 'normal');
-            expect(values).toEqual([70, 10, 80, 20, 20, 40, 80, 30, 110]);
+            expect(values).toEqual([80, 0, 40, 0, 110, 0]);
         });
     });
 
@@ -615,7 +615,7 @@ describe('axisDataMaker', function() {
             });
 
             expect(result).toEqual({
-                labels: [0, 25, 50, 75, 100],
+                labels: ['0%', '25%', '50%', '75%', '100%'],
                 tickCount: 5,
                 validTickCount: 5,
                 limit: {
