@@ -149,9 +149,9 @@
           &.tui-chart-xaxis-rotation {
             text-align: right;
             span {
-              position:absolute;
-              right:0;
-              top:0;
+              position: absolute;
+              right: 0;
+              top: 0;
             }
             white-space: nowrap;
           }
@@ -221,7 +221,7 @@
       .tui-chart-series-label {
         position: absolute;
         cursor: default;
-        text-align:center;
+        text-align: center;
         white-space: nowrap;
         .text-shadow(#fff 0px 0px 3px);
       }
@@ -233,15 +233,15 @@
 
   .tui-chart-series-custom-event-area {
     z-index: 1000;
-    position:absolute;
+    position: absolute;
     left: 10px;
     top: 0;
-    background-color:#fff;
+    background-color: #fff;
     .opacity(0);
   }
 
   .tui-chart-legend-rect {
-    margin-top:2px;
+    margin-top: 2px;
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
@@ -269,11 +269,11 @@
         position: relative;
         input {
           left: 2px;
-          top:2px;
+          top: 2px;
           *left: -2px;
           *top: -2px;
-          position:absolute;
-          padding:0;
+          position: absolute;
+          padding: 0;
           margin: 0;
         }
         .border-box();
@@ -283,7 +283,7 @@
         padding: 2px 0 2px 5px;
         cursor: pointer;
         .content-box();
-        line-height:1;
+        line-height: 1;
       }
 
       &.unselected {
@@ -298,8 +298,8 @@
     }
 
     &.horizontal {
-      padding-left:0;
-      padding-right:0;
+      padding-left: 0;
+      padding-right: 0;
       .tui-chart-legend {
         clear: none;
         float: left;
@@ -324,8 +324,8 @@
         min-width: 100px;
         color: #fff;
         .border-radius(5px);
-        background-color:rgba(0, 0, 0, 0.7);
-        background-color: #555\9;
+        background-color: rgba(0, 0, 0, 0.7);
+        background-color: #555 \9;
         > * {
           padding: 2px 7px;
           text-align: center;
@@ -367,7 +367,7 @@
     .tui-chart-group-tooltip-sector {
       z-index: 50;
       position: absolute;
-      background-color:#aaa;
+      background-color: #aaa;
       .opacity(0.3);
       display: none;
       &.show {
@@ -378,32 +378,32 @@
 }
 
 .tui-chart-size-check-element {
-  clear:both;
-  position:absolute;
+  clear: both;
+  position: absolute;
   word-wrap: break-word;
   word-break: keep-all;
-  top:100000px;
-  left:100000px;
-  width:1000px;
-  height:100px;
-  padding:0;
-  line-height:1;
+  top: 100000px;
+  left: 100000px;
+  width: 1000px;
+  height: 100px;
+  padding: 0;
+  line-height: 1;
   span {
     box-sizing: border-box;
-    text-align:center;
-    padding:0;
+    text-align: center;
+    padding: 0;
   }
 }
 
 :root .tui-chart .tui-chart-axis-area {
   &.vertical .tui-chart-title-area {
-    filter: none\0;
+    filter: none \0;
   }
   &.horizontal {
     .tui-chart-label {
       &.tui-chart-xaxis-rotation25, &.tui-chart-xaxis-rotation45, &.tui-chart-xaxis-rotation65, &.tui-chart-xaxis-rotation85 {
         span {
-          filter: none\0;
+          filter: none \0;
         }
       }
     }

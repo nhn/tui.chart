@@ -366,7 +366,8 @@ var renderUtil = {
      * @returns {string} formatted value
      */
     formatValue: function(value, formatFunctions) {
-        var fns = Array.prototype.concat.apply([value], formatFunctions || []);
+        var fns = [value].concat(formatFunctions || []);
+
         return tui.util.reduce(fns, function(stored, fn) {
             return fn(stored);
         });

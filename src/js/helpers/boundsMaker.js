@@ -198,19 +198,19 @@ var boundsMaker = {
     _divideLegendLabels: function(labels, count) {
         var limitCount = Math.round(labels.length / count),
             results = [],
-            temps = [];
+            temp = [];
 
         tui.util.forEachArray(labels, function(label) {
-            if (temps.length < limitCount) {
-                temps.push(label);
+            if (temp.length < limitCount) {
+                temp.push(label);
             } else {
-                results.push(temps);
-                temps = [label];
+                results.push(temp);
+                temp = [label];
             }
         });
 
-        if (temps.length) {
-            results.push(temps);
+        if (temp.length) {
+            results.push(temp);
         }
 
         return results;
@@ -233,9 +233,8 @@ var boundsMaker = {
 
         do {
             dividedLabels = this._divideLegendLabels(labels, divideCount);
-            maxLineWidth = tui.util.max(tui.util.map(dividedLabels, function(_labels) {
-                var sum = this._calculateLegendsWidthSum(_labels, labelTheme);
-                return sum;
+            maxLineWidth = Math.max.apply(null, tui.util.map(dividedLabels, function(_labels) {
+                return this._calculateLegendsWidthSum(_labels, labelTheme);
             }, this));
 
             if (prevMaxWidth === maxLineWidth) {
@@ -587,7 +586,7 @@ var boundsMaker = {
      * Make legend bound.
      * @param {{title: {height: number}, series: {width: number}, rightYAxis: {width: number}}} dimensions dimensions
      * @param {{align: ?boolean}} legendOption legend option
-     * @returns {{position: {top: number, left: number}}} legend bound
+     * @returns {{dimension: {width: number, height: number}, position: {top: number, left: number}}} legend bound
      * @private
      */
     _makeLegendBound: function(dimensions, legendOption) {

@@ -232,7 +232,6 @@ var axisDataMaker = {
 
         if (min === 0 && max === 0) {
             max = 5;
-            min = 0;
         }
 
         // 01. min, max, options 정보를 정수형으로 변경

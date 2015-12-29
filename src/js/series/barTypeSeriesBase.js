@@ -7,7 +7,6 @@
 'use strict';
 
 var chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
@@ -270,6 +269,14 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
     },
 
+    /**
+     * Make stacked label position.
+     * @param {{width: number, height: number, left: number, top: number}} bound element bound
+     * @param {string} formattedValue formatted value
+     * @param {number} labelHeight label height
+     * @returns {{left: number, top: number}} position
+     * @private
+     */
     _makeStackedLabelPosition: function(bound, formattedValue, labelHeight) {
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),

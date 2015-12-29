@@ -207,7 +207,7 @@ describe('boundsMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('앞쪽에서부터 나추어진 숫자 만큼씩 차례대로 채워나갑니다.', function() {
+        it('앞쪽에서부터 나누어진 숫자 만큼씩 차례대로 채워나갑니다.', function() {
             var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3),
                 expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
 
