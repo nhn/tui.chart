@@ -20,53 +20,45 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     },
 
     /**
-     * Get layer position.
-     * @param {MouseEvent} e mouse event object
-     * @param {{top: number, right: number, bottom: number, left: number}} bound bound
-     * @param {boolean} isVertical whether vertical or not
-     * @returns {number} layer position (left or top)
+     * Whether out position or not.
+     * @param {number} layerX layerX
+     * @param {number} layerY layerY
+     * @returns {boolean} result boolean
      * @private
      */
-    _getLayerPositionValue: function(e, bound, isVertical) {
-        var layerPosition;
-        if (isVertical) {
-            layerPosition = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left;
-        } else {
-            layerPosition = e.clientY - bound.top;
-        }
-        return layerPosition;
+    _isOutPosition: function(layerX, layerY) {
+        var dimension = this.bound.dimension;
+        return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
     },
 
     /**
      * On mousemove.
      * @param {MouseEvent} e mouse event object
+     * @private
      * @override
      */
-    onMousemove: function(e) {
+    _onMousemove: function(e) {
         var elTarget = e.target || e.srcElement,
             bound = elTarget.getBoundingClientRect(),
-            layerPositionValue = this._getLayerPositionValue(e, bound, this.isVertical),
-            index = this.tickBaseDataModel.findIndex(layerPositionValue),
-            prevIndex = this.prevIndex,
-            sizeType = this.isVertical ? 'height' : 'width';
+            layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
+            layerY = e.clientY - chartConst.SERIES_EXPAND_SIZE - bound.top,
+            index = -1;
+
+        if (!this._isOutPosition(layerX, layerY)) {
+            index = this.tickBaseDataModel.findIndex(this.isVertical ? layerX : layerY);
+        }
 
         if (index === -1) {
-            this.onMouseout();
-            return;
+            this._onMouseout();
+        } else if (this.prevIndex !== index) {
+            this.prevIndex = index;
+            this.fire('showGroupTooltip', {
+                index: index,
+                range: this.tickBaseDataModel.makeRange(index, this.chartType),
+                size: this.bound.dimension[this.isVertical ? 'height' : 'width'],
+                isVertical: this.isVertical
+            });
         }
-
-        if (prevIndex === index) {
-            return;
-        }
-
-        this.prevIndex = index;
-
-        this.fire('showGroupTooltip', {
-            index: index,
-            range: this.tickBaseDataModel.makeRange(index, this.chartType),
-            size: this.bound.dimension[sizeType],
-            isVertical: this.isVertical
-        });
     },
 
     /**
@@ -74,14 +66,12 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @param {MouseEvent} e mouse event object
      * @override
      */
-    onMouseout: function() {
+    _onMouseout: function() {
         if (!tui.util.isUndefined(this.prevIndex)) {
             this.fire('hideGroupTooltip', this.prevIndex);
             delete this.prevIndex;
         }
     }
 });
-
-tui.util.CustomEvents.mixin(GroupTypeCustomEvent);
 
 module.exports = GroupTypeCustomEvent;

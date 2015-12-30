@@ -10,25 +10,21 @@ var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
-    var series;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor.getFirstFormattedValue.and.returnValue('1');
+        dataProcessor.getFormatFunctions.and.returnValue([]);
     });
 
     beforeEach(function() {
         series = new ColumnChartSeries({
             chartType: 'column',
-            data: {
-                values: [],
-                formattedValues: [],
-                scale: {min: 0, max: 0}
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -37,6 +33,15 @@ describe('ColumnChartSeries', function() {
             },
             options: {}
         });
+
+        series.dataProcessor = dataProcessor;
+        series.data = {
+            limit: {
+                min: 0,
+                max: 100
+            }
+        };
+        spyOn(series, '_getPercentValues');
     });
 
     describe('_makeStartEndTops()', function() {
@@ -94,7 +99,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeNormalColumnChartBound()', function() {
         it('normal column chart bar 하나의 bound정보를 생성합니다.', function() {
             var actual = series._makeNormalColumnChartBound({
-                    distanceToMin: 0,
+                    distance: {
+                        toMax: 200
+                    },
                     dimension: {
                         width: 400,
                         height: 200
@@ -105,13 +112,13 @@ describe('ColumnChartSeries', function() {
                 expected = {
                     start: {
                         left: 20,
-                        top: 200,
+                        top: 210,
                         width: 30,
                         height: 0
                     },
                     end: {
                         left: 20,
-                        top: 140,
+                        top: 150,
                         width: 30,
                         height: 60
                     }
@@ -123,7 +130,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeNormalColumnChartBounds()', function() {
         it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function () {
             var actual;
-            series.percentValues = [[0.25], [0.5]];
+
+            series._getPercentValues.and.returnValue([[0.25], [0.5]]);
+
             actual = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
@@ -137,8 +146,10 @@ describe('ColumnChartSeries', function() {
 
         it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 위아래로 설정됩니다.', function () {
             var result;
-            series.percentValues = [[-0.25], [0.5]];
-            series.data.scale = {
+
+            series._getPercentValues.and.returnValue([[-0.25], [0.5]]);
+
+            series.data.limit = {
                 min: -40,
                 max: 60
             };
@@ -149,15 +160,15 @@ describe('ColumnChartSeries', function() {
 
             // 0점의 위치가 top 240임
             // 음수의 경우 height만 변화됨
-            expect(result[0][0].start.top).toBe(240);
+            expect(result[0][0].start.top).toBe(250);
             expect(result[0][0].start.height).toBe(0);
-            expect(result[0][0].end.top).toBe(240);
+            expect(result[0][0].end.top).toBe(250);
             expect(result[0][0].end.height).toBe(100);
 
             // 양수의 경우는 top, height 값이 같이 변함
-            expect(result[1][0].start.top).toBe(240);
+            expect(result[1][0].start.top).toBe(250);
             expect(result[1][0].start.height).toBe(0);
-            expect(result[1][0].end.top).toBe(40);
+            expect(result[1][0].end.top).toBe(50);
             expect(result[1][0].end.height).toBe(200);
         });
     });
@@ -165,18 +176,20 @@ describe('ColumnChartSeries', function() {
     describe('_makeStackedColumnChartBounds()', function() {
         it('stacked 옵션이 있는 Column차트의 bounds 정보는 end.top이 end.height 만큼씩 감소합니다.', function () {
             var bounds;
-            series.percentValues = [[0.2, 0.3, 0.5]];
+
+            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
+
             bounds = series._makeStackedColumnChartBounds({
                 width: 100,
                 height: 400
             }, 1);
-            expect(bounds[0][0].end.top).toBe(320);
+            expect(bounds[0][0].end.top).toBe(330);
             expect(bounds[0][0].end.height).toBe(80);
 
-            expect(bounds[0][1].end.top).toBe(200);
+            expect(bounds[0][1].end.top).toBe(210);
             expect(bounds[0][1].end.height).toBe(120);
 
-            expect(bounds[0][2].end.top).toBe(0);
+            expect(bounds[0][2].end.top).toBe(10);
             expect(bounds[0][2].end.height).toBe(200);
         });
     });
@@ -184,7 +197,9 @@ describe('ColumnChartSeries', function() {
     describe('_makeBounds()', function() {
         it('stacked 옵션이 없으면 _makeNormalColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
-            series.percentValues = [[0.25], [0.5]];
+
+            series._getPercentValues.and.returnValue([[0.25], [0.5]]);
+
             actual = series._makeBounds({
                 width: 200,
                 height: 400
@@ -198,7 +213,9 @@ describe('ColumnChartSeries', function() {
 
         it('stacked 옵션이 있으면 _makeStackedColumnChartBounds()가 수행됩니다.', function () {
             var actual, expected;
-            series.percentValues = [[0.2, 0.3, 0.5]];
+
+            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
+
             series.options.stacked = 'normal';
             actual = series._makeBounds({
                 width: 100,
@@ -252,20 +269,46 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('makeSumLabelHtml', function() {
-        it('합계 label html을 생성합니다.', function() {
-            var actual = series.makeSumLabelHtml({
-                    values: [10, 20, 30],
-                    bound: {
-                        left: 10,
-                        top: 30,
-                        width: 40,
-                        height: 20
-                    },
-                    formatFunctions: [],
-                    labelHeight: 20
-                }),
+    describe('_calculateSumLabelLeftPosition()', function() {
+        it('합계 레이블의 left position값을 계산합니다.', function() {
+            var actual = series._calculateSumLabelLeftPosition({
+                    left: 10,
+                    width: 30
+                }, 20),
+                expected = 6;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makePlusSumLabelHtml()', function() {
+        it('양수합계 레이블 html을 생성합니다.', function() {
+            var values = [10, 20, 30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
                 expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeMinusSumLabelHtml()', function() {
+        it('음수합계 레이블 html을 생성합니다.', function() {
+            var values = [-10, -20, -30],
+                bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+
             expect(actual).toBe(expected);
         });
     });

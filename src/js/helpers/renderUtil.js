@@ -10,6 +10,7 @@ var dom = require('./domHandler'),
     chartConst = require('./../const');
 
 var browser = tui.util.browser,
+    isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
 
 /**
@@ -28,7 +29,7 @@ var renderUtil = {
     },
 
     /**
-     * To make cssText for font.
+     * Make cssText for font.
      * @memberOf module:renderUtil
      * @param {{fontSize: number, fontFamily: string, color: string}} theme font theme
      * @returns {string} cssText
@@ -63,50 +64,99 @@ var renderUtil = {
      * @private
      */
     _createSizeCheckEl: function() {
-        var elDiv, elSpan;
-        if (this.checkEl) {
-            return this.checkEl;
+        var div, span;
+        if (!this.checkEl) {
+            div = dom.create('DIV', 'tui-chart-size-check-element');
+            span = dom.create('SPAN');
+            div.appendChild(span);
+            this.checkEl = div;
+        } else {
+            this.checkEl.style.cssText = '';
         }
 
-        elDiv = dom.create('DIV', 'tui-chart-size-check-element');
-        elSpan = dom.create('SPAN');
+        return this.checkEl;
+    },
 
-        elDiv.appendChild(elSpan);
-        this.checkEl = elDiv;
-        return elDiv;
+    /**
+     * Make caching key.
+     * @param {string} label labek
+     * @param {{fontSize: number, fontFamily: string}} theme theme
+     * @param {string} offsetType offset type (offsetWidth or offsetHeight)
+     * @returns {string} key
+     * @private
+     */
+    _makeCachingKey: function(label, theme, offsetType) {
+        var keys = [label, offsetType];
+
+        tui.util.forEach(theme, function(key, value) {
+            keys.push(key + value);
+        });
+
+        return keys.join('-');
+    },
+
+    /**
+     * Size cache.
+     * @type {object}
+     */
+    sizeCache: {},
+
+    /**
+     * Add css style.
+     * @param {HTMLElement} div div element
+     * @param {{fontSize: number, fontFamily: string, cssText: string}} theme theme
+     * @private
+     */
+    _addCssStyle: function(div, theme) {
+        div.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+
+        if (theme.fontFamily) {
+            div.style.fontFamily = theme.fontFamily;
+        }
+
+        if (theme.cssText) {
+            div.style.cssText += theme.cssText;
+        }
     },
 
     /**
      * Get rendered label size (width or height).
      * @memberOf module:renderUtil
-     * @param {string} label label
+     * @param {string | number} label label
      * @param {object} theme theme
      * @param {string} offsetType offset type (offsetWidth or offsetHeight)
      * @returns {number} size
      * @private
      */
     _getRenderedLabelSize: function(label, theme, offsetType) {
-        var elDiv, elSpan, labelSize;
+        var key, div, span, labelSize;
 
-        if (tui.util.isUndefined(label) || label === '') {
+        theme = theme || {};
+
+        if (!label) {
             return 0;
         }
 
-        elDiv = this._createSizeCheckEl();
-        elSpan = elDiv.firstChild;
+        label += '';
 
-        theme = theme || {};
-        elSpan.innerHTML = label;
-        elSpan.style.fontSize = (theme.fontSize || chartConst.DEFAULT_LABEL_FONT_SIZE) + 'px';
+        key = this._makeCachingKey(label, theme, offsetType);
+        labelSize = this.sizeCache[key];
 
-        if (theme.fontFamily) {
-            elSpan.style.padding = 0;
-            elSpan.style.fontFamily = theme.fontFamily;
+        if (!labelSize) {
+            div = this._createSizeCheckEl();
+            span = div.firstChild;
+
+            span.innerHTML = label;
+
+            this._addCssStyle(div, theme);
+
+            document.body.appendChild(div);
+            labelSize = span[offsetType];
+            document.body.removeChild(div);
+
+            this.sizeCache[key] = labelSize;
         }
 
-        document.body.appendChild(elDiv);
-        labelSize = elSpan[offsetType];
-        document.body.removeChild(elDiv);
         return labelSize;
     },
 
@@ -273,9 +323,15 @@ var renderUtil = {
     },
 
     /**
-     * To expand dimension.
-     * @param {{width: number, height: number}} dimension series dimension
-     * @returns {{width: number, height: number}} expended dimension
+     * Expand dimension.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} bound series bound
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }} expended bound
      */
     expandBound: function(bound) {
         var dimension = bound.dimension,
@@ -283,21 +339,50 @@ var renderUtil = {
         return {
             dimension: {
                 width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
-                height: dimension.height + chartConst.SERIES_EXPAND_SIZE
+                height: dimension.height + chartConst.SERIES_EXPAND_SIZE * 2
             },
             position: {
                 left: position.left - chartConst.SERIES_EXPAND_SIZE,
-                top: position.top
+                top: position.top - chartConst.SERIES_EXPAND_SIZE
             }
         };
     },
 
-    makeCustomEventName: function(prefix, str, suffix) {
-        return prefix + tui.util.properCase(str) + tui.util.properCase(suffix);
+    /**
+     * Make custom event name.
+     * @param {string} prefix prefix
+     * @param {string} value value
+     * @param {string} suffix suffix
+     * @returns {string} custom event name
+     */
+    makeCustomEventName: function(prefix, value, suffix) {
+        return prefix + tui.util.properCase(value) + tui.util.properCase(suffix);
     },
 
     /**
-     * Whether IE8 or not.
+     * Format value.
+     * @param {number} value value
+     * @param {array.<function>} formatFunctions functions for format
+     * @returns {string} formatted value
+     */
+    formatValue: function(value, formatFunctions) {
+        var fns = [value].concat(formatFunctions || []);
+
+        return tui.util.reduce(fns, function(stored, fn) {
+            return fn(stored);
+        });
+    },
+
+    /**
+     * Whether IE7 or not.
+     * @returns {boolean} result boolean
+     */
+    isIE7: function() {
+        return isIE7;
+    },
+
+    /**
+     * Whether oldBrowser or not.
      * @memberOf module:renderUtil
      * @returns {boolean} result boolean
      */

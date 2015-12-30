@@ -6,6 +6,41 @@
 
 'use strict';
 
+/**
+ * position
+ * @typedef {{left: number, top: number}} position
+ */
+
+/**
+ * bound
+ * @typedef {{
+ *      dimension: {width: number, height: number},
+ *      position: position
+ *}} bound
+ */
+
+/**
+ * group bound
+ *  @typedef {array.<array.<bound>>} groupBound
+ */
+
+/**
+ * group position
+ *  @typedef {array.<array.<position>>} groupPosition
+ */
+
+/**
+ * series info
+ * @typedef {{
+ *      chartType: {string},
+ *      data: {
+ *          groupBounds: ?groupBound,
+ *          groupValues: ?array.<array.<number>>,
+ *          groupPositions: ?groupPosition
+ *      }
+ *}} seriesInfo
+ */
+
 var chartConst = require('../const'),
     predicate = require('../helpers/predicate');
 
@@ -13,15 +48,15 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     /**
      * PointTypeDataModel is data mode for point type custom event.
      * @constructs PointTypeDataModel
-     * @param {array.<object>} seriesInfos series infos
+     * @param {array.<seriesInfo>} seriesInfos series infos
      */
     init: function(seriesInfos) {
         this.data = this._makeData(seriesInfos);
     },
 
     /**
-     * To make coordinate data about bar type graph
-     * @param {array.<array.<object>>} groupBounds group bounds
+     * Make coordinate data about bar type graph
+     * @param {groupBound} groupBounds group bounds
      * @param {string} chartType chart type
      * @returns {array} coordinate data
      * @private
@@ -58,13 +93,17 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     },
 
     /**
-     * To make coordinate data about dot type graph
-     * @param {array.<array.<object>>} groupPositions group positions
+     * Make coordinate data about dot type graph
+     * @param {groupPositions} groupPositions group positions
      * @param {string} chartType chart type
-     * @returns {array} coordinate data
+     * @returns {array.<array.<object>>} coordinate data
      * @private
      */
     _makeDotTypeCoordinateData: function(groupPositions, chartType) {
+        if (!groupPositions) {
+            return [];
+        }
+
         return tui.util.map(tui.util.pivot(groupPositions), function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
                 return {
@@ -88,7 +127,7 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     },
 
     /**
-     * To join data.
+     * Join data.
      * @param {array.<array.<array.<object>>>} groupData group data
      * @returns {array.<array.<object>>} joined data
      * @private
@@ -108,8 +147,8 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     },
 
     /**
-     * To make coordinate data.
-     * @param {array.<object>} seriesInfos series infos
+     * Make coordinate data.
+     * @param {array.<seriesInfo>} seriesInfos series infos
      * @returns {array.<array.<object>>} coordinate data
      * @private
      */

@@ -24,6 +24,26 @@ var predicate = {
     },
 
     /**
+     * Whether column chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isColumnChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_COLUMN;
+    },
+
+    /**
+     * Whether combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isComboChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_COMBO;
+    },
+
+    /**
      * Whether line chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -34,13 +54,23 @@ var predicate = {
     },
 
     /**
+     * Whether area chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAreaChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_AREA;
+    },
+
+    /**
      * Whether line type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
     isLineTypeChart: function(chartType) {
-        return this.isLineChart(chartType) || chartType === chartConst.CHART_TYPE_AREA;
+        return this.isLineChart(chartType) || this.isAreaChart(chartType);
     },
 
     /**
@@ -70,7 +100,46 @@ var predicate = {
      * @returns {boolean} result boolean
      */
     isCenterLegendAlign: function(align) {
-        return align === chartConst.LEGEND_TYPE_CENTER;
+        return align === chartConst.LEGEND_ALIGN_CENTER;
+    },
+
+    /**
+     * Whether left legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isLeftLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_LEFT;
+    },
+
+    /**
+     * Whether top legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isTopLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_TOP;
+    },
+
+    /**
+     * Whether bottom legend align or not.
+     * @memberOf module:predicate
+     * @param {string} align legend type
+     * @returns {boolean} result boolean
+     */
+    isBottomLegendAlign: function(align) {
+        return align === chartConst.LEGEND_ALIGN_BOTTOM;
+    },
+
+    /**
+     * Whether horizontal legend align or not.
+     * @param {string} align align
+     * @returns {boolean} result boolean
+     */
+    isHorizontalLegend: function(align) {
+        return this.isTopLegendAlign(align) || this.isBottomLegendAlign(align);
     },
 
     /**
@@ -85,6 +154,42 @@ var predicate = {
             result = this.isOuterLegendAlign(align) || this.isCenterLegendAlign(align);
         }
         return result;
+    },
+
+    /**
+     * Whether allowed stacked option or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isAllowedStackedOption: function(chartType) {
+        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isAreaChart(chartType);
+    },
+
+    /**
+     * Whether normal stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isNormalStacked: function(stacked) {
+        return stacked === chartConst.STACKED_NORMAL_TYPE;
+    },
+
+    /**
+     * Whether percent stacked or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isPercentStacked: function(stacked) {
+        return stacked === chartConst.STACKED_PERCENT_TYPE;
+    },
+
+    /**
+     * Whether valid stacked option or not.
+     * @param {boolean} stacked stacked option
+     * @returns {boolean} result boolean
+     */
+    isValidStackedOption: function(stacked) {
+        return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
     }
 };
 

@@ -7,7 +7,8 @@
 'use strict';
 
 var Series = require('./series'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase');
+    LineTypeSeriesBase = require('./lineTypeSeriesBase'),
+    chartConst = require('../const');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
@@ -25,7 +26,87 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * To make series data.
+     * Make position top of zero point.
+     * @param {{height: number}} dimension dimension
+     * @returns {number} position top
+     * @private
+     */
+    _makePositionTopOfZeroPoint: function() {
+        var dimension = this.bound.dimension,
+            limit = this.data.limit,
+            limitDistance = this._getLimitDistanceFromZeroPoint(dimension.height, limit),
+            top = limitDistance.toMax;
+
+        if (limit.min >= 0 && !top) {
+            top = dimension.height;
+        }
+
+        return top + chartConst.SERIES_EXPAND_SIZE;
+    },
+
+    /**
+     * Make stacked positions.
+     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
+    _makeStackedPositions: function(groupPositions) {
+        var height = this.bound.dimension.height + chartConst.SERIES_EXPAND_SIZE,
+            firstStartTop = this._makePositionTopOfZeroPoint(),
+            prevPositionTops = [];
+
+        return tui.util.map(groupPositions, function(positions) {
+            return tui.util.map(positions, function(position, index) {
+                var prevTop = prevPositionTops[index] || firstStartTop,
+                    stackedHeight = height - position.top,
+                    top = prevTop - stackedHeight;
+
+                position.startTop = prevTop;
+                position.top = top;
+
+                prevPositionTops[index] = top;
+                return position;
+            });
+        });
+    },
+
+    /**
+     * Make normal positions.
+     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
+    _makeNormalPositions: function(groupPositions) {
+        var startTop = this._makePositionTopOfZeroPoint();
+
+        return tui.util.map(groupPositions, function(positions) {
+            return tui.util.map(positions, function(position) {
+                position.startTop = startTop;
+                return position;
+            });
+        });
+    },
+
+    /**
+     * Make positions.
+     * @param {{width: number, height: number}} dimension dimension
+     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @private
+     */
+    _makePositions: function(dimension) {
+        var groupPositions = this._makeBasicPositions(dimension);
+
+        if (this.options.stacked) {
+            groupPositions = this._makeStackedPositions(groupPositions);
+        } else {
+            groupPositions = this._makeNormalPositions(groupPositions);
+        }
+
+        return groupPositions;
+    },
+
+    /**
+     * Make series data.
      * @param {{
      *      dimension: {width: number, height: number},
      *      position: {left: number, top: number}
@@ -33,16 +114,11 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @returns {object} series data
      */
     makeSeriesData: function(bound) {
-        var dimension = bound.dimension,
-            scaleDistance = this.getScaleDistanceFromZeroPoint(dimension.height, this.data.scale),
-            zeroTop = scaleDistance.toMax;
-        if (this.data.scale.min >= 0 && !zeroTop) {
-            zeroTop = dimension.height;
-        }
+        var zeroTop = this._getLimitDistanceFromZeroPoint(bound.dimension.height, this.data.limit).toMax;
 
         return {
-            groupPositions: this.makePositions(dimension),
-            zeroTop: zeroTop
+            groupPositions: this._makePositions(bound.dimension),
+            zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }
 });

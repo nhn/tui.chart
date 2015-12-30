@@ -11,18 +11,25 @@ var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarTypeSeriesBase', function() {
-    var series, makeSeriesRenderingPosition, makeSeriesLabelHtml, makeSumLabelHtml;
+    var series, dataProcessor, makeSeriesRenderingPosition, makeSeriesLabelHtml, makePlusSumLabelHtml, makeMinusSumLabelHtml;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getFormatFunctions', 'getFirstFormattedValue', 'getGroupValues', 'getFormattedValue']);
+
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
         makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
             left: 0,
             top: 0
         });
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        makeSumLabelHtml = jasmine.createSpy('makeSumLabelHtml').and.returnValue('<div></div>');
+        makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');
+        makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {
@@ -33,9 +40,11 @@ describe('BarTypeSeriesBase', function() {
                 fontSize: 11
             }
         };
+        series.dataProcessor = dataProcessor;
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
-        series.makeSumLabelHtml = makeSumLabelHtml;
-        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makePlusSumLabelHtml = makePlusSumLabelHtml;
+        series._makeMinusSumLabelHtml = makeMinusSumLabelHtml;
     });
 
     describe('_makeBarGutter()', function() {
@@ -96,7 +105,12 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var elLabelArea = dom.create('div');
+            var labelContainer = dom.create('div');
+
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
+            dataProcessor.getFormattedValue.and.returnValue('1.5');
+
             series._renderNormalSeriesLabel({
                 groupBounds: [
                     [
@@ -107,29 +121,24 @@ describe('BarTypeSeriesBase', function() {
                             end: {}
                         }
                     ]
-                ],
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
                 ]
-            }, elLabelArea);
-            expect(elLabelArea.childNodes.length).toEqual(2);
+            }, labelContainer);
+            expect(labelContainer.childNodes.length).toEqual(2);
         });
     });
 
-    describe('makeSumValues()', function() {
+    describe('_makeSumValues()', function() {
         it('[10, 20, 30] values의 합은 60입니다.', function() {
-            var actual = series.makeSumValues([10, 20, 30]);
+            var actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe(60);
         });
 
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {
-            var actual = series.makeSumValues(
-                [10, 20, 30],
-                [function(value) { return '00' + value; }]
-            );
+            var actual;
+
+            dataProcessor.getFormatFunctions.and.returnValue([function(value) { return '00' + value; }]);
+
+            actual = series._makeSumValues([10, 20, 30]);
             expect(actual).toBe('0060');
         });
     });
@@ -180,7 +189,7 @@ describe('BarTypeSeriesBase', function() {
                 labelHeight: 10
             });
             container.innerHTML = html;
-            expect(container.childNodes.length).toBe(3);
+            expect(container.childNodes.length).toBe(4);
         });
     });
 
@@ -209,7 +218,7 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             }, elLabelArea);
-            expect(elLabelArea.childNodes.length).toBe(3);
+            expect(elLabelArea.childNodes.length).toBe(4);
         });
     });
 

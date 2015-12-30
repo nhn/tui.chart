@@ -12,7 +12,9 @@ var Raphael = window.Raphael,
     ANGLE_180 = 180,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
-    LOADING_ANIMATION_TIME = 700;
+    LOADING_ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
@@ -22,7 +24,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render function of pie chart.
      * @param {HTMLElement} container container
-     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorData: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {object} callbacks callbacks
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
@@ -47,7 +49,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To make sector path.
+     * Make sector path.
      * @param {number} cx center x
      * @param {number} cy center y
      * @param {number} r radius
@@ -87,6 +89,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _renderSector: function (params) {
         var circleBound = params.circleBound,
             angles = params.angles;
+
         return params.paper.path().attr({
             sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
         }).attr(params.attrs);
@@ -95,7 +98,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render pie graph.
      * @param {object} paper raphael paper
-     * @param {{sectorsInfo: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{sectorData: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
      * @param {object} callbacks callbacks
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
@@ -108,13 +111,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             chartBackground = data.chartBackground,
             sectors = [];
 
-        tui.util.forEachArray(data.sectorsInfo, function(sectorInfo, index) {
-            var percentValue = sectorInfo.percentValue,
+        tui.util.forEachArray(data.sectorData, function(sectorDatum, index) {
+            var percentValue = sectorDatum.percentValue,
                 color = colors[index],
                 sector = this._renderSector({
                     paper: paper,
                     circleBound: circleBound,
-                    angles: sectorInfo.angles.start,
+                    angles: sectorDatum.angles.start,
                     attrs: {
                         fill: color,
                         stroke: chartBackground,
@@ -127,7 +130,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             sectors.push({
                 sector: sector,
                 color: color,
-                angles: sectorInfo.angles.end,
+                angles: sectorDatum.angles.end,
                 percentValue: percentValue
             });
         }, this);
@@ -154,7 +157,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To make line paths.
+     * Make line paths.
      * @param {array.<object>} outerPositions outer positions
      * @returns {Array} line paths.
      * @private
@@ -167,6 +170,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 'Z'
             ].join('');
         }, this);
+
         return paths;
     },
 
@@ -212,19 +216,20 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To expand selector radius.
+     * Expand selector radius.
      * @param {object} sector pie sector
      */
     _expandSector: function(sector) {
         var cx = this.circleBound.cx,
             cy = this.circleBound.cy;
+
         sector.animate({
             transform: "s1.1 1.1 " + cx + " " + cy
         }, ANIMATION_TIME, "elastic");
     },
 
     /**
-     * To restore selector radius.
+     * Restore selector radius.
      * @param {object} sector pie sector
      */
     _restoreSector: function(sector) {
@@ -256,6 +261,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     animate: function(callback) {
         var delayTime = 0,
             circleBound = this.circleBound;
+
         tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles,
                 animationTime = LOADING_ANIMATION_TIME * item.percentValue,
@@ -278,6 +284,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         if (!this.legendLines) {
             return;
         }
+
         tui.util.forEachArray(this.legendLines, function(line) {
             line.animate({
                 'stroke': 'black',
@@ -288,7 +295,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
 
     /**
-     * To resize graph of pie chart.
+     * Resize graph of pie chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {{cx:number, cy:number, r: number}} params.circleBound circle bound
@@ -309,11 +316,12 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * To move legend lines.
+     * Move legend lines.
      * @param {array.<object>} outerPositions outer positions
      */
     moveLegendLines: function(outerPositions) {
         var paths;
+
         if (!this.legendLines) {
             return;
         }
@@ -333,6 +341,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var item = this.sectors[indexes.index],
             objColor = Raphael.color(item.color),
             color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+
         item.sector.attr({
             fill: color
         });
@@ -344,9 +353,28 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     unselectSeries: function(indexes) {
         var sector = this.sectors[indexes.index];
+
         sector.sector.attr({
             fill: sector.color
         });
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var isNull = tui.util.isNull(legendIndex);
+
+        tui.util.forEachArray(this.sectors, function(item, index) {
+            var opacity;
+
+            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            item.sector.attr({
+                'fill-opacity': opacity
+            });
+        }, this);
     }
 });
 

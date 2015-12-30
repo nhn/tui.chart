@@ -10,16 +10,25 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael,
-    ANIMATION_TIME = 700;
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
 
-/**
- * @classdesc RaphaelAreaChart is graph renderer for area chart.
- * @class RaphaelAreaChart
- * @extends RaphaelLineTypeBase
- */
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
+    /**
+     * RaphaelAreaChart is graph renderer for area chart.
+     * @constructs RaphaelAreaChart
+     * @extends RaphaelLineTypeBase
+     */
+    init: function() {
+        /**
+         * selected legend index
+         * @type {?number}
+         */
+        this.selectedLegendIndex = null;
+    },
+
     /**
      * Render function of area chart.
      * @param {HTMLElement} container container
@@ -32,17 +41,21 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = this._getAreasPath(groupPositions, data.zeroTop),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupAreas, tooltipLine, selectionDot, groupDots;
+            paper, groupPaths, groupAreas, tooltipLine, selectionDot, groupDots;
 
-        this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.stackedOption = data.options.stacked;
+        this.spline = data.options.spline;
+        this.dimension = dimension;
+        this.zeroTop = data.zeroTop;
 
+        groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         groupAreas = this._renderAreas(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
         selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, borderStyle);
+        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
             this.selectionDot = selectionDot;
@@ -56,6 +69,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
+        delete this.pivotGroupDots;
 
         return paper;
     },
@@ -63,31 +77,23 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Render area graph.
      * @param {object} paper paper
-     * @param {{start: string, addStart: string}} path path
+     * @param {{start: string}} path path
      * @param {string} color color
      * @returns {array.<object>} raphael object
      * @private
      */
     _renderArea: function(paper, path, color) {
-        var result = [],
-            area = paper.path([path.start]),
+        var area = paper.path(path),
             fillStyle = {
                 fill: color,
                 opacity: 0.5,
                 stroke: color,
                 'stroke-opacity': 0
-            },
-            addArea;
+            };
 
         area.attr(fillStyle);
-        result.push(area);
 
-        if (path.addStart) {
-            addArea = paper.path([path.addStart]);
-            addArea.attr(fillStyle);
-            result.push(addArea);
-        }
-        return result;
+        return area;
     },
 
     /**
@@ -99,251 +105,157 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _renderAreas: function(paper, groupPaths, colors) {
-        var groupAreas = tui.util.map(groupPaths, function(paths, groupIndex) {
-            var color = colors[groupIndex] || 'transparent';
-            return tui.util.map(paths, function(path) {
-                var result = {
-                    area: this._renderArea(paper, path.area, color),
-                    line: raphaelRenderUtil.renderLine(paper, path.line.start, color)
-                };
-                return result;
-            }, this);
+        var groupAreas;
+
+        colors = colors.slice(0, groupPaths.length);
+        colors.reverse();
+        groupPaths.reverse();
+
+        groupAreas = tui.util.map(groupPaths, function(path, groupIndex) {
+            var areaColor = colors[groupIndex] || 'transparent',
+                lineColor = areaColor;
+
+            return {
+                area: this._renderArea(paper, path.area.join(' '), areaColor),
+                line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor)
+            };
         }, this);
 
-        return groupAreas;
+        return groupAreas.reverse();
     },
 
     /**
-     * Whether minus or not.
-     * @param {number} value value
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isMinus: function(value) {
-        return value < 0;
-    },
-
-    /**
-     * Whether plus or not.
-     * @param {number} value value
-     * @returns {boolean} result boolean
-     * @private
-     */
-    _isPlus: function(value) {
-        return value >= 0;
-    },
-
-    /**
-     * To make height.
+     * Make height.
      * @param {number} top top
-     * @param {number} zeroTop zero position top
+     * @param {number} startTop start top
      * @returns {number} height
      * @private
      */
-    _makeHeight: function(top, zeroTop) {
-        return Math.abs(top - zeroTop);
+    _makeHeight: function(top, startTop) {
+        return Math.abs(top - startTop);
     },
 
     /**
-     * Find middle left
-     * @param {{left: number, top: number}} fromPos from position
-     * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
-     * @returns {number} middle left
+     * Make areas path.
+     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {array.<string | number>} path
      * @private
      */
-    _findMiddleLeft: function(fromPos, toPos, zeroTop) {
-        var tops = [zeroTop - fromPos.top, zeroTop - toPos.top],
-            middleLeft, width, fromHeight, toHeight;
+    _makeAreasPath: function(positions) {
+        var len = positions.length * 2,
+            path = [];
 
-        if (tui.util.all(tops, this._isMinus) || tui.util.all(tops, this._isPlus)) {
-            return -1;
-        }
+        tui.util.forEachArray(positions, function(position, index) {
+            path[index] = ['L', position.left, position.top];
+            path[len - index - 1] = ['L', position.left, position.startTop];
+        });
 
-        fromHeight = this._makeHeight(fromPos.top, zeroTop);
-        toHeight = this._makeHeight(toPos.top, zeroTop);
-        width = toPos.left - fromPos.left;
+        path = concat.apply([], path);
+        path[0] = 'M';
 
-        middleLeft = fromPos.left + (width * (fromHeight / (fromHeight + toHeight)));
-        return middleLeft;
-    },
-
-    /**
-     * To make area path.
-     * @param {{left: number, top: number}} fromPos from position
-     * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
-     * @returns {string} area path
-     * @private
-     */
-    _makeAreaPath: function(fromPos, toPos, zeroTop) {
-        var fromStartPoint = ['M', fromPos.left, ' ', zeroTop],
-            fromEndPoint = zeroTop === fromPos.top ? [] : ['L', fromPos.left, ' ', fromPos.top],
-            toStartPoint = ['L', toPos.left, ' ', toPos.top],
-            toEndPoint = zeroTop === toPos.top ? [] : ['L', toPos.left, ' ', zeroTop];
-        return concat.call([], fromStartPoint, fromEndPoint, toStartPoint, toEndPoint).join('');
-    },
-
-    /**
-     * To make area paths.
-     * @param {{left: number, top: number}} fromPos from position
-     * @param {{left: number, top: number}} toPos to position
-     * @param {number} zeroTop zero position top
-     * @returns {{
-     *      start: string,
-     *      end: string,
-     *      addStart: string,
-     *      addEnd: string
-     * }} area paths
-     * @private
-     */
-    _makeAreaPaths: function(fromPos, toPos, zeroTop) {
-        var middleLeft = this._findMiddleLeft(fromPos, toPos, zeroTop),
-            result = {
-                start: this._makeAreaPath(fromPos, fromPos, zeroTop)
-            },
-            middlePos;
-
-        if (this._isPlus(middleLeft)) {
-            middlePos = {left: middleLeft, top: zeroTop};
-            result.end = this._makeAreaPath(fromPos, middlePos, zeroTop);
-            result.addStart = this._makeAreaPath(middlePos, middlePos, zeroTop);
-            result.addEnd = this._makeAreaPath(middlePos, toPos, zeroTop);
-        } else {
-            result.end = this._makeAreaPath(fromPos, toPos, zeroTop);
-        }
-
-        return result;
+        return path;
     },
 
     /**
      * Get area path.
-     * @param {array.<array.<object>>} groupPositions positions
-     * @param {number} zeroTop zero top
-     * @returns {array.<array.<string>>} paths
+     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
      * @private
      */
-    _getAreasPath: function(groupPositions, zeroTop) {
-        var groupPaths = tui.util.map(groupPositions, function(positions) {
-            var fromPos = positions[0],
-                rest = positions.slice(1);
-            return tui.util.map(rest, function(position) {
-                var result = {
-                    area: this._makeAreaPaths(fromPos, position, zeroTop),
-                    line: this.makeLinePath(fromPos, position)
-                };
-                fromPos = position;
-                return result;
-            }, this);
+    _getAreasPath: function(groupPositions) {
+        return tui.util.map(groupPositions, function(positions) {
+            positions[0].left -= 1;
+
+            return {
+                area: this._makeAreasPath(positions),
+                line: this._makeLinesPath(positions)
+            };
         }, this);
-        return groupPaths;
     },
 
     /**
-     * Animate area chart.
-     * @param {object} area raphael object
-     * @param {string} areaPath path
-     * @param {number} time play time
-     * @param {number} startTime start time
+     * Make spline area bottom path.
+     * @param {array.<{left: number, top: number}>} positions positions
+     * @param {array.<{left: number, top: number}>} prevPositions previous positions
+     * @returns {array.<string | number>} spline area path
      * @private
      */
-    _animateArea: function(area, areaPath, time, startTime) {
-        var areaAddEndPath = areaPath.addEnd,
-            areaEndPath = areaPath.end;
-        if (areaAddEndPath) {
-            time = time / 2;
-            setTimeout(function() {
-                area[1].animate({path: areaAddEndPath, 'stroke-opacity': 0.25}, time);
-            }, startTime + time);
-        }
-        setTimeout(function() {
-            area[0].animate({path: areaEndPath, 'stroke-opacity': 0.25}, time);
-        }, startTime);
+    _makeSplineAreaBottomPath: function(positions) {
+        return tui.util.map(positions, function(position) {
+            return ['L', position.left, this.zeroTop];
+        }, this).reverse();
     },
 
     /**
-     * Animate.
-     * @param {function} callback callback
-     */
-    animate: function(callback) {
-        var time = ANIMATION_TIME / this.groupAreas[0].length,
-            that = this,
-            startTime = 0;
-
-        this.renderItems(function(dot, groupIndex, index) {
-            var area, areaPath;
-            if (index) {
-                area = that.groupAreas[groupIndex][index - 1];
-                areaPath = that.groupPaths[groupIndex][index - 1];
-                that.animateLine(area.line, areaPath.line.end, time, startTime);
-                that._animateArea(area.area, areaPath.area, time, startTime);
-                startTime += time;
-            } else {
-                startTime = 0;
-            }
-
-            if (that.dotOpacity) {
-                setTimeout(function() {
-                    dot.attr({'fill-opacity': that.dotOpacity});
-                }, startTime);
-            }
-        });
-
-        if (callback) {
-            setTimeout(callback, startTime);
-        }
-    },
-
-    /**
-     * To update area attribute
-     * @param {object} area raphael object
-     * @param {string} areaPath area path
+     * Get spline areas path.
+     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
      * @private
      */
-    _updateAreaAttr: function(area, areaPath) {
-        var areaAddEndPath = areaPath.addEnd;
-        area[0].attr({path: areaPath.end});
-        if (areaAddEndPath) {
-            area[1].attr({path: areaAddEndPath});
-        }
+    _getSplineAreasPath: function(groupPositions) {
+        return tui.util.map(groupPositions, function(positions) {
+            var linesPath, areasBottomPath;
+
+            positions[0].left -= 1;
+            linesPath = this._makeSplineLinesPath(positions);
+            areasBottomPath = this._makeSplineAreaBottomPath(positions);
+
+            return {
+                area: linesPath.concat(areasBottomPath),
+                line: linesPath
+            };
+        }, this);
     },
 
     /**
-     * To resize graph of area chart.
+     * Resize graph of area chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
         var dimension = params.dimension,
-            groupPositions = params.groupPositions,
-            that = this;
+            groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this._getAreasPath(groupPositions, params.zeroTop);
+        this.groupPaths = this.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
-        this.renderItems(function(dot, groupIndex, index) {
-            var position = groupPositions[groupIndex][index],
-                dotAttrs = {
-                    cx: position.left,
-                    cy: position.top
-                },
-                area, areaPath;
-            if (index) {
-                area = that.groupAreas[groupIndex][index - 1];
-                areaPath = that.groupPaths[groupIndex][index - 1];
-                area.line.attr({path: areaPath.line.end});
-                that._updateAreaAttr(area.area, areaPath.area);
-            }
+        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+            var area = this.groupAreas[groupIndex];
+            area.area.attr({path: path.area.join(' ')});
+            area.line.attr({path: path.line.join(' ')});
 
-            if (that.dotOpacity) {
-                dotAttrs = tui.util.extend({'fill-opacity': that.dotOpacity}, dotAttrs, that.borderStyle);
-            }
+            tui.util.forEachArray(this.groupDots[groupIndex], function(item, index) {
+                this._moveDot(item.dot, groupPositions[groupIndex][index]);
+            }, this);
+        }, this);
+    },
 
-            dot.attr(dotAttrs);
-        });
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var that = this,
+            noneSelected = tui.util.isNull(legendIndex);
+
+        this.selectedLegendIndex = legendIndex;
+
+        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+            var area = this.groupAreas[groupIndex],
+                opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            area.area.attr({'fill-opacity': opacity});
+            area.line.attr({'stroke-opacity': opacity});
+
+            tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
+                if (that.dotOpacity) {
+                    item.dot.attr({'fill-opacity': opacity});
+                }
+            });
+        }, this);
     }
 });
 

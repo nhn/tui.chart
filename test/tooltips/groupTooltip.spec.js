@@ -11,10 +11,15 @@ var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('GroupTooltip', function() {
-    var tooltip;
+    var tooltip, dataProcessor;
+
+    beforeAll(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeFormattedValues', 'getCategory', 'getWholeLegendData', 'getLegendData']);
+    });
 
     beforeEach(function() {
         tooltip = new GroupTooltip({
+            dataProcessor: dataProcessor,
             options: {}
         });
     });
@@ -22,14 +27,18 @@ describe('GroupTooltip', function() {
     describe('makeTooltipData()', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function () {
             var actual, expected;
-            tooltip.labels = [
-                'Silver',
-                'Gold'
-            ];
-            tooltip.joinFormattedValues = [
+
+            dataProcessor.getWholeFormattedValues.and.returnValue([
                 ['10', '20'],
                 ['30', '40']
-            ];
+            ]);
+            dataProcessor.getCategory.and.callFake(function(index) {
+                var categories = [
+                    'Silver',
+                    'Gold'
+                ];
+                return categories[index];
+            });
 
             actual = tooltip.makeTooltipData();
             expected = [
@@ -42,17 +51,21 @@ describe('GroupTooltip', function() {
 
     describe('_makeColors()', function() {
         it('툴팁 테마에 colors가 설정되어있으면 그대로 반환합니다.', function() {
-            var legendLabels = [{
-                    chartType: 'column',
-                    label: 'legend1'
-                }, {
-                    chartType: 'column',
-                    label: 'legend2'
-                }],
-                actual = tooltip._makeColors(legendLabels, {
-                    colors: ['red', 'blue']
-                }),
-                expected = ['red', 'blue'];
+            var actual, expected;
+
+            dataProcessor.getWholeLegendData.and.returnValue([{
+                chartType: 'column',
+                label: 'legend1'
+            }, {
+                chartType: 'column',
+                label: 'legend2'
+            }]);
+
+            actual = tooltip._makeColors({
+                colors: ['red', 'blue']
+            });
+            expected = ['red', 'blue'];
+
             expect(actual).toEqual(expected);
         });
 
@@ -70,21 +83,57 @@ describe('GroupTooltip', function() {
         });
     });
 
-    describe('_makeTooltipHtml()', function() {
-        it('기본 툴팁 data에서 전달하는 index에 해당하는 data를 추출하여 툴팁 html을 생성합니다.', function() {
+    describe('_makeItemRenderingData()', function() {
+        it('렌더링에 사용할 item data를 생성합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.getLegendData.and.callFake(function(index) {
+                var legendData = [
+                    {
+                        chartType: 'column',
+                        label: 'legend1'
+                    },
+                    {
+                        chartType: 'line',
+                        label: 'legend2'
+                    }
+                ];
+                return legendData[index];
+            });
+
+            tooltip.suffix = 'suffix';
+
+            actual = tooltip._makeItemRenderingData(['20', '30']);
+            expected = [
+                {
+                    value: '20',
+                    legend: 'legend1',
+                    chartType: 'column',
+                    suffix: 'suffix'
+                },
+                {
+                    value: '30',
+                    legend: 'legend2',
+                    chartType: 'line',
+                    suffix: 'suffix'
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeGroupTooltipHtml()', function() {
+        it('전달하는 index에 해당하는 datum을 추출하여 기본 그룹 툴팁 html을 생성합니다.', function() {
             var actual, expected;
             tooltip.data = [
                 {category: 'Silver', values: ['10']},
                 {category: 'Gold', values: ['30']}
             ];
-            tooltip.joinLegendLabels = [{
-                chartType: 'column',
-                label: 'legend1'
-            }];
             tooltip.theme = {
                 colors: ['red']
             };
-            actual = tooltip._makeTooltipHtml(1);
+            actual = tooltip._makeGroupTooltipHtml(1);
             expected = '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
                 '<div>Gold</div>' +
                     '<div>' +
@@ -94,143 +143,51 @@ describe('GroupTooltip', function() {
                 '</div>';
             expect(actual).toBe(expected);
         });
-    });
 
-    //describe('_calculateVerticalPosition()', function() {
-    //    it('세로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
-    //        var actual = tooltip._calculateVerticalPosition({
-    //                width: 80,
-    //                height: 100
-    //            }, {
-    //                range: {
-    //                    start: 0,
-    //                    end: 100
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
-    //                size: 200
-    //            }),
-    //            expected = {
-    //                left: 115,
-    //                top: 50
-    //            };
-    //        expect(actual).toEqual(expected);
-    //    });
-    //    it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
-    //        var actual = tooltip._calculateVerticalPosition({
-    //                width: 80,
-    //                height: 100
-    //            }, {
-    //                range: {
-    //                    start: 100,
-    //                    end: 200
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
-    //                size: 200
-    //            }),
-    //            expected = {
-    //                left: 24,
-    //                top: 50
-    //            };
-    //        expect(actual).toEqual(expected);
-    //    });
-    //});
-    //
-    //describe('_calculateHorizontalPosition()', function() {
-    //    it('가로 타입의 차트의 툴팁 position 정보를 계산합니다.', function() {
-    //        var actual = tooltip._calculateHorizontalPosition({
-    //                width: 80,
-    //                height: 100
-    //            }, {
-    //                range: {
-    //                    start: 0,
-    //                    end: 100
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
-    //                size: 200
-    //            }),
-    //            expected = {
-    //                left: 70,
-    //                top: 0
-    //            };
-    //        expect(actual).toEqual(expected);
-    //    });
-    //    it('중간 틱 이후부터는 틱 영역 끝지점 부터 툴팁이 뜨도록 position 정보를 계산합니다.', function() {
-    //        var actual = tooltip._calculateHorizontalPosition({
-    //                width: 80,
-    //                height: 100
-    //            }, {
-    //                range: {
-    //                    start: 100,
-    //                    end: 200
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
-    //                size: 200
-    //            }),
-    //            expected = {
-    //                left: 70,
-    //                top: 100
-    //            };
-    //        expect(actual).toEqual(expected);
-    //    });
-    //});
-    //
-    //describe('_calculateTooltipPosition()', function() {
-    //    it('세로 툴팁의 경우 _calculateVerticalPosition()의 계산 결과의 값을 반환합니다.', function() {
-    //        var dimension = {
-    //                width: 80,
-    //                height: 100
-    //            },
-    //            params = {
-    //                range: {
-    //                    start: 0,
-    //                    end: 100
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
-    //                size: 200,
-    //                isVertical: true
-    //            },
-    //            actual, expected;
-    //        actual = tooltip._calculateTooltipPosition(dimension, params);
-    //        expected = tooltip._calculateVerticalPosition(dimension, params);
-    //        expect(actual).toEqual(expected);
-    //    });
-    //
-    //    it('가로 툴팁의 경우 _calculateHorizontalPosition()의 계산 결과의 값을 반환합니다.', function() {
-    //        var dimension = {
-    //                width: 80,
-    //                height: 100
-    //            },
-    //            params = {
-    //                range: {
-    //                    start: 0,
-    //                    end: 100
-    //                },
-    //                direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
-    //                size: 200
-    //            },
-    //            actual, expected;
-    //        actual = tooltip._calculateTooltipPosition(dimension, params);
-    //        expected = tooltip._calculateHorizontalPosition(dimension, params);
-    //        expect(actual).toEqual(expected);
-    //    });
-    //});
+        it('전달하는 index에 해당하는 datum을 추출하여 template 그룹 툴팁 html을 생성합니다.', function() {
+            var actual, expected;
+
+            tooltip.templateFunc = function(category, items) {
+               var head = '<div>' + category + '</div>',
+                   body = tui.util.map(items, function(item) {
+                       return '<div>' + item.legend + ': ' + item.value + '</div>';
+                   }).join('');
+               return head + body;
+            };
+
+            tooltip.data = [
+                {category: 'Silver', values: ['10']},
+                {category: 'Gold', values: ['30', '20']}
+            ];
+            tooltip.theme = {
+                colors: ['red']
+            };
+
+            actual = tooltip._makeGroupTooltipHtml(1);
+            expected = '<div>Gold</div>' +
+                '<div>legend1: 30</div>' +
+                '<div>legend2: 20</div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
 
     describe('_getTooltipSectorElement', function() {
         it('툴팁 섹터 엘리먼트를 얻습니다.', function() {
-            var elLayout = dom.create('DIV'),
+            var tooltipContainer = dom.create('DIV'),
                 actual;
-            tooltip.elLayout = elLayout;
+            tooltip.tooltipContainer = tooltipContainer;
             actual = tooltip._getTooltipSectorElement();
             expect(actual).toBeDefined();
             expect(actual.className).toBe('tui-chart-group-tooltip-sector');
         });
 
         it('this.elTooltipSector이 존재하면 그대로 반환합니다.', function() {
-            var elTooltipSector = dom.create('DIV'),
+            var groupTooltipSector = dom.create('DIV'),
                 actual, expected;
-            tooltip.elTooltipSector = elTooltipSector;
+            tooltip.groupTooltipSector = groupTooltipSector;
             actual = tooltip._getTooltipSectorElement();
-            expected = elTooltipSector;
+            expected = groupTooltipSector;
             expect(actual).toBe(expected);
         });
     });
@@ -248,7 +205,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -266,7 +223,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 10,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);
@@ -286,7 +243,7 @@ describe('GroupTooltip', function() {
                     },
                     position: {
                         left: 9,
-                        top: 0
+                        top: 10
                     }
                 };
             expect(actual).toEqual(expected);

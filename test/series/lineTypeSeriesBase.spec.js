@@ -11,43 +11,50 @@ var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml;
+    var series, makeSeriesLabelHtml, _getPercentValues, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
+        _getPercentValues = jasmine.createSpy('_getPercentValues').and.returnValue([]);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormattedGroupValues', 'getFirstFormattedValue']);
     });
 
     beforeEach(function() {
         series = new LineTypeSeriesBase();
-        series.makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
+        series._getPercentValues = _getPercentValues;
+        series.dataProcessor = dataProcessor;
     });
 
-    describe('_makePositions()', function() {
+    describe('_makeBasicPositions()', function() {
         it('라인차트의 position 정보를 생성합니다.', function () {
-            var bounds;
-            series.percentValues = [[0.25, 0.5, 0.4]];
+            var actual;
+
+            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
+
             series.data = {
                 aligned: false
             };
-            bounds = series.makePositions({
+            actual = series._makeBasicPositions({
                 width: 300,
                 height: 200
             });
-            expect(bounds).toEqual([
+
+            expect(actual).toEqual([
                 [
                     {
-                        top: 150,
+                        top: 160,
                         left: 60
                     },
                     {
-                        top: 100,
+                        top: 110,
                         left: 160
                     },
                     {
-                        top: 120,
+                        top: 130,
                         left: 260
                     }
                 ]
@@ -55,31 +62,80 @@ describe('LineTypeSeriesBase', function() {
         });
 
         it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function () {
-            var bounds;
-            series.percentValues = [[0.25, 0.5, 0.4]];
+            var actual;
+
+            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
+
             series.data = {
                 aligned: true
             };
-            bounds = series.makePositions({
+            actual = series._makeBasicPositions({
                 width: 300,
                 height: 200
             });
-            expect(bounds).toEqual([
+
+            expect(actual).toEqual([
                 [
                     {
-                        top: 150,
+                        top: 160,
                         left: 10
                     },
                     {
-                        top: 100,
+                        top: 110,
                         left: 160
                     },
                     {
-                        top: 120,
+                        top: 130,
                         left: 310
                     }
                 ]
             ]);
+        });
+    });
+
+    describe('_makeLabelPositionTop()', function() {
+        it('stacked인 영역 차트(startTop 존재)의 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {
+                stacked: 'normal'
+            };
+
+            actual = series._makeLabelPositionTop({
+                top: 10,
+                startTop: 40
+            }, 20, 16);
+            expected = 18;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('stacked가 아니면서 value가 음수이며 영역차트(startTop이 존재)인 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {};
+
+            actual = series._makeLabelPositionTop({
+                top: 10,
+                startTop: 40
+            }, -30);
+            expected = 15;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('stacked가 아니면서 value가 양수인 라인타입 차트의 레이블 top 정보를 생성합니다.', function() {
+            var actual, expected;
+
+            series.options = {};
+
+            actual = series._makeLabelPositionTop({
+                top: 60,
+                startTop: 40
+            }, 30, 16);
+            expected = 39;
+
+            expect(actual).toBe(expected);
         });
     });
 
@@ -92,6 +148,11 @@ describe('LineTypeSeriesBase', function() {
             series.theme = {
                 label: {}
             };
+
+            dataProcessor.getFormattedGroupValues.and.returnValue([
+                ['1.5'], ['2.2']
+            ]);
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
 
             series._renderSeriesLabel({
                 groupPositions: [
@@ -109,10 +170,7 @@ describe('LineTypeSeriesBase', function() {
                 dimension: {
                     width: 100,
                     height: 100
-                },
-                formattedValues: [
-                    ['1.5', '2.2']
-                ]
+                }
             }, elLabelArea);
 
             expect(elLabelArea.childNodes.length).toBe(2);

@@ -15,9 +15,9 @@ describe('RaphaelLineTypeBase', function() {
         lineTypeBase = new RaphaelLineTypeBase();
     });
 
-    describe('makeLinePath()', function() {
-        it('from position, to position을 이용하여 line graph를 그리기 위한 line path를 생성합니다.', function() {
-            var actual = lineTypeBase.makeLinePath(
+    describe('_makeLinesPath()', function() {
+        it('positions의 top, left 정보를 이용하여 line graph를 그리기 위한 path를 생성합니다.', function() {
+            var actual = lineTypeBase._makeLinesPath([
                     {
                         left: 10,
                         top: 10
@@ -25,11 +25,26 @@ describe('RaphaelLineTypeBase', function() {
                         left: 100,
                         top: 100
                     }
-                ),
-                expected = {
-                    start: 'M9.5 9.5L9.5 9.5',
-                    end: 'M10 10L100 100'
-                };
+                ]),
+                expected = ['M', 10, 10, 'L', 100, 100];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeSplineLinesPath()', function() {
+        it('positions의 top, left 정보를 이용하여 spline line graph를 그리기 위한 path를 생성합니다.', function() {
+            var actual = lineTypeBase._makeSplineLinesPath([
+                    {
+                        left: 10,
+                        top: 10
+                    }, {
+                        left: 100,
+                        top: 100
+                    }
+                ]),
+                expected = [['M', 9, 10, 'C', 9, 10], [100, 100, 100, 100]];
+
             expect(actual).toEqual(expected);
         });
     });

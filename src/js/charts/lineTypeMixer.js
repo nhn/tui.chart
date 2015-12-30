@@ -16,24 +16,28 @@ var ChartBase = require('./chartBase'),
 var lineTypeMixer = {
     /**
      * Initialize line type chart.
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
      * @private
      */
-    _lineTypeInit: function(userData, theme, options) {
+    _lineTypeInit: function(rawData, theme, options) {
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options,
             hasAxes: true,
             isVertical: true
         });
 
-        this._addComponents(this.convertedData, options.chartType);
+        this._addComponents(options.chartType);
     },
 
+    /**
+     * Add custom event component for normal tooltip.
+     * @private
+     */
     _addCustomEventComponentForNormalTooltip: function() {
         this._addComponent('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
@@ -43,28 +47,17 @@ var lineTypeMixer = {
 
     /**
      * Add components
-     * @param {object} convertedData converted data
      * @param {string} chartType chart type
      * @private
      */
-    _addComponents: function(convertedData, chartType) {
-        var seriesData = {
-            data: {
-                values: tui.util.pivot(convertedData.values),
-                formattedValues: tui.util.pivot(convertedData.formattedValues),
-                formatFunctions: convertedData.formatFunctions,
-                joinLegendLabels: convertedData.joinLegendLabels
-            }
-        };
+    _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            convertedData: convertedData,
             axes: ['yAxis', 'xAxis'],
             chartType: chartType,
             serieses: [
                 {
-                    name: 'series',
-                    SeriesClass: this.Series,
-                    data: seriesData
+                    name: this.options.chartType + 'Series',
+                    SeriesClass: this.Series
                 }
             ]
         });

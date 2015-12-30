@@ -6,7 +6,8 @@
 
 'use strict';
 
-var chartConst = require('../const');
+var chartConst = require('../const'),
+    predicate = require('./predicate');
 
 /**
  * Calculator.
@@ -14,17 +15,17 @@ var chartConst = require('../const');
  */
 var calculator = {
     /**
-     * To calculate scale from chart min, max data.
+     * Calculate limit from chart min, max data.
      *  - http://peltiertech.com/how-excel-calculates-automatic-chart-axis-limits/
      * @memberOf module:calculator
      * @param {number} min min minimum value of user data
      * @param {number} max max maximum value of user data
      * @param {number} tickCount tick count
-     * @returns {{min: number, max: number}} scale axis scale
+     * @returns {{min: number, max: number}} limit axis limit
      */
-    calculateScale: function(min, max) {
+    calculateLimit: function(min, max) {
         var saveMin = 0,
-            scale = {},
+            limit = {},
             iodValue; // increase or decrease value;
 
         if (min < 0) {
@@ -34,18 +35,18 @@ var calculator = {
         }
 
         iodValue = (max - min) / 20;
-        scale.max = max + iodValue + saveMin;
+        limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
-            scale.min = 0 + saveMin;
+            limit.min = 0 + saveMin;
         } else {
-            scale.min = min - iodValue + saveMin;
+            limit.min = min - iodValue + saveMin;
         }
-        return scale;
+        return limit;
     },
 
     /**
-     * To normalize number.
+     * Normalize number.
      * @memberOf module:calculator
      * @param {number} value target value
      * @returns {number} normalized number
@@ -85,7 +86,7 @@ var calculator = {
     },
 
     /**
-     * To make tick positions of pixel type.
+     * Make tick positions of pixel type.
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
@@ -93,11 +94,11 @@ var calculator = {
      */
     makeTickPixelPositions: function(size, count) {
         var positions = [],
-            pxScale, pxStep;
+            pxLimit, pxStep;
 
         if (count > 0) {
-            pxScale = {min: 0, max: size - 1};
-            pxStep = this.getScaleStep(pxScale, count);
+            pxLimit = {min: 0, max: size - 1};
+            pxStep = this.calculateStepFromLimit(pxLimit, count);
             positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
                 return Math.round(position);
             });
@@ -107,17 +108,17 @@ var calculator = {
     },
 
     /**
-     * To make labels from scale.
+     * Make labels from limit.
      * @memberOf module:calculator
-     * @param {{min: number, max: number}} scale axis scale
+     * @param {{min: number, max: number}} limit axis limit
      * @param {number} step step between max and min
      * @returns {string[]} labels
      * @private
      */
-    makeLabelsFromScale: function(scale, step) {
+    makeLabelsFromLimit: function(limit, step) {
         var multipleNum = tui.util.findMultipleNum(step),
-            min = scale.min * multipleNum,
-            max = scale.max * multipleNum,
+            min = limit.min * multipleNum,
+            max = limit.max * multipleNum,
             labels = tui.util.range(min, max + 1, step * multipleNum);
         labels = tui.util.map(labels, function(label) {
             return label / multipleNum;
@@ -126,18 +127,18 @@ var calculator = {
     },
 
     /**
-     * Get scale step.
+     * Calculate step from limit.
      * @memberOf module:calculator
-     * @param {{min: number, max: number}} scale axis scale
+     * @param {{min: number, max: number}} limit axis limit
      * @param {number} count value count
-     * @returns {number} scale step
+     * @returns {number} step
      */
-    getScaleStep: function(scale, count) {
-        return (scale.max - scale.min) / (count - 1);
+    calculateStepFromLimit: function(limit, count) {
+        return (limit.max - limit.min) / (count - 1);
     },
 
     /**
-     * To calculate adjacent.
+     * Calculate adjacent.
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse
      * @returns {number} adjacent
@@ -160,13 +161,37 @@ var calculator = {
     },
 
     /**
-     * To calculate opposite.
+     * Calculate opposite.
      * @param {number} degree degree
      * @param {number} hypotenuse hypotenuse
      * @returns {number} opposite
      */
     calculateOpposite: function(degree, hypotenuse) {
         return Math.sin(degree * chartConst.RAD) * hypotenuse;
+    },
+
+    /**
+     * Sum plus values.
+     * @param {array.<number>} values values
+     * @returns {number} sum
+     */
+    sumPlusValues: function(values) {
+        var plusValues = tui.util.filter(values, function(value) {
+            return value > 0;
+        });
+        return tui.util.sum(plusValues);
+    },
+
+    /**
+     * Sum minus values.
+     * @param {array.<number>} values values
+     * @returns {number} sum
+     */
+    sumMinusValues: function(values) {
+        var minusValues = tui.util.filter(values, function(value) {
+            return value < 0;
+        });
+        return tui.util.sum(minusValues);
     }
 };
 

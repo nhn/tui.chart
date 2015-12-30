@@ -15,26 +15,26 @@ var axisDataMaker = require('../helpers/axisDataMaker'),
  */
 var verticalTypeMixer = {
     /**
-     * To make axes data
-     * @param {object} convertedData converted data
+     * Make axes data
      * @param {object} bounds chart bounds
      * @param {object} options chart options
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(convertedData, bounds, options) {
-        var aligned = predicate.isLineTypeChart(options.chartType),
+    _makeAxesData: function(bounds) {
+        var options = this.options,
+            aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
-                labels: convertedData.labels,
+                labels: this.dataProcessor.getCategories(),
                 aligned: aligned,
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                values: convertedData.values,
+                values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
                 stacked: options.series && options.series.stacked || '',
                 chartType: options.chartType,
-                formatFunctions: convertedData.formatFunctions,
+                formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.yAxis,
                 isVertical: true,
                 aligned: aligned

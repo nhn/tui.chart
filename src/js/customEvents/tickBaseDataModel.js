@@ -22,25 +22,27 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make tick base data about line type chart.
+     * Make tick base data about line type chart.
      * @param {number} width width
      * @param {number} tickCount tick count
      * @returns {array} tick base data
      * @private
      */
     _makeLineTypeData: function(width, tickCount) {
-        var tickInterval = width / (tickCount - 1),
-            halfInterval = tickInterval / 2;
-        return tui.util.map(tui.util.range(0, tickCount), function(index) {
-            return {
-                min: index * tickInterval - halfInterval,
-                max: index * tickInterval + halfInterval
-            };
-        });
+        var tickInterval = (width + 1) / (tickCount - 1),
+            halfInterval = tickInterval / 2,
+            ranges = tui.util.map(tui.util.range(0, tickCount), function(index) {
+                return {
+                    min: index * tickInterval - halfInterval,
+                    max: index * tickInterval + halfInterval
+                };
+            });
+        ranges[tickCount - 1].max -= 1;
+        return ranges;
     },
 
     /**
-     * To make tick base data about non line type chart.
+     * Make tick base data about non line type chart.
      * @param {number} size width or height
      * @param {number} tickCount tick count
      * @returns {array} tick base data
@@ -52,17 +54,17 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
             prev = 0;
         return tui.util.map(tui.util.range(0, len), function(index) {
             var max = tui.util.min([size, (index + 1) * tickInterval]),
-                scale = {
+                limit = {
                     min: prev,
                     max: max
                 };
             prev = max;
-            return scale;
+            return limit;
         });
     },
 
     /**
-     * To make tick base data for custom event.
+     * Make tick base data for custom event.
      * @param {{width: number, height: number}} dimension dimension
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
@@ -89,8 +91,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      */
     findIndex: function(pointValue) {
         var foundIndex = -1;
-        tui.util.forEachArray(this.data, function(scale, index) {
-            if (scale.min < pointValue && scale.max >= pointValue) {
+        tui.util.forEachArray(this.data, function(limit, index) {
+            if (limit.min < pointValue && limit.max >= pointValue) {
                 foundIndex = index;
                 return false;
             }
@@ -108,25 +110,25 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * To make range of tooltip position.
+     * Make range of tooltip position.
      * @param {number} index index
      * @param {string} chartType chart type
      * @returns {{start: number, end: number}} range type value
      * @private
      */
     makeRange: function(index, chartType) {
-        var scale = this.data[index],
+        var limit = this.data[index],
             range, center;
         if (predicate.isLineTypeChart(chartType)) {
-            center = parseInt(scale.max - (scale.max - scale.min) / 2, 10);
+            center = parseInt(limit.max - (limit.max - limit.min) / 2, 10);
             range = {
                 start: center,
                 end: center
             };
         } else {
             range = {
-                start: scale.min,
-                end: scale.max
+                start: limit.min,
+                end: limit.max
             };
         }
 

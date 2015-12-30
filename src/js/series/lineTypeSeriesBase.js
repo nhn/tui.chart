@@ -15,17 +15,18 @@ var chartConst = require('../const'),
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
-     * To make positions of line chart.
+     * Make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
      * @returns {array.<array.<object>>} positions
+     * @private
      */
-    makePositions: function(dimension) {
-        var groupValues = this.percentValues,
+    _makeBasicPositions: function(dimension) {
+        var groupValues = this._getPercentValues(),
             width = dimension.width,
             height = dimension.height,
             len = groupValues[0].length,
             start = chartConst.SERIES_EXPAND_SIZE,
-            step, result;
+            step;
 
         if (this.data.aligned) {
             step = width / (len - 1);
@@ -34,16 +35,36 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             start += (step / 2);
         }
 
-        result = tui.util.map(groupValues, function(values) {
+        return tui.util.map(groupValues, function(values) {
             return tui.util.map(values, function(value, index) {
                 return {
                     left: start + (step * index),
-                    top: height - (value * height)
+                    top: height - (value * height) + chartConst.SERIES_EXPAND_SIZE
                 };
             });
         });
-        this.groupPositions = result;
-        return result;
+    },
+
+    /**
+     * Make label position top.
+     * @param {{top: number, startTop: number}} position position
+     * @param {number} value value
+     * @param {number} labelHeight label height
+     * @returns {number} position top
+     * @private
+     */
+    _makeLabelPositionTop: function(position, value, labelHeight) {
+        var positionTop;
+
+        if (this.options.stacked && position.startTop) {
+            positionTop = (position.startTop + position.top - labelHeight) / 2 + 1;
+        } else if (value < 0 && !tui.util.isUndefined(position.startTop)) {
+            positionTop = position.top + chartConst.SERIES_LABEL_PADDING;
+        } else {
+            positionTop = position.top - labelHeight - chartConst.SERIES_LABEL_PADDING;
+        }
+
+        return positionTop;
     },
 
     /**
@@ -51,67 +72,39 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
      *      @param {array.<array>} params.groupPositions group positions
-     *      @param {array.<array>} params.formattedValues formatted values
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
     _renderSeriesLabel: function(params, elSeriesLabelArea) {
-        var groupPositions, labelHeight, html;
+        var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
+
         if (!this.options.showLabel) {
             return;
         }
-        groupPositions = params.groupPositions;
-        labelHeight = renderUtil.getRenderedLabelHeight(params.formattedValues[0][0], this.theme.label);
 
-        html = tui.util.map(params.formattedValues, function(values, groupIndex) {
+        groupPositions = params.groupPositions;
+        formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
+        firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);
+        labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label);
+
+        html = tui.util.map(formattedValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
-                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label),
-                    labelHtml = this.makeSeriesLabelHtml({
+                    labelHtml = '',
+                    labelWidth;
+
+                if (position.top !== position.startTop) {
+                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
+                    labelHtml = this._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: position.top - labelHeight - chartConst.SERIES_LABEL_PADDING
+                        top: this._makeLabelPositionTop(position, value, labelHeight)
                     }, value, index, groupIndex);
+                }
                 return labelHtml;
             }, this).join('');
         }, this).join('');
 
         elSeriesLabelArea.innerHTML = html;
-    },
-
-    /**
-     * Get bound.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {{left: number, top: number}} bound
-     * @private
-     */
-    _getBound: function(groupIndex, index) {
-        return this.groupPositions[index][groupIndex];
-    },
-
-    /**
-     * Find index.
-     * @param {number} groupIndex group index
-     * @param {number} layerY mouse position
-     * @returns {number} index
-     * @private
-     */
-    _findIndex: function(groupIndex, layerY) {
-        var foundIndex = -1,
-            diff = 1000;
-
-        if (!this.tickItems) {
-            this.tickItems = tui.util.pivot(this.groupPositions);
-        }
-
-        tui.util.forEach(this.tickItems[groupIndex], function(position, index) {
-            var compare = Math.abs(layerY - position.top);
-            if (diff > compare) {
-                diff = compare;
-                foundIndex = index;
-            }
-        });
-        return foundIndex;
     },
 
     /**

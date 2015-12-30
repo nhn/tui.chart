@@ -12,7 +12,7 @@
  */
 var raphaelRenderUtil = {
     /**
-     * To make line path.
+     * Make line path.
      * @memberOf module:raphaelRenderUtil
      * @param {{top: number, left: number}} fromPos from position
      * @param {{top: number, left: number}} toPos to position
@@ -30,7 +30,7 @@ var raphaelRenderUtil = {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }
         });
-        return 'M' + fromPoint.join(' ') + 'L' + toPoint.join(' ');
+        return ['M'].concat(fromPoint).concat('L').concat(toPoint);
     },
 
     /**
@@ -59,7 +59,20 @@ var raphaelRenderUtil = {
     },
 
     /**
-     * To make changed luminance color.
+     * Render items of line type chart.
+     * @param {array.<array.<object>>} groupItems group items
+     * @param {function} funcRenderItem function
+     */
+    forEach2dArray: function(groupItems, funcRenderItem) {
+        tui.util.forEachArray(groupItems, function(items, groupIndex) {
+            tui.util.forEachArray(items, function(item, index) {
+                funcRenderItem(item, groupIndex, index);
+            }, this);
+        }, this);
+    },
+
+    /**
+     * Make changed luminance color.
      * http://www.sitepoint.com/javascript-generate-lighter-darker-color/
      * @param {string} hex hax color
      * @param {number} lum luminance

@@ -56,7 +56,12 @@ describe('Axis', function() {
             var elTitle = dom.create('DIV');
             axis._renderTitleAreaStyle(elTitle, 50, true);
             expect(elTitle.style.width).toBe('50px');
-            expect(elTitle.style.right).toBe('-50px');
+
+            if (renderUtil.isIE7()) {
+                expect(elTitle.style.right).toBe('0px');
+            } else {
+                expect(elTitle.style.right).toBe('-50px');
+            }
             expect(elTitle.style.top).toBe('0px');
         });
     });
@@ -416,9 +421,9 @@ describe('Axis', function() {
                 labelSize: 80,
                 degree: 45
             });
-            expected = '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
-                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
-                '<div class="tui-chart-label rotation45" style="left:10px;top:10px"><span>label3</span></div>';
+            expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
+                '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
+                '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });
@@ -517,6 +522,35 @@ describe('Axis', function() {
             expect(el.childNodes[0].className).toBe('tui-chart-title-area');
             expect(el.childNodes[1].className).toBe('tui-chart-tick-area');
             expect(el.childNodes[2].className).toBe('tui-chart-label-area');
+        });
+    });
+
+    describe('rerender()', function() {
+        it('변경된 bound 정보를 전달하여 rerendering합니다.', function() {
+            var bound = {
+                    dimension: {
+                        width: 100,
+                        height: 200
+                    },
+                    position: {
+                        top: 20
+                    }
+                },
+                data = {
+                    labels: ['label1', 'label2', 'label3'],
+                    tickCount: 4,
+                    isLabelAxis: true,
+                    isVertical: false
+                },
+                container = axis.render(bound, data);
+            bound.dimension = {
+                width: 200,
+                height: 100
+            };
+            axis.rerender(bound, data);
+
+            expect(container.style.width).toBe('200px');
+            expect(container.style.height).toBe('100px');
         });
     });
 });

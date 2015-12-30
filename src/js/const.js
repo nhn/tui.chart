@@ -13,7 +13,9 @@ var chartConst = {
     /** tui class names
      * @type {string}
      */
-    CLASS_NAME_LEGEND: 'tui-chart-legend',
+    CLASS_NAME_LEGEND_LABEL: 'tui-chart-legend-label',
+    /** @type {string} */
+    CLASS_NAME_LEGEND_CHECKBOX: 'tui-chart-legend-checkbox',
     /** @type {string} */
     CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
     /** @type {string} */
@@ -81,12 +83,18 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
-    /** series legend types
+    /** series legend aligns
      * @type {string}
      */
     LEGEND_ALIGN_OUTER: 'outer',
     /** @type {string} */
-    LEGEND_TYPE_CENTER: 'center',
+    LEGEND_ALIGN_CENTER: 'center',
+    /** @type {string} */
+    LEGEND_ALIGN_TOP: 'top',
+    /** @type {string} */
+    LEGEND_ALIGN_BOTTOM: 'bottom',
+    /** @type {string} */
+    LEGEND_ALIGN_LEFT: 'left',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
     /** default rate of pie graph */
@@ -121,7 +129,7 @@ var chartConst = {
      * @type {object}
      */
     PERCENT_STACKED_TICK_INFO: {
-        scale: {
+        limit: {
             min: 0,
             max: 100
         },
@@ -129,10 +137,25 @@ var chartConst = {
         tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     },
+
+    /** tick info of negative percent stacked option
+     * @type {object}
+     */
+    NEGATIVE_PERCENT_STACKED_TICK_INFO: {
+        limit: {
+            min: -100,
+            max: 100
+        },
+        step: 25,
+        tickCount: 9,
+        labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
+    },
     /** title add padding */
     TITLE_PADDING: 20,
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
+    /** legend checkbox width */
+    LEGEND_CHECKBOX_WIDTH: 20,
     /** legend rect width */
     LEGEND_RECT_WIDTH: 12,
     /** lgend label left padding */

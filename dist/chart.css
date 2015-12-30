@@ -37,6 +37,9 @@
 .tui-chart .tui-chart-axis-area .tui-chart-label-area .tui-chart-label {
   position: absolute;
 }
+.tui-chart .tui-chart-axis-area .tui-chart-label-area .tui-chart-label > span {
+  line-height: 1.2;
+}
 .tui-chart .tui-chart-axis-area.vertical {
   top: 10px;
 }
@@ -87,7 +90,7 @@
   text-align: center;
   white-space: nowrap;
   top: 0;
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area,
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-label-area {
@@ -128,60 +131,56 @@
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label {
   top: 10px;
   text-align: center;
+  word-wrap: break-word;
+  word-break: keep-all;
+}
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation {
+  text-align: right;
   white-space: nowrap;
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation25,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 {
-  text-align: right;
-}
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation25 span,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45 span,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65 span,
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 span {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation span {
   position: absolute;
   right: 0;
   top: 0;
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation25 {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation25 {
   -webkit-transform: rotate(-25deg);
   -moz-transform: rotate(-25deg);
   -ms-transform: rotate(-25deg);
   -o-transform: rotate(-25deg);
   transform: rotate(-25deg);
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation25 span {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation25 span {
   filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45 {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation45 {
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);
   -o-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation45 span {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation45 span {
   filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65 {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation65 {
   -webkit-transform: rotate(-65deg);
   -moz-transform: rotate(-65deg);
   -ms-transform: rotate(-65deg);
   -o-transform: rotate(-65deg);
   transform: rotate(-65deg);
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation65 span {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation65 span {
   filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation85 {
   -webkit-transform: rotate(-85deg);
   -moz-transform: rotate(-85deg);
   -ms-transform: rotate(-85deg);
   -o-transform: rotate(-85deg);
   transform: rotate(-85deg);
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.rotation85 span {
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation85 span {
   filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
 }
 .tui-chart .tui-chart-plot-area {
@@ -205,6 +204,10 @@
 .tui-chart .tui-chart-series-area {
   z-index: 400;
   position: absolute;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 .tui-chart .tui-chart-series-area:first-child {
   overflow: visible;
@@ -255,6 +258,10 @@
   z-index: 300;
   position: absolute;
   padding: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 .tui-chart .tui-chart-legend-area .tui-chart-legend {
   clear: both;
@@ -262,12 +269,49 @@
 .tui-chart .tui-chart-legend-area .tui-chart-legend > div {
   float: left;
 }
+.tui-chart .tui-chart-legend-area .tui-chart-legend .tui-chart-legend-checkbox-area {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend .tui-chart-legend-checkbox-area input {
+  left: 2px;
+  top: 2px;
+  *left: -2px;
+  *top: -2px;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+}
 .tui-chart .tui-chart-legend-area .tui-chart-legend .tui-chart-legend-label {
   padding: 2px 0 2px 5px;
+  cursor: pointer;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   line-height: 1;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend.unselected .tui-chart-legend-rect {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  opacity: 0.3;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend.unselected .tui-chart-legend-label {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  opacity: 0.3;
+}
+.tui-chart .tui-chart-legend-area.horizontal {
+  padding-left: 0;
+  padding-right: 0;
+}
+.tui-chart .tui-chart-legend-area.horizontal .tui-chart-legend {
+  clear: none;
+  float: left;
+  white-space: nowrap;
 }
 .tui-chart .tui-chart-tooltip-area {
   position: absolute;
@@ -290,7 +334,7 @@
   border-radius: 5px;
   background-clip: padding-box;
   background-color: rgba(0, 0, 0, 0.7);
-  background-color: #555\9;
+  background-color: #555 \9;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip > * {
   padding: 2px 7px;
@@ -337,19 +381,26 @@
 .tui-chart-size-check-element {
   clear: both;
   position: absolute;
+  word-wrap: break-word;
+  word-break: keep-all;
   top: 100000px;
   left: 100000px;
   width: 1000px;
   height: 100px;
+  padding: 0;
   line-height: 1;
-  z-index: 10000000;
+}
+.tui-chart-size-check-element span {
+  box-sizing: border-box;
+  text-align: center;
+  padding: 0;
 }
 :root .tui-chart .tui-chart-axis-area.vertical .tui-chart-title-area {
-  filter: none\0;
+  filter: none \0;
 }
-:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.rotation25 span,
-:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.rotation45 span,
-:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.rotation65 span,
-:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.rotation85 span {
-  filter: none\0;
+:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation25 span,
+:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation45 span,
+:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation65 span,
+:root .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label.tui-chart-xaxis-rotation85 span {
+  filter: none \0;
 }

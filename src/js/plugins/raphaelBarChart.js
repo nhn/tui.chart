@@ -9,7 +9,9 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var Raphael = window.Raphael;
 
-var ANIMATION_TIME = 700;
+var ANIMATION_TIME = 700,
+    EMPHASIS_OPACITY = 1,
+    DE_EMPHASIS_OPACITY = 0.3;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -65,6 +67,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBar: function(params) {
         var bound = params.bound,
             rect;
+
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
@@ -89,6 +92,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBars: function(params) {
         var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
             colors = params.theme.colors;
+
         this.groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
             return tui.util.map(bounds, function(bound, index) {
@@ -123,7 +127,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * To make rect points.
+     * Make rect points.
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @returns {{
      *      leftTop: {left: number, top: number},
@@ -155,7 +159,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * To make top line path.
+     * Make top line path.
      * @param {{left: numbrer, top: number}} leftTop left top
      * @param {{left: numbrer, top: number}} rightTop right top
      * @param {string} chartType chart type
@@ -166,11 +170,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _makeTopLinePath: function(leftTop, rightTop, chartType, value) {
         var cloneLeftTop = tui.util.extend({}, leftTop);
         cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
-        return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop);
+        return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop).join(' ');
     },
 
     /**
-     * To make border lines paths.
+     * Make border lines paths.
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
      * @param {number} value value
@@ -186,15 +190,15 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         }
 
         if (chartType === 'column' || value >= 0) {
-            paths.right = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom);
+            paths.right = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom).join(' ');
         }
 
         if (chartType === 'bar' || value < 0) {
-            paths.bottom = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom);
+            paths.bottom = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom).join(' ');
         }
 
         if (chartType === 'column' || value < 0) {
-            paths.left = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom);
+            paths.left = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom).join(' ');
         }
 
         return paths;
@@ -214,9 +218,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     _renderBorderLines: function(params) {
         var borderLinePaths = this._makeBorderLinesPaths(params.bound, params.chartType, params.value),
             lines = {};
+
         tui.util.forEach(borderLinePaths, function(path, name) {
             lines[name] = raphaelRenderUtil.renderLine(params.paper, path, params.borderColor, 1);
         });
+
         return lines;
     },
 
@@ -230,9 +236,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _renderBarBorders: function(params) {
         var borderColor = params.theme.borderColor;
+
         if (!borderColor) {
             return;
         }
+
         this.groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
                 var value;
@@ -279,6 +287,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _animateBorders: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
+
         tui.util.forEach(lines, function(line, name) {
             line.animate({path: paths[name]}, ANIMATION_TIME);
         });
@@ -289,29 +298,39 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {function} callback callback
      */
     animate: function(callback) {
-        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
-            var borders = this.groupBorders && this.groupBorders[groupIndex];
-            tui.util.forEachArray(bars, function(bar, index) {
-                var lines = borders && borders[index];
-                this._animateRect(bar.rect, bar.bound);
-                if (lines) {
-                    this._animateBorders(lines, bar.bound, this.chartType, bar.value);
-                }
-            }, this);
-        }, this);
+        var that = this,
+            groupBorders = this.groupBorders || [];
+
+        if (this.callbackTimeout) {
+            clearTimeout(this.callbackTimeout);
+            delete this.callbackTimeout;
+        }
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
+            var lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            if (!bar) {
+                return;
+            }
+            that._animateRect(bar.rect, bar.bound);
+            if (lines) {
+                that._animateBorders(lines, bar.bound, that.chartType, bar.value);
+            }
+        });
 
         if (callback) {
-            setTimeout(callback, ANIMATION_TIME);
+            this.callbackTimeout = setTimeout(function() {
+                callback();
+                delete that.callbackTimeout;
+            }, ANIMATION_TIME);
         }
     },
 
     /**
-     * To update rect attribute
+     * Update rect bound
      * @param {object} rect raphael object
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @private
      */
-    _updateRectAttr: function(rect, bound) {
+    _updateRectBound: function(rect, bound) {
         rect.attr({
             x: bound.left,
             y: bound.top,
@@ -321,45 +340,52 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * To update borders attribute
+     * Update borders attribute
      * @param {array.<object>} lines raphael objects
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} chartType chart type
      * @param {number} value value
      * @private
      */
-    _updateBordersAttr: function(lines, bound, chartType, value) {
+    _updateBordersPath: function(lines, bound, chartType, value) {
         var paths = this._makeBorderLinesPaths(bound, chartType, value);
+
         tui.util.forEach(lines, function(line, name) {
             line.attr({path: paths[name]});
         });
     },
 
     /**
-     * To resize graph of bar type chart.
+     * Resize graph of bar type chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
      *      @param {array.<array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
      */
     resize: function(params) {
-        var dimension = params.dimension,
+        var that = this,
+            groupBorders = this.groupBorders || [],
+            dimension = params.dimension,
             groupBounds = params.groupBounds;
 
         this.groupBounds = groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 
-        tui.util.forEachArray(this.groupBars, function(bars, groupIndex) {
-            var borders = this.groupBorders && this.groupBorders[groupIndex];
-            tui.util.forEachArray(bars, function(bar, index) {
-                var lines = borders && borders[index],
-                    bound = groupBounds[groupIndex][index].end;
-                bar.bound = bound;
-                this._updateRectAttr(bar.rect, bound);
-                if (lines) {
-                    this._updateBordersAttr(lines, bound, this.chartType, bar.value);
-                }
-            }, this);
-        }, this);
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
+            var lines, bound;
+
+            if (!bar) {
+                return;
+            }
+
+            lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            bound = groupBounds[groupIndex][index].end;
+            bar.bound = bound;
+            that._updateRectBound(bar.rect, bound);
+
+            if (lines) {
+                that._updateBordersPath(lines, bound, that.chartType, bar.value);
+            }
+        });
     },
 
     /**
@@ -375,7 +401,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * To change bar color.
+     * Change bar color.
      * @param {{groupIndex: number, index: number}} indexes indexes
      * @param {string} color fill color
      * @param {?string} borderColor stroke color
@@ -422,6 +448,33 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var bar = this.groupBars[indexes.groupIndex][indexes.index],
             borderColor = this.theme.borderColor;
         this._changeBarColor(indexes, bar.color, borderColor);
+    },
+
+    /**
+     * Select legend.
+     * @param {?number} legendIndex legend index
+     */
+    selectLegend: function(legendIndex) {
+        var groupBorders = this.groupBorders || [],
+            noneSelected = tui.util.isNull(legendIndex);
+
+        raphaelRenderUtil.forEach2dArray(this.groupBars, function(bar, groupIndex, index) {
+            var lines, opacity;
+
+            if (!bar) {
+                return;
+            }
+
+            lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
+            opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
+            bar.rect.attr({'fill-opacity': opacity});
+            if (lines) {
+                tui.util.forEach(lines, function(line) {
+                    line.attr({'stroke-opacity': opacity});
+                });
+            }
+        });
     }
 });
 

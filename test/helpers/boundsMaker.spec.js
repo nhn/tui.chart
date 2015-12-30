@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test dataConverter.
+ * @fileoverview Test boundsMaker.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,54 +12,65 @@ var maker = require('../../src/js/helpers/boundsMaker'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('boundsMaker', function() {
+    var dataProcessor;
+
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
-        spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+        spyOn(renderUtil, 'getRenderedLabelHeight');
         maker.chartLeftPadding = chartConst.CHART_PADDING;
+        maker.legendCheckboxWidth = chartConst.LEGEND_CHECKBOX_WIDTH;
+    });
+
+    beforeEach(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getWholeLegendData', 'getCategories',
+                'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
+        maker.dataProcessor = dataProcessor;
     });
 
     describe('_getValueAxisMaxLabel()', function() {
         it('단일 차트 value axis의 label 최대값을 반환합니다.', function () {
-            var result = maker._getValueAxisMaxLabel({
-                values: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ],
-                joinValues: [
-                    [20, 30, 50],
-                    [40, 40, 60],
-                    [60, 50, 10],
-                    [80, 10, 70]
-                ]
-            });
-            expect(result).toBe(90);
+            var actual;
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [80, 10, 70]
+            ]);
+
+            actual = maker._getValueAxisMaxLabel('column');
+            expect(actual).toBe(90);
         });
 
         it('Combo 차트 value axis의 label 최대값을 반환합니다.', function () {
-            var result = maker._getValueAxisMaxLabel({
-                values: {
-                    column: [
-                        [20, 30, 50],
-                        [40, 40, 60]
-                    ]
-                }
-            }, 'column');
-            expect(result).toBe(70);
+            var actual;
+
+            dataProcessor.getWholeGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60]
+            ]);
+
+            actual = maker._getValueAxisMaxLabel('combo');
+            expect(actual).toBe(70);
         });
     });
 
     describe('_getXAxisHeight()', function() {
         it('x축 영역의 높이를 계산하여 반환합니다.', function () {
-            var result = maker._getXAxisHeight({
+            var actual;
+
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+
+            actual = maker._getXAxisHeight({
                 title: 'title'
             }, ['label1', 'label12'], {
                 title: {},
                 label: {}
             });
-            expect(result).toBe(60);
+
+            expect(actual).toBe(60);
         });
     });
 
@@ -79,17 +90,16 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getYRAxisWidth()', function() {
+    describe('_getRightYAxisWidth()', function() {
         it('y right 축 영역의 너비를 계산하여 반환합니다.', function () {
-            var result = maker._getYRAxisWidth({
-                convertedData: {
-                    values: {
-                        line: [
-                            [60, 50, 10],
-                            [80, 10, 70]
-                        ]
-                    }
-                },
+            var actual, expected;
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [80, 10, 70]
+            ]);
+
+            actual = maker._getRightYAxisWidth({
                 chartTypes: ['column', 'line'],
                 theme: {
                     title: {},
@@ -100,12 +110,13 @@ describe('boundsMaker', function() {
                         title: 'YAxis title'
                     },
                     {
-                        title: 'YRAxis title'
+                        title: 'RightYAxis title'
                     }
                 ]
             });
+            expected = 97;
 
-            expect(result).toBe(97);
+            expect(actual).toBe(expected);
         });
     });
 
@@ -116,7 +127,7 @@ describe('boundsMaker', function() {
                 yAxis: {
                     width: 0
                 },
-                yrAxis: {
+                rightYAxis: {
                     width: 0
                 },
                 xAxis: {
@@ -125,9 +136,9 @@ describe('boundsMaker', function() {
             });
         });
 
-        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, yrAxis의 너비 값을 계산하여 반환합니다.', function() {
+        it('axis영역이 있는 차트의 경우 xAxis의 높이, yAxis의 너비, rightYAxis의 너비 값을 계산하여 반환합니다.', function() {
             var result = maker._makeAxesDimension({
-                convertedData: {
+                processedData: {
                     labels: ['label1', 'label12'],
                     joinValues: [
                         [20, 30, 50],
@@ -163,28 +174,184 @@ describe('boundsMaker', function() {
                 }
             });
             expect(result.yAxis.width).toBe(97);
-            expect(result.yrAxis.width).toBe(0);
+            expect(result.rightYAxis.width).toBe(0);
             expect(result.xAxis.height).toBe(60);
         });
     });
 
+    describe('_makeLegendWidth()', function() {
+        it('체크박스, 아이콘, 여백이 포함된 범례 너비를 반환합니다.', function() {
+            var actual, expected;
+
+            actual = maker._makeLegendWidth(40);
+            expected = 87;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateLegendsWidthSum()', function() {
+        it('여러 범례 길이의 합을 구합니다.', function() {
+            var actual = maker._calculateLegendsWidthSum(['legend1', 'legend2']),
+                expected = 194;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_divideLegendLabels()', function() {
+        it('입력 배열을 count만큼으로 나누어 2차원 배열로 반환합니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 2),
+                expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4']];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('앞쪽에서부터 나누어진 숫자 만큼씩 차례대로 채워나갑니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 3),
+                expected = [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('1로 나눌 경우에는 그대로 반환됩니다.', function() {
+            var actual = maker._divideLegendLabels(['ABC1', 'ABC2', 'ABC3', 'ABC4'], 1),
+                expected = [['ABC1', 'ABC2', 'ABC3', 'ABC4']];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeDividedLabelsAndMaxLineWidth()', function() {
+        it('차트의 너비를 넘어서지 않을때 까지 레이블들을 나누고 나눈 결과와 그때의 최대 너비를 반환합니다.', function() {
+            var actual = maker._makeDividedLabelsAndMaxLineWidth(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 250),
+                expected = {
+                    dividedLabels: [['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']],
+                    maxLineWidth: 194
+                };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('차트의 너비가 레이블 너비보다 작다면 현재의 레이블 정보와 최대 너비를 반환합니다.', function() {
+            var actual = maker._makeDividedLabelsAndMaxLineWidth(['ABC1', 'ABC2', 'ABC3', 'ABC4', 'ABC5'], 100),
+                expected = {
+                    dividedLabels: [['ABC1'], ['ABC2'], ['ABC3'], ['ABC4'], ['ABC5']],
+                    maxLineWidth: 97
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calculateHorizontalLegendHeight()', function() {
+        it('가로 범례의 높이를 구합니다.', function() {
+            var actual = maker._calculateHorizontalLegendHeight([['ABC1', 'ABC2'], ['ABC3', 'ABC4'], ['ABC5']]),
+                expected = 60;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeHorizontalLegendDimension()', function() {
+        it('가로타입 범례의 Dimension을 구합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.getWholeLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeHorizontalLegendDimension(250);
+            expected = {
+                width: 194,
+                height: 40
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeVerticalLegendDimension()', function() {
+        it('세로타입 범례의 Dimension을 구합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.getWholeLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeVerticalLegendDimension();
+            expected = 97;
+
+            expect(actual.width).toBe(expected);
+        });
+    });
+
     describe('_makeLegendDimension()', function() {
-        it('legend 영역의 dimension을 계산하여 반환합니다.', function () {
-            var acutal = maker._makeLegendDimension([
-                    {
-                        label: 'label1'
-                    },
-                    {
-                        label: 'label12'
-                    }
-                ],
-                {});
-            expect(acutal.width).toBe(87);
+        it('_isSkippedLegendSizing()가 true를 반환하면 0을 반환합니다.', function () {
+            var actual;
+
+            spyOn(maker, '_isSkippedLegendSizing').and.returnValue(true);
+
+            actual = maker._makeLegendDimension({});
+            expect(actual.width).toBe(0);
+        });
+
+        it('세로타입 범례의 dimension을 계산하여 반환합니다.', function () {
+            var actual, expected;
+
+            dataProcessor.getWholeLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeLegendDimension({});
+            expected = {
+                width: 97,
+                height: 0
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('가로타입 범례의 dimension을 계산하여 반환합니다.', function () {
+            var actual, expected;
+
+            dataProcessor.getWholeLegendData.and.returnValue([
+                {
+                    label: 'label1'
+                },
+                {
+                    label: 'label12'
+                }
+            ]);
+
+            actual = maker._makeLegendDimension({}, 'column', 250, {
+                align: 'top'
+            });
+            expected = {
+                width: 194,
+                height: 40
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
             var actual = maker._makeSeriesDimension({
                     chartDimension: {
                         width: 500,
@@ -194,19 +361,53 @@ describe('boundsMaker', function() {
                         yAxis: {
                             width: 50
                         },
-                        yrAxis: {
+                        rightYAxis: {
                             width: 0
                         },
                         xAxis: {
                             height: 50
                         }
                     },
-                    legendWidth: 50,
+                    legendDimension: {
+                        width: 50
+                    },
                     titleHeight: 50
                 }),
                 expected = {
                     width: 380,
                     height: 280
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+            var actual = maker._makeSeriesDimension({
+                    chartDimension: {
+                        width: 500,
+                        height: 400
+                    },
+                    axesDimension: {
+                        yAxis: {
+                            width: 50
+                        },
+                        rightYAxis: {
+                            width: 0
+                        },
+                        xAxis: {
+                            height: 50
+                        }
+                    },
+                    legendDimension: {
+                        height: 50
+                    },
+                    titleHeight: 50,
+                    legendOption: {
+                        align: 'bottom'
+                    }
+                }),
+                expected = {
+                    width: 430,
+                    height: 230
                 };
             expect(actual).toEqual(expected);
         });
@@ -259,19 +460,12 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_getComponentsDimension()', function() {
+    describe('_makeComponentsDimensions()', function() {
         it('컴포넌트들의 너비,높이 값을 계산하여 반환합니다.', function () {
-            var result = maker._getComponentsDimensions({
-                convertedData: {
-                    labels: ['label1', 'label12'],
-                    joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
-                },
+            var actual;
+
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+            actual = maker._makeComponentsDimensions({
                 optionChartTypes: [],
                 isVertical: true,
                 hasAxes: true,
@@ -302,20 +496,20 @@ describe('boundsMaker', function() {
                 }
             });
 
-            expect(result.chart).toEqual({
+            expect(actual.chart).toEqual({
                 width: 500,
                 height: 400
             });
 
-            expect(result.title.height).toBe(40);
-            expect(result.series.width).toBe(296);
-            expect(result.series.height).toBe(280);
+            expect(actual.title.height).toBe(40);
+            expect(actual.series.width).toBe(286);
+            expect(actual.series.height).toBe(280);
 
-            expect(result.legend.width).toBe(87);
+            expect(actual.legend.width).toBe(97);
 
-            expect(result.yAxis.width).toBe(97);
-            expect(result.yrAxis.width).toBe(0);
-            expect(result.xAxis.height).toBe(60);
+            expect(actual.yAxis.width).toBe(97);
+            expect(actual.rightYAxis.width).toBe(0);
+            expect(actual.xAxis.height).toBe(60);
         });
     });
 
@@ -348,7 +542,7 @@ describe('boundsMaker', function() {
                    plot: {
                        height: 200
                    }
-               }, 20),
+               }, 20, 0),
                expected = {
                    dimension: {
                        width: 100,
@@ -390,19 +584,25 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_makeYRAxisBound()', function() {
-        it('yrAxis width, plot height, legend width, top 정보를 받아 yrAxis bound정보를 생성합니다.', function() {
-            var actual = maker._makeYRAxisBound({
-                    yrAxis: {
+    describe('_makeRightYAxisBound()', function() {
+        it('rightYAxis width, plot height, legend width, top 정보를 받아 rightYAxis bound정보를 생성합니다.', function() {
+            var actual = maker._makeRightYAxisBound({
+                    rightYAxis: {
+                        width: 100
+                    },
+                    yAxis: {
                         width: 100
                     },
                     plot: {
                         height: 200
                     },
+                    series: {
+                        width: 300
+                    },
                     legend: {
                         width: 50
                     }
-                }, 20),
+                }, 20, 0),
                 expected = {
                     dimension: {
                         width: 100,
@@ -410,7 +610,7 @@ describe('boundsMaker', function() {
                     },
                     position: {
                         top: 20,
-                        right: 61
+                        left: 409
                     }
                 };
             expect(actual).toEqual(expected);
@@ -426,11 +626,12 @@ describe('boundsMaker', function() {
                     series: {width: 299, height: 199},
                     legend: {width: 70},
                     yAxis: {width: 50},
-                    yrAxis: {width: 0},
+                    rightYAxis: {width: 0},
                     xAxis: {height: 50}
                 },
                 top: 20,
-                left: 20
+                left: 20,
+                leftLegendWidth: 0
             });
 
             expect(actual.plot.position).toEqual({top: 20, left: 19});
@@ -456,15 +657,16 @@ describe('boundsMaker', function() {
                     series: {width: 299, height: 199},
                     legend: {width: 70},
                     yAxis: {width: 50},
-                    yrAxis: {width: 50},
+                    rightYAxis: {width: 50},
                     xAxis: {height: 50}
                 },
                 top: 20,
-                left: 20
+                left: 20,
+                leftLegendWidth: 0
             });
-            expect(actual.yrAxis.dimension.height).toBe(200);
-            expect(actual.yrAxis.position.top).toBe(20);
-            expect(actual.yrAxis.position.right).toBe(81);
+            expect(actual.rightYAxis.dimension.height).toBe(200);
+            expect(actual.rightYAxis.position.top).toBe(20);
+            expect(actual.rightYAxis.position.left).toBe(358);
         });
     });
 
@@ -485,7 +687,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeLegendBound()', function() {
-        it('title height, yAxis width, series width, yrAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
+        it('title height, yAxis width, series width, rightYAxis width 정보를 받아 legend bound정보를 생성합니다.', function() {
             var actual = maker._makeLegendBound({
                     title: {
                         height: 20
@@ -496,11 +698,17 @@ describe('boundsMaker', function() {
                     series: {
                         width: 200
                     },
-                    yrAxis: {
+                    rightYAxis: {
                         width: 30
+                    },
+                    legend: {
+                        width: 50
                     }
-                }),
+                }, {}),
                 expected = {
+                    dimension: {
+                        width: 50
+                    },
                     position: {
                         top: 20,
                         left: 270
@@ -512,42 +720,40 @@ describe('boundsMaker', function() {
 
     describe('_makeAxesLabelInfo()', function() {
         it('세로 타입의 차트에서는 yAxis는 value, xAxis는 category가 label이 됩니다.', function() {
-            var actual = maker._makeAxesLabelInfo({
-                    hasAxes: true,
-                    optionChartTypes: ['column'],
-                    convertedData: {
-                        values: {
-                            'column': [10, 20, 30]
-                        },
-                        labels: ['cate1', 'cate2', 'cate3'],
-                        formatFunctions: []
-                    },
-                    isVertical: true
-                }),
-                expected = {
-                    xAxis: ['cate1', 'cate2', 'cate3'],
-                    yAxis: [40]
-                };
+            var actual, expected;
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getGroupValues.and.returnValue([10, 20, 30]);
+
+            actual = maker._makeAxesLabelInfo({
+                hasAxes: true,
+                optionChartTypes: ['column'],
+                isVertical: true
+            });
+            expected = {
+                xAxis: ['cate1', 'cate2', 'cate3'],
+                yAxis: [40]
+            };
+
             expect(actual).toEqual(expected);
         });
 
         it('가로 타입의 차트에서는 yAxis는 category, xAxis는 value가 label이 됩니다.', function() {
-            var actual = maker._makeAxesLabelInfo({
-                    hasAxes: true,
-                    optionChartTypes: ['column'],
-                    convertedData: {
-                        values: {
-                            'column': [10, 20, 30]
-                        },
-                        labels: ['cate1', 'cate2', 'cate3'],
-                        formatFunctions: []
-                    },
-                    isVertical: false
-                }),
-                expected = {
-                    xAxis: [40],
-                    yAxis: ['cate1', 'cate2', 'cate3']
-                };
+            var actual, expected;
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getGroupValues.and.returnValue([10, 20, 30]);
+
+            actual = maker._makeAxesLabelInfo({
+                hasAxes: true,
+                optionChartTypes: ['column'],
+                isVertical: false
+            });
+            expected = {
+                xAxis: [40],
+                yAxis: ['cate1', 'cate2', 'cate3']
+            };
+
             expect(actual).toEqual(expected);
         });
 
@@ -574,11 +780,15 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeHorizontalLabelRotationInfo', function() {
+        beforeEach(function() {
+            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+        });
+
         it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
             var actual, expected;
 
             spyOn(renderUtil, 'getRenderedLabelsMaxWidth').and.returnValue(120);
-            actual = maker._makeHorizontalLabelRotationInfo(300, ['cate1', 'cate2', 'cate3'], {});
+            actual = maker._makeHorizontalLabelRotationInfo(100, ['cate1', 'cate2', 'cate3'], {});
             expected = {
                 maxLabelWidth: 120,
                 labelHeight: 20,
@@ -622,9 +832,9 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_calculateXAxisHeight()', function() {
+    describe('_calculateXAxisRotatedHeight()', function() {
         it('레이블 dimension과 degree 정보를 이용하여 x axis의 회전된 높이 정보를 구합니다.', function() {
-            var actual = maker._calculateXAxisHeight({
+            var actual = maker._calculateXAxisRotatedHeight({
                     degree: 25,
                     maxLabelWidth: 100,
                     labelHeight: 20
@@ -634,14 +844,40 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_calculateHeightDifference()', function() {
+    describe('_calculateDiffWithRotatedHeight()', function() {
         it('회전된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
-            var actual = maker._calculateHeightDifference({
+            var actual = maker._calculateDiffWithRotatedHeight({
                     degree: 25,
                     maxLabelWidth: 100,
                     labelHeight: 20
                 }),
                 expected = 40.38798191480294;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_calculateDiffWithMultilineHeight()', function() {
+        it('개행처리된 레이블과 원래의 레이블의 높이 차이를 계산합니다.', function() {
+            var actual, expected;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if (value.indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
+            });
+
+            dataProcessor.getMultilineCategories.and.returnValue([
+               'AAAA</br>BBBB'
+            ]);
+
+            actual = maker._calculateDiffWithMultilineHeight(['AAAA BBBB'], 50, {
+                fontSize: 12,
+                fontFamily: 'Verdana'
+            });
+            expected = 20;
+
             expect(actual).toBe(expected);
         });
     });
@@ -706,49 +942,66 @@ describe('boundsMaker', function() {
 
     describe('make()', function() {
         it('차트를 구성하는 컴포넌트들의 bounds 정보를 계산하여 반환합니다.', function () {
-            var result = maker.make({
-                convertedData: {
-                    values: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    joinValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ],
-                    labels: ['label1', 'label2', 'label3'],
-                    joinLegendLabels: [{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}],
-                    formatValues: [
-                        [20, 30, 50],
-                        [40, 40, 60],
-                        [60, 50, 10],
-                        [80, 10, 70]
-                    ]
-                },
-                theme: defaultTheme,
-                hasAxes: true,
-                options: {}
+            var actual;
+
+            renderUtil.getRenderedLabelHeight.and.callFake(function(value) {
+                if ((value + '').indexOf('</br>') > -1) {
+                    return 40;
+                } else {
+                    return 20;
+                }
             });
-            expect(result.chart.dimension.width).toBe(500);
-            expect(result.chart.dimension.height).toBe(400);
-            expect(result.series.dimension.width).toBe(296);
-            expect(result.series.dimension.height).toBe(280);
-            expect(result.series.position.top).toBe(50);
-            expect(result.series.position.left).toBe(107);
-            expect(result.yAxis.dimension.width).toBe(97);
-            expect(result.yAxis.dimension.height).toBe(281);
-            expect(result.yAxis.position.top).toBe(50);
-            expect(result.xAxis.dimension.width).toBe(297);
-            expect(result.xAxis.dimension.height).toBe(60);
-            expect(result.xAxis.position.top).toBe(330);
-            expect(result.legend.position.top).toBe(40);
-            expect(result.legend.position.left).toBe(403);
-            expect(result.tooltip.position.top).toBe(50);
-            expect(result.tooltip.position.left).toBe(97);
+
+            dataProcessor.getWholeGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]);
+
+            dataProcessor.getGroupValues.and.returnValue([
+                [20, 30, 50],
+                [40, 40, 60],
+                [60, 50, 10],
+                [80, 10, 70]
+            ]);
+
+            dataProcessor.getFormattedGroupValues.and.returnValue([
+                ['20', '30', '50'],
+                ['40', '40', '60'],
+                ['60', '50', '10'],
+                ['80', '10', '70']
+            ]);
+
+            dataProcessor.getLegendLabels.and.returnValue(['label1', 'label2', 'label3']);
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getMultilineCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getWholeLegendData.and.returnValue([{label: 'label1'}, {lable: 'label2'}, {label: 'label3'}]);
+
+            actual = maker.make(dataProcessor,
+                {
+                    theme: defaultTheme,
+                    hasAxes: true,
+                    options: {}
+                }
+            );
+
+            expect(actual.chart.dimension.width).toBe(500);
+            expect(actual.chart.dimension.height).toBe(400);
+            expect(actual.series.dimension.width).toBe(286);
+            expect(actual.series.dimension.height).toBe(280);
+            expect(actual.series.position.top).toBe(50);
+            expect(actual.series.position.left).toBe(107);
+            expect(actual.yAxis.dimension.width).toBe(97);
+            expect(actual.yAxis.dimension.height).toBe(281);
+            expect(actual.yAxis.position.top).toBe(50);
+            expect(actual.xAxis.dimension.width).toBe(287);
+            expect(actual.xAxis.dimension.height).toBe(60);
+            expect(actual.xAxis.position.top).toBe(330);
+            expect(actual.legend.position.top).toBe(40);
+            expect(actual.legend.position.left).toBe(393);
+            expect(actual.tooltip.position.top).toBe(40);
+            expect(actual.tooltip.position.left).toBe(97);
         });
     });
 });

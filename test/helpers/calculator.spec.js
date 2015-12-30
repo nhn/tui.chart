@@ -9,23 +9,23 @@
 var calculator = require('../../src/js/helpers/calculator.js');
 
 describe('calculator', function() {
-    describe('calculateScale()', function() {
-        it('userMin=10, userMax=100의 기본 scale 계산 결과는 min=0, max=104.5입니다.', function () {
-            var scale = calculator.calculateScale(10, 100);
-            expect(scale.min).toBe(0);
-            expect(scale.max).toBe(104.5);
+    describe('calculateLimit()', function() {
+        it('userMin=10, userMax=100의 기본 limit 계산 결과는 min=0, max=104.5입니다.', function () {
+            var actual = calculator.calculateLimit(10, 100);
+            expect(actual.min).toBe(0);
+            expect(actual.max).toBe(104.5);
         });
 
-        it('userMin=20, userMax=100의 기본 scale 계산 결과는 min=16, max=104입니다.', function () {
-            var scale = calculator.calculateScale(20, 100);
-            expect(scale.min).toBe(16);
-            expect(scale.max).toBe(104);
+        it('userMin=20, userMax=100의 기본 limit 계산 결과는 min=16, max=104입니다.', function () {
+            var actual = calculator.calculateLimit(20, 100);
+            expect(actual.min).toBe(16);
+            expect(actual.max).toBe(104);
         });
 
-        it('userMin=-100, userMax=-20의 기본 scale 계산 결과는 min=-100, max=-16입니다.', function () {
-            var scale = calculator.calculateScale(-100, -20);
-            expect(scale.min).toBe(-100);
-            expect(scale.max).toBe(-16);
+        it('userMin=-100, userMax=-20의 기본 limit 계산 결과는 min=-100, max=-16입니다.', function () {
+            var actual = calculator.calculateLimit(-100, -20);
+            expect(actual.min).toBe(-100);
+            expect(actual.max).toBe(-16);
         });
     });
 
@@ -83,53 +83,37 @@ describe('calculator', function() {
         });
     });
 
-    describe('getScaleStep()', function() {
-        it('scale.min=20, scale.max=100, tickCount=5 의 scale step은 20입니다.', function () {
+    describe('calculateStepFromLimit()', function() {
+        it('limit.min=20, limit.max=100, tickCount=5 의 limit step은 20입니다.', function () {
             var tickCount = 5,
-                scale = {min: 20, max: 100},
-                step = calculator.getScaleStep(scale, tickCount);
+                limit = {min: 20, max: 100},
+                step = calculator.calculateStepFromLimit(limit, tickCount);
             expect(step).toBe(20);
         });
 
-        it('scale.min=10, scale.max=130 tickCount=4의 scale step은 30입니다.', function () {
+        it('limit.min=10, limit.max=130 tickCount=4의 limit step은 30입니다.', function () {
             var tickCount = 4,
-                scale = {min: 10, max: 130},
-                step = calculator.getScaleStep(scale, tickCount);
+                limit = {min: 10, max: 130},
+                step = calculator.calculateStepFromLimit(limit, tickCount);
             expect(step).toBe(40);
         });
     });
 
-    describe('makeLabelsFromScale()', function() {
+    describe('makeLabelsFromLimit()', function() {
         it('min=20, max=100, step=20일 때의 labels는 [20, 40, 60, 80, 100] 입니다.', function () {
-            var scale = {min: 20, max: 100},
+            var limit = {min: 20, max: 100},
                 step = 20,
-                result = calculator.makeLabelsFromScale(scale, step);
+                result = calculator.makeLabelsFromLimit(limit, step);
             expect(result).toEqual([20, 40, 60, 80, 100]);
         });
 
         it('min=10, max=130, step=40일 때의 labels는 [10, 50, 90, 130] 입니다.', function () {
-            var scale = {min: 10, max: 130},
+            var limit = {min: 10, max: 130},
                 step = 40,
-                result = calculator.makeLabelsFromScale(scale, step);
+                result = calculator.makeLabelsFromLimit(limit, step);
             expect(result).toEqual([10, 50, 90, 130]);
         });
     });
-
-    //describe('arrayPivot()', function() {
-    //    it('배열 회전된 결과를 반환합니다.', function () {
-    //        var result = calculator.arrayPivot([
-    //            [1, 2, 3],
-    //            [4, 5, 6],
-    //            [7, 8, 9]
-    //        ]);
-    //
-    //        expect(result).toEqual([
-    //            [1, 4, 7],
-    //            [2, 5, 8],
-    //            [3, 6, 9]
-    //        ]);
-    //    });
-    //});
 
     describe('calculateAdjacent()', function() {
         it('끼인각이 30도이고 빗변이 2일 경우 인접변 너비는 루트3 입니다.', function() {

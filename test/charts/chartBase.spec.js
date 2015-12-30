@@ -7,19 +7,17 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    chartConst = require('../../src/js/const'),
-    Legend = require('../../src/js/legends/legend'),
+    Plot = require('../../src/js/plots/plot'),
     dom = require('../../src/js/helpers/domHandler'),
-    dataConverter = require('../../src/js/helpers/dataConverter'),
-    boundsMaker = require('../../src/js/helpers/boundsMaker'),
-    UserEventListener = require('../../src/js/helpers/userEventListener');
+    DataProcessor = require('../../src/js/helpers/dataProcessor'),
+    boundsMaker = require('../../src/js/helpers/boundsMaker');
 
 describe('ChartBase', function() {
     var chartBase;
 
     beforeEach(function() {
         chartBase = new ChartBase({
-            userData: {
+            rawData: {
                 categories: ['cate1', 'cate2', 'cate3'],
                 series: [
                     {
@@ -53,27 +51,86 @@ describe('ChartBase', function() {
         });
     });
 
-    describe('_makeConvertedData()', function() {
+    describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            spyOn(dataConverter, 'convert').and.returnValue({'values': [1, 2, 3]});
-            actual = chartBase._makeConvertedData({
-                userData: {},
+            spyOn(DataProcessor.prototype, 'process').and.returnValue();
+            actual = chartBase._createDataProcessor({
+                rawData: {
+                    categories: ['a', 'b', 'c']
+                },
                 options: {}
             });
-            expect(actual.values).toEqual([1, 2, 3]);
+            expect(actual instanceof DataProcessor).toBe(true);
+            expect(actual.orgRawData).toEqual({
+                categories: ['a', 'b', 'c']
+            });
+        });
+    });
+
+    describe('_filterRawData()', function() {
+        it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+            var actual = chartBase._filterRawData({
+                    series: ['a', 'b', 'c', 'd']
+                }, [null, true, true]),
+                expected = ['b', 'c'];
+            expect(actual.series).toEqual(expected);
+        });
+
+        it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
+            var actual = chartBase._filterRawData({
+                    series: {
+                        column: ['a', 'b', 'c', 'd'],
+                        line: ['e', 'f', 'g']
+                    }
+                }, {
+                    column: [null, true, null, true],
+                    line: [true]
+                }),
+                expected = {
+                    column: ['b', 'd'],
+                    line: ['e']
+                };
+            expect(actual.series).toEqual(expected);
+        });
+    });
+
+    describe('_makeRerenderingData()', function() {
+        it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
+            var renderingData = {
+                    series: {
+                        bound: 'seriesBound'
+                    },
+                    tooltip: {
+                        bound: 'tooltipBound'
+                    }
+                },
+                checkedLegends = [true],
+                actual;
+
+            chartBase.componentMap = {
+               'series': {
+                   componentType: 'series',
+                   chartType: 'column'
+               }
+            };
+
+            actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
+            expect(actual.tooltip.bound).toEqual('tooltipBound');
+            expect(actual.series.bound).toEqual('seriesBound');
+            expect(actual.series.checkedLegends).toEqual([true]);
         });
     });
 
     describe('addComponent()', function() {
         it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
-            var legend;
-            chartBase._addComponent('legend', Legend, {});
+            var plot;
+            chartBase._addComponent('plot', Plot, {});
 
-            legend = chartBase.componentMap.legend;
-            expect(legend).toBeTruthy();
-            expect(legend.constructor).toEqual(Legend);
-            expect(tui.util.inArray('legend', tui.util.pluck(chartBase.components, 'name'))).toBe(0);
+            plot = chartBase.componentMap.plot;
+            expect(plot).toBeTruthy();
+            expect(plot.constructor).toEqual(Plot);
+            expect(tui.util.inArray('plot', tui.util.pluck(chartBase.components, 'name'))).toBe(0);
         });
 
         it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {
@@ -111,6 +168,6 @@ describe('ChartBase', function() {
             });
             expect(chartBase.options.chart.width).toBe(200);
             expect(chartBase.options.chart.height).toBe(100);
-        })
+        });
     });
 });

@@ -7,8 +7,9 @@
 'use strict';
 
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    isMac = navigator.userAgent.indexOf('Mac') > -1,
+    dom = require('../../src/js/helpers/domHandler.js');
+
+var isMac = navigator.userAgent.indexOf('Mac') > -1,
     browser = tui.util.browser,
     isOldBrowser = browser.msie && browser.version <= 8,
     isFirefox = browser.firefox,
@@ -41,7 +42,7 @@ describe('renderUtil', function() {
         it('동적인 폰트 크기를 체크할 수 있는 HTML Element를 반환합니다.', function () {
             var actual = renderUtil._createSizeCheckEl();
 
-            expect(actual.className).toBe('tui-chart-size-check-element')
+            expect(actual.className).toBe('tui-chart-size-check-element');
             expect(actual.firstChild.nodeName).toBe('SPAN');
         });
     });
@@ -108,12 +109,14 @@ describe('renderUtil', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function () {
             var acutal = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label']);
 
-            if (isOldBrowser || isFirefox) {
-                expect(acutal).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(acutal).toBe(40);
+            if (isFirefox) {
+                expect(acutal).toBe(37);
+            } else if (isOldBrowser || (isMac && isChrome)) {
+                expect(acutal).toBe(32);
+            } else if (isChrome) {
+                expect(acutal).toBe(36);
             } else {
-                expect(acutal).toBe(39);
+                expect(acutal).toBe(33);
             }
         });
     });
@@ -122,10 +125,14 @@ describe('renderUtil', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function () {
             var acutal = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label']);
 
-            if (isOldBrowser) {
-                expect(acutal).toBe(14);
-            } else {
+            if (isFirefox) {
+                expect(acutal).toBe(13);
+            } else if (isOldBrowser || (isMac && isChrome)) {
                 expect(acutal).toBe(15);
+            } else if (isChrome) {
+                expect(acutal).toBe(16);
+            } else {
+                expect(acutal).toBe(14);
             }
         });
     });
@@ -143,10 +150,10 @@ describe('renderUtil', function() {
     describe('renderPosition()', function() {
         it('전달 받은 Element style에 전달 받은 위치(top, left)값을 설정합니다.', function () {
             var el = dom.create('DIV'),
-                position = {top: 50, right: 50};
+                position = {top: 50, left: 50};
             renderUtil.renderPosition(el, position);
             expect(el.style.top).toBe('50px');
-            expect(el.style.right).toBe('50px');
+            expect(el.style.left).toBe('50px');
         });
     });
 
@@ -165,6 +172,24 @@ describe('renderUtil', function() {
             expect(elTitle.style.fontSize).toBe('12px');
             expect(elTitle.style.backgroundColor).toBe('orange');
             expect(elTitle.className).toBe('test-title');
+        });
+    });
+
+    describe('makeCustomEventName()', function() {
+        it('커스텀 이벤트명을 생성합니다.', function() {
+            var actual = renderUtil.makeCustomEventName('prefix', 'value', 'suffix'),
+                expected = 'prefixValueSuffix';
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('formatValue()', function() {
+        it('두번째인자인 포맷함수를 이용하여 첫번째 인자인 값을 포맷팅합니다.', function() {
+            var actual = renderUtil.formatValue(3, [function(value) {
+                    return '00' + value;
+                }]),
+                expected = '003';
+            expect(actual).toEqual(expected);
         });
     });
 });

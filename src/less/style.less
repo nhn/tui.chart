@@ -5,6 +5,13 @@
 @legend-rect-width: 12px;
 @hidden-padding: 1px;
 
+.user-select() {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .tui-chart {
   position: relative;
   &, * {
@@ -43,6 +50,9 @@
     .tui-chart-label-area {
       .tui-chart-label {
         position: absolute;
+        > span {
+          line-height: 1.2;
+        }
       }
     }
 
@@ -65,7 +75,6 @@
           right: 0;
           width: 5px;
           height: 1px;
-          height: 1px;
         }
       }
 
@@ -85,7 +94,7 @@
           text-align: center;
           white-space: nowrap;
           top: 0;
-          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
         }
 
         .tui-chart-tick-area, .tui-chart-label-area {
@@ -135,34 +144,37 @@
         .tui-chart-label {
           top: 10px;
           text-align: center;
-          white-space: nowrap;
-          &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+          word-wrap: break-word;
+          word-break: keep-all;
+          &.tui-chart-xaxis-rotation {
             text-align: right;
             span {
-              position:absolute;
-              right:0;
-              top:0;
+              position: absolute;
+              right: 0;
+              top: 0;
             }
+            white-space: nowrap;
           }
-          &.rotation25 {
+
+          &.tui-chart-xaxis-rotation25 {
             .rotate(-25deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
             }
           }
-          &.rotation45 {
+          &.tui-chart-xaxis-rotation45 {
             .rotate(-45deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
             }
           }
-          &.rotation65 {
+          &.tui-chart-xaxis-rotation65 {
             .rotate(-65deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
             }
           }
-          &.rotation85 {
+          &.tui-chart-xaxis-rotation85 {
             .rotate(-85deg);
             span {
               filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
@@ -199,6 +211,7 @@
     &:first-child {
       overflow: visible;
     }
+    .user-select();
     .tui-chart-series-label-area {
       position: absolute;
       left: 0px;
@@ -208,7 +221,7 @@
       .tui-chart-series-label {
         position: absolute;
         cursor: default;
-        text-align:center;
+        text-align: center;
         white-space: nowrap;
         .text-shadow(#fff 0px 0px 3px);
       }
@@ -220,15 +233,15 @@
 
   .tui-chart-series-custom-event-area {
     z-index: 1000;
-    position:absolute;
+    position: absolute;
     left: 10px;
     top: 0;
-    background-color:#fff;
+    background-color: #fff;
     .opacity(0);
   }
 
   .tui-chart-legend-rect {
-    margin-top:2px;
+    margin-top: 2px;
     width: @legend-rect-width;
     height: @legend-rect-width;
     &.line {
@@ -243,15 +256,54 @@
     z-index: 300;
     position: absolute;
     padding: 10px;
+    .user-select();
     .tui-chart-legend {
       clear: both;
       > div {
         float: left;
       }
+
+      .tui-chart-legend-checkbox-area {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        input {
+          left: 2px;
+          top: 2px;
+          *left: -2px;
+          *top: -2px;
+          position: absolute;
+          padding: 0;
+          margin: 0;
+        }
+        .border-box();
+      }
+
       .tui-chart-legend-label {
         padding: 2px 0 2px 5px;
+        cursor: pointer;
         .content-box();
-        line-height:1;
+        line-height: 1;
+      }
+
+      &.unselected {
+        .tui-chart-legend-rect {
+          .opacity(0.3);
+        }
+
+        .tui-chart-legend-label {
+          .opacity(0.3);
+        }
+      }
+    }
+
+    &.horizontal {
+      padding-left: 0;
+      padding-right: 0;
+      .tui-chart-legend {
+        clear: none;
+        float: left;
+        white-space: nowrap;
       }
     }
   }
@@ -272,8 +324,8 @@
         min-width: 100px;
         color: #fff;
         .border-radius(5px);
-        background-color:rgba(0, 0, 0, 0.7);
-        background-color: #555\9;
+        background-color: rgba(0, 0, 0, 0.7);
+        background-color: #555 \9;
         > * {
           padding: 2px 7px;
           text-align: center;
@@ -315,7 +367,7 @@
     .tui-chart-group-tooltip-sector {
       z-index: 50;
       position: absolute;
-      background-color:#aaa;
+      background-color: #aaa;
       .opacity(0.3);
       display: none;
       &.show {
@@ -326,25 +378,32 @@
 }
 
 .tui-chart-size-check-element {
-  clear:both;
-  position:absolute;
-  top:100000px;
-  left:100000px;
-  width:1000px;
-  height:100px;
-  line-height:1;
-  z-index: 10000000;
+  clear: both;
+  position: absolute;
+  word-wrap: break-word;
+  word-break: keep-all;
+  top: 100000px;
+  left: 100000px;
+  width: 1000px;
+  height: 100px;
+  padding: 0;
+  line-height: 1;
+  span {
+    box-sizing: border-box;
+    text-align: center;
+    padding: 0;
+  }
 }
 
 :root .tui-chart .tui-chart-axis-area {
   &.vertical .tui-chart-title-area {
-    filter: none\0;
+    filter: none \0;
   }
   &.horizontal {
     .tui-chart-label {
-      &.rotation25, &.rotation45, &.rotation65, &.rotation85 {
+      &.tui-chart-xaxis-rotation25, &.tui-chart-xaxis-rotation45, &.tui-chart-xaxis-rotation65, &.tui-chart-xaxis-rotation85 {
         span {
-          filter: none\0;
+          filter: none \0;
         }
       }
     }

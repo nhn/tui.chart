@@ -49,7 +49,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
          * For caching
          * @type {object}
          */
-        this.positions;
+        this.positions = {};
 
         this._setData(chartDimension, areaBound, isVertical, options);
     },
@@ -62,6 +62,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _getHorizontalDirection: function(alignOption) {
         var direction;
+
         alignOption = alignOption || '';
         if (alignOption.indexOf('left') > -1) {
             direction = chartConst.TOOLTIP_DIRECTION_BACKWARD;
@@ -70,11 +71,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             direction = chartConst.TOOLTIP_DIRECTION_FORWARD;
         }
+
         return direction;
     },
 
     /**
-     * To make vertical data.
+     * Make vertical data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -90,6 +92,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _makeVerticalData: function(chartDimension, areaBound, alignOption) {
         var hDirection = this._getHorizontalDirection(alignOption);
+
         return {
             positionType: 'left',
             sizeType: 'width',
@@ -109,7 +112,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _getVerticalDirection: function(alignOption) {
         var direction;
+
         alignOption = alignOption || '';
+
         if (alignOption.indexOf('top') > -1) {
             direction = chartConst.TOOLTIP_DIRECTION_BACKWARD;
         } else if (alignOption.indexOf('bottom') > -1) {
@@ -117,11 +122,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             direction = chartConst.TOOLTIP_DIRECTION_CENTER;
         }
+
         return direction;
     },
 
     /**
-     * To make horizontal data.
+     * Make horizontal data.
      * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{
      *      dimension: {width: number, height: number},
@@ -132,11 +138,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      *      positionType: string, sizeType: string, direction: (string),
      *      areaPosition: number, areaSize: number, chartSize: number,
      *      basePosition: (number)
-     * }} vertical data
+     * }} horizontal data
      * @private
      */
     _makeHorizontalData: function(chartDimension, areaBound, alignOption) {
         var vDirection = this._getVerticalDirection(alignOption);
+
         return {
             positionType: 'top',
             sizeType: 'height',
@@ -144,7 +151,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             areaPosition: areaBound.position.top,
             areaSize: areaBound.dimension.height,
             chartSize: chartDimension.height,
-            basePosition: 0
+            basePosition: chartConst.SERIES_EXPAND_SIZE
         };
     },
 
@@ -162,6 +169,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _setData: function(chartDimension, areaBound, isVertical, options) {
         var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align),
             horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+
         if (isVertical) {
             this.mainData = verticalData;
             this.subData = horizontalData;
@@ -179,7 +187,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate main position value.
+     * Calculate main position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {{start: number, end: number}} range range
      * @param {object} data data
@@ -192,6 +200,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         var isLine = (range.start === range.end),
             padding = isLine ? 9 : 5,
             value = data.basePosition;
+
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value += range.end + padding;
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
@@ -201,11 +210,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value += range.start + ((range.end - range.start - tooltipSize) / 2);
         }
+
         return value;
     },
 
     /**
-     * To calculate sub position value.
+     * Calculate sub position value.
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
      *      @param {number} data.areaSize tooltip area size (width or height)
@@ -217,6 +227,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _calculateSubPositionValue: function(tooltipSize, data) {
         var middle = data.areaSize / 2,
             value;
+
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value = middle + data.basePosition;
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_BACKWARD) {
@@ -224,11 +235,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value = middle - (tooltipSize / 2) + data.basePosition;
         }
+
         return value;
     },
 
     /**
-     * To make position value diff.
+     * Make position value diff.
      * @param {number} value positoin value
      * @param {number} tooltipSize tooltip size (width or height)
      * @param {object} data data
@@ -255,6 +267,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _adjustBackwardPositionValue: function(value, range, tooltipSize, data) {
         var changedValue;
+
         if (value < -data.areaPosition) {
             changedValue = this._calculateMainPositionValue(tooltipSize, range, {
                 direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
@@ -266,6 +279,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
                 value = changedValue;
             }
         }
+
         return value;
     },
 
@@ -284,6 +298,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     _adjustForwardPositionValue: function(value, range, tooltipSize, data) {
         var diff = this._makePositionValueDiff(value, tooltipSize, data),
             changedValue;
+
         if (diff > 0) {
             changedValue = this._calculateMainPositionValue(tooltipSize, range, {
                 direction: chartConst.TOOLTIP_DIRECTION_BACKWARD,
@@ -295,6 +310,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
                 value = changedValue;
             }
         }
+
         return value;
     },
 
@@ -318,6 +334,7 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             value = tui.util.max([value, -data.areaPosition]);
             value = tui.util.min([value, data.chartSize - data.areaPosition - tooltipSize]);
         }
+
         return value;
     },
 
@@ -338,11 +355,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else {
             value = tui.util.max([value, -data.areaPosition]);
         }
+
         return value;
     },
 
     /**
-     * To make caching key.
+     * Make caching key.
      * @param {{start: number, end: number}} range range
      * @returns {string} key
      * @private
@@ -363,7 +381,50 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
     },
 
     /**
-     * To calculate group tooltip position.
+     * Make main position value.
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{start: number, end: number}} range tooltip sector range
+     * @param {{
+     *      positionType: string, sizeType: string, direction: (string),
+     *      areaPosition: number, areaSize: number, chartSize: number,
+     *      basePosition: (number)
+     * }} main main data
+     * @returns {number} position value
+     * @private
+     */
+    _makeMainPositionValue: function(tooltipDimension, range, main) {
+        var value;
+
+        value = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
+        value = this._addPositionOptionValue(value, main.positionType);
+        value = this._adjustMainPositionValue(value, range, tooltipDimension[main.sizeType], main);
+
+        return value;
+    },
+
+    /**
+     * Make sub position value.
+     * @param {{width: number, height: number}} tooltipDimension tooltip dimension
+     * @param {{
+     *      positionType: string, sizeType: string, direction: (string),
+     *      areaPosition: number, areaSize: number, chartSize: number,
+     *      basePosition: (number)
+     * }} sub sub data
+     * @returns {number} position value
+     * @private
+     */
+    _makeSubPositionValue: function(tooltipDimension, sub) {
+        var value;
+
+        value = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
+        value = this._addPositionOptionValue(value, sub.positionType);
+        value = this._adjustSubPositionValue(value, tooltipDimension[sub.sizeType], sub);
+
+        return value;
+    },
+
+    /**
+     * Calculate group tooltip position.
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{start: number, end: number}} range tooltip sector range
      * @returns {{left: number, top: number}} group tooltip position
@@ -372,19 +433,12 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         var key = this._makeCachingKey(range),
             main = this.mainData,
             sub = this.subData,
-            position = this.positions[key],
-            mainPosition, subPosition;
+            position = this.positions[key];
 
         if (!position) {
             position = {};
-            mainPosition = this._calculateMainPositionValue(tooltipDimension[main.sizeType], range, main);
-            subPosition = this._calculateSubPositionValue(tooltipDimension[sub.sizeType], sub);
-
-            mainPosition = this._addPositionOptionValue(mainPosition, main.positionType);
-            subPosition = this._addPositionOptionValue(subPosition, sub.positionType);
-
-            position[main.positionType] = this._adjustMainPositionValue(mainPosition, range, tooltipDimension[main.sizeType], main);
-            position[sub.positionType] = this._adjustSubPositionValue(subPosition, tooltipDimension[sub.sizeType], sub);
+            position[main.positionType] = this._makeMainPositionValue(tooltipDimension, range, main);
+            position[sub.positionType] = this._makeSubPositionValue(tooltipDimension, sub);
             this.positions[key] = position;
         }
 

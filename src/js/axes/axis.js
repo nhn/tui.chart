@@ -36,13 +36,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To render axis area.
-     * @param {HTMLElement} elAxisArea axis area element
+     * Render axis area.
+     * @param {HTMLElement} axisContainer axis area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      * @private
      */
-    _renderAxisArea: function(elAxisArea, bound, data) {
+    _renderAxisArea: function(axisContainer, bound, data) {
         var theme = this.theme,
             isVertical = !!data.isVertical,
             isPositionRight = !!data.isPositionRight,
@@ -65,34 +65,50 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (!isVertical || !data.aligned) {
             elTickArea = this._renderTickArea(size);
         }
-        renderUtil.renderDimension(elAxisArea, dimension);
-        renderUtil.renderPosition(elAxisArea, bound.position);
-        dom.addClass(elAxisArea, isVertical ? 'vertical' : 'horizontal');
-        dom.addClass(elAxisArea, isPositionRight ? 'right' : '');
-        dom.append(elAxisArea, [elTitleArea, elTickArea, elLabelArea]);
+
+        renderUtil.renderDimension(axisContainer, dimension);
+        renderUtil.renderPosition(axisContainer, bound.position);
+        dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(axisContainer, isPositionRight ? 'right' : '');
+        dom.append(axisContainer, [elTitleArea, elTickArea, elLabelArea]);
     },
 
     /**
-     * To render axis component.
+     * Render axis component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      * @returns {HTMLElement} axis area base element
      */
     render: function(bound, data) {
         var el = dom.create('DIV', this.className);
+
         this._renderAxisArea(el, bound, data);
-        this.elAxisArea = el;
+        this.axisContainer = el;
         return el;
     },
 
     /**
-     * To resize axis component.
+     * Rerender axis component.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
+     * @param {object} data rendering data
+     */
+    rerender: function(bound, data) {
+        this.axisContainer.innerHTML = '';
+        if (bound.dimension.width > 0) {
+            if (data.options) {
+                this.options = data.options;
+            }
+            this._renderAxisArea(this.axisContainer, bound, data);
+        }
+    },
+
+    /**
+     * Resize axis component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      */
     resize: function(bound, data) {
-        this.elAxisArea.innerHTML = '';
-        this._renderAxisArea(this.elAxisArea, bound, data);
+        this.rerender(bound, data);
     },
 
     /**
@@ -108,10 +124,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         ];
 
         if (isPositionRight) {
-            cssTexts.push(renderUtil.concatStr('right:', -size, 'px'));
-            cssTexts.push(renderUtil.concatStr('top:', 0, 'px'));
+            if (renderUtil.isIE7()) {
+                cssTexts.push(renderUtil.concatStr('right:', '0px'));
+            } else {
+                cssTexts.push(renderUtil.concatStr('right:', -size, 'px'));
+            }
+            cssTexts.push('top:0px');
         } else {
-            cssTexts.push(renderUtil.concatStr('left:', 0, 'px'));
+            cssTexts.push('left:0px');
             if (!renderUtil.isOldBrowser()) {
                 cssTexts.push(renderUtil.concatStr('top:', size, 'px'));
             }
@@ -175,7 +195,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make cssText of vertical label.
+     * Make cssText of vertical label.
      * @param {number} axisWidth axis width
      * @param {number} titleAreaWidth title area width
      * @returns {string} cssText
@@ -205,19 +225,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             }),
             elLabelArea = dom.create('DIV', 'tui-chart-label-area'),
             areaCssText = renderUtil.makeFontCssText(this.theme.label),
+            categories = data.labels,
             labelsHtml, titleAreaWidth;
 
         if (data.isVertical) {
             posType = data.isLabelAxis ? 'top' : 'bottom';
             titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
             areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
+        } else if (data.isLabelAxis && this.options.rotation === false) {
+            categories = this.dataProcessor.getMultilineCategories();
         }
 
-        tickPixelPositions.length = data.labels.length;
-
+        tickPixelPositions.length = categories.length;
         labelsHtml = this._makeLabelsHtml({
             positions: tickPixelPositions,
-            labels: data.labels,
+            labels: categories,
             posType: posType,
             cssTexts: cssTexts,
             labelSize: labelSize,
@@ -249,11 +271,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var title = this.options.title,
             theme = this.theme.title,
             result = title ? renderUtil.getRenderedLabelHeight(title, theme) : 0;
+
         return result;
     },
 
     /**
-     * To make cssTexts of label.
+     * Make cssTexts of label.
      * @param {object} params parameter
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {boolean} params.isLabelAxis whether label axis or not
@@ -275,7 +298,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To calculate rotation moving position.
+     * Calculate rotation moving position.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelHeight label height
@@ -287,6 +310,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPosition: function(params) {
         var moveLeft = params.moveLeft;
+
         if (params.degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
         }
@@ -298,7 +322,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To calculate rotation moving position for ie8.
+     * Calculate rotation moving position for ie8.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
@@ -327,7 +351,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make cssText for rotation moving.
+     * Make cssText for rotation moving.
      * @param {object} params parameters
      *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
@@ -342,16 +366,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeCssTextForRotationMoving: function(params) {
         var position;
+
         if (renderUtil.isOldBrowser()) {
             position = this._calculateRotationMovingPositionForIE8(params);
         } else {
             position = this._calculateRotationMovingPosition(params);
         }
+
         return renderUtil.concatStr('left:', position.left, 'px', ';top:', position.top, 'px');
     },
 
     /**
-     * To make html of rotation labels.
+     * Make html of rotation labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
@@ -364,7 +390,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            addClass = ' rotation' + params.degree,
+            addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + params.degree,
             halfWidth = params.labelSize / 2,
             moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
             top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
@@ -392,7 +418,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * To make html of normal labels.
+     * Make html of normal labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
@@ -412,11 +438,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                     label: params.labels[index]
                 });
             }, this).join('');
+
         return labelsHtml;
     },
 
     /**
-     * To make html of labels.
+     * Make html of labels.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
@@ -427,6 +454,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeLabelsHtml: function(params) {
         var labelsHtml;
+
         if (params.degree) {
             labelsHtml = this._makeRotationLabelsHtml(params);
         } else {

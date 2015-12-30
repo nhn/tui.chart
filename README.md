@@ -20,34 +20,35 @@ This application supports drawing a chart on web browser.<br>
 
 ## Sample Images
 
-<img alt="bar chart" src="https://cloud.githubusercontent.com/assets/2888775/10809233/2ad6a7fa-7e38-11e5-82bd-f9b78429e997.png">
+<img alt="bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045564/947679f6-aee9-11e5-99bd-e3e018dd8149.png">
 
-<img alt="negative bar chart" src="https://cloud.githubusercontent.com/assets/2888775/10809238/2ffb4ed4-7e38-11e5-998e-9aad1de3df3f.png">
+<img alt="negative bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045566/9480963e-aee9-11e5-9fa8-8ae565bd43a8.png">
 
-<img alt="stacked bar chart" src="https://cloud.githubusercontent.com/assets/2888775/10809240/35b84804-7e38-11e5-85a1-57eb60079e3e.png">
+<img alt="stacked bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045565/947979bc-aee9-11e5-842e-123190fcb621.png">
 
-<img alt="column chart" src="https://cloud.githubusercontent.com/assets/2888775/10809241/3b41e726-7e38-11e5-956f-6acfd356a705.png">
+<img alt="column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045571/ac7db0c8-aee9-11e5-9270-0d54133c948e.png">
 
-<img alt="negative column chart" src="https://cloud.githubusercontent.com/assets/2888775/10809244/41009874-7e38-11e5-8739-75535dde146f.png">
+<img alt="negative column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045572/ac8aafb2-aee9-11e5-853f-461ff565c0b8.png">
 
-<img alt="percent stacked column chart" src="https://cloud.githubusercontent.com/assets/2888775/10836377/3b9af344-7ef0-11e5-824c-2e4d6c5f605a.png">
+<img alt="percent stacked column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045573/ac8fd51e-aee9-11e5-8e73-23cf05929034.png">
 
-<img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/10809249/4de3976c-7e38-11e5-9e5e-eda2dd0a6cd6.png">
+<img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/12045582/bf4638e2-aee9-11e5-9e62-d5e66b842165.png">
 
-<img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/10836378/41002b60-7ef0-11e5-8337-d66db2adaac8.png">
+<img alt="spline line chart" src="https://cloud.githubusercontent.com/assets/2888775/12045581/bf45f788-aee9-11e5-8fe4-5a7d264d941b.png">
 
-<img alt="pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10064137/468634d2-62b0-11e5-8961-402cd5a7e518.png">
+<img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/12045580/bf425740-aee9-11e5-9df7-b41c21db42f9.png">
 
-<img alt="center legend pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10809260/6b5a0844-7e38-11e5-9d97-cb991964afa9.png">
+<img alt="stacked area chart" src="https://cloud.githubusercontent.com/assets/2888775/12045583/bf466e48-aee9-11e5-9c76-00c3a2a6d687.png">
 
-<img alt="outer lengend pie chart" src="https://cloud.githubusercontent.com/assets/2888775/10809267/71fe8800-7e38-11e5-9acb-d3d6541e6fd2.png">
+<img alt="pie chart" src="https://cloud.githubusercontent.com/assets/2888775/12045630/6c896a56-aeea-11e5-8321-a11467717478.png">
 
-<img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/10811561/8b8579d8-7e50-11e5-9b43-d67f0ec3ce63.png">
+<img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/12045602/e1bf9f12-aee9-11e5-9a39-29eae62be331.png">
+
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.chart/latest/
 * **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial
-* **Sample** : https://github.com/nhnent/tui.chart/wiki/samples
+* **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial.html
 
 ## Dependency
 * tui.code-snippet 1.0.4

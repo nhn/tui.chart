@@ -28,26 +28,27 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     init: function(params) {
         this.chartType = params.chartType;
         this.isVertical = params.isVertical;
+        this.dataProcessor = params.dataProcessor;
     },
 
     /**
-     * To render event handle layer area
-     * @param {HTMLElement} elCoordinateArea coordinate area element
+     * Render event handle layer area
+     * @param {HTMLElement} customEventContainer custom event container element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
      * @private
      */
-    _renderCustomEventArea: function(elCoordinateArea, bound, data) {
+    _renderCustomEventArea: function(customEventContainer, bound, data) {
         var expandedBound;
         this.bound = bound;
         this.tickBaseDataModel = new TickBaseDataModel(bound.dimension, data.tickCount, this.chartType, this.isVertical);
         expandedBound = renderUtil.expandBound(bound);
-        renderUtil.renderDimension(elCoordinateArea, expandedBound.dimension);
-        renderUtil.renderPosition(elCoordinateArea, expandedBound.position);
+        renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
+        renderUtil.renderPosition(customEventContainer, expandedBound.position);
     },
 
     /**
-     * To render event handle layer component.
+     * Render event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @param {object} data rendering data
      * @return {HTMLElement} coordinate area
@@ -57,7 +58,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
         this._renderCustomEventArea(el, bound, data);
         this.attachEvent(el);
-        this.elCoordinateArea = el;
+        this.customEventContainer = el;
         return el;
     },
 
@@ -70,12 +71,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
-     * To resize event handle layer component.
+     * Render.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
+     * @param {{tickCount: number}} data data
+     */
+    rerender: function(bound, data) {
+        this._renderCustomEventArea(this.customEventContainer, bound, data);
+    },
+
+    /**
+     * Resize event handle layer component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound for resizable
      * @param {{tickCount: number}} data data
      */
     resize: function(bound, data) {
-        this._renderCustomEventArea(this.elCoordinateArea, bound, data);
+        this.rerender(bound, data);
     },
 
     /**
@@ -111,7 +121,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _unselectSelectedData: function() {
-        var eventName = this.fire(renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series'), this.selectedData);
+        var eventName = renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series');
         this.fire(eventName, this.selectedData);
         delete this.selectedData;
     },
@@ -119,14 +129,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     /**
      * On click
      * @param {mouseevent} e mouse event
+     * @private
      */
-    onClick: function(e) {
+    _onClick: function(e) {
         var elTarget = e.target || e.srcElement,
             clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
             foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
         if (!this._isChanged(this.selectedData, foundData)) {
             this._unselectSelectedData();
-            return;
         } else if (foundData) {
             if (this.selectedData) {
                 this._unselectSelectedData();
@@ -138,24 +148,26 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * On mouse move
+     * @private
      * @abstract
      */
-    onMousemove: function() {},
+    _onMousemove: function() {},
 
     /**
      * On mouse out
+     * @private
      * @abstract
      */
-    onMouseout: function() {},
+    _onMouseout: function() {},
 
     /**
      * Attach event
      * @param {HTMLElement} el target element
      */
     attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this.onClick, this));
-        eventListener.bindEvent('mousemove', el, tui.util.bind(this.onMousemove, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this.onMouseout, this));
+        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('mousemove', el, tui.util.bind(this._onMousemove, this));
+        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

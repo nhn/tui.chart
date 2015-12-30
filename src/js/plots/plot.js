@@ -31,23 +31,23 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To render plot area.
-     * @param {HTMLElement} elPlotArea plot area element
+     * Render plot area.
+     * @param {HTMLElement} plotContainer plot area element
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @private
      */
-    _renderPlotArea: function(elPlotArea, bound, data) {
+    _renderPlotArea: function(plotContainer, bound, data) {
         this.bound = bound;
         this.data = data;
 
-        renderUtil.renderDimension(elPlotArea, bound.dimension);
-        renderUtil.renderPosition(elPlotArea, bound.position);
-        this._renderLines(elPlotArea, bound.dimension);
+        renderUtil.renderDimension(plotContainer, bound.dimension);
+        renderUtil.renderPosition(plotContainer, bound.position);
+        this._renderLines(plotContainer, bound.dimension);
     },
 
     /**
-     * To render plot component.
+     * Render plot component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @returns {HTMLElement} plot element
@@ -55,18 +55,27 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     render: function(bound, data) {
         var el = dom.create('DIV', this.className);
         this._renderPlotArea(el, bound, data);
-        this.elPlotArea = el;
+        this.plotContainer = el;
         return el;
     },
 
     /**
-     * To resize plot component.
+     * Rerender.
+     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
+     * @param {object} data rendering
+     */
+    rerender: function(bound, data) {
+        this.plotContainer.innerHTML = '';
+        this._renderPlotArea(this.plotContainer, bound, data);
+    },
+
+    /**
+     * Resize plot component.
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      */
     resize: function(bound, data) {
-        this.elPlotArea.innerHTML = '';
-        this._renderPlotArea(this.elPlotArea, bound, data);
+        this.rerender(bound, data);
     },
 
     /**
@@ -104,7 +113,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make html of plot line.
+     * Make html of plot line.
      * @param {object} params parameters
      *      @param {array.<object>} params.positions positions
      *      @param {number} params.size width or height
@@ -134,7 +143,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make pixel value of vertical positions
+     * Make pixel value of vertical positions
      * @param {number} height plot height
      * @returns {array.<number>} positions
      * @private
@@ -146,7 +155,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * To make pixel value of horizontal positions.
+     * Make pixel value of horizontal positions.
      * @param {number} width plot width
      * @returns {array.<number>} positions
      * @private

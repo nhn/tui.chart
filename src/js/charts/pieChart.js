@@ -19,11 +19,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * Column chart.
      * @constructs PieChart
      * @extends ChartBase
-     * @param {array.<array>} userData chart data
+     * @param {array.<array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
-    init: function(userData, theme, options) {
+    init: function(rawData, theme, options) {
         this.className = 'tui-pie-chart';
 
         options.tooltip = options.tooltip || {};
@@ -33,65 +33,48 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         }
 
         ChartBase.call(this, {
-            userData: userData,
+            rawData: rawData,
             theme: theme,
             options: options
         });
 
-        this._addComponents(this.convertedData, theme.chart.background, options);
+        this._addComponents(theme.chart.background, options);
     },
 
     /**
      * Add components
-     * @param {object} convertedData converted data
      * @param {object} chartBackground chart background
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(convertedData, chartBackground, options) {
+    _addComponents: function(chartBackground, options) {
         var legendAlign, isPieLegendType;
         options.legend = options.legend || {};
         legendAlign = options.legend && options.legend.align;
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
-        if (convertedData.joinLegendLabels && !isPieLegendType && !options.legend.hidden) {
+
+        if (!isPieLegendType && !options.legend.hidden) {
             this._addComponent('legend', Legend, {
-                joinLegendLabels: convertedData.joinLegendLabels,
-                legendLabels: convertedData.legendLabels,
                 chartType: options.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this._addComponent('tooltip', Tooltip, {
-            values: convertedData.values,
-            formattedValues: convertedData.formattedValues,
-            labels: convertedData.labels,
-            legendLabels: convertedData.legendLabels,
-            joinLegendLabels: convertedData.joinLegendLabels,
-            userEvent: this.userEvent,
-            chartType: options.chartType
-        });
+        this._addComponent('tooltip', Tooltip, this._makeTooltipData());
 
-        this._addComponent('series', Series, {
+        this._addComponent('pieSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
             chartBackground: chartBackground,
             userEvent: this.userEvent,
-            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null,
-            data: {
-                values: convertedData.values,
-                formattedValues: convertedData.formattedValues,
-                legendLabels: convertedData.legendLabels,
-                joinLegendLabels: convertedData.joinLegendLabels
-            }
+            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null
         });
     },
 
     /**
-     * To make rendering data for pie chart.
+     * Make rendering data for pie chart.
      * @param {object} bounds chart bounds
-     * * @param {object} bounds chart bounds
      * @return {object} data for rendering
      * @private
      * @override
@@ -102,7 +85,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 seriesPosition: bounds.series.position,
                 chartDimension: bounds.chart.dimension
             },
-            series: {
+            pieSeries: {
                 chartWidth: bounds.chart.dimension.width
             }
         };
@@ -114,10 +97,14 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function (component) {
-                return component.componentType === 'series';
-            });
+        var tooltip, serieses;
+
+        ChartBase.prototype._attachCustomEvent.call(this);
+
+        tooltip = this.componentMap.tooltip;
+        serieses = tui.util.filter(this.componentMap, function (component) {
+            return component.componentType === 'series';
+        });
         tui.util.forEach(serieses, function (series) {
             series.on('showTooltip', tooltip.onShow, tooltip);
             series.on('hideTooltip', tooltip.onHide, tooltip);
