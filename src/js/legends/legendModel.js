@@ -134,19 +134,30 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      */
     _setData: function() {
         var legendData = this.legendData,
-            data, startIndex, defaultLegendTheme;
+            data, defaultLegendTheme, startIndex, startThemeIndex;
 
         if (!this.chartTypes) {
             data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.checkedIndexesMap[this.chartType]);
         } else {
             startIndex = 0;
+            startThemeIndex = 0;
             defaultLegendTheme = {
                 colors: defaultTheme.series.colors
             };
             data = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
-                var chartTheme = this.theme[chartType] || defaultLegendTheme,
-                    endIndex = startIndex + this.labels[chartType].length,
-                    datum = this._makeLabelInfoAppliedTheme(legendData.slice(startIndex, endIndex), chartTheme, this.checkedIndexesMap[chartType]);
+                var chartTheme = this.theme[chartType],
+                    labelLen = this.labels[chartType].length,
+                    endIndex = startIndex + labelLen,
+                    themeEndIndex, datum;
+
+                if (!chartTheme) {
+                    themeEndIndex = startThemeIndex + labelLen;
+                    chartTheme = JSON.parse(JSON.stringify(defaultLegendTheme));
+                    chartTheme.colors = chartTheme.colors.slice(startThemeIndex, themeEndIndex);
+                    startThemeIndex = themeEndIndex;
+                }
+
+                datum = this._makeLabelInfoAppliedTheme(legendData.slice(startIndex, endIndex), chartTheme, this.checkedIndexesMap[chartType]);
                 startIndex = endIndex;
                 return datum;
             }, this));

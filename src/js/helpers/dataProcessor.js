@@ -14,7 +14,7 @@ var concat = Array.prototype.concat;
 
 /**
  * Raw data.
- * @typedef array.<{name: string, data: array.<number>}> rawSeriesData
+ * @typedef {array.<{name: string, data: array.<number>}>} rawSeriesData
  */
 
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
@@ -101,7 +101,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Get value.
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @param {? string} chartType chart type
+     * @param {?string} chartType chart type
      * @returns {number} value
      */
     getValue: function(groupIndex, index, chartType) {

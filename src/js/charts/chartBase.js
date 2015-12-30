@@ -175,7 +175,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             theme: this.theme,
             options: this.options,
             hasAxes: this.hasAxes,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            chartType: this.chartType
         }, boundParams));
     },
 
@@ -273,7 +274,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
                 return component.componentType === 'series';
             });
 
-        renderingData.tooltip = tui.util.extend(tooltipData, renderingData.tooltip);
+        renderingData.tooltip = tui.util.extend({
+            checkedLegends: checkedLegends
+        }, tooltipData, renderingData.tooltip);
 
         tui.util.forEach(serieses, function(series, seriesName) {
             renderingData[seriesName] = tui.util.extend({
@@ -292,15 +295,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _rerender: function(checkedLegends, rawData, boundsParams) {
-        var prevWholeLegendData = this.dataProcessor.getWholeLegendData(),
-            bounds, renderingData;
+        var bounds, renderingData;
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
         this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
 
+
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
-        this.dataProcessor.setWholeLegendData(prevWholeLegendData);
+        //this.dataProcessor.setWholeLegendData(prevWholeLegendData);
 
         bounds = this._makeBounds(boundsParams);
         renderingData = this._makeRenderingData(bounds);
@@ -438,7 +441,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Public API for resizable.
-     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     * @api
      */
     resize: function(dimension) {
         var updated, bounds, renderingData;
@@ -462,7 +468,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Set tooltip align option.
-     * @param {string} align align
+     * @param {string} align align (left|center|right, top|middle|bottom)
+     * @api
      */
     setTooltipAlign: function(align) {
         this.componentMap.tooltip.setAlign(align);
@@ -470,7 +477,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Set position option.
-     * @param {{left: number, top: number}} position moving position
+     * @param {object} position moving position
+     *      @param {number} position.left left
+     *      @param {number} position.top top
+     * @api
      */
     setTooltipPosition: function(position) {
         this.componentMap.tooltip.setPosition(position);
@@ -478,6 +488,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Reset tooltip align option.
+     * @api
      */
     resetTooltipAlign: function() {
         this.componentMap.tooltip.resetAlign();
@@ -485,6 +496,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Reset tooltip position.
+     * @api
      */
     resetTooltipPosition: function() {
         this.componentMap.tooltip.resetPosition();

@@ -8,7 +8,6 @@
 
 var seriesTemplate = require('./seriesTemplate'),
     chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     pluginFactory = require('../factories/pluginFactory');

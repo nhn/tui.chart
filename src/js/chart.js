@@ -99,10 +99,13 @@ _createChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -165,6 +168,7 @@ tui.chart.barChart = function(container, data, options) {
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
+ *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
  *          @param {string} options.series.stacked stacked type
  *          @param {boolean} options.series.showLabel whether show label or not
@@ -179,10 +183,13 @@ tui.chart.barChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -245,10 +252,12 @@ tui.chart.columnChart = function(container, data, options) {
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
+ *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
@@ -258,10 +267,13 @@ tui.chart.columnChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -327,10 +339,12 @@ tui.chart.lineChart = function(container, data, options) {
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
+ *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
@@ -340,10 +354,13 @@ tui.chart.lineChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -399,13 +416,14 @@ tui.chart.areaChart = function(container, data, options) {
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object[]} options.yAxis options of vertical axis
- *          @param {string} options.yAxis[].title title of vertical axis
- *          @param {number} options.yAxis[].min minimal value of vertical axis
- *          @param {number} options.yAxis[].max maximum value of vertical axis
+ *      @param {object|array} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
+ *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
  *          @param {object} options.series.column options of column series
  *              @param {string} options.series.column.stacked stacked type
@@ -416,6 +434,7 @@ tui.chart.areaChart = function(container, data, options) {
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
  *              @param {boolean} options.series.line.hasSelection whether has selection or not
+ *              @param {boolean} options.series.line.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
  *              @param {string} options.tooltip.column.suffix suffix of tooltip
@@ -426,10 +445,13 @@ tui.chart.areaChart = function(container, data, options) {
  *                  @param {number} options.tooltip.column.position.top position top
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -512,10 +534,13 @@ tui.chart.comboChart = function(container, data, options) {
  *              @param {number} options.tooltip.position.left position left
  *              @param {number} options.tooltip.position.top position top
  *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align
+ *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
+ * @api
  * @example
  * var container = document.getElementById('container-id'),
  *     data = {
@@ -595,6 +620,7 @@ tui.chart.pieChart = function(container, data, options) {
  *              @param {number} theme.legend.label.fontSize font size of legend label
  *              @param {string} theme.legend.label.fontFamily font family of legend label
  *              @param {string} theme.legend.label.color font color of legend label
+ * @api
  * @example
  * var theme = {
  *   yAxis: {

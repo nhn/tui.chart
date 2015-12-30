@@ -630,7 +630,7 @@ var boundsMaker = {
             return null;
         }
 
-        chartType = params.optionChartTypes && params.optionChartTypes[0] || '';
+        chartType = params.optionChartTypes && params.optionChartTypes[0] || params.chartType;
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
         maxValueLabel = this._getValueAxisMaxLabel(chartType);
         labels = this.dataProcessor.getCategories();

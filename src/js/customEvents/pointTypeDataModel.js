@@ -14,7 +14,7 @@
 /**
  * bound
  * @typedef {{
- *      dimension: {width: number, height: number}
+ *      dimension: {width: number, height: number},
  *      position: position
  *}} bound
  */

@@ -99,7 +99,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         var endHeight, endTop, startEndTops, bound;
 
         endHeight = Math.abs(value * baseInfo.dimension.height);
-        endTop = (baseInfo.isMinus ? 0 : baseInfo.distance.toMax) + chartConst.SERIES_EXPAND_SIZE;
+        endTop = (baseInfo.isMinus ? 0 : (baseInfo.distance.toMax || baseInfo.dimension.height)) + chartConst.SERIES_EXPAND_SIZE;
         startEndTops = this._makeStartEndTops(endTop, endHeight, value);
         bound = this._makeColumnChartBound(tui.util.extend({
             baseBound: {

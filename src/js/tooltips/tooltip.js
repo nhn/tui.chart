@@ -483,7 +483,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
-
         return this.templateFunc(data.category, {
             value: data.value,
             legend: data.legend,
