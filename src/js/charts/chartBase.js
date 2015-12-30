@@ -30,6 +30,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.dataProcessor = this._createDataProcessor(params);
 
+        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+
         /**
          * component array
          * @type {array}
@@ -295,17 +297,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _rerender: function(checkedLegends, rawData, boundsParams) {
-        var bounds, renderingData;
+        var newWholeLegendData, bounds, renderingData;
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
         this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
 
-
+        newWholeLegendData = this.dataProcessor.getWholeLegendData();
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
-        //this.dataProcessor.setWholeLegendData(prevWholeLegendData);
-
+        this.dataProcessor.setWholeLegendData(this.orgWholeLegendData);
         bounds = this._makeBounds(boundsParams);
+        this.dataProcessor.setWholeLegendData(newWholeLegendData);
+
         renderingData = this._makeRenderingData(bounds);
         renderingData = this._makeRerenderingData(renderingData, checkedLegends);
 
