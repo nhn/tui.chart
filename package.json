@@ -1,7 +1,7 @@
 {
   "name": "tui.chart",
   "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "scripts": {
@@ -19,7 +19,7 @@
     "browserify": "^10.2.4",
     "browserify-istanbul": "^0.2.1",
     "del": "^1.2.0",
-    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
+    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-less": "^3.0.3",

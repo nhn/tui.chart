@@ -37,7 +37,7 @@
     },
     "opts": {
         "recurse": true,
-        "private": true,
+        "name": "Chart",
         "destination": "Output Location",
         "tutorials": "samples"
     }
