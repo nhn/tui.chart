@@ -25,14 +25,6 @@
 <body>
 <div id="chart-area"></div>
 <div style="width:640px;margin-left:10px;margin-top:5px;">
-    <!--<div>-->
-        <!--chart type :-->
-        <!--<select id="type">-->
-            <!--<option value="barChart">Bar Chart</option>-->
-            <!--<option value="columnChart">Column Chart</option>-->
-            <!--<option value="lineChart" selected>line Chart</option>-->
-        <!--</select>-->
-    <!--</div>-->
     <div>
         <div style="float:left;">
             <div>data</div>
@@ -86,7 +78,10 @@
     },
     "series": {
         "hasDot": true,
-                "showLabel": true
+        "showLabel": true
+    },
+    "tooltip": {
+        "grouped": true
     },
     "theme": "newTheme"
 }
@@ -130,8 +125,7 @@
 <script src="lib/raphael/raphael-min.js"></script>
 <script src="dist/chart.js"></script>
 <script>
-    var chart = tui.chart,
-        elChartArea = document.getElementById('chart-area'),
+    var elChartArea = document.getElementById('chart-area'),
         elBtn = document.getElementById('btn'),
         data = {
             categories: ['cate1', 'cate2', 'cate3'],
@@ -152,55 +146,8 @@
                     name: 'Legend4',
                     data: [80, -10, -70]
                 }
-            ],
-//            series: {
-//                column: [
-//                    {
-//                        name: 'Legend1',
-//                        data: [20, 30, 50]
-//                    },
-//                    {
-//                        name: 'Legend2',
-//                        data: [40, 40, 60]
-//                    },
-//                    {
-//                        name: 'Legend3',
-//                        data: [60, 50, 10]
-//                    },
-//                    {
-//                        name: 'Legend4',
-//                        data: [80, 10, 70]
-//                    }
-//                ],
-//                line: [
-//                    {
-//                        name: 'Legend2_1',
-//                        data: [1, 2, 3]
-//                    }
-//                ]
-//            }
+            ]
         },
-//        data = {
-//            categories: ['cate1', 'cate2', 'cate3'],
-//            series: [
-//                {
-//                    name: 'Legend1',
-//                    data: 20
-//                },
-//                {
-//                    name: 'Legend2',
-//                    data: 40
-//                },
-//                {
-//                    name: 'Legend3',
-//                    data: 60
-//                },
-//                {
-//                    name: 'Legend4',
-//                    data: 80
-//                }
-//            ]
-//        },
         options = {
             chart: {
                 width: 500,
@@ -210,20 +157,6 @@
             yAxis:{
                 title: 'Y Axis'
             },
-//            yAxis:[
-//                {
-//                    title: 'Y Axis',
-//                    chartType: 'line'
-//                },
-//                {
-//                    title: 'XX Axis'
-//                }
-//            ],
-//            series: {
-//                line: {
-//                    hasDot: true,
-//                },
-//            },
             xAxis: {
                 title: 'X Axis'
             },
@@ -231,32 +164,23 @@
                 showLabel: true
             },
             tooltip: {
-                line: {
-                    suffix: 'px'
-                },
-                column: {
-                    suffix: '%'
-                }
+                grouped: true
             }
-        };
+        },
+        chart, onClick;
 
-//    chart.comboChart(elChartArea, data, options);
-//    chart.pieChart(elChartArea, data, options);
-//    chart.barChart(elChartArea, data, options);
-    chart.lineChart(elChartArea, data, options);
-//    chart.columnChart(elChartArea, data, options);
+    chart = tui.chart.lineChart(elChartArea, data, options);
 
-    var onClick = function() {
+    onClick = function() {
         var type = 'comboChart',
-//          type = document.getElementById('type').value,
             customData = JSON.parse(document.getElementById('data').value),
             options = JSON.parse(document.getElementById('options').value),
             theme = JSON.parse(document.getElementById('theme').value);
 
-        chart.registerTheme(options.theme, theme);
+        tui.chart.registerTheme(options.theme, theme);
 
         elChartArea.innerHTML = '';
-        chart[type](elChartArea, customData, options);
+        tui.chart[type](elChartArea, customData, options);
     };
 </script>
 </body>
