@@ -235,16 +235,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Fire legend event.
      * @param {{chartType: string, index: number}} data data
-     * @param {boolean} isDelayShow whether delay show or not
      * @private
      */
-    _fireLegendSelectionEvent: function(data, isDelayShow) {
+    _fireLegendSelectionEvent: function(data) {
         var chartTypes = this.chartTypes || [data.chartType],
             index = this.legendModel.getSelectedIndex(),
             legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            this.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex, isDelayShow);
+            this.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
         }, this);
     },
 
@@ -267,20 +266,18 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _selectLegend: function(index) {
-        var data = this.legendModel.getDatum(index),
-            isDelayShow = false;
+        var data = this.legendModel.getDatum(index);
 
         this.legendModel.toggleSelectedIndex(index);
 
         if (!tui.util.isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
-            isDelayShow = true;
             this.legendModel.checkSelectedIndex();
             this._fireLegendCheckboxEvent();
         }
 
         this._renderLegendArea(this.legendContainer);
 
-        this._fireLegendSelectionEvent(data, isDelayShow);
+        this._fireLegendSelectionEvent(data);
         this._fireUserEvent(data);
     },
 

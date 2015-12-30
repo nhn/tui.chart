@@ -9,6 +9,7 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var ANIMATION_TIME = 700,
+    ANIMATION_TERM = 26,
     DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
     SELECTION_DOT_RADIUS = 7,
@@ -322,11 +323,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
             item = this.groupDots[groupIndex][index],
-            opacity;
-
-        if (this.dotOpacity === 0) {
             opacity = this.dotOpacity;
-        } else if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+
+        if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
         }
 
@@ -341,10 +340,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _hideGroupDots: function(index) {
-        var dots = this._getPivotGroupDots();
+        var dots = this._getPivotGroupDots(),
+            hasSelectedIndex = !tui.util.isNull(this.selectedLegendIndex),
+            baseOpacity = this.dotOpacity;
 
-        tui.util.forEachArray(dots[index], function(item) {
-            this._hideDot(item.dot);
+        tui.util.forEachArray(dots[index], function(item, groupIndex) {
+            var opacity = baseOpacity;
+
+            if (opacity && hasSelectedIndex && this.selectedLegendIndex !== groupIndex) {
+                opacity = DE_EMPHASIS_OPACITY;
+            }
+
+            this._hideDot(item.dot, opacity);
         }, this);
     },
 
@@ -384,20 +391,26 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     animate: function(callback) {
         var that = this,
-            term = 26,
+            term = ANIMATION_TERM,
             count = parseInt(ANIMATION_TIME / term, 10),
             step = this.dimension.width / count,
-            height = this.dimension.height;
+            seriesHeight = this.dimension.height;
 
-        tui.util.forEachArray(tui.util.range(1, count + 1), function(tick) {
-            setTimeout(function() {
-                that.paper.setSize(step * tick, height);
+        if (this.animations) {
+            tui.util.forEachArray(this.animations, clearTimeout);
+            delete this.animations;
+        }
+
+        this.animations = tui.util.map(tui.util.range(1, count + 1), function(tick) {
+            return setTimeout(function() {
+                that.paper.setSize(step * tick, seriesHeight);
 
                 if (tick === count) {
+                    delete that.animations;
                     callback();
                 }
             }, term * tick);
-        });
+        }, this);
     },
 
     /**

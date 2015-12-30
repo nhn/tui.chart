@@ -52,6 +52,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         options.legend = options.legend || {};
         legendAlign = options.legend && options.legend.align;
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
+
         if (!isPieLegendType && !options.legend.hidden) {
             this._addComponent('legend', Legend, {
                 chartType: options.chartType,

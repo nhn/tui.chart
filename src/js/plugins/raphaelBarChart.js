@@ -190,15 +190,15 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         }
 
         if (chartType === 'column' || value >= 0) {
-            paths.right = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom);
+            paths.right = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom).join(' ');
         }
 
         if (chartType === 'bar' || value < 0) {
-            paths.bottom = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom);
+            paths.bottom = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom).join(' ');
         }
 
         if (chartType === 'column' || value < 0) {
-            paths.left = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom);
+            paths.left = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom).join(' ');
         }
 
         return paths;

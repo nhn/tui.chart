@@ -20,23 +20,23 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3", "cate4"],
+    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
     "series": [
         {
-            "name": "Legend1",
-            "data": [20, 30, 50, 70]
+            "name": "Budget",
+            "data": [5000, 3000, 5000, 7000, 6000, 4000, 1000]
         },
         {
-            "name": "Legend2",
-            "data": [40, 40, 60, 30]
+            "name": "Income",
+            "data": [8000, 1000, 7000, 2000, 6000, 3000, 5000]
         },
         {
-            "name": "Legend3",
-            "data": [60, 50, 10, 10]
+            "name": "Expenses",
+            "data": [4000, 4000, 6000, 3000, 4000, 5000, 7000]
         },
         {
-            "name": "Legend4",
-            "data": [80, 10, 70, 20]
+            "name": "Debt",
+            "data": [6000, 3000, 3000, 1000, 2000, 4000, 3000]
         }
     ]
 }
@@ -49,17 +49,18 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "Stacked Bar Chart"
+        "title": "Stacked Bar Chart",
+        "format": "1,000"
     },
     "yAxis": {
-        "title": "Y Axis"
+        "title": "Month"
     },
     "xAxis": {
-        "title": "X Axis"
+        "title": "Amount",
+        "max": 24000
     },
     "series": {
-        "stacked": "normal",
-        "showLabel": true
+        "stacked": "normal"
     }
 }
         </textarea>
@@ -71,25 +72,8 @@
         <div>Chart Theme</div>
         <textarea id="theme">
 {
-    "chart": {
-        "background": "#ffffff",
-        "fontFamily": "Verdana"
-    },
-    "title": {
-        "color": "#000000"
-    },
-    "plot": {
-        "lineColor": "#e5dbc4",
-        "background": "#f6f1e5"
-    },
     "series": {
-        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
-        "borderColor": "#8e6535"
-    },
-    "legend": {
-        "label": {
-            "color": "#6f491d"
-        }
+        "colors": ["#63A69F", "#F2E1AC", "#F2836B",  "#F2594B"]
     }
 }
         </textarea>
@@ -106,23 +90,23 @@
 <script>
     var container = document.getElementById('chart-area'),
     data = {
-        categories: ['cate1', 'cate2', 'cate3', 'cate4'],
+        categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         series: [
             {
-                name: 'Legend1',
-                data: [20, 30, 50, 70]
+                name: 'Budget',
+                data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
             },
             {
-                name: 'Legend2',
-                data: [40, 40, 60, 30]
+                name: 'Income',
+                data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
             },
             {
-                name: 'Legend3',
-                data: [60, 50, 10, 10]
+                name: 'Expenses',
+                data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
             },
             {
-                name: 'Legend4',
-                data: [80, 10, 70, 20]
+                name: 'Debt',
+                data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
             }
         ]
     },
@@ -130,17 +114,18 @@
         chart: {
             width: 700,
             height: 400,
-            title: 'Stacked Bar Chart'
+            title: 'Stacked Bar Chart',
+            'format': '1,000'
         },
         yAxis: {
-            title: 'Y Axis'
+            title: 'Month'
         },
         xAxis: {
-            title: 'X Axis'
+            title: 'Amount',
+            max: 24000
         },
         series: {
-            stacked: 'normal',
-            showLabel: true
+            stacked: 'normal'
         }
     };
     tui.chart.barChart(container, data, options);

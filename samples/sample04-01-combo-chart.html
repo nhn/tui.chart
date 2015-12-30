@@ -20,30 +20,31 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3", "cate4", "cate5", "cate6"],
+    "categories": ["Apr", "May", "June", "July", "Aug", "Sep", "Oct"],
     "series": {
         "column": [
             {
-                "name": "Legend1",
-                "data": [20, 30, 50, 70, 80, 40]
+                "name": "Seoul",
+                "data": [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9]
             },
             {
-                "name": "Legend2",
-                "data": [40, 40, 60, 30, 20, 50]
+                "name": "NewYork",
+                "data": [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3]
+
             },
             {
-                "name": "Legend3",
-                "data": [60, 50, 10, 70, 40, 10]
+                "name": "Sydney",
+                "data": [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6]
             },
             {
-                "name": "Legend4",
-                "data": [80, 10, 70, 80, 10, 30]
+                "name": "Moskva",
+                "data": [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2]
             }
         ],
         "line": [
             {
-                "name": "Legend",
-                "data": [1, 2, 3, 7, 4, 2]
+                "name": "Average",
+                "data": [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3]
             }
         ]
     }
@@ -59,13 +60,11 @@
         "height": 400,
         "title": "Combo Chart"
     },
-    "yAxis": [{
-        "title": "Y Axis"
-    }, {
-        "title": "YR Axis"
-    }],
+    "yAxis": {
+        "title": "Temperature (Celsius)"
+    },
     "xAxis": {
-        "title": "X Axis"
+        "title": "City"
     },
     "series": {
         "line": {
@@ -73,7 +72,8 @@
         }
     },
     "tooltip": {
-        "grouped": true
+        "grouped": true,
+        "suffix": "°C"
     }
 }
         </textarea>
@@ -85,26 +85,12 @@
         <div>Chart Theme</div>
         <textarea id="theme">
 {
-    "chart": {
-        "background": "#ffffff",
-        "fontFamily": "Verdana"
-    },
-    "title": {
-        "color": "#000000"
-    },
-    "plot": {
-        "lineColor": "#e5dbc4",
-        "background": "#f6f1e5"
-    },
     "series": {
-            "column": {
-                "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
-                "borderColor": "#8e6535"
-            }
-    },
-    "legend": {
-        "label": {
-            "color": "#6f491d"
+        "column": {
+            "colors": ["#74807B", "#5EA393", "#A4E2C5", "#F7A655"]
+        },
+        "line": {
+            "colors": ["#E05D64"]
         }
     }
 }
@@ -123,30 +109,32 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5', 'cate6'],
+            categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
             series: {
                 column: [
                     {
-                        name: 'Legend1',
-                        data: [20, 30, 50, 70, 80, 40]
+                        name: 'Seoul',
+                        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9]
                     },
                     {
-                        name: 'Legend2',
-                        data: [40, 40, 60, 30, 20, 50]
+                        name: 'NewYork',
+                        data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3]
+
+                    },
+
+                    {
+                        name: 'Sydney',
+                        data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6]
                     },
                     {
-                        name: 'Legend3',
-                        data: [60, 50, 10, 70, 40, 10]
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70, 80, 10, 30]
+                        name: 'Moskva',
+                        data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2]
                     }
                 ],
                 line: [
                     {
-                        name: 'Legend',
-                        data: [1, 2, 3, 7, 4, 2]
+                        name: 'Average',
+                        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3]
                     }
                 ]
             }
@@ -157,13 +145,11 @@
                 height: 400,
                 title: 'Combo Chart'
             },
-            yAxis: [{
-                title: 'Y Axis'
-            }, {
-                title: 'YR Axis'
-            }],
+            yAxis: {
+                title: 'Temperature (Celsius)'
+            },
             xAxis: {
-                title: 'X Axis'
+                title: 'City'
             },
             series: {
                 line: {
@@ -171,7 +157,8 @@
                 }
             },
             tooltip: {
-                grouped: true
+                grouped: true,
+                suffix: '°C'
             }
         };
     tui.chart.comboChart(container, data, options);

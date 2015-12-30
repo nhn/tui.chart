@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Center Legend Pie Chart Sample</title>
+    <title>Spline Line Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -14,37 +14,21 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="pieChart" />
+        <input type="hidden" id="type" value="lineChart" />
     </div>
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Browser"],
+    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov"],
     "series": [
         {
-            "name": "Chrome",
-            "data": 46.02
+            "name": "Budget",
+            "data": [5000, 3000, 6000, 3000, 6000, 4000]
         },
         {
-            "name": "IE",
-            "data": 20.47
-        },
-        {
-            "name": "Firefox",
-            "data": 17.71
-        },
-        {
-            "name": "Safari",
-            "data": 5.45
-        },
-        {
-            "name": "Opera",
-            "data": 3.10
-        },
-        {
-            "name": "Etc",
-            "data": 7.25
+            "name": "Income",
+            "data": [8000, 1000, 7000, 2000, 5000, 3000]
         }
     ]
 }
@@ -55,18 +39,24 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
+        "width": 700,
         "height": 400,
-        "title": "Center Legend Pie Chart"
+        "title": "Spline Line Chart"
+    },
+    "yAxis": {
+        "title": "Amount",
+        "min": 0,
+        "max": 9000
+    },
+    "xAxis": {
+        "title": "Month"
     },
     "series": {
-        "showLabel": true
+        "spline": true,
+        "hasDot": true
     },
     "tooltip": {
-        "suffix": "%"
-    },
-    "legend": {
-        "align": "center"
+        "suffix": "°C"
     }
 }
         </textarea>
@@ -79,7 +69,7 @@
         <textarea id="theme">
 {
     "series": {
-        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
+        "colors": [ "#D95576", "#00628C", "#00A8DA", "#1EA399", "#F7A655"]
     }
 }
         </textarea>
@@ -97,52 +87,42 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['Browser'],
+            categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
             series: [
                 {
-                    name: 'Chrome',
-                    data: 46.02
+                    name: 'Budget',
+                    data: [5000, 3000, 6000, 3000, 6000, 4000]
                 },
                 {
-                    name: 'IE',
-                    data: 20.47
-                },
-                {
-                    name: 'Firefox',
-                    data: 17.71
-                },
-                {
-                    name: 'Safari',
-                    data: 5.45
-                },
-                {
-                    name: 'Opera',
-                    data: 3.10
-                },
-                {
-                    name: 'Etc',
-                    data: 7.25
+                    name: 'Income',
+                    data: [8000, 1000, 7000, 2000, 5000, 3000]
+
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
+                width: 700,
                 height: 400,
-                title: 'Center Legend Pie Chart'
+                title: 'Spline Line Chart'
+            },
+            yAxis: {
+                title: 'Amount',
+                min: 0,
+                max: 9000
+            },
+            xAxis: {
+                title: 'Month'
             },
             series: {
-                showLabel: true
+                spline: true,
+                hasDot: true
             },
             tooltip: {
-                suffix: '%'
-            },
-            legend: {
-                align: 'center'
+                suffix: '°C'
             }
         };
-
-    tui.chart.pieChart(container, data, options);
+    tui.chart.lineChart(container, data, options);
 </script>
 </body>
 </html>

@@ -47,11 +47,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.paper = paper = Raphael(container, 1, dimension.height);
         this.stackedOption = data.options.stacked;
-        this.isSpline = data.options.isSpline;
+        this.spline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
 
-        groupPaths = data.options.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         groupAreas = this._renderAreas(paper, groupPaths, colors);
         tooltipLine = this._renderTooltipLine(paper, dimension.height);
         selectionDot = this._makeSelectionDot(paper);
@@ -69,6 +69,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
+        delete this.pivotGroupDots;
 
         return paper;
     },
@@ -104,9 +105,15 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _renderAreas: function(paper, groupPaths, colors) {
-        var groupAreas = tui.util.map(groupPaths, function(path, groupIndex) {
+        var groupAreas;
+
+        colors = colors.slice(0, groupPaths.length);
+        colors.reverse();
+        groupPaths.reverse();
+
+        groupAreas = tui.util.map(groupPaths, function(path, groupIndex) {
             var areaColor = colors[groupIndex] || 'transparent',
-                lineColor = this.stackedOption ? '#ffffff' : areaColor;
+                lineColor = areaColor;
 
             return {
                 area: this._renderArea(paper, path.area.join(' '), areaColor),
@@ -114,7 +121,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             };
         }, this);
 
-        return groupAreas;
+        return groupAreas.reverse();
     },
 
     /**
@@ -168,8 +175,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Make spline area bottom path.
-     * @param {array.<{left: number}>} positions positions
-     * @param {array.<string | number>} linesPath lines path
+     * @param {array.<{left: number, top: number}>} positions positions
+     * @param {array.<{left: number, top: number}>} prevPositions previous positions
      * @returns {array.<string | number>} spline area path
      * @private
      */
@@ -191,7 +198,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             positions[0].left -= 1;
             linesPath = this._makeSplineLinesPath(positions);
-            areasBottomPath = this._makeSplineAreaBottomPath(positions, linesPath);
+            areasBottomPath = this._makeSplineAreaBottomPath(positions);
 
             return {
                 area: linesPath.concat(areasBottomPath),
@@ -211,7 +218,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupPaths = this.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
@@ -241,10 +248,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             area.area.attr({'fill-opacity': opacity});
-
-            if (!that.stackedOption) {
-                area.line.attr({'stroke-opacity': opacity});
-            }
+            area.line.attr({'stroke-opacity': opacity});
 
             tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
                 if (that.dotOpacity) {

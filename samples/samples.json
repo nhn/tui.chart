@@ -20,6 +20,9 @@
   "sample03-01-line-chart": {
     "title": "Line Chart Sample"
   },
+  "sample03-02-spline-line-chart": {
+    "title": "Spline Line Chart Sample"
+  },
   "sample04-01-combo-chart": {
     "title": "Combo Chart Sample"
   },
@@ -34,5 +37,8 @@
   },
   "sample06-01-area-chart": {
     "title": "Area Chart Sample"
+  },
+  "sample06-02-stacked-area-chart": {
+    "title": "Stacked Area Chart Sample"
   }
 }

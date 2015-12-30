@@ -251,7 +251,6 @@ describe('test Legend', function() {
             expect(args[0]).toBe('selectColumnLegend');
             expect(args[1]).toBe('column');
             expect(args[2]).toBe(0);
-            expect(args[3]).toBe(true);
         });
     });
 

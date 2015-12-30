@@ -20,23 +20,19 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1", "cate2", "cate3", "cate4"],
+    "categories": ["May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
     "series": [
         {
-            "name": "Legend1",
-            "data": [-20, 30, 50, -10]
+            "name": "Budget",
+            "data": [4000, 5000, 3000, 5000, 7000, 6000, 4000, 1000]
         },
         {
-            "name": "Legend2",
-            "data": [40, -40, 60, -30]
+            "name": "Income",
+            "data": [7000, 8000, 1000, 7000, 2000, 7000, 3000, 5000]
         },
         {
-            "name": "Legend3",
-            "data": [-60, 50, -10, -50]
-        },
-        {
-            "name": "Legend4",
-            "data": [80, -10, -70, 80]
+            "name": "Expenses",
+            "data": [-5000, -4000, -4000, -6000, -3000, -4000, -5000, -7000]
         }
     ]
 }
@@ -49,19 +45,19 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "Negative Bar Chart"
+        "title": "Negative Bar Chart",
+        "format": "1,000"
     },
     "yAxis": {
-        "title": "Y Axis"
+        "title": "Month"
     },
     "xAxis": {
-        "title": "X Axis"
+        "title": "Amount",
+        "min": -10000,
+        "max": 10000
     },
     "series": {
-      "showLabel": true
-    },
-    "legend": {
-        "hidden": true
+        "showLabel": true
     }
 }
         </textarea>
@@ -73,25 +69,8 @@
         <div>Chart Theme</div>
         <textarea id="theme">
 {
-    "chart": {
-        "background": "#ffffff",
-        "fontFamily": "Verdana"
-    },
-    "title": {
-        "color": "#000000"
-    },
-    "plot": {
-        "lineColor": "#e5dbc4",
-        "background": "#f6f1e5"
-    },
     "series": {
-        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#f5f5f5"],
-        "borderColor": "#8e6535"
-    },
-    "legend": {
-        "label": {
-            "color": "#6f491d"
-        }
+        "colors": ["#63A69F", "#F2E1AC", "#F2836B",  "#F2594B"]
     }
 }
         </textarea>
@@ -107,46 +86,42 @@
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
-    data = {
-        categories: ['cate1', 'cate2', 'cate3', 'cate3'],
-        series: [
-            {
-                name: 'Legend1',
-                data: [-20, 30, 50, -10]
+        data = {
+            categories: ['May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            series: [
+                {
+                    name: 'Budget',
+                    data: [4000, 5000, 3000, 5000, 7000, 6000, 4000, 1000]
+                },
+                {
+                    name: 'Income',
+                    data: [7000, 8000, 1000, 7000, 2000, 7000, 3000, 5000]
+                },
+                {
+                    name: 'Expenses',
+                    data: [-5000, -4000, -4000, -6000, -3000, -4000, -5000, -7000]
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Negative Bar Chart',
+                "format": "1,000"
             },
-            {
-                name: 'Legend2',
-                data: [40, -40, 60, -30]
+            yAxis: {
+                title: 'Month'
             },
-            {
-                name: 'Legend3',
-                data: [-60, 50, -10, 50]
+            xAxis: {
+                title: 'Amount',
+                min: -10000,
+                max: 10000
             },
-            {
-                name: 'Legend4',
-                data: [80, -10, -70, 80]
+            series: {
+                showLabel: true
             }
-        ]
-    },
-    options = {
-        chart: {
-            width: 700,
-            height: 400,
-            title: 'Negative Bar Chart'
-        },
-        yAxis: {
-            title: 'Y Axis'
-        },
-        xAxis: {
-            title: 'X Axis'
-        },
-        series: {
-            showLabel: true
-        },
-        legend: {
-            hidden: true
-        }
-    };
+        };
     tui.chart.barChart(container, data, options);
 </script>
 </body>

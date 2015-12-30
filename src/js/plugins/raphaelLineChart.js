@@ -39,13 +39,13 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = data.options.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
+            groupPaths = data.options.spline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper, groupLines, tooltipLine, selectionDot, groupDots;
 
         this.paper = paper = Raphael(container, 1, dimension.height);
-        this.isSpline = data.options.isSpline;
+        this.splineOption = data.options.spline;
         this.dimension = dimension;
 
         groupLines = this._renderLines(paper, groupPaths, colors);
@@ -67,6 +67,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.tooltipLine = tooltipLine;
         this.groupDots = groupDots;
         this.dotOpacity = opacity;
+        delete this.pivotGroupDots;
 
         return paper;
     },
@@ -124,7 +125,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
+        this.groupPaths = this.splineOption ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
@@ -140,9 +141,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Select legend.
      * @param {?number} legendIndex legend index
-     * @param {boolean} isDelayShow whether delay show or not
      */
-    selectLegend: function(legendIndex, isDelayShow) {
+    selectLegend: function(legendIndex) {
         var that = this,
             noneSelected = tui.util.isNull(legendIndex);
 
@@ -156,7 +156,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;
 
-                if (that.dotOpacity && !isDelayShow) {
+                if (that.dotOpacity) {
                     item.dot.attr({'fill-opacity': opacity});
                 }
             });

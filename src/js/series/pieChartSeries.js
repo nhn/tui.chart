@@ -23,8 +23,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
-    init: function() {
-        Series.apply(this, arguments);
+    init: function(params) {
+        /**
+         * legend align option.
+         * @type {boolean}
+         */
+        this.legendAlign = params.legendAlign;
+
+        Series.call(this, params);
     },
 
     /**
@@ -422,6 +428,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
         }, params), seriesLabelContainer);
+
         this.graphRenderer.renderLegendLines(outerPositions);
     },
 

@@ -20,31 +20,31 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["cate1"],
+    "categories": ["Browser"],
     "series": [
         {
-            "name": "Legend1",
-            "data": 20
+            "name": "Chrome",
+            "data": 46.02
         },
         {
-            "name": "Legend2",
-            "data": 50
+            "name": "IE",
+            "data": 20.47
         },
         {
-            "name": "Legend3",
-            "data": 60
+            "name": "Firefox",
+            "data": 17.71
         },
         {
-            "name": "Legend4",
-            "data": 80
+            "name": "Safari",
+            "data": 5.45
         },
         {
-            "name": "Legend5",
-            "data": 10
+            "name": "Opera",
+            "data": 3.10
         },
         {
-            "name": "Legend6",
-            "data": 30
+            "name": "Etc",
+            "data": 7.25
         }
     ]
 }
@@ -75,21 +75,8 @@
         <div>Chart Theme</div>
         <textarea id="theme">
 {
-    "chart": {
-        "background": "#e5dbc4",
-        "fontFamily": "Verdana"
-    },
-    "title": {
-        "color": "#000000"
-    },
     "series": {
-        "colors": ["#40abb4", "#e78a31", "#c1c452", "#795224", "#555555"],
-        "borderColor": "#8e6535"
-    },
-    "legend": {
-        "label": {
-            "color": "#6f491d"
-        }
+        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
     }
 }
         </textarea>
@@ -107,30 +94,31 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
+            categories: ['Browser'],
             series: [
                 {
-                    name: 'Legend1',
-                    data: 20
+                    name: 'Chrome',
+                    data: 46.02
                 },
                 {
-                    name: 'Legend2',
-                    data: 50
+                    name: 'IE',
+                    data: 20.47
                 },
                 {
-                    name: 'Legend3',
-                    data: 60
+                    name: 'Firefox',
+                    data: 17.71
                 },
                 {
-                    name: 'Legend4',
-                    data: 80
+                    name: 'Safari',
+                    data: 5.45
                 },
                 {
-                    name: 'Legend5',
-                    data: 10
+                    name: 'Opera',
+                    data: 3.10
                 },
                 {
-                    name: 'Legend6',
-                    data: 30
+                    name: 'Etc',
+                    data: 7.25
                 }
             ]
         },
@@ -142,6 +130,9 @@
             },
             series: {
                 showLabel: true
+            },
+            "tooltip": {
+                "suffix": "%"
             },
             legend: {
                 align: 'outer'

@@ -118,7 +118,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
         return {
             groupPositions: this._makePositions(bound.dimension),
-            zeroTop: zeroTop
+            zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }
 });

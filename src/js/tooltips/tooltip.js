@@ -40,7 +40,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeTooltipHtml: function(category, item) {
         return tooltipTemplate.tplDefault(tui.util.extend({
-            category: category
+            category: category || ''
         }, item));
     },
 
@@ -137,7 +137,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             formattedValues = orgFormattedValues;
             legendLabels = orgLegendLabels;
         }
-
 
         tui.util.forEach(formattedValues, function(groupValues, chartType) {
             tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {

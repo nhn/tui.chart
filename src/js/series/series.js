@@ -559,9 +559,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      *On select legend.
      * @param {string} chartType chart type
      * @param {?number} legendIndex legend index
-     * @param {boolean} isDelayShow whether delay show or not
      */
-    onSelectLegend: function(chartType, legendIndex, isDelayShow) {
+    onSelectLegend: function(chartType, legendIndex) {
         var groupValues = this.dataProcessor.getGroupValues(this.chartType);
 
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
@@ -572,7 +571,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (groupValues && groupValues.length) {
             this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
-            this.graphRenderer.selectLegend(legendIndex, isDelayShow);
+            this.graphRenderer.selectLegend(legendIndex);
         }
     }
 });
