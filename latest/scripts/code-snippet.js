@@ -1,4 +1,100 @@
-/*!code-snippet v1.0.2 | NHN Entertainment*/
+/*!code-snippet v1.0.6 | NHN Entertainment*/
+/**********
+ * array.js
+ **********/
+
+/**
+ * @fileoverview This module has some functions for handling array.
+ * @author NHN Ent.
+ *         FE Development Team <jiung.kang@nhnent.com>
+ * @dependency type.js
+ */
+
+(function(tui) {
+    'use strict';
+    if (!tui) {
+        tui = window.tui = {};
+    }
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
+    }
+
+    var aps = Array.prototype.slice;
+
+    /**
+     * Generate an integer Array containing an arithmetic progression.
+     * @param {number} start
+     * @param {number} stop
+     * @param {number} step
+     * @memberof tui.util
+     * @returns {Array}
+     * @example
+     *
+     *   var arr = tui.util.range(5);
+     *   console.log(arr); // [0,1,2,3,4]
+     *
+     *   arr = tui.util.range(1, 5);
+     *   console.log(arr); // [1,2,3,4]
+     *
+     *   arr = tui.util.range(2, 10, 2);
+     *   console.log(arr); // [2,4,6,8]
+     *
+     *   arr = tui.util.range(10, 2, -2);
+     *   console.log(arr); // [10,8,6,4]
+     */
+    var range = function(start, stop, step) {
+        var arr = [],
+            flag;
+
+        if (tui.util.isUndefined(stop)) {
+            stop = start || 0;
+            start = 0;
+        }
+
+        step = step || 1;
+        flag = step < 0 ? -1 : 1;
+        stop *= flag;
+
+        for(; start * flag < stop; start += step) {
+            arr.push(start);
+        }
+
+        return arr;
+    };
+
+    /**
+     * Zip together multiple lists into a single array
+     * @param {...Array}
+     * @memberof tui.util
+     * @returns {Array}
+     * @example
+     *
+     *   var result = tui.util.zip([1, 2, 3], ['a', 'b','c'], [true, false, true]);
+     *
+     *   console.log(result[0]); // [1, 'a', true]
+     *   console.log(result[1]); // [2, 'b', false]
+     *   console.log(result[2]); // [3, 'c', true]
+     */
+    var zip = function() {
+        var arr2d = aps.call(arguments),
+            result = [];
+
+        tui.util.forEach(arr2d, function(arr) {
+            tui.util.forEach(arr, function(value, index) {
+                if (!result[index]) {
+                    result[index] = [];
+                }
+                result[index].push(value);
+            });
+        });
+
+        return result;
+    };
+
+    tui.util.range = range;
+    tui.util.zip = zip;
+})(window.tui);
+
 /**********
  * browser.js
  **********/
@@ -7,35 +103,35 @@
  * @fileoverview This module detects the kind of well-known browser and version.
  * @author NHN Ent.
  *         FE Development Team <e0242@nhnent.com>
+ * @namespace tui.util
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
-     * This object has an information that indicate the kind of browser.
+     * This object has an information that indicate the kind of browser.<br>
      * The list below is a detectable browser list.
-     * - ie7 ~ ie11
-     * - chrome
-     * - firefox
-     * - safari
-     *
-     * @memberof ne.util
+     *  - ie7 ~ ie11
+     *  - chrome
+     *  - firefox
+     *  - safari
+     * @memberof tui.util
      * @example
-     *  ne.util.browser.chrome === true;    // chrome
-     *  ne.util.browser.firefox === true;    // firefox
-     *  ne.util.browser.safari === true;    // safari
-     *  ne.util.browser.msie === true;    // IE
-     *  ne.util.browser.other === true;    // other browser
-     *  ne.util.browser.version;    // browser version
+     *  tui.util.browser.chrome === true;    // chrome
+     *  tui.util.browser.firefox === true;    // firefox
+     *  tui.util.browser.safari === true;    // safari
+     *  tui.util.browser.msie === true;    // IE
+     *  tui.util.browser.other === true;    // other browser
+     *  tui.util.browser.version;    // browser version
      */
     var browser = {
         chrome: false,
@@ -91,8 +187,8 @@
     };
 
     detector[appName]();
-    ne.util.browser = browser;
-})(window.ne);
+    tui.util.browser = browser;
+})(window.tui);
 
 /**********
  * collection.js
@@ -105,25 +201,25 @@
  * @dependency type.js, object.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
-     * This variable saves whether the 'indexOf' method is in Array.prototype or not.
+     * This variable saves whether the 'indexOf' method is in Array.prototype or not.<br>
      * And it will be checked only once when the page is loaded.
      * @type {boolean}
      */
     var hasIndexOf = !!Array.prototype.indexOf;
 
     /**
-     * Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.
-     * If the callback function returns false, the loop will be stopped.
+     * Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.<br>
+     * If the callback function returns false, the loop will be stopped.<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - The value of the element
      *  - The index of the element
@@ -131,7 +227,7 @@
      * @param {Array} arr The array(or Array-like object) that will be traversed
      * @param {function} iteratee Callback function
      * @param {Object} [context] Context(this) of callback function
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var sum = 0;
      *
@@ -155,8 +251,8 @@
 
 
     /**
-     * Execute the provided callback once for each property of object which actually exist.
-     * If the callback function returns false, the loop will be stopped.
+     * Execute the provided callback once for each property of object which actually exist.<br>
+     * If the callback function returns false, the loop will be stopped.<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - The value of the property
      *  - The name of the property
@@ -164,7 +260,7 @@
      * @param {Object} obj The object that will be traversed
      * @param {function} iteratee  Callback function
      * @param {Object} [context] Context(this) of callback function
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var sum = 0;
      *
@@ -188,9 +284,9 @@
     }
 
     /**
-     * Execute the provided callback once for each property of object(or element of array) which actually exist.
-     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of example).
-     * If the callback function returns false, the loop will be stopped.
+     * Execute the provided callback once for each property of object(or element of array) which actually exist.<br>
+     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of example).<br>
+     * If the callback function returns false, the loop will be stopped.<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - The value of the property(or The value of the element)
      *  - The name of the property(or The index of the element)
@@ -198,7 +294,7 @@
      * @param {Object} obj The object that will be traversed
      * @param {function} iteratee Callback function
      * @param {Object} [context] Context(this) of callback function
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  //ex1
      *  var sum = 0;
@@ -217,16 +313,16 @@
      *  }
      */
     function forEach(obj, iteratee, context) {
-        if (ne.util.isArray(obj)) {
-            ne.util.forEachArray(obj, iteratee, context);
+        if (tui.util.isArray(obj)) {
+            tui.util.forEachArray(obj, iteratee, context);
         } else {
-            ne.util.forEachOwnProperties(obj, iteratee, context);
+            tui.util.forEachOwnProperties(obj, iteratee, context);
         }
     }
 
     /**
-     * Execute the provided callback function once for each element in an array, in order, and constructs a new array from the results.
-     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of forEach example)
+     * Execute the provided callback function once for each element in an array, in order, and constructs a new array from the results.<br>
+     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of forEach example)<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - The value of the property(or The value of the element)
      *  - The name of the property(or The index of the element)
@@ -235,7 +331,7 @@
      * @param {function} iteratee Callback function
      * @param {Object} [context] Context(this) of callback function
      * @returns {Array} A new array composed of returned values from callback function
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var result = map([0,1,2,3], function(value) {
      *      return value + 1;
@@ -248,7 +344,7 @@
 
         context = context || null;
 
-        ne.util.forEach(obj, function() {
+        tui.util.forEach(obj, function() {
             resultArray.push(iteratee.apply(context, arguments));
         });
 
@@ -256,8 +352,8 @@
     }
 
     /**
-     * Execute the callback function once for each element present in the array(or Array-like object or plain object).
-     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of forEach example)
+     * Execute the callback function once for each element present in the array(or Array-like object or plain object).<br>
+     * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of forEach example)<br>
      * Callback function(iteratee) is invoked with four arguments:
      *  - The previousValue
      *  - The currentValue
@@ -267,7 +363,7 @@
      * @param {function} iteratee Callback function
      * @param {Object} [context] Context(this) of callback function
      * @returns {*} The result value
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var result = reduce([0,1,2,3], function(stored, value) {
      *      return stored + value;
@@ -283,8 +379,8 @@
 
         context = context || null;
 
-        if (!ne.util.isArray(obj)) {
-            keys = ne.util.keys(obj);
+        if (!tui.util.isArray(obj)) {
+            keys = tui.util.keys(obj);
         }
 
         length = keys ? keys.length : obj.length;
@@ -298,11 +394,11 @@
         return store;
     }
     /**
-     * Transform the Array-like object to Array.
+     * Transform the Array-like object to Array.<br>
      * In low IE (below 8), Array.prototype.slice.call is not perfect. So, try-catch statement is used.
      * @param {*} arrayLike Array-like object
      * @return {Array} Array
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var arrayLike = {
      *      0: 'one',
@@ -330,7 +426,7 @@
     }
 
     /**
-     * Create a new array or plain object with all elements(or properties) that pass the test implemented by the provided function.
+     * Create a new array or plain object with all elements(or properties) that pass the test implemented by the provided function.<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - The value of the property(or The value of the element)
      *  - The name of the property(or The index of the element)
@@ -339,7 +435,7 @@
      * @param {function} iteratee Callback function
      * @param {Object} [context] Context(this) of callback function
      * @returns {Object} plain object or Array
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var result1 = filter([0,1,2,3], function(value) {
      *      return (value % 2 === 0);
@@ -359,11 +455,11 @@
 
         context = context || null;
 
-        if (!ne.util.isObject(obj) || !ne.util.isFunction(iteratee)) {
+        if (!tui.util.isObject(obj) || !tui.util.isFunction(iteratee)) {
             throw new Error('wrong parameter');
         }
 
-        if (ne.util.isArray(obj)) {
+        if (tui.util.isArray(obj)) {
             result = [];
             add = function(result, args) {
                 result.push(args[0]);
@@ -375,7 +471,7 @@
             };
         }
 
-        ne.util.forEach(obj, function() {
+        tui.util.forEach(obj, function() {
             if (iteratee.apply(context, arguments)) {
                 add(result, arguments);
             }
@@ -385,12 +481,12 @@
     };
 
     /**
-     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.
+     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.<br>
      * It compares searchElement to elements of the Array using strict equality (the same method used by the ===, or triple-equals, operator).
      * @param {*} searchElement Element to locate in the array
      * @param {Array} array Array that will be traversed.
      * @param {number} startIndex Start index in array for searching (default 0)
-     * @memberof ne.util
+     * @memberof tui.util
      * @return {number} the First index at which a given element, or -1 if it is not present
      * @example
      *
@@ -398,14 +494,14 @@
      *       idx1,
      *       idx2;
      *
-     *   idx1 = ne.util.inArray('one', arr, 3);
+     *   idx1 = tui.util.inArray('one', arr, 3);
      *   alert(idx1); // -1
      *
-     *   idx2 = ne.util.inArray('one', arr);
+     *   idx2 = tui.util.inArray('one', arr);
      *   alert(idx2); // 0
      */
     var inArray = function(searchElement, array, startIndex) {
-        if (!ne.util.isArray(array)) {
+        if (!tui.util.isArray(array)) {
             return -1;
         }
 
@@ -417,7 +513,7 @@
             length = array.length;
 
         // set startIndex
-        if (ne.util.isUndefined(startIndex)) {
+        if (tui.util.isUndefined(startIndex)) {
             startIndex = 0;
         } else if (startIndex >= length || startIndex < 0) {
             return -1;
@@ -433,16 +529,49 @@
         return -1;
     };
 
-    ne.util.forEachOwnProperties = forEachOwnProperties;
-    ne.util.forEachArray = forEachArray;
-    ne.util.forEach = forEach;
-    ne.util.toArray = toArray;
-    ne.util.map = map;
-    ne.util.reduce = reduce;
-    ne.util.filter = filter;
-    ne.util.inArray = inArray;
+    /**
+     * fetching a property
+     * @param {Array} arr target collection
+     * @param {String|Number} property property name
+     * @memberof tui.util
+     * @returns {Array}
+     * @example
+     *   var objArr = [
+     *         {'abc': 1, 'def': 2, 'ghi': 3},
+     *         {'abc': 4, 'def': 5, 'ghi': 6},
+     *         {'abc': 7, 'def': 8, 'ghi': 9}
+     *       ],
+     *       arr2d = [
+     *         [1, 2, 3],
+     *         [4, 5, 6],
+     *         [7, 8, 9]
+     *       ],
+     *       result;
+     *
+     *   result = tui.util.pluck(objArr, 'abc');
+     *   console.log(result) // [1, 4, 7]
+     *
+     *   result = tui.util.pluck(arr2d, 2);
+     *   console.log(result) // [3, 6, 9]
+     */
+    var pluck = function(arr, property) {
+        var result = tui.util.map(arr, function(item) {
+            return item[property];
+        });
+        return result;
+    };
 
-})(window.ne);
+    tui.util.forEachOwnProperties = forEachOwnProperties;
+    tui.util.forEachArray = forEachArray;
+    tui.util.forEach = forEach;
+    tui.util.toArray = toArray;
+    tui.util.map = map;
+    tui.util.reduce = reduce;
+    tui.util.filter = filter;
+    tui.util.inArray = inArray;
+    tui.util.pluck = pluck;
+
+})(window.tui);
 
 /**********
  * customEvent.js
@@ -450,23 +579,23 @@
 
 /**
  * @fileoverview
- *  This module provides some functions for custom events.
+ *  This module provides some functions for custom events.<br>
  *  And it is implemented in the observer design pattern.
  * @author NHN Ent.
  *         FE Development Team <e0242@nhnent.com>
  * @dependency type.js, collection.js object.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
 
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -479,7 +608,7 @@
 
     /**
      * A data structure for storing handlerItems bound with a specific context
-     *  and is a unit item of ctxEvents.
+     *  and is a unit item of ctxEvents.<br>
      * Handlers in this item, will be executed with same event.
      * @ignore
      * @typedef {Object.<string, handlerItem>} ctxEventsItem
@@ -530,7 +659,7 @@
 
     /**
      * @constructor
-     * @memberof ne.util
+     * @memberof tui.util
      */
     function CustomEvents() {
         /**
@@ -560,7 +689,7 @@
      *  function Model() {
      *      this.name = '';
      *  }
-     *  ne.util.CustomEvents.mixin(Model);
+     *  tui.util.CustomEvents.mixin(Model);
      *
      *  var model = new Model();
      *  model.on('change', function() { this.name = 'model'; }, this);
@@ -568,7 +697,7 @@
      *  alert(model.name); // 'model';
      */
     CustomEvents.mixin = function(func) {
-        ne.util.extend(func.prototype, CustomEvents.prototype);
+        tui.util.extend(func.prototype, CustomEvents.prototype);
     };
 
     /**********
@@ -577,7 +706,7 @@
 
     /**
      * Work similarly to Array.prototype.forEach(),
-     *  however does Array.prototype.splice() additionally.
+     *  however does Array.prototype.splice() additionally.<br>
      * Callback(iteratee) function is invoked with four arguments:
      *  - The value of the element
      *  - The index of the element
@@ -596,7 +725,7 @@
                 i -= 1;
             };
 
-        if (!ne.util.isExisty(arr) || !ne.util.isArray(arr)) {
+        if (!tui.util.isExisty(arr) || !tui.util.isArray(arr)) {
             return;
         }
 
@@ -614,7 +743,7 @@
      **********/
 
     /**
-     * Execute the callback once for each ctxEventsItem.
+     * Execute the callback once for each ctxEventsItem.<br>
      * Callback function(iteratee) is invoked with three arguments:
      *  - {ctxEventsItem} A unit item of ctxEvents
      *  - {string} A key (ex - 'eventName_idx' or 'eventName_len')
@@ -624,12 +753,12 @@
      */
     CustomEvents.prototype._eachCtxEvents = function(iteratee) {
         var events = this._ctxEvents;
-        ne.util.forEachOwnProperties(events, iteratee);
+        tui.util.forEachOwnProperties(events, iteratee);
     };
 
     /**
      * Execute the callback once
-     *  for each handler item that is value of the key including a specific string(=id, arguments[1]).
+     *  for each handler item that is value of the key including a specific string(=id, arguments[1]).<br>
      * Callback function(iteratee) is invoked with two arguments:
      *  - handlerItem
      *  - handlerItemId
@@ -639,7 +768,7 @@
      * @private
      */
     CustomEvents.prototype._eachCtxHandlerItemByContainId = function(ctxEventsItem, id, iteratee) {
-        ne.util.forEachOwnProperties(ctxEventsItem, function(handlerItem, handlerItemId) {
+        tui.util.forEachOwnProperties(ctxEventsItem, function(handlerItem, handlerItemId) {
             if (handlerItemId.indexOf(id) > -1) {
                 iteratee(handlerItem, handlerItemId);
             }
@@ -648,7 +777,7 @@
 
     /**
      * Execute the callback once
-     *  for each case of when the provided handler(arguments[0]) is equal to a handler in ctxEventsItem.
+     *  for each case of when the provided handler(arguments[0]) is equal to a handler in ctxEventsItem.<br>
      * Callback function(iteratee) is invoked with four arguments:
      *  - handlerItem
      *  - handlerItemId
@@ -659,7 +788,7 @@
      * @private
      */
     CustomEvents.prototype._eachCtxEventByHandler = function(handler, iteratee) {
-        var handlerId = ne.util.stamp(handler),
+        var handlerId = tui.util.stamp(handler),
             eachById = this._eachCtxHandlerItemByContainId;
 
         this._eachCtxEvents(function(ctxEventsItem, eventKey) {
@@ -671,7 +800,7 @@
 
     /**
      * Execute the callback once
-     *  for each case of when the provided context(arguments[0]) is equal to a context in ctxEventsItem.
+     *  for each case of when the provided context(arguments[0]) is equal to a context in ctxEventsItem.<br>
      * Callback function(iteratee) is invoked with four arguments:
      *  - handlerItem
      *  - handlerItemId
@@ -682,7 +811,7 @@
      * @private
      */
     CustomEvents.prototype._eachCtxEventByContext = function(context, iteratee) {
-        var contextId = ne.util.stamp(context),
+        var contextId = tui.util.stamp(context),
             eachById = this._eachCtxHandlerItemByContainId;
 
         this._eachCtxEvents(function(ctxEventsItem, eventKey) {
@@ -693,7 +822,7 @@
     };
 
     /**
-     * Execute the callback once for each handler of ctxEventsItem of the provided eventName(arguments[0]).
+     * Execute the callback once for each handler of ctxEventsItem of the provided eventName(arguments[0]).<br>
      * Callback function(iteratee) is invoked with four arguments:
      *  - handlerItem
      *  - handlerItemId
@@ -712,7 +841,7 @@
             ctxEventsItem = this._ctxEvents[key],
             args;
 
-        ne.util.forEachOwnProperties(ctxEventsItem, function() {
+        tui.util.forEachOwnProperties(ctxEventsItem, function() {
             args = Array.prototype.slice.call(arguments);
             args.push(key);
             iteratee.apply(null, args);
@@ -725,7 +854,7 @@
 
     /**
      * Execute the callback once
-     *  for each handler in instance equal to the provided handler(arguments[0]).
+     *  for each handler in instance equal to the provided handler(arguments[0]).<br>
      * Callback function(iteratee) is invoked with five arguments:
      *  - handlerItem
      *  - index of handlerItem array
@@ -741,7 +870,7 @@
             forEachArrayDecrease = this._forEachArraySplice,
             idx = 0;
 
-        ne.util.forEachOwnProperties(events, function(eventList, eventKey) {
+        tui.util.forEachOwnProperties(events, function(eventList, eventKey) {
             forEachArrayDecrease(eventList, function(handlerItem, index, eventList, decrease) {
                 if (handlerItem.fn === handler) {
                     iteratee(handlerItem, idx, eventList, eventKey, decrease);
@@ -752,7 +881,7 @@
     };
 
     /**
-     * Execute the callback once for each handler of normal events of the provided eventName.
+     * Execute the callback once for each handler of normal events of the provided eventName.<br>
      * Callback function(iteratee) is invoked with four arguments:
      *  - handler
      *  - index of handler-list
@@ -770,7 +899,7 @@
         }
 
         events = this._events[eventName];
-        if (!ne.util.isExisty(events)) {
+        if (!tui.util.isExisty(events)) {
             return;
         }
 
@@ -805,7 +934,7 @@
      * @private
      */
     CustomEvents.prototype._getHandlerKey = function(func, ctx) {
-        return ne.util.stamp(func) + '_' + ne.util.stamp(ctx);
+        return tui.util.stamp(func) + '_' + tui.util.stamp(ctx);
     };
 
 
@@ -818,7 +947,7 @@
     CustomEvents.prototype._setCtxLen = function(lenKey, change) {
         var events = this._ctxEvents;
 
-        if (!ne.util.isExisty(events[lenKey])) {
+        if (!tui.util.isExisty(events[lenKey])) {
             events[lenKey] = 0;
         }
 
@@ -838,12 +967,12 @@
             key = this._getCtxKey(eventName),
             event;
 
-        if (!ne.util.isExisty(events)) {
+        if (!tui.util.isExisty(events)) {
             events = this._ctxEvents = {};
         }
 
         event = events[key];
-        if (!ne.util.isExisty(event)) {
+        if (!tui.util.isExisty(event)) {
             event = events[key] = {};
         }
 
@@ -868,12 +997,12 @@
         var events = this._events,
             event;
 
-        if (!ne.util.isExisty(events)) {
+        if (!tui.util.isExisty(events)) {
             events = this._events = {};
         }
 
         event = events[eventName];
-        if (!ne.util.isExisty(event)) {
+        if (!tui.util.isExisty(event)) {
             event = events[eventName] = [];
         }
 
@@ -910,7 +1039,7 @@
      */
     CustomEvents.prototype._offByContext = function(context, eventName) {
         var ctxEvents = this._ctxEvents,
-            hasArgs = ne.util.isExisty(eventName),
+            hasArgs = tui.util.isExisty(eventName),
             matchEventName,
             matchHandler,
             lenKey;
@@ -918,8 +1047,8 @@
         this._eachCtxEventByContext(context, function(handlerItem, hanId, ctxItems, eventKey) {
             lenKey = eventKey.replace('_idx', '_len');
 
-            matchEventName = hasArgs && ne.util.isString(eventName) && eventKey.indexOf(eventName) > -1;
-            matchHandler = hasArgs && ne.util.isFunction(eventName) && handlerItem.fn === eventName;
+            matchEventName = hasArgs && tui.util.isString(eventName) && eventKey.indexOf(eventName) > -1;
+            matchHandler = hasArgs && tui.util.isFunction(eventName) && handlerItem.fn === eventName;
 
             if (!hasArgs || (matchEventName || matchHandler)) {
                 delete ctxItems[hanId];
@@ -936,7 +1065,7 @@
      */
     CustomEvents.prototype._offByEventName = function(eventName, handler) {
         var ctxEvents = this._ctxEvents,
-            hasHandler = ne.util.isExisty(handler),
+            hasHandler = tui.util.isExisty(handler),
             lenKey;
 
         this._eachCtxEventByEventName(eventName, function(handlerItem, hanId, ctxItems, eventKey) {
@@ -986,17 +1115,17 @@
     CustomEvents.prototype.on = function(eventName, handler, context) {
         var eventNameList;
 
-        if (ne.util.isObject(eventName)) {
+        if (tui.util.isObject(eventName)) {
             // {eventName: handler}
             context = handler;
-            ne.util.forEachOwnProperties(eventName, function(handler, name) {
-                 this.on(name, handler, context);
+            tui.util.forEachOwnProperties(eventName, function(handler, name) {
+                this.on(name, handler, context);
             }, this);
             return;
-        } else if (ne.util.isString(eventName) && eventName.indexOf(' ') > -1) {
+        } else if (tui.util.isString(eventName) && eventName.indexOf(' ') > -1) {
             // processing of multiple events by split event name
             eventNameList = eventName.split(' ');
-            ne.util.forEachArray(eventNameList, function(name) {
+            tui.util.forEachArray(eventNameList, function(name) {
                 this.on(name, handler, context);
             }, this);
             return;
@@ -1004,11 +1133,11 @@
 
         var ctxId;
 
-        if (ne.util.isExisty(context)) {
-            ctxId = ne.util.stamp(context);
+        if (tui.util.isExisty(context)) {
+            ctxId = tui.util.stamp(context);
         }
 
-        if (ne.util.isExisty(ctxId)) {
+        if (tui.util.isExisty(ctxId)) {
             this._addCtxEvent(eventName, context, handler);
         } else {
             this._addNormalEvent(eventName, handler);
@@ -1055,17 +1184,17 @@
             return;
         }
 
-        if (ne.util.isFunction(eventName)) {
+        if (tui.util.isFunction(eventName)) {
             // 3. off by handler
             this._offByHandler(eventName);
 
-        } else if (ne.util.isObject(eventName)) {
-            if (ne.util.hasStamp(eventName)) {
+        } else if (tui.util.isObject(eventName)) {
+            if (tui.util.hasStamp(eventName)) {
                 // 1, 5, 6 off by context
                 this._offByContext(eventName, handler);
             } else {
                 // 4. off by an Object.<string, function>
-                ne.util.forEachOwnProperties(eventName, function(handler, name) {
+                tui.util.forEachOwnProperties(eventName, function(handler, name) {
                     this.off(name, handler);
                 }, this);
             }
@@ -1085,10 +1214,10 @@
     CustomEvents.prototype.getListenerLength = function(eventName) {
         var ctxEvents = this._ctxEvents,
             events = this._events,
-            existy = ne.util.isExisty,
+            existy = tui.util.isExisty,
             lenKey = this._getCtxLenKey(eventName);
 
-        var normal = (existy(events) && ne.util.isArray(events[eventName])) ? events[eventName].length : 0,
+        var normal = (existy(events) && tui.util.isArray(events[eventName])) ? events[eventName].length : 0,
             ctx = (existy(ctxEvents) && existy(ctxEvents[lenKey])) ? ctxEvents[lenKey] : 0;
 
         return normal + ctx;
@@ -1106,8 +1235,8 @@
 
 
     /**
-     * Fire a event and returns the result of operation 'boolean AND' with all listener's results.
-     * So, It is different from {@link CustomEvents#fire}.
+     * Fire a event and returns the result of operation 'boolean AND' with all listener's results.<br>
+     * So, It is different from {@link CustomEvents#fire}.<br>
      * In service code,
      *  use this as a before event in component level usually for notifying that the event is cancelable.
      * @param {string} eventName - Custom event name
@@ -1137,7 +1266,7 @@
         var args = Array.prototype.slice.call(arguments, 1),
             self = this,
             result = true,
-            existy = ne.util.isExisty;
+            existy = tui.util.isExisty;
 
         this._eachEventByEventName(eventName, function(item) {
             if (existy(item) && item.fn.apply(self, args) === false) {
@@ -1171,7 +1300,7 @@
     };
 
     /**
-     * Attache a one-shot event.
+     * Attach a one-shot event.
      * @param {(object|string)} eventName - Custom event name or an object {eventName: handler}
      * @param {function} fn - Handler function
      * @param {*} [context] - Context for binding
@@ -1179,8 +1308,8 @@
     CustomEvents.prototype.once = function(eventName, fn, context) {
         var that = this;
 
-        if (ne.util.isObject(eventName)) {
-            ne.util.forEachOwnProperties(eventName, function(handler, eventName) {
+        if (tui.util.isObject(eventName)) {
+            tui.util.forEachOwnProperties(eventName, function(handler, eventName) {
                 this.once(eventName, handler, fn);
             }, this);
 
@@ -1195,9 +1324,9 @@
         this.on(eventName, onceHandler, context);
     };
 
-    ne.util.CustomEvents = CustomEvents;
+    tui.util.CustomEvents = CustomEvents;
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * defineClass.js
@@ -1211,15 +1340,15 @@
  * @dependency inheritance.js, object.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -1229,7 +1358,7 @@
      *  @param {Function} props.init Initialization method
      *  @param {Object} [props.static] Static members of constructor
      * @returns {*} Constructor
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var Parent = defineClass({
      *      init: function() {
@@ -1259,7 +1388,7 @@
      *  childInstance.method();
      *  childInstance.method2();
      */
-    ne.util.defineClass = function(parent, props) {
+    tui.util.defineClass = function(parent, props) {
         var obj;
 
         if (!props) {
@@ -1270,20 +1399,20 @@
         obj = props.init || function(){};
 
         if(parent) {
-            ne.util.inherit(obj, parent);
+            tui.util.inherit(obj, parent);
         }
 
         if (props.hasOwnProperty('static')) {
-            ne.util.extend(obj, props.static);
+            tui.util.extend(obj, props.static);
             delete props.static;
         }
 
-        ne.util.extend(obj.prototype, props);
+        tui.util.extend(obj.prototype, props);
 
         return obj;
     };
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * defineModule.js
@@ -1295,18 +1424,18 @@
  *         FE Development Team <e0242@nhnent.com>
  * @dependency type.js, defineNamespace.js
  */
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
-    var util = ne.util,
+    var util = tui.util,
         INITIALIZATION_METHOD_NAME = 'initialize';
 
     /**
@@ -1314,8 +1443,9 @@
      * @param {string} namespace - Namespace of module
      * @param {Object} moduleDefinition - Object literal for module
      * @returns {Object} Defined module
+     * @memberof tui.util
      * @example
-     *     var myModule = ne.util.defineModule('modules.myModule', {
+     *     var myModule = tui.util.defineModule('modules.myModule', {
      *          name: 'john',
      *          message: '',
      *          initialize: function() {
@@ -1339,8 +1469,8 @@
 
         return util.defineNamespace(namespace, base, true);
     }
-    ne.util.defineModule = defineModule;
-})(window.ne);
+    tui.util.defineModule = defineModule;
+})(window.tui);
 
 /**********
  * defineNamespace.js
@@ -1352,16 +1482,16 @@
  *         FE Development Team <e0242@nhnent.com>
  * @dependency inheritance.js, object.js, collection.js
  */
-(function(ne) {
+(function(tui) {
 
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -1370,15 +1500,14 @@
      * @param {(object|function)} props - A set of modules or one module
      * @param {boolean} isOverride flag - What if module already define, override or not
      * @returns {(object|function)} Defined namespace
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      * var neComp = defineNamespace('ne.component');
-     * neComp.listMenu = ne.util.defineClass({
+     * neComp.listMenu = tui.util.defineClass({
      *      init: function() {
      *          // code
      *      }
      * });
-     * @memberof ne.util
      */
     var defineNamespace = function(name, props, isOverride) {
         var namespace,
@@ -1394,7 +1523,7 @@
         lastspace = namespace.pop();
         namespace.unshift(window);
 
-        result = ne.util.reduce(namespace, function(obj, name) {
+        result = tui.util.reduce(namespace, function(obj, name) {
             obj[name] = obj[name] || {};
             return obj[name];
         });
@@ -1417,7 +1546,7 @@
         namespace = name.split('.');
         namespace.unshift(window);
 
-        result = ne.util.reduce(namespace, function(obj, name) {
+        result = tui.util.reduce(namespace, function(obj, name) {
             return obj && obj[name];
         });
         return result;
@@ -1429,12 +1558,13 @@
      * @returns {boolean}
      */
     var isValidType = function(module) {
-        return (ne.util.isObject(module) || ne.util.isFunction(module));
+        return (tui.util.isObject(module) || tui.util.isFunction(module));
     };
 
-    ne.util.defineNamespace = defineNamespace;
+    tui.util.defineNamespace = defineNamespace;
 
-})(window.ne);
+})(window.tui);
+
 /**********
  * enum.js
  **********/
@@ -1446,161 +1576,161 @@
  * @dependency type, collection.js
  */
 
-(function(ne) {
+(function(tui) {
 
-'use strict';
+    'use strict';
 
-/* istanbul ignore if */
-if (!ne) {
-    ne = window.ne = {};
-}
-if (!ne.util) {
-    ne.util = window.ne.util = {};
-}
-
-/**
- * Check whether the defineProperty() method is supported.
- * @type {boolean}
- */
-var isSupportDefinedProperty = (function () {
-    try {
-        Object.defineProperty({}, 'x', {});
-        return true;
-    } catch (e) {
-        return false;
+    /* istanbul ignore if */
+    if (!tui) {
+        tui = window.tui = {};
     }
-}());
-
-/**
- * A unique value of a constant.
- * @type {number}
- */
-var enumValue = 0;
-
-/**
- * Make a constant-list that has unique values.
- * In modern browsers (except IE8 and lower),
- *  a value defined once can not be changed.
- *
- * @param {...string | string[]} itemList Constant-list (An array of string is available)
- * @exports Enum
- * @constructor
- * @class
- * @memberof ne.util
- * @examples
- *  //create
- *  var MYENUM = new Enum('TYPE1', 'TYPE2');
- *  var MYENUM2 = new Enum(['TYPE1', 'TYPE2']);
- *
- *  //usage
- *  if (value === MYENUM.TYPE1) {
- *       ....
- *  }
- *
- *  //add (If a duplicate name is inputted, will be disregarded.)
- *  MYENUM.set('TYPE3', 'TYPE4');
- *
- *  //get name of a constant by a value
- *  MYENUM.getName(MYENUM.TYPE1); // 'TYPE1'이 리턴된다.
- *
- *  // In modern browsers (except IE8 and lower), a value can not be changed in constants.
- *  var originalValue = MYENUM.TYPE1;
- *  MYENUM.TYPE1 = 1234; // maybe TypeError
- *  MYENUM.TYPE1 === originalValue; // true
- *
- **/
-function Enum(itemList) {
-    if (itemList) {
-        this.set.apply(this, arguments);
-    }
-}
-
-/**
- * Define a constants-list
- * @param {...string| string[]} itemList Constant-list (An array of string is available)
- */
-Enum.prototype.set = function(itemList) {
-    var self = this;
-
-    if (!ne.util.isArray(itemList)) {
-        itemList = ne.util.toArray(arguments);
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
-    ne.util.forEach(itemList, function itemListIteratee(item) {
-        self._addItem(item);
-    });
-};
-
-/**
- * Return a key of the constant.
- * @param {number} value A value of the constant.
- * @returns {string|undefined} Key of the constant.
- */
-Enum.prototype.getName = function(value) {
-    var foundedKey,
-        self = this;
-
-    ne.util.forEach(this, function(itemValue, key) {
-        if (self._isEnumItem(key) && value === itemValue) {
-            foundedKey = key;
+    /**
+     * Check whether the defineProperty() method is supported.
+     * @type {boolean}
+     */
+    var isSupportDefinedProperty = (function () {
+        try {
+            Object.defineProperty({}, 'x', {});
+            return true;
+        } catch (e) {
             return false;
         }
-    });
+    }());
 
-    return foundedKey;
-};
+    /**
+     * A unique value of a constant.
+     * @type {number}
+     */
+    var enumValue = 0;
 
-/**
- * Create a constant.
- * @private
- * @param {string} name Constant name. (It will be a key of a constant)
- */
-Enum.prototype._addItem = function(name) {
-    var value;
-
-    if (!this.hasOwnProperty(name)) {
-        value = this._makeEnumValue();
-
-        if (isSupportDefinedProperty) {
-            Object.defineProperty(this, name, {
-                enumerable: true,
-                configurable: false,
-                writable: false,
-                value: value
-            });
-        } else {
-            this[name] = value;
+    /**
+     * Make a constant-list that has unique values.<br>
+     * In modern browsers (except IE8 and lower),<br>
+     *  a value defined once can not be changed.
+     *
+     * @param {...string | string[]} itemList Constant-list (An array of string is available)
+     * @exports Enum
+     * @constructor
+     * @class
+     * @memberof tui.util
+     * @examples
+     *  //create
+     *  var MYENUM = new Enum('TYPE1', 'TYPE2');
+     *  var MYENUM2 = new Enum(['TYPE1', 'TYPE2']);
+     *
+     *  //usage
+     *  if (value === MYENUM.TYPE1) {
+ *       ....
+ *  }
+     *
+     *  //add (If a duplicate name is inputted, will be disregarded.)
+     *  MYENUM.set('TYPE3', 'TYPE4');
+     *
+     *  //get name of a constant by a value
+     *  MYENUM.getName(MYENUM.TYPE1); // 'TYPE1'이 리턴된다.
+     *
+     *  // In modern browsers (except IE8 and lower), a value can not be changed in constants.
+     *  var originalValue = MYENUM.TYPE1;
+     *  MYENUM.TYPE1 = 1234; // maybe TypeError
+     *  MYENUM.TYPE1 === originalValue; // true
+     *
+     **/
+    function Enum(itemList) {
+        if (itemList) {
+            this.set.apply(this, arguments);
         }
     }
-};
 
-/**
- * Return a unique value for assigning to a constant.
- * @private
- * @returns {number} A unique value
- */
-Enum.prototype._makeEnumValue = function() {
-    var value;
+    /**
+     * Define a constants-list
+     * @param {...string| string[]} itemList Constant-list (An array of string is available)
+     */
+    Enum.prototype.set = function(itemList) {
+        var self = this;
 
-    value = enumValue;
-    enumValue += 1;
+        if (!tui.util.isArray(itemList)) {
+            itemList = tui.util.toArray(arguments);
+        }
 
-    return value;
-};
+        tui.util.forEach(itemList, function itemListIteratee(item) {
+            self._addItem(item);
+        });
+    };
 
-/**
- * Return whether a constant from the given key is in instance or not.
- * @param {string} key - A constant key
- * @returns {boolean} Result
- * @private
- */
-Enum.prototype._isEnumItem = function(key) {
-    return ne.util.isNumber(this[key]);
-};
+    /**
+     * Return a key of the constant.
+     * @param {number} value A value of the constant.
+     * @returns {string|undefined} Key of the constant.
+     */
+    Enum.prototype.getName = function(value) {
+        var foundedKey,
+            self = this;
 
-ne.util.Enum = Enum;
+        tui.util.forEach(this, function(itemValue, key) {
+            if (self._isEnumItem(key) && value === itemValue) {
+                foundedKey = key;
+                return false;
+            }
+        });
 
-})(window.ne);
+        return foundedKey;
+    };
+
+    /**
+     * Create a constant.
+     * @private
+     * @param {string} name Constant name. (It will be a key of a constant)
+     */
+    Enum.prototype._addItem = function(name) {
+        var value;
+
+        if (!this.hasOwnProperty(name)) {
+            value = this._makeEnumValue();
+
+            if (isSupportDefinedProperty) {
+                Object.defineProperty(this, name, {
+                    enumerable: true,
+                    configurable: false,
+                    writable: false,
+                    value: value
+                });
+            } else {
+                this[name] = value;
+            }
+        }
+    };
+
+    /**
+     * Return a unique value for assigning to a constant.
+     * @private
+     * @returns {number} A unique value
+     */
+    Enum.prototype._makeEnumValue = function() {
+        var value;
+
+        value = enumValue;
+        enumValue += 1;
+
+        return value;
+    };
+
+    /**
+     * Return whether a constant from the given key is in instance or not.
+     * @param {string} key - A constant key
+     * @returns {boolean} Result
+     * @private
+     */
+    Enum.prototype._isEnumItem = function(key) {
+        return tui.util.isNumber(this[key]);
+    };
+
+    tui.util.Enum = Enum;
+
+})(window.tui);
 
 /**********
  * exMap.js
@@ -1614,29 +1744,29 @@ ne.util.Enum = Enum;
  * @dependency Map.js, collection.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
-    // Caching ne.util for performance enhancing
-    var util = ne.util,
+    // Caching tui.util for performance enhancing
+    var util = tui.util,
         mapAPIsForRead = ['get', 'has', 'forEach', 'keys', 'values', 'entries'],
         mapAPIsForDelete = ['delete', 'clear'];
 
     /**
-     * The ExMap object is Extended Version of the ne.util.Map object.
+     * The ExMap object is Extended Version of the tui.util.Map object.<br>
      * and added some useful feature to make it easy to manage the Map object.
      * @constructor
      * @param {Array} initData - Array of key-value pairs (2-element Arrays).
      *      Each key-value pair will be added to the new Map
-     * @memberof ne.util
+     * @memberof tui.util
      */
     function ExMap(initData) {
         this._map = new util.Map(initData);
@@ -1696,7 +1826,7 @@ ne.util.Enum = Enum;
     /**
      * Looks through each key-value pair in the map and returns the new ExMap object of
      * all key-value pairs that pass a truth test implemented by the provided function.
-     * @param  {function} predicate - Function to test each key-value pair of the Map object.
+     * @param  {function} predicate - Function to test each key-value pair of the Map object.<br>
      *      Invoked with arguments (value, key). Return true to keep the element, false otherwise.
      * @return {ExMap} A new ExMap object
      */
@@ -1713,7 +1843,7 @@ ne.util.Enum = Enum;
     };
 
     util.ExMap = ExMap;
-})(window.ne);
+})(window.tui);
 
 /**********
  * formatDate.js
@@ -1726,7 +1856,7 @@ ne.util.Enum = Enum;
  * @dependency type.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
     var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi,
@@ -1805,12 +1935,12 @@ ne.util.Enum = Enum;
         };
 
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -1853,7 +1983,7 @@ ne.util.Enum = Enum;
      * @param {string} form - Date form
      * @param {Date|Object} date - Date object
      * @returns {boolean|string} A transformed string or false.
-     * @memberOf ne.util
+     * @memberOf tui.util
      * @example
      *  // key         | Shorthand
      *  // ------------|-----------------------
@@ -1891,7 +2021,7 @@ ne.util.Enum = Enum;
             nDate,
             resultStr;
 
-        if (ne.util.isDate(date)) {
+        if (tui.util.isDate(date)) {
             nDate = {
                 year: date.getFullYear(),
                 month: date.getMonth() + 1,
@@ -1930,8 +2060,8 @@ ne.util.Enum = Enum;
         return resultStr;
     }
 
-    ne.util.formatDate = formatDate;
-})(window.ne);
+    tui.util.formatDate = formatDate;
+})(window.tui);
 
 
 /**********
@@ -1944,15 +2074,15 @@ ne.util.Enum = Enum;
  *         FE Development Team <e0242@nhnent.com>
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -1960,7 +2090,7 @@ ne.util.Enum = Enum;
      * @param {function} fn A original function before binding
      * @param {*} obj context of function in arguments[0]
      * @return {function()} A new bound function with context that is in arguments[1]
-     * @memberof ne.util
+     * @memberof tui.util
      */
     function bind(fn, obj) {
         var slice = Array.prototype.slice;
@@ -1979,9 +2109,9 @@ ne.util.Enum = Enum;
         };
     }
 
-    ne.util.bind = bind;
+    tui.util.bind = bind;
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * hashMap.js
@@ -1994,15 +2124,15 @@ ne.util.Enum = Enum;
  * @dependency type, collection.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -2013,14 +2143,14 @@ ne.util.Enum = Enum;
     var _MAPDATAPREFIX = 'å';
 
     /**
-     * HashMap can handle the key-value pairs.
-     * Caution:
+     * HashMap can handle the key-value pairs.<br>
+     * Caution:<br>
      *  HashMap instance has a length property but is not an instance of Array.
      * @param {Object} [obj] A initial data for creation.
      * @constructor
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
-     *  var hm = new ne.util.HashMap({
+     *  var hm = new tui.util.HashMap({
      *      'mydata': {
      *           'hello': 'imfine'
      *       },
@@ -2089,7 +2219,7 @@ ne.util.Enum = Enum;
     HashMap.prototype.setObject = function(obj) {
         var self = this;
 
-        ne.util.forEachOwnProperties(obj, function(value, key) {
+        tui.util.forEachOwnProperties(obj, function(value, key) {
             self.setKeyValue(key, value);
         });
     };
@@ -2175,10 +2305,10 @@ ne.util.Enum = Enum;
      */
     HashMap.prototype.remove = function(key) {
         if (arguments.length > 1) {
-            key = ne.util.toArray(arguments);
+            key = tui.util.toArray(arguments);
         }
 
-        return ne.util.isArray(key) ? this.removeByKeyArray(key) : this.removeByKey(key);
+        return tui.util.isArray(key) ? this.removeByKeyArray(key) : this.removeByKey(key);
     };
 
     /**
@@ -2217,7 +2347,7 @@ ne.util.Enum = Enum;
         var data = [],
             self = this;
 
-        ne.util.forEach(keyArray, function(key) {
+        tui.util.forEach(keyArray, function(key) {
             data.push(self.removeByKey(key));
         });
 
@@ -2251,7 +2381,7 @@ ne.util.Enum = Enum;
         var self = this,
             flag;
 
-        ne.util.forEachOwnProperties(this, function(value, key) {
+        tui.util.forEachOwnProperties(this, function(value, key) {
             if (key.charAt(0) === _MAPDATAPREFIX) {
                 flag = iteratee(value, self.decodeKey(key));
             }
@@ -2284,8 +2414,8 @@ ne.util.Enum = Enum;
     };
 
     /**
-     * Work similarly to Array.prototype.map().
-     * It executes the provided callback that checks conditions once for each element of hashMap,
+     * Work similarly to Array.prototype.map().<br>
+     * It executes the provided callback that checks conditions once for each element of hashMap,<br>
      *  and returns a new array having elements satisfying the conditions
      * @param {Function} condition A function that checks conditions
      * @returns {Array} A new array having elements satisfying the conditions
@@ -2339,9 +2469,9 @@ ne.util.Enum = Enum;
         return result;
     };
 
-    ne.util.HashMap = HashMap;
+    tui.util.HashMap = HashMap;
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * inheritance.js
@@ -2353,15 +2483,15 @@ ne.util.Enum = Enum;
  *         FE Development Team <e0242@nhnent.com>
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
     /* istanbul ignore if */
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
 
@@ -2370,7 +2500,7 @@ ne.util.Enum = Enum;
      * Create a new object with the specified prototype object and properties.
      * @param {Object} obj This object will be a prototype of the newly-created object.
      * @return {Object}
-     * @memberof ne.util
+     * @memberof tui.util
      */
     function createObject() {
         function F() {}
@@ -2388,7 +2518,7 @@ ne.util.Enum = Enum;
      *
      * @param {function} subType Child constructor
      * @param {function} superType Parent constructor
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  // Parent constructor
      *  function Animal(leg) {
@@ -2414,15 +2544,15 @@ ne.util.Enum = Enum;
      *  };
      */
     function inherit(subType, superType) {
-        var prototype = ne.util.createObject(superType.prototype);
+        var prototype = tui.util.createObject(superType.prototype);
         prototype.constructor = subType;
         subType.prototype = prototype;
     }
 
-    ne.util.createObject = createObject();
-    ne.util.inherit = inherit;
+    tui.util.createObject = createObject();
+    tui.util.inherit = inherit;
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * map.js
@@ -2436,39 +2566,39 @@ ne.util.Enum = Enum;
  * @dependency type.js, collection.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
 
-    // Caching ne.util for performance enhancing
-    var util = ne.util,
+    // Caching tui.util for performance enhancing
+    var util = tui.util,
+
+        /**
+         * Using undefined for a key can be ambiguous if there's deleted item in the array,<br>
+         * which is also undefined when accessed by index.<br>
+         * So use this unique object as an undefined key to distinguish it from deleted keys.
+         * @private
+         * @constant
+         */
+        _KEY_FOR_UNDEFINED = {},
+
+        /**
+         * For using NaN as a key, use this unique object as a NaN key.<br>
+         * This makes it easier and faster to compare an object with each keys in the array<br>
+         * through no exceptional comapring for NaN.
+         */
+        _KEY_FOR_NAN = {};
 
     /**
-     * Using undefined for a key can be ambiguous if there's deleted item in the array,
-     * which is also undefined when accessed by index.
-     * So use this unique object as an undefined key to distinguish it from deleted keys.
-     * @private
-     * @constant
-     */
-    _KEY_FOR_UNDEFINED = {},
-
-    /**
-     * For using NaN as a key, use this unique object as a NaN key.
-     * This makes it easier and faster to compare an object with each keys in the array
-     * through no exceptional comapring for NaN.
-     */
-    _KEY_FOR_NAN = {};
-
-    /**
-     * Constructor of MapIterator
+     * Constructor of MapIterator<br>
      * Creates iterator object with new keyword.
      * @constructor
      * @param  {Array} keys - The array of keys in the map
@@ -2490,8 +2620,8 @@ ne.util.Enum = Enum;
     MapIterator.prototype.next = function() {
         var data = {};
         do {
-           this._index += 1;
-       } while (util.isUndefined(this._keys[this._index]) && this._index < this._length);
+            this._index += 1;
+        } while (util.isUndefined(this._keys[this._index]) && this._index < this._length);
 
         if (this._index >= this._length) {
             data.done = true;
@@ -2503,13 +2633,13 @@ ne.util.Enum = Enum;
     };
 
     /**
-     * The Map object implements the ES6 Map specification as closely as possible.
-     * For using objects and primitive values as keys, this object uses array internally.
-     * So if the key is not a string, get(), set(), has(), delete() will operates in O(n),
+     * The Map object implements the ES6 Map specification as closely as possible.<br>
+     * For using objects and primitive values as keys, this object uses array internally.<br>
+     * So if the key is not a string, get(), set(), has(), delete() will operates in O(n),<br>
      * and it can cause performance issues with a large dataset.
      *
      * Features listed below are not supported. (can't be implented without native support)
-     * - Map object is iterable
+     * - Map object is iterable<br>
      * - Iterable object can be used as an argument of constructor
      *
      * If the browser supports full implementation of ES6 Map specification, native Map obejct
@@ -2517,6 +2647,7 @@ ne.util.Enum = Enum;
      * @constructor
      * @param  {Array} initData - Array of key-value pairs (2-element Arrays).
      *      Each key-value pair will be added to the new Map
+     * @memberof tui.util
      */
     function Map(initData) {
         this._valuesForString = {};
@@ -2545,8 +2676,8 @@ ne.util.Enum = Enum;
     };
 
     /**
-     * Returns true if the specified value is NaN.
-     * For unsing NaN as a key, use this method to test equality of NaN
+     * Returns true if the specified value is NaN.<br>
+     * For unsing NaN as a key, use this method to test equality of NaN<br>
      * because === operator doesn't work for NaN.
      * @private
      * @param {*} value - Any object to be tested
@@ -2721,7 +2852,7 @@ ne.util.Enum = Enum;
         return new MapIterator(this._keys, util.bind(this._getOriginValue, this));
     };
 
-    /*
+    /**
      * Returns a new Iterator object that contains the [key, value] pairs
      * for each element in the Map object in insertion order.
      * @return {Iterator} A new Iterator object
@@ -2745,7 +2876,7 @@ ne.util.Enum = Enum;
      * Removes the specified element from a Map object.
      * @param {*} key - The key of the element to remove
      */
-     // cannot use reserved keyword as a property name in IE8 and under.
+        // cannot use reserved keyword as a property name in IE8 and under.
     Map.prototype['delete'] = function(key) {
         var keyIndex;
 
@@ -2801,7 +2932,7 @@ ne.util.Enum = Enum;
     })();
 
     util.Map = Map;
-})(window.ne);
+})(window.tui);
 
 /**********
  * object.js
@@ -2814,14 +2945,14 @@ ne.util.Enum = Enum;
  * @dependency type.js, collection.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
@@ -2829,7 +2960,7 @@ ne.util.Enum = Enum;
      * @param {object} target - Object that will be extended
      * @param {...object} objects - Objects as sources
      * @return {object} Extended object
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function extend(target, objects) {
         var source,
@@ -2859,7 +2990,7 @@ ne.util.Enum = Enum;
      * Assign a unique id to an object
      * @param {object} obj - Object that will be assigned id.
      * @return {number} Stamped id
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function stamp(obj) {
         obj.__fe_id = obj.__fe_id || ++lastId;
@@ -2870,10 +3001,10 @@ ne.util.Enum = Enum;
      * Verify whether an object has a stamped id or not.
      * @param {object} obj
      * @returns {boolean}
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function hasStamp(obj) {
-        return ne.util.isExisty(ne.util.pick(obj, '__fe_id'));
+        return tui.util.isExisty(tui.util.pick(obj, '__fe_id'));
     }
 
     /**
@@ -2887,7 +3018,7 @@ ne.util.Enum = Enum;
      * Return a key-list(array) of a given object
      * @param {object} obj - Object from which a key-list will be extracted
      * @returns {Array} A key-list(array)
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function keys(obj) {
         var keys = [],
@@ -2903,8 +3034,8 @@ ne.util.Enum = Enum;
     }
 
     /**
-     * Return the equality for multiple objects(jsonObjects).
-     *  (Reference) http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+     * Return the equality for multiple objects(jsonObjects).<br>
+     *  See {@link http://stackoverflow.com/questions/1068834/object-comparison-in-javascript}
      * @param {...object} object - Multiple objects for comparing.
      * @return {boolean} Equality
      * @example
@@ -2913,15 +3044,15 @@ ne.util.Enum = Enum;
      *      jsonObj2 = {name:'milk', price: 1000},
      *      jsonObj3 = {name:'milk', price: 1000};
      *
-     *  ne.util.compareJSON(jsonObj1, jsonObj2, jsonObj3);   // true
+     *  tui.util.compareJSON(jsonObj1, jsonObj2, jsonObj3);   // true
      *
      *
      *  var jsonObj4 = {name:'milk', price: 1000},
      *      jsonObj5 = {name:'beer', price: 3000};
      *
-     *      ne.util.compareJSON(jsonObj4, jsonObj5); // false
+     *      tui.util.compareJSON(jsonObj4, jsonObj5); // false
 
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function compareJSON(object) {
         var leftChain,
@@ -2936,8 +3067,8 @@ ne.util.Enum = Enum;
             // and isNaN(undefined) returns true
             if (isNaN(x) &&
                 isNaN(y) &&
-                ne.util.isNumber(x) &&
-                ne.util.isNumber(y)) {
+                tui.util.isNumber(x) &&
+                tui.util.isNumber(y)) {
                 return true;
             }
 
@@ -2951,7 +3082,7 @@ ne.util.Enum = Enum;
             // Works in case when functions are created in constructor.
             // Comparing dates is a common scenario. Another built-ins?
             // We can even handle functions passed across iframes
-            if ((ne.util.isFunction(x) && ne.util.isFunction(y)) ||
+            if ((tui.util.isFunction(x) && tui.util.isFunction(y)) ||
                 (x instanceof Date && y instanceof Date) ||
                 (x instanceof RegExp && y instanceof RegExp) ||
                 (x instanceof String && y instanceof String) ||
@@ -2972,8 +3103,8 @@ ne.util.Enum = Enum;
             }
 
             // check for infinitive linking loops
-            if (ne.util.inArray(x, leftChain) > -1 ||
-                ne.util.inArray(y, rightChain) > -1) {
+            if (tui.util.inArray(x, leftChain) > -1 ||
+                tui.util.inArray(y, rightChain) > -1) {
                 return false;
             }
 
@@ -3046,11 +3177,11 @@ ne.util.Enum = Enum;
      *          }
      *      }
      *  };
-     *  ne.util.pick(obj, 'nested', 'nested', 'key1'); // 21
-     *  ne.util.pick(obj, 'nested', 'nested', 'key2'); // undefined
+     *  tui.util.pick(obj, 'nested', 'nested', 'key1'); // 21
+     *  tui.util.pick(obj, 'nested', 'nested', 'key2'); // undefined
      *
      *  var arr = ['a', 'b', 'c'];
-     *  ne.util.pick(arr, 1); // 'b'
+     *  tui.util.pick(arr, 1); // 'b'
      */
     function pick(obj, paths) {
         var args = arguments,
@@ -3067,14 +3198,14 @@ ne.util.Enum = Enum;
         }
     }
 
-    ne.util.extend = extend;
-    ne.util.stamp = stamp;
-    ne.util.hasStamp = hasStamp;
-    ne.util._resetLastId = resetLastId;
-    ne.util.keys = Object.keys || keys;
-    ne.util.compareJSON = compareJSON;
-    ne.util.pick = pick;
-})(window.ne);
+    tui.util.extend = extend;
+    tui.util.stamp = stamp;
+    tui.util.hasStamp = hasStamp;
+    tui.util._resetLastId = resetLastId;
+    tui.util.keys = Object.keys || keys;
+    tui.util.compareJSON = compareJSON;
+    tui.util.pick = pick;
+})(window.tui);
 
 /**********
  * string.js
@@ -3086,21 +3217,21 @@ ne.util.Enum = Enum;
  *         FE Development Team <e0242@nhnent.com>
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
 
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
      * Transform the given HTML Entity string into plain string
      * @param {String} htmlEntity - HTML Entity type string
      * @return {String} Plain string
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var htmlEntityString = "A &#39;quote&#39; is &lt;b&gt;bold&lt;/b&gt;"
      *  var result = decodeHTMLEntity(htmlEntityString); //"A 'quote' is <b>bold</b>"
@@ -3116,7 +3247,7 @@ ne.util.Enum = Enum;
      * Transform the given string into HTML Entity string
      * @param {String} html - String for encoding
      * @return {String} HTML Entity
-     * @memberof ne.util
+     * @memberof tui.util
      * @example
      *  var htmlEntityString = "<script> alert('test');</script><a href='test'>";
      *  var result = encodeHTMLEntity(htmlEntityString); //"&lt;script&gt; alert(&#39;test&#39;);&lt;/script&gt;&lt;a href=&#39;test&#39;&gt;"
@@ -3131,17 +3262,223 @@ ne.util.Enum = Enum;
     /**
      * Return whether the string capable to transform into plain string is in the given string or not.
      * @param {String} string
-     * @memberof ne.util
+     * @memberof tui.util
      * @return {boolean}
      */
     function hasEncodableString(string) {
         return /[<>&"']/.test(string);
     }
 
-    ne.util.decodeHTMLEntity = decodeHTMLEntity;
-    ne.util.encodeHTMLEntity = encodeHTMLEntity;
-    ne.util.hasEncodableString = hasEncodableString;
-})(window.ne);
+    /**
+     * Return duplicate charters
+     * @param {string} operandStr1 The operand string
+     * @param {string} operandStr2 The operand string
+     * @private
+     * @memberof tui.util
+     * @returns {string}
+     * @example
+     * tui.util.getDuplicatedChar('fe dev', 'nhn entertainment');
+     * => 'e'
+     * tui.util.getDuplicatedChar('fdsa', 'asdf');
+     * => 'asdf'
+     */
+    function getDuplicatedChar(operandStr1, operandStr2) {
+        var dupl,
+            key,
+            i = 0,
+            len = operandStr1.length,
+            pool = {};
+
+        for (; i < len; i += 1) {
+            key = operandStr1.charAt(i);
+            pool[key] = 1;
+        }
+
+        for (i = 0, len = operandStr2.length; i < len; i += 1) {
+            key = operandStr2.charAt(i);
+            if(pool[key]) {
+                pool[key] += 1;
+            }
+        }
+
+        pool = tui.util.filter(pool, function(item) {
+            return item > 1;
+        });
+
+        pool = tui.util.keys(pool).sort();
+        dupl = pool.join('');
+
+        return dupl;
+    }
+
+    tui.util.decodeHTMLEntity = decodeHTMLEntity;
+    tui.util.encodeHTMLEntity = encodeHTMLEntity;
+    tui.util.hasEncodableString = hasEncodableString;
+    tui.util.getDuplicatedChar = getDuplicatedChar;
+
+})(window.tui);
+
+/**********
+ * tricks.js
+ **********/
+
+/**
+ * @fileoverview collections of some technic methods.
+ * @author NHN Ent. FE Development Team <e0242.nhnent.com>
+ */
+
+/** @namespace tui */
+/** @namespace tui.util */
+
+(function(tui) {
+    'use strict';
+    var aps = Array.prototype.slice;
+
+    /* istanbul ignore if */
+    if (!tui) {
+        tui = window.tui = {};
+    }
+    /* istanbul ignore if */
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
+    }
+
+    /**
+     * Creates a debounced function that delays invoking fn until after delay milliseconds has elapsed
+     * since the last time the debouced function was invoked.
+     * @param {function} fn The function to debounce.
+     * @param {number} [delay=0] The number of milliseconds to delay
+     * @memberof tui.util
+     * @returns {function} debounced function.
+     * @example
+     *
+     * function someMethodToInvokeDebounced() {}
+     *
+     * var debounced = tui.util.debounce(someMethodToInvokeDebounced, 300);
+     *
+     * // invoke repeatedly
+     * debounced();
+     * debounced();
+     * debounced();
+     * debounced();
+     * debounced();
+     * debounced();    // last invoke of debounced()
+     *
+     * // invoke someMethodToInvokeDebounced() after 300 milliseconds.
+     */
+    function debounce(fn, delay) {
+        var timer,
+            args;
+
+        /* istanbul ignore next */
+        delay = delay || 0;
+
+        function debounced() {
+            args = aps.call(arguments);
+
+            window.clearTimeout(timer);
+            timer = window.setTimeout(function() {
+                fn.apply(null, args);
+            }, delay);
+        }
+
+        return debounced;
+    }
+
+    /**
+     * return timestamp
+     * @memberof tui.util
+     * @returns {number} The number of milliseconds from Jan. 1970 00:00:00 (GMT)
+     */
+    function timestamp() {
+        return +(new Date());
+    }
+
+    /**
+     * Creates a throttled function that only invokes fn at most once per every interval milliseconds.
+     *
+     * You can use this throttle short time repeatedly invoking functions. (e.g MouseMove, Resize ...)
+     *
+     * if you need reuse throttled method. you must remove slugs (e.g. flag variable) related with throttling.
+     * @param {function} fn function to throttle
+     * @param {number} [interval=0] the number of milliseconds to throttle invocations to.
+     * @memberof tui.util
+     * @returns {function} throttled function
+     * @example
+     *
+     * function someMethodToInvokeThrottled() {}
+     *
+     * var throttled = tui.util.throttle(someMethodToInvokeThrottled, 300);
+     *
+     * // invoke repeatedly
+     * throttled();    // invoke (leading)
+     * throttled();
+     * throttled();    // invoke (near 300 milliseconds)
+     * throttled();
+     * throttled();
+     * throttled();    // invoke (near 600 milliseconds)
+     * // ...
+     * // invoke (trailing)
+     *
+     * // if you need reuse throttled method. then invoke reset()
+     * throttled.reset();
+     */
+    function throttle(fn, interval) {
+        var base,
+            _timestamp = tui.util.timestamp,
+            debounced,
+            isLeading = true,
+            stamp,
+            args,
+            tick = function(_args) {
+                fn.apply(null, _args);
+                base = null;
+            };
+
+        /* istanbul ignore next */
+        interval = interval || 0;
+
+        debounced = tui.util.debounce(tick, interval);
+
+        function throttled() {
+            args = aps.call(arguments);
+
+            if (isLeading) {
+                tick(args);
+                isLeading = false;
+                return;
+            }
+
+            stamp = _timestamp();
+
+            base = base || stamp;
+
+            // pass array directly because `debounce()`, `tick()` are already use
+            // `apply()` method to invoke developer's `fn` handler.
+            //
+            // also, this `debounced` line invoked every time for implements 
+            // `trailing` features.
+            debounced(args);
+
+            if ((stamp - base) >= interval) {
+                tick(args);
+            }
+        }
+
+        function reset() {
+            isLeading = true;
+            base = null;
+        }
+
+        throttled.reset = reset;
+        return throttled;
+    }
+
+    tui.util.timestamp = timestamp;
+    tui.util.debounce = debounce;
+    tui.util.throttle = throttle;
+})(window.tui);
+
 
 /**********
  * type.js
@@ -3154,74 +3491,74 @@ ne.util.Enum = Enum;
  * @dependency collection.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
     /* istanbul ignore if */
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     /**
-     * Check whether the given variable is existing or not.
+     * Check whether the given variable is existing or not.<br>
      *  If the given variable is not null and not undefined, returns true.
      * @param {*} param - Target for checking
      * @returns {boolean} Is existy?
-     * @memberOf ne.util
+     * @memberOf tui.util
      * @example
-     *  ne.util.isExisty(''); //true
-     *  ne.util.isExisty(0); //true
-     *  ne.util.isExisty([]); //true
-     *  ne.util.isExisty({}); //true
-     *  ne.util.isExisty(null); //false
-     *  ne.util.isExisty(undefined); //false
-    */
+     *  tui.util.isExisty(''); //true
+     *  tui.util.isExisty(0); //true
+     *  tui.util.isExisty([]); //true
+     *  tui.util.isExisty({}); //true
+     *  tui.util.isExisty(null); //false
+     *  tui.util.isExisty(undefined); //false
+     */
     function isExisty(param) {
         return param != null;
     }
 
     /**
-     * Check whether the given variable is undefined or not.
+     * Check whether the given variable is undefined or not.<br>
      *  If the given variable is undefined, returns true.
      * @param {*} obj - Target for checking
      * @returns {boolean} Is undefined?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isUndefined(obj) {
         return obj === undefined;
     }
 
     /**
-     * Check whether the given variable is null or not.
+     * Check whether the given variable is null or not.<br>
      *  If the given variable(arguments[0]) is null, returns true.
      * @param {*} obj - Target for checking
      * @returns {boolean} Is null?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isNull(obj) {
         return obj === null;
     }
 
     /**
-     * Check whether the given variable is truthy or not.
-     *  If the given variable is not null or not undefined or not false, returns true.
+     * Check whether the given variable is truthy or not.<br>
+     *  If the given variable is not null or not undefined or not false, returns true.<br>
      *  (It regards 0 as true)
      * @param {*} obj - Target for checking
      * @return {boolean} Is truthy?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isTruthy(obj) {
         return isExisty(obj) && obj !== false;
     }
 
     /**
-     * Check whether the given variable is falsy or not.
+     * Check whether the given variable is falsy or not.<br>
      *  If the given variable is null or undefined or false, returns true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is falsy?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isFalsy(obj) {
         return !isTruthy(obj);
@@ -3231,11 +3568,11 @@ ne.util.Enum = Enum;
     var toString = Object.prototype.toString;
 
     /**
-     * Check whether the given variable is an arguments object or not.
+     * Check whether the given variable is an arguments object or not.<br>
      *  If the given variable is an arguments object, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is arguments?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isArguments(obj) {
         var result = isExisty(obj) &&
@@ -3245,66 +3582,66 @@ ne.util.Enum = Enum;
     }
 
     /**
-     * Check whether the given variable is an instance of Array or not.
+     * Check whether the given variable is an instance of Array or not.<br>
      *  If the given variable is an instance of Array, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is array instance?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isArray(obj) {
         return obj instanceof Array;
     }
 
     /**
-     * Check whether the given variable is an object or not.
+     * Check whether the given variable is an object or not.<br>
      *  If the given variable is an object, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is object?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isObject(obj) {
         return obj === Object(obj);
     }
 
     /**
-     * Check whether the given variable is a function or not.
+     * Check whether the given variable is a function or not.<br>
      *  If the given variable is a function, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is function?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isFunction(obj) {
         return obj instanceof Function;
     }
 
     /**
-     * Check whether the given variable is a number or not.
+     * Check whether the given variable is a number or not.<br>
      *  If the given variable is a number, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is number?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isNumber(obj) {
         return typeof obj === 'number' || obj instanceof Number;
     }
 
     /**
-     * Check whether the given variable is a string or not.
+     * Check whether the given variable is a string or not.<br>
      *  If the given variable is a string, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is string?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isString(obj) {
         return typeof obj === 'string' || obj instanceof String;
     }
 
     /**
-     * Check whether the given variable is a boolean or not.
+     * Check whether the given variable is a boolean or not.<br>
      *  If the given variable is a boolean, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is boolean?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isBoolean(obj) {
         return typeof obj === 'boolean' || obj instanceof Boolean;
@@ -3312,71 +3649,71 @@ ne.util.Enum = Enum;
 
 
     /**
-     * Check whether the given variable is an instance of Array or not.
-     *  If the given variable is an instance of Array, return true.
+     * Check whether the given variable is an instance of Array or not.<br>
+     *  If the given variable is an instance of Array, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @return {boolean} Is an instance of array?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isArraySafe(obj) {
         return toString.call(obj) === '[object Array]';
     }
 
     /**
-     * Check whether the given variable is a function or not.
-     *  If the given variable is a function, return true.
+     * Check whether the given variable is a function or not.<br>
+     *  If the given variable is a function, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @return {boolean} Is a function?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isFunctionSafe(obj) {
         return toString.call(obj) === '[object Function]';
     }
 
     /**
-     * Check whether the given variable is a number or not.
-     *  If the given variable is a number, return true.
+     * Check whether the given variable is a number or not.<br>
+     *  If the given variable is a number, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @return {boolean} Is a number?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isNumberSafe(obj) {
         return toString.call(obj) === '[object Number]';
     }
 
     /**
-     * Check whether the given variable is a string or not.
-     *  If the given variable is a string, return true.
+     * Check whether the given variable is a string or not.<br>
+     *  If the given variable is a string, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @return {boolean} Is a string?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isStringSafe(obj) {
         return toString.call(obj) === '[object String]';
     }
 
     /**
-     * Check whether the given variable is a boolean or not.
-     *  If the given variable is a boolean, return true.
+     * Check whether the given variable is a boolean or not.<br>
+     *  If the given variable is a boolean, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @return {boolean} Is a boolean?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isBooleanSafe(obj) {
         return toString.call(obj) === '[object Boolean]';
     }
 
     /**
-     * Check whether the given variable is a instance of HTMLNode or not.
+     * Check whether the given variable is a instance of HTMLNode or not.<br>
      *  If the given variables is a instance of HTMLNode, return true.
      * @param {*} html - Target for checking
      * @return {boolean} Is HTMLNode ?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isHTMLNode(html) {
         if (typeof(HTMLElement) === 'object') {
@@ -3386,11 +3723,11 @@ ne.util.Enum = Enum;
     }
 
     /**
-     * Check whether the given variable is a HTML tag or not.
+     * Check whether the given variable is a HTML tag or not.<br>
      *  If the given variables is a HTML tag, return true.
      * @param {*} html - Target for checking
      * @return {Boolean} Is HTML tag?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isHTMLTag(html) {
         if (typeof(HTMLElement) === 'object') {
@@ -3400,11 +3737,11 @@ ne.util.Enum = Enum;
     }
 
     /**
-     * Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.
+     * Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.<br>
      *  If the given variables is empty, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is empty?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isEmpty(obj) {
         var hasKey = false;
@@ -3422,7 +3759,7 @@ ne.util.Enum = Enum;
         }
 
         if (isObject(obj) && !isFunction(obj)) {
-            ne.util.forEachOwnProperties(obj, function() {
+            tui.util.forEachOwnProperties(obj, function() {
                 hasKey = true;
                 return false;
             });
@@ -3435,65 +3772,65 @@ ne.util.Enum = Enum;
     }
 
     /**
-     * Check whether the given variable is not empty(not null, not undefined, or not empty array, not empty object) or not.
+     * Check whether the given variable is not empty(not null, not undefined, or not empty array, not empty object) or not.<br>
      *  If the given variables is not empty, return true.
      * @param {*} obj - Target for checking
      * @return {boolean} Is not empty?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isNotEmpty(obj) {
         return !isEmpty(obj);
     }
 
     /**
-     * Check whether the given variable is an instance of Date or not.
+     * Check whether the given variable is an instance of Date or not.<br>
      *  If the given variables is an instance of Date, return true.
      * @param {*} obj - Target for checking
      * @returns {boolean} Is an instance of Date?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isDate(obj) {
         return obj instanceof Date;
     }
 
     /**
-     * Check whether the given variable is an instance of Date or not.
-     *  If the given variables is an instance of Date, return true.
+     * Check whether the given variable is an instance of Date or not.<br>
+     *  If the given variables is an instance of Date, return true.<br>
      *  (It is used for multiple frame environments)
      * @param {*} obj - Target for checking
      * @returns {boolean} Is an instance of Date?
-     * @memberOf ne.util
+     * @memberOf tui.util
      */
     function isDateSafe(obj) {
         return toString.call(obj) === '[object Date]';
     }
 
 
-    ne.util.isExisty = isExisty;
-    ne.util.isUndefined = isUndefined;
-    ne.util.isNull = isNull;
-    ne.util.isTruthy = isTruthy;
-    ne.util.isFalsy = isFalsy;
-    ne.util.isArguments = isArguments;
-    ne.util.isArray = Array.isArray || isArray;
-    ne.util.isArraySafe = Array.isArray || isArraySafe;
-    ne.util.isObject = isObject;
-    ne.util.isFunction = isFunction;
-    ne.util.isFunctionSafe = isFunctionSafe;
-    ne.util.isNumber = isNumber;
-    ne.util.isNumberSafe = isNumberSafe;
-    ne.util.isDate = isDate;
-    ne.util.isDateSafe = isDateSafe;
-    ne.util.isString = isString;
-    ne.util.isStringSafe = isStringSafe;
-    ne.util.isBoolean = isBoolean;
-    ne.util.isBooleanSafe = isBooleanSafe;
-    ne.util.isHTMLNode = isHTMLNode;
-    ne.util.isHTMLTag = isHTMLTag;
-    ne.util.isEmpty = isEmpty;
-    ne.util.isNotEmpty = isNotEmpty;
+    tui.util.isExisty = isExisty;
+    tui.util.isUndefined = isUndefined;
+    tui.util.isNull = isNull;
+    tui.util.isTruthy = isTruthy;
+    tui.util.isFalsy = isFalsy;
+    tui.util.isArguments = isArguments;
+    tui.util.isArray = Array.isArray || isArray;
+    tui.util.isArraySafe = Array.isArray || isArraySafe;
+    tui.util.isObject = isObject;
+    tui.util.isFunction = isFunction;
+    tui.util.isFunctionSafe = isFunctionSafe;
+    tui.util.isNumber = isNumber;
+    tui.util.isNumberSafe = isNumberSafe;
+    tui.util.isDate = isDate;
+    tui.util.isDateSafe = isDateSafe;
+    tui.util.isString = isString;
+    tui.util.isStringSafe = isStringSafe;
+    tui.util.isBoolean = isBoolean;
+    tui.util.isBooleanSafe = isBooleanSafe;
+    tui.util.isHTMLNode = isHTMLNode;
+    tui.util.isHTMLTag = isHTMLTag;
+    tui.util.isEmpty = isEmpty;
+    tui.util.isNotEmpty = isNotEmpty;
 
-})(window.ne);
+})(window.tui);
 
 /**********
  * window.js
@@ -3506,13 +3843,13 @@ ne.util.Enum = Enum;
  * @dependency browser.js, type.js, object.js, collection.js, func.js, window.js
  */
 
-(function(ne) {
+(function(tui) {
     'use strict';
-    if (!ne) {
-        ne = window.ne = {};
+    if (!tui) {
+        tui = window.tui = {};
     }
-    if (!ne.util) {
-        ne.util = window.ne.util = {};
+    if (!tui.util) {
+        tui.util = window.tui.util = {};
     }
 
     var popup_id = 0;
@@ -3520,7 +3857,7 @@ ne.util.Enum = Enum;
     /**
      * Popup management class
      * @constructor
-     * @memberof ne.util
+     * @memberof tui.util
      */
     function Popup() {
 
@@ -3531,7 +3868,7 @@ ne.util.Enum = Enum;
         this.openedPopup = {};
 
         /**
-         * In IE7, an error occurs when the closeWithParent property attaches to window object.
+         * In IE7, an error occurs when the closeWithParent property attaches to window object.<br>
          * So, It is for saving the value of closeWithParent instead of attaching to window object.
          * @type {Object}
          */
@@ -3541,7 +3878,7 @@ ne.util.Enum = Enum;
          * Post data bridge for IE11 popup
          * @type {string}
          */
-        this.postDataBridgeUrl = '';
+        this.postBridgeUrl = '';
     }
 
     /**********
@@ -3555,7 +3892,7 @@ ne.util.Enum = Enum;
      */
     Popup.prototype.getPopupList = function(key) {
         var target;
-        if (ne.util.isExisty(key)) {
+        if (tui.util.isExisty(key)) {
             target = this.openedPopup[key];
         } else {
             target = this.openedPopup;
@@ -3566,27 +3903,26 @@ ne.util.Enum = Enum;
     /**
      * Open popup
      * Caution:
-     *  In IE11, when transfer data to popup by POST, must set the postDataBridgeUrl.
-     *  Additionally, when open the popup with another domain, can not control the popup because of security.
+     *  In IE11, when transfer data to popup by POST, must set the postBridgeUrl.
      *
      * @param {string} url - popup url
      * @param {Object} options
-     *     @param {string} [options.popupName] - Key of popup window.
-     *      If the key is set, when you try to open by this key, the popup of this key is focused.
+     *     @param {string} [options.popupName] - Key of popup window.<br>
+     *      If the key is set, when you try to open by this key, the popup of this key is focused.<br>
      *      Or else a new popup window having this key is opened.
      *
-     *     @param {string} [options.popupOptionStr=""] - Option string of popup window
-     *      It is same with the third parameter of window.open() method.
+     *     @param {string} [options.popupOptionStr=""] - Option string of popup window<br>
+     *      It is same with the third parameter of window.open() method.<br>
      *      See {@link http://www.w3schools.com/jsref/met_win_open.asp}
      *
      *     @param {boolean} [options.closeWithParent=true] - Is closed when parent window closed?
      *
-     *     @param {boolean} [options.useReload=false] - This property indicates whether reload the popup or not.
-     *      If true, the popup will be reloaded when you try to re-open the popup that has been opened.
+     *     @param {boolean} [options.useReload=false] - This property indicates whether reload the popup or not.<br>
+     *      If true, the popup will be reloaded when you try to re-open the popup that has been opened.<br>
      *      When transmit the POST-data, some browsers alert a message for confirming whether retransmit or not.
      *
-     *     @param {string} [options.postDataBridgeUrl=''] - Use this url to avoid a certain bug occuring when transmitting POST data to the popup in IE11.
-     *      This specific buggy situation is known to happen because IE11 tries to open the requested url not in a new popup window as intended, but in a new tab.
+     *     @param {string} [options.postBridgeUrl=''] - Use this url to avoid a certain bug occuring when transmitting POST data to the popup in IE11.<br>
+     *      This specific buggy situation is known to happen because IE11 tries to open the requested url not in a new popup window as intended, but in a new tab.<br>
      *      See {@link http://wiki.nhnent.com/pages/viewpage.action?pageId=240562844}
      *
      *     @param {string} [options.method=get] - The method of transmission when the form-data is transmitted to popup-window.
@@ -3594,7 +3930,7 @@ ne.util.Enum = Enum;
      *     @param {Object} [options.param=null] - Using as parameters for transmission when the form-data is transmitted to popup-window.
      */
     Popup.prototype.openPopup = function(url, options) {
-        options = ne.util.extend({
+        options = tui.util.extend({
             popupName: 'popup_' + popup_id + '_' + (+new Date()),
             popupOptionStr: '',
             useReload: true,
@@ -3605,20 +3941,20 @@ ne.util.Enum = Enum;
 
         options.method = options.method.toUpperCase();
 
-        this.postDataBridgeUrl = options.postDataBridgeUrl || this.postDataBridgeUrl;
+        this.postBridgeUrl = options.postBridgeUrl || this.postBridgeUrl;
 
         var popup,
             formElement,
             useIEPostBridge = options.method === 'POST' && options.param &&
-                ne.util.browser.msie && ne.util.browser.version === 11;
+                tui.util.browser.msie && tui.util.browser.version === 11;
 
-        if (!ne.util.isExisty(url)) {
-            throw new Error('Popup#open() 팝업 URL이 입력되지 않았습니다');
+        if (!tui.util.isExisty(url)) {
+            throw new Error('Popup#open() need popup url.');
         }
 
         popup_id += 1;
 
-        /**
+        /*
          * In form-data transmission
          * 1. Create a form before opening a popup.
          * 2. Transmit the form-data.
@@ -3637,7 +3973,7 @@ ne.util.Enum = Enum;
 
         popup = this.openedPopup[options.popupName];
 
-        if (!ne.util.isExisty(popup)) {
+        if (!tui.util.isExisty(popup)) {
             this.openedPopup[options.popupName] = popup = this._open(useIEPostBridge, options.param,
                 url, options.popupName, options.popupOptionStr);
 
@@ -3656,8 +3992,8 @@ ne.util.Enum = Enum;
 
         this.closeWithParentPopup[options.popupName] = options.closeWithParent;
 
-        if (!popup || popup.closed || ne.util.isUndefined(popup.closed)) {
-            alert('브라우저에 팝업을 막는 기능이 활성화 상태이기 때문에 서비스 이용에 문제가 있을 수 있습니다. 해당 기능을 비활성화 해 주세요');
+        if (!popup || popup.closed || tui.util.isUndefined(popup.closed)) {
+            alert('please enable popup windows for this website');
         }
 
         if (options.param && options.method === 'POST' && !useIEPostBridge) {
@@ -3669,7 +4005,7 @@ ne.util.Enum = Enum;
             }
         }
 
-        window.onunload = ne.util.bind(this.closeAllPopup, this);
+        window.onunload = tui.util.bind(this.closeAllPopup, this);
     };
 
     /**
@@ -3678,7 +4014,7 @@ ne.util.Enum = Enum;
      * @param {Window} [popup] - Window-context of popup for closing. If omit this, current window-context will be closed.
      */
     Popup.prototype.close = function(skipBeforeUnload, popup) {
-        skipBeforeUnload = ne.util.isExisty(skipBeforeUnload) ? skipBeforeUnload : false;
+        skipBeforeUnload = tui.util.isExisty(skipBeforeUnload) ? skipBeforeUnload : false;
 
         var target = popup || window;
 
@@ -3697,9 +4033,9 @@ ne.util.Enum = Enum;
      * @param {boolean} closeWithParent - If true, popups having the closeWithParentPopup property as true will be closed.
      */
     Popup.prototype.closeAllPopup = function(closeWithParent) {
-        var hasArg = ne.util.isExisty(closeWithParent);
+        var hasArg = tui.util.isExisty(closeWithParent);
 
-        ne.util.forEachOwnProperties(this.openedPopup, function(popup, key) {
+        tui.util.forEachOwnProperties(this.openedPopup, function(popup, key) {
             if ((hasArg && this.closeWithParentPopup[key]) || !hasArg) {
                 this.close(false, popup);
             }
@@ -3725,7 +4061,7 @@ ne.util.Enum = Enum;
             param = {};
 
         search = window.location.search.substr(1);
-        ne.util.forEachArray(search.split('&'), function(part) {
+        tui.util.forEachArray(search.split('&'), function(part) {
             pair = part.split('=');
             param[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
         });
@@ -3737,7 +4073,7 @@ ne.util.Enum = Enum;
      * Create a hidden form from the given arguments and return this form.
      * @param {string} action - URL for form transmission
      * @param {Object} [data] - Data for form transmission
-     * @param {Otring} [method] - Method of transmission
+     * @param {string} [method] - Method of transmission
      * @param {string} [target] - Target of transmission
      * @param {HTMLElement} [container] - Container element of form.
      * @returns {HTMLElement} Form element
@@ -3753,7 +4089,7 @@ ne.util.Enum = Enum;
         form.target = target || '';
         form.style.display = 'none';
 
-        ne.util.forEachOwnProperties(data, function(value, key) {
+        tui.util.forEachOwnProperties(data, function(value, key) {
             input = document.createElement('input');
             input.name = key;
             input.type = 'hidden';
@@ -3779,7 +4115,7 @@ ne.util.Enum = Enum;
     Popup.prototype._parameterize = function(object) {
         var query = [];
 
-        ne.util.forEachOwnProperties(object, function(value, key) {
+        tui.util.forEachOwnProperties(object, function(value, key) {
             query.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
         });
 
@@ -3800,16 +4136,10 @@ ne.util.Enum = Enum;
         var popup;
 
         if (useIEPostBridge) {
-            url = this.postDataBridgeUrl + '?storageKey=' + encodeURIComponent(popupName) +
-            '&redirectUrl=' + encodeURIComponent(url);
-            if (!window.localStorage) {
-                alert('IE11브라우저의 문제로 인해 이 기능은 브라우저의 LocalStorage 기능을 활성화 하셔야 이용하실 수 있습니다');
-            } else {
-                localStorage.removeItem(popupName);
-                localStorage.setItem(popupName, JSON.stringify(param));
-
-                popup = window.open(url, popupName, optionStr);
-            }
+            popup = window.open(this.postBridgeUrl, popupName, optionStr);
+            setTimeout(function() {
+                popup.redirect(url, param);
+            }, 100);
         } else {
             popup = window.open(url, popupName, optionStr);
         }
@@ -3817,6 +4147,5 @@ ne.util.Enum = Enum;
         return popup;
     };
 
-    ne.util.popup = new Popup();
-
-})(window.ne);
+    tui.util.popup = new Popup();
+})(window.tui);

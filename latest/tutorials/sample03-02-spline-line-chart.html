@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Spline Line Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="lineChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+    "series": [
+        {
+            "name": "Budget",
+            "data": [5000, 3000, 6000, 3000, 6000, 4000]
+        },
+        {
+            "name": "Income",
+            "data": [8000, 1000, 7000, 2000, 5000, 3000]
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Spline Line Chart"
+    },
+    "yAxis": {
+        "title": "Amount",
+        "min": 0,
+        "max": 9000
+    },
+    "xAxis": {
+        "title": "Month"
+    },
+    "series": {
+        "spline": true,
+        "hasDot": true
+    },
+    "tooltip": {
+        "suffix": "°C"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": [ "#D95576", "#00628C", "#00A8DA", "#1EA399", "#F7A655"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+            series: [
+                {
+                    name: 'Budget',
+                    data: [5000, 3000, 6000, 3000, 6000, 4000]
+                },
+                {
+                    name: 'Income',
+                    data: [8000, 1000, 7000, 2000, 5000, 3000]
+
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Spline Line Chart'
+            },
+            yAxis: {
+                title: 'Amount',
+                min: 0,
+                max: 9000
+            },
+            xAxis: {
+                title: 'Month'
+            },
+            series: {
+                spline: true,
+                hasDot: true
+            },
+            tooltip: {
+                suffix: '°C'
+            }
+        };
+    tui.chart.lineChart(container, data, options);
+</script>
+</body>
+</html>
