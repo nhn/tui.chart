@@ -77,7 +77,42 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         var el = TooltipBase.prototype.render.call(this, bound, data);
 
         this.positionModel = new GroupTooltipPositionModel(this.chartDimension, bound, this.isVertical, this.options);
+        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+
         return el;
+    },
+
+    /**
+     * Rerender.
+     * @param {{position: object}} bound tooltip bound
+     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     * @override
+     */
+    rerender: function(bound, data) {
+        TooltipBase.prototype.rerender.call(this, bound, data);
+
+        this.theme = this._updateLegendTheme(data.checkedLegends);
+    },
+
+    /**
+     * Update legend theme.
+     * @param {object | array.<boolean>}checkedLegends checked legends
+     * @returns {{colors: array.<string>}} legend theme
+     * @private
+     */
+    _updateLegendTheme: function(checkedLegends) {
+        var colors = [];
+
+        tui.util.forEachArray(this.orgWholeLegendData, function(item) {
+            var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
+            if (_checkedLegends[item.index]) {
+                colors.push(item.theme.color);
+            }
+        });
+
+        return {
+            colors: colors
+        };
     },
 
     /**
@@ -133,6 +168,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeItemRenderingData: function(values) {
         return tui.util.map(values, function(value, index) {
             var legendLabel = this.dataProcessor.getLegendData(index);
+
             return {
                 value: value,
                 legend: legendLabel.label,
