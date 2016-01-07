@@ -90,21 +90,29 @@ var all = function(arr, condition, context) {
     return result;
 };
 
-var unique = function(arr, isSorted, iteratee, context) {
+/**
+ * Pick unique values.
+ * @param {array} arr target array
+ * @param {[boolean]} sorted whether sorted or not.
+ * @param {[function]} iteratee iteratee function
+ * @param {[object]} context target context
+ * @returns {Array} unique values
+ */
+var unique = function(arr, sorted, iteratee, context) {
     var result = [],
         prevValue;
 
-    if (!tui.util.isBoolean(isSorted)) {
+    if (!tui.util.isBoolean(sorted)) {
         context = iteratee;
-        iteratee = isSorted;
-        isSorted = false;
+        iteratee = sorted;
+        sorted = false;
     }
 
     iteratee = iteratee || function(value) {
         return value;
     };
 
-    if (isSorted) {
+    if (sorted) {
         tui.util.forEachArray(arr, function (value, index) {
             value = iteratee ? iteratee.call(context, value, index, arr) : value;
             if (!index || prevValue !== value) {

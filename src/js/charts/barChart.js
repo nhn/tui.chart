@@ -124,7 +124,26 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                 optionChartTypes: ['bar', 'bar']
             };
         }
+
         return ChartBase.prototype.render.call(this, boundParams);
+    },
+
+    /**
+     * Resize
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     */
+    resize: function(dimension) {
+        var boundParams;
+
+        if (this.hasRightYAxis) {
+            boundParams = {
+                optionChartTypes: ['bar', 'bar']
+            };
+        }
+
+        ChartBase.prototype.resize.call(this, dimension, boundParams);
     },
 
     /**

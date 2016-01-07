@@ -350,6 +350,18 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
+     * Resize
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     */
+    resize: function(dimension) {
+        ChartBase.prototype.resize.call(this, dimension, {
+            optionChartTypes: this.optionChartTypes
+        });
+    },
+
+    /**
      * On change selected legend.
      * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
      */

@@ -451,9 +451,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} dimension dimension
      *      @param {number} dimension.width width
      *      @param {number} dimension.height height
+     * @param {?object} boundsParams addition params for calculating bounds
      * @api
      */
-    resize: function(dimension) {
+    resize: function(dimension, boundsParams) {
         var updated, bounds, renderingData;
 
         if (!dimension) {
@@ -466,7 +467,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        bounds = this._makeBounds();
+        bounds = this._makeBounds(boundsParams);
         renderingData = this._makeRenderingData(bounds);
         renderUtil.renderDimension(this.chartContainer, bounds.chart.dimension);
         this._renderComponents(bounds, renderingData, 'resize');

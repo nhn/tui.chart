@@ -59,10 +59,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             formattedValues, wholeFormattedValues;
 
         this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
-
         formattedValues = this._formatValues(values, formatFunctions);
-        wholeFormattedValues = this._makeWholeValues(formattedValues);
-
+        wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
 
         this.data = {
             categories: categories,
