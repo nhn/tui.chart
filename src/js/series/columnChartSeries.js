@@ -241,7 +241,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         if (bound) {
             sum = calculator.sumMinusValues(values);
 
-            if (this.options.diverging) {
+            if (this.options.divergent) {
                 sum = Math.abs(sum);
             }
 

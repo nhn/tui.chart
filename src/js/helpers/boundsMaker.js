@@ -22,11 +22,11 @@ var boundsMaker = {
      * Get max label of value axis.
      * @memberOf module:boundsMaker
      * @param {string} chartType chart type
-     * @param {?boolean} divergingOption diverging option
+     * @param {?boolean} divergentOption divergent option
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(chartType, divergingOption) {
+    _getValueAxisMaxLabel: function(chartType, divergentOption) {
         var values = predicate.isComboChart(chartType) ? this.dataProcessor.getWholeGroupValues() : this.dataProcessor.getGroupValues(chartType),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
@@ -36,7 +36,7 @@ var boundsMaker = {
             maxLabel = calculator.normalizeAxisNumber(limit.max),
             minLabel = calculator.normalizeAxisNumber(limit.min);
 
-        if (divergingOption) {
+        if (divergentOption) {
             maxLabel = Math.abs(maxLabel);
             minLabel = Math.abs(minLabel);
         }
@@ -644,7 +644,7 @@ var boundsMaker = {
         seriesOption = params.options.series || {};
 
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
-        maxValueLabel = this._getValueAxisMaxLabel(chartType, seriesOption.diverging);
+        maxValueLabel = this._getValueAxisMaxLabel(chartType, seriesOption.divergent);
         labels = this.dataProcessor.getCategories();
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정

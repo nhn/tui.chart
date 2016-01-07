@@ -58,7 +58,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             seriesOption = options.series || {},
             formattedValues, wholeFormattedValues;
 
-        this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
+        this.divergentOption = predicate.isBarTypeChart(options.chartType) && seriesOption.divergent;
         formattedValues = this._formatValues(values, formatFunctions);
         wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
 
@@ -336,7 +336,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _formatGroupValues: function(groupValues, formatFunctions) {
         return tui.util.map(groupValues, function(values) {
-            if (this.divergingOption) {
+            if (this.divergentOption) {
                 values = tui.util.map(values, Math.abs);
             }
             return tui.util.map(values, function(value) {
@@ -696,7 +696,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
-            if (this.divergingOption) {
+            if (this.divergentOption) {
                 result = this._makePercentDivergingStackedPercentValues(groupValues);
             } else {
                 result = this._makePercentStackedPercentValues(groupValues);

@@ -63,7 +63,7 @@ var barTypeMixer = {
     },
 
     /**
-     * Make normal diverging raw series data.
+     * Make normal divergent raw series data.
      * @param {{data: array.<number>}} rawSeriesData raw series data
      * @returns {{data: array.<number>}} changed raw series data
      * @private
@@ -81,7 +81,7 @@ var barTypeMixer = {
     },
 
     /**
-     * Make stacked diverging raw series data.
+     * Make stacked divergent raw series data.
      * @param {{data: array.<number>, stack: string}} rawSeriesData raw series data
      * @returns {{data: array.<number>}} changed raw series data
      * @private
@@ -105,7 +105,7 @@ var barTypeMixer = {
     },
 
     /**
-     * Make raw series data for diverging.
+     * Make raw series data for divergent.
      * @param {{data: array.<number>, stack: string}} rawSeriesData raw series data
      * @param {?string} stackedOption stacked option
      * @returns {{data: array.<number>}} changed raw series data

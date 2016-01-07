@@ -217,7 +217,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         if (bound) {
             sum = calculator.sumMinusValues(values);
 
-            if (this.options.diverging) {
+            if (this.options.divergent) {
                 sum = Math.abs(sum);
             }
 

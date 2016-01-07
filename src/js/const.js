@@ -149,10 +149,10 @@ var chartConst = {
         tickCount: 9,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** tick info of diverging percent stacked option
+    /** tick info of divergent percent stacked option
      * @type {object}
      */
-    DIVERGING_PERCENT_STACKED_TICK_INFO: {
+    DIVERGENT_PERCENT_STACKED_TICK_INFO: {
         limit: {
             min: -100,
             max: 100

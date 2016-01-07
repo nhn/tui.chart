@@ -102,7 +102,7 @@ var axisDataMaker = {
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stackedOption)) {
             minusSum = calculator.sumMinusValues(concat.apply([], params.values));
             if (minusSum < 0) {
-                tickInfo = params.divergingOption ? chartConst.DIVERGING_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+                tickInfo = params.divergentOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
             } else {
                 tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             }
@@ -116,7 +116,7 @@ var axisDataMaker = {
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
                 chartType: params.chartType,
-                divergingOption: params.divergingOption
+                divergentOption: params.divergentOption
             }, options);
         }
 
@@ -218,7 +218,7 @@ var axisDataMaker = {
     },
 
     /**
-     * Make limit for diverging option.
+     * Make limit for divergent option.
      * @param {number} min min value
      * @param {max} max max value
      * @returns {{min: number, max: number}} limit
@@ -254,7 +254,7 @@ var axisDataMaker = {
             max = 5;
         }
 
-        if (params.divergingOption) {
+        if (params.divergentOption) {
             changedLimit = this._makeLimitForDivergingOption(min, max);
             min = changedLimit.min;
             max = changedLimit.max;
@@ -280,7 +280,7 @@ var axisDataMaker = {
         // 05. 정수형으로 변경했던 tick info를 원래 형태로 변경
         tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
 
-        if (params.divergingOption) {
+        if (params.divergentOption) {
             tickInfo.labels = tui.util.map(tickInfo.labels, Math.abs);
         }
         return tickInfo;
