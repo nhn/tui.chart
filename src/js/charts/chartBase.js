@@ -86,6 +86,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.userEvent = new UserEventListener();
 
+        /**
+         * chart type
+         * @type {string}
+         */
         this.chartType = this.options.chartType;
 
         this._addCustomEventComponent();

@@ -55,8 +55,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             wholeLegendData = this._makeWholeLegendData(legendLabels, chartType, seriesChartTypes),
             format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
-            formattedValues = format ? this._formatValues(values, formatFunctions) : values,
+            seriesOption = options.series || {},
+            formattedValues = this._formatValues(values, formatFunctions, seriesOption.diverging),
             wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
+
+        this.divergingOption = seriesOption.diverging;
 
         this.data = {
             categories: categories,
@@ -330,8 +333,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} formatted values
      * @private
      */
-    _formatGroupValues: function(groupValues, formatFunctions) {
+    _formatGroupValues: function(groupValues, formatFunctions, divergingOption) {
         return tui.util.map(groupValues, function(values) {
+            if (divergingOption) {
+                values = tui.util.map(values, Math.abs);
+            }
             return tui.util.map(values, function(value) {
                 var fns = [value].concat(formatFunctions);
                 return tui.util.reduce(fns, function(stored, fn) {
@@ -348,14 +354,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} formatted values
      * @private
      */
-    _formatValues: function(chartValues, formatFunctions) {
+    _formatValues: function(chartValues, formatFunctions, divergingOption) {
         var result;
+        formatFunctions = formatFunctions || [];
         if (tui.util.isArray(chartValues)) {
-            result = this._formatGroupValues(chartValues, formatFunctions);
+            result = this._formatGroupValues(chartValues, formatFunctions, divergingOption);
         } else {
             result = {};
             tui.util.forEach(chartValues, function(groupValues, chartType) {
-                result[chartType] = this._formatGroupValues(groupValues, formatFunctions);
+                result[chartType] = this._formatGroupValues(groupValues, formatFunctions, divergingOption);
             }, this);
         }
         return result;
@@ -614,7 +621,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
-        var percentValues = tui.util.map(groupValues, function(values) {
+        return tui.util.map(groupValues, function(values) {
             var sum = tui.util.sum(tui.util.map(values, function(value) {
                 return Math.abs(value);
             }));
@@ -623,8 +630,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 return sum === 0 ? 0 : ratio * (value / sum);
             });
         });
+    },
 
-        return percentValues;
+    _makePercentDivergingStackedPercentValues: function(groupValues) {
+        return tui.util.map(groupValues, function(values) {
+            var plusSum = calculator.sumPlusValues(values),
+                minusSum = Math.abs(calculator.sumMinusValues(values));
+
+            return tui.util.map(values, function(value) {
+                var sum = value >= 0 ? plusSum : minusSum;
+                return sum === 0 ? 0 : 0.5 * (value / sum);
+            });
+        });
     },
 
     /**
@@ -678,7 +695,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
-            result = this._makePercentStackedPercentValues(groupValues);
+            if (this.divergingOption) {
+                result = this._makePercentDivergingStackedPercentValues(groupValues);
+            } else {
+                result = this._makePercentStackedPercentValues(groupValues);
+            }
         } else {
             result = this._makePercentValues(groupValues, limit, isLineTypeChart);
         }

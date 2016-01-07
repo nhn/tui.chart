@@ -265,7 +265,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
         yAxisData = axisDataMaker.makeValueAxisData(tui.util.extend({
             values: yAxisValues,
-            stacked: seriesOption && seriesOption.stacked || '',
+            stackedOption: seriesOption && seriesOption.stacked || '',
             options: yAxisOptions,
             chartType: chartType,
             seriesDimension: params.seriesDimension,

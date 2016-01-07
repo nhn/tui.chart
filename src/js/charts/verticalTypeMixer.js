@@ -32,7 +32,7 @@ var verticalTypeMixer = {
             yAxisData = axisDataMaker.makeValueAxisData({
                 values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
-                stacked: options.series && options.series.stacked || '',
+                stackedOption: options.series && options.series.stacked || '',
                 chartType: options.chartType,
                 formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.yAxis,

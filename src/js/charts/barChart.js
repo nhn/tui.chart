@@ -7,7 +7,9 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
+    chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
+    barTypeMixer = require('./barTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
@@ -27,6 +29,13 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
          * @type {string}
          */
         this.className = 'tui-bar-chart';
+
+        options.series = options.series || {};
+
+        if (options.series.diverging) {
+            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
+            options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+        }
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -49,7 +58,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             xAxisData = axisDataMaker.makeValueAxisData({
                 values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
-                stacked: options.series && options.series.stacked || '',
+                stackedOption: options.series.stacked || '',
+                divergingOption: options.series.diverging,
                 chartType: options.chartType,
                 formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.xAxis
@@ -61,7 +71,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
         return {
             xAxis: xAxisData,
-            yAxis: yAxisData
+            yAxis: yAxisData,
+            rightYAxis: yAxisData
         };
     },
 
@@ -72,7 +83,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: ['yAxis', 'xAxis'],
+            axes: ['yAxis', 'xAxis', 'rightYAxis'],
             chartType: chartType,
             serieses: [
                 {
@@ -85,5 +96,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 });
 
 axisTypeMixer.mixin(BarChart);
+barTypeMixer.mixin(BarChart);
 
 module.exports = BarChart;
