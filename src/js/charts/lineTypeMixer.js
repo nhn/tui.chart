@@ -7,6 +7,8 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
+    predicate = require('../helpers/predicate'),
+    axisDataMaker = require('../helpers/axisDataMaker'),
     AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
@@ -32,6 +34,37 @@ var lineTypeMixer = {
         });
 
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Make axes data
+     * @param {object} bounds chart bounds
+     * @returns {object} axes data
+     * @private
+     */
+    _makeAxesData: function(bounds) {
+        var options = this.options,
+            aligned = predicate.isLineTypeChart(options.chartType),
+            xAxisData = axisDataMaker.makeLabelAxisData({
+                labels: this.dataProcessor.getCategories(),
+                aligned: aligned,
+                options: options.xAxis
+            }),
+            yAxisData = axisDataMaker.makeValueAxisData({
+                values: this.dataProcessor.getGroupValues(),
+                seriesDimension: bounds.series.dimension,
+                stackedOption: options.series && options.series.stacked || '',
+                chartType: options.chartType,
+                formatFunctions: this.dataProcessor.getFormatFunctions(),
+                options: options.yAxis,
+                isVertical: true,
+                aligned: aligned
+            });
+
+        return {
+            xAxis: xAxisData,
+            yAxis: yAxisData
+        };
     },
 
     /**

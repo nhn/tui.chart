@@ -118,6 +118,30 @@ describe('boundsMaker', function() {
 
             expect(actual).toBe(expected);
         });
+
+        it('labels 값이 있을 경우 labels로 너비 계산을 합니다.', function () {
+            var actual, expected;
+
+            actual = maker._getRightYAxisWidth({
+                labels: ['label1', 'label2'],
+                chartTypes: ['column', 'line'],
+                theme: {
+                    title: {},
+                    label: {}
+                },
+                options: [
+                    {
+                        title: 'YAxis title'
+                    },
+                    {
+                        title: 'RightYAxis title'
+                    }
+                ]
+            });
+            expected = 97;
+
+            expect(actual).toBe(expected);
+        });
     });
 
     describe('_makeAxesDimension()', function() {
@@ -728,7 +752,8 @@ describe('boundsMaker', function() {
             actual = maker._makeAxesLabelInfo({
                 hasAxes: true,
                 optionChartTypes: ['column'],
-                isVertical: true
+                isVertical: true,
+                options: {}
             });
             expected = {
                 xAxis: ['cate1', 'cate2', 'cate3'],
@@ -738,7 +763,7 @@ describe('boundsMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로 타입의 차트에서는 yAxis는 category, xAxis는 value가 label이 됩니다.', function() {
+        it('가로 타입의 차트에서는 yAxis와 rightYAxis는 category, xAxis는 value가 label이 됩니다.', function() {
             var actual, expected;
 
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
@@ -747,11 +772,13 @@ describe('boundsMaker', function() {
             actual = maker._makeAxesLabelInfo({
                 hasAxes: true,
                 optionChartTypes: ['column'],
-                isVertical: false
+                isVertical: false,
+                options: {}
             });
             expected = {
                 xAxis: [40],
-                yAxis: ['cate1', 'cate2', 'cate3']
+                yAxis: ['cate1', 'cate2', 'cate3'],
+                rightYAxis: ['cate1', 'cate2', 'cate3']
             };
 
             expect(actual).toEqual(expected);

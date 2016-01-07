@@ -34,6 +34,16 @@ var predicate = {
     },
 
     /**
+     * Whether bar type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isBarTypeChart: function(chartType) {
+        return this.isBarChart(chartType) || this.isColumnChart(chartType);
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type

@@ -56,10 +56,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
             seriesOption = options.series || {},
-            formattedValues = this._formatValues(values, formatFunctions, seriesOption.diverging),
-            wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
+            formattedValues, wholeFormattedValues;
 
-        this.divergingOption = seriesOption.diverging;
+        this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
+
+        formattedValues = this._formatValues(values, formatFunctions);
+        wholeFormattedValues = this._makeWholeValues(formattedValues);
+
 
         this.data = {
             categories: categories,
@@ -333,9 +336,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} formatted values
      * @private
      */
-    _formatGroupValues: function(groupValues, formatFunctions, divergingOption) {
+    _formatGroupValues: function(groupValues, formatFunctions) {
         return tui.util.map(groupValues, function(values) {
-            if (divergingOption) {
+            if (this.divergingOption) {
                 values = tui.util.map(values, Math.abs);
             }
             return tui.util.map(values, function(value) {
@@ -344,7 +347,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                     return fn(stored);
                 });
             });
-        });
+        }, this);
     },
 
     /**
@@ -354,15 +357,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} formatted values
      * @private
      */
-    _formatValues: function(chartValues, formatFunctions, divergingOption) {
+    _formatValues: function(chartValues, formatFunctions) {
         var result;
         formatFunctions = formatFunctions || [];
         if (tui.util.isArray(chartValues)) {
-            result = this._formatGroupValues(chartValues, formatFunctions, divergingOption);
+            result = this._formatGroupValues(chartValues, formatFunctions);
         } else {
             result = {};
             tui.util.forEach(chartValues, function(groupValues, chartType) {
-                result[chartType] = this._formatGroupValues(groupValues, formatFunctions, divergingOption);
+                result[chartType] = this._formatGroupValues(groupValues, formatFunctions);
             }, this);
         }
         return result;

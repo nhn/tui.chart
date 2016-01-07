@@ -6,8 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('./predicate');
+var chartConst = require('../const');
 
 /**
  * Calculator.
@@ -82,7 +81,9 @@ var calculator = {
             normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
         }
 
-        return normalized *= flag;
+        normalized *= flag;
+
+        return normalized;
     },
 
     /**

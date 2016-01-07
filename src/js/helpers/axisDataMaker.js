@@ -58,6 +58,7 @@ var axisDataMaker = {
     makeLabelAxisData: function(params) {
         var tickCount = params.labels.length,
             options = params.options || {};
+
         if (!params.aligned) {
             tickCount += 1;
         }
@@ -97,6 +98,7 @@ var axisDataMaker = {
             isAllowedStackedOption = predicate.isAllowedStackedOption(params.chartType),
             formatFunctions = params.formatFunctions,
             minusSum, tickInfo;
+
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stackedOption)) {
             minusSum = calculator.sumMinusValues(concat.apply([], params.values));
             if (minusSum < 0) {
@@ -215,18 +217,20 @@ var axisDataMaker = {
         return tickInfo;
     },
 
+    /**
+     * Make limit for diverging option.
+     * @param {number} min min value
+     * @param {max} max max value
+     * @returns {{min: number, max: number}} limit
+     * @private
+     */
     _makeLimitForDivergingOption: function(min, max) {
-        var standardNum = Math.max(Math.abs(min), Math.abs(max));
-        return {
-            min: -standardNum,
-            max: standardNum
-        };
-    },
+        var newMax = Math.max(Math.abs(min), Math.abs(max));
 
-    _makeLabelsForDivergingOption: function(labels) {
-        return tui.util.map(labels, function(label) {
-            return Math.abs(label);
-        });
+        return {
+            min: -newMax,
+            max: newMax
+        };
     },
 
     /**
@@ -249,8 +253,6 @@ var axisDataMaker = {
         if (min === 0 && max === 0) {
             max = 5;
         }
-
-        options.series = options.series || {};
 
         if (params.divergingOption) {
             changedLimit = this._makeLimitForDivergingOption(min, max);
@@ -279,7 +281,7 @@ var axisDataMaker = {
         tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
 
         if (params.divergingOption) {
-            tickInfo.labels = this._makeLabelsForDivergingOption(tickInfo.labels);
+            tickInfo.labels = tui.util.map(tickInfo.labels, Math.abs);
         }
         return tickInfo;
     },

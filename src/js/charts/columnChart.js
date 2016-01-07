@@ -7,8 +7,10 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
+    chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
-    verticalTypeMixer = require('./verticalTypeMixer'),
+    barTypeMixer = require('./barTypeMixer'),
+    axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/columnChartSeries');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
@@ -30,6 +32,13 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
          */
         this.className = 'tui-column-chart';
 
+        options.series = options.series || {};
+
+        if (options.series.diverging) {
+            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
+            options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+        }
+
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
@@ -39,6 +48,36 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         });
 
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Make axes data
+     * @param {object} bounds chart bounds
+     * @param {?boolean} divergingOption diverging option
+     * @returns {object} axes data
+     * @private
+     */
+    _makeAxesData: function(bounds) {
+        var options = this.options,
+            xAxisData = axisDataMaker.makeLabelAxisData({
+                labels: this.dataProcessor.getCategories(),
+                options: options.xAxis
+            }),
+            yAxisData = axisDataMaker.makeValueAxisData({
+                values: this.dataProcessor.getGroupValues(),
+                seriesDimension: bounds.series.dimension,
+                stackedOption: options.series.stacked || '',
+                divergingOption: options.series.diverging,
+                chartType: options.chartType,
+                formatFunctions: this.dataProcessor.getFormatFunctions(),
+                options: options.yAxis,
+                isVertical: true
+            });
+
+        return {
+            xAxis: xAxisData,
+            yAxis: yAxisData
+        };
     },
 
     /**
@@ -64,6 +103,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 });
 
 axisTypeMixer.mixin(ColumnChart);
-verticalTypeMixer.mixin(ColumnChart);
+barTypeMixer.mixin(ColumnChart);
 
 module.exports = ColumnChart;
