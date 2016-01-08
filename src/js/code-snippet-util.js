@@ -3,8 +3,8 @@
 /**
  * Pick minimum value from value array.
  * @param {array} arr value array
- * @param {function} condition condition function
- * @param {object} context target context
+ * @param {[function]} condition condition function
+ * @param {[object]} context target context
  * @returns {*} minimum value
  */
 var min = function(arr, condition, context) {
@@ -30,7 +30,7 @@ var min = function(arr, condition, context) {
 /**
  * Pick maximum value from value array.
  * @param {array} arr value array
- * @param {function} condition condition function
+ * @param {[function]} condition condition function
  * @param {[object]} context target context
  * @returns {*} maximum value
  */

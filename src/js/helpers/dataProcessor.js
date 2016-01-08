@@ -594,7 +594,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent values about normal stacked option.
+     * Make percent values for normal stacked option.
      * @param {array.<array.<number>>} groupValues gruop values
      * @param {{min: number, max: number}} limit axis limit
      * @returns {array} percent values about normal stacked option.
@@ -611,7 +611,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent values about percent stacked option.
+     * Make percent values for percent stacked option.
      * @param {array.<array.<number>>} groupValues gruop values
      * @returns {array} percent values about percent stacked option
      * @private
@@ -653,7 +653,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make percent value.
-     * @param {array.<array.<number>>} groupValues gruop values
+     * @param {array.<array.<number>>} groupValues group values
      * @param {{min: number, max: number}} limit axis limit
      * @param {boolean} isLineTypeChart whether line type chart or not.
      * @returns {array.<array.<number>>} percent values
