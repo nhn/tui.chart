@@ -633,7 +633,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         });
     },
 
-    _makePercentDivergingStackedPercentValues: function(groupValues) {
+    /**
+     * Make percent values for percent divergent stacked option.
+     * @param groupValues
+     * @returns {Array}
+     * @private
+     */
+    _makePercentDivergentStackedPercentValues: function(groupValues) {
         return tui.util.map(groupValues, function(values) {
             var plusSum = calculator.sumPlusValues(values),
                 minusSum = Math.abs(calculator.sumMinusValues(values));
@@ -697,7 +703,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             result = this._makeNormalStackedPercentValues(groupValues, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             if (this.divergentOption) {
-                result = this._makePercentDivergingStackedPercentValues(groupValues);
+                result = this._makePercentDivergentStackedPercentValues(groupValues);
             } else {
                 result = this._makePercentStackedPercentValues(groupValues);
             }

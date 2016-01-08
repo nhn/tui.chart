@@ -114,7 +114,7 @@ var unique = function(arr, sorted, iteratee, context) {
 
     if (sorted) {
         tui.util.forEachArray(arr, function (value, index) {
-            value = iteratee ? iteratee.call(context, value, index, arr) : value;
+            value = iteratee.call(context, value, index, arr);
             if (!index || prevValue !== value) {
                 result.push(value);
             }
