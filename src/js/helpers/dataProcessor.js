@@ -635,8 +635,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make percent values for percent divergent stacked option.
-     * @param groupValues
-     * @returns {Array}
+     * @param {array.<array.<number>>} groupValues group values
+     * @returns {array.<array.<number>>} percent values
      * @private
      */
     _makePercentDivergentStackedPercentValues: function(groupValues) {
