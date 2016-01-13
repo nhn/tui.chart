@@ -1,7 +1,7 @@
 {
   "name": "tui.chart",
   "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
-  "version": "1.4.0",
+  "version": "1.4.0a",
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "scripts": {
