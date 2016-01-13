@@ -6,7 +6,9 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil');
 
 var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
@@ -38,9 +40,23 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.data = this.makeTooltipData();
 
+        /**
+         * Tooltip suffix.
+         * @type {string}
+         */
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
 
+        /**
+         * Tooltip template function.
+         * @type {function}
+         */
         this.templateFunc = this.options.template || tui.util.bind(this._makeTooltipHtml, this);
+
+        /**
+         * Tooltip animation time.
+         * @type {number}
+         */
+        this.animationTime = predicate.isPieChart(params.chartType) ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
 
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
@@ -171,34 +187,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Cancel hide tooltip.
-     * @private
-     */
-    _cancelHide: function() {
-        if (!this.activeHider) {
-            return;
-        }
-        clearInterval(this.activeHider.timerId);
-        this.activeHider.setOpacity(1);
-    },
-
-    /**
-     * Cancel slide tooltip.
-     * @private
-     */
-    _cancelSlide: function() {
-        if (!this.activeSliders) {
-            return;
-        }
-
-        tui.util.forEach(this.activeSliders, function(slider) {
-            clearInterval(slider.timerId);
-        });
-
-        this._completeSlide();
-    },
-
-    /**
      * Move to Position.
      * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} position position
@@ -206,43 +194,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     moveToPosition: function(tooltipElement, position, prevPosition) {
         if (prevPosition) {
-            this._cancelHide();
-            this._cancelSlide();
             this._slideTooltip(tooltipElement, prevPosition, position);
         } else {
             renderUtil.renderPosition(tooltipElement, position);
         }
-    },
-
-    /**
-     * Get slider.
-     * @param {HTMLElement} element element
-     * @param {string} type slide type (horizontal or vertical)
-     * @returns {object} effect object
-     * @private
-     */
-    _getSlider: function(element, type) {
-        if (!this.slider) {
-            this.slider = {};
-        }
-
-        if (!this.slider[type]) {
-            this.slider[type] = new tui.component.Effects.Slide({
-                flow: type,
-                element: element,
-                duration: 100
-            });
-        }
-
-        return this.slider[type];
-    },
-
-    /**
-     * Complete slide tooltip.
-     * @private
-     */
-    _completeSlide: function() {
-        delete this.activeSliders;
     },
 
     /**
@@ -253,38 +208,17 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _slideTooltip: function(tooltipElement, prevPosition, position) {
-        var vSlider = this._getSlider(tooltipElement, 'vertical'),
-            hSlider = this._getSlider(tooltipElement, 'horizontal'),
-            moveTop = prevPosition.top - position.top,
-            moveLeft = prevPosition.left - position.left,
-            vDirection = moveTop > 0 ? 'forword' : 'backword',
-            hDirection = moveTop > 0 ? 'forword' : 'backword',
-            activeSliders = [],
-            complate = tui.util.bind(this._completeSlide, this);
+        var moveTop = position.top - prevPosition.top,
+            moveLeft = position.left - prevPosition.left;
 
-        if (moveTop) {
-            vSlider.setDistance(moveTop);
-            vSlider.action({
-                direction: vDirection,
-                start: prevPosition.top,
-                complete: complate
-            });
-            activeSliders.push(vSlider);
-        }
+        renderUtil.cancelAnimation(this.slidingAnimation);
 
-        if (moveLeft) {
-            hSlider.setDistance(moveLeft);
-            hSlider.action({
-                direction: hDirection,
-                start: prevPosition.left,
-                complete: complate
-            });
-            activeSliders.push(vSlider);
-        }
-
-        if (activeSliders.length) {
-            this.activeSliders = activeSliders;
-        }
+        this.slidingAnimation = renderUtil.startAnimation(this.animationTime, function(ratio) {
+            var left = moveLeft * ratio,
+                top = moveTop * ratio;
+            tooltipElement.style.left = (prevPosition.left + left) + 'px';
+            tooltipElement.style.top = (prevPosition.top + top) + 'px';
+        });
     },
 
     /**
@@ -307,7 +241,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         if (!this.hider) {
             this.hider = new tui.component.Effects.Fade({
                 element: element,
-                duration: 100
+                duration: 50
             });
         }
 
@@ -319,6 +253,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {HTMLElement} tooltipElement tooltip element
      */
     hideAnimation: function(tooltipElement) {
+        dom.removeClass(tooltipElement, 'show');
+        tooltipElement.style.cssText = '';
+        return;
+        var that = this;
         this.activeHider = this._getHider(tooltipElement);
         this.activeHider.action({
             start: 1,
@@ -326,6 +264,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
             complete: function() {
                 dom.removeClass(tooltipElement, 'show');
                 tooltipElement.style.cssText = '';
+                delete that.activeHider;
             }
         });
     },

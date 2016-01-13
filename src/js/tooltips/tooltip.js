@@ -10,7 +10,6 @@ var TooltipBase = require('./tooltipBase'),
     chartConst = require('../const'),
     predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
-    eventListener = require('../helpers/eventListener'),
     renderUtil = require('../helpers/renderUtil'),
     tooltipTemplate = require('./tooltipTemplate');
 
@@ -114,7 +113,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }
 
         TooltipBase.prototype.resize.call(this, bound, data);
-        this._updateContainerBound();
     },
 
     /**
@@ -294,9 +292,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _calculateTooltipPositionAboutPieChart: function(params) {
-        var containerBound = this._getTooltipContainerBound();
-        params.bound.left = params.eventPosition.clientX - containerBound.left;
-        params.bound.top = params.eventPosition.clientY - containerBound.top;
+        tui.util.extend(params.bound, params.eventPosition);
         return this._calculateTooltipPositionAboutNotBarChart(params);
     },
 
@@ -598,22 +594,40 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             indexes = this._getIndexesCustomAttribute(elTooltip),
             chartType = elTooltip.getAttribute('data-chart-type');
 
-        this._setShowedCustomAttribute(elTooltip, false);
-        this._fireHideAnimation(indexes, chartType);
+        if (chartType) {
+            this._setShowedCustomAttribute(elTooltip, false);
+            this._fireHideAnimation(indexes, chartType);
 
-        if (this._isChangedIndexes(this.prevIndexes, indexes)) {
-            delete this.prevIndexes;
-        }
-
-        setTimeout(function() {
-            if (that._isShowedTooltip(elTooltip)) {
-                return;
+            if (this._isChangedIndexes(this.prevIndexes, indexes)) {
+                delete this.prevIndexes;
             }
-            that.hideAnimation(elTooltip);
 
-            that = null;
-            indexes = null;
-        }, chartConst.HIDE_DELAY);
+            setTimeout(function() {
+                if (that._isShowedTooltip(elTooltip)) {
+                    return;
+                }
+
+                dom.removeClass(elTooltip, 'show');
+                elTooltip.style.cssText = '';
+
+                that = null;
+                indexes = null;
+            }, chartConst.HIDE_DELAY);
+        }
+    },
+
+    /**
+     * On show tooltip container.
+     */
+    onShowTooltipContainer: function() {
+        this.tooltipContainer.style.zIndex = chartConst.TOOLTIP_ZINDEX;
+    },
+
+    /**
+     * On hide tooltip container.
+     */
+    onHideTooltipContainer: function() {
+        this.tooltipContainer.style.zIndex = 0;
     },
 
     /**
@@ -622,8 +636,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _attachEvent: function(el) {
-        eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
+        //eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
+        //eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

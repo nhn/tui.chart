@@ -35,19 +35,25 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         var dimension = data.dimension,
             paper;
 
+        Raphael._oid = 0;
         this.paper = paper = Raphael(container, dimension.width, dimension.height);
-
+        
         if (!paper.customAttributes.sector) {
             paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
         }
 
+        this.container = container;
+        this.callbacks = callbacks;
         this.selectionColor = data.theme.selectionColor;
         this.circleBound = data.circleBound;
-        this._renderPie(paper, data, callbacks);
 
+        this._renderPie(paper, data);
         return paper;
     },
 
+    clear: function() {
+        this.paper.clear();
+    },
     /**
      * Make sector path.
      * @param {number} cx center x
@@ -99,13 +105,9 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Render pie graph.
      * @param {object} paper raphael paper
      * @param {{sectorData: array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
-     * @param {object} callbacks callbacks
-     *      @param {function} callbacks.funcShowTooltip show tooltip function
-     *      @param {function} callbacks.funcHideTooltip hide tooltip function
-     *      @param {function} callbacks.funcSelectSeries select series function
      * @private
      */
-    _renderPie: function(paper, data, callbacks) {
+    _renderPie: function(paper, data) {
         var circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
@@ -124,8 +126,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                         'stroke-width': 1
                     }
                 });
-
-            this._bindHoverEvent(sector, index, callbacks);
 
             sectors.push({
                 sector: sector,
@@ -175,47 +175,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Bind hover event.
-     * @param {object} target raphael item
-     * @param {number} index index
-     * @param {object} callbacks callbacks
-     *      @param {function} callbacks.funcShowTooltip show tooltip function
-     *      @param {function} callbacks.funcHideTooltip hide tooltip function
-     *      @param {function} callbacks.funcSelectSeries select series function
-     * @private
-     */
-    _bindHoverEvent: function(target, index, callbacks) {
-        var args = [{}, 0, index],
-            isOn = false,
-            throttled = tui.util.throttle(function() {
-                if (!isOn) {
-                    return;
-                }
-                callbacks.funcShowTooltip.apply(null, arguments);
-            }, 100);
-
-        target.mouseover(function (e) {
-            var _args = args.concat({
-                clientX: e.clientX,
-                clientY: e.clientY
-            });
-            isOn = true;
-            callbacks.funcShowTooltip.apply(null, _args);
-        }).mousemove(function(e) {
-            var _args = args.concat({
-                clientX: e.clientX,
-                clientY: e.clientY - 10
-            });
-            throttled.apply(null, _args);
-        }).mouseout(function () {
-            isOn = false;
-            callbacks.funcHideTooltip();
-        }).click(function() {
-            callbacks.funcSelectSeries(index);
-        });
-    },
-
-    /**
      * Expand selector radius.
      * @param {object} sector pie sector
      */
@@ -237,20 +196,25 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Show animation.
-     * @param {{index: number}} data data
+     * animate expanding.
+     * @param {number} index sector index
      */
-    showAnimation: function(data) {
-        var sector = this.sectors[data.index].sector;
+    _animateExpanding: function(index) {
+        var sector = this.sectors[index].sector;
+
+        if (this.prevMovedSector) {
+            this._animateRestoring(this.prevMovedSector.id);
+        }
+
         this._expandSector(sector);
     },
 
     /**
-     * Hide animation.
-     * @param {{index: number}} data data
+     * Animate restoring.
+     * @param {number} index sector index
      */
-    hideAnimation: function(data) {
-        var sector = this.sectors[data.index].sector;
+    _animateRestoring: function(index) {
+        var sector = this.sectors[index].sector;
         this._restoreSector(sector);
     },
 
@@ -306,6 +270,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         this.circleBound = circleBound;
         this.paper.setSize(dimension.width, dimension.height);
+        delete this.containerBound;
 
         tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles;
@@ -326,7 +291,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             return;
         }
 
-        paths = this._makeLinePaths(outerPositions)
+        paths = this._makeLinePaths(outerPositions);
         tui.util.forEachArray(this.legendLines, function(line, index) {
             line.attr({path: paths[index]});
             return line;
@@ -334,11 +299,73 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Select series.
-     * @param {{groupIndex: number, index: number}} indexes indexes
+     * Click series.
+     * @param {{left: number, top: number}} position mouse position
      */
-    selectSeries: function(indexes) {
-        var item = this.sectors[indexes.index],
+    clickSeries: function(position) {
+        var sector = this.paper.getElementByPoint(position.left, position.top);
+
+        if (sector && this.prevSelectedSector) {
+            this._unselectSeries(this.prevSelectedSector.id);
+        }
+
+        if (this.prevSelectedSector === sector) {
+            sector = null;
+            delete this.prevSelectedSector;
+        } else if (sector) {
+            this._selectSeries(sector.id);
+            this.prevSelectedSector = sector;
+        }
+    },
+
+
+    /**
+     * Get tooltip container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.container.getBoundingClientRect();
+        }
+        return this.containerBound;
+    },
+
+    /**
+     * Move mouse on series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    moveMouseOnSeries: function(position) {
+        var sector = this.paper.getElementByPoint(position.left, position.top),
+            containerBound, args, changed;
+
+        if (sector && this.sectors[sector.id]) {
+            containerBound = this._getContainerBound();
+            changed = this.prevMovedSector !== sector;
+            args = [{}, 0, sector.id, {
+                left: position.left - containerBound.left,
+                top: position.top - containerBound.top
+            }];
+
+            if (changed) {
+                this._animateExpanding(sector.id);
+            }
+
+            this.callbacks.funcShowTooltip.apply(null, args);
+            this.prevMovedSector = sector;
+        } else if (this.prevMovedSector) {
+            this._animateRestoring(this.prevMovedSector.id);
+            this.callbacks.funcHideTooltip();
+        }
+    },
+
+    /**
+     * Select series.
+     * @param {number} index index
+     * @private
+     */
+    _selectSeries: function(index) {
+        var item = this.sectors[index],
             objColor = Raphael.color(item.color),
             color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
 
@@ -349,10 +376,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Unelect series.
-     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {number} index index
+     * @private
      */
-    unselectSeries: function(indexes) {
-        var sector = this.sectors[indexes.index];
+    _unselectSeries: function(index) {
+        var sector = this.sectors[index];
 
         sector.sector.attr({
             fill: sector.color

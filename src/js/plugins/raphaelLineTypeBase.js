@@ -391,30 +391,19 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     animate: function(callback) {
         var that = this,
             seriesWidth = this.dimension.width,
-            seriesHeight = this.dimension.height,
-            startTime;
+            seriesHeight = this.dimension.height;
 
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            delete this.animationId;
-        }
+        tui.chart.renderUtil.cancelAnimation(this.animation);
 
-        function setSize() {
-            var diffTime = (new Date()).getTime() - startTime,
-                width = Math.min(seriesWidth * (diffTime / ANIMATION_TIME), seriesWidth);
+        this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_TIME, function(ratio) {
+            var width = Math.min(seriesWidth * ratio, seriesWidth);
 
             that.paper.setSize(width, seriesHeight);
 
-            if (width === seriesWidth) {
-                delete that.animationId;
+            if (ratio === 1) {
                 callback();
-            } else {
-                that.animationId = requestAnimationFrame(setSize);
             }
-        }
-
-        startTime = (new Date()).getTime();
-        this.animationId = requestAnimationFrame(setSize);
+        });
     },
 
     /**

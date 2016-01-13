@@ -234,10 +234,13 @@
   .tui-chart-series-custom-event-area {
     z-index: 1000;
     position: absolute;
-    left: 10px;
+    left: 0;
     top: 0;
     background-color: #fff;
     .opacity(0);
+    &.hide {
+      display: none;
+    }
   }
 
   .tui-chart-legend-rect {
@@ -280,7 +283,7 @@
       }
 
       .tui-chart-legend-label {
-        padding: 2px 0 2px 5px;
+        padding: 2px 0 2px 4px;
         cursor: pointer;
         .content-box();
         line-height: 1;

@@ -121,6 +121,12 @@ var chartConst = {
      * @type {string}
      */
     TOOLTIP_PREFIX: 'tui-chart-tooltip',
+    /** tooltip z-index **/
+    TOOLTIP_ZINDEX: 500,
+    /** tooltip animation time */
+    TOOLTIP_ANIMATION_TIME: 100,
+    /** tooltip animation time for pie chart */
+    TOOLTIP_PIE_ANIMATION_TIME: 50,
     /** minimum pixel type step size */
     MIN_PIXEL_TYPE_STEP_SIZE: 40,
     /** maximum pixel type step size */

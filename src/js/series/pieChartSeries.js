@@ -30,6 +30,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.legendAlign = params.legendAlign;
 
+        /**
+         * chart background.
+         * @type {string}
+         */
+        this.chartBackground = params.chartBackground;
+
         Series.call(this, params);
     },
 
@@ -601,6 +607,36 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this._handleMouseEvent(e, function(groupIndex, index) {
             that.hideTooltip(groupIndex, index);
         });
+    },
+
+    /**
+     * Action graph renderer.
+     * @param {{left: number, top: number}} position mouse position
+     * @param {string} funcName function name
+     * @private
+     */
+    _actionGraphRenderer: function(position, funcName) {
+        this.fire('hideTooltipContainer');
+        dom.removeClass(this.seriesLabelContainer, 'show');
+        this.graphRenderer[funcName](position);
+        dom.addClass(this.seriesLabelContainer, 'show');
+        this.fire('showTooltipContainer');
+    },
+
+    /**
+     * On click series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onClickSeries: function(position) {
+        this._actionGraphRenderer(position, 'clickSeries');
+    },
+
+    /**
+     * On move series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onMoveSeries: function(position) {
+        this._actionGraphRenderer(position, 'moveMouseOnSeries');
     },
 
     /**

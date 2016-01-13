@@ -12,7 +12,8 @@ var ChartBase = require('./chartBase'),
     renderUtil = require('../helpers/renderUtil'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
-    Series = require('../series/pieChartSeries');
+    Series = require('../series/pieChartSeries'),
+    pieChartCustomEvent = require('../customEvents/pieChartCustomEvent');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
@@ -73,6 +74,14 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     },
 
     /**
+     * Add custom event component.
+     * @private
+     */
+    _addCustomEventComponent: function() {
+        this._addComponent('customEvent', pieChartCustomEvent);
+    },
+
+    /**
      * Make rendering data for pie chart.
      * @param {object} bounds chart bounds
      * @return {object} data for rendering
@@ -97,10 +106,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var tooltip, serieses;
+        var customEvent, tooltip, serieses;
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
+        customEvent = this.componentMap.customEvent;
         tooltip = this.componentMap.tooltip;
         serieses = tui.util.filter(this.componentMap, function (component) {
             return component.componentType === 'series';
@@ -109,10 +119,11 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             series.on('showTooltip', tooltip.onShow, tooltip);
             series.on('hideTooltip', tooltip.onHide, tooltip);
 
-            if (series.onShowAnimation) {
-                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
-                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
-            }
+            series.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
+            series.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
+
+            customEvent.on(renderUtil.makeCustomEventName('click', series.chartType, 'series'), series.onClickSeries, series);
+            customEvent.on(renderUtil.makeCustomEventName('move', series.chartType, 'series'), series.onMoveSeries, series);
         }, this);
     }
 });

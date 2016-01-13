@@ -276,6 +276,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var groupValues = this.dataProcessor.getGroupValues(this.chartType),
             that = this;
 
+        if (this.graphRenderer.clear) {
+            this.graphRenderer.clear();
+        }
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
@@ -500,18 +503,23 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         dom.addClass(this.seriesLabelContainer, 'show');
-        this.labelShower = new tui.component.Effects.Fade({
-            element: this.seriesLabelContainer,
-            duration: 300
-        });
-        this.labelShower.action({
-            start: 0,
-            end: 1,
-            complete: function() {
-                clearInterval(that.labelShower.timerId);
-                delete that.labelShower;
-            }
-        });
+
+        if (renderUtil.isIE7()) {
+            this.seriesLabelContainer.style.filter = '';
+        } else {
+            this.labelShower = new tui.component.Effects.Fade({
+                element: this.seriesLabelContainer,
+                duration: 300
+            });
+            this.labelShower.action({
+                start: 0,
+                end: 1,
+                complete: function() {
+                    clearInterval(that.labelShower.timerId);
+                    delete that.labelShower;
+                }
+            });
+        }
     },
 
     /**

@@ -171,8 +171,8 @@ describe('Tooltip', function() {
             actual = tooltip._calculateTooltipPositionAboutPieChart({
                 bound: {},
                 eventPosition: {
-                    clientX: 50,
-                    clientY: 50
+                    left: 50,
+                    top: 50
                 },
                 dimension: {
                     width: 50,
@@ -185,7 +185,7 @@ describe('Tooltip', function() {
                 }
             });
             expected = {
-                left: 45,
+                left: 55,
                 top: 15
             };
 

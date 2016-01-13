@@ -374,6 +374,46 @@ var renderUtil = {
     },
 
     /**
+     * Cancel animation
+     * @param {{id: number}} animation animaion object
+     */
+    cancelAnimation: function(animation) {
+        if (animation && animation.id) {
+            cancelAnimationFrame(animation.id);
+            delete animation.id;
+        }
+    },
+
+    /**
+     * Start animation.
+     * @param {number} animationTime animation time
+     * @param {function} callback callback function
+     * @returns {{id: number}} requestAnimationFrame id
+     */
+    startAnimation: function(animationTime, callback) {
+        var animation = {},
+            startTime;
+
+        function animate() {
+            var diffTime = (new Date()).getTime() - startTime,
+                ratio = Math.min((diffTime / animationTime), 1);
+
+            callback(ratio);
+
+            if (ratio === 1) {
+                delete animation.id;
+            } else {
+                animation.id = requestAnimationFrame(animate);
+            }
+        }
+
+        startTime = (new Date()).getTime();
+        animation.id = requestAnimationFrame(animate);
+
+        return animation;
+    },
+
+    /**
      * Whether IE7 or not.
      * @returns {boolean} result boolean
      */
@@ -390,5 +430,8 @@ var renderUtil = {
         return isOldBrowser;
     }
 };
+
+tui.util.defineNamespace('tui.chart');
+tui.chart.renderUtil = renderUtil;
 
 module.exports = renderUtil;
