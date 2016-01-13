@@ -9,7 +9,6 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var ANIMATION_TIME = 700,
-    ANIMATION_TERM = 26,
     DEFAULT_DOT_RADIUS = 3,
     HOVER_DOT_RADIUS = 4,
     SELECTION_DOT_RADIUS = 7,
@@ -391,26 +390,31 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      */
     animate: function(callback) {
         var that = this,
-            term = ANIMATION_TERM,
-            count = parseInt(ANIMATION_TIME / term, 10),
-            step = this.dimension.width / count,
-            seriesHeight = this.dimension.height;
+            seriesWidth = this.dimension.width,
+            seriesHeight = this.dimension.height,
+            startTime;
 
-        if (this.animations) {
-            tui.util.forEachArray(this.animations, clearTimeout);
-            delete this.animations;
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            delete this.animationId;
         }
 
-        this.animations = tui.util.map(tui.util.range(1, count + 1), function(tick) {
-            return setTimeout(function() {
-                that.paper.setSize(step * tick, seriesHeight);
+        function setSize() {
+            var diffTime = (new Date()).getTime() - startTime,
+                width = Math.min(seriesWidth * (diffTime / ANIMATION_TIME), seriesWidth);
 
-                if (tick === count) {
-                    delete that.animations;
-                    callback();
-                }
-            }, term * tick);
-        }, this);
+            that.paper.setSize(width, seriesHeight);
+
+            if (width === seriesWidth) {
+                delete that.animationId;
+                callback();
+            } else {
+                that.animationId = requestAnimationFrame(setSize);
+            }
+        }
+
+        startTime = (new Date()).getTime();
+        this.animationId = requestAnimationFrame(setSize);
     },
 
     /**

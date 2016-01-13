@@ -30,6 +30,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.legendAlign = params.legendAlign;
 
+        /**
+         * chart background.
+         * @type {string}
+         */
+        this.chartBackground = params.chartBackground;
+
         Series.call(this, params);
     },
 
