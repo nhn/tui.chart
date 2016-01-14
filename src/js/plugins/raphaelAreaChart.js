@@ -43,7 +43,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             opacity = data.options.hasDot ? 1 : 0,
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupPaths, groupAreas, tooltipLine, selectionDot, groupDots;
+            paper, groupPaths;
 
         this.paper = paper = Raphael(container, 1, dimension.height);
         this.stackedOption = data.options.stacked;
@@ -51,23 +51,18 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
 
-        groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
-        groupAreas = this._renderAreas(paper, groupPaths, colors);
-        tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
-            this.selectionDot = selectionDot;
+            this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
 
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
-        this.groupPaths = groupPaths;
-        this.groupAreas = groupAreas;
-        this.tooltipLine = tooltipLine;
-        this.groupDots = groupDots;
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 

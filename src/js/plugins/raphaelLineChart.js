@@ -42,19 +42,18 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPaths = data.options.spline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupLines, tooltipLine, selectionDot, groupDots;
+            paper;
 
         this.paper = paper = Raphael(container, 1, dimension.height);
         this.splineOption = data.options.spline;
         this.dimension = dimension;
 
-        groupLines = this._renderLines(paper, groupPaths, colors);
-        tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupLines = this._renderLines(paper, groupPaths, colors);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
-            this.selectionDot = selectionDot;
+            this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
 
@@ -63,9 +62,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
-        this.groupLines = groupLines;
-        this.tooltipLine = tooltipLine;
-        this.groupDots = groupDots;
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 

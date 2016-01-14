@@ -36,17 +36,16 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.paper = paper = Raphael(container, dimension.width, dimension.height);
 
         baseParams = {
-            paper: paper,
             theme: data.theme,
             groupBounds: groupBounds,
             groupValues: data.groupValues,
             chartType: data.chartType
         };
 
-        this._renderBars(baseParams);
+        this.groupBars = this._renderBars(baseParams);
+        this.groupBorders = this._renderBarBorders(baseParams);
 
-        this._renderBarBorders(baseParams);
-
+        this.overlay = this._renderOverlay();
         this.theme = data.theme;
         this.groupBounds = groupBounds;
         this.chartType = data.chartType;
@@ -55,9 +54,29 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
+     * Render overlay.
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderOverlay: function() {
+        var rect = this._renderBar({
+            bound: {
+                width: 1,
+                height: 1,
+                left: 0,
+                top: 0
+            },
+            color: '#fff'
+        }).attr({
+            'fill-opacity': 0
+        });
+
+        return rect;
+    },
+
+    /**
      * Render rect
      * @param {object} params parameters
-     *      @param {object} params.paper raphael paper
      *      @param {string} params.color series color
      *      @param {string} params.borderColor series borderColor
      *      @param {{left: number, top: number, width: number, height: number}} params.bound bound
@@ -72,7 +91,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             return null;
         }
 
-        rect = params.paper.rect(bound.left, bound.top, bound.width, bound.height);
+        rect = this.paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
             fill: params.color,
             stroke: 'none'
@@ -84,16 +103,17 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     /**
      * Render bars.
      * @param {object} params parameters
-     *      @param {object} params.paper raphael paper
      *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
      *      @param {array.<array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @returns {array.<array.<object>>} bars
      * @private
      */
     _renderBars: function(params) {
         var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
-            colors = params.theme.colors;
+            colors = params.theme.colors,
+            groupBars;
 
-        this.groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
             return tui.util.map(bounds, function(bound, index) {
                 var color, rect, value;
@@ -106,7 +126,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 value = params.groupValues[groupIndex][index];
 
                 rect = this._renderBar({
-                    paper: params.paper,
                     chartType: params.chartType,
                     color: color,
                     borderColor: params.theme.borderColor,
@@ -124,6 +143,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 };
             }, this);
         }, this);
+
+        return groupBars;
     },
 
     /**
@@ -207,7 +228,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     /**
      * Render border lines;
      * @param {object} params parameters
-     *      @param {object} params.paper paper
      *      @param {{left: number, top:number, width: number, height: number}} params.bound bar bound
      *      @param {string} params.borderColor border color
      *      @param {string} params.chartType chart type
@@ -220,8 +240,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             lines = {};
 
         tui.util.forEach(borderLinePaths, function(path, name) {
-            lines[name] = raphaelRenderUtil.renderLine(params.paper, path, params.borderColor, 1);
-        });
+            lines[name] = raphaelRenderUtil.renderLine(this.paper, path, params.borderColor, 1);
+        }, this);
 
         return lines;
     },
@@ -229,19 +249,20 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     /**
      * Render bar borders.
      * @param {object} params parameters
-     *      @param {object} params.paper raphael paper
      *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
      *      @param {array.<array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @returns {array.<array.<object>>} borders
      * @private
      */
     _renderBarBorders: function(params) {
-        var borderColor = params.theme.borderColor;
+        var borderColor = params.theme.borderColor,
+            groupBorders;
 
         if (!borderColor) {
-            return;
+            return null;
         }
 
-        this.groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
                 var value;
 
@@ -252,7 +273,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 value = params.groupValues[groupIndex][index];
 
                 return this._renderBorderLines({
-                    paper: params.paper,
+                    paper: this.paper,
                     bound: bound.start,
                     borderColor: borderColor,
                     chartType: params.chartType,
@@ -260,6 +281,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 });
             }, this);
         }, this);
+
+        return groupBorders;
     },
 
     /**
@@ -322,6 +345,35 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                 delete that.callbackTimeout;
             }, ANIMATION_TIME);
         }
+    },
+
+    /**
+     * Show animation.
+     * @param {{groupIndex: number, index:number}} data show info
+     */
+    showAnimation: function(data) {
+        var bar = this.groupBars[data.groupIndex][data.index],
+            bound = bar.bound;
+        this.overlay.attr({
+            width: bound.width,
+            height: bound.height,
+            x: bound.left,
+            y: bound.top,
+            'fill-opacity': 0.3
+        });
+    },
+
+    /**
+     * Hide animation.
+     */
+    hideAnimation: function() {
+        this.overlay.attr({
+            width: 1,
+            height: 1,
+            x: 0,
+            y: 0,
+            'fill-opacity': 0
+        });
     },
 
     /**

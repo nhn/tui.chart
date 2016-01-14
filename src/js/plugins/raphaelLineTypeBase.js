@@ -227,6 +227,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         });
     },
 
+    _updateLineStrokeWidth: function(line, strokeWidth) {
+        line.attr({
+            'stroke-width': strokeWidth
+        });
+    },
+
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
@@ -234,8 +240,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
             item = this.groupDots[groupIndex][index];
 
+        this._updateLineStrokeWidth(line, 3);
         this._showDot(item.dot);
     },
 
@@ -321,11 +329,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
             item = this.groupDots[groupIndex][index],
             opacity = this.dotOpacity;
 
         if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
+        }
+
+        if (line) {
+            this._updateLineStrokeWidth(line, 2);
         }
 
         if (item) {
