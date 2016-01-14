@@ -227,6 +227,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         });
     },
 
+    /**
+     * Update line stroke width.
+     * @param {object} line raphael object
+     * @param {number} strokeWidth stroke width
+     * @private
+     */
     _updateLineStrokeWidth: function(line, strokeWidth) {
         line.attr({
             'stroke-width': strokeWidth

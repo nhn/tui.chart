@@ -65,6 +65,7 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
      * On mouse move.
      * @param {mouseevent} e mouse event
      * @private
+     * @override
      */
     _onMousemove: function(e) {
         this._onMouseEvent('move', e);

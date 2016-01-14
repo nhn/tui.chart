@@ -390,9 +390,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             };
         }, this);
 
-        if (this.componentMap.customEvent.initCustomEventData) {
-            this.componentMap.customEvent.initCustomEventData(seriesInfos);
-        }
+        this.componentMap.customEvent.initCustomEventData(seriesInfos);
     },
 
     /**

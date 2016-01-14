@@ -384,7 +384,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     hideTooltip: function(elTooltip, index) {
         delete this.prevIndex;
         this._hideTooltipSector(index);
-        this.hideAnimation(elTooltip);
+        dom.removeClass(elTooltip, 'show');
+        elTooltip.style.cssText = '';
     }
 });
 

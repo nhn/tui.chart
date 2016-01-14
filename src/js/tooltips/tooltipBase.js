@@ -232,44 +232,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Get hider.
-     * @param {HTMLElement} element element
-     * @returns {object} effect object
-     * @private
-     */
-    _getHider: function(element) {
-        if (!this.hider) {
-            this.hider = new tui.component.Effects.Fade({
-                element: element,
-                duration: 50
-            });
-        }
-
-        return this.hider;
-    },
-
-    /**
-     * Hide animation.
-     * @param {HTMLElement} tooltipElement tooltip element
-     */
-    hideAnimation: function(tooltipElement) {
-        dom.removeClass(tooltipElement, 'show');
-        tooltipElement.style.cssText = '';
-        return;
-        var that = this;
-        this.activeHider = this._getHider(tooltipElement);
-        this.activeHider.action({
-            start: 1,
-            end: 0,
-            complete: function() {
-                dom.removeClass(tooltipElement, 'show');
-                tooltipElement.style.cssText = '';
-                delete that.activeHider;
-            }
-        });
-    },
-
-    /**
      * Set tooltip align option.
      * @param {string} align align
      */
