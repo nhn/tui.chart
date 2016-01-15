@@ -332,31 +332,45 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
+     * Whether changed or not.
+     * @param {{left: number, top: number}} prevPosition previous position
+     * @param {{left: number, top: number}} position position
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isChangedPosition: function(prevPosition, position) {
+        return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
+    },
+
+    /**
      * Move mouse on series.
      * @param {{left: number, top: number}} position mouse position
      */
     moveMouseOnSeries: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top),
-            containerBound, args, changed;
+            containerBound, args, changedSector;
 
         if (sector && this.sectors[sector.data('index')]) {
             containerBound = this._getContainerBound();
-            changed = this.prevMovedSector !== sector;
+            changedSector = this.prevMovedSector !== sector;
             args = [{}, 0, sector.data('index'), {
                 left: position.left - containerBound.left,
                 top: position.top - containerBound.top
             }];
 
-            if (changed) {
+            if (changedSector) {
                 this._animateExpanding(sector.data('index'));
             }
 
-            this.callbacks.funcShowTooltip.apply(null, args);
-            this.prevMovedSector = sector;
+            if (this._isChangedPosition(this.prevPosition, position)) {
+                this.callbacks.funcShowTooltip.apply(null, args);
+                this.prevMovedSector = sector;
+            }
         } else if (this.prevMovedSector) {
             this._animateRestoring(this.prevMovedSector.data('index'));
             this.callbacks.funcHideTooltip();
         }
+        this.prevPosition = position;
     },
 
     /**
