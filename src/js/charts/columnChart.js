@@ -20,7 +20,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      * @extends ChartBase
      * @mixes axisTypeMixer
      * @mixes verticalTypeMixer
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
@@ -34,7 +34,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
         options.series = options.series || {};
 
-        if (options.series.divergent) {
+        if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
             options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
         }
@@ -53,7 +53,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     /**
      * Make axes data
      * @param {object} bounds chart bounds
-     * @param {?boolean} divergentOption divergent option
+     * @param {?boolean} divergingOption diverging option
      * @returns {object} axes data
      * @private
      */
@@ -67,7 +67,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                 values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
                 stackedOption: options.series.stacked || '',
-                divergentOption: options.series.divergent,
+                divergingOption: options.series.diverging,
                 chartType: options.chartType,
                 formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.yAxis,

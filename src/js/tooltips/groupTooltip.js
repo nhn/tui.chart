@@ -29,7 +29,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Make tooltip html.
      * @param {string} category category
-     * @param {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
+     * @param {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
      * @returns {string} tooltip html
      * @private
      */
@@ -96,8 +96,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Update legend theme.
-     * @param {object | array.<boolean>}checkedLegends checked legends
-     * @returns {{colors: array.<string>}} legend theme
+     * @param {object | Array.<boolean>}checkedLegends checked legends
+     * @returns {{colors: Array.<string>}} legend theme
      * @private
      */
     _updateLegendTheme: function(checkedLegends) {
@@ -117,7 +117,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Make tooltip data.
-     * @returns {array.<object>} tooltip data
+     * @returns {Array.<object>} tooltip data
      * @override
      */
     makeTooltipData: function() {
@@ -132,7 +132,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Make colors.
      * @param {object} theme tooltip theme
-     * @returns {array.<string>} colors
+     * @returns {Array.<string>} colors
      * @private
      */
     _makeColors: function(theme) {
@@ -161,8 +161,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Make rendering data about legend item.
-     * @param {array.<string>} values values
-     * @returns {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
+     * @param {Array.<string>} values values
+     * @returns {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
      * @private
      */
     _makeItemRenderingData: function(values) {

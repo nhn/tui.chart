@@ -28,19 +28,19 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
         /**
          * legend labels
-         * @type {array.<string> | {column: ?array.<string>, line: ?array.<string>}}
+         * @type {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}}
          */
         this.labels = params.labels;
 
         /**
          * label infos
-         * @type {array.<{chartType: string, label: string, index: number}>}
+         * @type {Array.<{chartType: string, label: string, index: number}>}
          */
         this.legendData = params.legendData;
 
         /**
          * chart types
-         * @type {?array.<string>}
+         * @type {?Array.<string>}
          */
         this.chartTypes = params.chartTypes;
 
@@ -52,7 +52,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
         /**
          * Legend data
-         * @type {?array}
+         * @type {?Array}
          */
         this.data = null;
 
@@ -70,7 +70,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
         /**
          * checked indexes
-         * @type {array}
+         * @type {Array}
          */
         this.checkedWholeIndexes = [];
 
@@ -92,10 +92,10 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
     /**
      * Make label info that applied theme.
-     * @param {array.<object>} labelInfo labels
-     * @param {{colors: array.<number>, singleColor: ?string, bordercolor: ?string}} theme legend theme
-     * @param {array.<boolean>} checkedIndexes checked indexes
-     * @returns {array.<object>} labels
+     * @param {Array.<object>} labelInfo labels
+     * @param {{colors: Array.<number>, singleColor: ?string, bordercolor: ?string}} theme legend theme
+     * @param {Array.<boolean>} checkedIndexes checked indexes
+     * @returns {Array.<object>} labels
      * @private
      */
     _makeLabelInfoAppliedTheme: function(labelInfo, theme, checkedIndexes) {
@@ -168,7 +168,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
     /**
      * Get legend data.
-     * @returns {array.<{chartType: string, label: string, theme: object}>} legend data
+     * @returns {Array.<{chartType: string, label: string, theme: object}>} legend data
      */
     getData: function() {
         return this.data;
@@ -282,7 +282,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
     /**
      * Get checked indexes.
-     * @returns {{column: ?array.<boolean>, line: ?array.<boolean>} | array.<boolean>} sending data
+     * @returns {{column: ?Array.<boolean>, line: ?Array.<boolean>} | Array.<boolean>} sending data
      */
     getCheckedIndexes: function() {
         return this.checkedIndexesMap[this.chartType] || this.checkedIndexesMap;
@@ -299,7 +299,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
 
     /**
      * Update checked data.
-     * @param {array.<number>} indexes indxes
+     * @param {Array.<number>} indexes indxes
      */
     updateCheckedData: function(indexes) {
         this._resetCheckedData();

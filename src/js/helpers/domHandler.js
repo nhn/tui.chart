@@ -34,7 +34,7 @@ var domHandler = {
      * Get class names.
      * @memberOf module:domHandler
      * @param {HTMLElement} el target element
-     * @returns {array} names
+     * @returns {Array} names
      * @private
      */
     _getClassNames: function(el) {

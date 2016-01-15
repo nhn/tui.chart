@@ -64,7 +64,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Initialize data of custom event
-     * @param {array.<object>} seriesInfos series infos
+     * @param {Array.<object>} seriesInfos series infos
      */
     initCustomEventData: function(seriesInfos) {
         this.pointTypeDataModel = new PointTypeDataModel(seriesInfos);

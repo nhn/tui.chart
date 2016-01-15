@@ -16,7 +16,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
      * @param {object} params parameters
-     *      @param {array.<number>} params.values converted values
+     *      @param {Array.<number>} params.values converted values
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
@@ -36,7 +36,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
         /**
          * TooltipBase base data.
-         * @type {array.<array.<object>>}
+         * @type {Array.<Array.<object>>}
          */
         this.data = this.makeTooltipData();
 

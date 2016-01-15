@@ -19,7 +19,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * Combo chart.
      * @constructs ComboChart
      * @extends ChartBase
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
@@ -51,7 +51,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Make yAxis options map.
-     * @param {array.<string>} chartTypes chart types
+     * @param {Array.<string>} chartTypes chart types
      * @param {?object} yAxisOptions yAxis options
      * @returns {{column: ?object, line: ?object}} options map
      * @private
@@ -146,8 +146,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Make serieses
-     * @param {array.<string>} chartTypes chart types
-     * @returns {array.<object>} serieses
+     * @param {Array.<string>} chartTypes chart types
+     * @returns {Array.<object>} serieses
      * @private
      */
     _makeSerieses: function(chartTypes) {
@@ -201,9 +201,9 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Get y axis option chart types.
-     * @param {array.<string>} chartTypes chart types
+     * @param {Array.<string>} chartTypes chart types
      * @param {object} yAxisOptions y axis options
-     * @returns {array.<string>} chart types
+     * @returns {Array.<string>} chart types
      * @private
      */
     _getYAxisOptionChartTypes: function(chartTypes, yAxisOptions) {
@@ -237,7 +237,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @param {object} params parameters
      *      @param {number} params.index chart index
      *      @param {{width: number, height: number}} params.seriesDimension series dimension
-     *      @param {array.<string>} chartTypes chart type
+     *      @param {Array.<string>} chartTypes chart type
      *      @param {boolean} isOneYAxis whether one series or not
      *      @param {object} options chart options
      *      @param {object} addParams add params
@@ -329,7 +329,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * Increase y axis tick count.
      * @param {number} increaseTickCount increase tick count
      * @param {object} toData to tick info
-     * @param {array.<function>} formatFunctions format functions
+     * @param {Array.<function>} formatFunctions format functions
      * @private
      */
     _increaseYAxisTickCount: function(increaseTickCount, toData, formatFunctions) {
@@ -363,7 +363,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * On change selected legend.
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var rawData = this._filterRawData(this.rawData, checkedLegends),

@@ -362,7 +362,7 @@ var renderUtil = {
     /**
      * Format value.
      * @param {number} value value
-     * @param {array.<function>} formatFunctions functions for format
+     * @param {Array.<function>} formatFunctions functions for format
      * @returns {string} formatted value
      */
     formatValue: function(value, formatFunctions) {

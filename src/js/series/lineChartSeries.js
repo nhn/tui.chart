@@ -27,7 +27,7 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
     /**
      * Make positions.
      * @param {{width: number, height: number}} dimension dimension
-     * @returns {array.<array.<{left: number, top: number}>>} positions
+     * @returns {Array.<Array.<{left: number, top: number}>>} positions
      * @private
      */
     _makePositions: function(dimension) {

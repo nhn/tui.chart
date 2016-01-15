@@ -21,12 +21,12 @@
 
 /**
  * group bound
- *  @typedef {array.<array.<bound>>} groupBound
+ *  @typedef {Array.<Array.<bound>>} groupBound
  */
 
 /**
  * group position
- *  @typedef {array.<array.<position>>} groupPosition
+ *  @typedef {Array.<Array.<position>>} groupPosition
  */
 
 /**
@@ -35,7 +35,7 @@
  *      chartType: {string},
  *      data: {
  *          groupBounds: ?groupBound,
- *          groupValues: ?array.<array.<number>>,
+ *          groupValues: ?Array.<Array.<number>>,
  *          groupPositions: ?groupPosition
  *      }
  *}} seriesInfo
@@ -48,7 +48,7 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     /**
      * PointTypeDataModel is data mode for point type custom event.
      * @constructs PointTypeDataModel
-     * @param {array.<seriesInfo>} seriesInfos series infos
+     * @param {Array.<seriesInfo>} seriesInfos series infos
      */
     init: function(seriesInfos) {
         this.data = this._makeData(seriesInfos);
@@ -58,7 +58,7 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
      * Make coordinate data about bar type graph
      * @param {groupBound} groupBounds group bounds
      * @param {string} chartType chart type
-     * @returns {array} coordinate data
+     * @returns {Array} coordinate data
      * @private
      */
     _makeRectTypeCoordinateData: function(groupBounds, chartType) {
@@ -96,7 +96,7 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
      * Make coordinate data about dot type graph
      * @param {groupPositions} groupPositions group positions
      * @param {string} chartType chart type
-     * @returns {array.<array.<object>>} coordinate data
+     * @returns {Array.<Array.<object>>} coordinate data
      * @private
      */
     _makeDotTypeCoordinateData: function(groupPositions, chartType) {
@@ -128,8 +128,8 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
 
     /**
      * Join data.
-     * @param {array.<array.<array.<object>>>} groupData group data
-     * @returns {array.<array.<object>>} joined data
+     * @param {Array.<Array.<Array.<object>>>} groupData group data
+     * @returns {Array.<Array.<object>>} joined data
      * @private
      */
     _joinData: function(groupData) {
@@ -148,8 +148,8 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
 
     /**
      * Make coordinate data.
-     * @param {array.<seriesInfo>} seriesInfos series infos
-     * @returns {array.<array.<object>>} coordinate data
+     * @param {Array.<seriesInfo>} seriesInfos series infos
+     * @returns {Array.<Array.<object>>} coordinate data
      * @private
      */
     _makeData: function(seriesInfos) {

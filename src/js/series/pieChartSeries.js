@@ -41,9 +41,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Make sectors information.
-     * @param {array.<number>} percentValues percent values
+     * @param {Array.<number>} percentValues percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
-     * @returns {array.<object>} sectors information
+     * @returns {Array.<object>} sectors information
      * @private
      */
     _makeSectorData: function(percentValues, circleBound) {
@@ -105,7 +105,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @returns {{
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
-     *      sectorData: array.<object>
+     *      sectorData: Array.<object>
      * }} add data for graph rendering
      */
     makeSeriesData: function(bound) {
@@ -317,7 +317,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Render center legend.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions positions
+     *      @param {Array.<object>} params.positions positions
      *      @param {string} params.separator separator
      *      @param {object} params.options options
      *      @param {function} params.funcMoveToPosition function
@@ -376,7 +376,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     /**
      * Add end position.
      * @param {number} centerLeft center left
-     * @param {array.<object>} positions positions
+     * @param {Array.<object>} positions positions
      * @private
      */
     _addEndPosition: function(centerLeft, positions) {

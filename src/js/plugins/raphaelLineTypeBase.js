@@ -23,8 +23,8 @@ var concat = Array.prototype.concat;
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * Make lines path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} paths
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} paths
      * @private
      */
     _makeLinesPath: function(positions) {
@@ -71,8 +71,8 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Make spline lines path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} paths
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} paths
      * @private
      */
     _makeSplineLinesPath: function(positions) {
@@ -181,10 +181,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Render dots.
      * @param {object} paper raphael paper
-     * @param {array.<array.<object>>} groupPositions positions
+     * @param {Array.<Array.<object>>} groupPositions positions
      * @param {string[]} colors colors
      * @param {number} opacity opacity
-     * @returns {array.<object>} dots
+     * @returns {Array.<object>} dots
      * @private
      */
     _renderDots: function(paper, groupPositions, colors, opacity) {
@@ -255,7 +255,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Get pivot group dots.
-     * @returns {array.<array>} dots
+     * @returns {Array.<Array>} dots
      * @private
      */
     _getPivotGroupDots: function() {

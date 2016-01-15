@@ -115,7 +115,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make html of plot line.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions positions
+     *      @param {Array.<object>} params.positions positions
      *      @param {number} params.size width or height
      *      @param {string} params.className line className
      *      @param {string} params.positionType position type (left or bottom)
@@ -145,7 +145,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make pixel value of vertical positions
      * @param {number} height plot height
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      * @private
      */
     _makeVerticalPixelPositions: function(height) {
@@ -157,7 +157,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make pixel value of horizontal positions.
      * @param {number} width plot width
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      * @private
      */
     _makeHorizontalPixelPositions: function(width) {

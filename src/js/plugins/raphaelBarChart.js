@@ -104,8 +104,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Render bars.
      * @param {object} params parameters
      *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {array.<array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
-     * @returns {array.<array.<object>>} bars
+     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @returns {Array.<Array.<object>>} bars
      * @private
      */
     _renderBars: function(params) {
@@ -250,8 +250,8 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Render bar borders.
      * @param {object} params parameters
      *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {array.<array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
-     * @returns {array.<array.<object>>} borders
+     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @returns {Array.<Array.<object>>} borders
      * @private
      */
     _renderBarBorders: function(params) {
@@ -302,7 +302,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Animate borders.
-     * @param {array.<object>} lines raphael objects
+     * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
      * @param {number} value value
@@ -393,7 +393,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Update borders attribute
-     * @param {array.<object>} lines raphael objects
+     * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} chartType chart type
      * @param {number} value value
@@ -411,7 +411,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Resize graph of bar type chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {array.<array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
+     *      @param {Array.<Array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
      */
     resize: function(params) {
         var that = this,
@@ -442,7 +442,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Change borders color.
-     * @param {array.<object>} lines raphael objects
+     * @param {Array.<object>} lines raphael objects
      * @param {borderColor} borderColor border color
      * @private
      */

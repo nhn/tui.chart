@@ -18,7 +18,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @constructs Axis
      * @param {object} params parameters
      *      @param {{
-     *          labels: array.<string>,
+     *          labels: Array.<string>,
      *          tickCount: number,
      *          isLabelAxis: boolean,
      *          isVertical: boolean
@@ -379,7 +379,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make html of rotation labels.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions label position array
+     *      @param {Array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
      *      @param {string} params.posType position type (left or bottom)
      *      @param {string[]} params.cssTexts css array
@@ -420,7 +420,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make html of normal labels.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions label position array
+     *      @param {Array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
      *      @param {string} params.posType position type (left or bottom)
      *      @param {string[]} params.cssTexts css array
@@ -445,7 +445,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make html of labels.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions label position array
+     *      @param {Array.<object>} params.positions label position array
      *      @param {string[]} params.labels label array
      *      @param {string} params.posType position type (left or bottom)
      *      @param {string[]} params.cssTexts css array

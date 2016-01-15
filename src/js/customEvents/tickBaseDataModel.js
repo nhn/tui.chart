@@ -25,7 +25,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * Make tick base data about line type chart.
      * @param {number} width width
      * @param {number} tickCount tick count
-     * @returns {array} tick base data
+     * @returns {Array} tick base data
      * @private
      */
     _makeLineTypeData: function(width, tickCount) {
@@ -45,7 +45,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * Make tick base data about non line type chart.
      * @param {number} size width or height
      * @param {number} tickCount tick count
-     * @returns {array} tick base data
+     * @returns {Array} tick base data
      * @private
      */
     _makeNormalData: function(size, tickCount) {
@@ -69,7 +69,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
      * @param {boolan} isVertical whether vertical or not
-     * @returns {array.<object>} tick base data
+     * @returns {Array.<object>} tick base data
      * @private
      */
     _makeData: function(dimension, tickCount, chartType, isVertical) {

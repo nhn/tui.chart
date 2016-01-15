@@ -30,7 +30,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Render function of line chart.
      * @param {HTMLElement} container container
-     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @return {object} paper raphael paper
      */
     render: function(container, data) {
@@ -70,8 +70,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Get lines path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<array.<string>>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<Array.<string>>} path
      * @private
      */
     _getLinesPath: function(groupPositions) {
@@ -84,8 +84,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Get spline lines path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array} path
      * @private
      */
     _getSplineLinesPath: function(groupPositions) {
@@ -95,10 +95,10 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Render lines.
      * @param {object} paper raphael paper
-     * @param {array.<array.<string>>} groupPaths paths
+     * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string[]} colors line colors
      * @param {number} strokeWidth stroke width
-     * @returns {array.<array.<object>>} lines
+     * @returns {Array.<Array.<object>>} lines
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
@@ -114,7 +114,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * Resize graph of line chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
         var dimension = params.dimension,

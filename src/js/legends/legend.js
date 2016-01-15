@@ -20,7 +20,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @constructs Legend
      * @param {object} params parameters
      *      @param {object} params.theme axis theme
-     *      @param {?array.<string>} params.chartTypes chart types
+     *      @param {?Array.<string>} params.chartTypes chart types
      *      @param {string} params.chart type
      */
     init: function(params) {
@@ -38,7 +38,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         /**
          * chart types
-         * @type {?array.<string>}
+         * @type {?Array.<string>}
          */
         this.chartTypes = params.chartTypes;
 
@@ -60,7 +60,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         /**
          * checked indexes
-         * @type {array}
+         * @type {Array}
          */
         this.checkedIndexes = [];
 
@@ -80,7 +80,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * Render legend area.
      * @param {HTMLElement} legendContainer legend container
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
-     * @param {array.<boolean>} checkedIndexes checked indexes
+     * @param {Array.<boolean>} checkedIndexes checked indexes
      * @private
      */
     _renderLegendArea: function(legendContainer) {
@@ -146,8 +146,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Make labels width.
-     * @param {array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {array.<number>} labels width
+     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
+     * @returns {Array.<number>} labels width
      * @private
      */
     _makeLabelsWidth: function(legendData) {
@@ -159,7 +159,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Make legend html.
-     * @param {array.<{chartType: ?string, label: string}>} legendData legend data
+     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
      * @returns {string} legend html
      * @private
      */
@@ -283,7 +283,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Get checked indexes.
-     * @returns {array} checked indexes
+     * @returns {Array} checked indexes
      * @private
      */
     _getCheckedIndexes: function() {

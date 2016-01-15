@@ -29,7 +29,7 @@ var renderUtil = require('../helpers/renderUtil'),
 var axisTypeMixer = {
     /**
      * Add axis components.
-     * @param {array.<string>} axisNames axis names
+     * @param {Array.<string>} axisNames axis names
      * @param {boolean} aligned whether aligned or not
      * @private
      */
@@ -48,7 +48,7 @@ var axisTypeMixer = {
 
     /**
      * Add series components
-     * @param {array<object>} serieses serieses
+     * @param {Array<object>} serieses serieses
      * @param {object} options options
      * @param {boolean} aligned whether aligned or not
      * @private
@@ -78,7 +78,7 @@ var axisTypeMixer = {
 
     /**
      * Add legend component.
-     * @param {array.<string>} chartTypes series chart types
+     * @param {Array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
      * @param {object} legendOptions legend options
      * @private
@@ -115,7 +115,7 @@ var axisTypeMixer = {
     /**
      * Get limit map.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {array.<string>} chartTypes chart types
+     * @param {Array.<string>} chartTypes chart types
      * @param {boolean} isVertical whether vertical or not
      * @returns {{column: ?axisLimit, line: ?axisLimit}} limit map
      * @private
@@ -136,7 +136,7 @@ var axisTypeMixer = {
     /**
      * Make series data for rendering.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {array.<string>} chartTypes chart types
+     * @param {Array.<string>} chartTypes chart types
      * @param {boolean} isVertical whether vertical or not
      * @returns {object} series data
      * @private

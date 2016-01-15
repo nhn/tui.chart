@@ -16,31 +16,29 @@ var barTypeMixer = {
 
     /**
      * Pick stacks.
-     * @param {array.<{stack: string}>} rawSeriesData raw series data
-     * @returns {array.<string>} stacks
+     * @param {Array.<{stack: string}>} rawSeriesData raw series data
+     * @returns {Array.<string>} stacks
      * @private
      */
     _pickStacks: function(rawSeriesData) {
         var stacks;
 
         stacks = tui.util.map(rawSeriesData, function(seriesDatum) {
-            return tui.util.pick(seriesDatum, 'stack');
+            return seriesDatum.stack;
         });
 
         stacks = tui.util.filter(stacks, function(stack) {
             return !!stack;
         });
 
-        stacks = tui.util.uniq(stacks);
-
-        stacks.length = Math.min(stacks.length, 2);
+        stacks = tui.util.unique(stacks).slice(0, 2);
 
         return stacks;
     },
 
     /**
      * Make minus values.
-     * @param {array.<number>} data number data
+     * @param {Array.<number>} data number data
      * @returns {Array} minus values
      * @private
      */
@@ -52,7 +50,7 @@ var barTypeMixer = {
 
     /**
      * Make plus values.
-     * @param {array.<number>} data number data
+     * @param {Array.<number>} data number data
      * @returns {Array} plus values
      * @private
      */
@@ -63,9 +61,9 @@ var barTypeMixer = {
     },
 
     /**
-     * Make normal divergent raw series data.
-     * @param {{data: array.<number>}} rawSeriesData raw series data
-     * @returns {{data: array.<number>}} changed raw series data
+     * Make normal diverging raw series data.
+     * @param {{data: Array.<number>}} rawSeriesData raw series data
+     * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
     _makeNormalDivergingRawSeriesData: function(rawSeriesData) {
@@ -81,9 +79,9 @@ var barTypeMixer = {
     },
 
     /**
-     * Make stacked divergent raw series data.
-     * @param {{data: array.<number>, stack: string}} rawSeriesData raw series data
-     * @returns {{data: array.<number>}} changed raw series data
+     * Make stacked diverging raw series data.
+     * @param {{data: Array.<number>, stack: string}} rawSeriesData raw series data
+     * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
     _makeStackedDivergingRawSeriesData: function(rawSeriesData) {
@@ -105,10 +103,10 @@ var barTypeMixer = {
     },
 
     /**
-     * Make raw series data for divergent.
-     * @param {{data: array.<number>, stack: string}} rawSeriesData raw series data
+     * Make raw series data for diverging.
+     * @param {{data: Array.<number>, stack: string}} rawSeriesData raw series data
      * @param {?string} stackedOption stacked option
-     * @returns {{data: array.<number>}} changed raw series data
+     * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
     _makeRawSeriesDataForDiverging: function(rawSeriesData, stackedOption) {

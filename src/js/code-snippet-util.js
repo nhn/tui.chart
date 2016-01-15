@@ -2,9 +2,9 @@
 
 /**
  * Pick minimum value from value array.
- * @param {array} arr value array
- * @param {[function]} condition condition function
- * @param {[object]} context target context
+ * @param {Array} arr value array
+ * @param {?function} condition condition function
+ * @param {?object} context target context
  * @returns {*} minimum value
  */
 var min = function(arr, condition, context) {
@@ -29,9 +29,9 @@ var min = function(arr, condition, context) {
 
 /**
  * Pick maximum value from value array.
- * @param {array} arr value array
- * @param {[function]} condition condition function
- * @param {[object]} context target context
+ * @param {Array} arr value array
+ * @param {?function} condition condition function
+ * @param {?object} context target context
  * @returns {*} maximum value
  */
 var max = function(arr, condition, context) {
@@ -56,9 +56,9 @@ var max = function(arr, condition, context) {
 
 /**
  * Whether one of them is true or not.
- * @param {array} arr target array
+ * @param {Array} arr target array
  * @param {function} condition condition function
- * @param {[object]} context target context
+ * @param {?object} context target context
  * @returns {boolean} result boolean
  */
 var any = function(arr, condition, context) {
@@ -74,7 +74,7 @@ var any = function(arr, condition, context) {
 
 /**
  * All of them is true or not.
- * @param {array} arr target array
+ * @param {Array} arr target array
  * @param {function} condition condition function
  * @param {[object]} context target context
  * @returns {boolean} result boolean
@@ -91,11 +91,11 @@ var all = function(arr, condition, context) {
 };
 
 /**
- * Pick unique values.
- * @param {array} arr target array
- * @param {[boolean]} sorted whether sorted or not.
- * @param {[function]} iteratee iteratee function
- * @param {[object]} context target context
+ * Make unique values.
+ * @param {Array} arr target array
+ * @param {?boolean} sorted whether sorted or not.
+ * @param {?function} iteratee iteratee function
+ * @param {?object} context target context
  * @returns {Array} unique values
  */
 var unique = function(arr, sorted, iteratee, context) {
@@ -135,8 +135,8 @@ var unique = function(arr, sorted, iteratee, context) {
 /**
  * Array pivot.
  * @memberOf module:calculator
- * @param {array.<array>} arr2d target 2d array
- * @returns {array.<array>} pivoted 2d array
+ * @param {Array.<Array>} arr2d target 2d array
+ * @returns {Array.<Array>} pivoted 2d array
  */
 var pivot = function(arr2d) {
     var result = [];
@@ -163,7 +163,7 @@ var lengthAfterPoint = function(value) {
 
 /**
  * Find multiple num.
- * @param {...array} target values
+ * @param {...Array} target values
  * @returns {number} multiple num
  */
 var findMultipleNum = function() {
@@ -233,7 +233,7 @@ var division = function(a, b) {
 
 /**
  * Sum.
- * @param {array.<number>} values target values
+ * @param {Array.<number>} values target values
  * @returns {number} result value
  */
 var sum = function(values) {
@@ -253,7 +253,7 @@ tui.util.min = min;
 tui.util.max = max;
 tui.util.any = any;
 tui.util.all = all;
-tui.util.uniq = tui.util.unique = unique;
+tui.util.unique = unique;
 tui.util.pivot = pivot;
 tui.util.lengthAfterPoint = lengthAfterPoint;
 tui.util.mod = mod;

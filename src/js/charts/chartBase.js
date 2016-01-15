@@ -34,7 +34,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         /**
          * component array
-         * @type {array}
+         * @type {Array}
          */
         this.components = [];
 
@@ -100,7 +100,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} params parameters
      *      @params {object} rawData raw data
      *      @params {{chart: object, chartType: string}} options chart options
-     *      @params {array} seriesChartTypes series chart types
+     *      @params {Array} seriesChartTypes series chart types
      * @returns {object} data processor
      * @private
      */
@@ -241,7 +241,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Filter raw data.
      * @param {object} rawData raw data
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @returns {object} rawData
      * @private
      */
@@ -270,7 +270,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Make rerendering data.
      * @param {object} renderingData rendering data
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @returns {object} rendering data
      * @private
      */
@@ -295,7 +295,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Rerender.
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      * @private
@@ -323,7 +323,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * On change checked legend.
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
      * @param {?object} boundsParams addition params for calculating bounds
      */
@@ -345,7 +345,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render components.
-     * @param {array.<object>} bounds bounds
+     * @param {Array.<object>} bounds bounds
      * @param {object} renderingData data for rendering
      * @param {string} funcName function name for execution
      * @param {HTMLElement} container container element

@@ -46,8 +46,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make stacked positions.
-     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
-     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @param {Array.<Array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
      * @private
      */
     _makeStackedPositions: function(groupPositions) {
@@ -72,8 +72,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make normal positions.
-     * @param {array.<array.<{left: number, top: number}>>} groupPositions group positions
-     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @param {Array.<Array.<{left: number, top: number}>>} groupPositions group positions
+     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
      * @private
      */
     _makeNormalPositions: function(groupPositions) {
@@ -90,7 +90,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     /**
      * Make positions.
      * @param {{width: number, height: number}} dimension dimension
-     * @returns {array.<array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
      * @private
      */
     _makePositions: function(dimension) {

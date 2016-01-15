@@ -60,7 +60,7 @@ var raphaelRenderUtil = {
 
     /**
      * Render items of line type chart.
-     * @param {array.<array.<object>>} groupItems group items
+     * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
      */
     forEach2dArray: function(groupItems, funcRenderItem) {

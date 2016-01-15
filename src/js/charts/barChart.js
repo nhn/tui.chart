@@ -19,7 +19,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @constructs BarChart
      * @extends ChartBase
      * @mixes axisTypeMixer
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
@@ -38,7 +38,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
         options.series = options.series || {};
 
-        if (options.series.divergent) {
+        if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
             options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
             this.hasRightYAxis = options.yAxis && tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
@@ -66,7 +66,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                 values: this.dataProcessor.getGroupValues(),
                 seriesDimension: bounds.series.dimension,
                 stackedOption: options.series.stacked || '',
-                divergentOption: options.series.divergent,
+                divergingOption: options.series.diverging,
                 chartType: options.chartType,
                 formatFunctions: this.dataProcessor.getFormatFunctions(),
                 options: options.xAxis
@@ -148,7 +148,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
     /**
      * On change selected legend.
-     * @param {array.<?boolean> | {line: ?array.<boolean>, column: ?array.<boolean>}} checkedLegends checked legends
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
     onChangeCheckedLegends: function(checkedLegends) {
         var boundParams;

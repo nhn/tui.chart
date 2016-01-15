@@ -91,7 +91,7 @@ var calculator = {
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      */
     makeTickPixelPositions: function(size, count) {
         var positions = [],
@@ -173,7 +173,7 @@ var calculator = {
 
     /**
      * Sum plus values.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @returns {number} sum
      */
     sumPlusValues: function(values) {
@@ -185,7 +185,7 @@ var calculator = {
 
     /**
      * Sum minus values.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @returns {number} sum
      */
     sumMinusValues: function(values) {

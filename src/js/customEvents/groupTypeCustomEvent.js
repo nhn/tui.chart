@@ -1,5 +1,5 @@
 /**
- * @fileoverview GroupTypeCustomEvent is event handle layer for grouped toolip option.
+ * @fileoverview GroupTypeCustomEvent is event handle layer for grouped tooltip option.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var CustomEventBase = require('./customEventBase'),
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
-     * GroupTypeCustomEvent is event handle layer for grouped toolip option.
+     * GroupTypeCustomEvent is event handle layer for grouped tooltip option.
      * @constructs GroupTypeCustomEvent
      * @extends CustomEventBase
      */

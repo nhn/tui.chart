@@ -82,7 +82,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * Make normal column chart bound.
      * @param {{
      *      dimension: {width: number, height: number},
-     *      groupValues: array.<array.<number>>,
+     *      groupValues: Array.<Array.<number>>,
      *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} baseInfo base info
@@ -115,7 +115,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Make bounds of normal column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeNormalColumnChartBounds: function(dimension) {
@@ -128,7 +128,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Make bounds of stacked column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeStackedColumnChartBounds: function(dimension) {
@@ -149,7 +149,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     /**
      * Make bounds of column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeBounds: function(dimension) {
@@ -205,7 +205,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
     /**
      * Make plus sum label html.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
      * @returns {string} plus sum label html
@@ -229,7 +229,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
     /**
      * Make minus sum label html.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @returns {string} plus minus label html
      * @private
@@ -241,7 +241,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         if (bound) {
             sum = calculator.sumMinusValues(values);
 
-            if (this.options.divergent) {
+            if (this.options.diverging) {
                 sum = Math.abs(sum);
             }
 

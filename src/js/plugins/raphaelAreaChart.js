@@ -32,7 +32,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Render function of area chart.
      * @param {HTMLElement} container container
-     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @return {object} paper raphael paper
      */
     render: function(container, data) {
@@ -74,7 +74,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {object} paper paper
      * @param {{start: string}} path path
      * @param {string} color color
-     * @returns {array.<object>} raphael object
+     * @returns {Array.<object>} raphael object
      * @private
      */
     _renderArea: function(paper, path, color) {
@@ -94,9 +94,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Render area graphs.
      * @param {object} paper paper
-     * @param {array.<object>} groupPaths group paths
-     * @param {array.<string>} colors colors
-     * @returns {array} raphael objects
+     * @param {Array.<object>} groupPaths group paths
+     * @param {Array.<string>} colors colors
+     * @returns {Array} raphael objects
      * @private
      */
     _renderAreas: function(paper, groupPaths, colors) {
@@ -132,8 +132,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Make areas path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} path
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} path
      * @private
      */
     _makeAreasPath: function(positions) {
@@ -153,8 +153,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Get area path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
     _getAreasPath: function(groupPositions) {
@@ -170,9 +170,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Make spline area bottom path.
-     * @param {array.<{left: number, top: number}>} positions positions
-     * @param {array.<{left: number, top: number}>} prevPositions previous positions
-     * @returns {array.<string | number>} spline area path
+     * @param {Array.<{left: number, top: number}>} positions positions
+     * @param {Array.<{left: number, top: number}>} prevPositions previous positions
+     * @returns {Array.<string | number>} spline area path
      * @private
      */
     _makeSplineAreaBottomPath: function(positions) {
@@ -183,8 +183,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Get spline areas path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
     _getSplineAreasPath: function(groupPositions) {
@@ -206,7 +206,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Resize graph of area chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
         var dimension = params.dimension,

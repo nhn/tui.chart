@@ -22,11 +22,11 @@ var boundsMaker = {
      * Get max label of value axis.
      * @memberOf module:boundsMaker
      * @param {string} chartType chart type
-     * @param {?boolean} divergentOption divergent option
+     * @param {?boolean} divergingOption diverging option
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(chartType, divergentOption) {
+    _getValueAxisMaxLabel: function(chartType, divergingOption) {
         var values = predicate.isComboChart(chartType) ? this.dataProcessor.getWholeGroupValues() : this.dataProcessor.getGroupValues(chartType),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
@@ -36,7 +36,7 @@ var boundsMaker = {
             maxLabel = calculator.normalizeAxisNumber(limit.max),
             minLabel = calculator.normalizeAxisNumber(limit.min);
 
-        if (divergentOption) {
+        if (divergingOption) {
             maxLabel = Math.abs(maxLabel);
             minLabel = Math.abs(minLabel);
         }
@@ -50,7 +50,7 @@ var boundsMaker = {
      * Get height of x axis area.
      * @memberOf module:boundsMaker
      * @param {object} options x axis options,
-     * @param {array.<string>} labels axis labels
+     * @param {Array.<string>} labels axis labels
      * @param {object} theme axis theme
      * @returns {number} height
      * @private
@@ -65,7 +65,7 @@ var boundsMaker = {
     /**
      * Get width about y axis.
      * @param {object} options y axis options
-     * @param {array.<string>} labels labels
+     * @param {Array.<string>} labels labels
      * @param {object} theme yAxis theme
      * @param {number} index options index
      * @returns {number} y axis width
@@ -90,7 +90,7 @@ var boundsMaker = {
      * Get width about right y axis.
      * @memberOf module:boundsMaker
      * @param {object} params parameters
-     *      @param {array.<string>} params.chartTypes y axis chart types
+     *      @param {Array.<string>} params.chartTypes y axis chart types
      *      @param {object} params.theme y axis theme
      *      @param {object} params.options y axis options
      * @returns {number} y right axis width
@@ -184,7 +184,7 @@ var boundsMaker = {
 
     /**
      * Calculate sum of legends width.
-     * @param {array.<string>} labels legend labels
+     * @param {Array.<string>} labels legend labels
      * @param {{fontSize: number, fontFamily: number}} labelTheme legend label theme
      * @returns {number} sum of width
      * @private
@@ -198,9 +198,9 @@ var boundsMaker = {
 
     /**
      * Divide legend labels.
-     * @param {array.<string>} labels legend labels
+     * @param {Array.<string>} labels legend labels
      * @param {number} count division count
-     * @returns {array.<array.<string>>} divided labels
+     * @returns {Array.<Array.<string>>} divided labels
      * @private
      */
     _divideLegendLabels: function(labels, count) {
@@ -226,10 +226,10 @@ var boundsMaker = {
 
     /**
      * Make division labels and max line width.
-     * @param {array.<string>} labels legend labels
+     * @param {Array.<string>} labels legend labels
      * @param {number} chartWidth chart width
      * @param {{fontSize: number, fontFamily: number}} labelTheme legend label theme
-     * @returns {{dividedLabels: array.<array.<string>>, maxLineWidth: number}} result
+     * @returns {{dividedLabels: Array.<Array.<string>>, maxLineWidth: number}} result
      * @private
      */
     _makeDividedLabelsAndMaxLineWidth: function(labels, chartWidth, labelTheme) {
@@ -263,7 +263,7 @@ var boundsMaker = {
 
     /**
      * Calculate height of horizontal legend.
-     * @param {array.<array.<string>>} dividedLabels divided labels
+     * @param {Array.<Array.<string>>} dividedLabels divided labels
      * @param {{fontSize: number, fontFamily: number}} labelTheme legend label theme
      * @returns {number} legend height
      * @private
@@ -276,7 +276,7 @@ var boundsMaker = {
 
     /**
      * Get whole legend labels.
-     * @returns {array.<string>} labels
+     * @returns {Array.<string>} labels
      * @private
      */
     _getWholeLegendLabels: function() {
@@ -550,7 +550,7 @@ var boundsMaker = {
      * @memberOf module:boundsMaker
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axed or not
-     *      @param {array.<string>} params.optionChartTypes y axis chart types
+     *      @param {Array.<string>} params.optionChartTypes y axis chart types
      *      @param {{width: number, height: number}} params.dimension chart dimension
      *      @param {number} params.top top position
      *      @param {number} params.right right position
@@ -626,9 +626,9 @@ var boundsMaker = {
      * Make axes label info.
      * @param {object} params parameters
      *      @param {boolean} params.hasAxes whether has axes or not
-     *      @param {array} params.optionChartTypes chart types
+     *      @param {Array} params.optionChartTypes chart types
      *      @param {boolean} isVertical whether vertical or not
-     * @returns {{xAxis: array, yAxis: array}} label info
+     * @returns {{xAxis: Array, yAxis: Array}} label info
      * @private
      */
     _makeAxesLabelInfo: function(params) {
@@ -644,7 +644,7 @@ var boundsMaker = {
         seriesOption = params.options.series || {};
 
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
-        maxValueLabel = this._getValueAxisMaxLabel(chartType, seriesOption.divergent);
+        maxValueLabel = this._getValueAxisMaxLabel(chartType, seriesOption.diverging);
         labels = this.dataProcessor.getCategories();
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
@@ -697,7 +697,7 @@ var boundsMaker = {
     /**
      * Make rotation info about horizontal label.
      * @param {number} limitWidth limit width
-     * @param {array.<string>} labels axis labels
+     * @param {Array.<string>} labels axis labels
      * @param {object} theme axis label theme
      * @returns {?object} rotation info
      * @private
@@ -809,7 +809,7 @@ var boundsMaker = {
 
     /**
      * Calculate height difference between origin category and multiline category.
-     * @param {array.<string>} labels labels
+     * @param {Array.<string>} labels labels
      * @param {{fontSize: number, fontFamily: string}} theme axis label theme
      * @param {number} limitWidth limit width
      * @returns {number} calculated height
@@ -829,7 +829,7 @@ var boundsMaker = {
      * Update dimensions and degree.
      * @param {{plot: {width: number, height: number}, series: {width: number, height: number}, xAxis: {width: number, height: number}}} dimensions dimensions
      * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
-     * @param {array} labels labels
+     * @param {Array} labels labels
      * @param {object} theme theme
      * @param {number} limitWidth limit width
      * @private
@@ -869,7 +869,7 @@ var boundsMaker = {
      *      @param {boolean} params.isVertical whether vertical or not
      *      @param {object} params.options chart options
      *      @param {boolean} params.hasAxes whether has axes area or not
-     *      @param {array} params.optionChartTypes y axis option chart types
+     *      @param {Array} params.optionChartTypes y axis option chart types
      * @returns {{
      *   plot: {
      *     dimension: {width: number, height: number},

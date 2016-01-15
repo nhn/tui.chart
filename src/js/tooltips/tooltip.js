@@ -18,7 +18,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * Tooltip component.
      * @constructs Tooltip
      * @param {object} params parameters
-     *      @param {array.<number>} params.values converted values
+     *      @param {Array.<number>} params.values converted values
      *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
@@ -116,7 +116,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Make tooltip data.
-     * @returns {array.<object>} tooltip data
+     * @returns {Array.<object>} tooltip data
      * @override
      */
     makeTooltipData: function() {

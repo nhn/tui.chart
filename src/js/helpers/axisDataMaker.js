@@ -21,9 +21,9 @@ var abs = Math.abs,
 var axisDataMaker = {
     /**
      * Make labels.
-     * @param {array.<string>} labels labels
+     * @param {Array.<string>} labels labels
      * @param {number} labelInterval label interval
-     * @returns {array.<string>} labels
+     * @returns {Array.<string>} labels
      * @private
      */
     _makeLabels: function(labels, labelInterval) {
@@ -45,10 +45,10 @@ var axisDataMaker = {
      * Make data about label axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @param {array.<string>} labels chart labels
+     *      @param {Array.<string>} labels chart labels
      *      @param {boolean} isVertical whether vertical or not
      * @returns {{
-     *      labels: array.<string>,
+     *      labels: Array.<string>,
      *      tickCount: number,
      *      validTickCount: number,
      *      isLabelAxis: boolean,
@@ -77,13 +77,13 @@ var axisDataMaker = {
      * Make data about value axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @param {array.<array.<number>>} params.values chart values
+     *      @param {Array.<Array.<number>>} params.values chart values
      *      @param {{width:number, height:number}} params.seriesDimension series dimension
-     *      @param {array.<function>} params.formatFunctions format functions
+     *      @param {Array.<function>} params.formatFunctions format functions
      *      @param {string} params.stacked stacked option
      *      @param {string} params.options axis options
      * @returns {{
-     *      labels: array.<string>,
+     *      labels: Array.<string>,
      *      tickCount: number,
      *      validTickCount: number,
      *      isLabelAxis: boolean,
@@ -102,7 +102,7 @@ var axisDataMaker = {
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stackedOption)) {
             minusSum = calculator.sumMinusValues(concat.apply([], params.values));
             if (minusSum < 0) {
-                tickInfo = params.divergentOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+                tickInfo = params.divergingOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
             } else {
                 tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             }
@@ -116,7 +116,7 @@ var axisDataMaker = {
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
                 chartType: params.chartType,
-                divergentOption: params.divergentOption
+                divergingOption: params.divergingOption
             }, options);
         }
 
@@ -135,10 +135,10 @@ var axisDataMaker = {
     /**
      * Make base values.
      * @memberOf module:axisDataMaker
-     * @param {array.<number>} groupValues group values
+     * @param {Array.<number>} groupValues group values
      * @param {boolean} isAllowedStackedOption whether allowed stacked option or not.
      * @param {string} stacked stacked option.
-     * @returns {array.<number>} base values
+     * @returns {Array.<number>} base values
      * @private
      */
     _makeBaseValues: function(groupValues, isAllowedStackedOption, stacked) {
@@ -175,7 +175,7 @@ var axisDataMaker = {
      * @memberOf module:axisDataMaker
      * @param {{width: number, height: number}} chartDimension chat dimension
      * @param {boolean} isVertical whether vertical or not
-     * @returns {array.<number>} tick counts
+     * @returns {Array.<number>} tick counts
      * @private
      */
     _getCandidateTickCounts: function(chartDimension, isVertical) {
@@ -207,8 +207,8 @@ var axisDataMaker = {
      * @memberOf module:axisDataMaker
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
-     * @param {array.<object>} candidates tick info candidates
-     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} selected tick info
+     * @param {Array.<object>} candidates tick info candidates
+     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} selected tick info
      * @private
      */
     _selectTickInfo: function(min, max, candidates) {
@@ -218,7 +218,7 @@ var axisDataMaker = {
     },
 
     /**
-     * Make limit for divergent option.
+     * Make limit for diverging option.
      * @param {number} min min value
      * @param {max} max max value
      * @returns {{min: number, max: number}} limit
@@ -254,7 +254,7 @@ var axisDataMaker = {
             max = 5;
         }
 
-        if (params.divergentOption) {
+        if (params.divergingOption) {
             changedLimit = this._makeLimitForDivergingOption(min, max);
             min = changedLimit.min;
             max = changedLimit.max;
@@ -280,7 +280,7 @@ var axisDataMaker = {
         // 05. 정수형으로 변경했던 tick info를 원래 형태로 변경
         tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
 
-        if (params.divergentOption) {
+        if (params.divergingOption) {
             tickInfo.labels = tui.util.map(tickInfo.labels, Math.abs);
         }
         return tickInfo;
@@ -329,9 +329,9 @@ var axisDataMaker = {
     /**
      * Revert tick info to original type.
      * @memberOf module:axisDataMaker
-     * @param {{step: number, limit: {min: number, max: number}, labels: array.<number>}} tickInfo tick info
+     * @param {{step: number, limit: {min: number, max: number}, labels: Array.<number>}} tickInfo tick info
      * @param {number} divideNum divide num
-     * @returns {{step: number, limit: {min: number, max: number}, labels: array.<number>}} divided tick info
+     * @returns {{step: number, limit: {min: number, max: number}, labels: Array.<number>}} divided tick info
      * @private
      */
     _revertOriginalTypeTickInfo: function(tickInfo, divideNum) {
@@ -368,7 +368,7 @@ var axisDataMaker = {
      *      @param {number} params.userMax user max
      *      @param {{tickCount: number, limit: object}} params.tickInfo tick info
      *      @param {{min: number, max:number}} params.options axis options
-     * @returns {{tickCount: number, limit: object, labels: array}} corrected tick info
+     * @returns {{tickCount: number, limit: object, labels: Array}} corrected tick info
      * @private
      */
     _minimizeTickLimit: function(params) {
@@ -415,9 +415,9 @@ var axisDataMaker = {
     /**
      * Divide tick step.
      * @memberOf module:axisDataMaker
-     * @param {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tickInfo tick info
+     * @param {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} tickInfo tick info
      * @param {number} orgTickCount original tickCount
-     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: array.<number>}} tick info
+     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} tick info
      * @private
      */
     _divideTickStep: function(tickInfo, orgTickCount) {
@@ -451,7 +451,7 @@ var axisDataMaker = {
      *      limit: {min: number, max: number},
      *      tickCount: number,
      *      step: number,
-     *      labels: array.<number>
+     *      labels: Array.<number>
      * }} tick info
      * @private
      */
@@ -611,10 +611,10 @@ var axisDataMaker = {
      * @param {object} params parameters
      *      @param {number} params.min minimum value of user data
      *      @param {number} params.max maximum value of user data
-     *      @param {array.<number>} params.tickCounts tick counts
+     *      @param {Array.<number>} params.tickCounts tick counts
      *      @param {string} params.chartType chart type
      * @param {{min: number, max:number}} options axis options
-     * @returns {array} candidates about tick info
+     * @returns {Array} candidates about tick info
      * @private
      */
     _getCandidateTickInfos: function(params, options) {

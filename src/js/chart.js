@@ -26,7 +26,7 @@ tui.util.defineNamespace('tui.chart');
 /**
  * Create chart.
  * @param {HTMLElement} container container
- * @param {array.<array>} data chart data
+ * @param {Array.<Array>} data chart data
  * @param {{
  *   chart: {
  *     width: number,
@@ -70,8 +70,8 @@ _createChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -153,8 +153,8 @@ tui.chart.barChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -237,8 +237,8 @@ tui.chart.columnChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -324,8 +324,8 @@ tui.chart.lineChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -408,15 +408,15 @@ tui.chart.areaChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object|array} options.yAxis options of vertical axis
+ *      @param {object|Array} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
@@ -516,7 +516,7 @@ tui.chart.comboChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -613,7 +613,7 @@ tui.chart.pieChart = function(container, data, options) {
  *          @param {string} theme.plot.lineColor plot line color
  *          @param {string} theme.plot.background plot background
  *      @param {object} theme.series series theme
- *          @param {array.<string>} theme.series.colors series colors
+ *          @param {Array.<string>} theme.series.colors series colors
  *          @param {string} theme.series.borderColor series border color
  *      @param {object} theme.legend legend theme
  *          @param {object} theme.legend.label theme of legend label

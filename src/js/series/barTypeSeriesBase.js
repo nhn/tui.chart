@@ -102,7 +102,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @param {string} anotherSizeType another size type (width or height)
      * @returns {{
      *      dimension: {width: number, height: number},
-     *      groupValues: array.<array.<number>>,
+     *      groupValues: Array.<Array.<number>>,
      *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} base info
@@ -135,12 +135,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Make normal bounds.
      * @param {{
      *      dimension: {width: number, height: number},
-     *      groupValues: array.<array.<number>>,
+     *      groupValues: Array.<Array.<number>>,
      *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} baseInfo base info
      * @param {function} iteratee iteratee
-     * @returns {array} bounds
+     * @returns {Array} bounds
      * @private
      */
     _makeNormalBounds: function(baseInfo, iteratee) {
@@ -197,7 +197,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @param {{width: number, height:number}} dimension column chart dimension
      * @param {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} baseInfo base info
      * @param {function} makeBoundFunc make bound function
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeStackedBounds: function(dimension, baseInfo, makeBoundFunc) {
@@ -230,7 +230,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Render normal series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {Array.<Array>} params.groupBounds group bounds
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
@@ -260,7 +260,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Make sum values.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @returns {number} sum result.
      */
     _makeSumValues: function(values) {
@@ -292,7 +292,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Make stacked labels html.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
-     *      @param {array.<object>} params.bounds bounds,
+     *      @param {Array.<object>} params.bounds bounds,
      *      @param {number} params.labelHeight label height
      * @returns {string} labels html
      * @private
@@ -334,7 +334,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Render stacked series label.
      * @param {object} params parameters
-     *      @param {array.<array>} params.groupBounds group bounds
+     *      @param {Array.<Array>} params.groupBounds group bounds
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
@@ -361,8 +361,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Render series label.
      * @param {object} params parameters
-     *      @param {array.<array>} params.groupBounds group bounds
-     *      @param {array.<array>} params.formattedValues formatted values
+     *      @param {Array.<Array>} params.groupBounds group bounds
+     *      @param {Array.<Array>} params.formattedValues formatted values
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */

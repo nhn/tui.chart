@@ -104,11 +104,11 @@ var chartConst = {
     /** dot radius */
     DOT_RADIUS: 4,
     /** yAxis properties
-     * @type {array.<string>}
+     * @type {Array.<string>}
      */
     YAXIS_PROPS: ['tickColor', 'title', 'label'], // yaxis theme의 속성 - chart type filtering할 때 사용됨
     /** series properties
-     * @type {array.<string>}
+     * @type {Array.<string>}
      */
     SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors', 'selectionColor'], // series theme의 속성 - chart type filtering할 때 사용됨
     /** title area width padding */
@@ -155,7 +155,7 @@ var chartConst = {
         tickCount: 9,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** tick info of divergent percent stacked option
+    /** tick info of diverging percent stacked option
      * @type {object}
      */
     DIVERGENT_PERCENT_STACKED_TICK_INFO: {

@@ -86,7 +86,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         /**
          * series data
-         * @type {array.<object>}
+         * @type {Array.<object>}
          */
         this.seriesData = [];
 
@@ -137,7 +137,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Get percent values.
-     * @returns {array.<array.<number>>} percent values.
+     * @returns {Array.<Array.<number>>} percent values.
      * @private
      */
     _getPercentValues: function() {
@@ -245,7 +245,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Update theme.
      * @param {object} theme legend theme
-     * @param {?array.<?boolean>} checkedLegends checked legends
+     * @param {?Array.<?boolean>} checkedLegends checked legends
      * @returns {object} updated theme
      * @private
      */
@@ -324,9 +324,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {{width: number, height: number}} dimension dimension
      * @returns {{
      *      container: HTMLElement,
-     *      values: array.<array>,
-     *      formattedValues: array.<array>,
-     *      formatFunctions: array.<function>,
+     *      values: Array.<Array>,
+     *      formattedValues: Array.<Array>,
+     *      formatFunctions: Array.<function>,
      *      dimension: {width: number, height: number}
      * }} add data for series label
      * @private

@@ -17,7 +17,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     /**
      * Make positions of line chart.
      * @param {{width: number, height:nunber}} dimension line chart dimension
-     * @returns {array.<array.<object>>} positions
+     * @returns {Array.<Array.<object>>} positions
      * @private
      */
     _makeBasicPositions: function(dimension) {
@@ -71,7 +71,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * Render series label.
      * @param {object} params parameters
      *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupPositions group positions
+     *      @param {Array.<Array>} params.groupPositions group positions
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
