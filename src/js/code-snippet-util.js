@@ -31,7 +31,7 @@ var min = function(arr, condition, context) {
  * Pick maximum value from value array.
  * @param {array} arr value array
  * @param {function} condition condition function
- * @param {object} context target context
+ * @param {[object]} context target context
  * @returns {*} maximum value
  */
 var max = function(arr, condition, context) {
@@ -58,12 +58,13 @@ var max = function(arr, condition, context) {
  * Whether one of them is true or not.
  * @param {array} arr target array
  * @param {function} condition condition function
+ * @param {[object]} context target context
  * @returns {boolean} result boolean
  */
-var any = function(arr, condition) {
+var any = function(arr, condition, context) {
     var result = false;
-    tui.util.forEachArray(arr, function(item) {
-        if (condition(item)) {
+    tui.util.forEachArray(arr, function(item, index) {
+        if (condition.call(context, item, index, arr)) {
             result = true;
             return false;
         }
@@ -75,16 +76,59 @@ var any = function(arr, condition) {
  * All of them is true or not.
  * @param {array} arr target array
  * @param {function} condition condition function
+ * @param {[object]} context target context
  * @returns {boolean} result boolean
  */
-var all = function(arr, condition) {
+var all = function(arr, condition, context) {
     var result = true;
-    tui.util.forEachArray(arr, function(item) {
-        if (!condition(item)) {
+    tui.util.forEachArray(arr, function(item, index) {
+        if (!condition.call(context, item, index, arr)) {
             result = false;
             return false;
         }
     });
+    return result;
+};
+
+/**
+ * Pick unique values.
+ * @param {array} arr target array
+ * @param {[boolean]} sorted whether sorted or not.
+ * @param {[function]} iteratee iteratee function
+ * @param {[object]} context target context
+ * @returns {Array} unique values
+ */
+var unique = function(arr, sorted, iteratee, context) {
+    var result = [],
+        prevValue;
+
+    if (!tui.util.isBoolean(sorted)) {
+        context = iteratee;
+        iteratee = sorted;
+        sorted = false;
+    }
+
+    iteratee = iteratee || function(value) {
+        return value;
+    };
+
+    if (sorted) {
+        tui.util.forEachArray(arr, function (value, index) {
+            value = iteratee.call(context, value, index, arr);
+            if (!index || prevValue !== value) {
+                result.push(value);
+            }
+            prevValue = value;
+        });
+    } else {
+        tui.util.forEachArray(arr, function(value, index) {
+            value = iteratee.call(context, value, index, arr);
+            if (tui.util.inArray(value, result) === -1) {
+                result.push(value);
+            }
+        });
+    }
+
     return result;
 };
 
@@ -209,6 +253,7 @@ tui.util.min = min;
 tui.util.max = max;
 tui.util.any = any;
 tui.util.all = all;
+tui.util.uniq = tui.util.unique = unique;
 tui.util.pivot = pivot;
 tui.util.lengthAfterPoint = lengthAfterPoint;
 tui.util.mod = mod;

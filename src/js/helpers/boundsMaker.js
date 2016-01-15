@@ -22,20 +22,27 @@ var boundsMaker = {
      * Get max label of value axis.
      * @memberOf module:boundsMaker
      * @param {string} chartType chart type
+     * @param {?boolean} divergentOption divergent option
      * @returns {number|string} max label
      * @private
      */
-    _getValueAxisMaxLabel: function(chartType) {
+    _getValueAxisMaxLabel: function(chartType, divergentOption) {
         var values = predicate.isComboChart(chartType) ? this.dataProcessor.getWholeGroupValues() : this.dataProcessor.getGroupValues(chartType),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             flattenValues = concat.apply([], values),
             min = tui.util.min(flattenValues),
             max = tui.util.max(flattenValues),
             limit = calculator.calculateLimit(min, max),
-            minLabel = calculator.normalizeAxisNumber(limit.min),
-            maxLabel = calculator.normalizeAxisNumber(limit.max);
+            maxLabel = calculator.normalizeAxisNumber(limit.max),
+            minLabel = calculator.normalizeAxisNumber(limit.min);
+
+        if (divergentOption) {
+            maxLabel = Math.abs(maxLabel);
+            minLabel = Math.abs(minLabel);
+        }
 
         maxLabel = (minLabel + '').length > (maxLabel + '').length ? minLabel : maxLabel;
+
         return renderUtil.formatValue(maxLabel, formatFunctions);
     },
 
@@ -93,14 +100,14 @@ var boundsMaker = {
         var chartTypes = params.chartTypes || [],
             len = chartTypes.length,
             width = 0,
-            index, chartType, theme, label;
+            index, chartType, theme, labels;
 
         if (len > 1) {
             index = len - 1;
             chartType = chartTypes[index];
             theme = params.theme[chartType] || params.theme;
-            label = this._getValueAxisMaxLabel(chartType);
-            width = this._getYAxisWidth(params.options, [label], theme, index);
+            labels = params.labels || [this._getValueAxisMaxLabel(chartType)];
+            width = this._getYAxisWidth(params.options, labels, theme, index);
         }
         return width;
     },
@@ -133,6 +140,7 @@ var boundsMaker = {
             yAxisWidth = this._getYAxisWidth(params.options.yAxis, axesLabelInfo.yAxis, params.theme.yAxis[chartType] || params.theme.yAxis);
             xAxisHeight = this._getXAxisHeight(params.options.xAxis, axesLabelInfo.xAxis, params.theme.xAxis);
             rightYAxisWidth = this._getRightYAxisWidth({
+                labels: axesLabelInfo.rightYAxis,
                 chartTypes: params.optionChartTypes,
                 theme: params.theme.yAxis,
                 options: params.options.yAxis
@@ -624,15 +632,19 @@ var boundsMaker = {
      * @private
      */
     _makeAxesLabelInfo: function(params) {
-        var chartType, maxValueLabel, labels, yLabels, xLabels;
+        var chartType, seriesOption, maxValueLabel,
+            labels, yLabels, xLabels, rightYLabels,
+            labelInfo;
 
         if (!params.hasAxes) {
             return null;
         }
 
         chartType = params.optionChartTypes && params.optionChartTypes[0] || params.chartType;
+        seriesOption = params.options.series || {};
+
         // value 중 가장 큰 값을 추출하여 value label로 지정 (lable 너비 체크 시 사용)
-        maxValueLabel = this._getValueAxisMaxLabel(chartType);
+        maxValueLabel = this._getValueAxisMaxLabel(chartType, seriesOption.divergent);
         labels = this.dataProcessor.getCategories();
 
         // 세로옵션에 따라서 x축과 y축에 적용할 레이블 정보 지정
@@ -642,12 +654,19 @@ var boundsMaker = {
         } else {
             yLabels = labels;
             xLabels = [maxValueLabel];
+            rightYLabels = labels;
         }
 
-        return {
+        labelInfo = {
             xAxis: xLabels,
             yAxis: yLabels
         };
+
+        if (rightYLabels) {
+            labelInfo.rightYAxis = rightYLabels;
+        }
+
+        return labelInfo;
     },
 
     /**

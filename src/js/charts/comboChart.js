@@ -265,7 +265,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
         yAxisData = axisDataMaker.makeValueAxisData(tui.util.extend({
             values: yAxisValues,
-            stacked: seriesOption && seriesOption.stacked || '',
+            stackedOption: seriesOption && seriesOption.stacked || '',
             options: yAxisOptions,
             chartType: chartType,
             seriesDimension: params.seriesDimension,
@@ -345,6 +345,18 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      */
     render: function() {
         return ChartBase.prototype.render.call(this, {
+            optionChartTypes: this.optionChartTypes
+        });
+    },
+
+    /**
+     * Resize
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     */
+    resize: function(dimension) {
+        ChartBase.prototype.resize.call(this, dimension, {
             optionChartTypes: this.optionChartTypes
         });
     },

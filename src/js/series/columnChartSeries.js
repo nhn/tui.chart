@@ -240,6 +240,11 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
         if (bound) {
             sum = calculator.sumMinusValues(values);
+
+            if (this.options.divergent) {
+                sum = Math.abs(sum);
+            }
+
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
                 left: this._calculateSumLabelLeftPosition(bound, formattedSum),

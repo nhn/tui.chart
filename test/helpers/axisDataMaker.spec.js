@@ -144,6 +144,18 @@ describe('axisDataMaker', function() {
         });
     });
 
+    describe('_makeLimitForDivergingOption()', function() {
+        it('min, max값의 절대값중 큰 숫자를 구해 새로운 min(-max), max를 반환합니다.', function() {
+            var actual = maker._makeLimitForDivergingOption(-20, 10),
+                expected = {
+                    min: -20,
+                    max: 20
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_getTickInfo()', function() {
         it('입력 data에 가장 적절한 tick info를 계산하여 반환합니다.', function () {
             var tickInfo = maker._getTickInfo({
@@ -578,7 +590,7 @@ describe('axisDataMaker', function() {
                     width: 320,
                     height: 320
                 },
-                stacked: 'normal',
+                stackedOption: 'normal',
                 chartType: 'column',
                 options: {}
             });
@@ -609,7 +621,7 @@ describe('axisDataMaker', function() {
                     width: 320,
                     height: 320
                 },
-                stacked: 'percent',
+                stackedOption: 'percent',
                 chartType: 'bar',
                 options: {}
             });

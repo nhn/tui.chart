@@ -55,8 +55,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             wholeLegendData = this._makeWholeLegendData(legendLabels, chartType, seriesChartTypes),
             format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
-            formattedValues = format ? this._formatValues(values, formatFunctions) : values,
-            wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
+            seriesOption = options.series || {},
+            formattedValues, wholeFormattedValues;
+
+        this.divergentOption = predicate.isBarTypeChart(options.chartType) && seriesOption.divergent;
+        formattedValues = this._formatValues(values, formatFunctions);
+        wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
 
         this.data = {
             categories: categories,
@@ -332,13 +336,16 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _formatGroupValues: function(groupValues, formatFunctions) {
         return tui.util.map(groupValues, function(values) {
+            if (this.divergentOption) {
+                values = tui.util.map(values, Math.abs);
+            }
             return tui.util.map(values, function(value) {
                 var fns = [value].concat(formatFunctions);
                 return tui.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });
             });
-        });
+        }, this);
     },
 
     /**
@@ -350,6 +357,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _formatValues: function(chartValues, formatFunctions) {
         var result;
+        formatFunctions = formatFunctions || [];
         if (tui.util.isArray(chartValues)) {
             result = this._formatGroupValues(chartValues, formatFunctions);
         } else {
@@ -614,7 +622,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
-        var percentValues = tui.util.map(groupValues, function(values) {
+        return tui.util.map(groupValues, function(values) {
             var sum = tui.util.sum(tui.util.map(values, function(value) {
                 return Math.abs(value);
             }));
@@ -623,8 +631,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 return sum === 0 ? 0 : ratio * (value / sum);
             });
         });
+    },
 
-        return percentValues;
+    /**
+     * Make percent values for percent divergent stacked option.
+     * @param groupValues
+     * @returns {Array}
+     * @private
+     */
+    _makePercentDivergentStackedPercentValues: function(groupValues) {
+        return tui.util.map(groupValues, function(values) {
+            var plusSum = calculator.sumPlusValues(values),
+                minusSum = Math.abs(calculator.sumMinusValues(values));
+
+            return tui.util.map(values, function(value) {
+                var sum = value >= 0 ? plusSum : minusSum;
+                return sum === 0 ? 0 : 0.5 * (value / sum);
+            });
+        });
     },
 
     /**
@@ -678,7 +702,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
-            result = this._makePercentStackedPercentValues(groupValues);
+            if (this.divergentOption) {
+                result = this._makePercentDivergentStackedPercentValues(groupValues);
+            } else {
+                result = this._makePercentStackedPercentValues(groupValues);
+            }
         } else {
             result = this._makePercentValues(groupValues, limit, isLineTypeChart);
         }

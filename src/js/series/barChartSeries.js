@@ -216,6 +216,11 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
         if (bound) {
             sum = calculator.sumMinusValues(values);
+
+            if (this.options.divergent) {
+                sum = Math.abs(sum);
+            }
+
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({

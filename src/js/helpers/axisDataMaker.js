@@ -58,6 +58,7 @@ var axisDataMaker = {
     makeLabelAxisData: function(params) {
         var tickCount = params.labels.length,
             options = params.options || {};
+
         if (!params.aligned) {
             tickCount += 1;
         }
@@ -96,10 +97,12 @@ var axisDataMaker = {
             isPositionRight = !!params.isPositionRight,
             isAllowedStackedOption = predicate.isAllowedStackedOption(params.chartType),
             formatFunctions = params.formatFunctions,
-            tickInfo;
-        if (isAllowedStackedOption && predicate.isPercentStacked(params.stacked)) {
-            if (calculator.sumMinusValues(concat.apply([], params.values)) < 0) {
-                tickInfo = chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+            minusSum, tickInfo;
+
+        if (isAllowedStackedOption && predicate.isPercentStacked(params.stackedOption)) {
+            minusSum = calculator.sumMinusValues(concat.apply([], params.values));
+            if (minusSum < 0) {
+                tickInfo = params.divergentOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
             } else {
                 tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             }
@@ -108,11 +111,12 @@ var axisDataMaker = {
             }];
         } else {
             tickInfo = this._getTickInfo({
-                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stacked),
+                values: this._makeBaseValues(params.values, isAllowedStackedOption, params.stackedOption),
                 seriesDimension: params.seriesDimension,
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
-                chartType: params.chartType
+                chartType: params.chartType,
+                divergentOption: params.divergentOption
             }, options);
         }
 
@@ -214,6 +218,22 @@ var axisDataMaker = {
     },
 
     /**
+     * Make limit for divergent option.
+     * @param {number} min min value
+     * @param {max} max max value
+     * @returns {{min: number, max: number}} limit
+     * @private
+     */
+    _makeLimitForDivergingOption: function(min, max) {
+        var newMax = Math.max(Math.abs(min), Math.abs(max));
+
+        return {
+            min: -newMax,
+            max: newMax
+        };
+    },
+
+    /**
      * Get tick count and limit.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
@@ -228,10 +248,16 @@ var axisDataMaker = {
     _getTickInfo: function(params, options) {
         var min = tui.util.min(params.values),
             max = tui.util.max(params.values),
-            intTypeInfo, tickCounts, candidates, tickInfo;
+            changedLimit, intTypeInfo, tickCounts, candidates, tickInfo;
 
         if (min === 0 && max === 0) {
             max = 5;
+        }
+
+        if (params.divergentOption) {
+            changedLimit = this._makeLimitForDivergingOption(min, max);
+            min = changedLimit.min;
+            max = changedLimit.max;
         }
 
         // 01. min, max, options 정보를 정수형으로 변경
@@ -253,6 +279,10 @@ var axisDataMaker = {
 
         // 05. 정수형으로 변경했던 tick info를 원래 형태로 변경
         tickInfo = this._revertOriginalTypeTickInfo(tickInfo, intTypeInfo.divideNum);
+
+        if (params.divergentOption) {
+            tickInfo.labels = tui.util.map(tickInfo.labels, Math.abs);
+        }
         return tickInfo;
     },
 
