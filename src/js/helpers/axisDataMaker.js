@@ -116,7 +116,8 @@ var axisDataMaker = {
                 isVertical: isVertical,
                 isPositionRight: isPositionRight,
                 chartType: params.chartType,
-                divergingOption: params.divergingOption
+                divergingOption: params.divergingOption,
+                tickCount: params.tickCount
             }, options);
         }
 
@@ -162,11 +163,13 @@ var axisDataMaker = {
      */
     _getBaseSize: function(dimension, isVertical) {
         var baseSize;
+
         if (isVertical) {
             baseSize = dimension.height;
         } else {
             baseSize = dimension.width;
         }
+
         return baseSize;
     },
 
@@ -382,6 +385,7 @@ var axisDataMaker = {
             isUndefinedMin = tui.util.isUndefined(options.min),
             isUndefinedMax = tui.util.isUndefined(options.max),
             labels;
+
         tui.util.forEachArray(ticks, function(tickIndex) {
             var curStep = (step * tickIndex),
                 curMin = tickMin + curStep,

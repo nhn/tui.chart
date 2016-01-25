@@ -60,11 +60,13 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(bounds) {
+    _makeAxesData: function() {
         var options = this.options,
             xAxisData = axisDataMaker.makeValueAxisData({
                 values: this.dataProcessor.getGroupValues(),
-                seriesDimension: bounds.series.dimension,
+                seriesDimension: {
+                    width: this.boundsMaker.makeSeriesWidth()
+                },
                 stackedOption: options.series.stacked || '',
                 divergingOption: options.series.diverging,
                 chartType: options.chartType,
@@ -95,10 +97,21 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @private
      */
     _addComponents: function(chartType) {
-        var axes = ['yAxis', 'xAxis'];
+        var axes = [
+            {
+                name: 'yAxis',
+                isLabel: true
+            },
+            {
+                name: 'xAxis'
+            }
+        ];
 
         if (this.hasRightYAxis) {
-            axes.push('rightYAxis');
+            axes.push({
+                name: 'rightYAxis',
+                isLabe: true
+            });
         }
         this._addComponentsForAxisType({
             axes: axes,
@@ -110,40 +123,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
                 }
             ]
         });
-    },
-
-    /**
-     * Render
-     * @returns {HTMLElement} chart element
-     */
-    render: function() {
-        var boundParams;
-
-        if (this.hasRightYAxis) {
-            boundParams = {
-                optionChartTypes: ['bar', 'bar']
-            };
-        }
-
-        return ChartBase.prototype.render.call(this, boundParams);
-    },
-
-    /**
-     * Resize
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     */
-    resize: function(dimension) {
-        var boundParams;
-
-        if (this.hasRightYAxis) {
-            boundParams = {
-                optionChartTypes: ['bar', 'bar']
-            };
-        }
-
-        ChartBase.prototype.resize.call(this, dimension, boundParams);
     },
 
     /**

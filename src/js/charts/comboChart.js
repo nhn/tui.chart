@@ -107,9 +107,11 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      */
     _makeOptionsMap: function(chartTypes) {
         var optionsMap = {};
+
         tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = this.options.series && this.options.series[chartType];
+            optionsMap[chartType] = this.options.series[chartType] || this.options.series;
         }, this);
+
         return optionsMap;
     },
 
@@ -184,11 +186,24 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _addComponents: function(chartTypesMap) {
-        var axes = ['yAxis', 'xAxis'],
+        var axes = [
+                {
+                    name: 'yAxis',
+                    isLabel: true,
+                    chartType: chartTypesMap.chartTypes[0]
+                },
+                {
+                    name: 'xAxis'
+                }
+            ],
             serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
 
         if (chartTypesMap.optionChartTypes.length) {
-            axes.push('rightYAxis');
+            axes.push({
+                name: 'rightYAxis',
+                isLabel: true,
+                chartType: chartTypesMap.chartTypes[1]
+            });
         }
 
         this._addComponentsForAxisType({
@@ -279,15 +294,16 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
     /**
      * Make axes data
-     * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(bounds) {
+    _makeAxesData: function() {
         var options = this.options,
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             yAxisParams = {
-                seriesDimension: bounds.series.dimension,
+                seriesDimension: {
+                    height: this.boundsMaker.makeSeriesHeight()
+                },
                 chartTypes: this.chartTypes,
                 isOneYAxis: !this.optionChartTypes.length,
                 options: options
@@ -337,28 +353,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromLimit(toData.limit, toData.step), formatFunctions);
         toData.tickCount += increaseTickCount;
         toData.validTickCount += increaseTickCount;
-    },
-
-    /**
-     * Render
-     * @returns {HTMLElement} chart element
-     */
-    render: function() {
-        return ChartBase.prototype.render.call(this, {
-            optionChartTypes: this.optionChartTypes
-        });
-    },
-
-    /**
-     * Resize
-     * @param {object} dimension dimension
-     *      @param {number} dimension.width width
-     *      @param {number} dimension.height height
-     */
-    resize: function(dimension) {
-        ChartBase.prototype.resize.call(this, dimension, {
-            optionChartTypes: this.optionChartTypes
-        });
     },
 
     /**

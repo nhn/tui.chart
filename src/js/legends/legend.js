@@ -7,6 +7,7 @@
 'use strict';
 
 var LegendModel = require('./legendModel'),
+    LegendDimensionModel = require('./LegendDimensionModel'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     predicate = require('../helpers/predicate'),
@@ -24,6 +25,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      *      @param {string} params.chart type
      */
     init: function(params) {
+        var legendData;
+
         /**
          * legend theme
          * @type {Object}
@@ -64,16 +67,31 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.checkedIndexes = [];
 
+        this.boundsMaker = params.boundsMaker;
+
+        legendData = params.dataProcessor.getWholeLegendData();
         /**
          * legend model
          */
         this.legendModel = new LegendModel({
-            theme: params.theme,
+            theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
-            legendData: params.dataProcessor.getWholeLegendData(),
-            chartTypes: params.chartTypes,
-            chartType: params.chartType
+            legendData: legendData,
+            chartTypes: this.chartTypes,
+            chartType: this.chartType
         });
+
+        this.dimensionModel = new LegendDimensionModel({
+            legendLabels: tui.util.pluck(legendData, 'label'),
+            chartType: this.chartType,
+            options: this.options,
+            theme: this.theme
+        });
+    },
+
+    registerDimension: function() {
+        var chartWidth = this.boundsMaker.getDimension('chart').width;
+        this.boundsMaker.registerBaseDimension('legend', this.dimensionModel.makeDimension(chartWidth));
     },
 
     /**
@@ -85,20 +103,18 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _renderLegendArea: function(legendContainer) {
         legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
-        renderUtil.renderPosition(legendContainer, this.bound.position);
+        renderUtil.renderPosition(legendContainer, this.boundsMaker.getPosition('legend'));
         this._renderLabelTheme(legendContainer, this.theme.label);
     },
 
     /**
      * Render legend component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
      */
-    render: function(bound) {
+    render: function() {
         var el = dom.create('DIV', this.className);
 
         this.legendContainer = el;
-        this.bound = bound;
 
         if (predicate.isHorizontalLegend(this.options.align)) {
             dom.addClass(el, 'horizontal');
@@ -111,10 +127,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Resize legend component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      */
-    resize: function(bound) {
-        this.bound = bound;
+    resize: function() {
         this._renderLegendArea(this.legendContainer);
     },
 

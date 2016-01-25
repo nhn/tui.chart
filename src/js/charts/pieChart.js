@@ -55,15 +55,15 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
 
         if (!isPieLegendType && !options.legend.hidden) {
-            this._addComponent('legend', Legend, {
+            this.component.register('legend', Legend, {
                 chartType: options.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this._addComponent('tooltip', Tooltip, this._makeTooltipData());
+        this.component.register('tooltip', Tooltip, this._makeTooltipData());
 
-        this._addComponent('pieSeries', Series, {
+        this.component.register('pieSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
@@ -78,24 +78,32 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @private
      */
     _addCustomEventComponent: function() {
-        this._addComponent('customEvent', pieChartCustomEvent);
+        this.component.register('customEvent', pieChartCustomEvent);
+    },
+
+    /**
+     * Update percent values.
+     * @private
+     * @override
+     */
+    _updatePercentValues: function() {
+        this.dataProcessor.registerPieChartPercentValues(this.options.chartType);
     },
 
     /**
      * Make rendering data for pie chart.
-     * @param {object} bounds chart bounds
      * @return {object} data for rendering
      * @private
      * @override
      */
-    _makeRenderingData: function(bounds) {
+    _makeRenderingData: function() {
+        var chartDimension = this.boundsMaker.getDimension('chart');
         return {
             tooltip: {
-                seriesPosition: bounds.series.position,
-                chartDimension: bounds.chart.dimension
+                seriesPosition: this.boundsMaker.getPosition('series')
             },
             pieSeries: {
-                chartWidth: bounds.chart.dimension.width
+                chartWidth: chartDimension.width
             }
         };
     },
@@ -110,11 +118,10 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
-        customEvent = this.componentMap.customEvent;
-        tooltip = this.componentMap.tooltip;
-        serieses = tui.util.filter(this.componentMap, function (component) {
-            return component.componentType === 'series';
-        });
+        customEvent = this.component.get('customEvent');
+        tooltip = this.component.get('tooltip');
+        serieses = this.component.where({componentType: 'series'});
+
         tui.util.forEach(serieses, function (series) {
             series.on('showTooltip', tooltip.onShow, tooltip);
             series.on('hideTooltip', tooltip.onHide, tooltip);

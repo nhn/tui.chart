@@ -96,16 +96,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     /**
      * Render tooltip component.
      * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound, data) {
+    render: function() {
         var el = dom.create('DIV', this.className);
 
-        renderUtil.renderPosition(el, bound.position);
+        renderUtil.renderPosition(el, this.boundsMaker.getPosition('tooltip'));
 
-        this.bound = bound;
-        this.chartDimension = data.chartDimension;
         this.tooltipContainer = el;
 
         return el;
@@ -113,15 +110,11 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Rerender.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      */
-    rerender: function(bound, data) {
-        this.bound = bound;
-        tui.util.extend(this, data);
+    rerender: function() {
         this.data = this.makeTooltipData();
         if (this.positionModel) {
-            this.positionModel.updateBound(bound);
+            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
         }
     },
 
@@ -131,12 +124,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {{chartDimension: object}} data data for resize
      * @override
      */
-    resize: function(bound, data) {
-        this.bound = bound;
-        this.chartDimension = data.chartDimension;
-        renderUtil.renderPosition(this.tooltipContainer, bound.position);
+    resize: function() {
+        renderUtil.renderPosition(this.tooltipContainer, this.boundsMaker.getPosition('tooltip'));
         if (this.positionModel) {
-            this.positionModel.updateBound(bound);
+            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
         }
     },
 

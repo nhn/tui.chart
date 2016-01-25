@@ -65,7 +65,9 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
                 values: this.dataProcessor.getGroupValues(),
-                seriesDimension: bounds.series.dimension,
+                seriesDimension: {
+                    height: this.boundsMaker.makeSeriesHeight()
+                },
                 stackedOption: options.series.stacked || '',
                 divergingOption: options.series.diverging,
                 chartType: options.chartType,
@@ -87,7 +89,15 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: ['yAxis', 'xAxis'],
+            axes: [
+                {
+                    name: 'yAxis'
+                },
+                {
+                    name: 'xAxis',
+                    isLabel: true
+                }
+            ],
             chartType: chartType,
             serieses: [
                 {

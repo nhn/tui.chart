@@ -27,7 +27,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @private
      */
     _isOutPosition: function(layerX, layerY) {
-        var dimension = this.bound.dimension;
+        var dimension = this.dimension;
         return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
     },
 
@@ -55,7 +55,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             this.fire('showGroupTooltip', {
                 index: index,
                 range: this.tickBaseDataModel.makeRange(index, this.chartType),
-                size: this.bound.dimension[this.isVertical ? 'height' : 'width'],
+                size: this.dimension[this.isVertical ? 'height' : 'width'],
                 isVertical: this.isVertical
             });
         }

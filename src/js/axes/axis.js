@@ -36,18 +36,102 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Make height of x axis area.
+     * @returns {number} height
+     * @private
+     */
+    _makeXAxisHeight: function() {
+        var title = this.options.title,
+            titleAreaHeight = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING,
+            height = renderUtil.getRenderedLabelHeight('AAA', this.theme.label) + titleAreaHeight;
+        return height;
+    },
+
+    /**
+     * Make width of y axis area.
+     * @param {Array.<string | number>} labels labels
+     * @returns {number} width
+     * @private
+     */
+    _makeYAxisWidth: function(labels) {
+        var title = this.options.title || '',
+            titleAreaWidth, width;
+
+        titleAreaWidth = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING;
+        width = renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
+
+        return width;
+    },
+
+    /**
+     * Whether invalid right y axis or not.
+     * @returns {boolean} whether invalid or not.
+     * @private
+     */
+    _isInvalidRightYAxis: function() {
+        var isInvalid = false,
+            grouopValues;
+
+        if (this.name === 'rightYAxis') {
+            grouopValues = this.dataProcessor.getGroupValues();
+            tui.util.forEach(grouopValues, function(values) {
+                if (!values.length) {
+                    isInvalid = true;
+                }
+            });
+        }
+
+        return isInvalid;
+    },
+
+    /**
+     * Register legend dimension to boundsMaker.
+     */
+    registerDimension: function() {
+        var dimension = {};
+
+        if (!this._isInvalidRightYAxis()) {
+            if (this.componentType === 'xAxis') {
+                dimension.height = this._makeXAxisHeight();
+                this.boundsMaker.registerBaseDimension(this.name, dimension);
+            } else if (this.isLabel) {
+                dimension.width = this._makeYAxisWidth(this.dataProcessor.getCategories());
+                this.boundsMaker.registerBaseDimension(this.name, dimension);
+            }
+        }
+    },
+
+    /**
+     * Register legend addition dimension to boundsMaker.
+     */
+    registerAdditionDimension: function() {
+        var dimension,
+            axesData = this.boundsMaker.axesData;
+
+        if (this._isInvalidRightYAxis()) {
+            return;
+        }
+
+        if (this.componentType === 'yAxis' && !this.isLabel) {
+            dimension = {
+                width: this._makeYAxisWidth(axesData.yAxis.labels)
+            };
+            this.boundsMaker.registerBaseDimension(this.name, dimension);
+        }
+    },
+
+    /**
      * Render axis area.
      * @param {HTMLElement} axisContainer axis area element
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      * @private
      */
-    _renderAxisArea: function(axisContainer, bound, data) {
+    _renderAxisArea: function(axisContainer, data) {
         var theme = this.theme,
             isVertical = !!data.isVertical,
             isPositionRight = !!data.isPositionRight,
             options = this.options,
-            dimension = bound.dimension,
+            dimension = this.boundsMaker.getDimension(this.name),
             size = isVertical ? dimension.height : dimension.width,
             elTitleArea = this._renderTitleArea({
                 title: options.title,
@@ -56,18 +140,17 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 isPositionRight: isPositionRight,
                 size: size
             }),
-            elLabelArea = this._renderLabelArea(data, size, dimension.width, bound.degree),
+            elLabelArea = this._renderLabelArea(data, size, dimension.width),
             elTickArea;
 
         this.data = data;
-        this.bound = bound;
 
         if (!isVertical || !data.aligned) {
             elTickArea = this._renderTickArea(size);
         }
 
         renderUtil.renderDimension(axisContainer, dimension);
-        renderUtil.renderPosition(axisContainer, bound.position);
+        renderUtil.renderPosition(axisContainer, this.boundsMaker.getPosition(this.name));
         dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
         dom.addClass(axisContainer, isPositionRight ? 'right' : '');
         dom.append(axisContainer, [elTitleArea, elTickArea, elLabelArea]);
@@ -75,30 +158,28 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Render axis component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
-     * @param {object} data rendering data
      * @returns {HTMLElement} axis area base element
      */
-    render: function(bound, data) {
+    render: function(data) {
         var el = dom.create('DIV', this.className);
 
-        this._renderAxisArea(el, bound, data);
+        this._renderAxisArea(el, data);
         this.axisContainer = el;
         return el;
     },
 
     /**
      * Rerender axis component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
      * @param {object} data rendering data
      */
-    rerender: function(bound, data) {
+    rerender: function(data) {
         this.axisContainer.innerHTML = '';
-        if (bound.dimension.width > 0) {
+
+        if (!this._isInvalidRightYAxis()) {
             if (data.options) {
                 this.options = data.options;
             }
-            this._renderAxisArea(this.axisContainer, bound, data);
+            this._renderAxisArea(this.axisContainer, data);
         }
     },
 
@@ -210,11 +291,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {object} data rendering data
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
-     * @param {number} degree rotation degree
      * @returns {HTMLElement} label area element
      * @private
      */
-    _renderLabelArea: function(data, size, axisWidth, degree) {
+    _renderLabelArea: function(data, size, axisWidth) {
         var tickPixelPositions = calculator.makeTickPixelPositions(size, data.tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
             posType = 'left',
@@ -243,7 +323,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             posType: posType,
             cssTexts: cssTexts,
             labelSize: labelSize,
-            degree: degree,
             theme: this.theme.label
         });
 
@@ -455,7 +534,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _makeLabelsHtml: function(params) {
         var labelsHtml;
 
-        if (params.degree) {
+        if (this.boundsMaker.xAxisDegree) {
             labelsHtml = this._makeRotationLabelsHtml(params);
         } else {
             labelsHtml = this._makeNormalLabelsHtml(params);

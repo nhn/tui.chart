@@ -75,43 +75,30 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Render tooltip component.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      * @override
      */
-    render: function(bound, data) {
-        var el = TooltipBase.prototype.render.call(this, bound, data);
-
-        if (data) {
-            this.seriesPosition = data.seriesPosition;
-        }
+    render: function() {
+        var el = TooltipBase.prototype.render.call(this);
 
         return el;
     },
 
     /**
      * Rerender.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      */
-    rerender: function(bound, data) {
-        TooltipBase.prototype.rerender.call(this, bound, data);
+    rerender: function() {
+        TooltipBase.prototype.rerender.call(this);
         this.initValues();
     },
 
     /**
      * Resize tooltip component.
-     * @param {{position: object}} bound tooltip bound
      * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @override
      */
-    resize: function(bound, data) {
-        if (data) {
-            this.seriesPosition = data.seriesPosition;
-        }
-
-        TooltipBase.prototype.resize.call(this, bound, data);
+    resize: function(data) {
+        TooltipBase.prototype.resize.call(this, data);
     },
 
     /**
@@ -375,14 +362,16 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Adjust position.
-     * @param {{width: number, height: number}} chartDimension chart dimension
      * @param {{left: number, top: number}} areaPosition area position
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{left: number, top: number}} position position
      * @returns {{left: number, top: number}} adjusted position
      * @private
      */
-    _adjustPosition: function(chartDimension, areaPosition, tooltipDimension, position) {
+    _adjustPosition: function(tooltipDimension, position) {
+        var chartDimension = this.boundsMaker.getDimension('chart'),
+            areaPosition = this.boundsMaker.getPosition('tooltip');
+
         position.left = Math.max(position.left, -areaPosition.left);
         position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
         position.top = Math.max(position.top, -areaPosition.top);
@@ -433,7 +422,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             });
         }
 
-        position = this._adjustPosition(this.chartDimension, this.bound.position, params.dimension, position);
+        position = this._adjustPosition(params.dimension, position);
         return position;
     },
 
@@ -455,15 +444,14 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             sizeType = params.sizeType,
             positionType = params.positionType,
             value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
-            movedPositionValue;
+            tooltipSizeHalf, barPosition, barSizeHalf, movedPositionValue;
 
         if (value < 0) {
-            movedPositionValue = bound[sizeType] + params.dimension[sizeType] + (chartConst.TOOLTIP_GAP * 2);
-            if (positionType === 'left') {
-                position[positionType] -= movedPositionValue;
-            } else {
-                position[positionType] += movedPositionValue;
-            }
+            tooltipSizeHalf = params.dimension[sizeType] / 2;
+            barPosition = bound[positionType];
+            barSizeHalf = bound[sizeType] / 2;
+            movedPositionValue = (barPosition + barSizeHalf - tooltipSizeHalf) * 2 - position[positionType];
+            position[positionType] = movedPositionValue;
         }
 
         return position;

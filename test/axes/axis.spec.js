@@ -12,7 +12,7 @@ var Axis = require('../../src/js/axes/axis'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Axis', function() {
-    var axis;
+    var dataProcessor, boundsMaker, axis;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -21,6 +21,8 @@ describe('Axis', function() {
     });
 
     beforeEach(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupValues', 'getCategories', 'getMultilineCategories']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
         axis = new Axis({
             theme: {
                 title: {
@@ -33,7 +35,168 @@ describe('Axis', function() {
             },
             options: {
                 title: 'Axis Title'
-            }
+            },
+            dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker
+        });
+    });
+
+    describe('_makeXAxisHeight()', function() {
+        it('x축 영역의 높이를 계산하여 반환합니다.', function () {
+            var actual, expected;
+
+            axis.options.title = 'Axis Title';
+            actual = axis._makeXAxisHeight();
+            expected = 60;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeYAxisWidth()', function() {
+        it('y축 영역의 너비를 계산하여 반환합니다.', function() {
+            var actual, expected;
+
+            axis.options.title = 'Axis Title';
+            actual = axis._makeYAxisWidth(['label1', 'label12']);
+            expected = 97;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_isInvalidRightYAxis()', function() {
+        it('component name이 rightYAxis가 아니면 false를 반환합니다.', function() {
+            var actual, expected;
+
+            axis.name = 'xAxis';
+            actual = axis._isInvalidRightYAxis();
+            expected = false;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('component name이 rightYAxis면서 getGroupValues에 length가 0인 values가 하나라도 존재하면 true를 반환합니다.', function() {
+            var actual, expected;
+
+            axis.name = 'rightYAxis';
+            dataProcessor.getGroupValues.and.returnValue([[], [1, 2, 3]]);
+
+            actual = axis._isInvalidRightYAxis();
+            expected = true;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('registerDimension()', function() {
+        it('_isInvalidRightYAxis()가 true이면 boundsMaker에 등록하지 않습니다.', function() {
+            var actualDimensions = {};
+
+            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(false);
+            axis.name = 'yAxis';
+
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerDimension();
+
+            expect(actualDimensions[axis.name]).toBeUndefined();
+        });
+
+        it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
+            var actualDimensions = {},
+                expected = {
+                    height: 60
+                };
+
+            axis.name = 'xAxis';
+            axis.componentType = 'xAxis';
+
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerDimension();
+
+            expect(actualDimensions[axis.name]).toEqual(expected);
+        });
+
+        it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
+            var actualDimensions = {},
+                expected = {
+                    width: 97
+                };
+
+            axis.name = 'yAxis';
+            axis.componentType = 'yAxis';
+            axis.isLabel = true;
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerDimension();
+
+            expect(actualDimensions[axis.name]).toEqual(expected);
+        });
+
+        it('componentType이 xAxis가 아니면서 isLabel이 true가 아니면 boundsMaker에 등록하지 않습니다.', function() {
+            var actualDimensions = {};
+
+            axis.name = 'yAxis';
+            axis.componentType = 'yAxis';
+
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerDimension();
+
+            expect(actualDimensions[axis.name]).toBeUndefined();
+        });
+    });
+
+    describe('registerAdditionDimension()', function() {
+        it('_isInvalidRightYAxis()가 true이면 boundsMaker에 등록하지 않습니다.', function() {
+            var actualDimensions = {};
+
+            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(true);
+            axis.name = 'yAxis';
+
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerAdditionDimension();
+
+            expect(actualDimensions[axis.name]).toBeUndefined();
+        });
+
+        it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
+            var actualDimensions = {},
+                expected = {
+                    width: 97
+                };
+
+            axis.name = 'yAxis';
+            axis.componentType = 'yAxis';
+
+            boundsMaker.axesData = {
+                yAxis: {
+                    labels: ['label1', 'label2']
+                }
+            };
+            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
+                actualDimensions[name] = dimension;
+            });
+
+            axis.registerAdditionDimension();
+
+            expect(actualDimensions[axis.name]).toEqual(expected);
         });
     });
 
@@ -450,9 +613,11 @@ describe('Axis', function() {
                 labels: ['label1', 'label2', 'label3'],
                 posType: 'left',
                 cssTexts: [],
-                labelSize: 80,
-                degree: 45
+                labelSize: 80
             };
+
+            boundsMaker.xAxisDegree = 45;
+
             actual = axis._makeLabelsHtml(params);
             expected = axis._makeRotationLabelsHtml(params);
             expect(actual).toBe(expected);
@@ -498,59 +663,71 @@ describe('Axis', function() {
         });
     });
 
-    describe('render()', function() {
-        it('레이블 타입 axis의 전체 영역을 렌더링 합니다.', function() {
-            var el = axis.render({
-                dimension: {
-                    width: 100,
-                    height: 200
-                },
-                position: {
-                    top: 20
-                }
-            }, {
-                labels: ['label1', 'label2', 'label3'],
-                tickCount: 4,
-                isLabelAxis: true,
-                isVertical: false
-            });
+    describe('_renderAxisArea()', function() {
 
-            expect(el.style.width).toBe('100px');
-            expect(el.style.height).toBe('200px');
-            expect(el.style.top).toBe('20px');
-            expect(dom.hasClass(el, 'horizontal')).toBeTruthy();
-            expect(el.childNodes[0].className).toBe('tui-chart-title-area');
-            expect(el.childNodes[1].className).toBe('tui-chart-tick-area');
-            expect(el.childNodes[2].className).toBe('tui-chart-label-area');
-        });
     });
 
-    describe('rerender()', function() {
-        it('변경된 bound 정보를 전달하여 rerendering합니다.', function() {
-            var bound = {
-                    dimension: {
-                        width: 100,
-                        height: 200
-                    },
-                    position: {
-                        top: 20
-                    }
-                },
+    describe('_renderAxisArea()', function() {
+        it('axis의 전체 영역을 렌더링 합니다.', function() {
+            var container = dom.create('DIV'),
                 data = {
                     labels: ['label1', 'label2', 'label3'],
                     tickCount: 4,
                     isLabelAxis: true,
                     isVertical: false
-                },
-                container = axis.render(bound, data);
-            bound.dimension = {
-                width: 200,
-                height: 100
-            };
-            axis.rerender(bound, data);
+                };
 
-            expect(container.style.width).toBe('200px');
-            expect(container.style.height).toBe('100px');
+            boundsMaker.getDimension.and.returnValue({
+                width: 100,
+                height: 200
+            });
+            boundsMaker.getPosition.and.returnValue({
+                top: 20
+            });
+
+            axis._renderAxisArea(container, data);
+
+            expect(container.style.width).toBe('100px');
+            expect(container.style.height).toBe('200px');
+            expect(container.style.top).toBe('20px');
+            expect(dom.hasClass(container, 'horizontal')).toBeTruthy();
+            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(container.childNodes[1].className).toBe('tui-chart-tick-area');
+            expect(container.childNodes[2].className).toBe('tui-chart-label-area');
+        });
+    });
+
+    describe('rerender()', function() {
+        it('_isInvalidRightYAxis()가 true이면 container의 내용만 비우고 끝냅니다.', function() {
+            axis.axisContainer = dom.create('DIV');
+            axis.axisContainer.innerHTML = 'contents';
+
+            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(true);
+
+            axis.rerender();
+
+            expect(axis.axisContainer.innerHTML).toBe('');
+        });
+
+        it('_isInvalidRightYAxis()가 false이서 this.options가 있을 경우 options의 내용을 갱신하면서 _renderAxisArea()를 수행합니다.', function() {
+            var acutal = false,
+                options = {
+                    title: 'ABC'
+                },
+                expected = true;
+
+            spyOn(axis, '_renderAxisArea').and.callFake(function() {
+                acutal = true;
+            });
+
+            axis.axisContainer = dom.create('DIV');
+            axis.options = {};
+            axis.rerender({
+                options: options
+            });
+
+            expect(axis.options).toEqual(options);
+            expect(acutal).toBe(expected);
         });
     });
 });

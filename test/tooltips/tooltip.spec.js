@@ -11,18 +11,21 @@ var Tooltip = require('../../src/js/tooltips/tooltip'),
     dom = require('../../src/js/helpers/domHandler');
 
 describe('Tooltip', function() {
-    var tooltip, dataProcessor;
+    var tooltip, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getValue']);
         dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
         dataProcessor.getFormattedGroupValues.and.returnValue([['10', '20']]);
         dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
+
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getPosition']);
     });
 
     beforeEach(function() {
         tooltip = new Tooltip({
             dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker,
             options: {}
         });
     });
@@ -230,7 +233,7 @@ describe('Tooltip', function() {
 
             actual = tooltip._moveToSymmetry(
                 {
-                    left: 130
+                    left: 120
                 },
                 {
                     bound: {
@@ -258,16 +261,19 @@ describe('Tooltip', function() {
     });
 
     describe('_adjustPosition()', function() {
+        beforeAll(function() {
+            boundsMaker.getDimension.and.returnValue({
+                width: 200,
+                height: 100
+            });
+            boundsMaker.getPosition.and.returnValue({
+                left: 10,
+                top: 10
+            });
+        });
+
         it('차트 왼쪽 영역을 넘어가는 툴팁 포지션의 left값을 보정합니다.', function() {
-            var chartDimension = {
-                    width: 200,
-                    height: 100
-                },
-                areaPosition = {
-                    left: 10,
-                    top: 10
-                },
-                tooltipDimension = {
+            var tooltipDimension = {
                     width: 50,
                     height: 50
                 },
@@ -276,21 +282,15 @@ describe('Tooltip', function() {
                     top: 10
                 },
                 actual, expected;
-            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+
+            actual = tooltip._adjustPosition(tooltipDimension, position);
             expected = -10;
+
             expect(actual.left).toBe(expected);
         });
 
         it('차트 오른쪽 영역을 넘어가는 툴팁 포지션의 left값을 보정합니다.', function() {
-            var chartDimension = {
-                    width: 200,
-                    height: 100
-                },
-                areaPosition = {
-                    left: 10,
-                    top: 10
-                },
-                tooltipDimension = {
+            var tooltipDimension = {
                     width: 50,
                     height: 50
                 },
@@ -299,21 +299,14 @@ describe('Tooltip', function() {
                     top: 10
                 },
                 actual, expected;
-            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+
+            actual = tooltip._adjustPosition(tooltipDimension, position);
             expected = 140;
             expect(actual.left).toBe(expected);
         });
 
         it('차트 위쪽 영역을 넘어가는 툴팁 포지션의 top값을 보정합니다.', function() {
-            var chartDimension = {
-                    width: 200,
-                    height: 100
-                },
-                areaPosition = {
-                    left: 10,
-                    top: 10
-                },
-                tooltipDimension = {
+            var tooltipDimension = {
                     width: 50,
                     height: 50
                 },
@@ -322,21 +315,13 @@ describe('Tooltip', function() {
                     top: -20
                 },
                 actual, expected;
-            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            actual = tooltip._adjustPosition(tooltipDimension, position);
             expected = -10;
             expect(actual.top).toBe(expected);
         });
 
         it('차트 아래쪽 영역을 넘어가는 툴팁 포지션의 top값을 보정합니다.', function() {
-            var chartDimension = {
-                    width: 200,
-                    height: 100
-                },
-                areaPosition = {
-                    left: 10,
-                    top: 10
-                },
-                tooltipDimension = {
+            var tooltipDimension = {
                     width: 50,
                     height: 50
                 },
@@ -345,7 +330,7 @@ describe('Tooltip', function() {
                     top: 80
                 },
                 actual, expected;
-            actual = tooltip._adjustPosition(chartDimension, areaPosition, tooltipDimension, position);
+            actual = tooltip._adjustPosition(tooltipDimension, position);
             expected = 40;
             expect(actual.top).toBe(expected);
         });
@@ -355,7 +340,7 @@ describe('Tooltip', function() {
         it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var actual, expected;
             tooltip.bound = {};
-            spyOn(tooltip, '_adjustPosition').and.callFake(function(chartDimension, areaPosition, tooltimDimension, position) {
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
                 return position;
             });
             actual = tooltip._calculateTooltipPosition({
@@ -386,7 +371,7 @@ describe('Tooltip', function() {
         it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
             var actual, expected;
             tooltip.bound = {};
-            spyOn(tooltip, '_adjustPosition').and.callFake(function(chartDimension, areaPosition, tooltimDimension, position) {
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
                 return position;
             });
             actual = tooltip._calculateTooltipPosition({
