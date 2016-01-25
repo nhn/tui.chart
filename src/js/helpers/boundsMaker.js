@@ -141,9 +141,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     /**
      * Register axes data.
      * @param {object} axesData axes data
-     * @private
      */
-    _registerAxesData: function(axesData) {
+    registerAxesData: function(axesData) {
         this.axesData = axesData;
     },
 
@@ -590,8 +589,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * Register bounds data.
      * @param {{xAxis: object, yAxis: object, rightYAxis: ?object}} axesData axes data
      */
-    registerBoundsData: function(axesData) {
-        this._registerAxesData(axesData);
+    registerBoundsData: function() {
         this._registerCenterComponentsDimensions();
         if (this.hasAxes) {
             this._registerAxisComponentsDimensions();

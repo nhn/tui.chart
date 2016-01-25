@@ -198,8 +198,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this._registerComponentsDimension('registerDimension');
         axesData = this._makeAxesData();
-        this.boundsMaker.registerBoundsData(axesData);
+        this.boundsMaker.registerAxesData(axesData);
         this._registerComponentsDimension('registerAdditionDimension');
+        this.boundsMaker.registerBoundsData();
         this._updatePercentValues(axesData);
         renderingData = this._makeRenderingData(axesData);
 

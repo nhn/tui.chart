@@ -127,20 +127,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderSeriesLabel: function() {},
 
     /**
-     * Set base data.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
-     * @param {object} data data for rendering
-     * @private
-     */
-    _setBaseData: function(data) {
-        this.data = data;
-        //this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
-    },
-
-    /**
      * Get percent values.
      * @returns {Array.<Array.<number>>} percent values.
      * @private

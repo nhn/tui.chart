@@ -52,12 +52,10 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
     /**
      * Make axes data
-     * @param {object} bounds chart bounds
-     * @param {?boolean} divergingOption diverging option
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(bounds) {
+    _makeAxesData: function() {
         var options = this.options,
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),

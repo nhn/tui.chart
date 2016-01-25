@@ -32,7 +32,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makePositionTopOfZeroPoint: function() {
-        var dimension = this.bound.dimension,
+        var dimension = this.boundsMaker.getDimension('series'),
             limit = this.data.limit,
             limitDistance = this._getLimitDistanceFromZeroPoint(dimension.height, limit),
             top = limitDistance.toMax;
@@ -51,7 +51,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @private
      */
     _makeStackedPositions: function(groupPositions) {
-        var height = this.bound.dimension.height + chartConst.SERIES_EXPAND_SIZE,
+        var height = this.boundsMaker.getDimension('series').height + chartConst.SERIES_EXPAND_SIZE,
             firstStartTop = this._makePositionTopOfZeroPoint(),
             prevPositionTops = [];
 

@@ -38,7 +38,6 @@ var lineTypeMixer = {
 
     /**
      * Make axes data
-     * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
