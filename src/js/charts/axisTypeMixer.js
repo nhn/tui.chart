@@ -224,15 +224,12 @@ var axisTypeMixer = {
 
     /**
      * Attach coordinate event.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Tooltip} tooltip tooltip component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForGroupTooltip: function() {
-        var customEvent = this.componentMap.customEvent,
-            tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForGroupTooltip: function(customEvent, tooltip, serieses) {
         customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
 
@@ -248,15 +245,12 @@ var axisTypeMixer = {
 
     /**
      * Attach custom event for normal tooltip.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Tooltip} tooltip tooltip component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForNormalTooltip: function() {
-        var customEvent = this.componentMap.customEvent,
-            tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForNormalTooltip: function(customEvent, tooltip, serieses) {
         customEvent.on('showTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideTooltip', tooltip.onHide, tooltip);
 
@@ -270,14 +264,11 @@ var axisTypeMixer = {
 
     /**
      * Attach custom event for series selection.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForSeriesSelection: function() {
-        var customEvent = this.componentMap.customEvent,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForSeriesSelection: function(customEvent, serieses) {
         tui.util.forEach(serieses, function(series) {
             customEvent.on(renderUtil.makeCustomEventName('select', series.chartType, 'series'), series.onSelectSeries, series);
             customEvent.on(renderUtil.makeCustomEventName('unselect', series.chartType, 'series'), series.onUnselectSeries, series);
@@ -290,15 +281,19 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
-        ChartBase.prototype._attachCustomEvent.call(this);
+        var serieses = this.component.where({componentType: 'series'}),
+            customEvent = this.component.get('customEvent'),
+            tooltip = this.component.get('tooltip');
+
+        ChartBase.prototype._attachCustomEvent.call(this, serieses);
 
         if (this.hasGroupTooltip) {
-            this._attachCustomEventForGroupTooltip();
+            this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
         } else {
-            this._attachCustomEventForNormalTooltip();
+            this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);
         }
 
-        this._attachCustomEventForSeriesSelection();
+        this._attachCustomEventForSeriesSelection(customEvent, serieses);
     },
 
     /**
