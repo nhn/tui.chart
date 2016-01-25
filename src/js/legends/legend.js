@@ -7,7 +7,7 @@
 'use strict';
 
 var LegendModel = require('./legendModel'),
-    LegendDimensionModel = require('./LegendDimensionModel'),
+    LegendDimensionModel = require('./legendDimensionModel'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     predicate = require('../helpers/predicate'),
