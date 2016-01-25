@@ -10,7 +10,7 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     DefaultDataProcessor = require('../helpers/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
-    ComponentModel = require('./ComponentModel'),
+    ComponentModel = require('./componentModel'),
     UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
