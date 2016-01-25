@@ -89,6 +89,9 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         });
     },
 
+    /**
+     * Register legend dimension.
+     */
     registerDimension: function() {
         var chartWidth = this.boundsMaker.getDimension('chart').width;
         this.boundsMaker.registerBaseDimension('legend', this.dimensionModel.makeDimension(chartWidth));
