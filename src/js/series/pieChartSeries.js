@@ -98,18 +98,16 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Make series data.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @returns {{
      *      chartBackground: string,
      *      circleBound: ({cx: number, cy: number, r: number}),
      *      sectorData: Array.<object>
      * }} add data for graph rendering
+     * @private
+     * @override
      */
-    makeSeriesData: function(bound) {
-        var circleBound = this._makeCircleBound(bound.dimension, {
+    _makeSeriesData: function() {
+        var circleBound = this._makeCircleBound(this.boundsMaker.getDimension('series'), {
                 showLabel: this.options.showLabel,
                 legendAlign: this.legendAlign
             }),

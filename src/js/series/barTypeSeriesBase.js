@@ -12,19 +12,15 @@ var chartConst = require('../const'),
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
      * Make series data.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @returns {object} add data
+     * @private
+     * @override
      */
-    makeSeriesData: function(bound) {
-        var groupBounds = this._makeBounds(bound.dimension);
-
-        this.groupBounds = groupBounds;
+    _makeSeriesData: function() {
+        this.groupBounds = this._makeBounds(this.boundsMaker.getDimension('series'));
 
         return {
-            groupBounds: groupBounds,
+            groupBounds: this.groupBounds,
             groupValues: this._getPercentValues()
         };
     },

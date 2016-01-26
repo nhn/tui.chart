@@ -11,7 +11,7 @@ var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('LineTypeSeriesBase', function() {
-    var series, makeSeriesLabelHtml, _getPercentValues, dataProcessor;
+    var series, makeSeriesLabelHtml, _getPercentValues, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -20,6 +20,7 @@ describe('LineTypeSeriesBase', function() {
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
         _getPercentValues = jasmine.createSpy('_getPercentValues').and.returnValue([]);
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormattedGroupValues', 'getFirstFormattedValue']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -27,6 +28,7 @@ describe('LineTypeSeriesBase', function() {
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series._getPercentValues = _getPercentValues;
         series.dataProcessor = dataProcessor;
+        series.boundsMaker = boundsMaker;
     });
 
     describe('_makeBasicPositions()', function() {
@@ -34,15 +36,14 @@ describe('LineTypeSeriesBase', function() {
             var actual;
 
             series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
-
             series.data = {
                 aligned: false
             };
-            actual = series._makeBasicPositions({
+            boundsMaker.getDimension.and.returnValue({
                 width: 300,
                 height: 200
             });
-
+            actual = series._makeBasicPositions();
             expect(actual).toEqual([
                 [
                     {
@@ -65,14 +66,14 @@ describe('LineTypeSeriesBase', function() {
             var actual;
 
             series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
-
             series.data = {
                 aligned: true
             };
-            actual = series._makeBasicPositions({
+            boundsMaker.getDimension.and.returnValue({
                 width: 300,
                 height: 200
             });
+            actual = series._makeBasicPositions();
 
             expect(actual).toEqual([
                 [

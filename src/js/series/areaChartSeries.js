@@ -89,12 +89,11 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make positions.
-     * @param {{width: number, height: number}} dimension dimension
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
      * @private
      */
-    _makePositions: function(dimension) {
-        var groupPositions = this._makeBasicPositions(dimension);
+    _makePositions: function() {
+        var groupPositions = this._makeBasicPositions();
 
         if (this.options.stacked) {
             groupPositions = this._makeStackedPositions(groupPositions);
@@ -107,17 +106,16 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make series data.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @returns {object} series data
+     * @private
+     * @override
      */
-    makeSeriesData: function(bound) {
-        var zeroTop = this._getLimitDistanceFromZeroPoint(bound.dimension.height, this.data.limit).toMax;
+    _makeSeriesData: function() {
+        var dimension = this.boundsMaker.getDimension('series'),
+            zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.data.limit).toMax;
 
         return {
-            groupPositions: this._makePositions(bound.dimension),
+            groupPositions: this._makePositions(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }

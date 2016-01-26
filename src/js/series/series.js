@@ -105,11 +105,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Make series data.
-     * @returns {object} add data
+     * @private
+     * @abstract
      */
-    makeSeriesData: function() {
-        return {};
-    },
+    _makeSeriesData: function() {},
 
     /**
      * Get seriesData
@@ -167,7 +166,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.data = data;
 
         expandedBound = renderUtil.expandBound(bound);
-        this.seriesData = seriesData = this.makeSeriesData(bound);
+        this.seriesData = seriesData = this._makeSeriesData();
 
         renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
         this._renderPosition(seriesContainer, expandedBound.position);
