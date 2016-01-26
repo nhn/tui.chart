@@ -120,8 +120,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Resize tooltip component.
-     * @param {{position: object}} bound tooltip bound
-     * @param {{chartDimension: object}} data data for resize
      * @override
      */
     resize: function() {

@@ -163,8 +163,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {object} seriesData series data
      * @returns {{
      *      container: HTMLElement,
-     *      options: {legendAlign: string, showLabel: boolean},
-     *      chartWidth: number
+     *      options: {legendAlign: string, showLabel: boolean}
      * }} add data for make series label
      * @private
      */
@@ -173,8 +172,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             options: {
                 legendAlign: this.legendAlign,
                 showLabel: this.options.showLabel
-            },
-            chartWidth: this.data.chartWidth
+            }
         }, seriesData);
     },
 
@@ -418,13 +416,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * Render outer legend.
      * @param {object} params parameters
      *      @param {object} params.sectorData sector info
-     *      @param {number} params.chartWidth chart width
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
     _renderOuterLegend: function(params, seriesLabelContainer) {
         var outerPositions = tui.util.pluck(params.sectorData, 'outerPosition'),
-            centerLeft = params.chartWidth / 2;
+            centerLeft = this.boundsMaker.getDimension('chart').width / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
         this._renderLegendLabel(tui.util.extend({
@@ -469,7 +466,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _moveLegendLines: function(seriesData) {
         var outerPositions = tui.util.pluck(seriesData.sectorData, 'outerPosition'),
-            centerLeft = this.data.chartWidth / 2;
+            centerLeft = this.boundsMaker.getDimension('chart').width / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
         this.graphRenderer.moveLegendLines(outerPositions);

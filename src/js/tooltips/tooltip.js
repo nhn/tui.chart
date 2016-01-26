@@ -94,7 +94,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Resize tooltip component.
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @override
      */
     resize: function(data) {

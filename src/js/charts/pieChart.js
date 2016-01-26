@@ -91,24 +91,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     },
 
     /**
-     * Make rendering data for pie chart.
-     * @return {object} data for rendering
-     * @private
-     * @override
-     */
-    _makeRenderingData: function() {
-        var chartDimension = this.boundsMaker.getDimension('chart');
-        return {
-            tooltip: {
-                seriesPosition: this.boundsMaker.getPosition('series')
-            },
-            pieSeries: {
-                chartWidth: chartDimension.width
-            }
-        };
-    },
-
-    /**
      * Attach custom evnet.
      * @private
      * @override

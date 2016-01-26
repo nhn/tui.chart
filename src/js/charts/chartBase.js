@@ -152,12 +152,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Make rendering data for axis type chart.
-     * @param {object} bounds chart bounds
-     * @param {object} options options
+     * @return {object} rendering data.
      * @private
-     * @abstract
      */
-    _makeRenderingData: function() {},
+    _makeRenderingData: function() {
+        return {};
+    },
 
     /**
      * Attach custom evnet.

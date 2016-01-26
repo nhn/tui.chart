@@ -11,7 +11,7 @@ var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('PieChartSeries', function() {
-    var series, dataProcessor;
+    var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -19,6 +19,7 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getFormattedValue']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -41,6 +42,7 @@ describe('PieChartSeries', function() {
         });
 
         series.dataProcessor = dataProcessor;
+        series.boundsMaker = boundsMaker;
     });
 
     describe('_makeSectorData()', function() {
@@ -292,9 +294,10 @@ describe('PieChartSeries', function() {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
-
             spyOn(series.graphRenderer, 'renderLegendLines');
-
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
             series._renderOuterLegend({
                 sectorData: [
                     {
@@ -324,8 +327,7 @@ describe('PieChartSeries', function() {
                 ],
                 options: {
                     legendAlign: 'outer'
-                },
-                chartWidth: 220
+                }
             }, labelContainer);
 
             children = labelContainer.childNodes;
@@ -378,8 +380,7 @@ describe('PieChartSeries', function() {
                     ],
                     options: {
                         legendAlign: 'outer'
-                    },
-                    chartWidth: 220
+                    }
                 };
 
             dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
@@ -388,6 +389,9 @@ describe('PieChartSeries', function() {
                 return values[index];
             });
             spyOn(series.graphRenderer, 'renderLegendLines');
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
 
             series._renderSeriesLabel(params, actual);
             series._renderOuterLegend(params, expected);
