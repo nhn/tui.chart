@@ -7,16 +7,14 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    Plot = require('../../src/js/plots/plot'),
     dom = require('../../src/js/helpers/domHandler'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor'),
-    boundsMaker = require('../../src/js/helpers/boundsMaker');
+    DataProcessor = require('../../src/js/helpers/dataProcessor');
 
 describe('ChartBase', function() {
-    var chartBase, componentModel;
+    var chartBase, componentManager;
 
     beforeAll(function() {
-        componentModel = jasmine.createSpyObj('componentModel', ['where']);
+        componentManager = jasmine.createSpyObj('componentManager', ['where']);
     });
 
     beforeEach(function() {
@@ -53,7 +51,7 @@ describe('ChartBase', function() {
                 }
             }
         });
-        chartBase.component = componentModel;
+        chartBase.component = componentManager;
     });
 
     describe('_makeProcessedData()', function() {
@@ -106,7 +104,7 @@ describe('ChartBase', function() {
                 checkedLegends = [true],
                 actual;
 
-            componentModel.where.and.returnValue([
+            componentManager.where.and.returnValue([
                 {
                     name: 'columnSeries',
                     chartType: 'column'

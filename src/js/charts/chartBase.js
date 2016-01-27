@@ -10,7 +10,7 @@ var dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     DefaultDataProcessor = require('../helpers/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
-    ComponentModel = require('./componentModel'),
+    ComponentManager = require('./componentManager'),
     UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -87,10 +87,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         });
 
         /**
-         * component model
-         * @type {ComponentModel}
+         * component manager
+         * @type {ComponentManager}
          */
-        this.component = new ComponentModel({
+        this.component = new ComponentManager({
             dataProcessor: this.dataProcessor,
             options: this.options,
             theme: this.theme,

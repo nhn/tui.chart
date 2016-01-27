@@ -1,20 +1,20 @@
 /**
- * @fileoverview ComponentModel is component model.
+ * @fileoverview ComponentManager manages components of chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var ComponentModel = tui.util.defineClass(/** @lends ComponentModel.prototype */ {
+var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototype */ {
     /**
-     * ComponentModel is component model.
+     * ComponentManager manages components of chart.
      * @param {object} params parameters
      *      @param {object} params.theme theme
      *      @param {object} params.options options
      *      @param {DataProcessor} params.dataProcessor data processor
      *      @param {BoundsMaker} params.boundsMaker bounds maker
-     * @constructs ComponentModel
+     * @constructs ComponentManager
      */
     init: function(params) {
         /**
@@ -97,14 +97,28 @@ var ComponentModel = tui.util.defineClass(/** @lends ComponentModel.prototype */
         this.componentMap[name] = component;
     },
 
+    /**
+     * Iterate each components.
+     * @param {function} iteratee iteratee
+     */
     each: function(iteratee) {
         tui.util.forEachArray(this.components, iteratee);
     },
 
+    /**
+     * Return the results of applying the iteratee to each components.
+     *  @param {function} iteratee iteratee
+     * @returns {Array.<object>} components
+     */
     map: function(iteratee) {
         return tui.util.map(this.components, iteratee);
     },
 
+    /**
+     * Find components to conditionMap.
+     * @param {object} conditionMap condition map
+     * @returns {Array.<object>} filtered components
+     */
     where: function(conditionMap) {
         return tui.util.filter(this.components, function(component) {
             var contained = true;
@@ -120,9 +134,14 @@ var ComponentModel = tui.util.defineClass(/** @lends ComponentModel.prototype */
         });
     },
 
+    /**
+     * Get component.
+     * @param {string} name component name
+     * @returns {object} component instance
+     */
     get: function(name) {
         return this.componentMap[name];
     }
 });
 
-module.exports = ComponentModel;
+module.exports = ComponentManager;

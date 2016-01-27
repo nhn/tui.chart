@@ -15,7 +15,7 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
 describe('ComboChart', function() {
     var componentMap = {},
         spyObjs = {},
-        componentModel
+        componentManager
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -23,9 +23,9 @@ describe('ComboChart', function() {
 
         tui.util.extend(axisTypeMixer, spyObjs);
 
-        componentModel = jasmine.createSpyObj('componentModel', ['register']);
-        axisTypeMixer.component = componentModel;
-        componentModel.register.and.callFake(function(name, ComponentClass) {
+        componentManager = jasmine.createSpyObj('componentManager', ['register']);
+        axisTypeMixer.component = componentManager;
+        componentManager.register.and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
     });

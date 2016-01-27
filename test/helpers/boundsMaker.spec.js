@@ -350,13 +350,13 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_registerAxisComponentsDimensions()', function() {
+    describe('_registerAxisComponentsDimension()', function() {
         it('plot dimension을 계산하여 axis를 구성하는 component들의 dimension을 등록합니다.', function() {
             spyOn(boundsMaker, '_makePlotDimension').and.returnValue({
                 width: 300,
                 height: 200
             });
-            boundsMaker._registerAxisComponentsDimensions();
+            boundsMaker._registerAxisComponentsDimension();
 
             expect(boundsMaker.getDimension('plot').width).toBe(300);
             expect(boundsMaker.getDimension('plot').height).toBe(200);
@@ -539,14 +539,14 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_registerCenterComponentsDimensions()', function() {
+    describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
             spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
                 width: 300,
                 height: 200
             });
 
-            boundsMaker._registerCenterComponentsDimensions();
+            boundsMaker._registerCenterComponentsDimension();
 
             expect(boundsMaker.getDimension('series').width).toBe(300);
             expect(boundsMaker.getDimension('series').height).toBe(200);
@@ -557,7 +557,7 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_registerAxisComponentsPositions()', function() {
+    describe('_registerAxisComponentsPosition()', function() {
         it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
             var seriesPosition = {
                     left: 50,
@@ -573,7 +573,7 @@ describe('boundsMaker', function() {
                 width: 30
             };
 
-            boundsMaker._registerAxisComponentsPositions(seriesPosition, leftLegendWidth);
+            boundsMaker._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
 
             expect(boundsMaker.getPosition('plot').top).toBe(50);
             expect(boundsMaker.getPosition('plot').left).toBe(49);
