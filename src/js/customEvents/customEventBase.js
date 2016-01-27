@@ -125,6 +125,23 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * On mouse event.
+     * @param {string} eventType custom event type
+     * @param {mouseevent} e mouse event
+     * @private
+     */
+    _onMouseEvent: function(eventType, e) {
+        var eventName = renderUtil.makeCustomEventName(eventType, this.chartType, 'series');
+
+        dom.addClass(this.customEventContainer, 'hide');
+        this.fire(eventName, {
+            left: e.clientX,
+            top: e.clientY
+        });
+        dom.removeClass(this.customEventContainer, 'hide');
+    },
+
+    /**
      * On click
      * @param {mouseevent} e mouse event
      * @private
@@ -143,6 +160,20 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
             this.selectedData = foundData;
         }
     },
+
+    /**
+     * On mouse down
+     * @private
+     * @abstract
+     */
+    _onMousedown: function() {},
+
+    /**
+     * On mouse up
+     * @private
+     * @abstract
+     */
+    _onMouseup: function() {},
 
     /**
      * On mouse move
@@ -164,6 +195,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      */
     attachEvent: function(el) {
         eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+        eventListener.bindEvent('mousedown', el, tui.util.bind(this._onMousedown, this));
+        eventListener.bindEvent('mouseup', el, tui.util.bind(this._onMouseup, this));
         eventListener.bindEvent('mousemove', el, tui.util.bind(this._onMousemove, this));
         eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }

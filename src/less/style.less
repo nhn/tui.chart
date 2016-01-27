@@ -241,6 +241,10 @@
     &.hide {
       display: none;
     }
+
+    &.drag {
+      cursor: move;
+    }
   }
 
   .tui-chart-legend-rect {
@@ -297,6 +301,27 @@
         .tui-chart-legend-label {
           .opacity(0.3);
         }
+      }
+    }
+
+    .tui-chart-legend-tick-area {
+      position:absolute;
+      left: 10px;
+      top: 10px;
+      .tui-chart-map-legend-graph-area {
+
+      }
+      .tui-chart-map-legend-tick {
+        width: 15px;
+        height: 1px;
+        background-color: #ccc;
+        position: absolute;
+        left: 5px;
+      }
+
+      .tui-chart-map-legend-tick-label {
+        position: absolute;
+        left: 25px;
       }
     }
 

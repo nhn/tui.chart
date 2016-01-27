@@ -133,11 +133,11 @@ var renderUtil = {
 
         theme = theme || {};
 
+        label += '';
+
         if (!label) {
             return 0;
         }
-
-        label += '';
 
         key = this._makeCachingKey(label, theme, offsetType);
         labelSize = this.sizeCache[key];

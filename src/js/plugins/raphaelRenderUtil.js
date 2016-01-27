@@ -59,6 +59,28 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Render area graph.
+     * @param {object} paper paper
+     * @param {{start: string}} path path
+     * @param {string} color color
+     * @param {?number} opacity opacity
+     * @returns {Array.<object>} raphael object
+     */
+    renderArea: function(paper, path, color, opacity, strokeColor, strokeOpacity) {
+        var area = paper.path(path),
+            fillStyle = {
+                fill: color,
+                opacity: opacity,
+                stroke: strokeColor,
+                'stroke-opacity': strokeOpacity || 0
+            };
+
+        area.attr(fillStyle);
+
+        return area;
+    },
+
+    /**
      * Render items of line type chart.
      * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function

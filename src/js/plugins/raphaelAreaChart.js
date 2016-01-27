@@ -70,28 +70,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * Render area graph.
-     * @param {object} paper paper
-     * @param {{start: string}} path path
-     * @param {string} color color
-     * @returns {Array.<object>} raphael object
-     * @private
-     */
-    _renderArea: function(paper, path, color) {
-        var area = paper.path(path),
-            fillStyle = {
-                fill: color,
-                opacity: 0.5,
-                stroke: color,
-                'stroke-opacity': 0
-            };
-
-        area.attr(fillStyle);
-
-        return area;
-    },
-
-    /**
      * Render area graphs.
      * @param {object} paper paper
      * @param {Array.<object>} groupPaths group paths
@@ -111,7 +89,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 lineColor = areaColor;
 
             return {
-                area: this._renderArea(paper, path.area.join(' '), areaColor),
+                area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), areaColor, 0.5, areaColor),
                 line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor)
             };
         }, this);

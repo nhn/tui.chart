@@ -34,6 +34,8 @@ var chartConst = {
     CHART_TYPE_COMBO: 'combo',
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
+    /** @type {string} */
+    CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
     /** chart default width */
@@ -101,6 +103,11 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATE: 0.8,
     /** small rate of pie graph */
     PIE_GRAPH_SMALL_RATE: 0.65,
+    /** tick count for map chart legend */
+    MAP_CHART_LEGEND_TICK_COUNT: 4,
+    /** default position ratio of map chart label
+     * @type {object}
+     */
     /** dot radius */
     DOT_RADIUS: 4,
     /** yAxis properties

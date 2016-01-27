@@ -38,21 +38,6 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
     initCustomEventData: function() {},
 
     /**
-     * On mouse event.
-     * @param {string} eventType custom event type
-     * @param {mouseevent} e mouse event
-     * @private
-     */
-    _onMouseEvent: function(eventType, e) {
-        dom.addClass(this.customEventContainer, 'hide');
-        this.fire(eventType + 'PieSeries', {
-            left: e.clientX,
-            top: e.clientY
-        });
-        dom.removeClass(this.customEventContainer, 'hide');
-    },
-
-    /**
      * On click.
      * @param {mouseevent} e mouse event
      * @private
