@@ -31,16 +31,9 @@ describe('ColumnChartSeries', function() {
                     fontSize: 11
                 }
             },
-            options: {}
+            options: {},
+            dataProcessor: dataProcessor
         });
-
-        series.dataProcessor = dataProcessor;
-        series.data = {
-            limit: {
-                min: 0,
-                max: 100
-            }
-        };
         spyOn(series, '_getPercentValues');
     });
 
@@ -132,7 +125,12 @@ describe('ColumnChartSeries', function() {
             var actual;
 
             series._getPercentValues.and.returnValue([[0.25], [0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             actual = series._makeNormalColumnChartBounds({
                 width: 200,
                 height: 400
@@ -148,10 +146,11 @@ describe('ColumnChartSeries', function() {
             var result;
 
             series._getPercentValues.and.returnValue([[-0.25], [0.5]]);
-
-            series.data.limit = {
-                min: -40,
-                max: 60
+            series.data = {
+                limit: {
+                    min: -40,
+                    max: 60
+                }
             };
             result = series._makeNormalColumnChartBounds({
                 width: 200,
@@ -178,7 +177,12 @@ describe('ColumnChartSeries', function() {
             var bounds;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             bounds = series._makeStackedColumnChartBounds({
                 width: 100,
                 height: 400
@@ -199,7 +203,12 @@ describe('ColumnChartSeries', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.25], [0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             actual = series._makeBounds({
                 width: 200,
                 height: 400
@@ -215,7 +224,12 @@ describe('ColumnChartSeries', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             series.options.stacked = 'normal';
             actual = series._makeBounds({
                 width: 100,

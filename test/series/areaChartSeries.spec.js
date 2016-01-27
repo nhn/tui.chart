@@ -18,10 +18,10 @@ describe('AreaChartSeries', function() {
 
     beforeEach(function() {
         series = new AreaChartSeries({
-            boundsMaker: boundsMaker,
             chartType: 'area',
             theme: {},
-            options: {}
+            options: {},
+            boundsMaker: boundsMaker
         });
     });
 

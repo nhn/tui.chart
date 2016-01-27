@@ -25,24 +25,16 @@ describe('PieChartSeries', function() {
     beforeEach(function() {
         series = new PieChartSeries({
             chartType: 'pie',
-            data: {
-                values: [],
-                formattedValues: []
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
                     fontSize: 11
                 }
             },
-            options: {}
+            options: {},
+            dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker
         });
-
-        series.dataProcessor = dataProcessor;
-        series.boundsMaker = boundsMaker;
     });
 
     describe('_makeSectorData()', function() {

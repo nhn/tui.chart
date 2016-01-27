@@ -22,7 +22,6 @@ describe('Series', function() {
         series = new Series({
             chartType: 'bar',
             tooltipPrefix: 'tooltip-prefix-',
-            boundsMaker: boundsMaker,
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -30,6 +29,7 @@ describe('Series', function() {
                 },
                 colors: ['blue']
             },
+            boundsMaker: boundsMaker,
             options: {}
         });
     });
