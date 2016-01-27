@@ -177,6 +177,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
     },
 
+    /**
+     * Make axes data.
+     * @abstract
+     * @private
+     */
     _makeAxesData: function() {},
 
     /**
@@ -186,6 +191,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _updatePercentValues: function() {},
 
+    /**
+     * Register components dimension.
+     * @param {function} func function for execute
+     * @private
+     */
     _registerComponentsDimension: function(func) {
         this.component.each(function(component) {
             if (component[func]) {
@@ -194,6 +204,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         });
     },
 
+    /**
+     * Render.
+     * @param {function} callback callback function
+     * @private
+     */
     _render: function(callback) {
         var axesData, renderingData;
 

@@ -410,7 +410,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         };
     },
 
-    _registerAxisComponentsDimensions: function() {
+    /**
+     * Register axis components dimension.
+     * @private
+     */
+    _registerAxisComponentsDimension: function() {
         var plotDimension = this._makePlotDimension();
 
         this._registerDimension('plot', plotDimension);
@@ -477,10 +481,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Register center componets dimensions.
+     * Register center componets dimension.
      * @private
      */
-    _registerCenterComponentsDimensions: function() {
+    _registerCenterComponentsDimension: function() {
         var seriesDimension = this._makeSeriesDimension();
 
         this._registerDimension('series', seriesDimension);
@@ -494,7 +498,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {number} leftLegendWidth legend width
      * @private
      */
-    _registerAxisComponentsPositions: function(seriesPosition, leftLegendWidth) {
+    _registerAxisComponentsPosition: function(seriesPosition, leftLegendWidth) {
         var seriesDimension = this.getDimension('series');
 
         this._registerPosition('plot', {
@@ -579,7 +583,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();
-            this._registerAxisComponentsPositions(seriesPosition, leftLegendWidth);
+            this._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
         }
 
         this._registerEssentialComponentsPositions(seriesPosition);
@@ -590,9 +594,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {{xAxis: object, yAxis: object, rightYAxis: ?object}} axesData axes data
      */
     registerBoundsData: function() {
-        this._registerCenterComponentsDimensions();
+        this._registerCenterComponentsDimension();
         if (this.hasAxes) {
-            this._registerAxisComponentsDimensions();
+            this._registerAxisComponentsDimension();
         }
         this._registerPositions();
     }
