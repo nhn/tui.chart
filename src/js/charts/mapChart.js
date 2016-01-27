@@ -10,15 +10,14 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     MapChartDataProcessor = require('../helpers/mapChartDataProcessor'),
     axisDataMaker = require('../helpers/axisDataMaker'),
-    renderUtil = require('../helpers/renderUtil'),
     MapChartColorModel = require('./mapChartColorModel'),
     Series = require('../series/mapChartSeries'),
     Legend = require('../legends/mapChartLegend'),
-    mapChartCustomEvent = require('../customEvents/mapChartCustomEvent')
+    mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
-     * Column chart.
+     * Map chart.
      * @constructs MapChart
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
@@ -26,6 +25,10 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
+        /**
+         * class name
+         * @type {string}
+         */
         this.className = 'tui-map-chart';
 
         options.tooltip = options.tooltip || {};
@@ -42,16 +45,15 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             DataProcessor: MapChartDataProcessor
         });
 
-        this._addComponents(theme.chart.background, options);
+        this._addComponents(options);
     },
 
     /**
      * Add components
-     * @param {object} chartBackground chart background
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(chartBackground, options) {
+    _addComponents: function(options) {
         var legendAlign, isPieLegendType;
         options.legend = options.legend || {};
         legendAlign = options.legend && options.legend.align;
@@ -61,7 +63,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
-            chartBackground: chartBackground,
             userEvent: this.userEvent,
             legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null
         });

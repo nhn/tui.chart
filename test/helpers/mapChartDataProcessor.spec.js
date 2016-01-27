@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test DataProcessor.
+ * @fileoverview Test for MapChartDataProcessor.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var MapChartDataProcessor = require('../../src/js/helpers/mapChartDataProcessor.js');
 
-describe('test DataProcessor', function() {
+describe('test MapChartDataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {

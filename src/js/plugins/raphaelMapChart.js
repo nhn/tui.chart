@@ -16,7 +16,7 @@ var Raphael = window.Raphael;
  */
 var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype */ {
     /**
-     * Render function of pie chart.
+     * Render function of map chart.
      * @param {HTMLElement} container container
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension

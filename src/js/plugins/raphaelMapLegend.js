@@ -15,7 +15,7 @@ var Raphael = window.Raphael;
  */
 var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototype */ {
     /**
-     * Render function of pie chart.
+     * Render function of map chart legend.
      * @param {HTMLElement} container container
      * @param {{width: number, height: number}} dimension legend dimension
      * @param {MapChartColorModel} colorModel map chart color model

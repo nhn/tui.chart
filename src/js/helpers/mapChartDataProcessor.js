@@ -1,5 +1,5 @@
 /**
- * @fileoverview Data processor.
+ * @fileoverview Data processor for map chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -13,12 +13,16 @@ var DataProcessor = require('./dataProcessor'),
  * Raw data.
  * @typedef {Array.<{name: string, data: Array.<number>}>} rawSeriesData
  */
+
+/**
+ * @classdesc Data processor for map chart.
+ * @class MapChartDataProcessor
+ */
 var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapChartDataProcessor.prototype */{
     /**
      * Process raw data.
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} options options
-     * @param {Array.<string>} seriesChartTypes chart types
+     * @param {{series: Array.<{code: string, name: ?string, data: number}>}} rawData raw data
+     * @param {{chart: {format: string}}} options options
      */
     process: function(rawData, options) {
         var seriesData = rawData.series,
@@ -67,7 +71,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
 
     /**
      * Get values.
-     * @returns {Array} picked values.
+     * @returns {Array.<number>} picked values.
      */
     getValues: function() {
         return tui.util.pluck(this.data.valueMap, 'value');

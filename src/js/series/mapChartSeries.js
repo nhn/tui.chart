@@ -1,5 +1,5 @@
 /**
- * @fileoverview Pie chart series component.
+ * @fileoverview Map chart series component.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,27 +10,14 @@ var Series = require('./series');
 
 var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
-     * Line chart series component.
+     * Map chart series component.
      * @constructs MapChartSeries
      * @extends Series
      * @param {object} params parameters
-     *      @param {object} params.model series model
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
     init: function(params) {
-        /**
-         * legend align option.
-         * @type {boolean}
-         */
-        this.legendAlign = params.legendAlign;
-
-        /**
-         * chart background.
-         * @type {string}
-         */
-        this.chartBackground = params.chartBackground;
-
         /**
          * Base position.
          * @type {{left: number, top: number}}
@@ -59,7 +46,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
-     * @param {object} seriesData series data
+     * @param {{colorModel: MapChartColorModel, map: Array.<object>, valueMap: object}} seriesData series data of map chart
      * @private
      * @override
      */

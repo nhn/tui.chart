@@ -12,14 +12,15 @@ var chartConst = require('../const'),
     pluginFactory = require('../factories/pluginFactory'),
     legendTemplate = require('./../legends/legendTemplate');
 
-var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
+var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */ {
     /**
      * Legend component for map chart.
-     * @constructs Legend
+     * @constructs MapChartLegend
      * @param {object} params parameters
      *      @param {object} params.theme axis theme
-     *      @param {?Array.<string>} params.chartTypes chart types
-     *      @param {string} params.chart type
+     *      @param {?Array.<string>} params.options legend options
+     *      @param {MapChartDataProcessor} params.dataProcessor data processor
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      */
     init: function(params) {
         var libType = params.libType || chartConst.DEFAULT_PLUGIN;
@@ -113,8 +114,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Render legend area.
      * @param {HTMLElement} container legend container
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
-     * @param {Array.<boolean>} checkedIndexes checked indexes
      * @private
      */
     _renderLegendArea: function(container) {
@@ -146,13 +145,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Resize legend component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      */
     resize: function() {
         this._renderLegendArea(this.legendContainer);
     }
 });
 
-tui.util.CustomEvents.mixin(Legend);
+tui.util.CustomEvents.mixin(MapChartLegend);
 
-module.exports = Legend;
+module.exports = MapChartLegend;
