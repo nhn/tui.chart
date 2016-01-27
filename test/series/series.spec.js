@@ -103,7 +103,7 @@ describe('Series', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
             var seriesContainer;
 
-            series.dataProcessor = jasmine.createSpyObj('dataProcessor', ['setPercentValues']);
+            series.hasAxes = true;
 
             boundsMaker.getBound.and.returnValue({
                 dimension: {width: 200, height: 100},

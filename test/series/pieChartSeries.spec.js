@@ -119,38 +119,42 @@ describe('PieChartSeries', function() {
 
     describe('_getSeriesLabel()', function() {
         it('legendType 옵션만 있을 경우에는 legend만 반환합니다.', function() {
-            var actual = series._getSeriesLabel({
-                    legend: 'legend',
-                    options: {
-                        legendAlign: 'outer'
-                    }
-                }),
-                expected = '<span class="tui-chart-series-legend">legend</span>';
+            var actual, expected;
+
+            series.legendAlign = 'outer';
+            actual = series._getSeriesLabel({
+                legend: 'legend'
+            });
+            expected = '<span class="tui-chart-series-legend">legend</span>';
+
             expect(actual).toBe(expected);
         });
 
         it('showLabel 옵션만 있을 경우에는 label만 반환한다.', function() {
-            var actual = series._getSeriesLabel({
-                    label: 'label',
-                    options: {
-                        showLabel: true
-                    }
-                }),
-                expected = 'label';
+            var actual, expected;
+
+            series.options.showLabel = true;
+            actual = series._getSeriesLabel({
+                label: 'label'
+            });
+            expected = 'label';
+
             expect(actual).toBe(expected);
         });
 
         it('legendType, showLabel 옵션이 있을 경우에는 legend + separator + label 형태로 반환합니다.', function() {
-            var actual = series._getSeriesLabel({
-                    legend: 'legend',
-                    label: 'label',
-                    separator: ':&nbsp;',
-                    options: {
-                        legendAlign: 'outer',
-                        showLabel: true
-                    }
-                }),
-                expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
+            var actual, expected;
+
+            series.options.showLabel = true;
+            series.legendAlign = 'outer';
+
+            actual = series._getSeriesLabel({
+                legend: 'legend',
+                label: 'label',
+                separator: ':&nbsp;'
+            });
+            expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
+
             expect(actual).toBe(expected);
         });
     });
@@ -180,8 +184,8 @@ describe('PieChartSeries', function() {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
-
-            series._renderCenterLegend({
+            series.legendAlign = 'center';
+            series.seriesData = {
                 sectorData: [
                     {
                         centerPosition: {
@@ -201,12 +205,9 @@ describe('PieChartSeries', function() {
                             top: 150
                         }
                     }
-                ],
-                options: {
-                    legendAlign: 'center'
-                }
-            }, elLabelArea);
-
+                ]
+            };
+            series._renderCenterLegend(elLabelArea);
             children = elLabelArea.childNodes;
 
             expect(children[0].style.left).toBe('80px');
@@ -298,7 +299,8 @@ describe('PieChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 220
             });
-            series._renderOuterLegend({
+            series.legendAlign = 'outer';
+            series.seriesData = {
                 sectorData: [
                     {
                         outerPosition: {
@@ -324,11 +326,9 @@ describe('PieChartSeries', function() {
                             }
                         }
                     }
-                ],
-                options: {
-                    legendAlign: 'outer'
-                }
-            }, labelContainer);
+                ]
+            };
+            series._renderOuterLegend(labelContainer);
 
             children = labelContainer.childNodes;
 
@@ -350,38 +350,7 @@ describe('PieChartSeries', function() {
     describe('_renderSeriesLabel()', function() {
         it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
             var actual = dom.create('div'),
-                expected = dom.create('div'),
-                params = {
-                    sectorData: [
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 100,
-                                    top: 50
-                                }
-                            }
-                        },
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 150,
-                                    top: 100
-                                }
-                            }
-                        },
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 100,
-                                    top: 150
-                                }
-                            }
-                        }
-                    ],
-                    options: {
-                        legendAlign: 'outer'
-                    }
-                };
+                expected = dom.create('div');
 
             dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
             dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
@@ -392,47 +361,83 @@ describe('PieChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 220
             });
+            series.legendAlign = 'outer';
+            series.seriesData = {
+                sectorData: [
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 100,
+                                top: 50
+                            }
+                        }
+                    },
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 150,
+                                top: 100
+                            }
+                        }
+                    },
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 100,
+                                top: 150
+                            }
+                        }
+                    }
+                ]
+            };
 
-            series._renderSeriesLabel(params, actual);
-            series._renderOuterLegend(params, expected);
+            series._renderSeriesLabel(actual);
+            series._renderOuterLegend(expected);
 
             expect(actual.className).toEqual(expected.className);
             expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                elExpected = dom.create('div'),
-                params = {
-                    legendLabels: ['legend1', 'legend2', 'legend3'],
-                    formattedValues: ['1.1', '2.2', '3.3'],
-                    sectorData: [
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 50
-                            }
-                        },
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 100
-                            }
-                        },
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 150
-                            }
+            var actual = dom.create('div'),
+                expected = dom.create('div');
+
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+                var values = ['1.1', '2.2', '3.3'];
+                return values[index];
+            });
+            spyOn(series.graphRenderer, 'renderLegendLines');
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
+            series.legendAlign = 'center';
+            series.seriesData = {
+                sectorData: [
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 50
                         }
-                    ],
-                    options: {
-                        legendAlign: 'center'
+                    },
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 100
+                        }
+                    },
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 150
+                        }
                     }
-                };
-            series._renderSeriesLabel(params, elLabelArea);
-            series._renderCenterLegend(params, elExpected);
-            expect(elLabelArea.className).toEqual(elExpected.className);
-            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
+                ]
+            };
+            series._renderSeriesLabel(actual);
+            series._renderCenterLegend(expected);
+
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
     });
 });

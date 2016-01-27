@@ -154,8 +154,7 @@ describe('LineTypeSeriesBase', function() {
                 ['1.5'], ['2.2']
             ]);
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-
-            series._renderSeriesLabel({
+            series.seriesData = {
                 groupPositions: [
                     [
                         {
@@ -167,12 +166,9 @@ describe('LineTypeSeriesBase', function() {
                             left: 150
                         }
                     ]
-                ],
-                dimension: {
-                    width: 100,
-                    height: 100
-                }
-            }, elLabelArea);
+                ]
+            };
+            series._renderSeriesLabel(elLabelArea);
 
             expect(elLabelArea.childNodes.length).toBe(2);
         });
