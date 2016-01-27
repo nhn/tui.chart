@@ -224,14 +224,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Render normal series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {Array.<Array>} params.groupBounds group bounds
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderNormalSeriesLabel: function(params, elSeriesLabelArea) {
-        var groupBounds = params.groupBounds,
+    _renderNormalSeriesLabel: function(elSeriesLabelArea) {
+        var groupBounds = this.seriesData.groupBounds,
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
@@ -329,13 +326,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Render stacked series label.
-     * @param {object} params parameters
-     *      @param {Array.<Array>} params.groupBounds group bounds
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderStackedSeriesLabel: function(params, elSeriesLabelArea) {
-        var groupBounds = params.groupBounds,
+    _renderStackedSeriesLabel: function(elSeriesLabelArea) {
+        var groupBounds = this.seriesData.groupBounds,
             groupValues = this.dataProcessor.getGroupValues(this.chartType),
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
@@ -356,21 +351,18 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Render series label.
-     * @param {object} params parameters
-     *      @param {Array.<Array>} params.groupBounds group bounds
-     *      @param {Array.<Array>} params.formattedValues formatted values
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+    _renderSeriesLabel: function(elSeriesLabelArea) {
         if (!this.options.showLabel) {
             return;
         }
 
         if (this.options.stacked) {
-            this._renderStackedSeriesLabel(params, elSeriesLabelArea);
+            this._renderStackedSeriesLabel(elSeriesLabelArea);
         } else {
-            this._renderNormalSeriesLabel(params, elSeriesLabelArea);
+            this._renderNormalSeriesLabel(elSeriesLabelArea);
         }
     }
 });

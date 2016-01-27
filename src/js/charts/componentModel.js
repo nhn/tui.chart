@@ -52,6 +52,12 @@ var ComponentModel = tui.util.defineClass(/** @lends ComponentModel.prototype */
          * @type {BoundsMaker}
          */
         this.boundsMaker = params.boundsMaker;
+
+        /**
+         * whether chart has axes or not
+         * @type {boolean}
+         */
+        this.hasAxes = params.hasAxes;
     },
 
     /**
@@ -79,6 +85,7 @@ var ComponentModel = tui.util.defineClass(/** @lends ComponentModel.prototype */
         commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
         commonParams.dataProcessor = this.dataProcessor;
         commonParams.boundsMaker = this.boundsMaker;
+        commonParams.hasAxes = this.hasAxes;
 
         params = tui.util.extend(params, commonParams);
 

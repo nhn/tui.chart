@@ -152,7 +152,8 @@ var axisTypeMixer = {
         tui.util.forEachArray(chartTypes, function(chartType) {
             seriesData[chartType + 'Series'] = {
                 limit: limitMap[chartType],
-                aligned: aligned
+                aligned: aligned,
+                hasAxes: true
             };
         });
 

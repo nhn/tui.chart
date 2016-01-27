@@ -159,24 +159,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Make add data for series label.
-     * @param {object} seriesData series data
-     * @returns {{
-     *      container: HTMLElement,
-     *      options: {legendAlign: string, showLabel: boolean}
-     * }} add data for make series label
-     * @private
-     */
-    _makeSeriesDataForSeriesLabel: function(seriesData) {
-        return tui.util.extend({
-            options: {
-                legendAlign: this.legendAlign,
-                showLabel: this.options.showLabel
-            }
-        }, seriesData);
-    },
-
-    /**
      * Render raphael graph.
      * @param {{width: number, height: number}} dimension dimension
      * @param {object} seriesData series data
@@ -299,11 +281,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
 
-        if (params.options.legendAlign) {
+        if (this.legendAlign) {
             seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
 
-        if (params.options.showLabel) {
+        if (this.options.showLabel) {
             seriesLabel += (seriesLabel ? params.separator : '') + params.label;
         }
 
@@ -328,8 +310,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             var label = this._getSeriesLabel({
                     legend: legend,
                     label: this.dataProcessor.getFormattedValue(0, index, this.chartType),
-                    separator: params.separator,
-                    options: params.options
+                    separator: params.separator
                 }),
                 position = params.funcMoveToPosition(positions[index], label);
             return this._makeSeriesLabelHtml(position, label, 0, index);
@@ -361,12 +342,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderCenterLegend: function(params, seriesLabelContainer) {
-        this._renderLegendLabel(tui.util.extend({
-            positions: tui.util.pluck(params.sectorData, 'centerPosition'),
+    _renderCenterLegend: function(seriesLabelContainer) {
+        this._renderLegendLabel({
+            positions: tui.util.pluck(this.seriesData.sectorData, 'centerPosition'),
             funcMoveToPosition: tui.util.bind(this._moveToCenterPosition, this),
             separator: '<br>'
-        }, params), seriesLabelContainer);
+        }, seriesLabelContainer);
     },
 
     /**
@@ -419,33 +400,32 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderOuterLegend: function(params, seriesLabelContainer) {
-        var outerPositions = tui.util.pluck(params.sectorData, 'outerPosition'),
+    _renderOuterLegend: function(seriesLabelContainer) {
+        var outerPositions = tui.util.pluck(this.seriesData.sectorData, 'outerPosition'),
             centerLeft = this.boundsMaker.getDimension('chart').width / 2;
 
         this._addEndPosition(centerLeft, outerPositions);
-        this._renderLegendLabel(tui.util.extend({
+        this._renderLegendLabel({
             positions: outerPositions,
             funcMoveToPosition: tui.util.bind(this._moveToOuterPosition, this, centerLeft),
             separator: ':&nbsp;'
-        }, params), seriesLabelContainer);
+        }, seriesLabelContainer);
 
         this.graphRenderer.renderLegendLines(outerPositions);
     },
 
     /**
      * Render series label.
-     * @param {object} params parameters
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, seriesLabelContainer) {
-        var legendAlign = params.options.legendAlign;
+    _renderSeriesLabel: function(seriesLabelContainer) {
+        var legendAlign = this.legendAlign;
 
         if (predicate.isOuterLegendAlign(legendAlign)) {
-            this._renderOuterLegend(params, seriesLabelContainer);
+            this._renderOuterLegend(seriesLabelContainer);
         } else {
-            this._renderCenterLegend(params, seriesLabelContainer);
+            this._renderCenterLegend(seriesLabelContainer);
         }
     },
 

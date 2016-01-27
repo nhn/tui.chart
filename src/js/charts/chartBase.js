@@ -94,7 +94,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             options: this.options,
             theme: this.theme,
-            boundsMaker: this.boundsMaker
+            boundsMaker: this.boundsMaker,
+            hasAxes: this.hasAxes
         });
 
         /**

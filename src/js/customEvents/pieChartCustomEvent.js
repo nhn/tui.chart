@@ -7,7 +7,6 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase'),
-    eventListener = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 

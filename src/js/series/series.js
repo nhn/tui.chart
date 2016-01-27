@@ -67,6 +67,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.orgTheme = this.theme = params.theme;
 
         /**
+         * whether chart has axes or not
+         * @type {boolean}
+         */
+        this.hasAxes = !!params.hasAxes;
+
+        /**
          * Graph renderer
          * @type {object}
          */
@@ -135,20 +141,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
     /**
      * Render series label area
-     * @param {{width: number, height: number}} dimension series dimension
-     * @param {object} seriesData series data
      * @param {?HTMLElement} seriesLabelContainer series label area element
      * @returns {HTMLElement} series label area element
      * @private
      */
-    _renderSeriesLabelArea: function(dimension, seriesData, seriesLabelContainer) {
-        var addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(seriesData, dimension);
-
+    _renderSeriesLabelArea: function(seriesLabelContainer) {
         if (!seriesLabelContainer) {
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
         }
 
-        this._renderSeriesLabel(addDataForSeriesLabel, seriesLabelContainer);
+        this._renderSeriesLabel(seriesLabelContainer);
         return seriesLabelContainer;
     },
 
@@ -165,7 +167,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.data = data;
 
-        expandedBound = renderUtil.expandBound(bound);
+        expandedBound = this.hasAxes ? renderUtil.expandBound(bound) : bound;
         this.seriesData = seriesData = this._makeSeriesData();
 
         renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
@@ -175,7 +177,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             funcRenderGraph(expandedBound.dimension, seriesData);
         }
 
-        seriesLabelContainer = this._renderSeriesLabelArea(expandedBound.dimension, seriesData, this.seriesLabelContainer);
+        seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
 
         if (!this.seriesLabelContainer) {
             this.seriesLabelContainer = seriesLabelContainer;
@@ -298,25 +300,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     resize: function(data) {
         this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._resizeGraph, this));
-    },
-
-    /**
-     * Make add data for series label.
-     * @param {object} seriesData series data
-     * @param {{width: number, height: number}} dimension dimension
-     * @returns {{
-     *      container: HTMLElement,
-     *      values: Array.<Array>,
-     *      formattedValues: Array.<Array>,
-     *      formatFunctions: Array.<function>,
-     *      dimension: {width: number, height: number}
-     * }} add data for series label
-     * @private
-     */
-    _makeSeriesDataForSeriesLabel: function(seriesData, dimension) {
-        return tui.util.extend({
-            dimension: dimension
-        }, seriesData);
     },
 
     /**

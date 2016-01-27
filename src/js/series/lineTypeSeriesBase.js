@@ -69,20 +69,17 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
     /**
      * Render series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {Array.<Array>} params.groupPositions group positions
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+    _renderSeriesLabel: function(elSeriesLabelArea) {
         var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
 
         if (!this.options.showLabel) {
             return;
         }
 
-        groupPositions = params.groupPositions;
+        groupPositions = this.seriesData.groupPositions;
         formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
         firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);
         labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label);
