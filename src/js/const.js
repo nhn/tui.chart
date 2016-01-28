@@ -58,7 +58,6 @@ var chartConst = {
     DEFAULT_LABEL_FONT_SIZE: 12,
     /** default font size of series label */
     DEFAULT_SERIES_LABEL_FONT_SIZE: 11,
-    /** @type {string} */
     /** default graph plugin
      * @type {string}
      */
@@ -189,7 +188,9 @@ var chartConst = {
     XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
     XAXIS_LABEL_GUTTER: 2,
-    /** stand multiple nums of axis */
+    /** stand multiple nums of axis
+     * @type {Array}
+     */
     AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10],
     /** label padding top */
     LABEL_PADDING_TOP: 2,
