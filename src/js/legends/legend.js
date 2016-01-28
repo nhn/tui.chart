@@ -67,6 +67,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.checkedIndexes = [];
 
+        /**
+         * bounds maker
+         * @type {BoundsMaker}
+         */
         this.boundsMaker = params.boundsMaker;
 
         legendData = params.dataProcessor.getWholeLegendData();
@@ -107,7 +111,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _renderLegendArea: function(legendContainer) {
         legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
         renderUtil.renderPosition(legendContainer, this.boundsMaker.getPosition('legend'));
-        this._renderLabelTheme(legendContainer, this.theme.label);
+        legendContainer.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
     },
 
     /**
@@ -210,17 +214,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                 return template(data);
             }, this).join('');
         return html;
-    },
-
-    /**
-     * Render css style of label area.
-     * @param {HTMLElement} el label area element
-     * @param {{fontSize:number, fontFamily: string, color: string}} theme label theme
-     * @private
-     */
-    _renderLabelTheme: function(el, theme) {
-        var cssText = renderUtil.makeFontCssText(theme);
-        el.style.cssText += ';' + cssText;
     },
 
     /**

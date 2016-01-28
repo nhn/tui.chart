@@ -26,7 +26,6 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
     /**
      * Render event handle layer area
      * @param {HTMLElement} customEventContainer custom event container element
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {
@@ -82,9 +81,10 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
         this.isDown = false;
         if (this.isDrag) {
             this._dragEnd();
-        } else {
+        } else if (!this.isMove) {
             this._onMouseEvent('click', e);
         }
+        this.isMove = false;
     },
 
     /**
@@ -104,6 +104,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
                 top: e.clientY
             });
         } else {
+            this.isMove = true;
             this._onMouseEvent('move', e);
         }
     },

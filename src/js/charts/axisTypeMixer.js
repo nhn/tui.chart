@@ -29,7 +29,7 @@ var renderUtil = require('../helpers/renderUtil'),
 var axisTypeMixer = {
     /**
      * Add axis components.
-     * @param {Array.<string>} axisNames axis names
+     * @param {Array.<object>} axes axes option
      * @param {boolean} aligned whether aligned or not
      * @private
      */

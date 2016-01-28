@@ -54,17 +54,14 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      */
     _addComponents: function(options) {
-        var legendAlign, isPieLegendType;
         options.legend = options.legend || {};
-        legendAlign = options.legend && options.legend.align;
 
         this.component.register('legend', Legend);
         this.component.register('mapSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
-            userEvent: this.userEvent,
-            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null
+            userEvent: this.userEvent
         });
     },
 

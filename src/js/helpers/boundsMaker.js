@@ -122,7 +122,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * Register base dimension.
      * @param {string} name component name
      * @param {dimension} dimension component dimension
-     * @private
      */
     registerBaseDimension: function(name, dimension) {
         this._registerDimension(name, dimension);

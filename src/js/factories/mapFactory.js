@@ -30,10 +30,7 @@ module.exports = {
      * @param {{width: number, height: number}} dimension map dimension
      * @param {Array} data map data
      */
-    register: function(mapName, dimension, data) {
-        maps[mapName] = {
-            dimension: dimension,
-            data: data
-        };
+    register: function(mapName, data) {
+        maps[mapName] = data;
     }
 };

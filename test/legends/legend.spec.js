@@ -45,19 +45,6 @@ describe('test Legend', function() {
         });
     });
 
-    describe('_renderLabelTheme()', function() {
-        it('전달하는 엘리먼트에 전달하는 theme의 cssText속성을 셋팅합니다.', function() {
-            var el = dom.create('DIV'),
-                theme = {
-                    fontSize: 14,
-                    color: 'red'
-                };
-            legend._renderLabelTheme(el, theme);
-            expect(el.style.fontSize).toBe('14px');
-            expect(el.style.color).toBe('red');
-        });
-    });
-
     describe('_makeLegendRectCssText()', function() {
         it('범례 앞쪽의 사각 영역에 대한 cssText를 생성합니다.', function() {
             var actual = legend._makeLegendRectCssText({
