@@ -104,6 +104,13 @@ var chartConst = {
     PIE_GRAPH_SMALL_RATE: 0.65,
     /** tick count for map chart legend */
     MAP_CHART_LEGEND_TICK_COUNT: 4,
+    /** default position ratio of map chart label
+     * @type {object}
+     */
+    MAP_CHART_LABEL_DEFAULT_POSITION_RATIO: {
+        x: 0.5,
+        y: 0.5
+    },
     /** dot radius */
     DOT_RADIUS: 4,
     /** yAxis properties

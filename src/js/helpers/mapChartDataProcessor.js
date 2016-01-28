@@ -55,6 +55,10 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
                 result.name = datum.name;
             }
 
+            if (datum.labelCoordinate) {
+                result.labelCoordinate = datum.labelCoordinate;
+            }
+
             valueMap[datum.code] = result;
         });
 

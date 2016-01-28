@@ -20,14 +20,14 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {HTMLElement} container container
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
-     *      @param {{dimension: {width: number, height: number}, data: Array.<object>}} data.map mapData
+     *      @param {Array.<{code: string, path: string}>} data.map mapData
      *      @param {object} data.valueMap valueMap
      *      @param {MapChartColorModel} data.colorModel color model
      * @return {object} paper raphael paper
      */
     render: function(container, data) {
         var dimension = data.dimension,
-            mapDimension = data.map.dimension,
+            mapDimension = data.mapDimension,
             paper;
 
         this.paper = paper = Raphael(container, dimension.width, dimension.height);
@@ -42,7 +42,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * Render map graph.
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
-     *      @param {{dimension: {width: number, height: number}, data: Array.<object>}} data.map mapData
+     *      @param {Array.<{code: string, path: string}>} data.map mapData
      *      @param {object} data.valueMap valueMap
      *      @param {MapChartColorModel} data.colorModel color model
      * @returns {Array.<{sector: object, color: string, data: object}>} rendered map information
@@ -52,7 +52,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         var colorModel = data.colorModel,
             valueMap = data.valueMap;
 
-        return tui.util.map(data.map.data, function(datum, index) {
+        return tui.util.map(data.map, function(datum, index) {
             var value = valueMap[datum.code],
                 percentValue = value && value.percentValue || 0,
                 color = colorModel.getColor(percentValue),

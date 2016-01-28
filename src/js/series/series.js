@@ -17,7 +17,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Series base component.
      * @constructs Series
      * @param {object} params parameters
-     *      @param {object} params.model series model
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
@@ -503,6 +502,20 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             legendIndex: legendIndex,
             index: seriesData.indexes.groupIndex
         };
+    },
+
+    /**
+     * Execute graph renderer.
+     * @param {{left: number, top: number}} position mouse position
+     * @param {string} funcName function name
+     * @private
+     */
+    _executeGraphRenderer: function(position, funcName) {
+        this.fire('hideTooltipContainer');
+        dom.removeClass(this.seriesLabelContainer, 'show');
+        this.graphRenderer[funcName](position);
+        dom.addClass(this.seriesLabelContainer, 'show');
+        this.fire('showTooltipContainer');
     },
 
     /**

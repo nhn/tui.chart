@@ -6,7 +6,9 @@
 
 'use strict';
 
-var Series = require('./series');
+var Series = require('./series'),
+    MapChartMapModel = require('./mapChartMapModel'),
+    renderUtil = require('../helpers/renderUtil');
 
 var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
@@ -16,6 +18,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {object} params parameters
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
+     *      @param {MapChartDataProcessor} params.dataProcessor data processor for map chart
      */
     init: function(params) {
         /**
@@ -26,6 +29,12 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             left: 0,
             top: 0
         };
+
+        /**
+         * Map model.
+         * @type {MapChartMapModel}
+         */
+        this.mapModel = new MapChartMapModel(params.dataProcessor);
 
         Series.call(this, params);
     },
@@ -53,7 +62,36 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     _renderGraph: function(dimension, seriesData) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
+        params.mapDimension = this.mapModel.getMapDimension();
         this.graphRenderer.render(this.seriesContainer, params);
+    },
+
+    /**
+     * Render series component.
+     * @param {object} data data for rendering
+     * @returns {HTMLElement} series element
+     */
+    render: function(data) {
+        this.mapModel.createMapData(data.map);
+        return Series.prototype.render.call(this, data);
+    },
+
+    /**
+     * Render series label.
+     * @param {HTMLElement} seriesLabelContainer series label area element
+     * @private
+     */
+    _renderSeriesLabel: function(seriesLabelContainer) {
+        var html = tui.util.map(this.mapModel.getLabelData(), function(datum, index) {
+            var label = datum.name || datum.code,
+                left = datum.labelPosition.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
+                top = datum.labelPosition.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
+            return this._makeSeriesLabelHtml({
+                left: left,
+                top: top
+            }, datum.name, 0, index);
+        }, this).join('');
+        seriesLabelContainer.innerHTML = html;
     },
 
     /**
@@ -68,7 +106,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {{left: number, top: number}} position position
      */
     onMoveSeries: function(position) {
-        this.graphRenderer.moveMouseOnSeries(position);
+        this._executeGraphRenderer(position, 'moveMouseOnSeries');
     },
 
     /**
@@ -108,6 +146,13 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     onDragEndSeries: function() {
         delete this.throttled;
+    },
+
+    /**
+     * Animate component.
+     */
+    animateComponent: function() {
+        this.animateShowingAboutSeriesLabelArea();
     }
 });
 
