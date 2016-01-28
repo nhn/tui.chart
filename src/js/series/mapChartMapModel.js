@@ -186,6 +186,12 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
         return pathData;
     },
 
+    /**
+     * Make coordinates from path.
+     * @param {string} path path
+     * @returns {Array.<{x: number, y: number}>} coordinates
+     * @private
+     */
     _makeCoordinatesFromPath: function(path) {
         var pathData = this._splitPath(path),
             prevCoordinate = {
