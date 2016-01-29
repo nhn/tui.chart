@@ -1,3 +1,5 @@
+'use strict';
+
 var DEFAULT_COLOR = '#000000',
     DEFAULT_BACKGROUND = '#ffffff',
     EMPTY = '',

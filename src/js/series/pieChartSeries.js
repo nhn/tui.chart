@@ -337,8 +337,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Render center legend.
-     * @param {object} params parameters
-     *      @param {object} params.sectorData sector info
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */
@@ -395,8 +393,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Render outer legend.
-     * @param {object} params parameters
-     *      @param {object} params.sectorData sector info
      * @param {HTMLElement} seriesLabelContainer series label area element
      * @private
      */

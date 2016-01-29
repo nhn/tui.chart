@@ -162,6 +162,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Attach custom evnet.
+     * @param {Array.<object>} serieses serieses
      * @private
      */
     _attachCustomEvent: function(serieses) {
@@ -458,10 +459,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @param {object} dimension dimension
      *      @param {number} dimension.width width
      *      @param {number} dimension.height height
-     * @param {?object} boundsParams addition params for calculating bounds
      * @api
      */
-    resize: function(dimension, boundsParams) {
+    resize: function(dimension) {
         var that = this,
             updated;
 

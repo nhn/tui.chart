@@ -7,17 +7,20 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase'),
-    dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
 var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieChartCustomEvent.prototype */ {
     /**
      * PieChartCustomEvent is event handle layer for pie chart tooltip.
      * @constructs PieChartCustomEvent
+     * @param {object} params parameters
+     *      @param {BoundsMaker} params.boundsMaker bounds maker instance
+     *      @param {string} parmas.chartType chart type
      * @extends CustomEventBase
      */
     init: function(params) {
         this.boundsMaker = params.boundsMaker;
+        this.chartType = params.chartType;
     },
     /**
      * Render event handle layer area

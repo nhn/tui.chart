@@ -7,7 +7,7 @@
 'use strict';
 
 
-var Raphael = window.Raphael;
+var raphael = window.Raphael;
 
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
@@ -22,7 +22,7 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @return {object} paper raphael paper
      */
     render: function(container, dimension, colorModel) {
-        var paper = Raphael(container, dimension.width, dimension.height),
+        var paper = raphael(container, dimension.width, dimension.height),
             rect = paper.rect(5, 0, dimension.width - 5, dimension.height);
 
         rect.attr({

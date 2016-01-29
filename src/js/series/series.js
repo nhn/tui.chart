@@ -249,10 +249,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Rerender
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @param {object} data data for rendering
      */
     rerender: function(data) {
@@ -291,9 +287,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Resize series component.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
      * }} bound series bound
      * @param {object} data data for rendering
      */

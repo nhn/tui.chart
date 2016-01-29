@@ -78,7 +78,9 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @private
      */
     _addCustomEventComponent: function() {
-        this.component.register('customEvent', pieChartCustomEvent);
+        this.component.register('customEvent', pieChartCustomEvent, {
+            chartType: this.chartType
+        });
     },
 
     /**

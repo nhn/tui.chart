@@ -27,7 +27,6 @@ module.exports = {
     /**
      * Register Map.
      * @param {string} mapName map name
-     * @param {{width: number, height: number}} dimension map dimension
      * @param {Array} data map data
      */
     register: function(mapName, data) {

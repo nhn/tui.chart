@@ -7,7 +7,7 @@
 'use strict';
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael;
+var raphael = window.Raphael;
 
 var ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
@@ -33,7 +33,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             return null;
         }
 
-        this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.paper = paper = raphael(container, dimension.width, dimension.height);
 
         baseParams = {
             theme: data.theme,

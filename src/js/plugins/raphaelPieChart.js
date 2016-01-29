@@ -8,7 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael,
+var raphael = window.Raphael,
     ANGLE_180 = 180,
     RAD = Math.PI / ANGLE_180,
     ANIMATION_TIME = 500,
@@ -36,7 +36,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             paper;
 
         //Raphael._oid = 0;
-        this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.paper = paper = raphael(container, dimension.width, dimension.height);
 
         if (!paper.customAttributes.sector) {
             paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
@@ -67,13 +67,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
         var x1 = cx + r * Math.sin(startAngle * RAD), // 원 호의 시작 x 좌표
             y1 = cy - r * Math.cos(startAngle * RAD), // 원 호의 시작 y 좌표
-            x2 = cx + r * Math.sin(endAngle * RAD),// 원 호의 종료 x 좌표
+            x2 = cx + r * Math.sin(endAngle * RAD), // 원 호의 종료 x 좌표
             y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
             largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
-            path = ["M", cx, cy,
-                "L", x1, y1,
-                "A", r, r, 0, largeArcFlag, 1, x2, y2,
-                "Z"
+            path = ['M', cx, cy,
+                'L', x1, y1,
+                'A', r, r, 0, largeArcFlag, 1, x2, y2,
+                'Z'
             ];
         // path에 대한 자세한 설명은 아래 링크를 참고
         // http://www.w3schools.com/svg/svg_path.asp

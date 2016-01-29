@@ -9,7 +9,7 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael,
+var raphael = window.Raphael,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
@@ -44,7 +44,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper;
 
-        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.paper = paper = raphael(container, 1, dimension.height);
         this.splineOption = data.options.spline;
         this.dimension = dimension;
 
@@ -97,17 +97,15 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @param {object} paper raphael paper
      * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string[]} colors line colors
-     * @param {number} strokeWidth stroke width
+     * @param {?number} strokeWidth stroke width
      * @returns {Array.<Array.<object>>} lines
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        var groupLines = tui.util.map(groupPaths, function(path, groupIndex) {
+        return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
             return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
         }, this);
-
-        return groupLines;
     },
 
     /**

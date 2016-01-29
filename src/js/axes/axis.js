@@ -123,7 +123,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Render axis area.
      * @param {HTMLElement} axisContainer axis area element
-     * @param {object} data rendering data
+     * @param {{isVertical: boolean, isPositionRight: boolean, aligned: aligned}} data rendering data
      * @private
      */
     _renderAxisArea: function(axisContainer, data) {
@@ -158,6 +158,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Render axis component.
+     * @param {{isVertical: boolean, isPositionRight: boolean, aligned: aligned}} data rendering data
      * @returns {HTMLElement} axis area base element
      */
     render: function(data) {
@@ -255,7 +256,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             positions = calculator.makeTickPixelPositions(size, tickCount),
             elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
-            borderColorType = data.isVertical ? (data.isPositionRight ? 'borderLeftColor' : 'borderRightColor') : 'borderTopColor',
+            verticalBorderColorType = data.isPositionRight ? 'borderLeftColor' : 'borderRightColor',
+            borderColorType = data.isVertical ? verticalBorderColorType : 'borderTopColor',
             template = axisTemplate.tplAxisTick,
             ticksHtml = tui.util.map(positions, function(position, index) {
                 var cssText;

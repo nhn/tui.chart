@@ -8,7 +8,7 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael;
+var raphael = window.Raphael;
 
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -30,7 +30,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             mapDimension = data.mapDimension,
             paper;
 
-        this.paper = paper = Raphael(container, dimension.width, dimension.height);
+        this.paper = paper = raphael(container, dimension.width, dimension.height);
         this.sectors = this._renderMap(data);
 
         paper.setViewBox(0, 0, mapDimension.width, mapDimension.height, false);

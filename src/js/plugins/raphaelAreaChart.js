@@ -9,7 +9,7 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael,
+var raphael = window.Raphael,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
@@ -43,9 +43,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             opacity = data.options.hasDot ? 1 : 0,
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupPaths;
+            paper;
 
-        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.paper = paper = raphael(container, 1, dimension.height);
         this.stackedOption = data.options.stacked;
         this.spline = data.options.spline;
         this.dimension = dimension;

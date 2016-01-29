@@ -341,7 +341,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         result.left = bound.left + bound.width + positionOption.left;
         result.top = bound.top + positionOption.top;
 
-        // TODO : alignOptions을 객체로 만들어서 검사하도록 변경하기 ex) alignOption.left = true
         if (alignOption.indexOf('left') > -1) {
             result.left -= tooltipWidth;
         } else if (alignOption.indexOf('center') > -1) {
@@ -361,7 +360,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
 
     /**
      * Adjust position.
-     * @param {{left: number, top: number}} areaPosition area position
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{left: number, top: number}} position position
      * @returns {{left: number, top: number}} adjusted position

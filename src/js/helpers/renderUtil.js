@@ -252,15 +252,15 @@ var renderUtil = {
             return;
         }
 
-        if (position.top) {
+        if (!tui.util.isUndefined(position.top)) {
             el.style.top = position.top + 'px';
         }
 
-        if (position.left) {
+        if (!tui.util.isUndefined(position.left)) {
             el.style.left = position.left + 'px';
         }
 
-        if (position.right) {
+        if (!tui.util.isUndefined(position.right)) {
             el.style.right = position.right + 'px';
         }
     },
