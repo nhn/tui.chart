@@ -183,8 +183,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             cy = this.circleBound.cy;
 
         sector.animate({
-            transform: "s1.1 1.1 " + cx + " " + cy
-        }, ANIMATION_TIME, "elastic");
+            transform: 's1.1 1.1 ' + cx + ' ' + cy
+        }, ANIMATION_TIME, 'elastic');
     },
 
     /**
@@ -192,7 +192,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {object} sector pie sector
      */
     _restoreSector: function(sector) {
-        sector.animate({transform: ""}, ANIMATION_TIME, "elastic");
+        sector.animate({transform: ''}, ANIMATION_TIME, 'elastic');
     },
 
     /**
@@ -228,10 +228,17 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
         tui.util.forEachArray(this.sectors, function(item) {
             var angles = item.angles,
-                animationTime = LOADING_ANIMATION_TIME * item.percentValue,
-                anim = Raphael.animation({
-                    sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
-                }, animationTime);
+                animationTime, anim;
+
+            if (angles.startAngle === 0 && angles.endAngle === 360) {
+                angles.endAngle = 360 - 0.01;
+            }
+
+            animationTime = LOADING_ANIMATION_TIME * item.percentValue;
+            anim = Raphael.animation({
+                sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
+            }, animationTime);
+
             item.sector.animate(anim.delay(delayTime));
             delayTime += animationTime;
         }, this);
