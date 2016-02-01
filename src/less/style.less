@@ -240,10 +240,9 @@
   .tui-chart-zoom-area {
     z-index: 1500;
     position: absolute;
-
-    width: 23px;
-    height: 45px;
     border: 1px solid #cccccc;
+    background-color: #cccccc;
+    .border-radius(4px);
     > .tui-chart-zoom-btn {
       width: 21px;
       height: 21px;
@@ -252,8 +251,11 @@
       cursor: pointer;
       position: relative;
       &:first-child {
-        height: 22px;
-        border-bottom: 1px solid #cccccc;
+        margin-bottom: 1px;
+        .border-radius(4px 4px 0 0);
+      }
+      &:last-child {
+        .border-radius(0 0 4px 4px);
       }
       &:hover {
         background-color: #efefef;
