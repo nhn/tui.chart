@@ -135,19 +135,6 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     },
 
     /**
-     * Move map.
-     * @param {{left: number, top: number}} position position
-     */
-    moveMap: function(position) {
-        var viewBox = this.paper._viewBox;
-
-        viewBox[0] = position.left;
-        viewBox[1] = position.top;
-
-        this.paper.setViewBox.apply(this.paper, viewBox);
-    },
-
-    /**
      * Set size
      * @param {{width: number, height: number}} dimension dimension
      */
