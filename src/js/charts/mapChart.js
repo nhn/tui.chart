@@ -12,6 +12,7 @@ var ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     MapChartColorModel = require('./mapChartColorModel'),
     Series = require('../series/mapChartSeries'),
+    Zoom = require('../series/zoom'),
     Legend = require('../legends/mapChartLegend'),
     mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 
@@ -63,6 +64,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             componentType: 'series',
             userEvent: this.userEvent
         });
+        this.component.register('zoom', Zoom);
     },
 
     /**
@@ -132,7 +134,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _attachCustomEvent: function() {
         var customEvent = this.component.get('customEvent'),
-            mapSeries = this.component.get('mapSeries');
+            mapSeries = this.component.get('mapSeries'),
+            zoom = this.component.get('zoom');
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
@@ -141,6 +144,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         customEvent.on('dragStartMapSeries', mapSeries.onDragStartSeries, mapSeries);
         customEvent.on('dragMapSeries', mapSeries.onDragSeries, mapSeries);
         customEvent.on('dragEndMapSeries', mapSeries.onDragEndSeries, mapSeries);
+        zoom.on('zoom', mapSeries.onZoom, mapSeries);
     }
 });
 

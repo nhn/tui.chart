@@ -229,6 +229,53 @@
         display: block;
       }
     }
+
+    .tui-chart-series-graph-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .tui-chart-zoom-area {
+    z-index: 1500;
+    position: absolute;
+
+    width: 23px;
+    height: 45px;
+    border: 1px solid #cccccc;
+    > .tui-chart-zoom-btn {
+      width: 21px;
+      height: 21px;
+      display: block;
+      background-color: #fff;
+      cursor: pointer;
+      position: relative;
+      &:first-child {
+        height: 22px;
+        border-bottom: 1px solid #cccccc;
+      }
+      &:hover {
+        background-color: #efefef;
+      }
+      > div {
+        font-szie: 0;
+        background-color: #555555;
+        position: absolute;
+        &.horizontal-line {
+          width:9px;
+          height: 1px;
+          left: 6px;
+          top: 10px;
+        }
+        &.vertical-line {
+          width:1px;
+          height: 9px;
+          left: 10px;
+          top: 6px;
+        }
+      }
+    }
   }
 
   .tui-chart-series-custom-event-area {
@@ -401,6 +448,12 @@
       &.show {
         display: block;
       }
+    }
+  }
+
+  &.tui-map-chart {
+    .tui-chart-series-area {
+      overflow: hidden;
     }
   }
 }

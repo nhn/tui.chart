@@ -521,7 +521,8 @@ describe('MapChartMapModel', function() {
 
     describe('getLabelData()', function() {
         it('valueMap에 해당하는 data만 필터링하여 반환합니다', function() {
-            var actual, expected;
+            var zoomRatio = 1,
+                actual, expected;
 
             mapModel.mapData = [
                 {
@@ -544,14 +545,44 @@ describe('MapChartMapModel', function() {
             dataProcessor.getValueMap.and.returnValue({
                 CD1: {}
             });
-            actual = mapModel.getLabelData();
+            actual = mapModel.getLabelData(zoomRatio);
             expected = [
+                {
+                    name: 'Map name1',
+                    labelPosition: {
+                        left: 200.4,
+                        top: 115.6
+                    }
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('zoomRatio를 2로 하면 labelPosition을 두배의 수치로 계산하여 반환합니다', function() {
+            var zoomRatio = 2,
+                actual, expected;
+
+            mapModel.mapData = [
                 {
                     code: 'CD1',
                     name: 'Map name1',
                     labelPosition: {
                         left: 200.4,
                         top: 115.6
+                    }
+                }
+            ];
+            dataProcessor.getValueMap.and.returnValue({
+                CD1: {}
+            });
+            actual = mapModel.getLabelData(zoomRatio);
+            expected = [
+                {
+                    name: 'Map name1',
+                    labelPosition: {
+                        left: 400.8,
+                        top: 231.2
                     }
                 }
             ];

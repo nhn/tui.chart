@@ -280,14 +280,24 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
 
     /**
      * Get label data.
+     * @param {number} ratio ratio
      * @returns {Array.<{name: string, bound: {dimension: {width: number, height: number}, position: {top: number, left: number}}, labelPosition: {width: number, height: number}}>} map data
      */
-    getLabelData: function() {
-        var valueMap = this.dataProcessor.getValueMap();
+    getLabelData: function(ratio) {
+        var valueMap = this.dataProcessor.getValueMap(),
+            labelData = tui.util.filter(this.mapData, function(datum) {
+                return valueMap[datum.code];
+            }, this);
 
-        return tui.util.filter(this.mapData, function(datum) {
-            return valueMap[datum.code];
-        }, this);
+        return tui.util.map(labelData, function(datum) {
+            return {
+                name: datum.name,
+                labelPosition: {
+                    left: datum.labelPosition.left * ratio,
+                    top: datum.labelPosition.top * ratio
+                }
+            };
+        });
     },
 
     /**

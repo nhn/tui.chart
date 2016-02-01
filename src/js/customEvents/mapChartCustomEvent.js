@@ -114,9 +114,11 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @private
      * @override
      */
-    _onMouseout: function() {
+    _onMouseout: function(e) {
         if (this.isDrag) {
             this._dragEnd();
+        } else {
+            this._onMouseEvent('move', e);
         }
         this.isDown = false;
     }
