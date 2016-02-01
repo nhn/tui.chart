@@ -9,7 +9,7 @@
 var MapChartSeries = require('../../src/js/series/MapChartSeries.js');
 
 describe('MapChartSeries', function() {
-    var series, dataProcessor, boundsMaker, mapModel;
+    var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMap']);
@@ -64,14 +64,14 @@ describe('MapChartSeries', function() {
     });
 
     describe('_setGraphDimension()', function() {
-        it('시리즈 dimension에 zoomRatio를 곱하여 graphDimension을 구합니다', function() {
+        it('시리즈 dimension에 zoomMagn를 곱하여 graphDimension을 구합니다', function() {
             var actual, expected;
 
             boundsMaker.getDimension.and.returnValue({
                 width: 400,
                 height: 300
             });
-            series.zoomRatio = 2;
+            series.zoomMagn = 2;
             series._setGraphDimension();
             actual = series.graphDimension;
             expected = {

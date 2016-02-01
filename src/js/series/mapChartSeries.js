@@ -32,10 +32,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         };
 
         /**
-         * Zoom ratio.
+         * Zoom magnification.
          * @type {number}
          */
-        this.zoomRatio = 1;
+        this.zoomMagn = 1;
 
         /**
          * Map ratio.
@@ -100,8 +100,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         var seriesDimension = this.boundsMaker.getDimension('series');
 
         this.graphDimension = {
-            width: seriesDimension.width * this.zoomRatio,
-            height: seriesDimension.height * this.zoomRatio
+            width: seriesDimension.width * this.zoomMagn,
+            height: seriesDimension.height * this.zoomMagn
         };
     },
 
@@ -151,7 +151,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _renderSeriesLabel: function(seriesLabelContainer) {
-        var html = tui.util.map(this.mapModel.getLabelData(this.zoomRatio * this.mapRatio), function(datum, index) {
+        var html = tui.util.map(this.mapModel.getLabelData(this.zoomMagn * this.mapRatio), function(datum, index) {
             var label = datum.name || datum.code,
                 left = datum.labelPosition.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
                 top = datum.labelPosition.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
@@ -304,18 +304,16 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * On drag end series.
      */
-    onDragEndSeries: function() {
-        delete this.throttled;
-    },
+    onDragEndSeries: function() {},
 
     /**
      * On zoom.
-     * @param {number} newRatio new zoom ratio
+     * @param {number} newMagn new zoom magnification
      */
-    onZoom: function(newRatio) {
-        var changeRatio = newRatio / this.zoomRatio;
+    onZoom: function(newMagn) {
+        var changeRatio = newMagn / this.zoomMagn;
 
-        this.zoomRatio = newRatio;
+        this.zoomMagn = newMagn;
 
         this._zoom(changeRatio);
     },

@@ -20,8 +20,18 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
      */
     init: function(params) {
         this.className = 'tui-chart-zoom-area';
+
+        /**
+         * Bounds maker
+         * @type {BoundsMaker}
+         */
         this.boundsMaker = params.boundsMaker;
-        this.ratio = 1;
+
+        /**
+         * Magnification.
+         * @type {number}
+         */
+        this.magn = 1;
     },
 
     /**
@@ -64,17 +74,17 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     _onClick: function(e) {
         var target = e.target || e.srcElement,
             btnElement = this._findBtnElement(target),
-            changedRatio = 0,
-            zoomRatio;
+            changedMagn = 0,
+            magn;
 
         if (btnElement) {
-            zoomRatio = parseFloat(btnElement.getAttribute('data-ratio')),
-            changedRatio = this.ratio * zoomRatio;
+            magn = parseFloat(btnElement.getAttribute('data-magn')),
+            changedMagn = this.magn * magn;
         }
 
-        if (changedRatio >= 1) {
-            this.ratio = changedRatio;
-            this.fire('zoom', this.ratio);
+        if (changedMagn >= 1) {
+            this.magn = changedMagn;
+            this.fire('zoom', this.magn);
         }
 
         if (e.preventDefault) {
