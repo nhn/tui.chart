@@ -8,7 +8,7 @@
 
 var templateMaker = require('../helpers/templateMaker');
 
-var tags = {
+var htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ category }}</div>' +
         '<div>' +
@@ -26,12 +26,16 @@ var tags = {
         '&nbsp;<span>{{ value }}</span>' +
         '<span>{{ suffix }}</span>' +
     '</div>',
-    GROUP_CSS_TEXT: 'background-color:{{ color }}'
+    GROUP_CSS_TEXT: 'background-color:{{ color }}',
+    HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+        '<div>{{ name }}: {{ value }}</div>' +
+    '</div>'
 };
 
 module.exports = {
-    tplDefault: templateMaker.template(tags.HTML_DEFAULT_TEMPLATE),
-    tplGroup: templateMaker.template(tags.HTML_GROUP),
-    tplGroupItem: templateMaker.template(tags.HTML_GROUP_ITEM),
-    tplGroupCssText: templateMaker.template(tags.GROUP_CSS_TEXT)
+    tplDefault: templateMaker.template(htmls.HTML_DEFAULT_TEMPLATE),
+    tplGroup: templateMaker.template(htmls.HTML_GROUP),
+    tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
+    tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),
+    tplMapChartDefault: templateMaker.template(htmls.HTML_MAP_CHART_DEFAULT_TEMPLATE)
 };

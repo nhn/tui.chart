@@ -276,26 +276,79 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
+     * Show wedge.
+     * @param {number} index map data index
+     * @private
+     */
+    _showWedge: function(index) {
+        var datum = this.mapModel.getDatum(index);
+
+        if (!tui.util.isUndefined(datum.percentValue)) {
+            this.fire('showWedge', datum.percentValue);
+        }
+    },
+
+    /**
+     * Show tooltip
+     * @param {number} index map data index
+     * @param {{left: number, top: number}} mousePosition mouse position
+     * @private
+     */
+    _showTooltip: function(index, mousePosition) {
+        this.fire('showTooltip', {
+            chartType: this.chartType,
+            indexes: {
+                index: index
+            },
+            mousePosition: mousePosition
+        });
+    },
+
+    /**
+     * Get series container bound.
+     * @returns {{left: number, top: number}} container bound
+     * @private
+     */
+    _getContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.seriesContainer.getBoundingClientRect();
+        }
+        return this.containerBound;
+    },
+
+    /**
      * On move series.
      * @param {{left: number, top: number}} position position
      */
     onMoveSeries: function(position) {
-        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex'),
+            containerBound;
 
         if (!tui.util.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
                 if (this.prevMovedIndex) {
                     this.graphRenderer.restoreColor(this.prevMovedIndex);
+                    this.fire('hideWedge');
+                    this.fire('hideTooltip');
                 }
 
                 this.graphRenderer.changeColor(foundIndex);
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
+                containerBound = this._getContainerBound();
+                this._showTooltip(foundIndex, {
+                    left: position.left - containerBound.left,
+                    top: position.top - containerBound.top
+                });
                 this.prevMovedIndex = foundIndex;
             }
+
+            this._showWedge(foundIndex);
         } else if (!tui.util.isUndefined(this.prevMovedIndex)) {
             this.graphRenderer.restoreColor(this.prevMovedIndex);
+            this.fire('hideWedge');
+            this.fire('hideTooltip');
             delete this.prevMovedIndex;
         }
         this.prevPosition = position;
@@ -324,12 +377,19 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         renderUtil.renderPosition(this.graphContainer, movePosition);
         this.basePosition = movePosition;
+
+        if (!this.isDrag) {
+            this.isDrag = true;
+            this.fire('hideTooltip');
+        }
     },
 
     /**
      * On drag end series.
      */
-    onDragEndSeries: function() {},
+    onDragEndSeries: function() {
+        this.isDrag = false;
+    },
 
     /**
      * On zoom.

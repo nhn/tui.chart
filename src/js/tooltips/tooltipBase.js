@@ -96,7 +96,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Render tooltip component.
-     * @param {{position: object}} bound tooltip bound
      * @returns {HTMLElement} tooltip element
      */
     render: function() {
@@ -156,7 +155,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var tooltipElement = this._getTooltipElement(),
             prevPosition;
 
-        if (tooltipElement.offsetWidth) {
+        if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
             prevPosition = {
                 left: tooltipElement.offsetLeft,
                 top: tooltipElement.offsetTop

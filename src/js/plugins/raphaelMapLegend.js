@@ -31,7 +31,58 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
             fill: '270-' + colorModel.start + '-' + colorModel.end,
             stroke: 'none'
         });
+
+        this.wedge = this._renderWedge(paper);
+
         return paper;
+    },
+
+    /**
+     * Base path
+     * @type {Array}
+     */
+    basePath: ['M', 16, 6, 'L', 24, 3, 'L', 24, 9],
+
+    /**
+     * Render wedge.
+     * @param {object} paper raphael object
+     * @returns {object} raphael object
+     * @private
+     */
+    _renderWedge: function(paper) {
+        var wedge = paper.path(this.basePath).attr({
+            'fill': 'gray',
+            stroke: 'none',
+            opacity: 0
+        });
+
+        return wedge;
+    },
+
+    /**
+     * Show wedge.
+     * @param {number} top top
+     */
+    showWedge: function(top) {
+        var path = this.basePath;
+
+        path[2] = top;
+        path[5] = top - 3;
+        path[8] = top + 3;
+
+        this.wedge.attr({
+            path: path,
+            opacity: 1
+        });
+    },
+
+    /**
+     * Hide wedge
+     */
+    hideWedge: function() {
+        this.wedge.attr({
+            opacity: 0
+        });
     }
 });
 

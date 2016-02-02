@@ -365,12 +365,27 @@
         height: 1px;
         background-color: #ccc;
         position: absolute;
-        left: 5px;
+        left: 0px;
       }
 
       .tui-chart-map-legend-tick-label {
         position: absolute;
-        left: 25px;
+        left: 30px;
+        text-align: left;
+      }
+    }
+
+    .tui-chart-map-legend-wedge {
+      position: absolute;
+      width: 19px;
+      height: 4px;
+      border-left: 2px solid #777;
+      border-right: 2px solid #777;
+      left: 8px;
+      top: 30px;
+      display: none;
+      &.show {
+        display: block;
       }
     }
 
@@ -456,6 +471,14 @@
   &.tui-map-chart {
     .tui-chart-series-area {
       overflow: hidden;
+    }
+
+    .tui-chart-tooltip-area {
+      .tui-chart-default-tooltip {
+        > :first-child {
+          font-weight: normal;
+        }
+      }
     }
   }
 }

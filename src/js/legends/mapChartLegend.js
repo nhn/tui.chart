@@ -149,6 +149,21 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      */
     resize: function() {
         this._renderLegendArea(this.legendContainer);
+    },
+
+    /**
+     * On show wedge.
+     * @param {number} ratio ratio
+     */
+    onShowWedge: function(ratio) {
+        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_HEIGHT * ratio);
+    },
+
+    /**
+     * On hide wedge.
+     */
+    onHideWedge: function() {
+        this.graphRenderer.hideWedge();
     }
 });
 

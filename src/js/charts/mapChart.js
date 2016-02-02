@@ -15,6 +15,7 @@ var ChartBase = require('./chartBase'),
     Series = require('../series/mapChartSeries'),
     Zoom = require('../series/zoom'),
     Legend = require('../legends/mapChartLegend'),
+    MapChartTooltip = require('../tooltips/mapChartTooltip'),
     mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
@@ -55,6 +56,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         options.legend = options.legend || {};
 
         this.component.register('legend', Legend);
+
+        this.component.register('tooltip', MapChartTooltip, this._makeTooltipData());
+
         this.component.register('mapSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
@@ -121,7 +125,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             mapSeries: {
                 mapModel: mapModel,
                 colorModel: colorModel
-            }
+            },
+            tooltip: {
+                mapModel: mapModel
             }
         };
     },
@@ -134,6 +140,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     _attachCustomEvent: function() {
         var customEvent = this.component.get('customEvent'),
             mapSeries = this.component.get('mapSeries'),
+            legend = this.component.get('legend'),
+            tooltip = this.component.get('tooltip'),
             zoom = this.component.get('zoom');
 
         ChartBase.prototype._attachCustomEvent.call(this);
@@ -143,7 +151,13 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         customEvent.on('dragStartMapSeries', mapSeries.onDragStartSeries, mapSeries);
         customEvent.on('dragMapSeries', mapSeries.onDragSeries, mapSeries);
         customEvent.on('dragEndMapSeries', mapSeries.onDragEndSeries, mapSeries);
-        zoom.on('zoom', mapSeries.onZoom, mapSeries);
+
+        mapSeries.on('showWedge', legend.onShowWedge, legend);
+        mapSeries.on('hideWedge', legend.onHideWedge, legend);
+        mapSeries.on('showTooltip', tooltip.onShow, tooltip);
+        mapSeries.on('hideTooltip', tooltip.onHide, tooltip);
+
+        zoom.on('zoom', mapSeries.onZoom, mapSeries, mapSeries);
     }
 });
 

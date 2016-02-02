@@ -94,6 +94,25 @@ var predicate = {
     },
 
     /**
+     * Whether map chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isMapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_MAP;
+    },
+
+    /**
+     * Whether mouse position chart or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isMousePositionChart: function(chartType) {
+        return this.isPieChart(chartType) || this.isMapChart(chartType);
+    },
+
+    /**
      * Whether outer legend align or not.
      * @memberOf module:predicate
      * @param {string} align legend type
