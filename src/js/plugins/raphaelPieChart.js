@@ -29,7 +29,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
      *      @param {function} callbacks.funcSelectSeries select series function
-     * @return {object} paper raphael paper
+     * @returns {object} paper raphael paper
      */
     render: function(container, data, callbacks) {
         var dimension = data.dimension,
@@ -235,7 +235,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             }
 
             animationTime = LOADING_ANIMATION_TIME * item.percentValue;
-            anim = Raphael.animation({
+            anim = raphael.animation({
                 sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
             }, animationTime);
 
@@ -327,7 +327,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
 
     /**
-     * Get tooltip container bound.
+     * Get series container bound.
      * @returns {{left: number, top: number}} container bound
      * @private
      */
@@ -387,7 +387,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     _selectSeries: function(index) {
         var item = this.sectors[index],
-            objColor = Raphael.color(item.color),
+            objColor = raphael.color(item.color),
             color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
 
         item.sector.attr({

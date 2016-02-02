@@ -501,14 +501,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Execute graph renderer.
      * @param {{left: number, top: number}} position mouse position
      * @param {string} funcName function name
+     * @returns {*} result.
      * @private
      */
     _executeGraphRenderer: function(position, funcName) {
+        var result;
+
         this.fire('hideTooltipContainer');
         dom.removeClass(this.seriesLabelContainer, 'show');
-        this.graphRenderer[funcName](position);
+        result = this.graphRenderer[funcName](position);
         dom.addClass(this.seriesLabelContainer, 'show');
         this.fire('showTooltipContainer');
+
+        return result;
     },
 
     /**

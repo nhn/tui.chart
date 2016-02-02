@@ -7,7 +7,6 @@
 'use strict';
 
 var Series = require('./series'),
-    MapChartMapModel = require('./mapChartMapModel'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
@@ -59,7 +58,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          * Map model.
          * @type {MapChartMapModel}
          */
-        this.mapModel = new MapChartMapModel(params.dataProcessor);
+        this.mapModel = null;
 
         Series.call(this, params);
     },
@@ -78,21 +77,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
-     * Render series component.
-     * @param {object} data data for rendering
-     * @returns {HTMLElement} series element
-     */
-    render: function(data) {
-        var container;
-
-        this.mapModel.createMapData(data.map);
-        this._setMapRatio();
-
-        container = Series.prototype.render.call(this, data);
-        return container;
-    },
-
-    /**
      * Set graph dimension.
      * @private
      */
@@ -103,6 +87,21 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             width: seriesDimension.width * this.zoomMagn,
             height: seriesDimension.height * this.zoomMagn
         };
+    },
+
+    /**
+     * Render series component.
+     * @param {object} data data for rendering
+     * @returns {HTMLElement} series element
+     */
+    render: function(data) {
+        var container;
+
+        this.mapModel = data.mapModel;
+        this._setMapRatio();
+
+        container = Series.prototype.render.call(this, data);
+        return container;
     },
 
     /**
@@ -138,9 +137,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         this.graphRenderer.render(this.graphContainer, {
             colorModel: this.data.colorModel,
-            map: this.data.map,
+            mapModel: this.mapModel,
             dimension: this.graphDimension,
-            mapDimension: this.mapModel.getMapDimension(),
             valueMap: this.dataProcessor.getValueMap()
         });
     },
@@ -264,8 +262,17 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * On click series.
      */
-    onClickSeries: function() {
-        delete this.throttled;
+    onClickSeries: function() {},
+
+    /**
+     * Whether changed or not.
+     * @param {{left: number, top: number}} prevPosition previous position
+     * @param {{left: number, top: number}} position position
+     * @returns {boolean} result boolean
+     * @private
+     */
+    _isChangedPosition: function(prevPosition, position) {
+        return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
     },
 
     /**
@@ -273,7 +280,25 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {{left: number, top: number}} position position
      */
     onMoveSeries: function(position) {
-        this._executeGraphRenderer(position, 'moveMouseOnSeries');
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+
+        if (!tui.util.isNull(foundIndex)) {
+            if (this.prevMovedIndex !== foundIndex) {
+                if (this.prevMovedIndex) {
+                    this.graphRenderer.restoreColor(this.prevMovedIndex);
+                }
+
+                this.graphRenderer.changeColor(foundIndex);
+            }
+
+            if (this._isChangedPosition(this.prevPosition, position)) {
+                this.prevMovedIndex = foundIndex;
+            }
+        } else if (!tui.util.isUndefined(this.prevMovedIndex)) {
+            this.graphRenderer.restoreColor(this.prevMovedIndex);
+            delete this.prevMovedIndex;
+        }
+        this.prevPosition = position;
     },
 
     /**

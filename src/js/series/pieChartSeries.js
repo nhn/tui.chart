@@ -9,9 +9,7 @@
 var Series = require('./series'),
     chartConst = require('../const'),
     predicate = require('../helpers/predicate'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    eventListener = require('../helpers/eventListener');
+    renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -181,30 +179,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Render series component of pie chart.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
-     * @param {object} data data for rendering
-     * @returns {HTMLElement} series element
-     * @override
-     */
-    render: function() {
-        var el = Series.prototype.render.apply(this, arguments);
-        this.attachEvent(el);
-
-        return el;
-    },
-
-    /**
      * Resize.
      * @override
      */
     resize: function() {
         Series.prototype.resize.apply(this, arguments);
         this._moveLegendLines(this.seriesData);
-        this._updateContainerBound();
     },
 
     /**
@@ -222,7 +202,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 groupIndex: groupIndex,
                 index: index
             },
-            bound: bound,
             eventPosition: eventPosition
         }, params));
     },
@@ -449,138 +428,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Handle mouse event.
-     * @param {MouseEvent} e mouse event
-     * @param {function} callback callback
-     * @private
-     */
-    _handleMouseEvent: function(e, callback) {
-        var elTarget = e.target || e.srcElement,
-            elLabel = this._findLabelElement(elTarget),
-            groupIndex, index;
-
-        if (!elLabel) {
-            return;
-        }
-
-        groupIndex = parseInt(elLabel.getAttribute('data-group-index'), 10);
-        index = parseInt(elLabel.getAttribute('data-index'), 10);
-
-        if (groupIndex === -1 || index === -1) {
-            return;
-        }
-
-        callback(groupIndex, index, elTarget);
-    },
-
-    /**
-     * Find legend element.
-     * @param {HTMLElement} elTarget target element
-     * @returns {HTMLElement} legend element
-     * @private
-     */
-    _findLegendElement: function(elTarget) {
-        var elLegend;
-
-        if (dom.hasClass(elTarget, chartConst.CLASS_NAME_SERIES_LEGEND)) {
-            elLegend = elTarget;
-        }
-
-        return elLegend;
-    },
-
-    /**
-     * On click event handler.
-     * @param {MouseEvent} e mouse event
-     * @private
-     * @override
-     */
-    _onClick: function(e) {
-        var that = this;
-        this._handleMouseEvent(e, function(groupIndex, index, elTarget) {
-            var elLegend = that._findLegendElement(elTarget),
-                legendData;
-
-            if (!elLegend) {
-                that.selectSeries(index);
-            } else {
-                legendData = that.dataProcessor.getLegendData(index);
-                that.userEvent.fire('selectLegend', {
-                    legend: legendData.label,
-                    chartType: legendData.chartType,
-                    legendIndex: index,
-                    index: index
-                });
-            }
-        });
-    },
-
-    /**
-     * Update container bound.
-     * @private
-     */
-    _updateContainerBound: function() {
-        this.containerBound = this.seriesContainer.getBoundingClientRect();
-    },
-
-    /**
-     * Get series container bound.
-     * @returns {{left: number, top: number}} container bound
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this._updateContainerBound();
-        }
-        return this.containerBound;
-    },
-
-    /**
-     * Make label bound.
-     * @param {number} clientX clientX
-     * @param {number} clientY clientY
-     * @returns {{left: number, top: number}} bound
-     * @private
-     */
-    _makeLabelBound: function(clientX, clientY) {
-        var containerBound = this._getContainerBound();
-        return {
-            left: clientX - containerBound.left,
-            top: clientY - containerBound.top
-        };
-    },
-
-    /**
-     * This is event handler for mouseover.
-     * @private
-     * @param {MouseEvent} e mouse event
-     */
-    _onMouseover: function(e) {
-        var that = this;
-
-        this._handleMouseEvent(e, function(groupIndex, index) {
-            var bound = that._makeLabelBound(e.clientX, e.clientY - 10);
-            that.showTooltip({
-                allowNegativeTooltip: !!that.allowNegativeTooltip,
-                chartType: that.chartType
-            }, bound, groupIndex, index);
-        });
-    },
-
-    /**
-     * This is event handler for mouseout.
-     * @private
-     * @param {MouseEvent} e mouse event
-     */
-    _onMouseout: function(e) {
-        var that = this;
-
-        this._handleMouseEvent(e, function(groupIndex, index) {
-            that.hideTooltip(groupIndex, index);
-        });
-    },
-
-    /**
      * On click series.
      * @param {{left: number, top: number}} position mouse position
      */
@@ -594,16 +441,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     onMoveSeries: function(position) {
         this._executeGraphRenderer(position, 'moveMouseOnSeries');
-    },
-
-    /**
-     * Attach event
-     * @param {HTMLElement} el target element
-     */
-    attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
-        eventListener.bindEvent('mouseover', el, tui.util.bind(this._onMouseover, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
     }
 });
 

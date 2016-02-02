@@ -29,9 +29,9 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {
-        var expandedBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
-        renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
-        renderUtil.renderPosition(customEventContainer, expandedBound.position);
+        var bound = this.boundsMaker.getBound('customEvent');
+        renderUtil.renderDimension(customEventContainer, bound.dimension);
+        renderUtil.renderPosition(customEventContainer, bound.position);
     },
 
     /**

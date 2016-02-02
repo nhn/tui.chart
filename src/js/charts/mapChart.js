@@ -8,9 +8,10 @@
 
 var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
+    MapChartMapModel = require('./mapChartMapModel'),
+    MapChartColorModel = require('./mapChartColorModel'),
     MapChartDataProcessor = require('../helpers/mapChartDataProcessor'),
     axisDataMaker = require('../helpers/axisDataMaker'),
-    MapChartColorModel = require('./mapChartColorModel'),
     Series = require('../series/mapChartSeries'),
     Zoom = require('../series/zoom'),
     Legend = require('../legends/mapChartLegend'),
@@ -34,10 +35,6 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
-
-        if (!options.tooltip.align) {
-            options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
-        }
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -121,8 +118,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
                 axesData: axesData
             },
             mapSeries: {
-                colorModel: colorModel,
-                map: this.options.map
+                mapModel: mapModel,
+                colorModel: colorModel
+            }
             }
         };
     },

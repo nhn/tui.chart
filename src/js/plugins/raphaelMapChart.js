@@ -23,11 +23,11 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      *      @param {Array.<{code: string, path: string}>} data.map mapData
      *      @param {object} data.valueMap valueMap
      *      @param {MapChartColorModel} data.colorModel color model
-     * @return {object} paper raphael paper
+     * @returns {object} paper raphael paper
      */
     render: function(container, data) {
         var dimension = data.dimension,
-            mapDimension = data.mapDimension,
+            mapDimension = data.mapModel.getMapDimension(),
             paper;
 
         this.paper = paper = raphael(container, dimension.width, dimension.height);
@@ -49,12 +49,10 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @private
      */
     _renderMap: function(data) {
-        var colorModel = data.colorModel,
-            valueMap = data.valueMap;
+        var colorModel = data.colorModel;
 
-        return tui.util.map(data.map, function(datum, index) {
-            var value = valueMap[datum.code],
-                percentValue = value && value.percentValue || 0,
+        return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
+            var percentValue = datum.percentValue || 0,
                 color = colorModel.getColor(percentValue),
                 sector = raphaelRenderUtil.renderArea(this.paper, datum.path, color, 1, '#555555', 1);
 
@@ -63,57 +61,29 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             return {
                 sector: sector,
                 color: color,
-                data: value
+                percentValue: datum.percentValue
             };
         }, this);
     },
 
     /**
-     * Whether changed or not.
-     * @param {{left: number, top: number}} prevPosition previous position
+     * Find sector index.
      * @param {{left: number, top: number}} position position
-     * @returns {boolean} result boolean
-     * @private
+     * @returns {?number} found index
      */
-    _isChangedPosition: function(prevPosition, position) {
-        return !prevPosition || prevPosition.left !== position.left || prevPosition.top !== position.top;
-    },
-
-    /**
-     * Move mouse on series.
-     * @param {{left: number, top: number}} position mouse position
-     */
-    moveMouseOnSeries: function(position) {
+    findSectorIndex: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top),
-            changedSector;
+            foundIndex = (sector && !tui.util.isUndefined(sector.data('index'))) ? sector.data('index') : null,
+            data = foundIndex && this.sectors[foundIndex];
 
-        if (sector && this.sectors[sector.data('index')]) {
-            changedSector = this.prevMovedSector !== sector;
-            if (changedSector) {
-                if (this.prevMovedSector) {
-                    this._restoreColor(this.prevMovedSector.data('index'));
-                }
-                this._changeColor(sector.data('index'));
-            }
-
-            if (this._isChangedPosition(this.prevPosition, position)) {
-                // show tooltip
-                this.prevMovedSector = sector;
-            }
-        } else if (this.prevMovedSector) {
-            this._restoreColor(this.prevMovedSector.data('index'));
-            delete this.prevMovedSector;
-            // hide tooltip
-        }
-        this.prevPosition = position;
+        return data && !tui.util.isUndefined(data.percentValue) ? foundIndex : null;
     },
 
     /**
      * Change color.
      * @param {number} index index
-     * @private
      */
-    _changeColor: function(index) {
+    changeColor: function(index) {
         var sector = this.sectors[index];
 
         sector.sector.attr({
@@ -124,9 +94,8 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     /**
      * Restore color.
      * @param {number} index index
-     * @private
      */
-    _restoreColor: function(index) {
+    restoreColor: function(index) {
         var sector = this.sectors[index];
 
         sector.sector.attr({

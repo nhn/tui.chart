@@ -33,7 +33,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Render function of area chart.
      * @param {HTMLElement} container container
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
-     * @return {object} paper raphael paper
+     * @returns {object} paper raphael paper
      */
     render: function(container, data) {
         var dimension = data.dimension,

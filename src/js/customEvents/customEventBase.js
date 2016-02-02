@@ -51,7 +51,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     /**
      * Render event handle layer component.
      * @param {object} data rendering data
-     * @return {HTMLElement} coordinate area
+     * @returns {HTMLElement} coordinate area
      */
     render: function(data) {
         var el = dom.create('DIV', 'tui-chart-series-custom-event-area');

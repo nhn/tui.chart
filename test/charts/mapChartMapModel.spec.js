@@ -6,13 +6,13 @@
 
 'use strict';
 
-var MapChartMapModel = require('../../src/js/series/mapChartMapModel.js');
+var MapChartMapModel = require('../../src/js/charts/mapChartMapModel.js');
 
 describe('MapChartMapModel', function() {
     var mapModel, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMap']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMapDatum']);
     });
 
     beforeEach(function() {
@@ -377,7 +377,7 @@ describe('MapChartMapModel', function() {
         });
     });
 
-    describe('createMapData()', function() {
+    describe('_createMapData()', function() {
         it('rawMapData를 전달받아 mapData 생성합니다.', function() {
             var rawMapData = [
                     {
@@ -397,14 +397,15 @@ describe('MapChartMapModel', function() {
                 ],
                 actual, expected;
 
-            dataProcessor.getValueMap.and.returnValue({});
-            mapModel.createMapData(rawMapData);
+            dataProcessor.getValueMapDatum.and.returnValue({});
+            mapModel._createMapData(rawMapData);
 
             actual = mapModel.mapData;
             expected = [
                 {
                     code: 'CD1',
                     name: 'Map name1',
+                    path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
                     bound: {
                         dimension: {
                             width: 319,
@@ -423,6 +424,7 @@ describe('MapChartMapModel', function() {
                 {
                     code: 'CD2',
                     name: 'Map name2',
+                    path: 'M9,122L169,106L328,74L328,154L169,154L9,154',
                     bound: {
                         dimension: {
                             width: 319,
@@ -462,24 +464,32 @@ describe('MapChartMapModel', function() {
                 ],
                 actual, expected;
 
-            dataProcessor.getValueMap.and.returnValue({
-                CD1: {
-                    name: 'New Map name1'
-                },
-                CD2: {
-                    labelCoordinate: {
-                        x: 0.6,
-                        y: 0.6
-                    }
+            dataProcessor.getValueMapDatum.and.callFake(function(code) {
+                var result;
+
+                if (code === 'CD1') {
+                    result = {
+                        name: 'New Map name1'
+                    };
+                } else {
+                    result = {
+                        labelCoordinate: {
+                            x: 0.6,
+                            y: 0.6
+                        }
+                    };
                 }
+                return result;
             });
-            mapModel.createMapData(rawMapData);
+
+            mapModel._createMapData(rawMapData);
 
             actual = mapModel.mapData;
             expected = [
                 {
                     code: 'CD1',
                     name: 'New Map name1',
+                    path: 'M9,90L169,90L328,58L328,154L169,154L9,154',
                     bound: {
                         dimension: {
                             width: 319,
@@ -498,6 +508,7 @@ describe('MapChartMapModel', function() {
                 {
                     code: 'CD2',
                     name: 'Map name2',
+                    path: 'M9,122L169,106L328,74L328,154L169,154L9,154',
                     bound: {
                         dimension: {
                             width: 319,
@@ -542,8 +553,14 @@ describe('MapChartMapModel', function() {
                     }
                 }
             ];
-            dataProcessor.getValueMap.and.returnValue({
-                CD1: {}
+            dataProcessor.getValueMapDatum.and.callFake(function(code) {
+                var result;
+
+                if (code === 'CD1') {
+                    result = {};
+                }
+
+                return result;
             });
             actual = mapModel.getLabelData(zoomMagn);
             expected = [
@@ -573,9 +590,7 @@ describe('MapChartMapModel', function() {
                     }
                 }
             ];
-            dataProcessor.getValueMap.and.returnValue({
-                CD1: {}
-            });
+            dataProcessor.getValueMapDatum.and.returnValue({});
             actual = mapModel.getLabelData(zoomMagn);
             expected = [
                 {

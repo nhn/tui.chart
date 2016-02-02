@@ -153,7 +153,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Make rendering data for axis type chart.
-     * @return {object} rendering data.
+     * @returns {object} rendering data.
      * @private
      */
     _makeRenderingData: function() {

@@ -35,12 +35,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.tooltipContainer = null;
 
         /**
-         * TooltipBase base data.
-         * @type {Array.<Array.<object>>}
-         */
-        this.data = this._makeTooltipData();
-
-        /**
          * Tooltip suffix.
          * @type {string}
          */
@@ -57,6 +51,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {number}
          */
         this.animationTime = predicate.isPieChart(params.chartType) ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
+
+        /**
+         * TooltipBase base data.
+         * @type {Array.<Array.<object>>}
+         */
+        this.data = [];
 
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
@@ -101,6 +101,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     render: function() {
         var el = dom.create('DIV', this.className);
+
+        this.data = this._makeTooltipData();
 
         renderUtil.renderPosition(el, this.boundsMaker.getPosition('tooltip'));
 

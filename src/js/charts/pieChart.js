@@ -9,7 +9,6 @@
 var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries'),
@@ -98,24 +97,20 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var customEvent, tooltip, serieses;
+        var customEvent, tooltip, pieSeries;
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
         customEvent = this.component.get('customEvent');
         tooltip = this.component.get('tooltip');
-        serieses = this.component.where({componentType: 'series'});
+        pieSeries = this.component.get('pieSeries');
 
-        tui.util.forEach(serieses, function (series) {
-            series.on('showTooltip', tooltip.onShow, tooltip);
-            series.on('hideTooltip', tooltip.onHide, tooltip);
-
-            series.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
-            series.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
-
-            customEvent.on(renderUtil.makeCustomEventName('click', series.chartType, 'series'), series.onClickSeries, series);
-            customEvent.on(renderUtil.makeCustomEventName('move', series.chartType, 'series'), series.onMoveSeries, series);
-        }, this);
+        pieSeries.on('showTooltip', tooltip.onShow, tooltip);
+        pieSeries.on('hideTooltip', tooltip.onHide, tooltip);
+        pieSeries.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
+        pieSeries.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
+        customEvent.on('clickPieSeries', pieSeries.onClickSeries, pieSeries);
+        customEvent.on('movePieSeries', pieSeries.onMoveSeries, pieSeries);
     }
 });
 

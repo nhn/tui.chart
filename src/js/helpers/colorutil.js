@@ -189,7 +189,7 @@ var colorutil = {
     /**
      * Convert color hex string to rgb number array
      * @param {string} hexStr - hex string
-     * @return {number[]} rgb numbers
+     * @returns {number[]} rgb numbers
      */
     hexToRGB: function(hexStr) {
         var r, g, b;

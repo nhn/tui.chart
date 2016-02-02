@@ -557,13 +557,22 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerEssentialComponentsPositions: function(seriesPosition) {
+        var tooltipPosition;
+
         this._registerPosition('series', seriesPosition);
         this._registerPosition('customEvent', seriesPosition);
         this._registerPosition('legend', this._makeLegendPosition());
-        this._registerPosition('tooltip', {
-            top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
-            left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
-        });
+
+        if (this.hasAxes) {
+            tooltipPosition = {
+                top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
+                left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
+            }
+        } else {
+            tooltipPosition = seriesPosition;
+        }
+
+        this._registerPosition('tooltip', tooltipPosition);
     },
 
     /**

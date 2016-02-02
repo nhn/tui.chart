@@ -22,7 +22,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Render function of bar chart
      * @param {HTMLElement} container container element
      * @param {{size: object, model: object, options: object, tooltipPosition: string}} data chart data
-     * @return {object} paper raphael paper
+     * @returns {object} paper raphael paper
      */
     render: function(container, data) {
         var groupBounds = data.groupBounds,
@@ -479,13 +479,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     selectSeries: function(indexes) {
         var bar = this.groupBars[indexes.groupIndex][indexes.index],
-            objColor = Raphael.color(bar.color),
+            objColor = raphael.color(bar.color),
             color = this.theme.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2),
             borderColor = this.theme.borderColor,
             objBorderColor;
 
         if (borderColor) {
-            objBorderColor = Raphael.color(borderColor);
+            objBorderColor = raphael.color(borderColor);
             borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, 0.2);
         }
 

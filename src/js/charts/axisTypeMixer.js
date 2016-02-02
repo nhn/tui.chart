@@ -178,7 +178,7 @@ var axisTypeMixer = {
     /**
      * Make rendering data for axis type chart.
      * @param {object} axesData axesData
-     * @return {object} data for rendering
+     * @returns {object} data for rendering
      * @private
      * @override
      */

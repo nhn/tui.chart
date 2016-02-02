@@ -661,6 +661,7 @@ describe('boundsMaker', function() {
                 left: 250
             });
 
+            boundsMaker.hasAxes = true;
             boundsMaker._registerEssentialComponentsPositions(seriesPosition);
 
             expect(boundsMaker.getPosition('series').top).toBe(50);

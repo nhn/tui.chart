@@ -9,11 +9,12 @@
 var MapChartSeries = require('../../src/js/series/mapChartSeries.js');
 
 describe('MapChartSeries', function() {
-    var series, dataProcessor, boundsMaker;
+    var series, dataProcessor, boundsMaker, mapModel;
 
     beforeAll(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getValueMap']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+        mapModel = jasmine.createSpyObj('mapModel', ['getMapDimension']);
     });
 
     beforeEach(function() {
@@ -22,7 +23,7 @@ describe('MapChartSeries', function() {
             boundsMaker: boundsMaker,
             chartType: 'map'
         });
-        spyOn(series.mapModel, 'getMapDimension');
+        series.mapModel = mapModel;
     });
 
     describe('_setMapRatio()', function() {

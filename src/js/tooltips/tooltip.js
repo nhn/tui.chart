@@ -74,6 +74,27 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Make parameters for show tooltip user event.
+     * @param {{groupIndex: number, index: number}} indexes indexes
+     * @param {object} additionParams addition parameters
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} parameters for show tooltip
+     * @private
+     */
+    _makeShowTooltipParams: function(indexes, additionParams) {
+        var legendIndex = indexes.index,
+            legendData = this.dataProcessor.getLegendData(legendIndex),
+            params;
+
+        params = tui.util.extend({
+            chartType: legendData.chartType,
+            legend: legendData.label,
+            legendIndex: legendIndex,
+            index: indexes.groupIndex
+        }, additionParams);
+        return params;
+    },
+
+    /**
      * Make tooltip data.
      * @returns {Array.<object>} tooltip data
      * @override

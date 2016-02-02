@@ -35,7 +35,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
 
         /**
          * options
-         * @type {params.options|{legendAlign}|{}}
+         * @type {object}
          */
         this.options = params.options || {};
 
@@ -66,9 +66,10 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             valueStr = renderUtil.formatValue(maxValue, formatFunctions),
             labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label),
+            paddingWidth = (chartConst.LEGEND_AREA_PADDING * 2) + chartConst.MAP_LEGEND_LABEL_PADDING,
             dimension = {
-                width: 35 + labelWidth + 5,
-                height: 200
+                width:  chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + paddingWidth,
+                height: chartConst.MAP_LEGEND_HEIGHT
             };
 
         this.boundsMaker.registerBaseDimension('legend', dimension);
@@ -120,7 +121,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
         container.innerHTML = '';
         renderUtil.renderPosition(container, this.boundsMaker.getPosition('legend'));
         this.graphRenderer.render(container, {
-            width: 20,
+            width: chartConst.MAP_LEGEND_GRAPH_SIZE,
             height: this.boundsMaker.getDimension('legend').height
         }, this.colorModel);
         container.appendChild(this._renderTickArea());
@@ -133,14 +134,14 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @returns {HTMLElement} legend element
      */
     render: function(data) {
-        var el = dom.create('DIV', this.className);
+        var container = dom.create('DIV', this.className);
 
-        this.legendContainer = el;
+        this.legendContainer = container;
         this.colorModel = data.colorModel;
         this.axesData = data.axesData;
-        this._renderLegendArea(el);
+        this._renderLegendArea(container);
 
-        return el;
+        return container;
     },
 
     /**

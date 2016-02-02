@@ -78,7 +78,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
             magn;
 
         if (btnElement) {
-            magn = parseFloat(btnElement.getAttribute('data-magn')),
+            magn = parseFloat(btnElement.getAttribute('data-magn'));
             changedMagn = this.magn * magn;
         }
 
