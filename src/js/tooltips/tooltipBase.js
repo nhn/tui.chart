@@ -17,7 +17,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @constructs TooltipBase
      * @param {object} params parameters
      *      @param {Array.<number>} params.values converted values
-     *      @param {object} params.bound axis bound
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
@@ -38,7 +38,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * TooltipBase base data.
          * @type {Array.<Array.<object>>}
          */
-        this.data = this.makeTooltipData();
+        this.data = this._makeTooltipData();
 
         /**
          * Tooltip suffix.
@@ -89,9 +89,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Make tooltip data.
+     * @private
      * @abstract
      */
-    makeTooltipData: function() {},
+    _makeTooltipData: function() {},
 
     /**
      * Render tooltip component.
@@ -112,7 +113,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * Rerender.
      */
     rerender: function() {
-        this.data = this.makeTooltipData();
+        this.data = this._makeTooltipData();
         if (this.positionModel) {
             this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
         }

@@ -14,12 +14,16 @@ var TooltipBase = require('./tooltipBase'),
     defaultTheme = require('../themes/defaultTheme'),
     tooltipTemplate = require('./tooltipTemplate');
 
+/**
+ * @classdesc GroupTooltip component.
+ * @class GroupTooltip
+ */
 var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
      * @param {object} params parameters
-     *      @param {object} params.bound axis bound
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
@@ -119,7 +123,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @returns {Array.<object>} tooltip data
      * @override
      */
-    makeTooltipData: function() {
+    _makeTooltipData: function() {
         return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
             return {
                 category: this.dataProcessor.getCategory(index),
