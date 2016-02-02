@@ -156,6 +156,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         mapSeries.on('hideWedge', legend.onHideWedge, legend);
         mapSeries.on('showTooltip', tooltip.onShow, tooltip);
         mapSeries.on('hideTooltip', tooltip.onHide, tooltip);
+        mapSeries.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
+        mapSeries.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
 
         zoom.on('zoom', mapSeries.onZoom, mapSeries, mapSeries);
     }
