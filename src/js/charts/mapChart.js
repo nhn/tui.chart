@@ -105,12 +105,13 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     /**
      * Make rendering data for map chart.
      * @param {object} axesData axes data
-     * @return {object} data for rendering
+     * @returns {object} data for rendering
      * @private
      * @override
      */
     _makeRenderingData: function(axesData) {
-        var colorModel = new MapChartColorModel('#EEEEFF', '#0000ff');
+        var colorModel = new MapChartColorModel('#EEEEFF', '#0000ff'),
+            mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         return {
             legend: {

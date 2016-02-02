@@ -98,13 +98,13 @@ var singleTooltipMixer = {
      * Calculate tooltip position to event position.
      * @param {object} params parameters
      *      @param {{left: number, top: number}} params.bound bound
-     *      @param {{clientX: number, clientY: number}} params.eventPosition mouse position
+     *      @param {{left: number, top: number}} params.mousePosition mouse position
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateTooltipPositionToEventPosition: function(params) {
+    _calculateTooltipPositionToMousePosition: function(params) {
         params.bound = params.bound || {};
-        tui.util.extend(params.bound, params.eventPosition);
+        tui.util.extend(params.bound, params.mousePosition);
         return this._calculateTooltipPositionAboutNotBarChart(params);
     },
 
@@ -218,8 +218,8 @@ var singleTooltipMixer = {
         var position = {},
             sizeType, positionType, addPadding;
 
-        if (params.eventPosition) {
-            position = this._calculateTooltipPositionToEventPosition(params);
+        if (params.mousePosition) {
+            position = this._calculateTooltipPositionToMousePosition(params);
         } else {
             if (predicate.isBarChart(params.chartType)) {
                 position = this._calculateTooltipPositionAboutBarChart(params);

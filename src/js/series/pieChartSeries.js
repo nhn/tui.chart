@@ -194,15 +194,15 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
      * @param {number} groupIndex group index
      * @param {number} index index
-     * @param {{clientX: number, clientY: number}} eventPosition mouse event position
+     * @param {{left: number, top: number}} mousePosition mouse position
      */
-    showTooltip: function(params, bound, groupIndex, index, eventPosition) {
+    showTooltip: function(params, bound, groupIndex, index, mousePosition) {
         this.fire('showTooltip', tui.util.extend({
             indexes: {
                 groupIndex: groupIndex,
                 index: index
             },
-            eventPosition: eventPosition
+            mousePosition: mousePosition
         }, params));
     },
 

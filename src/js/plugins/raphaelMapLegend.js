@@ -9,6 +9,8 @@
 
 var raphael = window.Raphael;
 
+var PADDING = 10;
+
 /**
  * @classdesc RaphaelMapLegend is graph renderer for map chart legend.
  * @class RaphaelMapLegend
@@ -19,11 +21,11 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @param {HTMLElement} container container
      * @param {{width: number, height: number}} dimension legend dimension
      * @param {MapChartColorModel} colorModel map chart color model
-     * @return {object} paper raphael paper
+     * @returns {object} paper raphael paper
      */
     render: function(container, dimension, colorModel) {
         var paper = raphael(container, dimension.width, dimension.height),
-            rect = paper.rect(5, 0, dimension.width - 5, dimension.height);
+            rect = paper.rect(0, 0, dimension.width - PADDING, dimension.height);
 
         rect.attr({
             fill: '270-' + colorModel.start + '-' + colorModel.end,

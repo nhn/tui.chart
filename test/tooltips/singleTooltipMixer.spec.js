@@ -100,7 +100,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculateTooltipPositionToEventPosition()', function() {
+    describe('_calculateTooltipPositionToMousePosition()', function() {
         it('PIE 차트인 경우에는 마우스 이동 포지션 기준으로 계산하여 반환합니다.', function () {
             var actual, expected;
             tooltip.seriesPosition = {
@@ -109,9 +109,9 @@ describe('Tooltip', function() {
             };
 
             tooltip.containerBound = {left: 10, top: 0};
-            actual = tooltip._calculateTooltipPositionToEventPosition({
+            actual = tooltip._calculateTooltipPositionToMousePosition({
                 bound: {},
-                eventPosition: {
+                mousePosition: {
                     left: 50,
                     top: 50
                 },
