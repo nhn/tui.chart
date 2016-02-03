@@ -26,6 +26,10 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
     init: function(params) {
         var libType = params.libType || chartConst.DEFAULT_PLUGIN;
 
+        /**
+         * class name.
+         * @type {string}
+         */
         this.className = 'tui-chart-legend-area';
 
         /**

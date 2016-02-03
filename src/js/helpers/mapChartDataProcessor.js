@@ -93,7 +93,6 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
     /**
      * Make percent value.
      * @param {{min: number, max: number}} limit axis limit
-     * @private
      */
     registerPercentValues: function(limit) {
         var min = limit.min,

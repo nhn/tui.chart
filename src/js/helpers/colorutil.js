@@ -227,6 +227,11 @@ var colorutil = {
         return false;
     },
 
+    /**
+     * Color name to hex.
+     * @param {string} colorName color name
+     * @returns {string} hex
+     */
     colorNameToHex: function (colorName) {
         return colorMap[colorName.toLowerCase()] || colorName;
     }

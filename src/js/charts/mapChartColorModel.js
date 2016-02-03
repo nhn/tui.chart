@@ -52,7 +52,7 @@ var MapChartColorModel = tui.util.defineClass(/** @lends MapChartColorModel.prot
         if (!hexColor) {
             distances = this.distances;
             rgbColor = tui.util.map(this.startRGB, function (start, index) {
-                return start + parseInt(distances[index] * ratio, 0);
+                return start + parseInt(distances[index] * ratio, 10);
             });
             hexColor = colorutil.rgbToHEX.apply(null, rgbColor);
         }

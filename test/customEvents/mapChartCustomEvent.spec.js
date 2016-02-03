@@ -28,35 +28,23 @@ describe('MapChartCustomEvent', function() {
                 expectedPosition = {
                     left: 10,
                     top: 20
-                },
-                actualEventName, actualPosition;
-
-            customEvent.fire.and.callFake(function(eventName, position) {
-                actualEventName = eventName;
-                actualPosition = position;
-            });
+                };
 
             customEvent._onMousedown(eventObject);
 
-            expect(actualEventName).toBe(expectedEventName);
-            expect(actualPosition).toEqual(expectedPosition);
+            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
         });
     });
 
     describe('_onMouseup()', function() {
         it('isDrag가 true일 경우에 customEventContainer에 drag class를 제거하고 dragEndMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
-            var expectedEventName = 'dragEndMapSeries',
-                actualEventName;
-
-            customEvent.fire.and.callFake(function(eventName) {
-                actualEventName = eventName;
-            });
+            var expectedEventName = 'dragEndMapSeries';
 
             customEvent.customEventContainer = dom.create('DIV', 'drag');
             customEvent.isDrag = true;
             customEvent._onMouseup();
 
-            expect(actualEventName).toBe(expectedEventName);
+            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName);
             expect(customEvent.customEventContainer.className).toBe('');
         });
 
@@ -66,18 +54,12 @@ describe('MapChartCustomEvent', function() {
                     clientY: 20
                 },
                 expectedStr = 'click',
-                expectedEventObject = eventObject,
-                actualStr, actualEventObject;
+                expectedEventObject = eventObject;
 
-            customEvent._onMouseEvent.and.callFake(function(str, _eventObject) {
-                actualStr = str;
-                actualEventObject = _eventObject;
-            });
             customEvent.isDrag = false;
             customEvent._onMouseup(eventObject);
 
-            expect(actualStr).toBe(expectedStr);
-            expect(actualEventObject).toBe(expectedEventObject);
+            expect(customEvent._onMouseEvent).toHaveBeenCalledWith(expectedStr, expectedEventObject);
         });
     });
 
@@ -91,28 +73,20 @@ describe('MapChartCustomEvent', function() {
                 expectedPosition = {
                     left: 10,
                     top: 20
-                },
-                actualEventName, actualPosition;
-
-            customEvent.fire.and.callFake(function(eventName, position) {
-                actualEventName = eventName;
-                actualPosition = position;
-            });
+                };
 
             customEvent.isDown = true;
             customEvent.isDrag = true;
             customEvent._onMousemove(eventObject);
 
-            expect(actualEventName).toBe(expectedEventName);
-            expect(actualPosition).toEqual(expectedPosition);
+            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName, expectedPosition);
         });
 
         it('isDown true이면서 isDrag가 false이면 추가적으로 container에 darg class를 추가합니다.', function() {
             var eventObject = {
                     clientX: 10,
                     clientY: 20
-                },
-                addedClassName;
+                };
 
             customEvent.customEventContainer = dom.create('DIV');
             customEvent.isDown = true;
@@ -128,35 +102,24 @@ describe('MapChartCustomEvent', function() {
                     clientY: 20
                 },
                 expectedStr = 'move',
-                expectedEventObject = eventObject,
-                actualStr, actualEventObject;
+                expectedEventObject = eventObject;
 
-            customEvent._onMouseEvent.and.callFake(function(str, _eventObject) {
-                actualStr = str;
-                actualEventObject = _eventObject;
-            });
             customEvent.isDown = false;
             customEvent._onMousemove(eventObject);
 
-            expect(actualStr).toBe(expectedStr);
-            expect(actualEventObject).toBe(expectedEventObject);
+            expect(customEvent._onMouseEvent).toHaveBeenCalledWith(expectedStr, expectedEventObject);
         });
     });
 
     describe('_onMouseup()', function() {
         it('isDrag가 true일 경우에 customEventContainer에 drag class를 제거하고 dragEndMapSeries 커스텀 이벤트를 발생시킵니다.', function() {
-            var expectedEventName = 'dragEndMapSeries',
-                actualEventName;
-
-            customEvent.fire.and.callFake(function(eventName) {
-                actualEventName = eventName;
-            });
+            var expectedEventName = 'dragEndMapSeries';
 
             customEvent.customEventContainer = dom.create('DIV', 'drag');
             customEvent.isDrag = true;
             customEvent._onMouseout();
 
-            expect(actualEventName).toBe(expectedEventName);
+            expect(customEvent.fire).toHaveBeenCalledWith(expectedEventName);
             expect(customEvent.customEventContainer.className).toBe('');
         });
     });

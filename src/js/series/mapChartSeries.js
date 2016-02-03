@@ -60,6 +60,25 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.mapModel = null;
 
+        /**
+         * Previous mouse position.
+         * @type {?{left: number, top: number}}
+         */
+        this.prevPosition = null;
+
+
+        /**
+         * Previous moved index.
+         * @type {?number}
+         */
+        this.prevMovedIndex = null;
+
+        /**
+         * Whether drag or not.
+         * @type {boolean}
+         */
+        this.isDrag = false;
+
         Series.call(this, params);
     },
 
@@ -266,7 +285,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Whether changed or not.
-     * @param {{left: number, top: number}} prevPosition previous position
+     * @param {?{left: number, top: number}} prevPosition previous position
      * @param {{left: number, top: number}} position position
      * @returns {boolean} result boolean
      * @private
@@ -345,11 +364,11 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             }
 
             this._showWedge(foundIndex);
-        } else if (!tui.util.isUndefined(this.prevMovedIndex)) {
+        } else if (!tui.util.isNull(this.prevMovedIndex)) {
             this.graphRenderer.restoreColor(this.prevMovedIndex);
             this.fire('hideWedge');
             this.fire('hideTooltip');
-            delete this.prevMovedIndex;
+            this.prevMovedIndex = null;
         }
         this.prevPosition = position;
     },
