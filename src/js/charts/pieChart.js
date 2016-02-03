@@ -105,12 +105,17 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         tooltip = this.componentManager.get('tooltip');
         pieSeries = this.componentManager.get('pieSeries');
 
-        pieSeries.on('showTooltip', tooltip.onShow, tooltip);
-        pieSeries.on('hideTooltip', tooltip.onHide, tooltip);
-        pieSeries.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
-        pieSeries.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
-        customEvent.on('clickPieSeries', pieSeries.onClickSeries, pieSeries);
-        customEvent.on('movePieSeries', pieSeries.onMoveSeries, pieSeries);
+        customEvent.on({
+            clickPieSeries: pieSeries.onClickSeries,
+            movePieSeries: pieSeries.onMoveSeries
+        }, pieSeries);
+
+        pieSeries.on({
+            showTooltip: tooltip.onShow,
+            hideTooltip: tooltip.onHide,
+            showTooltipContainer: tooltip.onShowTooltipContainer,
+            hideTooltipContainer: tooltip.onHideTooltipContainer
+        }, tooltip);
     }
 });
 

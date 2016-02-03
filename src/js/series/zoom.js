@@ -15,7 +15,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * Zoom component.
      * @param {object} params parameters
-     *      @params {BoundsMaker} params.boundsMaker bounds maker
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      * @constructs Zoom
      */
     init: function(params) {

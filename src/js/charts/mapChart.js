@@ -145,20 +145,25 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             tooltip = this.componentManager.get('tooltip'),
             zoom = this.componentManager.get('zoom');
 
-        ChartBase.prototype._attachCustomEvent.call(this);
+        customEvent.on({
+            clickMapSeries: mapSeries.onClickSeries,
+            moveMapSeries: mapSeries.onMoveSeries,
+            dragStartMapSeries: mapSeries.onDragStartSeries,
+            dragMapSeries: mapSeries.onDragSeries,
+            dragEndMapSeries: mapSeries.onDragEndSeries
+        }, mapSeries);
 
-        customEvent.on('clickMapSeries', mapSeries.onClickSeries, mapSeries);
-        customEvent.on('moveMapSeries', mapSeries.onMoveSeries, mapSeries);
-        customEvent.on('dragStartMapSeries', mapSeries.onDragStartSeries, mapSeries);
-        customEvent.on('dragMapSeries', mapSeries.onDragSeries, mapSeries);
-        customEvent.on('dragEndMapSeries', mapSeries.onDragEndSeries, mapSeries);
+        mapSeries.on({
+            showWedge: legend.onShowWedge,
+            hideWedge: legend.onHideWedge
+        }, legend);
 
-        mapSeries.on('showWedge', legend.onShowWedge, legend);
-        mapSeries.on('hideWedge', legend.onHideWedge, legend);
-        mapSeries.on('showTooltip', tooltip.onShow, tooltip);
-        mapSeries.on('hideTooltip', tooltip.onHide, tooltip);
-        mapSeries.on('showTooltipContainer', tooltip.onShowTooltipContainer, tooltip);
-        mapSeries.on('hideTooltipContainer', tooltip.onHideTooltipContainer, tooltip);
+        mapSeries.on({
+            showTooltip: tooltip.onShow,
+            hideTooltip: tooltip.onHide,
+            showTooltipContainer: tooltip.onShowTooltipContainer,
+            hideTooltipContainer: tooltip.onHideTooltipContainer
+        }, tooltip);
 
         zoom.on('zoom', mapSeries.onZoom, mapSeries, mapSeries);
     }
