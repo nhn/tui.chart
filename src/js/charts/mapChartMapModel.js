@@ -18,17 +18,22 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     init: function(dataProcessor, rawMapData) {
         /**
          * Command function map.
-         * @type {{M: MapChartMapModel._makeCoordinate, m: MapChartMapModel._makeCoordinateFromRelativeCoordinate, L: MapChartMapModel._makeCoordinate, l: MapChartMapModel._makeCoordinateFromRelativeCoordinate, H: MapChartMapModel._makeXCoordinate, h: MapChartMapModel._makeXCoordinateFroRelativeCoordinate, V: MapChartMapModel._makeYCoordinate, v: MapChartMapModel._makeYCoordinateFromRelativeCoordinate}}
+         * @type {{
+         *      M: MapChartMapModel._makeCoordinate, m: MapChartMapModel._makeCoordinateFromRelativeCoordinate,
+         *      L: MapChartMapModel._makeCoordinate, l: MapChartMapModel._makeCoordinateFromRelativeCoordinate,
+         *      H: MapChartMapModel._makeXCoordinate, h: MapChartMapModel._makeXCoordinateFroRelativeCoordinate,
+         *      V: MapChartMapModel._makeYCoordinate, v: MapChartMapModel._makeYCoordinateFromRelativeCoordinate
+         * }}
          */
         this.commandFuncMap = {
-            M: this._makeCoordinate,
-            m: this._makeCoordinateFromRelativeCoordinate,
-            L: this._makeCoordinate,
-            l: this._makeCoordinateFromRelativeCoordinate,
-            H: this._makeXCoordinate,
-            h: this._makeXCoordinateFroRelativeCoordinate,
-            V: this._makeYCoordinate,
-            v: this._makeYCoordinateFromRelativeCoordinate
+            M: tui.util.bind(this._makeCoordinate, this),
+            m: tui.util.bind(this._makeCoordinateFromRelativeCoordinate, this),
+            L: tui.util.bind(this._makeCoordinate, this),
+            l: tui.util.bind(this._makeCoordinateFromRelativeCoordinate, this),
+            H: tui.util.bind(this._makeXCoordinate, this),
+            h: tui.util.bind(this._makeXCoordinateFroRelativeCoordinate, this),
+            V: tui.util.bind(this._makeYCoordinate, this),
+            v: tui.util.bind(this._makeYCoordinateFromRelativeCoordinate, this)
         };
 
         /**
@@ -62,18 +67,32 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     },
 
     /**
+     * Split coordinate string.
+     * @param {string} coordinateStr coordinate string
+     * @returns {{x: number, y: number}} coordinate map
+     * @private
+     */
+    _splitCoordinate: function(coordinateStr) {
+        var coordinates = coordinateStr.split(','),
+            result = {
+                x: parseFloat(coordinates[0])
+            };
+
+        if (coordinates[1]) {
+            result.y = parseFloat(coordinates[1]);
+        }
+
+        return result;
+    },
+
+    /**
      * Make coordinate
      * @param {string} coordinateStr coordinate
      * @returns {{x: number, y: number}} coordinate
      * @private
      */
     _makeCoordinate: function(coordinateStr) {
-        var coordinates = coordinateStr.split(',');
-
-        return {
-            x: parseFloat(coordinates[0]),
-            y: parseFloat(coordinates[1])
-        };
+        return this._splitCoordinate(coordinateStr);
     },
 
     /**
@@ -84,11 +103,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeCoordinateFromRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinates = coordinateStr.split(',');
+        var coordinate = this._splitCoordinate(coordinateStr);
 
         return {
-            x: parseFloat(coordinates[0]) + prevCoordinate.x,
-            y: parseFloat(coordinates[1]) + prevCoordinate.y
+            x: coordinate.x + prevCoordinate.x,
+            y: coordinate.y + prevCoordinate.y
         };
     },
 
@@ -99,10 +118,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeXCoordinate: function(coordinateStr) {
-        var coordinates = coordinateStr.split(',');
+        var coordinate = this._splitCoordinate(coordinateStr);
 
         return {
-            x: parseFloat(coordinates[0])
+            x: coordinate.x
         };
     },
 
@@ -114,10 +133,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeXCoordinateFroRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinates = coordinateStr.split(',');
+        var coordinate = this._splitCoordinate(coordinateStr);
 
         return {
-            x: parseFloat(coordinates[0]) + prevCoordinate.x
+            x: coordinate.x + prevCoordinate.x
         };
     },
 
@@ -128,10 +147,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeYCoordinate: function(coordinateStr) {
-        var coordinates = coordinateStr.split(',');
+        var coordinate = this._splitCoordinate(coordinateStr);
 
         return {
-            y: parseFloat(coordinates[0])
+            y: coordinate.x
         };
     },
 
@@ -143,10 +162,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeYCoordinateFromRelativeCoordinate: function(coordinateStr, prevCoordinate) {
-        var coordinates = coordinateStr.split(',');
+        var coordinate = this._splitCoordinate(coordinateStr);
 
         return {
-            y: parseFloat(coordinates[0]) + prevCoordinate.y
+            y: coordinate.x + prevCoordinate.y
         };
     },
 
@@ -226,9 +245,9 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 return !tui.util.isUndefined(y);
             }),
             maxLeft = Math.max.apply(null, xs),
-            minLeft = Math.min.apply([], xs),
-            maxTop = Math.max.apply([], ys),
-            minTop = Math.min.apply([], ys);
+            minLeft = Math.min.apply(null, xs),
+            maxTop = Math.max.apply(null, ys),
+            minTop = Math.min.apply(null, ys);
 
         return {
             dimension: {
