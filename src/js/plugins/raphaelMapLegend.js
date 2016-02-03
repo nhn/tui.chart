@@ -21,27 +21,36 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @param {HTMLElement} container container
      * @param {{width: number, height: number}} dimension legend dimension
      * @param {MapChartColorModel} colorModel map chart color model
+     * @param {boolean} isHorizontal whether horizontal legend or not
      * @returns {object} paper raphael paper
      */
-    render: function(container, dimension, colorModel) {
+    render: function(container, dimension, colorModel, isHorizontal) {
         var paper = raphael(container, dimension.width, dimension.height),
-            rect = paper.rect(0, 0, dimension.width - PADDING, dimension.height);
+            rectWidth = dimension.width - PADDING,
+            rectHeight = dimension.height,
+            left = 0,
+            degree;
 
-        rect.attr({
-            fill: '270-' + colorModel.start + '-' + colorModel.end,
+        if (isHorizontal) {
+            rectHeight -= PADDING;
+            left = PADDING / 2;
+            degree = 360;
+            this._makeWedghPath = this._makeHorizontalWedgePath;
+        } else {
+            degree = 270;
+            this._makeWedghPath = this._makeVerticalWedgePath;
+        }
+
+        paper.rect(left, 0, rectWidth, rectHeight).attr({
+            fill: degree + '-' + colorModel.start + '-' + colorModel.end,
             stroke: 'none'
         });
 
         this.wedge = this._renderWedge(paper);
 
+
         return paper;
     },
-
-    /**
-     * Base path
-     * @type {Array}
-     */
-    basePath: ['M', 16, 6, 'L', 24, 3, 'L', 24, 9],
 
     /**
      * Render wedge.
@@ -50,7 +59,7 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @private
      */
     _renderWedge: function(paper) {
-        var wedge = paper.path(this.basePath).attr({
+        var wedge = paper.path(this.verticalBasePath).attr({
             'fill': 'gray',
             stroke: 'none',
             opacity: 0
@@ -60,15 +69,55 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
     },
 
     /**
-     * Show wedge.
-     * @param {number} top top
+     * Vertical base path
+     * @type {Array}
      */
-    showWedge: function(top) {
-        var path = this.basePath;
+    verticalBasePath: ['M', 16, 6, 'L', 24, 3, 'L', 24, 9],
+
+    /**
+     * Make vertical wedge path.
+     * @param {number} top top
+     * @returns {Array} path
+     * @private
+     */
+    _makeVerticalWedgePath: function(top) {
+        var path = this.verticalBasePath;
 
         path[2] = top;
         path[5] = top - 3;
         path[8] = top + 3;
+
+        return path;
+    },
+
+    /**
+     * Horizontal base path
+     * @type {Array}
+     */
+    horizontalBasePath: ['M', 5, 16, 'L', 8, 24, 'L', 2, 24],
+
+    /**
+     * Make horizontal wedge path.
+     * @param {number} left left
+     * @returns {Array} path
+     * @private
+     */
+    _makeHorizontalWedgePath: function(left) {
+        var path = this.horizontalBasePath;
+
+        path[1] = left;
+        path[4] = left + 3;
+        path[7] = left - 3;
+
+        return path;
+    },
+
+    /**
+     * Show wedge.
+     * @param {number} positionValue top
+     */
+    showWedge: function(positionValue) {
+        var path = this._makeWedghPath(positionValue);
 
         this.wedge.attr({
             path: path,

@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     pluginFactory = require('../factories/pluginFactory'),
@@ -56,46 +57,114 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
          * @type {object}
          */
         this.graphRenderer = pluginFactory.get(libType, 'mapLegend');
+
+        /**
+         * Whether horizontal legend or not.
+         * @type {boolean}
+         */
+        this.isHorizontal = predicate.isHorizontalLegend(this.options.align);
+    },
+
+    /**
+     * Make vertical legend dimension.
+     * @returns {{width: number, height: number}} dimension
+     * @private
+     */
+    _makeVerticalDimension: function() {
+        var maxValue = Math.max.apply(null, this.dataProcessor.getValues()),
+            formatFunctions = this.dataProcessor.getFormatFunctions(),
+            valueStr = renderUtil.formatValue(maxValue, formatFunctions),
+            labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label),
+            padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+        return {
+            width:  chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
+            height: chartConst.MAP_LEGEND_SIZE
+        };
+    },
+
+    /**
+     * Make horizontal legend dimension
+     * @returns {{width: number, height: number}} dimension
+     * @private
+     */
+    _makeHorizontalDimension: function() {
+        var maxValue = Math.max.apply(null, this.dataProcessor.getValues()),
+            labelHeight = renderUtil.getRenderedLabelHeight(maxValue, this.theme.label),
+            padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
+
+        return {
+            width:  chartConst.MAP_LEGEND_SIZE,
+            height: chartConst.MAP_LEGEND_GRAPH_SIZE + labelHeight + padding
+        };
     },
 
     /**
      * Register dimension.
      */
     registerDimension: function() {
-        var maxValue = Math.max.apply(null, this.dataProcessor.getValues()),
-            formatFunctions = this.dataProcessor.getFormatFunctions(),
-            valueStr = renderUtil.formatValue(maxValue, formatFunctions),
-            labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label),
-            paddingWidth = (chartConst.LEGEND_AREA_PADDING * 2) + chartConst.MAP_LEGEND_LABEL_PADDING,
-            dimension = {
-                width:  chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + paddingWidth,
-                height: chartConst.MAP_LEGEND_HEIGHT
-            };
+        var dimension;
+
+        if (this.isHorizontal) {
+            dimension = this._makeHorizontalDimension();
+        } else {
+            dimension = this._makeVerticalDimension();
+        }
 
         this.boundsMaker.registerBaseDimension('legend', dimension);
     },
 
+    /**
+     * Make base data to make tick html.
+     * @returns {{startPositionValue: number, step: number, positionType: string, labelSize: ?number}} base data
+     * @private
+     */
+    _makeBaseDataToMakeTickHtml: function() {
+        var dimension = this.boundsMaker.getDimension('legend'),
+            stepCount = this.axesData.tickCount - 1,
+            baseData = {};
+
+        if (this.isHorizontal) {
+            baseData.startPositionValue = 5;
+            baseData.step = dimension.width / stepCount;
+            baseData.positionType = 'left:';
+        } else {
+            baseData.startPositionValue = 0;
+            baseData.step = dimension.height / stepCount;
+            baseData.positionType = 'top:';
+            baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(this.axesData.labels[0], this.theme.label) / 2, 10) - 1;
+        }
+
+        return baseData;
+    },
     /**
      * Make tick html.
      * @returns {string} tick html.
      * @private
      */
     _makeTickHtml: function() {
-        var top = 0,
-            labelHeight = parseInt(renderUtil.getRenderedLabelHeight(this.axesData.labels[0], this.theme.label) / 2, 10) - 1,
-            step = this.boundsMaker.getDimension('legend').height / (this.axesData.tickCount - 1),
+        var baseData = this._makeBaseDataToMakeTickHtml(),
+            positionValue = baseData.startPositionValue,
             htmls;
 
         htmls = tui.util.map(this.axesData.labels, function(label) {
-            var html = legendTemplate.tplTick({
-                top: top,
-                labelTop: top - labelHeight,
+            var labelSize, html;
+
+            if (this.isHorizontal) {
+                labelSize = parseInt(renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2, 10);
+            } else {
+                labelSize = baseData.labelSize;
+            }
+
+            html = legendTemplate.tplTick({
+                position: baseData.positionType + positionValue + 'px',
+                labelPosition: baseData.positionType + (positionValue - labelSize) + 'px',
                 label: label
             });
 
-            top += step;
+            positionValue += baseData.step;
             return html;
-        });
+        }, this);
 
         return htmls.join('');
     },
@@ -109,7 +178,52 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
         var tickContainer = dom.create('div', 'tui-chart-legend-tick-area');
 
         tickContainer.innerHTML = this._makeTickHtml();
+
+        if (this.isHorizontal) {
+            dom.addClass(tickContainer, 'horizontal');
+        }
         return tickContainer;
+    },
+
+    /**
+     * Make graph dimension of vertical legend
+     * @returns {{width: number, height: number}} dimension
+     * @private
+     */
+    _makeVerticalGraphDimension: function() {
+        return {
+            width: chartConst.MAP_LEGEND_GRAPH_SIZE,
+            height: this.boundsMaker.getDimension('legend').height
+        }
+    },
+
+    /**
+     * Make graph dimension of horizontal legend
+     * @returns {{width: number, height: number}} dimension
+     * @private
+     */
+    _makeHorizontalGraphDimension: function() {
+        return {
+            width: this.boundsMaker.getDimension('legend').width + 10,
+            height: chartConst.MAP_LEGEND_GRAPH_SIZE
+        }
+    },
+
+    /**
+     * Render graph.
+     * @param {HTMLElement} container container element
+     * @private
+     */
+    _renderGraph: function(container) {
+        var dimension;
+
+        if (this.isHorizontal) {
+            dimension = this._makeHorizontalGraphDimension();
+        } else {
+            dimension = this._makeVerticalGraphDimension();
+        }
+
+        this.graphRenderer.render(container, dimension, this.colorModel, this.isHorizontal);
     },
 
     /**
@@ -118,13 +232,13 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @private
      */
     _renderLegendArea: function(container) {
+        var tickContainer;
+
         container.innerHTML = '';
         renderUtil.renderPosition(container, this.boundsMaker.getPosition('legend'));
-        this.graphRenderer.render(container, {
-            width: chartConst.MAP_LEGEND_GRAPH_SIZE,
-            height: this.boundsMaker.getDimension('legend').height
-        }, this.colorModel);
-        container.appendChild(this._renderTickArea());
+        this._renderGraph(container);
+        tickContainer = this._renderTickArea();
+        container.appendChild(tickContainer);
         container.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
     },
 
@@ -156,7 +270,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @param {number} ratio ratio
      */
     onShowWedge: function(ratio) {
-        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_HEIGHT * ratio);
+        this.graphRenderer.showWedge(chartConst.MAP_LEGEND_SIZE * ratio);
     },
 
     /**

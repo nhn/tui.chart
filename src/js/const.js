@@ -188,7 +188,7 @@ var chartConst = {
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
     /** map legend height */
-    MAP_LEGEND_HEIGHT: 200,
+    MAP_LEGEND_SIZE: 200,
     /** map legend graph size */
     MAP_LEGEND_GRAPH_SIZE: 25,
     /** map legend label padding */

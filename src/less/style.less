@@ -357,9 +357,6 @@
       position:absolute;
       left: 10px;
       top: 10px;
-      .tui-chart-map-legend-graph-area {
-
-      }
       .tui-chart-map-legend-tick {
         width: 15px;
         height: 1px;
@@ -372,6 +369,18 @@
         position: absolute;
         left: 30px;
         text-align: left;
+      }
+
+      &.horizontal {
+        .tui-chart-map-legend-tick {
+          top: 0px;
+          width: 1px;
+          height: 15px;
+        }
+
+        .tui-chart-map-legend-tick-label {
+          top: 30px;
+        }
       }
     }
 

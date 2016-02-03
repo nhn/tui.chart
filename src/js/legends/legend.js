@@ -35,7 +35,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         /**
          * options
-         * @type {params.options|{legendAlign}|{}}
+         * @type {Object}
          */
         this.options = params.options || {};
 
