@@ -139,7 +139,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
             colorModel: this.data.colorModel,
             mapModel: this.mapModel,
             dimension: this.graphDimension,
-            valueMap: this.dataProcessor.getValueMap()
+            theme: this.theme
         });
     },
 

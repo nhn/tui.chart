@@ -25,8 +25,24 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @returns {object} paper raphael paper
      */
     render: function(container, dimension, colorModel, isHorizontal) {
-        var paper = raphael(container, dimension.width, dimension.height),
-            rectWidth = dimension.width - PADDING,
+        var paper = raphael(container, dimension.width, dimension.height);
+
+        this._renderGradientBar(paper, dimension, colorModel, isHorizontal);
+        this.wedge = this._renderWedge(paper);
+
+        return paper;
+    },
+
+    /**
+     * Render gradient bar.
+     * @param {object} paper raphael object
+     * @param {{width: number, height: number}} dimension legend dimension
+     * @param {MapChartColorModel} colorModel map chart color model
+     * @param {boolean} isHorizontal whether horizontal legend or not
+     * @private
+     */
+    _renderGradientBar: function(paper, dimension, colorModel, isHorizontal) {
+        var rectWidth = dimension.width - PADDING,
             rectHeight = dimension.height,
             left = 0,
             degree;
@@ -45,11 +61,6 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
             fill: degree + '-' + colorModel.start + '-' + colorModel.end,
             stroke: 'none'
         });
-
-        this.wedge = this._renderWedge(paper);
-
-
-        return paper;
     },
 
     /**
@@ -104,6 +115,8 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      */
     _makeHorizontalWedgePath: function(left) {
         var path = this.horizontalBasePath;
+
+        left += PADDING / 2;
 
         path[1] = left;
         path[4] = left + 3;

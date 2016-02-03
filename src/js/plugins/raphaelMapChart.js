@@ -10,6 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
+var STROKE_COLOR = 'gray';
+
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
  * @class RaphaelMapChart
@@ -21,7 +23,6 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
-     *      @param {object} data.valueMap valueMap
      *      @param {MapChartColorModel} data.colorModel color model
      * @returns {object} paper raphael paper
      */
@@ -32,6 +33,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         this.paper = paper = raphael(container, dimension.width, dimension.height);
         this.sectors = this._renderMap(data);
+        this.overColor = data.theme.overColor;
 
         paper.setViewBox(0, 0, mapDimension.width, mapDimension.height, false);
 
@@ -43,7 +45,6 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
-     *      @param {object} data.valueMap valueMap
      *      @param {MapChartColorModel} data.colorModel color model
      * @returns {Array.<{sector: object, color: string, data: object}>} rendered map information
      * @private
@@ -54,7 +55,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
             var percentValue = datum.percentValue || 0,
                 color = colorModel.getColor(percentValue),
-                sector = raphaelRenderUtil.renderArea(this.paper, datum.path, color, 1, '#555555', 1);
+                sector = raphaelRenderUtil.renderArea(this.paper, datum.path, color, 1, STROKE_COLOR, 1);
 
             sector.data('index', index);
 
@@ -86,9 +87,9 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     changeColor: function(index) {
         var sector = this.sectors[index];
 
-        sector.sector.attr({
-            fill: 'yellow'
-        });
+        sector.sector.animate({
+            fill: this.overColor
+        }, 100);
     },
 
     /**
@@ -98,9 +99,9 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
     restoreColor: function(index) {
         var sector = this.sectors[index];
 
-        sector.sector.attr({
+        sector.sector.animate({
             fill: sector.color
-        });
+        }, 100);
     },
 
     /**

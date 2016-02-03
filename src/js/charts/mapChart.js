@@ -114,7 +114,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @override
      */
     _makeRenderingData: function(axesData) {
-        var colorModel = new MapChartColorModel('#EEEEFF', '#0000ff'),
+        var seriesTheme = this.theme.series,
+            colorModel = new MapChartColorModel(seriesTheme.startColor, seriesTheme.endColor),
             mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         return {

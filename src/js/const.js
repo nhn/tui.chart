@@ -120,7 +120,8 @@ var chartConst = {
     /** series properties
      * @type {Array.<string>}
      */
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors', 'selectionColor'], // series theme의 속성 - chart type filtering할 때 사용됨
+    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors',
+        'selectionColor', 'startColor', 'endColor', 'overColor'], // series theme의 속성 - chart type filtering할 때 사용됨
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
     /** top margin of x axis label */
