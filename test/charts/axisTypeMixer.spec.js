@@ -24,7 +24,7 @@ describe('ComboChart', function() {
         tui.util.extend(axisTypeMixer, spyObjs);
 
         componentManager = jasmine.createSpyObj('componentManager', ['register']);
-        axisTypeMixer.component = componentManager;
+        axisTypeMixer.componentManager = componentManager;
         componentManager.register.and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });

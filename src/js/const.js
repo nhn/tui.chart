@@ -70,6 +70,7 @@ var chartConst = {
      * @type {string}
      */
     DEFAULT_THEME_NAME: 'default',
+    MAX_HEIGHT_WORLD: 'A',
     /** stacked option types
      * @type {string}
      */

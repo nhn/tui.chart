@@ -43,7 +43,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _makeXAxisHeight: function() {
         var title = this.options.title,
             titleAreaHeight = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING,
-            height = renderUtil.getRenderedLabelHeight('AAA', this.theme.label) + titleAreaHeight;
+            height = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label) + titleAreaHeight;
         return height;
     },
 
@@ -64,19 +64,20 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Whether invalid right y axis or not.
-     * @returns {boolean} whether invalid or not.
+     * Whether valid axis or not.
+     * @returns {boolean} whether valid axis or not.
      * @private
      */
-    _isInvalidRightYAxis: function() {
-        var isInvalid = false,
-            grouopValues;
+    _isValidAxis: function() {
+        var isInvalid = true,
+            groupValues;
 
         if (this.name === 'rightYAxis') {
-            grouopValues = this.dataProcessor.getGroupValues();
-            tui.util.forEach(grouopValues, function(values) {
+            groupValues = this.dataProcessor.getGroupValues();
+            tui.util.forEach(groupValues, function(values) {
                 if (!values.length) {
-                    isInvalid = true;
+                    isInvalid = false;
+                    return false;
                 }
             });
         }
@@ -90,7 +91,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     registerDimension: function() {
         var dimension = {};
 
-        if (!this._isInvalidRightYAxis()) {
+        if (this._isValidAxis()) {
             if (this.componentType === 'xAxis') {
                 dimension.height = this._makeXAxisHeight();
                 this.boundsMaker.registerBaseDimension(this.name, dimension);
@@ -102,21 +103,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Register legend addition dimension to boundsMaker.
+     * Register legend additional dimension to boundsMaker.
      */
-    registerAdditionDimension: function() {
+    registerAdditionalDimension: function() {
         var dimension,
             axesData = this.boundsMaker.axesData;
 
-        if (this._isInvalidRightYAxis()) {
-            return;
-        }
-
-        if (this.componentType === 'yAxis' && !this.isLabel) {
-            dimension = {
-                width: this._makeYAxisWidth(axesData.yAxis.labels)
-            };
-            this.boundsMaker.registerBaseDimension(this.name, dimension);
+        if (this._isValidAxis()) {
+            if (this.componentType === 'yAxis' && !this.isLabel) {
+                dimension = {
+                    width: this._makeYAxisWidth(axesData.yAxis.labels)
+                };
+                this.boundsMaker.registerBaseDimension(this.name, dimension);
+            }
         }
     },
 
@@ -176,7 +175,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     rerender: function(data) {
         this.axisContainer.innerHTML = '';
 
-        if (!this._isInvalidRightYAxis()) {
+        if (this._isValidAxis()) {
             if (data.options) {
                 this.options = data.options;
             }

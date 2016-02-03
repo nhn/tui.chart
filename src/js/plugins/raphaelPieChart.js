@@ -51,6 +51,9 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         return paper;
     },
 
+    /**
+     * Clear paper.
+     */
     clear: function() {
         this.paper.clear();
     },

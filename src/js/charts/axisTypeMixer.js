@@ -46,7 +46,7 @@ var axisTypeMixer = {
                 axisParams.index = 1;
             }
 
-            this.component.register(axis.name, Axis, axisParams);
+            this.componentManager.register(axis.name, Axis, axisParams);
         }, this);
     },
 
@@ -67,7 +67,7 @@ var axisTypeMixer = {
 
         tui.util.forEach(serieses, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-            this.component.register(series.name, series.SeriesClass, seriesParams);
+            this.componentManager.register(series.name, series.SeriesClass, seriesParams);
         }, this);
     },
 
@@ -77,7 +77,7 @@ var axisTypeMixer = {
      */
     _addTooltipComponent: function() {
         var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
-        this.component.register('tooltip', TooltipClass, this._makeTooltipData());
+        this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
     },
 
     /**
@@ -89,7 +89,7 @@ var axisTypeMixer = {
      */
     _addLegendComponent: function(chartTypes, chartType, legendOptions) {
         if (!legendOptions || !legendOptions.hidden) {
-            this.component.register('legend', Legend, {
+            this.componentManager.register('legend', Legend, {
                 chartTypes: chartTypes,
                 chartType: chartType,
                 userEvent: this.userEvent
@@ -109,7 +109,7 @@ var axisTypeMixer = {
         var options = this.options,
             aligned = !!params.aligned;
 
-        this.component.register('plot', Plot);
+        this.componentManager.register('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options);
@@ -207,7 +207,7 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
-        this.component.register('customEvent', GroupTypeCustomEvent, {
+        this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -218,7 +218,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this.component.register('customEvent', PointTypeCustomEvent, {
+        this.componentManager.register('customEvent', PointTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -295,9 +295,9 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
-        var serieses = this.component.where({componentType: 'series'}),
-            customEvent = this.component.get('customEvent'),
-            tooltip = this.component.get('tooltip');
+        var serieses = this.componentManager.where({componentType: 'series'}),
+            customEvent = this.componentManager.get('customEvent'),
+            tooltip = this.componentManager.get('tooltip');
 
         ChartBase.prototype._attachCustomEvent.call(this, serieses);
 

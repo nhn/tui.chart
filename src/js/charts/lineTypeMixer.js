@@ -73,7 +73,7 @@ var lineTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this.component.register('customEvent', AreaTypeCustomEvent, {
+        this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });

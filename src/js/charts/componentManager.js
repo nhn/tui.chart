@@ -70,8 +70,7 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, Component, params) {
-        var commonParams = {},
-            options, index, theme,
+        var options, index, theme,
             component, componentType;
 
         params = params || {};
@@ -81,13 +80,11 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
         theme = params.theme || this.theme[componentType];
         index = params.index || 0;
 
-        commonParams.theme = theme;
-        commonParams.options = tui.util.isArray(options) ? options[index] : options || {};
-        commonParams.dataProcessor = this.dataProcessor;
-        commonParams.boundsMaker = this.boundsMaker;
-        commonParams.hasAxes = this.hasAxes;
-
-        params = tui.util.extend(params, commonParams);
+        params.theme = theme;
+        params.options = tui.util.isArray(options) ? options[index] : options || {};
+        params.dataProcessor = this.dataProcessor;
+        params.boundsMaker = this.boundsMaker;
+        params.hasAxes = this.hasAxes;
 
         component = new Component(params);
         component.name = name;

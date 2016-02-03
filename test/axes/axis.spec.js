@@ -65,35 +65,35 @@ describe('Axis', function() {
         });
     });
 
-    describe('_isInvalidRightYAxis()', function() {
-        it('component name이 rightYAxis가 아니면 false를 반환합니다.', function() {
+    describe('_isValidAxis()', function() {
+        it('component name이 rightYAxis가 아니면 true를 반환합니다.', function() {
             var actual, expected;
 
             axis.name = 'xAxis';
-            actual = axis._isInvalidRightYAxis();
-            expected = false;
+            actual = axis._isValidAxis();
+            expected = true;
 
             expect(actual).toBe(expected);
         });
 
-        it('component name이 rightYAxis면서 getGroupValues에 length가 0인 values가 하나라도 존재하면 true를 반환합니다.', function() {
+        it('component name이 rightYAxis면서 getGroupValues에 length가 0인 values가 하나라도 존재하면 false를 반환합니다.', function() {
             var actual, expected;
 
             axis.name = 'rightYAxis';
             dataProcessor.getGroupValues.and.returnValue([[], [1, 2, 3]]);
 
-            actual = axis._isInvalidRightYAxis();
-            expected = true;
+            actual = axis._isValidAxis();
+            expected = false;
 
             expect(actual).toBe(expected);
         });
     });
 
     describe('registerDimension()', function() {
-        it('_isInvalidRightYAxis()가 true이면 boundsMaker에 등록하지 않습니다.', function() {
+        it('_isValidAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
             var actualDimensions = {};
 
-            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(false);
+            spyOn(axis, '_isValidAxis').and.returnValues(false);
             axis.name = 'yAxis';
 
             boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
@@ -160,18 +160,18 @@ describe('Axis', function() {
         });
     });
 
-    describe('registerAdditionDimension()', function() {
-        it('_isInvalidRightYAxis()가 true이면 boundsMaker에 등록하지 않습니다.', function() {
+    describe('registerAdditionalDimension()', function() {
+        it('_isInvalidRightYAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
             var actualDimensions = {};
 
-            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(true);
+            spyOn(axis, '_isValidAxis').and.returnValues(false);
             axis.name = 'yAxis';
 
             boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
                 actualDimensions[name] = dimension;
             });
 
-            axis.registerAdditionDimension();
+            axis.registerAdditionalDimension();
 
             expect(actualDimensions[axis.name]).toBeUndefined();
         });
@@ -194,7 +194,7 @@ describe('Axis', function() {
                 actualDimensions[name] = dimension;
             });
 
-            axis.registerAdditionDimension();
+            axis.registerAdditionalDimension();
 
             expect(actualDimensions[axis.name]).toEqual(expected);
         });
@@ -698,11 +698,11 @@ describe('Axis', function() {
     });
 
     describe('rerender()', function() {
-        it('_isInvalidRightYAxis()가 true이면 container의 내용만 비우고 끝냅니다.', function() {
+        it('_isInvalidRightYAxis()가 false이면 container의 내용만 비우고 끝냅니다.', function() {
             axis.axisContainer = dom.create('DIV');
             axis.axisContainer.innerHTML = 'contents';
 
-            spyOn(axis, '_isInvalidRightYAxis').and.returnValues(true);
+            spyOn(axis, '_isValidAxis').and.returnValues(false);
 
             axis.rerender();
 

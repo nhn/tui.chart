@@ -12,7 +12,7 @@ var ChartBase = require('./chartBase'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries'),
-    pieChartCustomEvent = require('../customEvents/pieChartCustomEvent');
+    PieChartCustomEvent = require('../customEvents/pieChartCustomEvent');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
@@ -54,15 +54,15 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
 
         if (!isPieLegendType && !options.legend.hidden) {
-            this.component.register('legend', Legend, {
+            this.componentManager.register('legend', Legend, {
                 chartType: options.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this.component.register('tooltip', Tooltip, this._makeTooltipData());
+        this.componentManager.register('tooltip', Tooltip, this._makeTooltipData());
 
-        this.component.register('pieSeries', Series, {
+        this.componentManager.register('pieSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
@@ -77,7 +77,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @private
      */
     _addCustomEventComponent: function() {
-        this.component.register('customEvent', pieChartCustomEvent, {
+        this.componentManager.register('customEvent', PieChartCustomEvent, {
             chartType: this.chartType
         });
     },
@@ -101,9 +101,9 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
-        customEvent = this.component.get('customEvent');
-        tooltip = this.component.get('tooltip');
-        pieSeries = this.component.get('pieSeries');
+        customEvent = this.componentManager.get('customEvent');
+        tooltip = this.componentManager.get('tooltip');
+        pieSeries = this.componentManager.get('pieSeries');
 
         pieSeries.on('showTooltip', tooltip.onShow, tooltip);
         pieSeries.on('hideTooltip', tooltip.onHide, tooltip);

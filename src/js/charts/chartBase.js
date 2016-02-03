@@ -63,9 +63,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         /**
          * whether chart has group tooltip or not
-         * @type {*|boolean}
+         * @type {boolean}
          */
-        this.hasGroupTooltip = this.options.tooltip && this.options.tooltip.grouped;
+        this.hasGroupTooltip = !!tui.util.pick(this.options, 'tooltip', 'grouped');
 
         /**
          * data processor
@@ -90,7 +90,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * component manager
          * @type {ComponentManager}
          */
-        this.component = new ComponentManager({
+        this.componentManager = new ComponentManager({
             dataProcessor: this.dataProcessor,
             options: this.options,
             theme: this.theme,
@@ -166,9 +166,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _attachCustomEvent: function(serieses) {
-        var legend = this.component.get('legend');
+        var legend = this.componentManager.get('legend');
 
-        serieses = serieses || this.component.where({componentType: 'series'});
+        serieses = serieses || this.componentManager.where({componentType: 'series'});
 
         if (legend) {
             legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
@@ -193,14 +193,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _updatePercentValues: function() {},
 
     /**
-     * Register components dimension.
-     * @param {function} func function for execute
+     * Execute component function.
+     * @param {string} funcName function name
      * @private
      */
-    _registerComponentsDimension: function(func) {
-        this.component.each(function(component) {
-            if (component[func]) {
-                component[func]();
+    _executeComponentFunc: function(funcName) {
+        this.componentManager.each(function(component) {
+            if (component[funcName]) {
+                component[funcName]();
             }
         });
     },
@@ -213,10 +213,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _render: function(callback) {
         var axesData, renderingData;
 
-        this._registerComponentsDimension('registerDimension');
+        this._executeComponentFunc('registerDimension');
         axesData = this._makeAxesData();
         this.boundsMaker.registerAxesData(axesData);
-        this._registerComponentsDimension('registerAdditionDimension');
+        this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerBoundsData();
         this._updatePercentValues(axesData);
         renderingData = this._makeRenderingData(axesData);
@@ -288,7 +288,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _makeRerenderingData: function(renderingData, checkedLegends) {
         var tooltipData = this._makeTooltipData(),
-            serieses = this.component.where({componentType: 'series'});
+            serieses = this.componentManager.where({componentType: 'series'});
 
         renderingData.tooltip = tui.util.extend({
             checkedLegends: checkedLegends
@@ -360,7 +360,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(renderingData, funcName, container) {
-        var elements = this.component.map(function(component) {
+        var elements = this.componentManager.map(function(component) {
             var data = renderingData[component.name],
                 element = null;
 
@@ -381,7 +381,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function() {
-        var customEvent = this.component.get('customEvent'),
+        var customEvent = this.componentManager.get('customEvent'),
             seriesInfos, chartTypes;
 
         if (!customEvent) {
@@ -390,7 +390,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         chartTypes = this.chartTypes || [this.chartType];
         seriesInfos = tui.util.map(chartTypes, function(chartType) {
-            var component = this.component.get(chartType + 'Series') || this.component.get('series');
+            var component = this.componentManager.get(chartType + 'Series') || this.componentManager.get('series');
 
             return {
                 chartType: chartType,
@@ -416,7 +416,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Animate chart.
      */
     animateChart: function() {
-        this.component.each(function(component) {
+        this.componentManager.each(function(component) {
             if (component.animateComponent) {
                 component.animateComponent();
             }
@@ -489,7 +489,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     setTooltipAlign: function(align) {
-        this.component.get('tooltip').setAlign(align);
+        this.componentManager.get('tooltip').setAlign(align);
     },
 
     /**
@@ -500,7 +500,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     setTooltipPosition: function(position) {
-        this.component.get('tooltip').setPosition(position);
+        this.componentManager.get('tooltip').setPosition(position);
     },
 
     /**
@@ -508,7 +508,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resetTooltipAlign: function() {
-        this.component.get('tooltip').resetAlign();
+        this.componentManager.get('tooltip').resetAlign();
     },
 
     /**
@@ -516,7 +516,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resetTooltipPosition: function() {
-        this.component.get('tooltip').resetPosition();
+        this.componentManager.get('tooltip').resetPosition();
     }
 });
 

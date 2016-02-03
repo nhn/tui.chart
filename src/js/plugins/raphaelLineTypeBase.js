@@ -405,9 +405,9 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Animate.
-     * @param {function} callback callback
+     * @param {function} onFinish callback
      */
-    animate: function(callback) {
+    animate: function(onFinish) {
         var that = this,
             seriesWidth = this.dimension.width,
             seriesHeight = this.dimension.height;
@@ -420,7 +420,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             that.paper.setSize(width, seriesHeight);
 
             if (ratio === 1) {
-                callback();
+                onFinish();
             }
         });
     },

@@ -128,16 +128,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Register position.
-     * @param {string} name component name
-     * @param {position} position component position
-     * @private
-     */
-    _registerPosition: function(name, position) {
-        this.positions[name] = position;
-    },
-
-    /**
      * Register axes data.
      * @param {object} axesData axes data
      */
@@ -279,7 +269,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var degree = rotationInfo.degree,
             labelHeight = rotationInfo.labelHeight,
             firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, this.theme.xAxis.label),
-            newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
+            newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
+                + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
             diffLeft = newLabelWidth - this.getDimension('yAxis').width;
         return diffLeft;
     },
@@ -500,25 +491,25 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _registerAxisComponentsPosition: function(seriesPosition, leftLegendWidth) {
         var seriesDimension = this.getDimension('series');
 
-        this._registerPosition('plot', {
+        this.positions['plot'] = {
             top: seriesPosition.top,
             left: seriesPosition.left - chartConst.HIDDEN_WIDTH
-        });
+        };
 
-        this._registerPosition('yAxis', {
+        this.positions['yAxis'] = {
             top: seriesPosition.top,
             left: this.chartLeftPadding + leftLegendWidth
-        });
+        };
 
-        this._registerPosition('xAxis', {
+        this.positions['xAxis'] = {
             top: seriesPosition.top + seriesDimension.height,
             left: seriesPosition.left - chartConst.HIDDEN_WIDTH
-        });
+        };
 
-        this._registerPosition('rightYAxis', {
+        this.positions['rightYAxis'] = {
             top: seriesPosition.top,
             left: this.chartLeftPadding + this.getDimension('yAxis').width + seriesDimension.width + leftLegendWidth - chartConst.HIDDEN_WIDTH
-        });
+        };
     },
 
     /**
@@ -559,9 +550,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _registerEssentialComponentsPositions: function(seriesPosition) {
         var tooltipPosition;
 
-        this._registerPosition('series', seriesPosition);
-        this._registerPosition('customEvent', seriesPosition);
-        this._registerPosition('legend', this._makeLegendPosition());
+        this.positions['series'] = seriesPosition;
+        this.positions['customEvent']= seriesPosition;
+        this.positions['legend'] = this._makeLegendPosition();
 
         if (this.hasAxes) {
             tooltipPosition = {
@@ -572,7 +563,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             tooltipPosition = seriesPosition;
         }
 
-        this._registerPosition('tooltip', tooltipPosition);
+        this.positions['tooltip'] = tooltipPosition;
     },
 
     /**

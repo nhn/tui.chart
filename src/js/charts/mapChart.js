@@ -55,17 +55,17 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     _addComponents: function(options) {
         options.legend = options.legend || {};
 
-        this.component.register('legend', Legend);
+        this.componentManager.register('legend', Legend);
 
-        this.component.register('tooltip', MapChartTooltip, this._makeTooltipData());
+        this.componentManager.register('tooltip', MapChartTooltip, this._makeTooltipData());
 
-        this.component.register('mapSeries', Series, {
+        this.componentManager.register('mapSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
             userEvent: this.userEvent
         });
-        this.component.register('zoom', Zoom);
+        this.componentManager.register('zoom', Zoom);
     },
 
     /**
@@ -73,7 +73,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      */
     _addCustomEventComponent: function() {
-        this.component.register('customEvent', mapChartCustomEvent, {
+        this.componentManager.register('customEvent', mapChartCustomEvent, {
             chartType: this.chartType
         });
     },
@@ -139,11 +139,11 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var customEvent = this.component.get('customEvent'),
-            mapSeries = this.component.get('mapSeries'),
-            legend = this.component.get('legend'),
-            tooltip = this.component.get('tooltip'),
-            zoom = this.component.get('zoom');
+        var customEvent = this.componentManager.get('customEvent'),
+            mapSeries = this.componentManager.get('mapSeries'),
+            legend = this.componentManager.get('legend'),
+            tooltip = this.componentManager.get('tooltip'),
+            zoom = this.componentManager.get('zoom');
 
         ChartBase.prototype._attachCustomEvent.call(this);
 

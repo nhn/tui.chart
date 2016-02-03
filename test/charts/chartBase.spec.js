@@ -51,7 +51,7 @@ describe('ChartBase', function() {
                 }
             }
         });
-        chartBase.component = componentManager;
+        chartBase.componentManager = componentManager;
     });
 
     describe('_makeProcessedData()', function() {
