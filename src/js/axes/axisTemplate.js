@@ -4,6 +4,8 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
+'use strict';
+
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {

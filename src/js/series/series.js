@@ -17,7 +17,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Series base component.
      * @constructs Series
      * @param {object} params parameters
-     *      @param {object} params.model series model
      *      @param {object} params.options series options
      *      @param {object} params.theme series theme
      */
@@ -43,6 +42,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.dataProcessor = params.dataProcessor;
 
         /**
+         * Bounds maker
+         * @type {BoundsMaker}
+         */
+        this.boundsMaker = params.boundsMaker;
+
+        /**
          * User event listener
          * @type {UserEventListener}
          */
@@ -59,6 +64,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {object}
          */
         this.orgTheme = this.theme = params.theme;
+
+        /**
+         * whether chart has axes or not
+         * @type {boolean}
+         */
+        this.hasAxes = !!params.hasAxes;
 
         /**
          * Graph renderer
@@ -86,7 +97,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         /**
          * series data
-         * @type {array.<object>}
+         * @type {Array.<object>}
          */
         this.seriesData = [];
 
@@ -99,11 +110,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Make series data.
-     * @returns {object} add data
+     * @private
+     * @abstract
      */
-    makeSeriesData: function() {
-        return {};
-    },
+    _makeSeriesData: function() {},
 
     /**
      * Get seriesData
@@ -121,23 +131,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderSeriesLabel: function() {},
 
     /**
-     * Set base data.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
-     * @param {object} data data for rendering
-     * @private
-     */
-    _setBaseData: function(bound, data) {
-        this.data = data;
-        this.bound = bound;
-        this.dataProcessor.setPercentValues(this.data.limit, this.options.stacked, this.chartType);
-    },
-
-    /**
      * Get percent values.
-     * @returns {array.<array.<number>>} percent values.
+     * @returns {Array.<Array.<number>>} percent values.
      * @private
      */
     _getPercentValues: function() {
@@ -145,50 +140,43 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
     /**
      * Render series label area
-     * @param {{width: number, height: number}} dimension series dimension
-     * @param {object} seriesData series data
      * @param {?HTMLElement} seriesLabelContainer series label area element
      * @returns {HTMLElement} series label area element
      * @private
      */
-    _renderSeriesLabelArea: function(dimension, seriesData, seriesLabelContainer) {
-        var addDataForSeriesLabel = this._makeSeriesDataForSeriesLabel(seriesData, dimension);
-
+    _renderSeriesLabelArea: function(seriesLabelContainer) {
         if (!seriesLabelContainer) {
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
         }
 
-        this._renderSeriesLabel(addDataForSeriesLabel, seriesLabelContainer);
+        this._renderSeriesLabel(seriesLabelContainer);
         return seriesLabelContainer;
     },
 
     /**
      * Render series area.
      * @param {HTMLElement} seriesContainer series area element
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @param {object} data data for rendering
      * @param {function} funcRenderGraph function for graph rendering
      * @private
      */
-    _renderSeriesArea: function(seriesContainer, bound, data, funcRenderGraph) {
-        var expandedBound, seriesData, seriesLabelContainer;
+    _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
+        var bound = this.boundsMaker.getBound('series'),
+            expandedBound, seriesData, seriesLabelContainer;
 
-        this._setBaseData(bound, data);
+        this.data = data;
 
-        expandedBound = renderUtil.expandBound(bound);
-        this.seriesData = seriesData = this.makeSeriesData(bound);
+        expandedBound = this.hasAxes ? renderUtil.expandBound(bound) : bound;
+        this.seriesData = seriesData = this._makeSeriesData();
 
         renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
-        this._renderPosition(seriesContainer, expandedBound.position, this.chartType);
+        this._renderPosition(seriesContainer, expandedBound.position);
 
         if (funcRenderGraph) {
             funcRenderGraph(expandedBound.dimension, seriesData);
         }
 
-        seriesLabelContainer = this._renderSeriesLabelArea(expandedBound.dimension, seriesData, this.seriesLabelContainer);
+        seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
 
         if (!this.seriesLabelContainer) {
             this.seriesLabelContainer = seriesLabelContainer;
@@ -225,19 +213,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render series component.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @param {object} data data for rendering
      * @returns {HTMLElement} series element
      */
-    render: function(bound, data) {
+    render: function(data) {
         var el = dom.create('DIV', this.className);
 
         this.seriesContainer = el;
-        this.bound = bound;
-        this._renderSeriesArea(el, bound, data, tui.util.bind(this._renderGraph, this));
+        this._renderSeriesArea(el, data, tui.util.bind(this._renderGraph, this));
 
         return el;
     },
@@ -245,7 +228,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
      * Update theme.
      * @param {object} theme legend theme
-     * @param {?array.<?boolean>} checkedLegends checked legends
+     * @param {?Array.<?boolean>} checkedLegends checked legends
      * @returns {object} updated theme
      * @private
      */
@@ -266,16 +249,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Rerender
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }} bound series bound
      * @param {object} data data for rendering
      */
-    rerender: function(bound, data) {
+    rerender: function(data) {
         var groupValues = this.dataProcessor.getGroupValues(this.chartType),
             that = this;
 
+        if (this.graphRenderer.clear) {
+            this.graphRenderer.clear();
+        }
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
@@ -283,7 +265,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (groupValues && groupValues.length) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
-            this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(that._renderGraph, this));
+            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(that._renderGraph, this));
             if (this.labelShower) {
                 clearInterval(this.labelShower.timerId);
             }
@@ -305,33 +287,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Resize series component.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
      * }} bound series bound
      * @param {object} data data for rendering
      */
-    resize: function(bound, data) {
-        this._renderSeriesArea(this.seriesContainer, bound, data, tui.util.bind(this._resizeGraph, this));
-    },
-
-    /**
-     * Make add data for series label.
-     * @param {object} seriesData series data
-     * @param {{width: number, height: number}} dimension dimension
-     * @returns {{
-     *      container: HTMLElement,
-     *      values: array.<array>,
-     *      formattedValues: array.<array>,
-     *      formatFunctions: array.<function>,
-     *      dimension: {width: number, height: number}
-     * }} add data for series label
-     * @private
-     */
-    _makeSeriesDataForSeriesLabel: function(seriesData, dimension) {
-        return tui.util.extend({
-            dimension: dimension
-        }, seriesData);
+    resize: function(data) {
+        this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._resizeGraph, this));
     },
 
     /**
@@ -500,18 +460,23 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         dom.addClass(this.seriesLabelContainer, 'show');
-        this.labelShower = new tui.component.Effects.Fade({
-            element: this.seriesLabelContainer,
-            duration: 300
-        });
-        this.labelShower.action({
-            start: 0,
-            end: 1,
-            complete: function() {
-                clearInterval(that.labelShower.timerId);
-                delete that.labelShower;
-            }
-        });
+
+        if (renderUtil.isIE7()) {
+            this.seriesLabelContainer.style.filter = '';
+        } else {
+            this.labelShower = new tui.component.Effects.Fade({
+                element: this.seriesLabelContainer,
+                duration: 300
+            });
+            this.labelShower.action({
+                start: 0,
+                end: 1,
+                complete: function() {
+                    clearInterval(that.labelShower.timerId);
+                    delete that.labelShower;
+                }
+            });
+        }
     },
 
     /**
@@ -530,6 +495,25 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             legendIndex: legendIndex,
             index: seriesData.indexes.groupIndex
         };
+    },
+
+    /**
+     * Execute graph renderer.
+     * @param {{left: number, top: number}} position mouse position
+     * @param {string} funcName function name
+     * @returns {*} result.
+     * @private
+     */
+    _executeGraphRenderer: function(position, funcName) {
+        var result;
+
+        this.fire('hideTooltipContainer');
+        dom.removeClass(this.seriesLabelContainer, 'show');
+        result = this.graphRenderer[funcName](position);
+        dom.addClass(this.seriesLabelContainer, 'show');
+        this.fire('showTooltipContainer');
+
+        return result;
     },
 
     /**
@@ -569,7 +553,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = legendIndex;
 
         if (groupValues && groupValues.length) {
-            this._renderSeriesArea(this.seriesContainer, this.bound, this.data);
+            this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }
     }

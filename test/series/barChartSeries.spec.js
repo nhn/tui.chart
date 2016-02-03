@@ -31,16 +31,9 @@ describe('BarChartSeries', function() {
                     fontSize: 11
                 }
             },
-            options: {}
+            options: {},
+            dataProcessor: dataProcessor
         });
-
-        series.dataProcessor = dataProcessor;
-        series.data = {
-            limit: {
-                min: 0,
-                max: 100
-            }
-        };
 
         spyOn(series, '_getPercentValues');
     });
@@ -110,8 +103,13 @@ describe('BarChartSeries', function() {
         it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function () {
             var actual;
 
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             series._getPercentValues.and.returnValue([[0.2, 0.4, 0.1]]);
-
             actual = series._makeNormalBarChartBounds({
                 width: 400,
                 height: 200
@@ -127,10 +125,11 @@ describe('BarChartSeries', function() {
             var actual;
 
             series._getPercentValues.and.returnValue([[-0.2, 0.4, 0.1]]);
-
-            series.data.limit = {
-                min: -40,
-                max: 60
+            series.data = {
+                limit: {
+                    min: -40,
+                    max: 60
+                }
             };
             actual = series._makeNormalBarChartBounds({
                 width: 400,
@@ -157,7 +156,12 @@ describe('BarChartSeries', function() {
             var bounds;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             bounds = series._makeStackedBarChartBounds({
                 width: 400,
                 height: 100
@@ -179,7 +183,12 @@ describe('BarChartSeries', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.2, 0.4, 0.1]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             actual = series._makeBounds({
                 width: 400,
                 height: 200
@@ -195,7 +204,12 @@ describe('BarChartSeries', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 100
+                }
+            };
             series.options.stacked = 'normal';
             actual = series._makeBounds({
                 width: 400,

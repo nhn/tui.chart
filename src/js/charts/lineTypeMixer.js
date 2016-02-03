@@ -18,7 +18,7 @@ var ChartBase = require('./chartBase'),
 var lineTypeMixer = {
     /**
      * Initialize line type chart.
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      * @param {object} initedData initialized data from combo chart
@@ -38,11 +38,10 @@ var lineTypeMixer = {
 
     /**
      * Make axes data
-     * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
-    _makeAxesData: function(bounds) {
+    _makeAxesData: function() {
         var options = this.options,
             aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
@@ -52,7 +51,9 @@ var lineTypeMixer = {
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
                 values: this.dataProcessor.getGroupValues(),
-                seriesDimension: bounds.series.dimension,
+                seriesDimension: {
+                    height: this.boundsMaker.makeSeriesHeight()
+                },
                 stackedOption: options.series && options.series.stacked || '',
                 chartType: options.chartType,
                 formatFunctions: this.dataProcessor.getFormatFunctions(),
@@ -72,7 +73,7 @@ var lineTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this._addComponent('customEvent', AreaTypeCustomEvent, {
+        this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -85,7 +86,15 @@ var lineTypeMixer = {
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: ['yAxis', 'xAxis'],
+            axes: [
+                {
+                    name: 'yAxis'
+                },
+                {
+                    name: 'xAxis',
+                    isLabel: true
+                }
+            ],
             chartType: chartType,
             serieses: [
                 {

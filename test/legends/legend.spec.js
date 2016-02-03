@@ -12,48 +12,36 @@ var Legend = require('../../src/js/legends/legend'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('test Legend', function() {
-    var legend, dataProcessor;
+    var legend, dataProcessor, boundsMaker;
 
     beforeAll(function() {
-        dataProcessor = {
-            getLegendLabels: jasmine.createSpy('getLegendLabels').and.returnValue([
-                'legend1',
-                'legend2'
-            ]),
-            getWholeLegendData: jasmine.createSpy('getWholeLegendData').and.returnValue([
-                {
-                    label: 'legend1'
-                },
-                {
-                    label: 'legend2'
-                }
-            ])
-        };
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getWholeLegendData']);
+        dataProcessor.getLegendLabels.and.returnValue([
+            'legend1',
+            'legend2'
+        ]);
+        dataProcessor.getWholeLegendData.and.returnValue([
+            {
+                label: 'legend1'
+            },
+            {
+                label: 'legend2'
+            }
+        ]);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getPosition']);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
     });
 
     beforeEach(function() {
         legend = new Legend({
             dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker,
             theme: {
                 label: {
                     fontSize: 12
                 },
                 colors: ['red', 'orange']
             }
-        });
-    });
-
-    describe('_renderLabelTheme()', function() {
-        it('전달하는 엘리먼트에 전달하는 theme의 cssText속성을 셋팅합니다.', function() {
-            var el = dom.create('DIV'),
-                theme = {
-                    fontSize: 14,
-                    color: 'red'
-                };
-            legend._renderLabelTheme(el, theme);
-            expect(el.style.fontSize).toBe('14px');
-            expect(el.style.color).toBe('red');
         });
     });
 
@@ -148,12 +136,10 @@ describe('test Legend', function() {
                 expectedElement = document.createElement('DIV'),
                 expectedChildren;
 
-            legend.bound = {
-                position: {
-                    top: 20,
-                    left: 200
-                }
-            };
+            boundsMaker.getPosition.and.returnValues({
+                top: 20,
+                left: 200
+            });
 
             legend._renderLegendArea(legendContainer);
 
@@ -183,18 +169,18 @@ describe('test Legend', function() {
 
     describe('render()', function() {
         it('render를 수행하면 legendContainer에 className 설정, _renderLegendArea를 실행한 렌더링, click 이벤트 등록 등을 수행한다.', function() {
-            var bound = {
-                    position: {
-                        top: 20,
-                        right: 10
-                    }
-                },
-                actual = legend.render(bound),
-                exepcted = document.createElement('DIV');
-            legend._renderLegendArea(exepcted);
+            var actual, expected;
+
+            boundsMaker.getPosition.and.returnValues({
+                top: 20,
+                right: 10
+            });
+            actual = legend.render();
+            expected = document.createElement('DIV');
+            legend._renderLegendArea(expected);
 
             expect(actual.className).toBe('tui-chart-legend-area');
-            expect(actual.innerHTML).toBe(exepcted.innerHTML);
+            expect(actual.innerHTML).toBe(expected.innerHTML);
             expect(legend.legendContainer).toBe(actual);
         });
     });

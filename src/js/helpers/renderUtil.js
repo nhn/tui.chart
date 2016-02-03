@@ -133,11 +133,11 @@ var renderUtil = {
 
         theme = theme || {};
 
+        label += '';
+
         if (!label) {
             return 0;
         }
-
-        label += '';
 
         key = this._makeCachingKey(label, theme, offsetType);
         labelSize = this.sizeCache[key];
@@ -252,15 +252,15 @@ var renderUtil = {
             return;
         }
 
-        if (position.top) {
+        if (!tui.util.isUndefined(position.top)) {
             el.style.top = position.top + 'px';
         }
 
-        if (position.left) {
+        if (!tui.util.isUndefined(position.left)) {
             el.style.left = position.left + 'px';
         }
 
-        if (position.right) {
+        if (!tui.util.isUndefined(position.right)) {
             el.style.right = position.right + 'px';
         }
     },
@@ -362,7 +362,7 @@ var renderUtil = {
     /**
      * Format value.
      * @param {number} value value
-     * @param {array.<function>} formatFunctions functions for format
+     * @param {Array.<function>} formatFunctions functions for format
      * @returns {string} formatted value
      */
     formatValue: function(value, formatFunctions) {
@@ -371,6 +371,46 @@ var renderUtil = {
         return tui.util.reduce(fns, function(stored, fn) {
             return fn(stored);
         });
+    },
+
+    /**
+     * Cancel animation
+     * @param {{id: number}} animation animaion object
+     */
+    cancelAnimation: function(animation) {
+        if (animation && animation.id) {
+            cancelAnimationFrame(animation.id);
+            delete animation.id;
+        }
+    },
+
+    /**
+     * Start animation.
+     * @param {number} animationTime animation time
+     * @param {function} callback callback function
+     * @returns {{id: number}} requestAnimationFrame id
+     */
+    startAnimation: function(animationTime, callback) {
+        var animation = {},
+            startTime;
+
+        function animate() {
+            var diffTime = (new Date()).getTime() - startTime,
+                ratio = Math.min((diffTime / animationTime), 1);
+
+            callback(ratio);
+
+            if (ratio === 1) {
+                delete animation.id;
+            } else {
+                animation.id = requestAnimationFrame(animate);
+            }
+        }
+
+        startTime = (new Date()).getTime();
+        animation.id = requestAnimationFrame(animate);
+
+        return animation;
     },
 
     /**
@@ -390,5 +430,8 @@ var renderUtil = {
         return isOldBrowser;
     }
 };
+
+tui.util.defineNamespace('tui.chart');
+tui.chart.renderUtil = renderUtil;
 
 module.exports = renderUtil;

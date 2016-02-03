@@ -57,7 +57,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * Make normal bar chart bound.
      * @param {{
      *      dimension: {width: number, height: number},
-     *      groupValues: array.<array.<number>>,
+     *      groupValues: Array.<Array.<number>>,
      *      groupSize: number, barSize: number, step: number,
      *      distanceToMin: number, isMinus: boolean
      * }} baseInfo base info
@@ -92,7 +92,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     /**
      * Make bounds of normal bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeNormalBarChartBounds: function(dimension) {
@@ -105,7 +105,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     /**
      * Make bounds of stacked bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeStackedBarChartBounds: function(dimension) {
@@ -125,7 +125,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     /**
      * Make bounds of bar chart.
      * @param {{width: number, height:number}} dimension bar chart dimension
-     * @returns {array.<array.<object>>} bounds
+     * @returns {Array.<Array.<object>>} bounds
      * @private
      */
     _makeBounds: function(dimension) {
@@ -180,7 +180,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
     /**
      * Make plus sum label html.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
      * @returns {string} plus sum label html
@@ -204,7 +204,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
     /**
      * Make minus sum label html.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
      * @returns {string} plus minus label html
@@ -217,7 +217,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         if (bound) {
             sum = calculator.sumMinusValues(values);
 
-            if (this.options.divergent) {
+            if (this.options.diverging) {
                 sum = Math.abs(sum);
             }
 

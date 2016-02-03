@@ -59,8 +59,32 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Render area graph.
+     * @param {object} paper paper
+     * @param {{start: string}} path path
+     * @param {string} color fill color
+     * @param {?number} opacity fill opacity
+     * @param {string} strokeColor stroke color
+     * @param {?number} strokeOpacity stroke opacity
+     * @returns {Array.<object>} raphael object
+     */
+    renderArea: function(paper, path, color, opacity, strokeColor, strokeOpacity) {
+        var area = paper.path(path),
+            fillStyle = {
+                fill: color,
+                opacity: opacity,
+                stroke: strokeColor,
+                'stroke-opacity': strokeOpacity || 0
+            };
+
+        area.attr(fillStyle);
+
+        return area;
+    },
+
+    /**
      * Render items of line type chart.
-     * @param {array.<array.<object>>} groupItems group items
+     * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
      */
     forEach2dArray: function(groupItems, funcRenderItem) {
@@ -92,7 +116,7 @@ var raphaelRenderUtil = {
         return '#' + tui.util.map(tui.util.range(3), function(index) {
             var c = parseInt(hex.substr(index * 2, 2), 16);
             c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-            return ("00" + c).substr(c.length);
+            return ('00' + c).substr(c.length);
         }).join('');
     }
 };

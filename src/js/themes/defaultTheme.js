@@ -1,3 +1,5 @@
+'use strict';
+
 var DEFAULT_COLOR = '#000000',
     DEFAULT_BACKGROUND = '#ffffff',
     EMPTY = '',
@@ -39,7 +41,10 @@ var defaultTheme = {
         },
         colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
         borderColor: EMPTY,
-        selectionColor: EMPTY
+        selectionColor: EMPTY,
+        startColor: '#F4F4F4',
+        endColor: '#345391',
+        overColor: '#F0C952'
     },
     legend: {
         label: {

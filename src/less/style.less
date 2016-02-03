@@ -229,15 +229,71 @@
         display: block;
       }
     }
+
+    .tui-chart-series-graph-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .tui-chart-zoom-area {
+    z-index: 1500;
+    position: absolute;
+    border: 1px solid #cccccc;
+    background-color: #cccccc;
+    .border-radius(4px);
+    > .tui-chart-zoom-btn {
+      width: 21px;
+      height: 21px;
+      display: block;
+      background-color: #fff;
+      cursor: pointer;
+      position: relative;
+      &:first-child {
+        margin-bottom: 1px;
+        .border-radius(4px 4px 0 0);
+      }
+      &:last-child {
+        .border-radius(0 0 4px 4px);
+      }
+      &:hover {
+        background-color: #efefef;
+      }
+      > div {
+        font-szie: 0;
+        background-color: #555555;
+        position: absolute;
+        &.horizontal-line {
+          width:9px;
+          height: 1px;
+          left: 6px;
+          top: 10px;
+        }
+        &.vertical-line {
+          width:1px;
+          height: 9px;
+          left: 10px;
+          top: 6px;
+        }
+      }
+    }
   }
 
   .tui-chart-series-custom-event-area {
     z-index: 1000;
     position: absolute;
-    left: 10px;
+    left: 0;
     top: 0;
     background-color: #fff;
     .opacity(0);
+    &.hide {
+      display: none;
+    }
+
+    &.drag {
+      cursor: move;
+    }
   }
 
   .tui-chart-legend-rect {
@@ -280,7 +336,7 @@
       }
 
       .tui-chart-legend-label {
-        padding: 2px 0 2px 5px;
+        padding: 2px 0 2px 4px;
         cursor: pointer;
         .content-box();
         line-height: 1;
@@ -294,6 +350,51 @@
         .tui-chart-legend-label {
           .opacity(0.3);
         }
+      }
+    }
+
+    .tui-chart-legend-tick-area {
+      position:absolute;
+      left: 10px;
+      top: 10px;
+      .tui-chart-map-legend-tick {
+        width: 15px;
+        height: 1px;
+        background-color: #ccc;
+        position: absolute;
+        left: 0px;
+      }
+
+      .tui-chart-map-legend-tick-label {
+        position: absolute;
+        left: 30px;
+        text-align: left;
+      }
+
+      &.horizontal {
+        .tui-chart-map-legend-tick {
+          top: 0px;
+          width: 1px;
+          height: 15px;
+        }
+
+        .tui-chart-map-legend-tick-label {
+          top: 30px;
+        }
+      }
+    }
+
+    .tui-chart-map-legend-wedge {
+      position: absolute;
+      width: 19px;
+      height: 4px;
+      border-left: 2px solid #777;
+      border-right: 2px solid #777;
+      left: 8px;
+      top: 30px;
+      display: none;
+      &.show {
+        display: block;
       }
     }
 
@@ -372,6 +473,20 @@
       display: none;
       &.show {
         display: block;
+      }
+    }
+  }
+
+  &.tui-map-chart {
+    .tui-chart-series-area {
+      overflow: hidden;
+    }
+
+    .tui-chart-tooltip-area {
+      .tui-chart-default-tooltip {
+        > :first-child {
+          font-weight: normal;
+        }
       }
     }
   }

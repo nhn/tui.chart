@@ -18,7 +18,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} params parameters
      *      @param {number} params.vTickCount vertical tick count
      *      @param {number} params.hTickCount horizontal tick count
-     *      @param {object} params.bound axis bound
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
@@ -33,49 +32,45 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Render plot area.
      * @param {HTMLElement} plotContainer plot area element
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @private
      */
-    _renderPlotArea: function(plotContainer, bound, data) {
-        this.bound = bound;
+    _renderPlotArea: function(plotContainer, data) {
+        var dimension = this.boundsMaker.getDimension('plot');
         this.data = data;
 
-        renderUtil.renderDimension(plotContainer, bound.dimension);
-        renderUtil.renderPosition(plotContainer, bound.position);
-        this._renderLines(plotContainer, bound.dimension);
+        renderUtil.renderDimension(plotContainer, dimension);
+        renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
+        this._renderLines(plotContainer, dimension);
     },
 
     /**
      * Render plot component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      * @returns {HTMLElement} plot element
      */
-    render: function(bound, data) {
+    render: function(data) {
         var el = dom.create('DIV', this.className);
-        this._renderPlotArea(el, bound, data);
+        this._renderPlotArea(el, data);
         this.plotContainer = el;
         return el;
     },
 
     /**
      * Rerender.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering
      */
-    rerender: function(bound, data) {
+    rerender: function(data) {
         this.plotContainer.innerHTML = '';
-        this._renderPlotArea(this.plotContainer, bound, data);
+        this._renderPlotArea(this.plotContainer, data);
     },
 
     /**
      * Resize plot component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound plot bound
      * @param {object} data rendering data
      */
-    resize: function(bound, data) {
-        this.rerender(bound, data);
+    resize: function(data) {
+        this.rerender(data);
     },
 
     /**
@@ -115,7 +110,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make html of plot line.
      * @param {object} params parameters
-     *      @param {array.<object>} params.positions positions
+     *      @param {Array.<object>} params.positions positions
      *      @param {number} params.size width or height
      *      @param {string} params.className line className
      *      @param {string} params.positionType position type (left or bottom)
@@ -145,7 +140,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make pixel value of vertical positions
      * @param {number} height plot height
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      * @private
      */
     _makeVerticalPixelPositions: function(height) {
@@ -157,7 +152,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Make pixel value of horizontal positions.
      * @param {number} width plot width
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      * @private
      */
     _makeHorizontalPixelPositions: function(width) {

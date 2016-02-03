@@ -82,7 +82,7 @@ module.exports = {
     /**
      * Filter chart types.
      * @param {object} target target charts
-     * @param {array.<string>} rejectionProps reject property
+     * @param {Array.<string>} rejectionProps reject property
      * @returns {Object} filtered charts.
      * @private
      */
@@ -101,7 +101,7 @@ module.exports = {
     /**
      * Concat colors.
      * @param {object} theme theme
-     * @param {array.<string>} seriesColors series colors
+     * @param {Array.<string>} seriesColors series colors
      * @private
      */
     _concatColors: function(theme, seriesColors) {
@@ -117,7 +117,7 @@ module.exports = {
     /**
      * Concat default colors.
      * @param {object} theme theme
-     * @param {array.<string>} seriesColors series colors
+     * @param {Array.<string>} seriesColors series colors
      * @private
      */
     _concatDefaultColors: function(theme, seriesColors) {
@@ -170,7 +170,7 @@ module.exports = {
      *      @param {string} params.propName property name
      *      @param {object} params.fromTheme from property
      *      @param {object} params.toTheme tp property
-     *      @param {array.<string>} params.rejectionProps reject property name
+     *      @param {Array.<string>} params.rejectionProps reject property name
      * @returns {object} copied property
      * @private
      */
@@ -198,7 +198,7 @@ module.exports = {
      * Copy color info to legend
      * @param {object} seriesTheme series theme
      * @param {object} legendTheme legend theme
-     * @param {array.<string>} colors colors
+     * @param {Array.<string>} colors colors
      * @private
      */
     _copyColorInfoToOther: function(seriesTheme, legendTheme, colors) {
@@ -217,7 +217,7 @@ module.exports = {
     /**
      * Get target items about font inherit.
      * @param {object} theme theme
-     * @returns {array.<object>} target items
+     * @returns {Array.<object>} target items
      * @private
      */
     _getInheritTargetThemeItems: function(theme) {
@@ -253,7 +253,7 @@ module.exports = {
     /**
      * Inherit theme font.
      * @param {object} theme theme
-     * @param {array.<object>} targetItems target theme items
+     * @param {Array.<object>} targetItems target theme items
      * @private
      */
     _inheritThemeFont: function(theme, targetItems) {

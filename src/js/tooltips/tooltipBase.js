@@ -6,7 +6,9 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
+var chartConst = require('../const'),
+    dom = require('../helpers/domHandler'),
+    predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil');
 
 var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
@@ -14,8 +16,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * TooltipBase is base class of tooltip components.
      * @constructs TooltipBase
      * @param {object} params parameters
-     *      @param {array.<number>} params.values converted values
-     *      @param {object} params.bound axis bound
+     *      @param {Array.<number>} params.values converted values
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
@@ -33,14 +35,28 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.tooltipContainer = null;
 
         /**
-         * TooltipBase base data.
-         * @type {array.<array.<object>>}
+         * Tooltip suffix.
+         * @type {string}
          */
-        this.data = this.makeTooltipData();
-
         this.suffix = this.options.suffix ? '&nbsp;' + this.options.suffix : '';
 
+        /**
+         * Tooltip template function.
+         * @type {function}
+         */
         this.templateFunc = this.options.template || tui.util.bind(this._makeTooltipHtml, this);
+
+        /**
+         * Tooltip animation time.
+         * @type {number}
+         */
+        this.animationTime = predicate.isPieChart(params.chartType) ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
+
+        /**
+         * TooltipBase base data.
+         * @type {Array.<Array.<object>>}
+         */
+        this.data = [];
 
         this._setDefaultTooltipPositionOption();
         this._saveOriginalPositionOptions();
@@ -73,23 +89,22 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Make tooltip data.
+     * @private
      * @abstract
      */
-    makeTooltipData: function() {},
+    _makeTooltipData: function() {},
 
     /**
      * Render tooltip component.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      */
-    render: function(bound, data) {
+    render: function() {
         var el = dom.create('DIV', this.className);
 
-        renderUtil.renderPosition(el, bound.position);
+        this.data = this._makeTooltipData();
 
-        this.bound = bound;
-        this.chartDimension = data.chartDimension;
+        renderUtil.renderPosition(el, this.boundsMaker.getPosition('tooltip'));
+
         this.tooltipContainer = el;
 
         return el;
@@ -97,30 +112,22 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
 
     /**
      * Rerender.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      */
-    rerender: function(bound, data) {
-        this.bound = bound;
-        tui.util.extend(this, data);
-        this.data = this.makeTooltipData();
+    rerender: function() {
+        this.data = this._makeTooltipData();
         if (this.positionModel) {
-            this.positionModel.updateBound(bound);
+            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
         }
     },
 
     /**
      * Resize tooltip component.
-     * @param {{position: object}} bound tooltip bound
-     * @param {{chartDimension: object}} data data for resize
      * @override
      */
-    resize: function(bound, data) {
-        this.bound = bound;
-        this.chartDimension = data.chartDimension;
-        renderUtil.renderPosition(this.tooltipContainer, bound.position);
+    resize: function() {
+        renderUtil.renderPosition(this.tooltipContainer, this.boundsMaker.getPosition('tooltip'));
         if (this.positionModel) {
-            this.positionModel.updateBound(bound);
+            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
         }
     },
 
@@ -148,7 +155,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var tooltipElement = this._getTooltipElement(),
             prevPosition;
 
-        if (tooltipElement.offsetWidth) {
+        if (!predicate.isMousePositionChart(params.chartType) && tooltipElement.offsetWidth) {
             prevPosition = {
                 left: tooltipElement.offsetLeft,
                 top: tooltipElement.offsetTop
@@ -171,34 +178,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Cancel hide tooltip.
-     * @private
-     */
-    _cancelHide: function() {
-        if (!this.activeHider) {
-            return;
-        }
-        clearInterval(this.activeHider.timerId);
-        this.activeHider.setOpacity(1);
-    },
-
-    /**
-     * Cancel slide tooltip.
-     * @private
-     */
-    _cancelSlide: function() {
-        if (!this.activeSliders) {
-            return;
-        }
-
-        tui.util.forEach(this.activeSliders, function(slider) {
-            clearInterval(slider.timerId);
-        });
-
-        this._completeSlide();
-    },
-
-    /**
      * Move to Position.
      * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} position position
@@ -206,43 +185,10 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     moveToPosition: function(tooltipElement, position, prevPosition) {
         if (prevPosition) {
-            this._cancelHide();
-            this._cancelSlide();
             this._slideTooltip(tooltipElement, prevPosition, position);
         } else {
             renderUtil.renderPosition(tooltipElement, position);
         }
-    },
-
-    /**
-     * Get slider.
-     * @param {HTMLElement} element element
-     * @param {string} type slide type (horizontal or vertical)
-     * @returns {object} effect object
-     * @private
-     */
-    _getSlider: function(element, type) {
-        if (!this.slider) {
-            this.slider = {};
-        }
-
-        if (!this.slider[type]) {
-            this.slider[type] = new tui.component.Effects.Slide({
-                flow: type,
-                element: element,
-                duration: 100
-            });
-        }
-
-        return this.slider[type];
-    },
-
-    /**
-     * Complete slide tooltip.
-     * @private
-     */
-    _completeSlide: function() {
-        delete this.activeSliders;
     },
 
     /**
@@ -253,38 +199,17 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @private
      */
     _slideTooltip: function(tooltipElement, prevPosition, position) {
-        var vSlider = this._getSlider(tooltipElement, 'vertical'),
-            hSlider = this._getSlider(tooltipElement, 'horizontal'),
-            moveTop = prevPosition.top - position.top,
-            moveLeft = prevPosition.left - position.left,
-            vDirection = moveTop > 0 ? 'forword' : 'backword',
-            hDirection = moveTop > 0 ? 'forword' : 'backword',
-            activeSliders = [],
-            complate = tui.util.bind(this._completeSlide, this);
+        var moveTop = position.top - prevPosition.top,
+            moveLeft = position.left - prevPosition.left;
 
-        if (moveTop) {
-            vSlider.setDistance(moveTop);
-            vSlider.action({
-                direction: vDirection,
-                start: prevPosition.top,
-                complete: complate
-            });
-            activeSliders.push(vSlider);
-        }
+        renderUtil.cancelAnimation(this.slidingAnimation);
 
-        if (moveLeft) {
-            hSlider.setDistance(moveLeft);
-            hSlider.action({
-                direction: hDirection,
-                start: prevPosition.left,
-                complete: complate
-            });
-            activeSliders.push(vSlider);
-        }
-
-        if (activeSliders.length) {
-            this.activeSliders = activeSliders;
-        }
+        this.slidingAnimation = renderUtil.startAnimation(this.animationTime, function(ratio) {
+            var left = moveLeft * ratio,
+                top = moveTop * ratio;
+            tooltipElement.style.left = (prevPosition.left + left) + 'px';
+            tooltipElement.style.top = (prevPosition.top + top) + 'px';
+        });
     },
 
     /**
@@ -295,39 +220,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         var tooltipElement = this._getTooltipElement();
 
         this.hideTooltip(tooltipElement, index);
-    },
-
-    /**
-     * Get hider.
-     * @param {HTMLElement} element element
-     * @returns {object} effect object
-     * @private
-     */
-    _getHider: function(element) {
-        if (!this.hider) {
-            this.hider = new tui.component.Effects.Fade({
-                element: element,
-                duration: 100
-            });
-        }
-
-        return this.hider;
-    },
-
-    /**
-     * Hide animation.
-     * @param {HTMLElement} tooltipElement tooltip element
-     */
-    hideAnimation: function(tooltipElement) {
-        this.activeHider = this._getHider(tooltipElement);
-        this.activeHider.action({
-            start: 1,
-            end: 0,
-            complete: function() {
-                dom.removeClass(tooltipElement, 'show');
-                tooltipElement.style.cssText = '';
-            }
-        });
     },
 
     /**

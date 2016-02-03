@@ -7,6 +7,7 @@
 'use strict';
 
 var LegendModel = require('./legendModel'),
+    LegendDimensionModel = require('./legendDimensionModel'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     predicate = require('../helpers/predicate'),
@@ -20,10 +21,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @constructs Legend
      * @param {object} params parameters
      *      @param {object} params.theme axis theme
-     *      @param {?array.<string>} params.chartTypes chart types
+     *      @param {?Array.<string>} params.chartTypes chart types
      *      @param {string} params.chart type
      */
     init: function(params) {
+        var legendData;
+
         /**
          * legend theme
          * @type {Object}
@@ -32,13 +35,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         /**
          * options
-         * @type {params.options|{legendAlign}|{}}
+         * @type {Object}
          */
         this.options = params.options || {};
 
         /**
          * chart types
-         * @type {?array.<string>}
+         * @type {?Array.<string>}
          */
         this.chartTypes = params.chartTypes;
 
@@ -60,45 +63,65 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         /**
          * checked indexes
-         * @type {array}
+         * @type {Array}
          */
         this.checkedIndexes = [];
 
         /**
+         * bounds maker
+         * @type {BoundsMaker}
+         */
+        this.boundsMaker = params.boundsMaker;
+
+        legendData = params.dataProcessor.getWholeLegendData();
+        /**
          * legend model
          */
         this.legendModel = new LegendModel({
-            theme: params.theme,
+            theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
-            legendData: params.dataProcessor.getWholeLegendData(),
-            chartTypes: params.chartTypes,
-            chartType: params.chartType
+            legendData: legendData,
+            chartTypes: this.chartTypes,
+            chartType: this.chartType
         });
+
+        this.dimensionModel = new LegendDimensionModel({
+            legendLabels: tui.util.pluck(legendData, 'label'),
+            chartType: this.chartType,
+            options: this.options,
+            theme: this.theme
+        });
+    },
+
+    /**
+     * Register legend dimension.
+     */
+    registerDimension: function() {
+        var chartWidth = this.boundsMaker.getDimension('chart').width;
+        this.boundsMaker.registerBaseDimension('legend', this.dimensionModel.makeDimension(chartWidth));
     },
 
     /**
      * Render legend area.
      * @param {HTMLElement} legendContainer legend container
      * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
-     * @param {array.<boolean>} checkedIndexes checked indexes
+     * @param {Array.<boolean>} checkedIndexes checked indexes
      * @private
      */
     _renderLegendArea: function(legendContainer) {
         legendContainer.innerHTML = this._makeLegendHtml(this.legendModel.getData());
-        renderUtil.renderPosition(legendContainer, this.bound.position);
-        this._renderLabelTheme(legendContainer, this.theme.label);
+        renderUtil.renderPosition(legendContainer, this.boundsMaker.getPosition('legend'));
+        legendContainer.style.cssText += ';' + renderUtil.makeFontCssText(this.theme.label);
     },
 
     /**
      * Render legend component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      * @returns {HTMLElement} legend element
      */
-    render: function(bound) {
+    render: function() {
         var el = dom.create('DIV', this.className);
 
         this.legendContainer = el;
-        this.bound = bound;
 
         if (predicate.isHorizontalLegend(this.options.align)) {
             dom.addClass(el, 'horizontal');
@@ -111,10 +134,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Resize legend component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
      */
-    resize: function(bound) {
-        this.bound = bound;
+    resize: function() {
         this._renderLegendArea(this.legendContainer);
     },
 
@@ -146,8 +167,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Make labels width.
-     * @param {array.<{chartType: ?string, label: string}>} legendData legend data
-     * @returns {array.<number>} labels width
+     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
+     * @returns {Array.<number>} labels width
      * @private
      */
     _makeLabelsWidth: function(legendData) {
@@ -159,7 +180,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Make legend html.
-     * @param {array.<{chartType: ?string, label: string}>} legendData legend data
+     * @param {Array.<{chartType: ?string, label: string}>} legendData legend data
      * @returns {string} legend html
      * @private
      */
@@ -193,17 +214,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                 return template(data);
             }, this).join('');
         return html;
-    },
-
-    /**
-     * Render css style of label area.
-     * @param {HTMLElement} el label area element
-     * @param {{fontSize:number, fontFamily: string, color: string}} theme label theme
-     * @private
-     */
-    _renderLabelTheme: function(el, theme) {
-        var cssText = renderUtil.makeFontCssText(theme);
-        el.style.cssText += ';' + cssText;
     },
 
     /**
@@ -283,7 +293,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Get checked indexes.
-     * @returns {array} checked indexes
+     * @returns {Array} checked indexes
      * @private
      */
     _getCheckedIndexes: function() {

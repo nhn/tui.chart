@@ -29,26 +29,30 @@ var renderUtil = require('../helpers/renderUtil'),
 var axisTypeMixer = {
     /**
      * Add axis components.
-     * @param {array.<string>} axisNames axis names
+     * @param {Array.<object>} axes axes option
      * @param {boolean} aligned whether aligned or not
      * @private
      */
-    _addAxisComponents: function(axisNames, aligned) {
-        tui.util.forEach(axisNames, function(name) {
+    _addAxisComponents: function(axes, aligned) {
+        tui.util.forEach(axes, function(axis) {
             var axisParams = {
-                aligned: aligned
+                aligned: aligned,
+                isLabel: !!axis.isLabel,
+                chartType: axis.chartType
             };
-            if (name === 'rightYAxis') {
+
+            if (axis.name === 'rightYAxis') {
                 axisParams.componentType = 'yAxis';
                 axisParams.index = 1;
             }
-            this._addComponent(name, Axis, axisParams);
+
+            this.componentManager.register(axis.name, Axis, axisParams);
         }, this);
     },
 
     /**
      * Add series components
-     * @param {array<object>} serieses serieses
+     * @param {Array<object>} serieses serieses
      * @param {object} options options
      * @param {boolean} aligned whether aligned or not
      * @private
@@ -63,7 +67,7 @@ var axisTypeMixer = {
 
         tui.util.forEach(serieses, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-            this._addComponent(series.name, series.SeriesClass, seriesParams);
+            this.componentManager.register(series.name, series.SeriesClass, seriesParams);
         }, this);
     },
 
@@ -73,19 +77,19 @@ var axisTypeMixer = {
      */
     _addTooltipComponent: function() {
         var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
-        this._addComponent('tooltip', TooltipClass, this._makeTooltipData());
+        this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
     },
 
     /**
      * Add legend component.
-     * @param {array.<string>} chartTypes series chart types
+     * @param {Array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
      * @param {object} legendOptions legend options
      * @private
      */
     _addLegendComponent: function(chartTypes, chartType, legendOptions) {
         if (!legendOptions || !legendOptions.hidden) {
-            this._addComponent('legend', Legend, {
+            this.componentManager.register('legend', Legend, {
                 chartTypes: chartTypes,
                 chartType: chartType,
                 userEvent: this.userEvent
@@ -105,7 +109,7 @@ var axisTypeMixer = {
         var options = this.options,
             aligned = !!params.aligned;
 
-        this._addComponent('plot', Plot);
+        this.componentManager.register('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options);
@@ -115,16 +119,15 @@ var axisTypeMixer = {
     /**
      * Get limit map.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {array.<string>} chartTypes chart types
-     * @param {boolean} isVertical whether vertical or not
+     * @param {Array.<string>} chartTypes chart types
      * @returns {{column: ?axisLimit, line: ?axisLimit}} limit map
      * @private
      */
-    _getLimitMap: function(axesData, chartTypes, isVertical) {
+    _getLimitMap: function(axesData, chartTypes) {
         var limitMap = {},
-            yAxisLimit = axesData.yAxis.limit;
+            yAxisLimit = axesData.yAxis ? axesData.yAxis.limit : axesData.rightYAxis.limit;
 
-        limitMap[chartTypes[0]] = isVertical ? yAxisLimit : axesData.xAxis.limit;
+        limitMap[chartTypes[0]] = this.isVertical ? yAxisLimit : axesData.xAxis.limit;
 
         if (chartTypes.length > 1) {
             limitMap[chartTypes[1]] = axesData.rightYAxis ? axesData.rightYAxis.limit : yAxisLimit;
@@ -136,20 +139,21 @@ var axisTypeMixer = {
     /**
      * Make series data for rendering.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
-     * @param {array.<string>} chartTypes chart types
+     * @param {Array.<string>} chartTypes chart types
      * @param {boolean} isVertical whether vertical or not
      * @returns {object} series data
      * @private
      */
-    _makeSeriesDataForRendering: function(axesData, chartTypes, isVertical) {
-        var limitMap = this._getLimitMap(axesData, chartTypes, isVertical),
+    _makeSeriesDataForRendering: function(axesData, chartTypes) {
+        var limitMap = this._getLimitMap(axesData, chartTypes),
             aligned = axesData.xAxis.aligned,
             seriesData = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             seriesData[chartType + 'Series'] = {
                 limit: limitMap[chartType],
-                aligned: aligned
+                aligned: aligned,
+                hasAxes: true
             };
         });
 
@@ -157,29 +161,39 @@ var axisTypeMixer = {
     },
 
     /**
-     * Make rendering data for axis type chart.
-     * @param {object} bounds chart bounds
-     * @return {object} data for rendering
+     * Update percent values.
+     * @param {object} axesData axes data
      * @private
      * @override
      */
-    _makeRenderingData: function(bounds) {
-        var axesData, optionChartTypes, seriesData;
+    _updatePercentValues: function(axesData) {
+        var chartTypes = this.chartTypes || [this.chartType],
+            limitMap = this._getLimitMap(axesData, chartTypes),
+            stackedOption = this.options.series.stacked;
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            this.dataProcessor.registerPercentValues(limitMap[chartType], stackedOption, chartType);
+        }, this);
+    },
 
-        axesData = this._makeAxesData(bounds);
-        optionChartTypes = this.chartTypes || [this.chartType];
-        seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
+    /**
+     * Make rendering data for axis type chart.
+     * @param {object} axesData axesData
+     * @returns {object} data for rendering
+     * @private
+     * @override
+     */
+    _makeRenderingData: function(axesData) {
+        var optionChartTypes = this.chartTypes || [this.chartType],
+            seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical),
+            yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
 
         return tui.util.extend({
             plot: {
-                vTickCount: axesData.yAxis.validTickCount,
+                vTickCount: yAxis.validTickCount,
                 hTickCount: axesData.xAxis.validTickCount
             },
             customEvent: {
-                tickCount: this.isVertical ? axesData.xAxis.tickCount : axesData.yAxis.tickCount
-            },
-            tooltip: {
-                chartDimension: bounds.chart.dimension
+                tickCount: this.isVertical ? axesData.xAxis.tickCount : yAxis.tickCount
             }
         }, seriesData, axesData);
     },
@@ -193,7 +207,7 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
-        this._addComponent('customEvent', GroupTypeCustomEvent, {
+        this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -204,7 +218,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this._addComponent('customEvent', PointTypeCustomEvent, {
+        this.componentManager.register('customEvent', PointTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
@@ -224,15 +238,12 @@ var axisTypeMixer = {
 
     /**
      * Attach coordinate event.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Tooltip} tooltip tooltip component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForGroupTooltip: function() {
-        var customEvent = this.componentMap.customEvent,
-            tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForGroupTooltip: function(customEvent, tooltip, serieses) {
         customEvent.on('showGroupTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideGroupTooltip', tooltip.onHide, tooltip);
 
@@ -248,15 +259,12 @@ var axisTypeMixer = {
 
     /**
      * Attach custom event for normal tooltip.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Tooltip} tooltip tooltip component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForNormalTooltip: function() {
-        var customEvent = this.componentMap.customEvent,
-            tooltip = this.componentMap.tooltip,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForNormalTooltip: function(customEvent, tooltip, serieses) {
         customEvent.on('showTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideTooltip', tooltip.onHide, tooltip);
 
@@ -270,14 +278,11 @@ var axisTypeMixer = {
 
     /**
      * Attach custom event for series selection.
+     * @param {CustomEvent} customEvent custom event component
+     * @param {Array.<Series>} serieses series components
      * @private
      */
-    _attachCustomEventForSeriesSelection: function() {
-        var customEvent = this.componentMap.customEvent,
-            serieses = tui.util.filter(this.componentMap, function(component) {
-                return component.componentType === 'series';
-            });
-
+    _attachCustomEventForSeriesSelection: function(customEvent, serieses) {
         tui.util.forEach(serieses, function(series) {
             customEvent.on(renderUtil.makeCustomEventName('select', series.chartType, 'series'), series.onSelectSeries, series);
             customEvent.on(renderUtil.makeCustomEventName('unselect', series.chartType, 'series'), series.onUnselectSeries, series);
@@ -290,15 +295,19 @@ var axisTypeMixer = {
      * @override
      */
     _attachCustomEvent: function() {
-        ChartBase.prototype._attachCustomEvent.call(this);
+        var serieses = this.componentManager.where({componentType: 'series'}),
+            customEvent = this.componentManager.get('customEvent'),
+            tooltip = this.componentManager.get('tooltip');
+
+        ChartBase.prototype._attachCustomEvent.call(this, serieses);
 
         if (this.hasGroupTooltip) {
-            this._attachCustomEventForGroupTooltip();
+            this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
         } else {
-            this._attachCustomEventForNormalTooltip();
+            this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);
         }
 
-        this._attachCustomEventForSeriesSelection();
+        this._attachCustomEventForSeriesSelection(customEvent, serieses);
     },
 
     /**

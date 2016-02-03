@@ -37,6 +37,11 @@ module.exports = function(config) {
       'src/js/**/*.js',
       'test/**/*.spec.js'
     ],
+    exclude: [
+      'src/js/code-snippet-util.js',
+      'src/js/polyfill.js',
+      'src/js/helpers/colorutil.js'
+    ],
     preprocessors: {
       'src/js/**/*.js': ['browserify'],
       'test/**/*.spec.js': ['browserify']

@@ -1,5 +1,5 @@
 /**
- * @fileoverview test tooltipBase
+ * @fileoverview Test for TooltipBase.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

@@ -8,7 +8,8 @@
 var chartConst = require('./const'),
     chartFactory = require('./factories/chartFactory'),
     pluginFactory = require('./factories/pluginFactory'),
-    themeFactory = require('./factories/themeFactory');
+    themeFactory = require('./factories/themeFactory'),
+    mapFactory = require('./factories/mapFactory');
 
 var _createChart;
 
@@ -26,7 +27,7 @@ tui.util.defineNamespace('tui.chart');
 /**
  * Create chart.
  * @param {HTMLElement} container container
- * @param {array.<array>} data chart data
+ * @param {Array.<Array>} data chart data
  * @param {{
  *   chart: {
  *     width: number,
@@ -54,7 +55,7 @@ tui.util.defineNamespace('tui.chart');
  */
 _createChart = function(container, data, options) {
     var themeName, theme, chart;
-    options = options || {};
+    options = options ? JSON.parse(JSON.stringify(options)) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
 
@@ -70,8 +71,8 @@ _createChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -153,8 +154,8 @@ tui.chart.barChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -237,8 +238,8 @@ tui.chart.columnChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -324,8 +325,8 @@ tui.chart.lineChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -408,15 +409,15 @@ tui.chart.areaChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<string>} data.categories categories
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<string>} data.categories categories
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
  *          @param {number} options.chart.height chart height
  *          @param {string} options.chart.title chart title
  *          @param {string} options.chart.format value format
- *      @param {object|array} options.yAxis options of vertical axis
+ *      @param {object|Array} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
@@ -516,7 +517,7 @@ tui.chart.comboChart = function(container, data, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
  * @param {object} data chart data
- *      @param {array.<array>} data.series series data
+ *      @param {Array.<Array>} data.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -577,6 +578,64 @@ tui.chart.pieChart = function(container, data, options) {
 };
 
 /**
+ * Map chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container chart container
+ * @param {object} data chart data
+ *      @param {Array.<Array>} data.series series data
+ * @param {object} options chart options
+ *      @param {object} options.chart chart options
+ *          @param {number} options.chart.width chart width
+ *          @param {number} options.chart.height chart height
+ *          @param {string} options.chart.title chart title
+ *          @param {string} options.chart.format value format
+ *      @param {object} options.series options of series
+ *          @param {boolean} options.series.showLabel whether show label or not
+ *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
+ *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {string} options.theme theme name
+ *      @param {string} options.map map type
+ *      @param {string} options.libType graph library type
+ * @returns {object} bar chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     data = {
+ *       series: [
+ *         {
+ *           code: 'KR',
+ *           data: 100
+ *         },
+ *         {
+ *           code: 'JP',
+ *           data: 50
+ *         }
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Map Chart'
+ *       }
+ *     };
+ * tui.chart.mapChart(container, data, options);
+ */
+tui.chart.mapChart = function(container, data, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_MAP;
+    options.map = mapFactory.get(options.map);
+
+    return _createChart(container, data, options);
+};
+
+/**
  * Register theme.
  * @memberOf tui.chart
  * @param {string} themeName theme name
@@ -613,7 +672,7 @@ tui.chart.pieChart = function(container, data, options) {
  *          @param {string} theme.plot.lineColor plot line color
  *          @param {string} theme.plot.background plot background
  *      @param {object} theme.series series theme
- *          @param {array.<string>} theme.series.colors series colors
+ *          @param {Array.<string>} theme.series.colors series colors
  *          @param {string} theme.series.borderColor series border color
  *      @param {object} theme.legend legend theme
  *          @param {object} theme.legend.label theme of legend label
@@ -660,6 +719,26 @@ tui.chart.pieChart = function(container, data, options) {
  */
 tui.chart.registerTheme = function(themeName, theme) {
     themeFactory.register(themeName, theme);
+};
+
+/**
+ * Register map.
+ * @param {string} mapName map name
+ * @param {{width: number, height: number}} dimension map dimension
+ * @param {Array.<{code: string, name: string, path: string}>} data map data
+ * @api
+ * @example
+ * var data = [
+ *   {
+ *     code: 'KR',
+ *     name: 'South Korea',
+ *     path: 'M835.13,346.53L837.55,350.71...'
+ *   },
+ *   //...
+ * ];
+ */
+tui.chart.registerMap = function(mapName, dimension, data) {
+    mapFactory.register(mapName, dimension, data);
 };
 
 /**

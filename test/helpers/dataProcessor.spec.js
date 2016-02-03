@@ -379,7 +379,7 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('setPercentValues()', function() {
+    describe('registerPercentValues()', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
             var actual;
 
@@ -388,7 +388,7 @@ describe('test DataProcessor', function() {
                 percentValues: {}
             };
 
-            dataProcessor.setPercentValues({min: 0, max: 160}, null, 'column');
+            dataProcessor.registerPercentValues({min: 0, max: 160}, null, 'column');
 
             actual = dataProcessor.data.percentValues.column;
 
@@ -403,7 +403,7 @@ describe('test DataProcessor', function() {
                 percentValues: {}
             };
 
-            dataProcessor.setPercentValues({min: 0, max: 160}, 'normal', 'column');
+            dataProcessor.registerPercentValues({min: 0, max: 160}, 'normal', 'column');
 
             actual = dataProcessor.data.percentValues.column;
 
@@ -418,7 +418,7 @@ describe('test DataProcessor', function() {
                 percentValues: {}
             };
 
-            dataProcessor.setPercentValues({min: 0, max: 160}, 'percent', 'column');
+            dataProcessor.registerPercentValues({min: 0, max: 160}, 'percent', 'column');
 
             actual = dataProcessor.data.percentValues.column;
 

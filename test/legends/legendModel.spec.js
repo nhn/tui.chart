@@ -1,5 +1,5 @@
 /**
- * @fileoverview test legend
+ * @fileoverview test LegendModel
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
