@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Combo Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="comboChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["Apr", "May", "June", "July", "Aug", "Sep", "Oct"],
+    "series": {
+        "column": [
+            {
+                "name": "Seoul",
+                "data": [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9]
+            },
+            {
+                "name": "NewYork",
+                "data": [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3]
+
+            },
+            {
+                "name": "Sydney",
+                "data": [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6]
+            },
+            {
+                "name": "Moskva",
+                "data": [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2]
+            }
+        ],
+        "line": [
+            {
+                "name": "Average",
+                "data": [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3]
+            }
+        ]
+    }
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Combo Chart"
+    },
+    "yAxis": {
+        "title": "Temperature (Celsius)"
+    },
+    "xAxis": {
+        "title": "City"
+    },
+    "series": {
+        "line": {
+            "hasDot": true
+        }
+    },
+    "tooltip": {
+        "grouped": true,
+        "suffix": "°C"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#combo-chart-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "column": {
+            "colors": ["#74807B", "#5EA393", "#A4E2C5", "#F7A655"]
+        },
+        "line": {
+            "colors": ["#E05D64"]
+        }
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#combo-chart-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+            series: {
+                column: [
+                    {
+                        name: 'Seoul',
+                        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9]
+                    },
+                    {
+                        name: 'NewYork',
+                        data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3]
+
+                    },
+
+                    {
+                        name: 'Sydney',
+                        data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6]
+                    },
+                    {
+                        name: 'Moskva',
+                        data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2]
+                    }
+                ],
+                line: [
+                    {
+                        name: 'Average',
+                        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3]
+                    }
+                ]
+            }
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Combo Chart'
+            },
+            yAxis: {
+                title: 'Temperature (Celsius)'
+            },
+            xAxis: {
+                title: 'City'
+            },
+            series: {
+                line: {
+                    hasDot: true
+                }
+            },
+            tooltip: {
+                grouped: true,
+                suffix: '°C'
+            }
+        };
+    tui.chart.comboChart(container, data, options);
+</script>
+</body>
+</html>

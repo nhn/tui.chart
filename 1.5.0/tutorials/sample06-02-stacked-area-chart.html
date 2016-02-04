@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Stacked Area Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="areaChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "series": [
+        {
+            "name": "Budget",
+            "data": [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+        },
+        {
+            "name": "Income",
+            "data": [8000, 4000, 7000, 2000, 6000, 3000, 5000]
+        },
+        {
+            "name": "Expenses",
+            "data": [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+        },
+        {
+            "name": "Debt",
+            "data": [3000, 4000, 3000, 1000, 2000, 4000, 3000]
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Stacked Area Chart",
+        "format": "1,000"
+    },
+    "yAxis": {
+        "title": "Temperature (Celsius)",
+        "max": 24000
+    },
+    "xAxis": {
+        "title": "City"
+    },
+    "series": {
+        "stacked": "normal",
+        "hasDot": true
+    },
+    "tooltip": {
+        "grouped": true
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#66a89c", "#39706f", "#1b4151"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            series: [
+                {
+                    name: 'Budget',
+                    data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+                },
+                {
+                    name: 'Income',
+                    data: [8000, 4000, 7000, 2000, 6000, 3000, 5000]
+                },
+                {
+                    name: 'Expenses',
+                    data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+                },
+                {
+                    name: 'Debt',
+                    data: [3000, 4000, 3000, 1000, 2000, 4000, 3000]
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Stacked Area Chart',
+                format: '1,000'
+            },
+            yAxis: {
+                title: 'Temperature (Celsius)',
+                max: 24000
+            },
+            xAxis: {
+                title: 'City'
+            },
+            series: {
+                stacked: 'normal',
+                hasDot: true
+            },
+            tooltip: {
+                grouped: true
+            }
+        };
+    tui.chart.areaChart(container, data, options);
+</script>
+</body>
+</html>

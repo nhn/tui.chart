@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Outer Legend Pie Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="pieChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["Browser"],
+    "series": [
+        {
+            "name": "Chrome",
+            "data": 46.02
+        },
+        {
+            "name": "IE",
+            "data": 20.47
+        },
+        {
+            "name": "Firefox",
+            "data": 17.71
+        },
+        {
+            "name": "Safari",
+            "data": 5.45
+        },
+        {
+            "name": "Opera",
+            "data": 3.10
+        },
+        {
+            "name": "Etc",
+            "data": 7.25
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 500,
+        "height": 400,
+        "title": "Outer Legend Pie Chart"
+    },
+    "series": {
+        "showLabel": true
+    },
+    "legend": {
+        "align": "outer"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['Browser'],
+            series: [
+                {
+                    name: 'Chrome',
+                    data: 46.02
+                },
+                {
+                    name: 'IE',
+                    data: 20.47
+                },
+                {
+                    name: 'Firefox',
+                    data: 17.71
+                },
+                {
+                    name: 'Safari',
+                    data: 5.45
+                },
+                {
+                    name: 'Opera',
+                    data: 3.10
+                },
+                {
+                    name: 'Etc',
+                    data: 7.25
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 500,
+                height: 400,
+                title: 'Outer Legend Pie Chart'
+            },
+            series: {
+                showLabel: true
+            },
+            "tooltip": {
+                "suffix": "%"
+            },
+            legend: {
+                align: 'outer'
+            }
+        };
+    tui.chart.pieChart(container, data, options);
+</script>
+</body>
+</html>

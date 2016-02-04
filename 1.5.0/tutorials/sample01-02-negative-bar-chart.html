@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Negative Bar Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="barChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "series": [
+        {
+            "name": "Budget",
+            "data": [4000, 5000, 3000, 5000, 7000, 6000, 4000, 1000]
+        },
+        {
+            "name": "Income",
+            "data": [7000, 8000, 1000, 7000, 2000, 7000, 3000, 5000]
+        },
+        {
+            "name": "Expenses",
+            "data": [-5000, -4000, -4000, -6000, -3000, -4000, -5000, -7000]
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Negative Bar Chart",
+        "format": "1,000"
+    },
+    "yAxis": {
+        "title": "Month"
+    },
+    "xAxis": {
+        "title": "Amount",
+        "min": -10000,
+        "max": 10000
+    },
+    "series": {
+        "showLabel": true
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#63A69F", "#F2E1AC", "#F2836B",  "#F2594B"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            series: [
+                {
+                    name: 'Budget',
+                    data: [4000, 5000, 3000, 5000, 7000, 6000, 4000, 1000]
+                },
+                {
+                    name: 'Income',
+                    data: [7000, 8000, 1000, 7000, 2000, 7000, 3000, 5000]
+                },
+                {
+                    name: 'Expenses',
+                    data: [-5000, -4000, -4000, -6000, -3000, -4000, -5000, -7000]
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Negative Bar Chart',
+                "format": "1,000"
+            },
+            yAxis: {
+                title: 'Month'
+            },
+            xAxis: {
+                title: 'Amount',
+                min: -10000,
+                max: 10000
+            },
+            series: {
+                showLabel: true
+            }
+        };
+    tui.chart.barChart(container, data, options);
+</script>
+</body>
+</html>

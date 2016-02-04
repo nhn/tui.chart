@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Area Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="areaChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["Jan", "Feb", "Mar","Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "series": [
+        {
+            "name": "Seoul",
+            "data": [-3.5, -1.1, 4.0, 11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 6.6, -0.6]
+        },
+
+        {
+            "name": "Sydney",
+            "data": [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2]
+        },
+        {
+            "name": "Moskva",
+            "data": [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5]
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Area Chart"
+    },
+    "yAxis": {
+        "title": "Temperature (Celsius)"
+    },
+    "xAxis": {
+        "title": "City"
+    },
+    "tooltip": {
+        "suffix": "°C"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#66a89c", "#39706f", "#1b4151"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            "categories": ["Jan", "Feb", "Mar","Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            "series": [
+                {
+                    "name": "Seoul",
+                    "data": [-3.5, -1.1, 4.0, 11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9, 6.6, -0.6]
+                },
+
+                {
+                    "name": "Sydney",
+                    "data": [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2]
+                },
+                {
+                    "name": "Moskva",
+                    "data": [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5]
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 400,
+                title: 'Area Chart'
+            },
+            yAxis: {
+                title: 'Temperature (Celsius)'
+            },
+            xAxis: {
+                title: 'City'
+            },
+            tooltip: {
+                suffix: '°C'
+            }
+        };
+    tui.chart.areaChart(container, data, options);
+</script>
+</body>
+</html>
