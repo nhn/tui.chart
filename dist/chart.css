@@ -231,15 +231,79 @@
 .tui-chart .tui-chart-series-area .tui-chart-series-label-area.show {
   display: block;
 }
+.tui-chart .tui-chart-series-area .tui-chart-series-label-area.opacity {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+  filter: alpha(opacity=100);
+  opacity: 1;
+}
+.tui-chart .tui-chart-series-area .tui-chart-series-graph-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.tui-chart .tui-chart-zoom-area {
+  z-index: 1500;
+  position: absolute;
+  border: 1px solid #cccccc;
+  background-color: #cccccc;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background-clip: padding-box;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn {
+  width: 21px;
+  height: 21px;
+  display: block;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:first-child {
+  margin-bottom: 1px;
+  -webkit-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+  background-clip: padding-box;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:last-child {
+  -webkit-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+  background-clip: padding-box;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn:hover {
+  background-color: #efefef;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div {
+  font-szie: 0;
+  background-color: #555555;
+  position: absolute;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div.horizontal-line {
+  width: 9px;
+  height: 1px;
+  left: 6px;
+  top: 10px;
+}
+.tui-chart .tui-chart-zoom-area > .tui-chart-zoom-btn > div.vertical-line {
+  width: 1px;
+  height: 9px;
+  left: 10px;
+  top: 6px;
+}
 .tui-chart .tui-chart-series-custom-event-area {
   z-index: 1000;
   position: absolute;
-  left: 10px;
+  left: 0;
   top: 0;
   background-color: #fff;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
   opacity: 0;
+}
+.tui-chart .tui-chart-series-custom-event-area.hide {
+  display: none;
+}
+.tui-chart .tui-chart-series-custom-event-area.drag {
+  cursor: move;
 }
 .tui-chart .tui-chart-legend-rect {
   margin-top: 2px;
@@ -287,7 +351,7 @@
   margin: 0;
 }
 .tui-chart .tui-chart-legend-area .tui-chart-legend .tui-chart-legend-label {
-  padding: 2px 0 2px 5px;
+  padding: 2px 0 2px 4px;
   cursor: pointer;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
@@ -303,6 +367,44 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
   filter: alpha(opacity=30);
   opacity: 0.3;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend-tick-area {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend-tick-area .tui-chart-map-legend-tick {
+  width: 15px;
+  height: 1px;
+  background-color: #ccc;
+  position: absolute;
+  left: 0px;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend-tick-area .tui-chart-map-legend-tick-label {
+  position: absolute;
+  left: 30px;
+  text-align: left;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend-tick-area.horizontal .tui-chart-map-legend-tick {
+  top: 0px;
+  width: 1px;
+  height: 15px;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-legend-tick-area.horizontal .tui-chart-map-legend-tick-label {
+  top: 30px;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-map-legend-wedge {
+  position: absolute;
+  width: 19px;
+  height: 4px;
+  border-left: 2px solid #777;
+  border-right: 2px solid #777;
+  left: 8px;
+  top: 30px;
+  display: none;
+}
+.tui-chart .tui-chart-legend-area .tui-chart-map-legend-wedge.show {
+  display: block;
 }
 .tui-chart .tui-chart-legend-area.horizontal {
   padding-left: 0;
@@ -377,6 +479,12 @@
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-group-tooltip-sector.show {
   display: block;
+}
+.tui-chart.tui-map-chart .tui-chart-series-area {
+  overflow: hidden;
+}
+.tui-chart.tui-map-chart .tui-chart-tooltip-area .tui-chart-default-tooltip > :first-child {
+  font-weight: normal;
 }
 .tui-chart-size-check-element {
   clear: both;

@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Pie Chart Sample</title>
+    <title>Map Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -14,37 +14,121 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="pieChart" />
+        <input type="hidden" id="type" value="mapChart" />
     </div>
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Browser"],
     "series": [
         {
-            "name": "Chrome",
-            "data": 46.02
+            "code": "KR",
+            "data": 100
         },
         {
-            "name": "IE",
-            "data": 20.47
+            "code": "JP",
+            "data": 30
         },
         {
-            "name": "Firefox",
-            "data": 17.71
+            "code": "CN",
+            "data": 60
         },
         {
-            "name": "Safari",
-            "data": 5.45
+            "code": "RU",
+            "data": 30
         },
         {
-            "name": "Opera",
-            "data": 3.10
+            "code": "IN",
+            "data": 30
         },
         {
-            "name": "Etc",
-            "data": 7.25
+            "code": "SA",
+            "data": 40
+        },
+        {
+            "code": "IR",
+            "data": 20
+        },
+        {
+            "code": "GN",
+            "data": 50
+        },
+        {
+            "code": "GA",
+            "data": 50
+        },
+        {
+            "code": "SD",
+            "data": 30
+        },
+        {
+            "code": "CD",
+            "data": 45
+        },
+        {
+            "code": "ZA",
+            "data": 60
+        },
+        {
+            "code": "IN",
+            "data": 30
+        },
+        {
+            "code": "VN",
+            "data": 20
+        },
+        {
+            "code": "US",
+            "data": 100
+        },
+        {
+            "code": "GB",
+            "data": 80
+        },
+        {
+            "code": "FR",
+            "data": 70
+        },
+        {
+            "code": "DE",
+            "data": 90
+        },
+        {
+            "code": "NO",
+            "data": 50
+        },
+        {
+            "code": "SE",
+            "data": 60
+        },
+        {
+            "code": "FI",
+            "data": 50
+        },
+        {
+            "code": "CA",
+            "data": 70
+        },
+        {
+            "code": "AU",
+            "data": 30
+        },
+        {
+            "code": "CL",
+            "data": 80,
+            "labelCoordinate": {"x": -0.5, "y": 0.5}
+        },
+        {
+            "code": "BR",
+            "data": 70
+        },
+        {
+            "code": "AR",
+            "data": 30
+        },
+        {
+            "code": "MX",
+            "data": 30
         }
     ]
 }
@@ -55,12 +139,13 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
-        "height": 400,
-        "title": "Pie Chart"
+        "width": 700,
+        "height": 600,
+        "title": "Map Chart"
     },
-    "tooltip": {
-        "suffix": "%"
+    "map": "world",
+    "legend": {
+        "align": "top"
     }
 }
         </textarea>
@@ -73,7 +158,9 @@
         <textarea id="theme">
 {
     "series": {
-        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
+            "startColor": "#ffefef",
+            "endColor": "#ac4142",
+            "overColor": "#75b5aa"
     }
 }
         </textarea>
@@ -87,49 +174,135 @@
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
 <script src="dist/chart.min.js"></script>
+<script src="dist/maps/world.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['Browser'],
             series: [
                 {
-                    name: 'Chrome',
-                    data: 46.02
+                    code: 'KR',
+                    data: 100
                 },
                 {
-                    name: 'IE',
-                    data: 20.47
+                    code: 'JP',
+                    data: 30
                 },
                 {
-                    name: 'Firefox',
-                    data: 17.71
+                    code: 'CN',
+                    data: 60
                 },
                 {
-                    name: 'Safari',
-                    data: 5.45
+                    code: 'RU',
+                    data: 30
                 },
                 {
-                    name: 'Opera',
-                    data: 3.10
+                    code: 'IN',
+                    data: 30
                 },
                 {
-                    name: 'Etc',
-                    data: 7.25
+                    code: 'SA',
+                    data: 40
+                },
+                {
+                    code: 'IR',
+                    data: 20
+                },
+                {
+                    code: 'GN',
+                    data: 50
+                },
+                {
+                    code: 'GA',
+                    data: 50
+                },
+                {
+                    code: 'SD',
+                    data: 30
+                },
+                {
+                    code: 'CD',
+                    data: 45
+                },
+                {
+                    code: 'ZA',
+                    data: 60
+                },
+                {
+                    code: 'IN',
+                    data: 30
+                },
+                {
+                    code: 'VN',
+                    data: 20
+                },
+                {
+                    code: 'US',
+                    data: 100
+                },
+                {
+                    code: 'GB',
+                    data: 80
+                },
+                {
+                    code: 'FR',
+                    data: 70
+                },
+                {
+                    code: 'DE',
+                    data: 90
+                },
+                {
+                    code: 'NO',
+                    data: 50
+                },
+                {
+                    code: 'SE',
+                    data: 60
+                },
+                {
+                    code: 'FI',
+                    data: 50
+                },
+                {
+                    code: 'CA',
+                    data: 70
+                },
+                {
+                    code: 'AU',
+                    data: 30
+                },
+                {
+                    code: 'CL',
+                    data: 80,
+                    labelCoordinate: {x: -0.5,y: 0.5}
+                },
+                {
+                    code: 'BR',
+                    data: 70
+                },
+                {
+                    code: 'AR',
+                    data: 30
+                },
+                {
+                    code: 'MX',
+                    data: 30
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
-                height: 400,
-                title: 'Pie Chart'
+                width: 700,
+                height: 600,
+                title: 'Map Chart'
             },
-            tooltip: {
-                suffix: '%'
+            map: 'world',
+            legend: {
+                align: 'top'
             }
         };
-    tui.chart.pieChart(container, data, options);
+    tui.chart.mapChart(container, data, options);
 </script>
 </body>
 </html>
