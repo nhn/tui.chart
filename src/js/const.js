@@ -203,10 +203,15 @@ var chartConst = {
     XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
     XAXIS_LABEL_GUTTER: 2,
-    /** stand multiple nums of axis
+    /**
+     * Standard multiple nums of axis
      * @type {Array}
      */
-    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10],
+    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10, 100, 1000],
+    /**
+     * Last standard multiple num of axis
+     */
+    AXIS_LAST_STANDARD_MULTIPLE_NUM: 1000,
     /** label padding top */
     LABEL_PADDING_TOP: 2,
     /** line margin top */

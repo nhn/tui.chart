@@ -69,8 +69,8 @@ var calculator = {
                     standard = num;
                 }
                 return false;
-            } else if (num === 10) {
-                standard = 10;
+            } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
+                standard = num;
             }
         });
 

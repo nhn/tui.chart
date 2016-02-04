@@ -102,7 +102,8 @@ var axisDataMaker = {
         if (isAllowedStackedOption && predicate.isPercentStacked(params.stackedOption)) {
             minusSum = calculator.sumMinusValues(concat.apply([], params.values));
             if (minusSum < 0) {
-                tickInfo = params.divergingOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
+                tickInfo = params.divergingOption ? chartConst.DIVERGENT_PERCENT_STACKED_TICK_INFO
+                    : chartConst.NEGATIVE_PERCENT_STACKED_TICK_INFO;
             } else {
                 tickInfo = chartConst.PERCENT_STACKED_TICK_INFO;
             }
@@ -258,6 +259,7 @@ var axisDataMaker = {
         }
 
         if (params.divergingOption) {
+            delete options.min;
             changedLimit = this._makeLimitForDivergingOption(min, max);
             min = changedLimit.min;
             max = changedLimit.max;
@@ -320,6 +322,8 @@ var axisDataMaker = {
         if (!tui.util.isUndefined(options.max)) {
             changedOptions.max = options.max * multipleNum;
         }
+
+        console.log(changedOptions);
 
         return {
             min: min * multipleNum,

@@ -356,6 +356,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _updateDimensionsHeight: function(diffHeight) {
         this.dimensions.plot.height -= diffHeight;
         this.dimensions.series.height -= diffHeight;
+        this.dimensions.yAxis.height -= diffHeight;
+        this.dimensions.rightYAxis.height -= diffHeight;
         this.dimensions.xAxis.height += diffHeight;
     },
 
@@ -375,7 +377,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         if (rotationInfo) {
             overflowLeft = this._calculateOverflowLeft(rotationInfo, labels[0]);
-
             this.xAxisDegree = rotationInfo.degree;
             this._updateDimensionsWidth(overflowLeft);
             this._updateDegree(rotationInfo, labels.length, overflowLeft);

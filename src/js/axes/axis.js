@@ -470,10 +470,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + params.degree,
+            addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + this.boundsMaker.xAxisDegree,
             halfWidth = params.labelSize / 2,
-            moveLeft = calculator.calculateAdjacent(params.degree, halfWidth),
-            top = calculator.calculateOpposite(params.degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
+            moveLeft = calculator.calculateAdjacent(this.boundsMaker.xAxisDegree, halfWidth),
+            top = calculator.calculateOpposite(this.boundsMaker.xAxisDegree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
             labelsHtml = tui.util.map(params.positions, function(position, index) {
                 var label = params.labels[index],
                     rotationCssText = this._makeCssTextForRotationMoving({
@@ -535,7 +535,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _makeLabelsHtml: function(params) {
         var labelsHtml;
 
-        if (this.boundsMaker.xAxisDegree) {
+        if (this.name === 'xAxis' && this.boundsMaker.xAxisDegree) {
             labelsHtml = this._makeRotationLabelsHtml(params);
         } else {
             labelsHtml = this._makeNormalLabelsHtml(params);
