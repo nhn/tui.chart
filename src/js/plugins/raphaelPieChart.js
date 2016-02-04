@@ -379,6 +379,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         } else if (this.prevMovedSector) {
             this._animateRestoring(this.prevMovedSector.data('index'));
             this.callbacks.funcHideTooltip();
+            this.prevMovedSector = null;
         }
         this.prevPosition = position;
     },

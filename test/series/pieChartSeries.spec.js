@@ -183,19 +183,22 @@ describe('PieChartSeries', function() {
                         centerPosition: {
                             left: 100,
                             top: 50
-                        }
+                        },
+                        percentValue: 0.3
                     },
                     {
                         centerPosition: {
                             left: 100,
                             top: 100
-                        }
+                        },
+                        percentValue: 0.4
                     },
                     {
                         centerPosition: {
                             left: 100,
                             top: 150
-                        }
+                        },
+                        percentValue: 0.4
                     }
                 ]
             };
@@ -300,7 +303,8 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 50
                             }
-                        }
+                        },
+                        percentValue: 0.3
                     },
                     {
                         outerPosition: {
@@ -308,7 +312,8 @@ describe('PieChartSeries', function() {
                                 left: 150,
                                 top: 100
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     },
                     {
                         outerPosition: {
@@ -316,7 +321,8 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 150
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     }
                 ]
             };
@@ -362,7 +368,8 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 50
                             }
-                        }
+                        },
+                        percentValue: 0.3
                     },
                     {
                         outerPosition: {
@@ -370,7 +377,8 @@ describe('PieChartSeries', function() {
                                 left: 150,
                                 top: 100
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     },
                     {
                         outerPosition: {
@@ -378,7 +386,8 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 150
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     }
                 ]
             };
