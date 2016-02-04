@@ -508,9 +508,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var result;
 
         this.fire('hideTooltipContainer');
-        dom.removeClass(this.seriesLabelContainer, 'show');
+
+        if (this.options.showLabel) {
+            dom.removeClass(this.seriesLabelContainer, 'show');
+        }
+
         result = this.graphRenderer[funcName](position);
-        dom.addClass(this.seriesLabelContainer, 'show');
+
+        if (this.options.showLabel) {
+            dom.addClass(this.seriesLabelContainer, 'show');
+        }
+
         this.fire('showTooltipContainer');
 
         return result;
@@ -556,6 +564,22 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }
+    },
+
+    /**
+     * Show label.
+     */
+    showLabel: function() {
+        this.options.showLabel = true;
+        dom.addClass(this.seriesLabelContainer, 'show opacity');
+    },
+
+    /**
+     * Hide label.
+     */
+    hideLabel: function() {
+        this.options.showLabel = false;
+        dom.removeClass(this.seriesLabelContainer, 'show');
     }
 });
 

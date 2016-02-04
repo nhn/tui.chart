@@ -75,10 +75,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
 
-        if (!this.options.showLabel) {
-            return;
-        }
-
         groupPositions = this.seriesData.groupPositions;
         formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
         firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);

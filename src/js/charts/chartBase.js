@@ -517,6 +517,30 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     resetTooltipPosition: function() {
         this.componentManager.get('tooltip').resetPosition();
+    },
+
+    /**
+     * Show series label.
+     * @api
+     */
+    showSeriesLabel: function() {
+        var serieses = this.componentManager.where({componentType: 'series'});
+
+        tui.util.forEachArray(serieses, function(series) {
+            series.showLabel();
+        });
+    },
+
+    /**
+     * Hide series label.
+     * @api
+     */
+    hideSeriesLabel: function() {
+        var serieses = this.componentManager.where({componentType: 'series'});
+
+        tui.util.forEachArray(serieses, function(series) {
+            series.hideLabel();
+        });
     }
 });
 

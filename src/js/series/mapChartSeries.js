@@ -415,11 +415,12 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {number} newMagn new zoom magnification
      */
     onZoom: function(newMagn) {
-        var changeRatio = newMagn / this.zoomMagn;
+        var changedRatio = newMagn / this.zoomMagn;
 
         this.zoomMagn = newMagn;
 
-        this._zoom(changeRatio);
+        this._zoom(changedRatio);
+        this.userEvent.fire('zoom', newMagn);
     },
 
     /**

@@ -227,9 +227,7 @@ describe('BarTypeSeriesBase', function() {
                 elExpected = dom.create('div'),
                 params;
 
-            series.options = {
-                showLabel: true
-            };
+            series.options = {};
             series.seriesData = {
                 groupBounds: [
                     [
@@ -263,7 +261,6 @@ describe('BarTypeSeriesBase', function() {
                 params;
 
             series.options = {
-                showLabel: true,
                 stacked: 'normal'
             };
             series.seriesData = {
@@ -292,17 +289,6 @@ describe('BarTypeSeriesBase', function() {
 
             expect(elLabelArea.className).toEqual(elExpected.className);
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
-        });
-
-        it('showLabel 옵션이 없으면 랜더링하지 않습니다.', function () {
-            var elLabelArea = dom.create('div');
-
-            series.options = {
-                stacked: 'normal'
-            };
-            series._renderSeriesLabel({}, elLabelArea);
-
-            expect(elLabelArea.innerHTML).toBe('');
         });
     });
 });

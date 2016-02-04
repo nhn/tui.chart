@@ -355,10 +355,6 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
-        if (!this.options.showLabel) {
-            return;
-        }
-
         if (this.options.stacked) {
             this._renderStackedSeriesLabel(elSeriesLabelArea);
         } else {
