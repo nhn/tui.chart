@@ -18,16 +18,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Chart base.
      * @constructs ChartBase
      * @param {object} params parameters
-     *      @param {object} params.bounds chart bounds
+     *      @param {object} params.rawData raw data
      *      @param {object} params.theme chart theme
-     *      @param {{yAxis: obejct, xAxis: object}} axesData axes data
      *      @param {object} params.options chart options
-     *      @param {boolean} param.isVertical whether vertical or not
+     *      @param {boolean} params.hasAxes whether has axes or not
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {DataProcessor} params.DataProcessor DataProcessor
      */
     init: function(params) {
         /**
-         * Raw data.
-         * @type {object} raw data
+         * raw data.
+         * @type {object}
          */
         this.rawData = params.rawData;
 

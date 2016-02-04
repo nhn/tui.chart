@@ -327,11 +327,11 @@ describe('axisDataMaker', function() {
             expect(result).toEqual({
                 limit: {
                     min: 0,
-                    max: 120
+                    max: 100
                 },
-                step: 30,
+                step: 25,
                 tickCount: 5,
-                labels: [0, 30, 60, 90, 120]
+                labels: [0, 25, 50, 75, 100]
             });
         });
     });
@@ -478,25 +478,27 @@ describe('axisDataMaker', function() {
 
     describe('_getCandidateTickInfos()', function() {
         it('tickCounts정보에 해당하는 tick info 후보군을 계산하여 반환합니다.', function () {
-            var candidates = maker._getCandidateTickInfos({
-                min: 10,
-                max: 90,
-                tickCounts: [4, 5]
-            }, {});
-            expect(candidates).toEqual([
-                {
-                    limit: {min: 0, max: 120},
-                    tickCount: 4,
-                    step: 40,
-                    labels: [0, 40, 80, 120]
-                },
-                {
-                    limit: {min: 0, max: 120},
-                    tickCount: 5,
-                    step: 30,
-                    labels: [0, 30, 60, 90, 120]
-                }
-            ]);
+            var actual = maker._getCandidateTickInfos({
+                    min: 10,
+                    max: 100,
+                    tickCounts: [3, 4]
+                }, {}),
+                expected = [
+                    {
+                        limit: {min: 0, max: 200},
+                        tickCount: 3,
+                        step: 100,
+                        labels: [0, 100, 200]
+                    },
+                    {
+                        limit: {min: 0, max: 150},
+                        tickCount: 4,
+                        step: 50,
+                        labels: [0, 50, 100, 150]
+                    }
+                ];
+
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -565,26 +567,26 @@ describe('axisDataMaker', function() {
             });
 
             expect(result).toEqual({
-                labels: [0, 30, 60, 90],
-                tickCount: 4,
-                validTickCount: 4,
+                labels: [0, 25, 50, 75, 100],
+                tickCount: 5,
+                validTickCount: 5,
                 limit: {
                     min: 0,
-                    max: 90
+                    max: 100
                 },
-                step: 30,
+                step: 25,
                 isVertical: false,
                 isPositionRight: false,
                 aligned: false
             });
         });
 
-        it('stacked 옵션이 "normal"인 value 타입 axis data를 생성합니다. limit.max는 행(ex: [80, 30]) 의 합산값에 영향을 받습니다.', function () {
+        it('stacked 옵션이 "normal"인 value 타입 axis data를 생성합니다. limit.max는 행(ex: [60, 30]) 의 합산값에 영향을 받습니다.', function () {
             var result = maker.makeValueAxisData({
                 values: [
                     [70, 10],
                     [20, 20],
-                    [80, 30]
+                    [60, 30]
                 ],
                 seriesDimension: {
                     width: 320,
@@ -596,14 +598,14 @@ describe('axisDataMaker', function() {
             });
 
             expect(result).toEqual({
-                labels: [0, 30, 60, 90, 120],
+                labels: [0, 25, 50, 75, 100],
                 tickCount: 5,
                 validTickCount: 5,
                 limit: {
                     min: 0,
-                    max: 120
+                    max: 100
                 },
-                step: 30,
+                step: 25,
                 isVertical: false,
                 isPositionRight: false,
                 aligned: false

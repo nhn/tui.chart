@@ -207,11 +207,11 @@ var chartConst = {
      * Standard multiple nums of axis
      * @type {Array}
      */
-    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10, 100, 1000],
+    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10, 20, 50, 100],
     /**
      * Last standard multiple num of axis
      */
-    AXIS_LAST_STANDARD_MULTIPLE_NUM: 1000,
+    AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
     /** label padding top */
     LABEL_PADDING_TOP: 2,
     /** line margin top */

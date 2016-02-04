@@ -317,17 +317,25 @@ describe('boundsMaker', function() {
                     height: 200
                 },
                 series: {
-                    height: 199
+                    height: 200
                 },
                 xAxis: {
                     height: 50
+                },
+                yAxis: {
+                    height: 200
+                },
+                rightYAxis: {
+                    height: 200
                 }
             };
             boundsMaker._updateDimensionsHeight(50);
 
             expect(boundsMaker.getDimension('plot').height).toBe(150);
-            expect(boundsMaker.getDimension('series').height).toBe(149);
+            expect(boundsMaker.getDimension('series').height).toBe(150);
             expect(boundsMaker.getDimension('xAxis').height).toBe(100);
+            expect(boundsMaker.getDimension('yAxis').height).toBe(150);
+            expect(boundsMaker.getDimension('rightYAxis').height).toBe(150);
         });
     });
 

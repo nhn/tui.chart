@@ -575,14 +575,15 @@ describe('Axis', function() {
     describe('_makeRotationLabelsHtml()', function() {
         it('45도로 회전된 레이블 영역 html을 생성합니다.', function() {
             var actual, expected;
+
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
+            boundsMaker.xAxisDegree = 45;
             actual = axis._makeRotationLabelsHtml({
                 positions: [30, 80, 130],
                 labels: ['label1', 'label2', 'label3'],
                 posType: 'left',
                 cssTexts: [],
-                labelSize: 80,
-                degree: 45
+                labelSize: 80
             });
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label1</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="left:10px;top:10px"><span>label2</span></div>' +
@@ -600,13 +601,18 @@ describe('Axis', function() {
                     posType: 'left',
                     cssTexts: []
                 },
-                actual = axis._makeLabelsHtml(params),
-                expected = axis._makeNormalLabelsHtml(params);
+                actual, expected;
+
+            delete boundsMaker.xAxisDegree;
+            actual = axis._makeLabelsHtml(params);
+            expected = axis._makeNormalLabelsHtml(params);
+
             expect(actual).toBe(expected);
         });
 
         it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
             var params, actual, expected;
+
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             params = {
                 positions: [30, 80, 130],
@@ -615,11 +621,11 @@ describe('Axis', function() {
                 cssTexts: [],
                 labelSize: 80
             };
-
             boundsMaker.xAxisDegree = 45;
-
+            axis.name = 'xAxis';
             actual = axis._makeLabelsHtml(params);
             expected = axis._makeRotationLabelsHtml(params);
+
             expect(actual).toBe(expected);
         });
     });

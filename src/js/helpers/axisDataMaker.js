@@ -323,8 +323,6 @@ var axisDataMaker = {
             changedOptions.max = options.max * multipleNum;
         }
 
-        console.log(changedOptions);
-
         return {
             min: min * multipleNum,
             max: max * multipleNum,

@@ -137,14 +137,14 @@ describe('ComboChart', function() {
                 }
             });
             expected = {
-                labels: [0, 30, 60, 90],
-                tickCount: 4,
-                validTickCount: 4,
+                labels: [0, 25, 50, 75, 100],
+                tickCount: 5,
+                validTickCount: 5,
                 limit: {
                     min: 0,
-                    max: 90
+                    max: 100
                 },
-                step: 30,
+                step: 25,
                 isVertical: true,
                 isPositionRight: false,
                 aligned: false,

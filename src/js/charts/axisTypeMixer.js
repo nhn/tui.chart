@@ -169,7 +169,7 @@ var axisTypeMixer = {
     _updatePercentValues: function(axesData) {
         var chartTypes = this.chartTypes || [this.chartType],
             limitMap = this._getLimitMap(axesData, chartTypes),
-            stackedOption = this.options.series.stacked;
+            stackedOption = this.options.series && this.options.series.stacked;
         tui.util.forEachArray(chartTypes, function(chartType) {
             this.dataProcessor.registerPercentValues(limitMap[chartType], stackedOption, chartType);
         }, this);
