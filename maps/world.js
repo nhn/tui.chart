@@ -1,6 +1,6 @@
 /**
  * https://www.amcharts.com/svg-maps/?map=world
- * svg path by amcharts team
+ * map data by amcharts team
  */
 (function(tuiChart) {
     'use strict';
