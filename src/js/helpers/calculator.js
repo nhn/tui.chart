@@ -6,8 +6,7 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('./predicate');
+var chartConst = require('../const');
 
 /**
  * Calculator.
@@ -70,8 +69,8 @@ var calculator = {
                     standard = num;
                 }
                 return false;
-            } else if (num === 10) {
-                standard = 10;
+            } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
+                standard = num;
             }
         });
 
@@ -82,7 +81,9 @@ var calculator = {
             normalized = tui.util.addition(value, (mod > 0 ? standard - mod : 0));
         }
 
-        return normalized *= flag;
+        normalized *= flag;
+
+        return normalized;
     },
 
     /**
@@ -90,7 +91,7 @@ var calculator = {
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
-     * @returns {array.<number>} positions
+     * @returns {Array.<number>} positions
      */
     makeTickPixelPositions: function(size, count) {
         var positions = [],
@@ -172,7 +173,7 @@ var calculator = {
 
     /**
      * Sum plus values.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @returns {number} sum
      */
     sumPlusValues: function(values) {
@@ -184,7 +185,7 @@ var calculator = {
 
     /**
      * Sum minus values.
-     * @param {array.<number>} values values
+     * @param {Array.<number>} values values
      * @returns {number} sum
      */
     sumMinusValues: function(values) {

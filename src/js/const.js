@@ -34,6 +34,8 @@ var chartConst = {
     CHART_TYPE_COMBO: 'combo',
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
+    /** @type {string} */
+    CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
     /** chart default width */
@@ -56,7 +58,6 @@ var chartConst = {
     DEFAULT_LABEL_FONT_SIZE: 12,
     /** default font size of series label */
     DEFAULT_SERIES_LABEL_FONT_SIZE: 11,
-    /** @type {string} */
     /** default graph plugin
      * @type {string}
      */
@@ -69,6 +70,7 @@ var chartConst = {
      * @type {string}
      */
     DEFAULT_THEME_NAME: 'default',
+    MAX_HEIGHT_WORLD: 'A',
     /** stacked option types
      * @type {string}
      */
@@ -101,16 +103,26 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATE: 0.8,
     /** small rate of pie graph */
     PIE_GRAPH_SMALL_RATE: 0.65,
+    /** tick count for map chart legend */
+    MAP_CHART_LEGEND_TICK_COUNT: 4,
+    /** default position ratio of map chart label
+     * @type {object}
+     */
+    MAP_CHART_LABEL_DEFAULT_POSITION_RATIO: {
+        x: 0.5,
+        y: 0.5
+    },
     /** dot radius */
     DOT_RADIUS: 4,
     /** yAxis properties
-     * @type {array.<string>}
+     * @type {Array.<string>}
      */
     YAXIS_PROPS: ['tickColor', 'title', 'label'], // yaxis theme의 속성 - chart type filtering할 때 사용됨
     /** series properties
-     * @type {array.<string>}
+     * @type {Array.<string>}
      */
-    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors', 'selectionColor'], // series theme의 속성 - chart type filtering할 때 사용됨
+    SERIES_PROPS: ['label', 'colors', 'borderColor', 'singleColors',
+        'selectionColor', 'startColor', 'endColor', 'overColor'], // series theme의 속성 - chart type filtering할 때 사용됨
     /** title area width padding */
     TITLE_AREA_WIDTH_PADDING: 20,
     /** top margin of x axis label */
@@ -121,6 +133,12 @@ var chartConst = {
      * @type {string}
      */
     TOOLTIP_PREFIX: 'tui-chart-tooltip',
+    /** tooltip z-index **/
+    TOOLTIP_ZINDEX: 500,
+    /** tooltip animation time */
+    TOOLTIP_ANIMATION_TIME: 100,
+    /** tooltip animation time for pie chart */
+    TOOLTIP_PIE_ANIMATION_TIME: 50,
     /** minimum pixel type step size */
     MIN_PIXEL_TYPE_STEP_SIZE: 40,
     /** maximum pixel type step size */
@@ -137,7 +155,6 @@ var chartConst = {
         tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     },
-
     /** tick info of negative percent stacked option
      * @type {object}
      */
@@ -150,6 +167,18 @@ var chartConst = {
         tickCount: 9,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
+    /** tick info of diverging percent stacked option
+     * @type {object}
+     */
+    DIVERGENT_PERCENT_STACKED_TICK_INFO: {
+        limit: {
+            min: -100,
+            max: 100
+        },
+        step: 25,
+        tickCount: 9,
+        labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
+    },
     /** title add padding */
     TITLE_PADDING: 20,
     /** legend area padding */
@@ -160,6 +189,12 @@ var chartConst = {
     LEGEND_RECT_WIDTH: 12,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
+    /** map legend height */
+    MAP_LEGEND_SIZE: 200,
+    /** map legend graph size */
+    MAP_LEGEND_GRAPH_SIZE: 25,
+    /** map legend label padding */
+    MAP_LEGEND_LABEL_PADDING: 5,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
@@ -168,8 +203,15 @@ var chartConst = {
     XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
     XAXIS_LABEL_GUTTER: 2,
-    /** stand multiple nums of axis */
-    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10],
+    /**
+     * Standard multiple nums of axis
+     * @type {Array}
+     */
+    AXIS_STANDARD_MULTIPLE_NUMS: [1, 2, 5, 10, 20, 50, 100],
+    /**
+     * Last standard multiple num of axis
+     */
+    AXIS_LAST_STANDARD_MULTIPLE_NUM: 100,
     /** label padding top */
     LABEL_PADDING_TOP: 2,
     /** line margin top */

@@ -9,7 +9,9 @@
 var BarChart = require('./raphaelBarChart'),
     LineChart = require('./raphaelLineChart'),
     AreaChart = require('./raphaelAreaChart'),
-    PieChart = require('./raphaelPieChart');
+    PieChart = require('./raphaelPieChart'),
+    MapChart = require('./raphaelMapChart'),
+    MapLegend = require('./raphaelMapLegend');
 
 var pluginName = 'raphael',
     pluginRaphael;
@@ -19,7 +21,9 @@ pluginRaphael = {
     column: BarChart,
     line: LineChart,
     area: AreaChart,
-    pie: PieChart
+    pie: PieChart,
+    map: MapChart,
+    mapLegend: MapLegend
 };
 
 tui.chart.registerPlugin(pluginName, pluginRaphael);

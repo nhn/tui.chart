@@ -16,12 +16,12 @@ var chartConst = require('../const'),
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
      * Make positions of line chart.
-     * @param {{width: number, height:nunber}} dimension line chart dimension
-     * @returns {array.<array.<object>>} positions
+     * @returns {Array.<Array.<object>>} positions
      * @private
      */
-    _makeBasicPositions: function(dimension) {
-        var groupValues = this._getPercentValues(),
+    _makeBasicPositions: function() {
+        var dimension = this.boundsMaker.getDimension('series'),
+            groupValues = this._getPercentValues(),
             width = dimension.width,
             height = dimension.height,
             len = groupValues[0].length,
@@ -69,20 +69,13 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
     /**
      * Render series label.
-     * @param {object} params parameters
-     *      @param {HTMLElement} params.container container
-     *      @param {array.<array>} params.groupPositions group positions
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
-    _renderSeriesLabel: function(params, elSeriesLabelArea) {
+    _renderSeriesLabel: function(elSeriesLabelArea) {
         var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
 
-        if (!this.options.showLabel) {
-            return;
-        }
-
-        groupPositions = params.groupPositions;
+        groupPositions = this.seriesData.groupPositions;
         formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
         firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);
         labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label);

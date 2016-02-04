@@ -7,13 +7,15 @@
 'use strict';
 
 var ChartBase = require('../../src/js/charts/chartBase'),
-    Plot = require('../../src/js/plots/plot'),
     dom = require('../../src/js/helpers/domHandler'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor'),
-    boundsMaker = require('../../src/js/helpers/boundsMaker');
+    DataProcessor = require('../../src/js/helpers/dataProcessor');
 
 describe('ChartBase', function() {
-    var chartBase;
+    var chartBase, componentManager;
+
+    beforeAll(function() {
+        componentManager = jasmine.createSpyObj('componentManager', ['where']);
+    });
 
     beforeEach(function() {
         chartBase = new ChartBase({
@@ -49,13 +51,14 @@ describe('ChartBase', function() {
                 }
             }
         });
+        chartBase.componentManager = componentManager;
     });
 
     describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
             spyOn(DataProcessor.prototype, 'process').and.returnValue();
-            actual = chartBase._createDataProcessor({
+            actual = chartBase._createDataProcessor(DataProcessor, {
                 rawData: {
                     categories: ['a', 'b', 'c']
                 },
@@ -97,54 +100,21 @@ describe('ChartBase', function() {
 
     describe('_makeRerenderingData()', function() {
         it('전달받은 rendering data에 rerendering에 필요한 data를 생성하여 추가합니다.', function() {
-            var renderingData = {
-                    series: {
-                        bound: 'seriesBound'
-                    },
-                    tooltip: {
-                        bound: 'tooltipBound'
-                    }
-                },
+            var renderingData = {},
                 checkedLegends = [true],
                 actual;
 
-            chartBase.componentMap = {
-               'series': {
-                   componentType: 'series',
-                   chartType: 'column'
-               }
-            };
+            componentManager.where.and.returnValue([
+                {
+                    name: 'columnSeries',
+                    chartType: 'column'
+                }
+            ]);
 
             actual = chartBase._makeRerenderingData(renderingData, checkedLegends);
-            expect(actual.tooltip.bound).toEqual('tooltipBound');
-            expect(actual.series.bound).toEqual('seriesBound');
-            expect(actual.series.checkedLegends).toEqual([true]);
-        });
-    });
 
-    describe('addComponent()', function() {
-        it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
-            var plot;
-            chartBase._addComponent('plot', Plot, {});
-
-            plot = chartBase.componentMap.plot;
-            expect(plot).toBeTruthy();
-            expect(plot.constructor).toEqual(Plot);
-            expect(tui.util.inArray('plot', tui.util.pluck(chartBase.components, 'name'))).toBe(0);
-        });
-
-        it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {
-            expect(chartBase.componentMap.plot).toBeFalsy();
-        });
-    });
-
-
-    describe('_makeBounds()', function() {
-        it('차트의 요소들의 bounds 정보를 생성합니다.', function() {
-            var actual;
-            spyOn(boundsMaker, 'make').and.returnValue({'chart': {dimension: {width: 100, height: 100}}});
-            actual = chartBase._makeBounds({});
-            expect(actual.chart.dimension).toEqual({width: 100, height: 100});
+            expect(actual.tooltip.checkedLegends).toEqual([true]);
+            expect(actual.columnSeries.checkedLegends).toEqual([true]);
         });
     });
 

@@ -20,13 +20,7 @@ var eventListener = {
      * @private
      */
     _attachEvent: function (eventName, el, callback) {
-        if (typeof callback == "object" && callback.handleEvent) {
-            el.attachEvent("on" + eventName, function () {
-                callback.handleEvent.call(callback);
-            });
-        } else {
-            el.attachEvent("on" + eventName, callback);
-        }
+        el.attachEvent('on' + eventName, callback);
     },
 
     /**
@@ -41,13 +35,7 @@ var eventListener = {
         try {
             el.addEventListener(eventName, callback);
         } catch (e) {
-            if (typeof callback == "object" && callback.handleEvent) {
-                el.addEventListener(eventName, function (event) {
-                    callback.handleEvent.call(callback, event);
-                });
-            } else {
-                throw e;
-            }
+            throw e;
         }
     },
     /**
@@ -59,9 +47,9 @@ var eventListener = {
      */
     bindEvent: function (eventName, el, callback) {
         var bindEvent;
-        if ("addEventListener" in el) {
+        if ('addEventListener' in el) {
             bindEvent = this._addEventListener;
-        } else if ("attachEvent" in el) {
+        } else if ('attachEvent' in el) {
             bindEvent = this._attachEvent;
         }
         this.bindEvent = bindEvent;

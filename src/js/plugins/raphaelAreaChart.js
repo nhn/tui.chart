@@ -9,7 +9,7 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael,
+var raphael = window.Raphael,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
@@ -32,8 +32,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Render function of area chart.
      * @param {HTMLElement} container container
-     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @return {object} paper raphael paper
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
+     * @returns {object} paper raphael paper
      */
     render: function(container, data) {
         var dimension = data.dimension,
@@ -43,31 +43,26 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             opacity = data.options.hasDot ? 1 : 0,
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupPaths, groupAreas, tooltipLine, selectionDot, groupDots;
+            paper;
 
-        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.paper = paper = raphael(container, 1, dimension.height);
         this.stackedOption = data.options.stacked;
         this.spline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
 
-        groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
-        groupAreas = this._renderAreas(paper, groupPaths, colors);
-        tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
-            this.selectionDot = selectionDot;
+            this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
 
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
-        this.groupPaths = groupPaths;
-        this.groupAreas = groupAreas;
-        this.tooltipLine = tooltipLine;
-        this.groupDots = groupDots;
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
@@ -75,33 +70,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * Render area graph.
-     * @param {object} paper paper
-     * @param {{start: string}} path path
-     * @param {string} color color
-     * @returns {array.<object>} raphael object
-     * @private
-     */
-    _renderArea: function(paper, path, color) {
-        var area = paper.path(path),
-            fillStyle = {
-                fill: color,
-                opacity: 0.5,
-                stroke: color,
-                'stroke-opacity': 0
-            };
-
-        area.attr(fillStyle);
-
-        return area;
-    },
-
-    /**
      * Render area graphs.
      * @param {object} paper paper
-     * @param {array.<object>} groupPaths group paths
-     * @param {array.<string>} colors colors
-     * @returns {array} raphael objects
+     * @param {Array.<object>} groupPaths group paths
+     * @param {Array.<string>} colors colors
+     * @returns {Array} raphael objects
      * @private
      */
     _renderAreas: function(paper, groupPaths, colors) {
@@ -116,7 +89,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 lineColor = areaColor;
 
             return {
-                area: this._renderArea(paper, path.area.join(' '), areaColor),
+                area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), areaColor, 0.5, areaColor),
                 line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor)
             };
         }, this);
@@ -137,8 +110,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Make areas path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} path
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} path
      * @private
      */
     _makeAreasPath: function(positions) {
@@ -158,8 +131,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Get area path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
     _getAreasPath: function(groupPositions) {
@@ -175,9 +148,9 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Make spline area bottom path.
-     * @param {array.<{left: number, top: number}>} positions positions
-     * @param {array.<{left: number, top: number}>} prevPositions previous positions
-     * @returns {array.<string | number>} spline area path
+     * @param {Array.<{left: number, top: number}>} positions positions
+     * @param {Array.<{left: number, top: number}>} prevPositions previous positions
+     * @returns {Array.<string | number>} spline area path
      * @private
      */
     _makeSplineAreaBottomPath: function(positions) {
@@ -188,8 +161,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
     /**
      * Get spline areas path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<{area: array.<string | number>, line: array.<string | number>}>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
     _getSplineAreasPath: function(groupPositions) {
@@ -211,7 +184,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * Resize graph of area chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
         var dimension = params.dimension,

@@ -110,8 +110,7 @@ describe('BarTypeSeriesBase', function() {
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
             dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
             dataProcessor.getFormattedValue.and.returnValue('1.5');
-
-            series._renderNormalSeriesLabel({
+            series.seriesData = {
                 groupBounds: [
                     [
                         {
@@ -122,7 +121,9 @@ describe('BarTypeSeriesBase', function() {
                         }
                     ]
                 ]
-            }, labelContainer);
+            };
+            series._renderNormalSeriesLabel(labelContainer);
+
             expect(labelContainer.childNodes.length).toEqual(2);
         });
     });
@@ -196,17 +197,13 @@ describe('BarTypeSeriesBase', function() {
     describe('_renderStackedSeriesLabel()', function() {
         it('bar type(bar, column) stacked=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
             var elLabelArea = dom.create('div');
+
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
             series.options = {
                 stacked: 'normal'
             };
-
-            series._renderStackedSeriesLabel({
-                formattedValues: [
-                    ['1.5', '2.2']
-                ],
-                values: [
-                    [1.5, 2.2]
-                ],
+            series.seriesData = {
                 groupBounds: [
                     [
                         {
@@ -217,7 +214,9 @@ describe('BarTypeSeriesBase', function() {
                         }
                     ]
                 ]
-            }, elLabelArea);
+            };
+            series._renderStackedSeriesLabel(elLabelArea);
+
             expect(elLabelArea.childNodes.length).toBe(4);
         });
     });
@@ -227,16 +226,9 @@ describe('BarTypeSeriesBase', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
                 params;
-            series.options = {
-                showLabel: true
-            };
-            params = {
-                formattedValues: [
-                    ['-1.5', '-2.2']
-                ],
-                values: [
-                    [-1.5, -2.2]
-                ],
+
+            series.options = {};
+            series.seriesData = {
                 groupBounds: [
                     [
                         {
@@ -248,8 +240,17 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
+            params = {
+                formattedValues: [
+                    ['-1.5', '-2.2']
+                ],
+                values: [
+                    [-1.5, -2.2]
+                ]
+            };
             series._renderSeriesLabel(params, elLabelArea);
             series._renderNormalSeriesLabel(params, elExpected);
+
             expect(elLabelArea.className).toEqual(elExpected.className);
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
@@ -260,17 +261,9 @@ describe('BarTypeSeriesBase', function() {
                 params;
 
             series.options = {
-                showLabel: true,
                 stacked: 'normal'
             };
-
-            params = {
-                formattedValues: [
-                    ['-1.5', '-2.2']
-                ],
-                values: [
-                    [-1.5, -2.2]
-                ],
+            series.seriesData = {
                 groupBounds: [
                     [
                         {
@@ -282,20 +275,20 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
+            params = {
+                formattedValues: [
+                    ['-1.5', '-2.2']
+                ],
+                values: [
+                    [-1.5, -2.2]
+                ]
+            };
 
             series._renderSeriesLabel(params, elLabelArea);
             series._renderStackedSeriesLabel(params, elExpected);
+
             expect(elLabelArea.className).toEqual(elExpected.className);
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
-        });
-
-        it('showLabel 옵션이 없으면 랜더링하지 않습니다.', function () {
-            var elLabelArea = dom.create('div');
-            series.options = {
-                stacked: 'normal'
-            };
-            series._renderSeriesLabel({}, elLabelArea);
-            expect(elLabelArea.innerHTML).toBe('');
         });
     });
 });

@@ -13,10 +13,12 @@ This application supports drawing a chart on web browser.<br>
    * A line chart is a type of chart which displays information as a series of data by straight line segments.
 * Area Chart<br>
    * An area chart displays graphically quantitive data. It is based on the line chart.
-* Combo Chart (Combination Chart)<br>
-   * A combo chart is a visualization that combines the features of the column chart and the line chart.
 * Pie Chart<br>
    * A type of graph in which a circle is divided into sectors that each represent a proportion of the whole.
+* Combo Chart (Combination Chart)<br>
+   * A combo chart is a visualization that combines the features of the column chart and the line chart.
+* Map Chart<br>
+   * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
 
 ## Sample Images
 
@@ -25,6 +27,8 @@ This application supports drawing a chart on web browser.<br>
 <img alt="negative bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045566/9480963e-aee9-11e5-9fa8-8ae565bd43a8.png">
 
 <img alt="stacked bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045565/947979bc-aee9-11e5-842e-123190fcb621.png">
+
+<img alt="diverging bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12807006/ab5edd8a-cb4e-11e5-88a4-ca9368c147af.png">
 
 <img alt="column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045571/ac7db0c8-aee9-11e5-9270-0d54133c948e.png">
 
@@ -44,16 +48,21 @@ This application supports drawing a chart on web browser.<br>
 
 <img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/12045602/e1bf9f12-aee9-11e5-9a39-29eae62be331.png">
 
+<img alt="map chart" src="https://cloud.githubusercontent.com/assets/2888775/12806980/6abdd4b6-cb4e-11e5-8214-bf77df4069d4.png">
+
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.chart/latest/
-* **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial
+* **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial/
 * **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial.html
 
 ## Dependency
 * tui.code-snippet 1.0.4
 * tui.component-effects 1.1.0
 * Raphaël 2.1.4
+
+## Map Data Attribution
+* https://www.amcharts.com/svg-maps/
 
 ## Test environment
 * PC

@@ -9,17 +9,17 @@
 var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
-    Series = require('../series/pieChartSeries');
+    Series = require('../series/pieChartSeries'),
+    PieChartCustomEvent = require('../customEvents/pieChartCustomEvent');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
      * Column chart.
      * @constructs PieChart
      * @extends ChartBase
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
@@ -54,15 +54,15 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
 
         if (!isPieLegendType && !options.legend.hidden) {
-            this._addComponent('legend', Legend, {
+            this.componentManager.register('legend', Legend, {
                 chartType: options.chartType,
                 userEvent: this.userEvent
             });
         }
 
-        this._addComponent('tooltip', Tooltip, this._makeTooltipData());
+        this.componentManager.register('tooltip', Tooltip, this._makeTooltipData());
 
-        this._addComponent('pieSeries', Series, {
+        this.componentManager.register('pieSeries', Series, {
             libType: options.libType,
             chartType: options.chartType,
             componentType: 'series',
@@ -73,22 +73,22 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     },
 
     /**
-     * Make rendering data for pie chart.
-     * @param {object} bounds chart bounds
-     * @return {object} data for rendering
+     * Add custom event component.
+     * @private
+     */
+    _addCustomEventComponent: function() {
+        this.componentManager.register('customEvent', PieChartCustomEvent, {
+            chartType: this.chartType
+        });
+    },
+
+    /**
+     * Update percent values.
      * @private
      * @override
      */
-    _makeRenderingData: function(bounds) {
-        return {
-            tooltip: {
-                seriesPosition: bounds.series.position,
-                chartDimension: bounds.chart.dimension
-            },
-            pieSeries: {
-                chartWidth: bounds.chart.dimension.width
-            }
-        };
+    _updatePercentValues: function() {
+        this.dataProcessor.registerPieChartPercentValues(this.options.chartType);
     },
 
     /**
@@ -97,23 +97,25 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _attachCustomEvent: function() {
-        var tooltip, serieses;
+        var customEvent, tooltip, pieSeries;
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
-        tooltip = this.componentMap.tooltip;
-        serieses = tui.util.filter(this.componentMap, function (component) {
-            return component.componentType === 'series';
-        });
-        tui.util.forEach(serieses, function (series) {
-            series.on('showTooltip', tooltip.onShow, tooltip);
-            series.on('hideTooltip', tooltip.onHide, tooltip);
+        customEvent = this.componentManager.get('customEvent');
+        tooltip = this.componentManager.get('tooltip');
+        pieSeries = this.componentManager.get('pieSeries');
 
-            if (series.onShowAnimation) {
-                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
-                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
-            }
-        }, this);
+        customEvent.on({
+            clickPieSeries: pieSeries.onClickSeries,
+            movePieSeries: pieSeries.onMoveSeries
+        }, pieSeries);
+
+        pieSeries.on({
+            showTooltip: tooltip.onShow,
+            hideTooltip: tooltip.onHide,
+            showTooltipContainer: tooltip.onShowTooltipContainer,
+            hideTooltipContainer: tooltip.onHideTooltipContainer
+        }, tooltip);
     }
 });
 

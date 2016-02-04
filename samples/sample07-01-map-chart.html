@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Map Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="mapChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "series": [
+        {
+            "code": "KR",
+            "data": 100
+        },
+        {
+            "code": "JP",
+            "data": 30
+        },
+        {
+            "code": "CN",
+            "data": 60
+        },
+        {
+            "code": "RU",
+            "data": 30
+        },
+        {
+            "code": "IN",
+            "data": 30
+        },
+        {
+            "code": "SA",
+            "data": 40
+        },
+        {
+            "code": "IR",
+            "data": 20
+        },
+        {
+            "code": "GN",
+            "data": 50
+        },
+        {
+            "code": "GA",
+            "data": 50
+        },
+        {
+            "code": "SD",
+            "data": 30
+        },
+        {
+            "code": "CD",
+            "data": 45
+        },
+        {
+            "code": "ZA",
+            "data": 60
+        },
+        {
+            "code": "IN",
+            "data": 30
+        },
+        {
+            "code": "VN",
+            "data": 20
+        },
+        {
+            "code": "US",
+            "data": 100
+        },
+        {
+            "code": "GB",
+            "data": 80
+        },
+        {
+            "code": "FR",
+            "data": 70
+        },
+        {
+            "code": "DE",
+            "data": 90
+        },
+        {
+            "code": "NO",
+            "data": 50
+        },
+        {
+            "code": "SE",
+            "data": 60
+        },
+        {
+            "code": "FI",
+            "data": 50
+        },
+        {
+            "code": "CA",
+            "data": 70
+        },
+        {
+            "code": "AU",
+            "data": 30
+        },
+        {
+            "code": "CL",
+            "data": 80,
+            "labelCoordinate": {"x": -0.5, "y": 0.5}
+        },
+        {
+            "code": "BR",
+            "data": 70
+        },
+        {
+            "code": "AR",
+            "data": 30
+        },
+        {
+            "code": "MX",
+            "data": 30
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 600,
+        "title": "Map Chart"
+    },
+    "map": "world",
+    "legend": {
+        "align": "top"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+            "startColor": "#ffefef",
+            "endColor": "#ac4142",
+            "overColor": "#75b5aa"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="dist/maps/world.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            series: [
+                {
+                    code: 'KR',
+                    data: 100
+                },
+                {
+                    code: 'JP',
+                    data: 30
+                },
+                {
+                    code: 'CN',
+                    data: 60
+                },
+                {
+                    code: 'RU',
+                    data: 30
+                },
+                {
+                    code: 'IN',
+                    data: 30
+                },
+                {
+                    code: 'SA',
+                    data: 40
+                },
+                {
+                    code: 'IR',
+                    data: 20
+                },
+                {
+                    code: 'GN',
+                    data: 50
+                },
+                {
+                    code: 'GA',
+                    data: 50
+                },
+                {
+                    code: 'SD',
+                    data: 30
+                },
+                {
+                    code: 'CD',
+                    data: 45
+                },
+                {
+                    code: 'ZA',
+                    data: 60
+                },
+                {
+                    code: 'IN',
+                    data: 30
+                },
+                {
+                    code: 'VN',
+                    data: 20
+                },
+                {
+                    code: 'US',
+                    data: 100
+                },
+                {
+                    code: 'GB',
+                    data: 80
+                },
+                {
+                    code: 'FR',
+                    data: 70
+                },
+                {
+                    code: 'DE',
+                    data: 90
+                },
+                {
+                    code: 'NO',
+                    data: 50
+                },
+                {
+                    code: 'SE',
+                    data: 60
+                },
+                {
+                    code: 'FI',
+                    data: 50
+                },
+                {
+                    code: 'CA',
+                    data: 70
+                },
+                {
+                    code: 'AU',
+                    data: 30
+                },
+                {
+                    code: 'CL',
+                    data: 80,
+                    labelCoordinate: {x: -0.5,y: 0.5}
+                },
+                {
+                    code: 'BR',
+                    data: 70
+                },
+                {
+                    code: 'AR',
+                    data: 30
+                },
+                {
+                    code: 'MX',
+                    data: 30
+                }
+            ]
+        },
+        options = {
+            chart: {
+                width: 700,
+                height: 600,
+                title: 'Map Chart'
+            },
+            map: 'world',
+            legend: {
+                align: 'top'
+            }
+        };
+    tui.chart.mapChart(container, data, options);
+</script>
+</body>
+</html>

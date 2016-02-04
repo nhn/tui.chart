@@ -12,17 +12,16 @@ var Series = require('../../src/js/series/series'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Series', function() {
-    var series;
+    var series, boundsMaker;
+
+    beforeAll(function() {
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getBound']);
+    });
 
     beforeEach(function() {
         series = new Series({
             chartType: 'bar',
             tooltipPrefix: 'tooltip-prefix-',
-            data: {
-                values: [[20], [40]],
-                formattedValues: [[20], [40]],
-                limit: {min: 0, max: 160}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
@@ -30,6 +29,7 @@ describe('Series', function() {
                 },
                 colors: ['blue']
             },
+            boundsMaker: boundsMaker,
             options: {}
         });
     });
@@ -103,12 +103,14 @@ describe('Series', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
             var seriesContainer;
 
-            series.dataProcessor = jasmine.createSpyObj('dataProcessor', ['setPercentValues']);
+            series.hasAxes = true;
 
-            seriesContainer = series.render({
+            boundsMaker.getBound.and.returnValue({
                 dimension: {width: 200, height: 100},
                 position: {top: 50, left: 50}
-            }, {});
+            });
+
+            seriesContainer = series.render({});
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
             expect(seriesContainer.style.width).toBe('220px');

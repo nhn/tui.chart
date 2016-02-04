@@ -34,6 +34,16 @@ var predicate = {
     },
 
     /**
+     * Whether bar type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isBarTypeChart: function(chartType) {
+        return this.isBarChart(chartType) || this.isColumnChart(chartType);
+    },
+
+    /**
      * Whether combo chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -81,6 +91,25 @@ var predicate = {
      */
     isPieChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_PIE;
+    },
+
+    /**
+     * Whether map chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isMapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_MAP;
+    },
+
+    /**
+     * Whether mouse position chart or not.
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isMousePositionChart: function(chartType) {
+        return this.isPieChart(chartType) || this.isMapChart(chartType);
     },
 
     /**

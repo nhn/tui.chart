@@ -18,9 +18,9 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
     /**
      * Make area type data for custom event.
-     * @param {array.<array.<object>>} groupPositions group positions
+     * @param {Array.<Array.<object>>} groupPositions group positions
      * @param {string} chartType cahrt type
-     * @returns {array} area type data for custom event
+     * @returns {Array} area type data for custom event
      * @private
      */
     _makeData: function(groupPositions, chartType) {

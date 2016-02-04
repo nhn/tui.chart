@@ -29,7 +29,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
     /**
      * Initialize data of custom event
-     * @param {array.<object>} seriesInfos series infos
+     * @param {Array.<object>} seriesInfos series infos
      * @override
      */
     initCustomEventData: function(seriesInfos) {

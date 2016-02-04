@@ -5,7 +5,7 @@ var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
   var webdriverConfig = {
-    hostname: 'fe.nhnent.com',
+    hostname: '10.77.32.96',
     port: 4444,
     remoteHost: true
   };
@@ -29,13 +29,18 @@ module.exports = function(config) {
       'Chrome-WebDriver',
       'Firefox-WebDriver'
     ],
-    singleRun: false,
+    singleRun: true,
     autoWatch: true,
     files: [
       'lib/tui-code-snippet/code-snippet.min.js',
       'lib/raphael/raphael-min.js',
       'src/js/**/*.js',
       'test/**/*.spec.js'
+    ],
+    exclude: [
+      'src/js/code-snippet-util.js',
+      'src/js/polyfill.js',
+      'src/js/helpers/colorutil.js'
     ],
     preprocessors: {
       'src/js/**/*.js': ['browserify'],

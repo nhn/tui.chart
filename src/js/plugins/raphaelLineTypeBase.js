@@ -23,8 +23,8 @@ var concat = Array.prototype.concat;
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
      * Make lines path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} paths
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} paths
      * @private
      */
     _makeLinesPath: function(positions) {
@@ -71,8 +71,8 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Make spline lines path.
-     * @param {array.<{left: number, top: number, startTop: number}>} positions positions
-     * @returns {array.<string | number>} paths
+     * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @returns {Array.<string | number>} paths
      * @private
      */
     _makeSplineLinesPath: function(positions) {
@@ -181,10 +181,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Render dots.
      * @param {object} paper raphael paper
-     * @param {array.<array.<object>>} groupPositions positions
+     * @param {Array.<Array.<object>>} groupPositions positions
      * @param {string[]} colors colors
      * @param {number} opacity opacity
-     * @returns {array.<object>} dots
+     * @returns {Array.<object>} dots
      * @private
      */
     _renderDots: function(paper, groupPositions, colors, opacity) {
@@ -228,20 +228,34 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
+     * Update line stroke width.
+     * @param {object} line raphael object
+     * @param {number} strokeWidth stroke width
+     * @private
+     */
+    _updateLineStrokeWidth: function(line, strokeWidth) {
+        line.attr({
+            'stroke-width': strokeWidth
+        });
+    },
+
+    /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
             item = this.groupDots[groupIndex][index];
 
+        this._updateLineStrokeWidth(line, 3);
         this._showDot(item.dot);
     },
 
     /**
      * Get pivot group dots.
-     * @returns {array.<array>} dots
+     * @returns {Array.<Array>} dots
      * @private
      */
     _getPivotGroupDots: function() {
@@ -321,11 +335,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
             item = this.groupDots[groupIndex][index],
             opacity = this.dotOpacity;
 
         if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
+        }
+
+        if (line) {
+            this._updateLineStrokeWidth(line, 2);
         }
 
         if (item) {
@@ -386,35 +405,24 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Animate.
-     * @param {function} callback callback
+     * @param {function} onFinish callback
      */
-    animate: function(callback) {
+    animate: function(onFinish) {
         var that = this,
             seriesWidth = this.dimension.width,
-            seriesHeight = this.dimension.height,
-            startTime;
+            seriesHeight = this.dimension.height;
 
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            delete this.animationId;
-        }
+        tui.chart.renderUtil.cancelAnimation(this.animation);
 
-        function setSize() {
-            var diffTime = (new Date()).getTime() - startTime,
-                width = Math.min(seriesWidth * (diffTime / ANIMATION_TIME), seriesWidth);
+        this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_TIME, function(ratio) {
+            var width = Math.min(seriesWidth * ratio, seriesWidth);
 
             that.paper.setSize(width, seriesHeight);
 
-            if (width === seriesWidth) {
-                delete that.animationId;
-                callback();
-            } else {
-                that.animationId = requestAnimationFrame(setSize);
+            if (ratio === 1) {
+                onFinish();
             }
-        }
-
-        startTime = (new Date()).getTime();
-        this.animationId = requestAnimationFrame(setSize);
+        });
     },
 
     /**

@@ -14,12 +14,16 @@ var TooltipBase = require('./tooltipBase'),
     defaultTheme = require('../themes/defaultTheme'),
     tooltipTemplate = require('./tooltipTemplate');
 
+/**
+ * @classdesc GroupTooltip component.
+ * @class GroupTooltip
+ */
 var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.prototype */ {
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
      * @param {object} params parameters
-     *      @param {object} params.bound axis bound
+     *      @param {BoundsMaker} params.boundsMaker bounds maker
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
@@ -29,7 +33,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Make tooltip html.
      * @param {string} category category
-     * @param {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
+     * @param {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} items items data
      * @returns {string} tooltip html
      * @private
      */
@@ -68,15 +72,15 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Render tooltip component.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
      * @returns {HTMLElement} tooltip element
      * @override
      */
-    render: function(bound, data) {
-        var el = TooltipBase.prototype.render.call(this, bound, data);
+    render: function() {
+        var el = TooltipBase.prototype.render.call(this),
+            chartDimension = this.boundsMaker.getDimension('chart'),
+            bound = this.boundsMaker.getBound('tooltip');
 
-        this.positionModel = new GroupTooltipPositionModel(this.chartDimension, bound, this.isVertical, this.options);
+        this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
         this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
 
         return el;
@@ -84,20 +88,19 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Rerender.
-     * @param {{position: object}} bound tooltip bound
-     * @param {?{seriesPosition: {left: number, top: number}}} data rendering data
+     * @param {{checkedLegends: Array.<boolean>}} data rendering data
      * @override
      */
-    rerender: function(bound, data) {
-        TooltipBase.prototype.rerender.call(this, bound, data);
+    rerender: function(data) {
+        TooltipBase.prototype.rerender.call(this, data);
 
         this.theme = this._updateLegendTheme(data.checkedLegends);
     },
 
     /**
      * Update legend theme.
-     * @param {object | array.<boolean>}checkedLegends checked legends
-     * @returns {{colors: array.<string>}} legend theme
+     * @param {object | Array.<boolean>}checkedLegends checked legends
+     * @returns {{colors: Array.<string>}} legend theme
      * @private
      */
     _updateLegendTheme: function(checkedLegends) {
@@ -117,10 +120,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Make tooltip data.
-     * @returns {array.<object>} tooltip data
+     * @returns {Array.<object>} tooltip data
      * @override
      */
-    makeTooltipData: function() {
+    _makeTooltipData: function() {
         return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
             return {
                 category: this.dataProcessor.getCategory(index),
@@ -132,7 +135,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Make colors.
      * @param {object} theme tooltip theme
-     * @returns {array.<string>} colors
+     * @returns {Array.<string>} colors
      * @private
      */
     _makeColors: function(theme) {
@@ -161,8 +164,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
     /**
      * Make rendering data about legend item.
-     * @param {array.<string>} values values
-     * @returns {array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
+     * @param {Array.<string>} values values
+     * @returns {Array.<{value: string, legend: string, chartType: string, suffix: ?string}>} legend item data.
      * @private
      */
     _makeItemRenderingData: function(values) {
@@ -329,6 +332,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         if (!tui.util.isUndefined(this.prevIndex)) {
             this.fire('hideGroupAnimation', this.prevIndex);
         }
+
         elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
 
         this._fireBeforeShowTooltip(params.index, params.range);
@@ -339,6 +343,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         dimension = this.getTooltipDimension(elTooltip);
         position = this.positionModel.calculatePosition(dimension, params.range);
+
         this.moveToPosition(elTooltip, position, prevPosition);
 
         this._fireAfterShowTooltip(params.index, params.range, {
@@ -384,7 +389,8 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     hideTooltip: function(elTooltip, index) {
         delete this.prevIndex;
         this._hideTooltipSector(index);
-        this.hideAnimation(elTooltip);
+        dom.removeClass(elTooltip, 'show');
+        elTooltip.style.cssText = '';
     }
 });
 

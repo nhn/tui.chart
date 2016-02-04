@@ -1,7 +1,7 @@
 {
   "name": "tui.chart",
   "author": "NHN Ent. FE Development Team <dl_javascript@nhnent.com>",
-  "version": "1.4.0a",
+  "version": "1.5.0",
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "scripts": {
@@ -26,7 +26,6 @@
     "gulp-minify-css": "^1.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.2.0",
-    "gulp-util": "^3.0.5",
     "karma": "^0.12.36",
     "karma-browserify": "^4.2.1",
     "karma-chrome-launcher": "^0.1.12",
@@ -37,7 +36,6 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "stringify": "^3.1.0",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.2.2"
+    "vinyl-source-stream": "^1.1.0"
   }
 }

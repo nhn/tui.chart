@@ -11,7 +11,7 @@ var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('PieChartSeries', function() {
-    var series, dataProcessor;
+    var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -19,28 +19,22 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getFormattedValue']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
         series = new PieChartSeries({
             chartType: 'pie',
-            data: {
-                values: [],
-                formattedValues: []
-            },
-            bound: {
-                dimension: {width: 200, height: 100}
-            },
             theme: {
                 label: {
                     fontFamily: 'Verdana',
                     fontSize: 11
                 }
             },
-            options: {}
+            options: {},
+            dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker
         });
-
-        series.dataProcessor = dataProcessor;
     });
 
     describe('_makeSectorData()', function() {
@@ -117,38 +111,42 @@ describe('PieChartSeries', function() {
 
     describe('_getSeriesLabel()', function() {
         it('legendType 옵션만 있을 경우에는 legend만 반환합니다.', function() {
-            var actual = series._getSeriesLabel({
-                    legend: 'legend',
-                    options: {
-                        legendAlign: 'outer'
-                    }
-                }),
-                expected = '<span class="tui-chart-series-legend">legend</span>';
+            var actual, expected;
+
+            series.legendAlign = 'outer';
+            actual = series._getSeriesLabel({
+                legend: 'legend'
+            });
+            expected = '<span class="tui-chart-series-legend">legend</span>';
+
             expect(actual).toBe(expected);
         });
 
         it('showLabel 옵션만 있을 경우에는 label만 반환한다.', function() {
-            var actual = series._getSeriesLabel({
-                    label: 'label',
-                    options: {
-                        showLabel: true
-                    }
-                }),
-                expected = 'label';
+            var actual, expected;
+
+            series.options.showLabel = true;
+            actual = series._getSeriesLabel({
+                label: 'label'
+            });
+            expected = 'label';
+
             expect(actual).toBe(expected);
         });
 
         it('legendType, showLabel 옵션이 있을 경우에는 legend + separator + label 형태로 반환합니다.', function() {
-            var actual = series._getSeriesLabel({
-                    legend: 'legend',
-                    label: 'label',
-                    separator: ':&nbsp;',
-                    options: {
-                        legendAlign: 'outer',
-                        showLabel: true
-                    }
-                }),
-                expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
+            var actual, expected;
+
+            series.options.showLabel = true;
+            series.legendAlign = 'outer';
+
+            actual = series._getSeriesLabel({
+                legend: 'legend',
+                label: 'label',
+                separator: ':&nbsp;'
+            });
+            expected = '<span class="tui-chart-series-legend">legend</span>:&nbsp;label';
+
             expect(actual).toBe(expected);
         });
     });
@@ -178,33 +176,33 @@ describe('PieChartSeries', function() {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
-
-            series._renderCenterLegend({
+            series.legendAlign = 'center';
+            series.seriesData = {
                 sectorData: [
                     {
                         centerPosition: {
                             left: 100,
                             top: 50
-                        }
+                        },
+                        percentValue: 0.3
                     },
                     {
                         centerPosition: {
                             left: 100,
                             top: 100
-                        }
+                        },
+                        percentValue: 0.4
                     },
                     {
                         centerPosition: {
                             left: 100,
                             top: 150
-                        }
+                        },
+                        percentValue: 0.4
                     }
-                ],
-                options: {
-                    legendAlign: 'center'
-                }
-            }, elLabelArea);
-
+                ]
+            };
+            series._renderCenterLegend(elLabelArea);
             children = elLabelArea.childNodes;
 
             expect(children[0].style.left).toBe('80px');
@@ -292,10 +290,12 @@ describe('PieChartSeries', function() {
                 var values = ['1.1', '2.2', '3.3'];
                 return values[index];
             });
-
             spyOn(series.graphRenderer, 'renderLegendLines');
-
-            series._renderOuterLegend({
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
+            series.legendAlign = 'outer';
+            series.seriesData = {
                 sectorData: [
                     {
                         outerPosition: {
@@ -303,7 +303,8 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 50
                             }
-                        }
+                        },
+                        percentValue: 0.3
                     },
                     {
                         outerPosition: {
@@ -311,7 +312,8 @@ describe('PieChartSeries', function() {
                                 left: 150,
                                 top: 100
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     },
                     {
                         outerPosition: {
@@ -319,14 +321,12 @@ describe('PieChartSeries', function() {
                                 left: 100,
                                 top: 150
                             }
-                        }
+                        },
+                        percentValue: 0.4
                     }
-                ],
-                options: {
-                    legendAlign: 'outer'
-                },
-                chartWidth: 220
-            }, labelContainer);
+                ]
+            };
+            series._renderOuterLegend(labelContainer);
 
             children = labelContainer.childNodes;
 
@@ -348,39 +348,7 @@ describe('PieChartSeries', function() {
     describe('_renderSeriesLabel()', function() {
         it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
             var actual = dom.create('div'),
-                expected = dom.create('div'),
-                params = {
-                    sectorData: [
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 100,
-                                    top: 50
-                                }
-                            }
-                        },
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 150,
-                                    top: 100
-                                }
-                            }
-                        },
-                        {
-                            outerPosition: {
-                                middle: {
-                                    left: 100,
-                                    top: 150
-                                }
-                            }
-                        }
-                    ],
-                    options: {
-                        legendAlign: 'outer'
-                    },
-                    chartWidth: 220
-                };
+                expected = dom.create('div');
 
             dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
             dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
@@ -388,47 +356,89 @@ describe('PieChartSeries', function() {
                 return values[index];
             });
             spyOn(series.graphRenderer, 'renderLegendLines');
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
+            series.legendAlign = 'outer';
+            series.seriesData = {
+                sectorData: [
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 100,
+                                top: 50
+                            }
+                        },
+                        percentValue: 0.3
+                    },
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 150,
+                                top: 100
+                            }
+                        },
+                        percentValue: 0.4
+                    },
+                    {
+                        outerPosition: {
+                            middle: {
+                                left: 100,
+                                top: 150
+                            }
+                        },
+                        percentValue: 0.4
+                    }
+                ]
+            };
 
-            series._renderSeriesLabel(params, actual);
-            series._renderOuterLegend(params, expected);
+            series._renderSeriesLabel(actual);
+            series._renderOuterLegend(expected);
 
             expect(actual.className).toEqual(expected.className);
             expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
         it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                elExpected = dom.create('div'),
-                params = {
-                    legendLabels: ['legend1', 'legend2', 'legend3'],
-                    formattedValues: ['1.1', '2.2', '3.3'],
-                    sectorData: [
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 50
-                            }
-                        },
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 100
-                            }
-                        },
-                        {
-                            centerPosition: {
-                                left: 100,
-                                top: 150
-                            }
+            var actual = dom.create('div'),
+                expected = dom.create('div');
+
+            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
+                var values = ['1.1', '2.2', '3.3'];
+                return values[index];
+            });
+            spyOn(series.graphRenderer, 'renderLegendLines');
+            boundsMaker.getDimension.and.returnValue({
+                width: 220
+            });
+            series.legendAlign = 'center';
+            series.seriesData = {
+                sectorData: [
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 50
                         }
-                    ],
-                    options: {
-                        legendAlign: 'center'
+                    },
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 100
+                        }
+                    },
+                    {
+                        centerPosition: {
+                            left: 100,
+                            top: 150
+                        }
                     }
-                };
-            series._renderSeriesLabel(params, elLabelArea);
-            series._renderCenterLegend(params, elExpected);
-            expect(elLabelArea.className).toEqual(elExpected.className);
-            expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
+                ]
+            };
+            series._renderSeriesLabel(actual);
+            series._renderCenterLegend(expected);
+
+            expect(actual.className).toEqual(expected.className);
+            expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
     });
 });

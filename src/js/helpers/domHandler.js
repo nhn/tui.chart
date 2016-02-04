@@ -34,7 +34,7 @@ var domHandler = {
      * Get class names.
      * @memberOf module:domHandler
      * @param {HTMLElement} el target element
-     * @returns {array} names
+     * @returns {Array} names
      * @private
      */
     _getClassNames: function(el) {
@@ -108,16 +108,20 @@ var domHandler = {
      * @returns {HTMLElement} result element
      */
     findParentByClass: function(el, className, lastClass) {
-        var parent = el.parentNode;
+        var parent = el.parentNode,
+            result;
+
         if (!parent) {
-            return null;
+            result = null;
         } else if (this.hasClass(parent, className)) {
-            return parent;
+            result = parent;
         } else if (parent.nodeName === 'BODY' || this.hasClass(parent, lastClass)) {
-            return null;
+            result = null;
         } else {
-            return this.findParentByClass(parent, className, lastClass);
+            result = this.findParentByClass(parent, className, lastClass);
         }
+
+        return result;
     },
 
     /**

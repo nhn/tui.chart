@@ -1,5 +1,5 @@
 /**
- * @fileoverview GroupTypeCustomEvent is event handle layer for grouped toolip option.
+ * @fileoverview GroupTypeCustomEvent is event handle layer for grouped tooltip option.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var CustomEventBase = require('./customEventBase'),
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
-     * GroupTypeCustomEvent is event handle layer for grouped toolip option.
+     * GroupTypeCustomEvent is event handle layer for grouped tooltip option.
      * @constructs GroupTypeCustomEvent
      * @extends CustomEventBase
      */
@@ -27,7 +27,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @private
      */
     _isOutPosition: function(layerX, layerY) {
-        var dimension = this.bound.dimension;
+        var dimension = this.dimension;
         return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
     },
 
@@ -55,7 +55,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             this.fire('showGroupTooltip', {
                 index: index,
                 range: this.tickBaseDataModel.makeRange(index, this.chartType),
-                size: this.bound.dimension[this.isVertical ? 'height' : 'width'],
+                size: this.dimension[this.isVertical ? 'height' : 'width'],
                 isVertical: this.isVertical
             });
         }

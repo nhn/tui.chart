@@ -14,7 +14,7 @@ var concat = Array.prototype.concat;
 
 /**
  * Raw data.
- * @typedef {array.<{name: string, data: array.<number>}>} rawSeriesData
+ * @typedef {Array.<{name: string, data: Array.<number>}>} rawSeriesData
  */
 
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
@@ -22,7 +22,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Data processor.
      * @constructs DataProcessor
      * @param {{
-     *      categories: array.<string>,
+     *      categories: Array.<string>,
      *      series: (rawSeriesData | {line: ?rawSeriesData, column: ?rawSeriesData})
      * }} rawData raw data
      */
@@ -33,7 +33,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get raw data.
-     * @returns {{categories: array.<string>, series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})}} raw data
+     * @returns {{categories: Array.<string>, series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})}} raw data
      */
     getRawData: function() {
         return this.orgRawData;
@@ -41,9 +41,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Process raw data.
-     * @param {array.<array>} rawData raw data
+     * @param {Array.<Array>} rawData raw data
      * @param {object} options options
-     * @param {array.<string>} seriesChartTypes chart types
+     * @param {Array.<string>} seriesChartTypes chart types
      */
     process: function(rawData, options, seriesChartTypes) {
         var chartType = options.chartType,
@@ -55,8 +55,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             wholeLegendData = this._makeWholeLegendData(legendLabels, chartType, seriesChartTypes),
             format = options.chart && options.chart.format || '',
             formatFunctions = this._findFormatFunctions(format),
-            formattedValues = format ? this._formatValues(values, formatFunctions) : values,
-            wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
+            seriesOption = options.series || {},
+            formattedValues, wholeFormattedValues;
+
+        this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
+        formattedValues = this._formatValues(values, formatFunctions);
+        wholeFormattedValues = this._makeWholeValues(formattedValues, seriesChartTypes);
 
         this.data = {
             categories: categories,
@@ -73,7 +77,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get Categories
-     * @returns {array.<string>}}
+     * @returns {Array.<string>}}
      */
     getCategories: function() {
         return this.data.categories;
@@ -91,7 +95,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get group values.
      * @param {string} chartType chart type
-     * @returns {array.array.<number>} group values
+     * @returns {Array.Array.<number>} group values
      */
     getGroupValues: function(chartType) {
         return this.data.values[chartType] || this.data.values;
@@ -111,7 +115,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get whole group values.
-     * @returns {array.<array.<number>>} gruop values
+     * @returns {Array.<Array.<number>>} gruop values
      */
     getWholeGroupValues: function() {
         return this.data.wholeValues;
@@ -120,7 +124,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get legend labels.
      * @param {?string} chartType chart type
-     * @returns {array.<string> | {column: ?array.<string>, line: ?array.<string>}} legend labels
+     * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
      */
     getLegendLabels: function(chartType) {
         return this.data.legendLabels[chartType] || this.data.legendLabels;
@@ -128,7 +132,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get whole legend data.
-     * @returns {array.<string>} legend data
+     * @returns {Array.<string>} legend data
      */
     getWholeLegendData: function() {
         return this.data.wholeLegendData;
@@ -136,7 +140,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Set whole legend data.
-     * @param {array.<{chartType: string, label: string}>} wholeLegendData legend data
+     * @param {Array.<{chartType: string, label: string}>} wholeLegendData legend data
      */
     setWholeLegendData: function(wholeLegendData) {
         this.data.wholeLegendData = wholeLegendData;
@@ -153,7 +157,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get format functions.
-     * @returns {array.<function>} functions
+     * @returns {Array.<function>} functions
      */
     getFormatFunctions: function() {
         return this.data.formatFunctions;
@@ -162,7 +166,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get formatted group values
      * @param {string} chartType chart type
-     * @returns {array.<string>} group values
+     * @returns {Array.<string>} group values
      */
     getFormattedGroupValues: function(chartType) {
         return this.data.formattedValues[chartType] || this.data.formattedValues;
@@ -191,7 +195,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get whole formatted values.
-     * @returns {array.array.<string>} formatted values
+     * @returns {Array.Array.<string>} formatted values
      */
     getWholeFormattedValues: function() {
         return this.data.wholeFormattedValues;
@@ -199,8 +203,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Process categories
-     * @param {array.<string>} categories categories
-     * @returns {array.<string>} processed categories
+     * @param {Array.<string>} categories categories
+     * @returns {Array.<string>} processed categories
      * @private
      */
     _processCategories: function(categories) {
@@ -209,8 +213,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Pick value.
-     * @param {{name: string, data: (array.<number> | number)}} items items
-     * @returns {array} picked value
+     * @param {{name: string, data: (Array.<number> | number)}} items items
+     * @returns {Array} picked value
      * @private
      */
     _pickValue: function(items) {
@@ -219,7 +223,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Pick values from axis data.
-     * @param {array.<array>} seriesData series data
+     * @param {Array.<Array>} seriesData series data
      * @returns {string[]} values
      */
     _pickValues: function(seriesData) {
@@ -239,9 +243,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make whole values.
-     * @param {array.<array>} groupValues values
-     * @param {array.<string>} seriesChartTypes chart types
-     * @returns {array.<number>} join values
+     * @param {Array.<Array>} groupValues values
+     * @param {Array.<string>} seriesChartTypes chart types
+     * @returns {Array.<number>} join values
      * @private
      */
     _makeWholeValues: function(groupValues, seriesChartTypes) {
@@ -275,7 +279,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Pick legend labels from axis data.
-     * @param {array.<array>} seriesData series data
+     * @param {Array.<Array>} seriesData series data
      * @returns {string[]} labels
      */
     _pickLegendLabels: function(seriesData) {
@@ -293,10 +297,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make whole legend data.
-     * @param {array} legendLabels legend labels
+     * @param {Array} legendLabels legend labels
      * @param {string} chartType chart type
-     * @param {array.<string>} seriesChartTypes chart types
-     * @returns {array} labels
+     * @param {Array.<string>} seriesChartTypes chart types
+     * @returns {Array} labels
      * @private
      */
     _makeWholeLegendData: function(legendLabels, chartType, seriesChartTypes) {
@@ -325,31 +329,35 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Format group values.
-     * @param {array.<array>} groupValues group values
+     * @param {Array.<Array>} groupValues group values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
      * @private
      */
     _formatGroupValues: function(groupValues, formatFunctions) {
         return tui.util.map(groupValues, function(values) {
+            if (this.divergingOption) {
+                values = tui.util.map(values, Math.abs);
+            }
             return tui.util.map(values, function(value) {
                 var fns = [value].concat(formatFunctions);
                 return tui.util.reduce(fns, function(stored, fn) {
                     return fn(stored);
                 });
             });
-        });
+        }, this);
     },
 
     /**
      * Format converted values.
-     * @param {array.<array>} chartValues chart values
+     * @param {Array.<Array>} chartValues chart values
      * @param {function[]} formatFunctions format functions
      * @returns {string[]} formatted values
      * @private
      */
     _formatValues: function(chartValues, formatFunctions) {
         var result;
+        formatFunctions = formatFunctions || [];
         if (tui.util.isArray(chartValues)) {
             result = this._formatGroupValues(chartValues, formatFunctions);
         } else {
@@ -556,7 +564,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Get multiline categories.
      * @param {number} limitWidth limit width
      * @param {object} theme label theme
-     * @returns {array} multiline categories
+     * @returns {Array} multiline categories
      */
     getMultilineCategories: function(limitWidth, theme) {
         if (!this.data.multilineCategories) {
@@ -570,8 +578,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make percent value.
-     * @param {array.<array.<number>>} groupValues gruop values
-     * @returns {array.<array.<number>>} percent values
+     * @param {Array.<Array.<number>>} groupValues gruop values
+     * @returns {Array.<Array.<number>>} percent values
      * @private
      */
     _makePieChartPercentValues: function(groupValues) {
@@ -586,10 +594,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent values about normal stacked option.
-     * @param {array.<array.<number>>} groupValues gruop values
+     * Make percent values for normal stacked option.
+     * @param {Array.<Array.<number>>} groupValues gruop values
      * @param {{min: number, max: number}} limit axis limit
-     * @returns {array} percent values about normal stacked option.
+     * @returns {Array} percent values about normal stacked option.
      * @private
      */
     _makeNormalStackedPercentValues: function(groupValues, limit) {
@@ -603,9 +611,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent values about percent stacked option.
-     * @param {array.<array.<number>>} groupValues gruop values
-     * @returns {array} percent values about percent stacked option
+     * Make percent values for percent stacked option.
+     * @param {Array.<Array.<number>>} groupValues gruop values
+     * @returns {Array} percent values about percent stacked option
      * @private
      */
     _makePercentStackedPercentValues: function(groupValues) {
@@ -614,7 +622,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
-        var percentValues = tui.util.map(groupValues, function(values) {
+        return tui.util.map(groupValues, function(values) {
             var sum = tui.util.sum(tui.util.map(values, function(value) {
                 return Math.abs(value);
             }));
@@ -623,16 +631,32 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 return sum === 0 ? 0 : ratio * (value / sum);
             });
         });
+    },
 
-        return percentValues;
+    /**
+     * Make percent values for percent diverging stacked option.
+     * @param {Array.<Array.<number>>} groupValues group values
+     * @returns {Array.<Array.<number>>} percent values
+     * @private
+     */
+    _makePercentDivergentStackedPercentValues: function(groupValues) {
+        return tui.util.map(groupValues, function(values) {
+            var plusSum = calculator.sumPlusValues(values),
+                minusSum = Math.abs(calculator.sumMinusValues(values));
+
+            return tui.util.map(values, function(value) {
+                var sum = value >= 0 ? plusSum : minusSum;
+                return sum === 0 ? 0 : 0.5 * (value / sum);
+            });
+        });
     },
 
     /**
      * Make percent value.
-     * @param {array.<array.<number>>} groupValues gruop values
+     * @param {Array.<Array.<number>>} groupValues group values
      * @param {{min: number, max: number}} limit axis limit
      * @param {boolean} isLineTypeChart whether line type chart or not.
-     * @returns {array.<array.<number>>} percent values
+     * @returns {Array.<Array.<number>>} percent values
      * @private
      */
     _makePercentValues: function(groupValues, limit, isLineTypeChart) {
@@ -661,24 +685,35 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent value.
+     * Register percent values.
+     * @param {string} chartType chart type
+     */
+    registerPieChartPercentValues: function(chartType) {
+        var groupValues = this.getGroupValues(chartType);
+        this.data.percentValues[chartType] = this._makePieChartPercentValues(groupValues);
+    },
+
+    /**
+     * Register percent values.
      * @param {{min: number, max: number}} limit axis limit
      * @param {string} stacked stacked option
      * @param {string} chartType chart type
      * @private
      */
-    setPercentValues: function(limit, stacked, chartType) {
+    registerPercentValues: function(limit, stacked, chartType) {
         var result,
             groupValues = this.getGroupValues(chartType),
             isAllowedStackedOption = predicate.isAllowedStackedOption(chartType),
             isLineTypeChart = predicate.isLineTypeChart(chartType);
 
-        if (predicate.isPieChart(chartType)) {
-            result = this._makePieChartPercentValues(groupValues);
-        } else if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
+        if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
             result = this._makeNormalStackedPercentValues(groupValues, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
-            result = this._makePercentStackedPercentValues(groupValues);
+            if (this.divergingOption) {
+                result = this._makePercentDivergentStackedPercentValues(groupValues);
+            } else {
+                result = this._makePercentStackedPercentValues(groupValues);
+            }
         } else {
             result = this._makePercentValues(groupValues, limit, isLineTypeChart);
         }
@@ -689,7 +724,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get percent values.
      * @param {string} chartType chart type
-     * @returns {array.<array.<number>>} percent values
+     * @returns {Array.<Array.<number>>} percent values
      */
     getPercentValues: function(chartType) {
         return this.data.percentValues[chartType];

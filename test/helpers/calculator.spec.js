@@ -50,14 +50,14 @@ describe('calculator', function() {
             expect(result).toBe(10);
         });
 
-        it('40에 대한 정규화 결과는 40입니다.', function () {
+        it('40에 대한 정규화 결과는 50입니다.', function () {
             var result = calculator.normalizeAxisNumber(40);
-            expect(result).toBe(40);
+            expect(result).toBe(50);
         });
 
-        it('1005에 대한 정규화 결과는 1010입니다.', function () {
+        it('1005에 대한 정규화 결과는 2000입니다.', function () {
             var result = calculator.normalizeAxisNumber(1005);
-            expect(result).toBe(1010);
+            expect(result).toBe(1100);
         });
 
         it('0.4에 대한 정규화 결과는 0.5입니다.', function () {

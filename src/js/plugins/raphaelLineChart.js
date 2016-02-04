@@ -9,7 +9,7 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var Raphael = window.Raphael,
+var raphael = window.Raphael,
     EMPHASIS_OPACITY = 1,
     DE_EMPHASIS_OPACITY = 0.3;
 
@@ -30,8 +30,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Render function of line chart.
      * @param {HTMLElement} container container
-     * @param {{groupPositions: array.<array>, dimension: object, theme: object, options: object}} data render data
-     * @return {object} paper raphael paper
+     * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
+     * @returns {object} paper raphael paper
      */
     render: function(container, data) {
         var dimension = data.dimension,
@@ -42,19 +42,18 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             groupPaths = data.options.spline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper, groupLines, tooltipLine, selectionDot, groupDots;
+            paper;
 
-        this.paper = paper = Raphael(container, 1, dimension.height);
+        this.paper = paper = raphael(container, 1, dimension.height);
         this.splineOption = data.options.spline;
         this.dimension = dimension;
 
-        groupLines = this._renderLines(paper, groupPaths, colors);
-        tooltipLine = this._renderTooltipLine(paper, dimension.height);
-        selectionDot = this._makeSelectionDot(paper);
-        groupDots = this._renderDots(paper, groupPositions, colors, opacity);
+        this.groupLines = this._renderLines(paper, groupPaths, colors);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.hasSelection) {
-            this.selectionDot = selectionDot;
+            this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
         }
 
@@ -63,9 +62,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
-        this.groupLines = groupLines;
-        this.tooltipLine = tooltipLine;
-        this.groupDots = groupDots;
         this.dotOpacity = opacity;
         delete this.pivotGroupDots;
 
@@ -74,8 +70,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Get lines path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array.<array.<string>>} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array.<Array.<string>>} path
      * @private
      */
     _getLinesPath: function(groupPositions) {
@@ -88,8 +84,8 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
     /**
      * Get spline lines path.
-     * @param {array.<array.<{left: number, top: number, startTop: number}>>} groupPositions positions
-     * @returns {array} path
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @returns {Array} path
      * @private
      */
     _getSplineLinesPath: function(groupPositions) {
@@ -99,26 +95,24 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
     /**
      * Render lines.
      * @param {object} paper raphael paper
-     * @param {array.<array.<string>>} groupPaths paths
+     * @param {Array.<Array.<string>>} groupPaths paths
      * @param {string[]} colors line colors
-     * @param {number} strokeWidth stroke width
-     * @returns {array.<array.<object>>} lines
+     * @param {?number} strokeWidth stroke width
+     * @returns {Array.<Array.<object>>} lines
      * @private
      */
     _renderLines: function(paper, groupPaths, colors, strokeWidth) {
-        var groupLines = tui.util.map(groupPaths, function(path, groupIndex) {
+        return tui.util.map(groupPaths, function(path, groupIndex) {
             var color = colors[groupIndex] || 'transparent';
             return raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
         }, this);
-
-        return groupLines;
     },
 
     /**
      * Resize graph of line chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {array.<array.<{left:number, top:number}>>} params.groupPositions group positions
+     *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
         var dimension = params.dimension,
