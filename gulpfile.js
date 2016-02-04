@@ -1,11 +1,9 @@
 'use strict';
 
 var gulp = require('gulp'),
-    gutil = require('gulp-util'),
     source = require('vinyl-source-stream'),
     sync = require('browser-sync'),
     browserify = require('browserify'),
-    watchify = require('watchify'),
     stringify = require('stringify'),
     less = require('gulp-less'),
     minifiyCss = require('gulp-minify-css'),
@@ -26,30 +24,14 @@ var banner = [
     ''
 ].join('\n');
 
-
-gulp.task('browser-sync', function() {
-    sync({
-        server: {
-            baseDir: '.'
-        },
-        port: process.env.PORT || 8080
-    });
-});
-
 gulp.task('browserify', function() {
-    var b = watchify(browserify('./src/js/chart.js', {debug: true})),
-        rebundle;
-    gutil.log(gutil.colors.green('rebundle...'));
-    rebundle = function() {
-        return b.bundle()
-            .pipe(source('./chart.js'))
-            .pipe(gulp.dest('./dist'));
-    };
-
+    var b = browserify('src/js/chart.js', {debug: true});
     b.add('./src/js/plugins/pluginRaphael.js');
     b.transform(stringify(['.html']));
 
-    return rebundle();
+    return b.bundle()
+        .pipe(source('chart.js'))
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('compress-js', ['browserify'], function() {
@@ -86,11 +68,9 @@ gulp.task('reload-less', ['compile-less'], function() {
     sync.reload();
 });
 
-gulp.task('watch', ['browserify', 'compile-less', 'browser-sync'], function() {
+gulp.task('watch', ['browserify', 'compile-less'], function() {
     gulp.watch('src/js/**/*', ['reload-js']);
     gulp.watch('src/less/**/*', ['reload-less']);
-
-    gutil.log(gutil.colors.green('Watching for changes...'));
 });
 
 gulp.task('default', ['watch']);
