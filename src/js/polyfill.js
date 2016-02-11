@@ -1,3 +1,4 @@
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
 if (!window.JSON) {
     window.JSON = {
         parse: function(sJSON) { return eval('(' + sJSON + ')'); },

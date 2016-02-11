@@ -106,11 +106,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _makeOptionsMap: function(chartTypes) {
-        var optionsMap = {};
+        var self = this,
+            optionsMap = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = this.options.series[chartType] || this.options.series;
-        }, this);
+            optionsMap[chartType] = self.options.series[chartType] || self.options.series;
+        });
 
         return optionsMap;
     },
@@ -122,7 +123,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _makeThemeMap: function(chartTypes) {
-        var theme = this.theme,
+        var self = this,
+            theme = this.theme,
             themeMap = {},
             colorCount = 0;
 
@@ -139,9 +141,9 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                 removedColors = chartTheme.series.colors.splice(0, colorCount);
                 chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);
                 themeMap[chartType] = chartTheme.series;
-                colorCount += this.dataProcessor.getLegendLabels(chartType).length;
+                colorCount += self.dataProcessor.getLegendLabels(chartType).length;
             }
-        }, this);
+        });
 
         return themeMap;
     },
@@ -186,16 +188,14 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _addComponents: function(chartTypesMap) {
-        var axes = [
-                {
-                    name: 'yAxis',
-                    isLabel: true,
-                    chartType: chartTypesMap.chartTypes[0]
-                },
-                {
-                    name: 'xAxis'
-                }
-            ],
+        var axes = [{
+                name: 'yAxis',
+                isLabel: true,
+                chartType: chartTypesMap.chartTypes[0]
+            },
+            {
+                name: 'xAxis'
+            }],
             serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
 
         if (chartTypesMap.optionChartTypes.length) {
@@ -314,7 +314,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             yAxisData = this._makeYAxisData(tui.util.extend({
                 index: 0
             }, yAxisParams)),
-            axesData, rightYAxisData;
+            axesData, rightYAxisData, tickCountDiff;
 
         axesData = {
             yAxis: yAxisData,
@@ -328,10 +328,13 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
                     isPositionRight: true
                 }
             }, yAxisParams));
-            if (yAxisData.tickCount < rightYAxisData.tickCount) {
-                this._increaseYAxisTickCount(rightYAxisData.tickCount - yAxisData.tickCount, yAxisData, formatFunctions);
-            } else if (yAxisData.tickCount > rightYAxisData.tickCount) {
-                this._increaseYAxisTickCount(yAxisData.tickCount - rightYAxisData.tickCount, rightYAxisData, formatFunctions);
+
+            tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
+
+            if (tickCountDiff > 0) {
+                this._increaseYAxisTickCount(tickCountDiff, yAxisData, formatFunctions);
+            } else if (tickCountDiff < 0) {
+                this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData, formatFunctions);
             }
 
             rightYAxisData.aligned = xAxisData.aligned;
@@ -349,8 +352,11 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _increaseYAxisTickCount: function(increaseTickCount, toData, formatFunctions) {
+        var labels;
+
         toData.limit.max += toData.step * increaseTickCount;
-        toData.labels = axisDataMaker.formatLabels(calculator.makeLabelsFromLimit(toData.limit, toData.step), formatFunctions);
+        labels = calculator.makeLabelsFromLimit(toData.limit, toData.step);
+        toData.labels = axisDataMaker.formatLabels(labels, formatFunctions);
         toData.tickCount += increaseTickCount;
         toData.validTickCount += increaseTickCount;
     },

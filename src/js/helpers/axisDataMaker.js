@@ -45,8 +45,9 @@ var axisDataMaker = {
      * Make data about label axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @param {Array.<string>} labels chart labels
-     *      @param {boolean} isVertical whether vertical or not
+     *      @param {Array.<string>} params.labels chart labels
+     *      @param {boolean} params.isVertical whether vertical or not
+     *      @param {boolean} params.aligned whether align or not
      * @returns {{
      *      labels: Array.<string>,
      *      tickCount: number,
@@ -57,14 +58,15 @@ var axisDataMaker = {
      */
     makeLabelAxisData: function(params) {
         var tickCount = params.labels.length,
-            options = params.options || {};
+            options = params.options || {},
+            labels = this._makeLabels(params.labels, options.labelInterval);
 
         if (!params.aligned) {
             tickCount += 1;
         }
 
         return {
-            labels: this._makeLabels(params.labels, options.labelInterval),
+            labels: labels,
             tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,
@@ -179,14 +181,23 @@ var axisDataMaker = {
      * @memberOf module:axisDataMaker
      * @param {{width: number, height: number}} chartDimension chat dimension
      * @param {boolean} isVertical whether vertical or not
+     * @param {number} tickCount tick count
      * @returns {Array.<number>} tick counts
      * @private
      */
-    _getCandidateTickCounts: function(chartDimension, isVertical) {
-        var baseSize = this._getBaseSize(chartDimension, isVertical),
-            start = tui.util.max([3, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10)]),
-            end = tui.util.max([start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)]) + 1,
+    _getCandidateTickCounts: function(chartDimension, isVertical, tickCount) {
+        var minStart = 3,
+            tickCounts, baseSize, start, end;
+
+        if (tickCount) {
+            tickCounts = [tickCount];
+        } else {
+            baseSize = this._getBaseSize(chartDimension, isVertical);
+            start = tui.util.max([minStart, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10)]);
+            end = tui.util.max([start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)]) + 1;
             tickCounts = tui.util.range(start, end);
+        }
+
         return tickCounts;
     },
 
@@ -212,7 +223,10 @@ var axisDataMaker = {
      * @param {number} min minimum value of user data
      * @param {number} max maximum value of user data
      * @param {Array.<object>} candidates tick info candidates
-     * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} selected tick info
+     * @returns {{
+     *      limit: {min: number, max: number}, tickCount: number,
+     *      step: number, labels: Array.<number>
+     * }} selected tick info
      * @private
      */
     _selectTickInfo: function(min, max, candidates) {
@@ -269,7 +283,7 @@ var axisDataMaker = {
         intTypeInfo = this._makeIntegerTypeInfo(min, max, options);
 
         // 02. tick count 후보군 얻기
-        tickCounts = params.tickCount ? [params.tickCount] : this._getCandidateTickCounts(params.seriesDimension, params.isVertical);
+        tickCounts = this._getCandidateTickCounts(params.seriesDimension, params.isVertical, params.tickCount);
 
         // 03. tick info 후보군 계산
         candidates = this._getCandidateTickInfos({
@@ -421,7 +435,8 @@ var axisDataMaker = {
     /**
      * Divide tick step.
      * @memberOf module:axisDataMaker
-     * @param {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} tickInfo tick info
+     * @param {{limit: {min: number, max: number}, tickCount: number,
+     *      step: number, labels: Array.<number>}} tickInfo tick info
      * @param {number} orgTickCount original tickCount
      * @returns {{limit: {min: number, max: number}, tickCount: number, step: number, labels: Array.<number>}} tick info
      * @private
@@ -516,15 +531,16 @@ var axisDataMaker = {
      * @private
      */
     _addMinPadding: function(params) {
-        var min = params.min;
+        var min = params.min,
+            isLineChart = predicate.isLineChart(params.chartType),
+            isMinusUserMin = params.userMin < 0,
+            isUndefinedMinOption = tui.util.isUndefined(params.minOption),
+            isEqualUserMin = (params.min === params.userMin);
 
-        if ((!predicate.isLineChart(params.chartType) && params.userMin >= 0) || !tui.util.isUndefined(params.minOption)) {
-            return min;
-        }
-        // normalize된 limit min값이 user min값과 같을 경우 step 감소
-        if (params.min === params.userMin) {
+        if ((isLineChart || isMinusUserMin) && isUndefinedMinOption && isEqualUserMin) {
             min -= params.step;
         }
+
         return min;
     },
 
@@ -540,16 +556,16 @@ var axisDataMaker = {
      * @private
      */
     _addMaxPadding: function(params) {
-        var max = params.max;
+        var max = params.max,
+            isLineChart = predicate.isLineChart(params.chartType),
+            isPlusUserMax = params.userMax > 0,
+            isUndefinedMaxOption = tui.util.isUndefined(params.maxOption),
+            isEqualUserMax = (params.max === params.userMax);
 
-        if ((!predicate.isLineChart(params.chartType) && params.userMax <= 0) || !tui.util.isUndefined(params.maxOption)) {
-            return max;
-        }
-
-        // normalize된 limit max값이 user max값과 같을 경우 step 증가
-        if (tui.util.isUndefined(params.maxOption) && (params.max === params.userMax)) {
+        if ((isLineChart || isPlusUserMax) && isUndefinedMaxOption && isEqualUserMax) {
             max += params.step;
         }
+
         return max;
     },
 
@@ -624,7 +640,8 @@ var axisDataMaker = {
      * @private
      */
     _getCandidateTickInfos: function(params, options) {
-        var userMin = params.min,
+        var self = this,
+            userMin = params.min,
             userMax = params.max,
             min = params.min,
             max = params.max,
@@ -634,7 +651,7 @@ var axisDataMaker = {
         limit = this._makeBaseLimit(min, max, options);
 
         candidates = tui.util.map(params.tickCounts, function(tickCount) {
-            return this._makeTickInfo({
+            return self._makeTickInfo({
                 tickCount: tickCount,
                 limit: tui.util.extend({}, limit),
                 userMin: userMin,
@@ -642,8 +659,28 @@ var axisDataMaker = {
                 chartType: params.chartType,
                 options: options
             });
-        }, this);
+        });
         return candidates;
+    },
+
+    /**
+     * Make limit about one vlaue.
+     * @param {number} min min
+     * @param {number} max max
+     * @returns {{min: number, max: number}} limit
+     * @private
+     */
+    _makeOneValueLimit: function(min, max) {
+        if (min > 0) {
+            min = 0;
+        } else {
+            max = 0;
+        }
+
+        return {
+            min: min,
+            max: max
+        };
     },
 
     /**
@@ -660,35 +697,26 @@ var axisDataMaker = {
             tmpMin, limit;
 
         if (min === max) {
-            if (min > 0) {
-                min = 0;
-            } else {
-                max = 0;
+            limit = this._makeOneValueLimit(min, max);
+        } else {
+            if (min < 0 && max <= 0) {
+                isMinus = true;
+                tmpMin = min;
+                min = -max;
+                max = -tmpMin;
             }
 
-            return {
-                min: min,
-                max: max
-            };
+            limit = calculator.calculateLimit(min, max);
+
+            if (isMinus) {
+                tmpMin = limit.min;
+                limit.min = -limit.max;
+                limit.max = -tmpMin;
+            }
+
+            limit.min = !tui.util.isUndefined(options.min) ? options.min : limit.min;
+            limit.max = !tui.util.isUndefined(options.max) ? options.max : limit.max;
         }
-
-        if (min < 0 && max <= 0) {
-            isMinus = true;
-            tmpMin = min;
-            min = -max;
-            max = -tmpMin;
-        }
-
-        limit = calculator.calculateLimit(min, max);
-
-        if (isMinus) {
-            tmpMin = limit.min;
-            limit.min = -limit.max;
-            limit.max = -tmpMin;
-        }
-
-        limit.min = !tui.util.isUndefined(options.min) ? options.min : limit.min;
-        limit.max = !tui.util.isUndefined(options.max) ? options.max : limit.max;
 
         return limit;
     },

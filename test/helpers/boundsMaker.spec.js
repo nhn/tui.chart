@@ -475,7 +475,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.dimensions = {
@@ -508,7 +508,7 @@ describe('boundsMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.dimensions = {

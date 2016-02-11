@@ -19,7 +19,7 @@ var eventListener = {
      * @param {function} callback callback function
      * @private
      */
-    _attachEvent: function (eventName, el, callback) {
+    _attachEvent: function(eventName, el, callback) {
         el.attachEvent('on' + eventName, callback);
     },
 
@@ -31,7 +31,7 @@ var eventListener = {
      * @param {function} callback callback function
      * @private
      */
-    _addEventListener: function (eventName, el, callback) {
+    _addEventListener: function(eventName, el, callback) {
         try {
             el.addEventListener(eventName, callback);
         } catch (e) {
@@ -45,7 +45,7 @@ var eventListener = {
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
      */
-    bindEvent: function (eventName, el, callback) {
+    bindEvent: function(eventName, el, callback) {
         var bindEvent;
         if ('addEventListener' in el) {
             bindEvent = this._addEventListener;

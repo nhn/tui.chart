@@ -33,7 +33,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get raw data.
-     * @returns {{categories: Array.<string>, series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})}} raw data
+     * @returns {{categories: Array.<string>,
+     *      series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})}} raw data
      */
     getRawData: function() {
         return this.orgRawData;
@@ -227,16 +228,17 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} values
      */
     _pickValues: function(seriesData) {
-        var values, result;
+        var self = this,
+            values, result;
         if (tui.util.isArray(seriesData)) {
-            values = tui.util.map(seriesData, this._pickValue, this);
+            values = tui.util.map(seriesData, this._pickValue);
             result = tui.util.pivot(values);
         } else {
             result = {};
             tui.util.forEach(seriesData, function(groupValues, type) {
-                values = tui.util.map(groupValues, this._pickValue, this);
+                values = tui.util.map(groupValues, self._pickValue);
                 result[type] = tui.util.pivot(values);
-            }, this);
+            });
         }
         return result;
     },
@@ -283,14 +285,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} labels
      */
     _pickLegendLabels: function(seriesData) {
-        var result;
+        var self = this,
+            result;
         if (tui.util.isArray(seriesData)) {
-            result = tui.util.map(seriesData, this._pickLegendLabel, this);
+            result = tui.util.map(seriesData, this._pickLegendLabel);
         } else {
             result = {};
             tui.util.forEach(seriesData, function(groupValues, type) {
-                result[type] = tui.util.map(groupValues, this._pickLegendLabel, this);
-            }, this);
+                result[type] = tui.util.map(groupValues, self._pickLegendLabel);
+            });
         }
         return result;
     },
@@ -335,8 +338,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _formatGroupValues: function(groupValues, formatFunctions) {
+        var self = this;
+
         return tui.util.map(groupValues, function(values) {
-            if (this.divergingOption) {
+            if (self.divergingOption) {
                 values = tui.util.map(values, Math.abs);
             }
             return tui.util.map(values, function(value) {
@@ -345,7 +350,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                     return fn(stored);
                 });
             });
-        }, this);
+        });
     },
 
     /**
@@ -356,15 +361,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _formatValues: function(chartValues, formatFunctions) {
-        var result;
+        var self = this,
+            result;
+
         formatFunctions = formatFunctions || [];
+
         if (tui.util.isArray(chartValues)) {
             result = this._formatGroupValues(chartValues, formatFunctions);
         } else {
             result = {};
             tui.util.forEach(chartValues, function(groupValues, chartType) {
-                result[chartType] = this._formatGroupValues(groupValues, formatFunctions);
-            }, this);
+                result[chartType] = self._formatGroupValues(groupValues, formatFunctions);
+            });
         }
         return result;
     },
@@ -416,7 +424,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _isComma: function(format) {
-        return format.indexOf(',') === format.split('.')[0].length - 4;
+        return format.indexOf(',') > -1;
     },
 
     /**
@@ -430,7 +438,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var zero = '0',
             isMinus = value < 0;
 
-        value = Math.abs(value) + '';
+        value = String(Math.abs(value));
 
         if (value.length >= len) {
             return value;
@@ -472,9 +480,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _formatComma: function(value) {
         var comma = ',',
             underPointValue = '',
-            values, lastIndex;
+            betweenLen = 3,
+            orgValue = value,
+            values, lastIndex, formattedValue;
 
-        value += '';
+        value = String(value);
 
         if (value.indexOf('.') > -1) {
             values = value.split('.');
@@ -482,27 +492,27 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             underPointValue = '.' + values[1];
         }
 
-        if (value.length < 4) {
-            return value + underPointValue;
+        if (value.length <= betweenLen) {
+            formattedValue = orgValue;
+        } else {
+            values = (value).split('').reverse();
+            lastIndex = values.length - 1;
+            values = tui.util.map(values, function(char, index) {
+                var result = [char];
+                if (index < lastIndex && (index + 1) % betweenLen === 0) {
+                    result.push(comma);
+                }
+                return result;
+            });
+            formattedValue = concat.apply([], values).reverse().join('') + underPointValue;
         }
 
-        values = (value).split('').reverse();
-        lastIndex = values.length - 1;
-        values = tui.util.map(values, function(char, index) {
-            var result = [char];
-            if (index < lastIndex && (index + 1) % 3 === 0) {
-                result.push(comma);
-            }
-            return result;
-        });
-
-        return concat.apply([], values).reverse().join('') + underPointValue;
+        return formattedValue;
     },
 
     /**
      * Find format functions.
      * @param {string} format format
-     * @param {string[]} values chart values
      * @returns {function[]} functions
      */
     _findFormatFunctions: function(format) {
@@ -567,10 +577,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {Array} multiline categories
      */
     getMultilineCategories: function(limitWidth, theme) {
+        var self = this;
+
         if (!this.data.multilineCategories) {
             this.data.multilineCategories = tui.util.map(this.getCategories(), function(category) {
-                return this._makeMultilineCategory(category, limitWidth, theme);
-            }, this);
+                return self._makeMultilineCategory(category, limitWidth, theme);
+            });
         }
 
         return this.data.multilineCategories;

@@ -159,6 +159,57 @@ describe('PointTypeDataModel', function() {
         });
     });
 
+    describe('_findCandidates()', function() {
+        it('입력받은 data중에서 layerX, laeryY에 포함되는 후보군을 찾아 반환합니다.', function() {
+            var data = [
+                    {
+                        bound: {
+                            left: 10,
+                            top: 25,
+                            right: 20,
+                            bottom: 35
+                        },
+                        sendData: {
+                            bound: {
+                                top: 30
+                            }
+                        }
+                    },
+                    {
+                        bound: {
+                            left: 10,
+                            top: 20,
+                            right: 20,
+                            bottom: 30
+                        },
+                        sendData: {
+                            bound: {
+                                top: 25
+                            }
+                        }
+                    }
+                ],
+                layerX = 20,
+                layerY = 22,
+                actual = dataModel._findCandidates(data, layerX, layerY),
+                expected = [{
+                    bound: {
+                        left: 10,
+                        top: 20,
+                        right: 20,
+                        bottom: 30
+                    },
+                    sendData: {
+                        bound: {
+                            top: 25
+                        }
+                    }
+                }];
+
+            expect(actual).toEqual(expected);
+        })
+    });
+
     describe('findData()', function() {
         it('groupIndex에 해당하는 data 그룹 중 layerX, layerY정보를 포함하는 data 후보군 중에서 layerY에 제일 가까운 data를 찾습니다.', function() {
             var actual, expected;

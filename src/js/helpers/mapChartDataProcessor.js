@@ -84,7 +84,8 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
     /**
      * Get valueMap datum.
      * @param {string} code map code
-     * @returns {{code: string, name: string, formattedValue: number, labelCoordinate: {x: number, y: number}}} valueMap datum
+     * @returns {{code: string, name: string, formattedValue: number,
+     *              labelCoordinate: {x: number, y: number}}} valueMap datum
      */
     getValueMapDatum: function(code) {
         return this.data.valueMap[code];

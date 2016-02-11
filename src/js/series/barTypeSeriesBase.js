@@ -34,11 +34,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBarGutter: function(groupSize, itemCount) {
         var baseSize = groupSize / (itemCount + 1) / 2,
+            standardSize = 6,
             gutter;
 
         if (baseSize <= 2) {
             gutter = 0;
-        } else if (baseSize <= 6) {
+        } else if (baseSize <= standardSize) {
             gutter = 2;
         } else {
             gutter = 4;
@@ -142,9 +143,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeNormalBounds: function(baseInfo, iteratee) {
         return tui.util.map(this._getPercentValues(), function(values, groupIndex) {
             var padding = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
-            return tui.util.map(values, function (value, index) {
+            return tui.util.map(values, function(value, index) {
                 return iteratee(baseInfo, value, padding, index);
-            }, this);
+            });
         }, this);
     },
 
@@ -152,7 +153,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * Make base info for stacked chart bounds.
      * @param {{width: number, height: number}} dimension dimension
      * @param {string} sizeType size type (width or height)
-     * @returns {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} base info
+     * @returns {{
+     *      groupSize: (number),
+     *      baseBound: object,
+     *      additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number
+     * }} base info
      * @private
      */
     _makeBaseInfoForStackedChartBounds: function(dimension, sizeType) {
@@ -191,7 +196,10 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Make bounds of stacked column chart.
      * @param {{width: number, height:number}} dimension column chart dimension
-     * @param {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} baseInfo base info
+     * @param {{
+     *      groupSize: (number), baseBound: object, additionPadding: number,
+     *      dimensionSize: number, positionType: string, baseEndPosition: number
+     * }} baseInfo base info
      * @param {function} makeBoundFunc make bound function
      * @returns {Array.<Array.<object>>} bounds
      * @private
@@ -202,7 +210,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 endPlusPosition = baseInfo.baseEndPosition,
                 endMinusPosition = baseInfo.baseEndPosition;
 
-            return tui.util.map(values, function (value) {
+            return tui.util.map(values, function(value) {
                 var bound = null,
                     endSize = Math.abs(value * baseInfo.dimensionSize);
                 baseInfo.baseBound[baseInfo.positionType] = padding;
@@ -216,7 +224,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 }
 
                 return bound;
-            }, this);
+            });
         }, this);
 
         return bounds;
@@ -228,7 +236,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
-        var groupBounds = this.seriesData.groupBounds,
+        var self = this,
+            groupBounds = this.seriesData.groupBounds,
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
@@ -237,16 +246,16 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return tui.util.map(values, function(value, index) {
                 var bound, formattedValue, renderingPosition;
                 bound = groupBounds[groupIndex][index].end;
-                formattedValue = this.dataProcessor.getFormattedValue(groupIndex, index, this.chartType);
-                renderingPosition = this.makeSeriesRenderingPosition({
+                formattedValue = self.dataProcessor.getFormattedValue(groupIndex, index, self.chartType);
+                renderingPosition = self.makeSeriesRenderingPosition({
                     value: value,
                     bound: bound,
                     formattedValue: formattedValue,
                     labelHeight: labelHeight
                 });
-                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
-            }, this).join('');
-        }, this).join('');
+                return self._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
+            }).join('');
+        }).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },
@@ -291,7 +300,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeStackedLabelsHtml: function(params) {
-        var values = params.values,
+        var self = this,
+            values = params.values,
             labelHeight = params.labelHeight,
             htmls, plusBound, minusBound;
 
@@ -302,9 +312,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
             if (bound && value) {
                 boundEnd = bound.end;
-                formattedValue = this.dataProcessor.getFormattedValue(params.groupIndex, index, this.chartType);
-                position = this._makeStackedLabelPosition(boundEnd, formattedValue, params.labelHeight);
-                labelHtml = this._makeSeriesLabelHtml(position, formattedValue, params.groupIndex, index);
+                formattedValue = self.dataProcessor.getFormattedValue(params.groupIndex, index, self.chartType);
+                position = self._makeStackedLabelPosition(boundEnd, formattedValue, params.labelHeight);
+                labelHtml = self._makeSeriesLabelHtml(position, formattedValue, params.groupIndex, index);
             }
 
             if (value > 0) {
@@ -314,7 +324,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             }
 
             return labelHtml;
-        }, this);
+        });
 
         if (this.options.stacked === 'normal') {
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
@@ -330,21 +340,22 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
-        var groupBounds = this.seriesData.groupBounds,
+        var self = this,
+            groupBounds = this.seriesData.groupBounds,
             groupValues = this.dataProcessor.getGroupValues(this.chartType),
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
 
         html = tui.util.map(groupValues, function(values, index) {
-            var labelsHtml = this._makeStackedLabelsHtml({
+            var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
                 values: values,
                 bounds: groupBounds[index],
                 labelHeight: labelHeight
             });
             return labelsHtml;
-        }, this).join('');
+        }).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },

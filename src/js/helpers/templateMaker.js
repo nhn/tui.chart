@@ -18,10 +18,10 @@ module.exports = {
      *   console.log(result); // <span>John</span>
      *
      */
-    template: function (html) {
-        return function (data) {
+    template: function(html) {
+        return function(data) {
             var result = html;
-            tui.util.forEach(data, function (value, key) {
+            tui.util.forEach(data, function(value, key) {
                 var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
                 result = result.replace(regExp, value);
             });

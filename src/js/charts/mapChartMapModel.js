@@ -215,20 +215,21 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _makeCoordinatesFromPath: function(path) {
-        var pathData = this._splitPath(path),
+        var self = this,
+            pathData = this._splitPath(path),
             prevCoordinate = {
                 x: 0,
                 y: 0
             };
 
         return tui.util.map(pathData, function(datum) {
-            var commandFunc = this.commandFuncMap[datum.type],
+            var commandFunc = self.commandFuncMap[datum.type],
                 coordinate = commandFunc(datum.coordinate, prevCoordinate);
 
             tui.util.extend(prevCoordinate, coordinate);
 
             return coordinate;
-        }, this);
+        });
     },
 
     /**
@@ -283,10 +284,12 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
      * @private
      */
     _createMapData: function(rawMapData) {
+        var self = this;
+
         this.mapData = tui.util.map(rawMapData, function(datum) {
-            var coordinate = this._makeCoordinatesFromPath(datum.path),
-                bound = this._findBoundFromCoordinates(coordinate),
-                userData = this.dataProcessor.getValueMapDatum(datum.code),
+            var coordinate = self._makeCoordinatesFromPath(datum.path),
+                bound = self._findBoundFromCoordinates(coordinate),
+                userData = self.dataProcessor.getValueMapDatum(datum.code),
                 name, labelCoordinate, formattedValue, percentValue, resultData;
 
             if (userData) {
@@ -301,7 +304,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 name: name,
                 path: datum.path,
                 bound: bound,
-                labelPosition: this._makeLabelPosition(bound, labelCoordinate)
+                labelPosition: self._makeLabelPosition(bound, labelCoordinate)
             };
 
             if (formattedValue) {
@@ -313,7 +316,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             }
 
             return resultData;
-        }, this);
+        });
     },
 
     getMapData: function() {
@@ -327,12 +330,14 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
     /**
      * Get label data.
      * @param {number} ratio ratio
-     * @returns {Array.<{name: string, bound: {dimension: {width: number, height: number}, position: {top: number, left: number}}, labelPosition: {width: number, height: number}}>} map data
+     * @returns {Array.<{name: string, bound: {dimension: {width: number, height: number},
+     *          position: {top: number, left: number}}, labelPosition: {width: number, height: number}}>} map data
      */
     getLabelData: function(ratio) {
-        var labelData = tui.util.filter(this.mapData, function(datum) {
-                return this.dataProcessor.getValueMapDatum(datum.code);
-            }, this);
+        var self = this,
+            labelData = tui.util.filter(this.mapData, function(datum) {
+                return self.dataProcessor.getValueMapDatum(datum.code);
+            });
 
         return tui.util.map(labelData, function(datum) {
             return {

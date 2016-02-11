@@ -42,10 +42,19 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             bound = elTarget.getBoundingClientRect(),
             layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
             layerY = e.clientY - chartConst.SERIES_EXPAND_SIZE - bound.top,
-            index = -1;
+            index = -1,
+            pointValue, sizeType;
+
+        if (this.isVertical) {
+            pointValue = layerX;
+            sizeType = 'height';
+        } else {
+            pointValue = layerY;
+            sizeType = 'width';
+        }
 
         if (!this._isOutPosition(layerX, layerY)) {
-            index = this.tickBaseDataModel.findIndex(this.isVertical ? layerX : layerY);
+            index = this.tickBaseDataModel.findIndex(pointValue);
         }
 
         if (index === -1) {
@@ -55,7 +64,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             this.fire('showGroupTooltip', {
                 index: index,
                 range: this.tickBaseDataModel.makeRange(index, this.chartType),
-                size: this.dimension[this.isVertical ? 'height' : 'width'],
+                size: this.dimension[sizeType],
                 isVertical: this.isVertical
             });
         }
@@ -63,7 +72,6 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
     /**
      * On mouseout.
-     * @param {MouseEvent} e mouse event object
      * @override
      */
     _onMouseout: function() {

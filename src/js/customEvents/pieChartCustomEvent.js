@@ -22,10 +22,12 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
         this.boundsMaker = params.boundsMaker;
         this.chartType = params.chartType;
     },
+
     /**
      * Render event handle layer area
      * @param {HTMLElement} customEventContainer custom event container element
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound bound of event handler layer
+     * @param {{dimension: {width: number, height: number},
+     *          position: {left: number, top: number}}} bound bound of event handler layer
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {

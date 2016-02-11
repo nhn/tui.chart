@@ -73,31 +73,31 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
-        var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
+        var self = this,
+            groupPositions = this.seriesData.groupPositions,
+            formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType)),
+            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            htmls;
 
-        groupPositions = this.seriesData.groupPositions;
-        formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
-        firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);
-        labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label);
-
-        html = tui.util.map(formattedValues, function(values, groupIndex) {
+        htmls = tui.util.map(formattedValues, function(values, groupIndex) {
             return tui.util.map(values, function(value, index) {
                 var position = groupPositions[groupIndex][index],
                     labelHtml = '',
                     labelWidth;
 
                 if (position.top !== position.startTop) {
-                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
-                    labelHtml = this._makeSeriesLabelHtml({
+                    labelWidth = renderUtil.getRenderedLabelWidth(value, self.theme.label);
+                    labelHtml = self._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: this._makeLabelPositionTop(position, value, labelHeight)
+                        top: self._makeLabelPositionTop(position, value, labelHeight)
                     }, value, index, groupIndex);
                 }
                 return labelHtml;
-            }, this).join('');
-        }, this).join('');
+            }).join('');
+        });
 
-        elSeriesLabelArea.innerHTML = html;
+        elSeriesLabelArea.innerHTML = htmls.join('');
     },
 
     /**

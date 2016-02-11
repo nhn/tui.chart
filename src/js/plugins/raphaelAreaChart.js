@@ -47,11 +47,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.paper = paper = raphael(container, 1, dimension.height);
         this.stackedOption = data.options.stacked;
-        this.spline = data.options.spline;
+        this.isSpline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
 
-        this.groupPaths = data.options.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
@@ -89,7 +89,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 lineColor = areaColor;
 
             return {
-                area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), areaColor, 0.5, areaColor),
+                area: raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
+                    fill: areaColor,
+                    opacity: 0.5,
+                    stroke: areaColor
+                }),
                 line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor)
             };
         }, this);
@@ -136,14 +140,16 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _getAreasPath: function(groupPositions) {
+        var self = this;
+
         return tui.util.map(groupPositions, function(positions) {
             positions[0].left -= 1;
 
             return {
-                area: this._makeAreasPath(positions),
-                line: this._makeLinesPath(positions)
+                area: self._makeAreasPath(positions),
+                line: self._makeLinesPath(positions)
             };
-        }, this);
+        });
     },
 
     /**
@@ -154,9 +160,11 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _makeSplineAreaBottomPath: function(positions) {
+        var self = this;
+
         return tui.util.map(positions, function(position) {
-            return ['L', position.left, this.zeroTop];
-        }, this).reverse();
+            return ['L', position.left, self.zeroTop];
+        }).reverse();
     },
 
     /**
@@ -166,18 +174,20 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @private
      */
     _getSplineAreasPath: function(groupPositions) {
+        var self = this;
+
         return tui.util.map(groupPositions, function(positions) {
             var linesPath, areasBottomPath;
 
             positions[0].left -= 1;
-            linesPath = this._makeSplineLinesPath(positions);
-            areasBottomPath = this._makeSplineAreaBottomPath(positions);
+            linesPath = self._makeSplineLinesPath(positions);
+            areasBottomPath = self._makeSplineAreaBottomPath(positions);
 
             return {
                 area: linesPath.concat(areasBottomPath),
                 line: linesPath
             };
-        }, this);
+        });
     },
 
     /**
@@ -187,23 +197,24 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
-        var dimension = params.dimension,
+        var self = this,
+            dimension = params.dimension,
             groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this.spline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
         tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
-            var area = this.groupAreas[groupIndex];
+            var area = self.groupAreas[groupIndex];
             area.area.attr({path: path.area.join(' ')});
             area.line.attr({path: path.line.join(' ')});
 
-            tui.util.forEachArray(this.groupDots[groupIndex], function(item, index) {
-                this._moveDot(item.dot, groupPositions[groupIndex][index]);
-            }, this);
-        }, this);
+            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
+                self._moveDot(item.dot, groupPositions[groupIndex][index]);
+            });
+        });
     },
 
     /**
@@ -211,24 +222,24 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var that = this,
+        var self = this,
             noneSelected = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
 
         tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
-            var area = this.groupAreas[groupIndex],
+            var area = self.groupAreas[groupIndex],
                 opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             area.area.attr({'fill-opacity': opacity});
             area.line.attr({'stroke-opacity': opacity});
 
-            tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
-                if (that.dotOpacity) {
+            tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
+                if (self.dotOpacity) {
                     item.dot.attr({'fill-opacity': opacity});
                 }
             });
-        }, this);
+        });
     }
 });
 

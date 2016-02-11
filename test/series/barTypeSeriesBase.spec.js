@@ -222,7 +222,7 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function () {
+        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
                 params;
@@ -255,7 +255,7 @@ describe('BarTypeSeriesBase', function() {
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
 
-        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function () {
+        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
                 params;

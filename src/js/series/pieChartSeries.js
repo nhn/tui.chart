@@ -45,7 +45,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeSectorData: function(percentValues, circleBound) {
-        var cx = circleBound.cx,
+        var self = this,
+            cx = circleBound.cx,
             cy = circleBound.cy,
             r = circleBound.r,
             angle = 0,
@@ -77,19 +78,19 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             return {
                 percentValue: percentValue,
                 angles: angles,
-                centerPosition: this._getArcPosition(tui.util.extend({
+                centerPosition: self._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
                 }, positionData)),
                 outerPosition: {
-                    start: this._getArcPosition(tui.util.extend({
+                    start: self._getArcPosition(tui.util.extend({
                         r: r
                     }, positionData)),
-                    middle: this._getArcPosition(tui.util.extend({
+                    middle: self._getArcPosition(tui.util.extend({
                         r: r + delta
                     }, positionData))
                 }
             };
-        }, this);
+        });
 
         return paths;
     },
@@ -282,7 +283,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderLegendLabel: function(params, seriesLabelContainer) {
-        var positions = params.positions,
+        var self = this,
+            positions = params.positions,
             htmls;
 
         htmls = tui.util.map(this.dataProcessor.getLegendLabels(), function(legend, index) {
@@ -290,17 +292,17 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 label, position;
 
             if (positions[index]) {
-                label = this._getSeriesLabel({
+                label = self._getSeriesLabel({
                     legend: legend,
-                    label: this.dataProcessor.getFormattedValue(0, index, this.chartType),
+                    label: self.dataProcessor.getFormattedValue(0, index, self.chartType),
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);
-                html = this._makeSeriesLabelHtml(position, label, 0, index);
+                html = self._makeSeriesLabelHtml(position, label, 0, index);
             }
 
             return html;
-        }, this);
+        });
         seriesLabelContainer.innerHTML = htmls.join('');
     },
 

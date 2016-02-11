@@ -6,6 +6,8 @@
 
 'use strict';
 
+/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 7, 8]}]*/
+
 var dom = require('./domHandler'),
     chartConst = require('./../const');
 
@@ -133,7 +135,7 @@ var renderUtil = {
 
         theme = theme || {};
 
-        label += '';
+        label = String(label);
 
         if (!label) {
             return 0;
@@ -387,18 +389,21 @@ var renderUtil = {
     /**
      * Start animation.
      * @param {number} animationTime animation time
-     * @param {function} callback callback function
+     * @param {function} onAnimation animation callback function
      * @returns {{id: number}} requestAnimationFrame id
      */
-    startAnimation: function(animationTime, callback) {
+    startAnimation: function(animationTime, onAnimation) {
         var animation = {},
             startTime;
 
+        /**
+         * Animate.
+         */
         function animate() {
             var diffTime = (new Date()).getTime() - startTime,
                 ratio = Math.min((diffTime / animationTime), 1);
 
-            callback(ratio);
+            onAnimation(ratio);
 
             if (ratio === 1) {
                 delete animation.id;

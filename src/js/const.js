@@ -4,6 +4,10 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
+'use strict';
+
+/*eslint no-magic-numbers: 0*/
+
 /**
  * Chart const
  * @readonly
@@ -237,6 +241,8 @@ var chartConst = {
     /** @type {string} */
     TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION: 'center bottom',
     /** hide delay */
-    HIDE_DELAY: 200
+    HIDE_DELAY: 200,
+    OLD_BROWSER_OPACITY_100: 100,
+    SERIES_LABEL_OPACITY: 0.3
 };
 module.exports = chartConst;

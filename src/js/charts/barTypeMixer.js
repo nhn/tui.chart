@@ -85,20 +85,21 @@ var barTypeMixer = {
      * @private
      */
     _makeStackedDivergingRawSeriesData: function(rawSeriesData) {
-        var result = [],
+        var self = this,
+            result = [],
             stacks = this._pickStacks(rawSeriesData),
             leftStack = stacks[0],
             rightStack = stacks[1];
 
         tui.util.forEachArray(rawSeriesData, function(seriesDatum) {
             if (seriesDatum.stack === leftStack) {
-                seriesDatum.data = this._makeMinusValues(seriesDatum.data);
+                seriesDatum.data = self._makeMinusValues(seriesDatum.data);
                 result.push(seriesDatum);
             } else if (seriesDatum.stack === rightStack) {
-                seriesDatum.data = this._makePlusValues(seriesDatum.data);
+                seriesDatum.data = self._makePlusValues(seriesDatum.data);
                 result.push(seriesDatum);
             }
-        }, this);
+        });
         return result;
     },
 

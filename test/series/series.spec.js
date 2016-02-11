@@ -100,7 +100,7 @@ describe('Series', function() {
     });
 
     describe('render()', function() {
-        it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
+        it('width=200, height=100의 series 영역을 렌더링합니다.', function() {
             var seriesContainer;
 
             series.hasAxes = true;

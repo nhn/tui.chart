@@ -6,6 +6,8 @@
 
 'use strict';
 
+/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 10, 20, 6, 0.1]}]*/
+
 var chartConst = require('../const');
 
 /**

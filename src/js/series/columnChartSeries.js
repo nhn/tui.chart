@@ -96,20 +96,18 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeNormalColumnChartBound: function(baseInfo, value, paddingLeft, index) {
-        var endHeight, endTop, startEndTops, bound;
+        var endHeight = Math.abs(value * baseInfo.dimension.height),
+            maxPosValue = baseInfo.distance.toMax || baseInfo.dimension.height,
+            endTop = (baseInfo.isMinus ? 0 : maxPosValue) + chartConst.SERIES_EXPAND_SIZE,
+            startEndTops = this._makeStartEndTops(endTop, endHeight, value);
 
-        endHeight = Math.abs(value * baseInfo.dimension.height);
-        endTop = (baseInfo.isMinus ? 0 : (baseInfo.distance.toMax || baseInfo.dimension.height)) + chartConst.SERIES_EXPAND_SIZE;
-        startEndTops = this._makeStartEndTops(endTop, endHeight, value);
-        bound = this._makeColumnChartBound(tui.util.extend({
+        return this._makeColumnChartBound(tui.util.extend({
             baseBound: {
                 left: paddingLeft + (baseInfo.step * index) + chartConst.SERIES_EXPAND_SIZE,
                 width: baseInfo.barSize
             },
             endHeight: endHeight
         }, startEndTops));
-
-        return bound;
     },
 
     /**
@@ -132,10 +130,10 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeStackedColumnChartBounds: function(dimension) {
-        var that = this,
+        var self = this,
             baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'height'),
             bounds = this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
-                return that._makeColumnChartBound({
+                return self._makeColumnChartBound({
                     baseBound: baseBound,
                     startTop: baseInfo.distance.toMax + chartConst.SERIES_EXPAND_SIZE,
                     endTop: baseInfo.distance.toMax - endSize - endPosition,

@@ -61,6 +61,21 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
     },
 
     /**
+     * Make component options.
+     * @param {object} options options
+     * @param {string} componentType component type
+     * @param {number} index component index
+     * @returns {object} options
+     * @private
+     */
+    _makeComponentOptions: function(options, componentType, index) {
+        options = options || this.options[componentType];
+        options = tui.util.isArray(options) ? options[index] : options || {};
+
+        return options;
+    },
+
+    /**
      * Register component.
      * The component refers to a component of the chart.
      * The component types are axis, legend, plot, series and customEvent.
@@ -70,24 +85,23 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
      * @param {object} params component parameters
      */
     register: function(name, Component, params) {
-        var options, index, theme,
+        var index,
             component, componentType;
 
         params = params || {};
 
         componentType = params.componentType || name;
-        options = params.options || this.options[componentType];
-        theme = params.theme || this.theme[componentType];
         index = params.index || 0;
 
-        params.theme = theme;
-        params.options = tui.util.isArray(options) ? options[index] : options || {};
+        params.theme = params.theme || this.theme[componentType];
+        params.options = this._makeComponentOptions(params.options, componentType, index);
+
         params.dataProcessor = this.dataProcessor;
         params.boundsMaker = this.boundsMaker;
         params.hasAxes = this.hasAxes;
 
         component = new Component(params);
-        component.name = name;
+        component.componentName = name;
         component.componentType = componentType;
 
         this.components.push(component);

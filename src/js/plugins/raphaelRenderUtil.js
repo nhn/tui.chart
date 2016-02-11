@@ -60,23 +60,21 @@ var raphaelRenderUtil = {
 
     /**
      * Render area graph.
-     * @param {object} paper paper
-     * @param {{start: string}} path path
-     * @param {string} color fill color
-     * @param {?number} opacity fill opacity
-     * @param {string} strokeColor stroke color
-     * @param {?number} strokeOpacity stroke opacity
+     * @param {object} paper raphael paper
+     * @param {string} path path
+     * @param {object} fillStyle fill style
+     *      @param {string} fillStyle.fill fill color
+     *      @param {?number} fillStyle.opacity fill opacity
+     *      @param {string} fillStyle.stroke stroke color
+     *      @param {?number} fillStyle.stroke-opacity stroke opacity
      * @returns {Array.<object>} raphael object
      */
-    renderArea: function(paper, path, color, opacity, strokeColor, strokeOpacity) {
-        var area = paper.path(path),
-            fillStyle = {
-                fill: color,
-                opacity: opacity,
-                stroke: strokeColor,
-                'stroke-opacity': strokeOpacity || 0
-            };
+    renderArea: function(paper, path, fillStyle) {
+        var area = paper.path(path);
 
+        fillStyle = tui.util.extend({
+            'stroke-opacity': 0
+        }, fillStyle);
         area.attr(fillStyle);
 
         return area;
@@ -91,8 +89,8 @@ var raphaelRenderUtil = {
         tui.util.forEachArray(groupItems, function(items, groupIndex) {
             tui.util.forEachArray(items, function(item, index) {
                 funcRenderItem(item, groupIndex, index);
-            }, this);
-        }, this);
+            });
+        });
     },
 
     /**
@@ -102,7 +100,9 @@ var raphaelRenderUtil = {
      * @param {number} lum luminance
      * @returns {string} changed color
      */
-    makeChangedLuminanceColor: function (hex, lum) {
+    makeChangedLuminanceColor: function(hex, lum) {
+        /*eslint no-magic-numbers: 0*/
+
         // validate hex string
         hex = String(hex).replace(/[^0-9a-f]/gi, '');
 

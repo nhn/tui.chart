@@ -131,7 +131,7 @@ describe('test Legend', function() {
     });
 
     describe('_renderLegendArea()', function() {
-        it('legend 영역 렌더링', function () {
+        it('legend 영역 렌더링', function() {
             var legendContainer = document.createElement('DIV'),
                 expectedElement = document.createElement('DIV'),
                 expectedChildren;
@@ -251,7 +251,7 @@ describe('test Legend', function() {
                 args;
 
             legend.userEvent = {
-                fire: jasmine.createSpy('fire').and.callFake(function () {
+                fire: jasmine.createSpy('fire').and.callFake(function() {
                     called = true;
                     args = arguments;
                 })

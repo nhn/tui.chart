@@ -124,12 +124,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     _makeTooltipData: function() {
+        var self = this;
+
         return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
             return {
-                category: this.dataProcessor.getCategory(index),
+                category: self.dataProcessor.getCategory(index),
                 values: values
             };
-        }, this);
+        });
     },
 
     /**
@@ -169,16 +171,19 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _makeItemRenderingData: function(values) {
+        var dataProcessor = this.dataProcessor,
+            suffix = this.suffix;
+
         return tui.util.map(values, function(value, index) {
-            var legendLabel = this.dataProcessor.getLegendData(index);
+            var legendLabel = dataProcessor.getLegendData(index);
 
             return {
                 value: value,
                 legend: legendLabel.label,
                 chartType: legendLabel.chartType,
-                suffix: this.suffix
+                suffix: suffix
             };
-        }, this);
+        });
     },
 
     /**

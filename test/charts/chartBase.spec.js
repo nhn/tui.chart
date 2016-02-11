@@ -106,7 +106,7 @@ describe('ChartBase', function() {
 
             componentManager.where.and.returnValue([
                 {
-                    name: 'columnSeries',
+                    componentName: 'columnSeries',
                     chartType: 'column'
                 }
             ]);
@@ -119,7 +119,7 @@ describe('ChartBase', function() {
     });
 
     describe('_renderTitle()', function() {
-        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function () {
+        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
             var el = dom.create('DIV');
             chartBase._renderTitle(el);
             expect(el.firstChild.innerHTML).toBe('Chart Title');
