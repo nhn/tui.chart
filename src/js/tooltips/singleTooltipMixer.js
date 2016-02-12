@@ -95,21 +95,53 @@ var singleTooltipMixer = {
     },
 
     /**
-     * Calculate tooltip position to event position.
-     * @param {object} params parameters
-     *      @param {{left: number, top: number}} params.bound bound
-     *      @param {{left: number, top: number}} params.mousePosition mouse position
-     * @returns {{top: number, left: number}} position
+     * Make left position of not bar chart.
+     * @param {number} baseLeft base left
+     * @param {string} alignOption align option
+     * @param {number} minusWidth minus width
+     * @param {number} lineGap line gap
+     * @returns {number} left position value
      * @private
      */
-    _calculateTooltipPositionToMousePosition: function(params) {
-        params.bound = params.bound || {};
-        tui.util.extend(params.bound, params.mousePosition);
-        return this._calculateTooltipPositionAboutNotBarChart(params);
+    _makeLeftPositionOfNotBarChart: function(baseLeft, alignOption, minusWidth, lineGap) {
+        var left = baseLeft;
+
+        if (alignOption.indexOf('left') > -1) {
+            left -= minusWidth + lineGap;
+        } else if (alignOption.indexOf('center') > -1) {
+            left -= minusWidth / 2;
+        } else {
+            left += lineGap;
+        }
+
+        return left;
     },
 
     /**
-     * Calculate tooltip position about not bar chart.
+     * Make top position of not bar chart.
+     * @param {number} baseTop base top
+     * @param {string} alignOption align option
+     * @param {number} tooltipHeight tooltip height
+     * @param {number} lineGap line gap
+     * @returns {number} top position value
+     * @private
+     */
+    _makeTopPositionOfNotBarChart: function(baseTop, alignOption, tooltipHeight, lineGap) {
+        var top = baseTop;
+
+        if (alignOption.indexOf('bottom') > -1) {
+            top += tooltipHeight + lineGap;
+        } else if (alignOption.indexOf('middle') > -1) {
+            top += tooltipHeight / 2;
+        } else {
+            top -= chartConst.TOOLTIP_GAP;
+        }
+
+        return top;
+    },
+
+    /**
+     * Make tooltip position of not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -117,39 +149,80 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateTooltipPositionAboutNotBarChart: function(params) {
+    _makeTooltipPositionOfNotBarChart: function(params) {
         var bound = params.bound,
             positionOption = params.positionOption,
             minusWidth = params.dimension.width - (bound.width || 0),
             lineGap = bound.width ? 0 : chartConst.TOOLTIP_GAP,
             alignOption = params.alignOption || '',
             tooltipHeight = params.dimension.height,
-            result = {};
+            baseLeft = bound.left + positionOption.left,
+            baseTop = bound.top - tooltipHeight + positionOption.top;
 
-        result.left = bound.left + positionOption.left;
-        result.top = bound.top - tooltipHeight + positionOption.top;
-
-        if (alignOption.indexOf('left') > -1) {
-            result.left -= minusWidth + lineGap;
-        } else if (alignOption.indexOf('center') > -1) {
-            result.left -= minusWidth / 2;
-        } else {
-            result.left += lineGap;
-        }
-
-        if (alignOption.indexOf('bottom') > -1) {
-            result.top += tooltipHeight + lineGap;
-        } else if (alignOption.indexOf('middle') > -1) {
-            result.top += tooltipHeight / 2;
-        } else {
-            result.top -= chartConst.TOOLTIP_GAP;
-        }
-
-        return result;
+        return {
+            left: this._makeLeftPositionOfNotBarChart(baseLeft, alignOption, minusWidth, lineGap),
+            top: this._makeTopPositionOfNotBarChart(baseTop, alignOption, tooltipHeight, lineGap)
+        };
     },
 
     /**
-     * Calculate tooltip position about bar chart.
+     * Make tooltip position to event position.
+     * @param {object} params parameters
+     *      @param {{left: number, top: number}} params.bound bound
+     *      @param {{left: number, top: number}} params.mousePosition mouse position
+     * @returns {{top: number, left: number}} position
+     * @private
+     */
+    _makeTooltipPositionToMousePosition: function(params) {
+        params.bound = params.bound || {};
+        tui.util.extend(params.bound, params.mousePosition);
+        return this._makeTooltipPositionOfNotBarChart(params);
+    },
+
+    /**
+     * Make left position of bar chart.
+     * @param {number} baseLeft base left
+     * @param {string} alignOption align option
+     * @param {number} tooltipWidth tooltip width
+     * @returns {number} left position value
+     * @private
+     */
+    _makeLeftPositionOfBarChart: function(baseLeft, alignOption, tooltipWidth) {
+        var left = baseLeft;
+
+        if (alignOption.indexOf('left') > -1) {
+            left -= tooltipWidth;
+        } else if (alignOption.indexOf('center') > -1) {
+            left -= tooltipWidth / 2;
+        } else {
+            left += chartConst.TOOLTIP_GAP;
+        }
+
+        return left;
+    },
+
+    /**
+     * Make top position of bar chart.
+     * @param {number} baseTop base top
+     * @param {string} alignOption align option
+     * @param {number} minusHeight minus width
+     * @returns {number} top position value
+     * @private
+     */
+    _makeTopPositionOfBarChart: function(baseTop, alignOption, minusHeight) {
+        var top = baseTop;
+
+        if (alignOption.indexOf('top') > -1) {
+            top -= minusHeight;
+        } else if (alignOption.indexOf('middle') > -1) {
+            top -= minusHeight / 2;
+        }
+
+        return top;
+    },
+
+    /**
+     * Make tooltip position of bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -157,32 +230,19 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateTooltipPositionAboutBarChart: function(params) {
+    _makeTooltipPositionOfBarChart: function(params) {
         var bound = params.bound,
             positionOption = params.positionOption,
             minusHeight = params.dimension.height - (bound.height || 0),
             alignOption = params.alignOption || '',
             tooltipWidth = params.dimension.width,
-            result = {};
+            baseLeft = bound.left + bound.width + positionOption.left,
+            baseTop = bound.top + positionOption.top;
 
-        result.left = bound.left + bound.width + positionOption.left;
-        result.top = bound.top + positionOption.top;
-
-        if (alignOption.indexOf('left') > -1) {
-            result.left -= tooltipWidth;
-        } else if (alignOption.indexOf('center') > -1) {
-            result.left -= tooltipWidth / 2;
-        } else {
-            result.left += chartConst.TOOLTIP_GAP;
-        }
-
-        if (alignOption.indexOf('top') > -1) {
-            result.top -= minusHeight;
-        } else if (alignOption.indexOf('middle') > -1) {
-            result.top -= minusHeight / 2;
-        }
-
-        return result;
+        return {
+            left: this._makeLeftPositionOfBarChart(baseLeft, alignOption, tooltipWidth),
+            top: this._makeTopPositionOfBarChart(baseTop, alignOption, minusHeight)
+        };
     },
 
     /**
@@ -204,7 +264,7 @@ var singleTooltipMixer = {
     },
 
     /**
-     * Calculate tooltip position.
+     * Make tooltip position.
      * @param {object} params parameters
      *      @param {{left: number, top: number, width: number, height: number}} params.bound graph bound
      *      @param {string} params.chartType chart type
@@ -214,20 +274,20 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _calculateTooltipPosition: function(params) {
+    _makeTooltipPosition: function(params) {
         var position = {},
             sizeType, positionType, addPadding;
 
         if (params.mousePosition) {
-            position = this._calculateTooltipPositionToMousePosition(params);
+            position = this._makeTooltipPositionToMousePosition(params);
         } else {
             if (predicate.isBarChart(params.chartType)) {
-                position = this._calculateTooltipPositionAboutBarChart(params);
+                position = this._makeTooltipPositionOfBarChart(params);
                 sizeType = 'width';
                 positionType = 'left';
                 addPadding = 1;
             } else {
-                position = this._calculateTooltipPositionAboutNotBarChart(params);
+                position = this._makeTooltipPositionOfNotBarChart(params);
                 sizeType = 'height';
                 positionType = 'top';
                 addPadding = -1;
@@ -319,7 +379,7 @@ var singleTooltipMixer = {
 
         dom.addClass(elTooltip, 'show');
 
-        position = this._calculateTooltipPosition(tui.util.extend({
+        position = this._makeTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
             positionOption: tui.util.extend({
                 left: 0,
@@ -365,7 +425,7 @@ var singleTooltipMixer = {
      * @param {function} callback callback
      */
     hideTooltip: function(elTooltip) {
-        var that = this,
+        var self = this,
             indexes = this._getIndexesCustomAttribute(elTooltip),
             chartType = elTooltip.getAttribute('data-chart-type');
 
@@ -378,14 +438,13 @@ var singleTooltipMixer = {
             }
 
             setTimeout(function() {
-                if (that._isShowedTooltip(elTooltip)) {
+                if (self._isShowedTooltip(elTooltip)) {
                     return;
                 }
 
                 dom.removeClass(elTooltip, 'show');
                 elTooltip.style.cssText = '';
 
-                that = null;
                 indexes = null;
             }, chartConst.HIDE_DELAY);
         }

@@ -154,7 +154,7 @@ describe('test Legend', function() {
     });
 
     describe('makeDimension()', function() {
-        it('_isSkipLegend()의 결과가 true이면 0을 반환합니다.', function () {
+        it('_isSkipLegend()의 결과가 true이면 0을 반환합니다.', function() {
             var actual;
 
             spyOn(dimensionModel, '_isSkipLegend').and.returnValue(true);
@@ -164,7 +164,7 @@ describe('test Legend', function() {
             expect(actual.width).toBe(0);
         });
 
-        it('가로타입 범례의 경우 _makeHorizontalDimension의 수행 결과를 반환합니다.', function () {
+        it('가로타입 범례의 경우 _makeHorizontalDimension의 수행 결과를 반환합니다.', function() {
             var actual, expected;
 
             dimensionModel.legendLabels = ['label1', 'label12'];
@@ -176,7 +176,7 @@ describe('test Legend', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('세로타입 범례의 경우 _makeVerticalDimension의 수행 결과를 반환합니다.', function () {
+        it('세로타입 범례의 경우 _makeVerticalDimension의 수행 결과를 반환합니다.', function() {
             var actual, expected;
 
             dimensionModel.legendLabels = ['label1', 'label12'];

@@ -109,11 +109,11 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeStackedBarChartBounds: function(dimension) {
-        var that = this,
+        var self = this,
             baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'width');
 
         return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
-            return that._makeBarChartBound({
+            return self._makeBarChartBound({
                 baseBound: baseBound,
                 startLeft: baseInfo.distance.toMin + chartConst.SERIES_EXPAND_SIZE,
                 endLeft: baseInfo.distance.toMin + endPosition,

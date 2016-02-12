@@ -59,7 +59,7 @@ module.exports = {
         var cloneTheme = JSON.parse(JSON.stringify(defaultTheme)),
             newTheme;
 
-        this._concatDefaultColors(theme, cloneTheme.series.colors)
+        this._concatDefaultColors(theme, cloneTheme.series.colors);
         newTheme = this._overwriteTheme(theme, cloneTheme);
 
         newTheme = this._copyProperty({
@@ -121,7 +121,8 @@ module.exports = {
      * @private
      */
     _concatDefaultColors: function(theme, seriesColors) {
-        var chartTypes;
+        var self = this,
+            chartTypes;
 
         if (!theme.series) {
             return;
@@ -133,8 +134,8 @@ module.exports = {
             this._concatColors(theme.series, seriesColors);
         } else {
             tui.util.forEach(chartTypes, function(item) {
-                this._concatColors(item, seriesColors);
-            }, this);
+                self._concatColors(item, seriesColors);
+            });
         }
     },
 
@@ -146,6 +147,8 @@ module.exports = {
      * @private
      */
     _overwriteTheme: function(from, to) {
+        var self = this;
+
         tui.util.forEach(to, function(item, key) {
             var fromItem = from[key];
             if (!fromItem) {
@@ -155,11 +158,11 @@ module.exports = {
             if (tui.util.isArray(fromItem)) {
                 to[key] = fromItem.slice();
             } else if (tui.util.isObject(fromItem)) {
-                this._overwriteTheme(fromItem, item);
+                self._overwriteTheme(fromItem, item);
             } else {
                 to[key] = fromItem;
             }
-        }, this);
+        });
 
         return to;
     },
@@ -175,7 +178,8 @@ module.exports = {
      * @private
      */
     _copyProperty: function(params) {
-        var chartTypes;
+        var self = this,
+            chartTypes;
 
         if (!params.toTheme[params.propName]) {
             return params.toTheme;
@@ -185,8 +189,8 @@ module.exports = {
         if (tui.util.keys(chartTypes).length) {
             tui.util.forEach(chartTypes, function(item, key) {
                 var cloneTheme = JSON.parse(JSON.stringify(defaultTheme[params.propName]));
-                params.fromTheme[params.propName][key] = this._overwriteTheme(item, cloneTheme);
-            }, this);
+                params.fromTheme[params.propName][key] = self._overwriteTheme(item, cloneTheme);
+            });
 
             params.toTheme[params.propName] = params.fromTheme[params.propName];
         }
@@ -273,7 +277,9 @@ module.exports = {
      * @ignore
      */
     _copyColorInfo: function(theme) {
-        var seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+        var self = this,
+            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+
         if (!tui.util.keys(seriesChartTypes).length) {
             this._copyColorInfoToOther(theme.series, theme.legend);
             this._copyColorInfoToOther(theme.series, theme.tooltip);
@@ -281,11 +287,11 @@ module.exports = {
             tui.util.forEach(seriesChartTypes, function(item, chartType) {
                 theme.legend[chartType] = {};
                 theme.tooltip[chartType] = {};
-                this._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);
-                this._copyColorInfoToOther(item, theme.tooltip[chartType], item.colors || theme.tooltip.colors);
+                self._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);
+                self._copyColorInfoToOther(item, theme.tooltip[chartType], item.colors || theme.tooltip.colors);
                 delete theme.legend.colors;
                 delete theme.tooltip.colors;
-            }, this);
+            });
         }
     }
 };

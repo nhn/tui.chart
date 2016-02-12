@@ -42,7 +42,7 @@ describe('Axis', function() {
     });
 
     describe('_makeXAxisHeight()', function() {
-        it('x축 영역의 높이를 계산하여 반환합니다.', function () {
+        it('x축 영역의 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             axis.options.title = 'Axis Title';
@@ -69,7 +69,7 @@ describe('Axis', function() {
         it('component name이 rightYAxis가 아니면 true를 반환합니다.', function() {
             var actual, expected;
 
-            axis.name = 'xAxis';
+            axis.componentName = 'xAxis';
             actual = axis._isValidAxis();
             expected = true;
 
@@ -79,7 +79,7 @@ describe('Axis', function() {
         it('component name이 rightYAxis면서 getGroupValues에 length가 0인 values가 하나라도 존재하면 false를 반환합니다.', function() {
             var actual, expected;
 
-            axis.name = 'rightYAxis';
+            axis.componentName = 'rightYAxis';
             dataProcessor.getGroupValues.and.returnValue([[], [1, 2, 3]]);
 
             actual = axis._isValidAxis();
@@ -94,7 +94,7 @@ describe('Axis', function() {
             var actualDimensions = {};
 
             spyOn(axis, '_isValidAxis').and.returnValues(false);
-            axis.name = 'yAxis';
+            axis.componentName = 'yAxis';
 
             boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
                 actualDimensions[name] = dimension;
@@ -102,7 +102,7 @@ describe('Axis', function() {
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.name]).toBeUndefined();
+            expect(actualDimensions[axis.componentName]).toBeUndefined();
         });
 
         it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
@@ -111,7 +111,7 @@ describe('Axis', function() {
                     height: 60
                 };
 
-            axis.name = 'xAxis';
+            axis.componentName = 'xAxis';
             axis.componentType = 'xAxis';
 
             boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
@@ -120,7 +120,7 @@ describe('Axis', function() {
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.name]).toEqual(expected);
+            expect(actualDimensions[axis.componentName]).toEqual(expected);
         });
 
         it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
@@ -129,7 +129,7 @@ describe('Axis', function() {
                     width: 97
                 };
 
-            axis.name = 'yAxis';
+            axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
             axis.isLabel = true;
 
@@ -140,13 +140,13 @@ describe('Axis', function() {
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.name]).toEqual(expected);
+            expect(actualDimensions[axis.componentName]).toEqual(expected);
         });
 
         it('componentType이 xAxis가 아니면서 isLabel이 true가 아니면 boundsMaker에 등록하지 않습니다.', function() {
             var actualDimensions = {};
 
-            axis.name = 'yAxis';
+            axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
 
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
@@ -156,7 +156,7 @@ describe('Axis', function() {
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.name]).toBeUndefined();
+            expect(actualDimensions[axis.componentName]).toBeUndefined();
         });
     });
 
@@ -165,7 +165,7 @@ describe('Axis', function() {
             var actualDimensions = {};
 
             spyOn(axis, '_isValidAxis').and.returnValues(false);
-            axis.name = 'yAxis';
+            axis.componentName = 'yAxis';
 
             boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
                 actualDimensions[name] = dimension;
@@ -173,7 +173,7 @@ describe('Axis', function() {
 
             axis.registerAdditionalDimension();
 
-            expect(actualDimensions[axis.name]).toBeUndefined();
+            expect(actualDimensions[axis.componentName]).toBeUndefined();
         });
 
         it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
@@ -182,7 +182,7 @@ describe('Axis', function() {
                     width: 97
                 };
 
-            axis.name = 'yAxis';
+            axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
 
             boundsMaker.axesData = {
@@ -196,7 +196,7 @@ describe('Axis', function() {
 
             axis.registerAdditionalDimension();
 
-            expect(actualDimensions[axis.name]).toEqual(expected);
+            expect(actualDimensions[axis.componentName]).toEqual(expected);
         });
     });
 
@@ -622,7 +622,7 @@ describe('Axis', function() {
                 labelSize: 80
             };
             boundsMaker.xAxisDegree = 45;
-            axis.name = 'xAxis';
+            axis.componentName = 'xAxis';
             actual = axis._makeLabelsHtml(params);
             expected = axis._makeRotationLabelsHtml(params);
 

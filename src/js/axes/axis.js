@@ -31,6 +31,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         tui.util.extend(this, params);
         /**
          * Axis view className
+         * @type {string}
          */
         this.className = 'tui-chart-axis-area';
     },
@@ -58,7 +59,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             titleAreaWidth, width;
 
         titleAreaWidth = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING;
-        width = renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth + chartConst.AXIS_LABEL_PADDING;
+        width = renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth +
+            chartConst.AXIS_LABEL_PADDING;
 
         return width;
     },
@@ -72,7 +74,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var isInvalid = true,
             groupValues;
 
-        if (this.name === 'rightYAxis') {
+        if (this.componentName === 'rightYAxis') {
             groupValues = this.dataProcessor.getGroupValues();
             tui.util.forEach(groupValues, function(values) {
                 if (!values.length) {
@@ -94,10 +96,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (this._isValidAxis()) {
             if (this.componentType === 'xAxis') {
                 dimension.height = this._makeXAxisHeight();
-                this.boundsMaker.registerBaseDimension(this.name, dimension);
+                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
             } else if (this.isLabel) {
                 dimension.width = this._makeYAxisWidth(this.dataProcessor.getCategories());
-                this.boundsMaker.registerBaseDimension(this.name, dimension);
+                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
             }
         }
     },
@@ -114,7 +116,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 dimension = {
                     width: this._makeYAxisWidth(axesData.yAxis.labels)
                 };
-                this.boundsMaker.registerBaseDimension(this.name, dimension);
+                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
             }
         }
     },
@@ -130,7 +132,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             isVertical = !!data.isVertical,
             isPositionRight = !!data.isPositionRight,
             options = this.options,
-            dimension = this.boundsMaker.getDimension(this.name),
+            dimension = this.boundsMaker.getDimension(this.componentName),
             size = isVertical ? dimension.height : dimension.width,
             elTitleArea = this._renderTitleArea({
                 title: options.title,
@@ -149,7 +151,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         }
 
         renderUtil.renderDimension(axisContainer, dimension);
-        renderUtil.renderPosition(axisContainer, this.boundsMaker.getPosition(this.name));
+        renderUtil.renderPosition(axisContainer, this.boundsMaker.getPosition(this.componentName));
         dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
         dom.addClass(axisContainer, isPositionRight ? 'right' : '');
         dom.append(axisContainer, [elTitleArea, elTickArea, elLabelArea]);
@@ -467,16 +469,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRotationLabelsHtml: function(params) {
-        var template = axisTemplate.tplAxisLabel,
+        var self = this,
+            template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
             labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
             addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + this.boundsMaker.xAxisDegree,
             halfWidth = params.labelSize / 2,
             moveLeft = calculator.calculateAdjacent(this.boundsMaker.xAxisDegree, halfWidth),
-            top = calculator.calculateOpposite(this.boundsMaker.xAxisDegree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN,
+            top = calculator.calculateOpposite(this.boundsMaker.xAxisDegree, halfWidth) +
+                chartConst.XAXIS_LABEL_TOP_MARGIN,
             labelsHtml = tui.util.map(params.positions, function(position, index) {
                 var label = params.labels[index],
-                    rotationCssText = this._makeCssTextForRotationMoving({
+                    rotationCssText = self._makeCssTextForRotationMoving({
                         degree: params.degree,
                         labelHeight: labelHeight,
                         labelWidth: params.labelSize,
@@ -492,7 +496,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                     cssText: labelCssText + rotationCssText,
                     label: label
                 });
-            }, this).join('');
+            }).join('');
 
         return labelsHtml;
     },
@@ -535,7 +539,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _makeLabelsHtml: function(params) {
         var labelsHtml;
 
-        if (this.name === 'xAxis' && this.boundsMaker.xAxisDegree) {
+        if (this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree) {
             labelsHtml = this._makeRotationLabelsHtml(params);
         } else {
             labelsHtml = this._makeNormalLabelsHtml(params);

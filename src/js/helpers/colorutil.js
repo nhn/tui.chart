@@ -4,6 +4,8 @@
  */
 'use strict';
 
+/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 4, 16]}]*/
+
 var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 
 /**
@@ -166,8 +168,8 @@ var colorutil = {
         var zero = '',
             i = 0;
 
-        if ((number + '').length > length) {
-            return number + '';
+        if (String(number).length > length) {
+            return String(number);
         }
 
         for (; i < (length - 1); i += 1) {
@@ -232,7 +234,7 @@ var colorutil = {
      * @param {string} colorName color name
      * @returns {string} hex
      */
-    colorNameToHex: function (colorName) {
+    colorNameToHex: function(colorName) {
         return colorMap[colorName.toLowerCase()] || colorName;
     }
 };

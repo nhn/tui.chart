@@ -1,0 +1,3 @@
+# Ignore polyfill
+src/js/polyfill.js
+src/js/code-snippet-util.js

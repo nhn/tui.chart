@@ -23,7 +23,7 @@ describe('Tooltip', function() {
     });
 
     describe('_makeTooltipData()', function() {
-        it('툴팁 렌더링에 사용될 data를 생성합니다.', function () {
+        it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
             var actual, expected;
 
             dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);

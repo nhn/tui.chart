@@ -25,7 +25,7 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeTooltipData()', function() {
-        it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function () {
+        it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
             dataProcessor.getWholeFormattedValues.and.returnValue([

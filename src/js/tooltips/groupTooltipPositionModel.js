@@ -198,7 +198,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _calculateMainPositionValue: function(tooltipSize, range, data) {
         var isLine = (range.start === range.end),
-            padding = isLine ? 9 : 5,
+            lineTypePadding = 9,
+            otherTypePadding = 5,
+            padding = isLine ? lineTypePadding : otherTypePadding,
             value = data.basePosition;
 
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {

@@ -736,7 +736,6 @@ tui.chart.registerTheme = function(themeName, theme) {
 /**
  * Register map.
  * @param {string} mapName map name
- * @param {{width: number, height: number}} dimension map dimension
  * @param {Array.<{code: string, name: string, path: string}>} data map data
  * @api
  * @example

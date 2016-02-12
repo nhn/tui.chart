@@ -10,7 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var STROKE_COLOR = 'gray';
+var STROKE_COLOR = 'gray',
+    ANIMATION_TIME = 100;
 
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -50,12 +51,18 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @private
      */
     _renderMap: function(data) {
-        var colorModel = data.colorModel;
+        var paper = this.paper,
+            colorModel = data.colorModel;
 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
             var percentValue = datum.percentValue || 0,
                 color = colorModel.getColor(percentValue),
-                sector = raphaelRenderUtil.renderArea(this.paper, datum.path, color, 1, STROKE_COLOR, 1);
+                sector = raphaelRenderUtil.renderArea(paper, datum.path, {
+                    fill: color,
+                    opacity: 1,
+                    stroke: STROKE_COLOR,
+                    'stroke-opacity': 1
+                });
 
             sector.data('index', index);
 
@@ -64,7 +71,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
                 color: color,
                 percentValue: datum.percentValue
             };
-        }, this);
+        });
     },
 
     /**
@@ -89,7 +96,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: this.overColor
-        }, 100);
+        }, ANIMATION_TIME);
     },
 
     /**
@@ -101,7 +108,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: sector.color
-        }, 100);
+        }, ANIMATION_TIME);
     },
 
     /**

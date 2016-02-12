@@ -19,7 +19,8 @@ describe('ComboChart', function() {
     });
 
     beforeEach(function() {
-        comboChart = new ComboChart({
+        comboChart = new ComboChart(
+            {
                 series: {
                     column: [],
                     line: []
@@ -61,7 +62,7 @@ describe('ComboChart', function() {
     });
 
     describe('_getYAxisOptionChartTypes() - y axis 영역 옵션에 설정된 차트 타입을 정렬하여 반환', function() {
-        it('옵션이 없을 경우에는 인자로 받은 차트 타입들(data 영역에서 사용하는)을 그대로 반환 합니다.', function () {
+        it('옵션이 없을 경우에는 인자로 받은 차트 타입들(data 영역에서 사용하는)을 그대로 반환 합니다.', function() {
             var result = comboChart._getYAxisOptionChartTypes(['column', 'line']);
             expect(result).toEqual(['column', 'line']);
         });
@@ -108,7 +109,7 @@ describe('ComboChart', function() {
             spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
         });
 
-        it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function () {
+        it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function() {
             var actual, expected;
 
             spyOn(comboChart.dataProcessor, 'getWholeGroupValues').and.returnValue([
@@ -154,7 +155,7 @@ describe('ComboChart', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function () {
+        it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function() {
             var actual, expected;
 
             spyOn(comboChart.dataProcessor, 'getGroupValues').and.returnValue([
@@ -248,7 +249,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeOptionsMap()', function() {
-        it('옵션이 있을 경우에는 각 chartType에 맞는 옵션을 추출하여 chartType을 key로 하는 y축 옵션 정보 맵을 생성합니다.', function () {
+        it('옵션이 있을 경우에는 각 chartType에 맞는 옵션을 추출하여 chartType을 key로 하는 y축 옵션 정보 맵을 생성합니다.', function() {
             var actual;
 
             comboChart.options = {
@@ -283,7 +284,7 @@ describe('ComboChart', function() {
     });
 
     describe('_makeThemeMap()', function() {
-        it('chartType을 key로 하는 테마 맵을 생성합니다.', function () {
+        it('chartType을 key로 하는 테마 맵을 생성합니다.', function() {
             var actual;
 
             comboChart.theme = {
@@ -298,7 +299,7 @@ describe('ComboChart', function() {
             expect(actual.line).toBeTruthy();
         });
 
-        it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function () {
+        it('series의 colors를 하나만 설정하게 되면 두번째 차트의 colors 색상 순서는 첫번째 차트 레이블 갯수에 영향을 받습니다.', function() {
             var actual;
 
             spyOn(comboChart.dataProcessor, 'getLegendLabels').and.callFake(function(chartType) {
@@ -321,7 +322,7 @@ describe('ComboChart', function() {
             expect(actual.line.colors).toEqual(['gray', 'red', 'orange', 'green', 'blue']);
         });
 
-        it('series의 colors는 차트별로 설정하게 되면 그대로 할당되게 됩니다.', function () {
+        it('series의 colors는 차트별로 설정하게 되면 그대로 할당되게 됩니다.', function() {
             var actual;
 
             comboChart.theme = {
@@ -343,7 +344,7 @@ describe('ComboChart', function() {
     });
 
     describe('_increaseYAxisTickCount()', function() {
-        it('전달 인자 만큼의 tick count를 증가시킵니다.(label, limit.max 정보도 동시에 업데이트합니다)', function () {
+        it('전달 인자 만큼의 tick count를 증가시킵니다.(label, limit.max 정보도 동시에 업데이트합니다)', function() {
             var targetTickInfo = {
                 tickCount: 4,
                 validTickCount: 4,

@@ -168,16 +168,18 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @private
      */
     _renderSeriesLabel: function(seriesLabelContainer) {
-        var html = tui.util.map(this.mapModel.getLabelData(this.zoomMagn * this.mapRatio), function(datum, index) {
-            var label = datum.name || datum.code,
-                left = datum.labelPosition.left - (renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2),
-                top = datum.labelPosition.top - (renderUtil.getRenderedLabelHeight(label, this.theme.label) / 2);
-            return this._makeSeriesLabelHtml({
-                left: left,
-                top: top
-            }, datum.name, 0, index);
-        }, this).join('');
-        seriesLabelContainer.innerHTML = html;
+        var self = this,
+            htmls = tui.util.map(this.mapModel.getLabelData(this.zoomMagn * this.mapRatio), function(datum, index) {
+                var label = datum.name || datum.code,
+                    left = datum.labelPosition.left - (renderUtil.getRenderedLabelWidth(label, self.theme.label) / 2),
+                    top = datum.labelPosition.top - (renderUtil.getRenderedLabelHeight(label, self.theme.label) / 2);
+
+                return self._makeSeriesLabelHtml({
+                    left: left,
+                    top: top
+                }, datum.name, 0, index);
+            });
+        seriesLabelContainer.innerHTML = htmls.join('');
     },
 
     /**

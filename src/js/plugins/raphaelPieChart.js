@@ -9,12 +9,15 @@
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael,
-    ANGLE_180 = 180,
-    RAD = Math.PI / ANGLE_180,
+    DEGREE_180 = 180,
+    DEGREE_360 = 360,
+    MIN_DEGREE = 0.01,
+    RAD = Math.PI / DEGREE_180,
     ANIMATION_TIME = 500,
     LOADING_ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+    DE_EMPHASIS_OPACITY = 0.3,
+    DEFAULT_LUMINANC = 0.2;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.
@@ -24,7 +27,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render function of pie chart.
      * @param {HTMLElement} container container
-     * @param {{sectorData: Array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{
+     *      sectorData: Array.<object>,
+     *      circleBound: {cx: number, cy: number, r: number},
+     *      dimension: object, theme: object, options: object
+     * }} data render data
      * @param {object} callbacks callbacks
      *      @param {function} callbacks.funcShowTooltip show tooltip function
      *      @param {function} callbacks.funcHideTooltip hide tooltip function
@@ -72,7 +79,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             y1 = cy - r * Math.cos(startAngle * RAD), // 원 호의 시작 y 좌표
             x2 = cx + r * Math.sin(endAngle * RAD), // 원 호의 종료 x 좌표
             y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
-            largeArcFlag = endAngle - startAngle > ANGLE_180 ? 1 : 0,
+            largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0,
             path = ['M', cx, cy,
                 'L', x1, y1,
                 'A', r, r, 0, largeArcFlag, 1, x2, y2,
@@ -95,7 +102,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @returns {object} raphael object
      * @private
      */
-    _renderSector: function (params) {
+    _renderSector: function(params) {
         var circleBound = params.circleBound,
             angles = params.angles;
 
@@ -107,11 +114,16 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     /**
      * Render pie graph.
      * @param {object} paper raphael paper
-     * @param {{sectorData: Array.<object>, circleBound: {cx: number, cy: number, r: number}, dimension: object, theme: object, options: object}} data render data
+     * @param {{
+     *      sectorData: Array.<object>,
+     *      circleBound: {cx: number, cy: number, r: number},
+     *      dimension: object, theme: object, options: object
+     * }} data render data
      * @private
      */
     _renderPie: function(paper, data) {
-        var circleBound = data.circleBound,
+        var self = this,
+            circleBound = data.circleBound,
             colors = data.theme.colors,
             chartBackground = data.chartBackground,
             sectors = [];
@@ -119,7 +131,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         tui.util.forEachArray(data.sectorData, function(sectorDatum, index) {
             var percentValue = sectorDatum.percentValue,
                 color = colors[index],
-                sector = this._renderSector({
+                sector = self._renderSector({
                     paper: paper,
                     circleBound: circleBound,
                     angles: sectorDatum.angles.start,
@@ -136,7 +148,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 angles: sectorDatum.angles.end,
                 percentValue: percentValue
             });
-        }, this);
+        });
 
         this.sectors = sectors;
     },
@@ -146,17 +158,15 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @param {Array.<object>} outerPositions outer position
      */
     renderLegendLines: function(outerPositions) {
-        var that = this,
+        var paper = this.paper,
             paths;
 
-        if (this.legendLines) {
-            return;
+        if (!this.legendLines) {
+            paths = this._makeLinePaths(outerPositions);
+            this.legendLines = tui.util.map(paths, function(path) {
+                return raphaelRenderUtil.renderLine(paper, path, 'transparent', 1);
+            });
         }
-
-        paths = this._makeLinePaths(outerPositions);
-        this.legendLines = tui.util.map(paths, function(path) {
-            return raphaelRenderUtil.renderLine(that.paper, path, 'transparent', 1);
-        });
     },
 
     /**
@@ -233,8 +243,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             var angles = item.angles,
                 animationTime, anim;
 
-            if (angles.startAngle === 0 && angles.endAngle === 360) {
-                angles.endAngle = 360 - 0.01;
+            if (angles.startAngle === 0 && angles.endAngle === DEGREE_360) {
+                angles.endAngle = DEGREE_360 - MIN_DEGREE;
             }
 
             animationTime = LOADING_ANIMATION_TIME * item.percentValue;
@@ -392,7 +402,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     _selectSeries: function(index) {
         var item = this.sectors[index],
             objColor = raphael.color(item.color),
-            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2);
+            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
 
         item.sector.attr({
             fill: color

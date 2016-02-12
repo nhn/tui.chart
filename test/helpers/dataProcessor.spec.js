@@ -27,7 +27,7 @@ describe('test DataProcessor', function() {
     });
 
     describe('_pickValues()', function() {
-        it('사용자가 입력한 data에서 value를 추출합니다.', function () {
+        it('사용자가 입력한 data에서 value를 추출합니다.', function() {
             var result = DataProcessor.prototype._pickValues([
                 {
                     name: 'Legend1',
@@ -55,7 +55,7 @@ describe('test DataProcessor', function() {
     });
 
     describe('_pickLegendLabels()', function() {
-        it('사용자가 입력한 data에서 legend label을 추출합니다.', function () {
+        it('사용자가 입력한 data에서 legend label을 추출합니다.', function() {
             var labels = dataProcessor._pickLegendLabels([
                 {
                     name: 'Legend1',
@@ -79,55 +79,65 @@ describe('test DataProcessor', function() {
     });
 
     describe('_formatZeroFill()', function() {
-        it('1을 길이 3으로 zero fill하면 "001"이 반환됩니다.', function () {
+        it('1을 길이 3으로 zero fill하면 "001"이 반환됩니다.', function() {
             var result = dataProcessor._formatZeroFill(3, 1);
             expect(result).toBe('001');
         });
 
-        it('22을 길이 4로 zero fill하면 "0022"가 반환됩니다.', function () {
+        it('22을 길이 4로 zero fill하면 "0022"가 반환됩니다.', function() {
             var result = dataProcessor._formatZeroFill(4, 22);
             expect(result).toBe('0022');
         });
     });
 
     describe('_formatDecimal()', function() {
-        it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function () {
+        it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function() {
             var result = dataProcessor._formatDecimal(2, 1.1111);
             expect(result).toBe('1.11');
         });
 
-        it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function () {
+        it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function() {
             var result = dataProcessor._formatDecimal(1, 1);
             expect(result).toBe('1.0');
         });
     });
 
     describe('_formatComma()', function() {
-        it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function () {
+        it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function() {
             var result = dataProcessor._formatComma(1000);
             expect(result).toBe('1,000');
         });
 
-        it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function () {
+        it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function() {
             var result = dataProcessor._formatComma(100000);
             expect(result).toBe('100,000');
         });
 
-        it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function () {
+        it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function() {
             var result = dataProcessor._formatComma(1000000);
             expect(result).toBe('1,000,000');
+        });
+
+        it('자리수가 4 미만인 값은 그대로 반환합니다', function() {
+            var result = dataProcessor._formatComma(900);
+            expect(result).toBe(900);
+        });
+
+        it('소수점이 포함된 경우 소수점을 고려하여 포맷팅합니다', function() {
+            var result = dataProcessor._formatComma(1000.123);
+            expect(result).toBe('1,000.123');
         });
     });
 
     describe('_pickMaxLenUnderPoint()', function() {
-        it('입력받은 인자 [1.12, 2.2, 3.33, 4.456]중에 소수점 이하의 길이를 비교하여 제일 긴 길이 3(4.456의 소수점 이하 길이)을 반환합니다.', function () {
+        it('입력받은 인자 [1.12, 2.2, 3.33, 4.456]중에 소수점 이하의 길이를 비교하여 제일 긴 길이 3(4.456의 소수점 이하 길이)을 반환합니다.', function() {
             var point = dataProcessor._pickMaxLenUnderPoint([1.12, 2.2, 3.33, 4.456]);
             expect(point).toBe(3);
         });
     });
 
     describe('_findFormatFunctions()', function() {
-        it('포맷 정보가 없을 경우에는 빈 배열을 반환합니다.', function () {
+        it('포맷 정보가 없을 경우에는 빈 배열을 반환합니다.', function() {
             var result = dataProcessor._findFormatFunctions();
             expect(result).toEqual([]);
         });
@@ -154,7 +164,7 @@ describe('test DataProcessor', function() {
     });
 
     describe('_formatValues()', function() {
-        it('단일 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function () {
+        it('단일 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
             var formatFunctions = dataProcessor._findFormatFunctions('0.0'),
                 result = dataProcessor._formatValues([
                     [20, 40, 60, 80],
@@ -168,7 +178,7 @@ describe('test DataProcessor', function() {
             ]);
         });
 
-        it('Combo 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function () {
+        it('Combo 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
             var formatFunctions = dataProcessor._findFormatFunctions('0.0'),
                 result = dataProcessor._formatValues({
                     column: [
@@ -193,7 +203,7 @@ describe('test DataProcessor', function() {
     });
 
     describe('process()', function() {
-        it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function () {
+        it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function() {
             var actual;
 
             dataProcessor.process({
@@ -333,38 +343,38 @@ describe('test DataProcessor', function() {
     });
 
     describe('_makeNormalPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function() {
             var actual = dataProcessor._makePercentValues([[20], [40], [80], [120]], {min: 0, max: 160});
             expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
-        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function () {
+        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function() {
             var actual = dataProcessor._makePercentValues([[-20], [-40], [-80], [-120]], {min: 0, max: 160});
             expect(actual).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
         });
 
-        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function () {
+        it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function() {
             var actual = dataProcessor._makePercentValues([[60], [40], [80], [120]], {min: 20, max: 180}, true);
             expect(actual).toEqual([[0.25], [0.125], [0.375], [0.625]]);
         });
     });
 
     describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "normal"이 모든 데이터가 양수인 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "normal"이 모든 데이터가 양수인 percent타입의 values를 생성합니다.', function() {
             var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [60, 60], [60, 40], [80, 20]], {min: 0, max: 160}),
                 expected = [[0.125, 0.5], [0.375, 0.375], [0.375, 0.25], [0.5, 0.125]];
 
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 "normal"이며 모든 데이터가 음수인 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "normal"이며 모든 데이터가 음수인 percent타입의 values를 생성합니다.', function() {
             var actual = dataProcessor._makeNormalStackedPercentValues([[-20, -80], [-60, -60], [-60, -40], [-80, -20]], {min: 0, max: 160}),
                 expected = [[-0.125, -0.5], [-0.375, -0.375], [-0.375, -0.25], [-0.5, -0.125]];
 
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 "normal"이며 데이터와 양수와 음수가 섞여있는 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "normal"이며 데이터와 양수와 음수가 섞여있는 percent타입의 values를 생성합니다.', function() {
             var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [-60, 60], [-60, -40], [80, -20]], {min: -160, max: 160}),
                 expected = [[0.0625, 0.25], [-0.1875, 0.1875], [-0.1875, -0.125], [0.25, -0.0625]];
 
@@ -373,14 +383,14 @@ describe('test DataProcessor', function() {
     });
 
     describe('_makePercentStackedPercentValues()', function() {
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
             var actual = dataProcessor._makePercentStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]]);
             expect(actual).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
         });
     });
 
     describe('registerPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function() {
             var actual;
 
             dataProcessor.data = {
@@ -395,7 +405,7 @@ describe('test DataProcessor', function() {
             expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
         });
 
-        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function() {
             var actual;
 
             dataProcessor.data = {
@@ -410,7 +420,7 @@ describe('test DataProcessor', function() {
             expect(actual).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
         });
 
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function () {
+        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
             var actual;
 
             dataProcessor.data = {

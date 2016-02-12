@@ -39,13 +39,14 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             theme = data.theme,
             colors = theme.colors,
             opacity = data.options.hasDot ? 1 : 0,
-            groupPaths = data.options.spline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
+            isSpline = data.options.spline,
+            groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper;
 
         this.paper = paper = raphael(container, 1, dimension.height);
-        this.splineOption = data.options.spline;
+        this.isSpline = isSpline;
         this.dimension = dimension;
 
         this.groupLines = this._renderLines(paper, groupPaths, colors);
@@ -75,11 +76,13 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @private
      */
     _getLinesPath: function(groupPositions) {
+        var self = this;
+
         return tui.util.map(groupPositions, function(positions) {
             positions[0].left -= 1;
 
-            return this._makeLinesPath(positions);
-        }, this);
+            return self._makeLinesPath(positions);
+        });
     },
 
     /**
@@ -115,21 +118,22 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      *      @param {Array.<Array.<{left:number, top:number}>>} params.groupPositions group positions
      */
     resize: function(params) {
-        var dimension = params.dimension,
+        var self = this,
+            dimension = params.dimension,
             groupPositions = params.groupPositions;
 
         this.groupPositions = groupPositions;
-        this.groupPaths = this.splineOption ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
+        this.groupPaths = this.isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
         tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
-            this.groupLines[groupIndex].attr({path: path.join(' ')});
+            self.groupLines[groupIndex].attr({path: path.join(' ')});
 
-            tui.util.forEachArray(this.groupDots[groupIndex], function(item, index) {
-                this._moveDot(item.dot, groupPositions[groupIndex][index]);
-            }, this);
-        }, this);
+            tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
+                self._moveDot(item.dot, groupPositions[groupIndex][index]);
+            });
+        });
     },
 
     /**
@@ -137,7 +141,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * @param {?number} legendIndex legend index
      */
     selectLegend: function(legendIndex) {
-        var that = this,
+        var self = this,
             noneSelected = tui.util.isNull(legendIndex);
 
         this.selectedLegendIndex = legendIndex;
@@ -145,16 +149,16 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            that.groupLines[groupIndex].attr({'stroke-opacity': opacity});
+            self.groupLines[groupIndex].attr({'stroke-opacity': opacity});
 
-            tui.util.forEachArray(this.groupDots[groupIndex], function(item) {
+            tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;
 
-                if (that.dotOpacity) {
+                if (self.dotOpacity) {
                     item.dot.attr({'fill-opacity': opacity});
                 }
             });
-        }, this);
+        });
     }
 });
 

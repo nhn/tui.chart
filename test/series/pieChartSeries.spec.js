@@ -67,7 +67,7 @@ describe('PieChartSeries', function() {
     });
 
     describe('_makeCircleBound()', function() {
-        it('pie차트의 circle bounds정보를 생성합니다.', function () {
+        it('pie차트의 circle bounds정보를 생성합니다.', function() {
             var actual = series._makeCircleBound({
                 width: 400,
                 height: 300
@@ -80,7 +80,7 @@ describe('PieChartSeries', function() {
             });
         });
 
-        it('showLabel=true, legendType=outer일 때에는 pie차트의 circle bounds의 반지름을(r) 작은 크기로 생성합니다.', function () {
+        it('showLabel=true, legendType=outer일 때에는 pie차트의 circle bounds의 반지름을(r) 작은 크기로 생성합니다.', function() {
             var actual = series._makeCircleBound({
                 width: 400,
                 height: 300

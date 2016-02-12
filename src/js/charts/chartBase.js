@@ -173,8 +173,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         if (legend) {
             legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
-            tui.util.forEach(serieses, function (series) {
-                legend.on(renderUtil.makeCustomEventName('select', series.chartType, 'legend'), series.onSelectLegend, series);
+            tui.util.forEach(serieses, function(series) {
+                var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
+                legend.on(selectLegendEventName, series.onSelectLegend, series);
             }, this);
         }
     },
@@ -208,10 +209,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render.
-     * @param {function} callback callback function
+     * @param {function} onRender render callback function
      * @private
      */
-    _render: function(callback) {
+    _render: function(onRender) {
         var axesData, renderingData;
 
         this._executeComponentFunc('registerDimension');
@@ -222,7 +223,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._updatePercentValues(axesData);
         renderingData = this._makeRenderingData(axesData);
 
-        callback(renderingData);
+        onRender(renderingData);
 
         this._sendSeriesData();
     },
@@ -233,7 +234,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     render: function() {
         var el = dom.create('DIV', this.className),
-            that = this;
+            self = this;
 
         dom.addClass(el, 'tui-chart');
         this._renderTitle(el);
@@ -242,7 +243,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
 
         this._render(function(renderingData) {
-            that._renderComponents(renderingData, 'render', el);
+            self._renderComponents(renderingData, 'render', el);
         });
 
         this._attachCustomEvent();
@@ -296,9 +297,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }, tooltipData, renderingData.tooltip);
 
         tui.util.forEach(serieses, function(series) {
-            renderingData[series.name] = tui.util.extend({
+            renderingData[series.componentName] = tui.util.extend({
                 checkedLegends: checkedLegends[series.chartType] || checkedLegends
-            }, renderingData[series.name]);
+            }, renderingData[series.componentName]);
         });
 
         return renderingData;
@@ -312,7 +313,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _rerender: function(checkedLegends, rawData) {
-        var that = this,
+        var self = this,
             newWholeLegendData;
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
@@ -325,9 +326,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
-            renderingData = that._makeRerenderingData(renderingData, checkedLegends);
-            that.dataProcessor.setWholeLegendData(newWholeLegendData);
-            that._renderComponents(renderingData, 'rerender');
+            renderingData = self._makeRerenderingData(renderingData, checkedLegends);
+            self.dataProcessor.setWholeLegendData(newWholeLegendData);
+            self._renderComponents(renderingData, 'rerender');
         });
     },
 
@@ -362,7 +363,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderComponents: function(renderingData, funcName, container) {
         var elements = this.componentManager.map(function(component) {
-            var data = renderingData[component.name],
+            var data = renderingData[component.componentName],
                 element = null;
 
             if (component[funcName]) {
@@ -382,7 +383,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function() {
-        var customEvent = this.componentManager.get('customEvent'),
+        var self = this,
+            customEvent = this.componentManager.get('customEvent'),
             seriesInfos, chartTypes;
 
         if (!customEvent) {
@@ -391,13 +393,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         chartTypes = this.chartTypes || [this.chartType];
         seriesInfos = tui.util.map(chartTypes, function(chartType) {
-            var component = this.componentManager.get(chartType + 'Series') || this.componentManager.get('series');
+            var component = self.componentManager.get(chartType + 'Series') || self.componentManager.get('series');
 
             return {
                 chartType: chartType,
                 data: component.getSeriesData()
             };
-        }, this);
+        });
 
         customEvent.initCustomEventData(seriesInfos);
     },
@@ -463,7 +465,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var that = this,
+        var self = this,
             updated;
 
         if (!dimension) {
@@ -480,7 +482,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
 
         this._render(function(renderingData) {
-            that._renderComponents(renderingData, 'resize');
+            self._renderComponents(renderingData, 'resize');
         });
     },
 

@@ -100,7 +100,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeNormalBarChartBounds()', function() {
-        it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function () {
+        it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function() {
             var actual;
 
             series.data = {
@@ -121,7 +121,7 @@ describe('BarChartSeries', function() {
             expect(!!actual[0][0].end).toBe(true);
         });
 
-        it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 좌우로 설정됩니다.', function () {
+        it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 좌우로 설정됩니다.', function() {
             var actual;
 
             series._getPercentValues.and.returnValue([[-0.2, 0.4, 0.1]]);
@@ -152,7 +152,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeStackedBarChartBounds()', function() {
-        it('stacked 옵션이 있는 Bar차트의 bounds 정보는 end.left가 이전 end.width 만큼씩 감소합니다', function () {
+        it('stacked 옵션이 있는 Bar차트의 bounds 정보는 end.left가 이전 end.width 만큼씩 감소합니다', function() {
             var bounds;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
@@ -179,7 +179,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeBounds()', function() {
-        it('stacked 옵션이 없으면 _makeNormalBarChartBounds()가 수행됩니다.', function () {
+        it('stacked 옵션이 없으면 _makeNormalBarChartBounds()가 수행됩니다.', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.2, 0.4, 0.1]]);
@@ -200,7 +200,7 @@ describe('BarChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 있으면 _makeStackedBarChartBounds()가 수행됩니다.', function () {
+        it('stacked 옵션이 있으면 _makeStackedBarChartBounds()가 수행됩니다.', function() {
             var actual, expected;
 
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);

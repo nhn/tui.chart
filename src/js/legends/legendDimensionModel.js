@@ -51,10 +51,11 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @private
      */
     _calculateLegendsWidthSum: function(labels, labelTheme) {
+        var self = this;
+
         return tui.util.sum(tui.util.map(labels, function(label) {
-            var labelWidth = this._makeLegendWidth(renderUtil.getRenderedLabelWidth(label, labelTheme));
-            return labelWidth;
-        }, this));
+            return self._makeLegendWidth(renderUtil.getRenderedLabelWidth(label, labelTheme));
+        }));
     },
 
     /**
@@ -86,6 +87,22 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
     },
 
     /**
+     * Get max line width.
+     * @param {Array.<string>} dividedLabels divided labels
+     * @param {{fontFamily: ?string, fontSize: ?string}} labelTheme label theme
+     * @returns {number} max line width
+     * @private
+     */
+    _getMaxLineWidth: function(dividedLabels, labelTheme) {
+        var self = this,
+            lineWidths = tui.util.map(dividedLabels, function(_labels) {
+                return self._calculateLegendsWidthSum(_labels, labelTheme);
+            }, this);
+
+        return Math.max.apply(null, lineWidths);
+    },
+
+    /**
      * Make division labels and max line width.
      * @param {Array.<string>} labels legend labels
      * @param {number} chartWidth chart width
@@ -97,14 +114,11 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
         var divideCount = 1,
             maxLineWidth = 0,
             prevMaxWidth = 0,
-            dividedLabels, lineWidths, prevLabels;
+            dividedLabels, prevLabels;
 
         do {
             dividedLabels = this._divideLegendLabels(labels, divideCount);
-            lineWidths = tui.util.map(dividedLabels, function(_labels) {
-                return this._calculateLegendsWidthSum(_labels, labelTheme);
-            }, this);
-            maxLineWidth = Math.max.apply(null, lineWidths);
+            maxLineWidth = this._getMaxLineWidth(dividedLabels, labelTheme);
 
             if (prevMaxWidth === maxLineWidth) {
                 dividedLabels = prevLabels;
@@ -143,8 +157,10 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @private
      */
     _makeHorizontalDimension: function(chartWidth) {
-        var labelsAndMaxWidth = this._makeDividedLabelsAndMaxLineWidth(this.legendLabels, chartWidth, this.theme.label),
-            legendHeight = this._calculateHorizontalLegendHeight(labelsAndMaxWidth.dividedLabels, this.theme.label) + (chartConst.LEGEND_AREA_PADDING * 2);
+        var labelTheme = this.theme.label,
+            labelsAndMaxWidth = this._makeDividedLabelsAndMaxLineWidth(this.legendLabels, chartWidth, labelTheme),
+            horizontalLegendHeight = this._calculateHorizontalLegendHeight(labelsAndMaxWidth.dividedLabels, labelTheme),
+            legendHeight = horizontalLegendHeight + (chartConst.LEGEND_AREA_PADDING * 2);
 
         return {
             width: labelsAndMaxWidth.maxLineWidth,
@@ -173,7 +189,10 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @private
      */
     _isSkipLegend: function() {
-        return (predicate.isPieChart(this.chartType) && predicate.isPieLegendAlign(this.options.align)) || this.options.hidden;
+        var isPieChart = predicate.isPieChart(this.chartType),
+            isPieLegendAlign = predicate.isPieChart(this.chartType) && predicate.isPieLegendAlign(this.options.align);
+
+        return (isPieChart && isPieLegendAlign) || this.options.hidden;
     },
 
     /**

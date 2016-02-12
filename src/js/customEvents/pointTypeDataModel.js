@@ -153,18 +153,44 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
      * @private
      */
     _makeData: function(seriesInfos) {
-        var coordinateData;
+        var self = this,
+            coordinateData;
+
         seriesInfos.reverse();
         coordinateData = tui.util.map(seriesInfos, function(info) {
             var result;
             if (predicate.isLineTypeChart(info.chartType)) {
-                result = this._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
+                result = self._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
             } else {
-                result = this._makeRectTypeCoordinateData(info.data.groupBounds, info.chartType);
+                result = self._makeRectTypeCoordinateData(info.data.groupBounds, info.chartType);
             }
             return result;
-        }, this);
+        });
         return this._joinData(coordinateData);
+    },
+
+    /**
+     * Find candidates.
+     * @param {{bound: {left: number, top: number, right: number, bottom: number}}} data data
+     * @param {number} layerX layerX
+     * @param {number} layerY layerY
+     * @returns {Array.<{sendData: object}>} candidates
+     * @private
+     */
+    _findCandidates: function(data, layerX, layerY) {
+        return tui.util.filter(data, function(datum) {
+            var bound = datum && datum.bound,
+                included = false,
+                includedX, includedY;
+
+            if (bound) {
+                includedX = bound.left <= layerX && bound.right >= layerX;
+                includedY = bound.top <= layerY && bound.bottom >= layerY;
+                included = includedX && includedY;
+            }
+
+            return included;
+        });
     },
 
     /**
@@ -179,24 +205,19 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
             result = null,
             candidates;
 
-        if (groupIndex === -1) {
-            return result;
+        if (groupIndex > -1) {
+            // layerX, layerY를 포함하는 data 추출
+            candidates = this._findCandidates(this.data[groupIndex], layerX, layerY);
+
+            // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
+            tui.util.forEachArray(candidates, function(data) {
+                var diff = Math.abs(layerY - data.sendData.bound.top);
+                if (min > diff) {
+                    min = diff;
+                    result = data.sendData;
+                }
+            });
         }
-
-        // layerX, layerY를 포함하는 data 추출
-        candidates = tui.util.filter(this.data[groupIndex], function(data) {
-            var bound = data && data.bound;
-            return bound && bound.left <= layerX && bound.right >= layerX && bound.top <= layerY && bound.bottom >= layerY;
-        });
-
-        // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
-        tui.util.forEachArray(candidates, function(data) {
-            var diff = Math.abs(layerY - data.sendData.bound.top);
-            if (min > diff) {
-                min = diff;
-                result = data.sendData;
-            }
-        });
 
         return result;
     }

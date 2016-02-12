@@ -252,12 +252,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(data) {
-        var groupValues = this.dataProcessor.getGroupValues(this.chartType),
-            that = this;
+        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
 
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
         }
+
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
@@ -265,7 +265,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (groupValues && groupValues.length) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
-            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(that._renderGraph, this));
+            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShower) {
                 clearInterval(this.labelShower.timerId);
             }
@@ -415,7 +415,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var funcMakeOpacityCssText;
         if (renderUtil.isOldBrowser()) {
             funcMakeOpacityCssText = function(opacity) {
-                return ';filter: alpha(opacity=' + (opacity * 100) + ')';
+                return ';filter: alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
             };
         } else {
             funcMakeOpacityCssText = function(_opacity) {
@@ -436,8 +436,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
+
         if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
-            cssObj.opacity = this._makeOpacityCssText(0.3);
+            cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
         }
@@ -453,7 +454,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Animate showing about series label area.
      */
     animateShowingAboutSeriesLabelArea: function() {
-        var that = this;
+        var self = this;
 
         if ((!this.options.showLabel && !this.legendAlign) || !this.seriesLabelContainer) {
             return;
@@ -472,8 +473,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 start: 0,
                 end: 1,
                 complete: function() {
-                    clearInterval(that.labelShower.timerId);
-                    delete that.labelShower;
+                    clearInterval(self.labelShower.timerId);
+                    delete self.labelShower;
                 }
             });
         }

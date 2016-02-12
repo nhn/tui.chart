@@ -47,24 +47,49 @@ describe('RaphaelBarChart', function() {
 
     describe('_makeTopLinePath()', function() {
         it('top 영역의 line path를 구합니다.', function() {
-            var actual = barChart._makeTopLinePath({
-                    left: 10,
-                    top: 10
-                }, {
-                    left: 50,
-                    top: 10
-                }, 'bar'),
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'bar'),
                 expected = 'M 10 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
-        it('top 영역의 line path의 left 정보는 column차트이거나 음수일 경우에는 1만큼 더 빼줍니다.', function() {
-            var actual = barChart._makeTopLinePath({
-                    left: 10,
-                    top: 10
-                }, {
-                    left: 50,
-                    top: 10
-                }, 'column'),
+
+        it('top 영역의 line path의 left 정보는 column차트일 경우에는 1만큼 더 빼줍니다.', function() {
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'column', 1),
+                expected = 'M 9 9.5 L 50 9.5';
+            expect(actual).toBe(expected);
+        });
+
+        it('top 영역의 line path의 left 정보는 bar차트이면서 음수인 경우에도 1만큼 더 빼줍니다.', function() {
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'bar', -1),
                 expected = 'M 9 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
