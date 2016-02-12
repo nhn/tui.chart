@@ -12,7 +12,7 @@ describe('test DataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {
-        dataProcessor = new DataProcessor();
+        dataProcessor = new DataProcessor({}, {});
     });
 
     describe('_processCategories()', function() {
@@ -26,55 +26,70 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_pickValues()', function() {
+    describe('_pickValuesFromRawData()', function() {
         it('사용자가 입력한 data에서 value를 추출합니다.', function() {
-            var result = DataProcessor.prototype._pickValues([
-                {
-                    name: 'Legend1',
-                    data: [20, 30, 50]
-                },
-                {
-                    name: 'Legend2',
-                    data: [40, 40, 60]
-                },
-                {
-                    name: 'Legend3',
-                    data: [60, 50, 10]
-                },
-                {
-                    name: 'Legend4',
-                    data: [80, 10, 70]
-                }
-            ]);
-            expect(result).toEqual([
+            var actual, expected;
+
+            dataProcessor.rawData = {
+                series: [
+                    {
+                        name: 'Legend1',
+                        data: [20, 30, 50]
+                    },
+                    {
+                        name: 'Legend2',
+                        data: [40, 40, 60]
+                    },
+                    {
+                        name: 'Legend3',
+                        data: [60, 50, 10]
+                    },
+                    {
+                        name: 'Legend4',
+                        data: [80, 10, 70]
+                    }
+                ]
+            };
+
+            actual = dataProcessor._pickValuesFromRawData();
+            expected = [
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
-            ]);
+            ];
+
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('_pickLegendLabels()', function() {
         it('사용자가 입력한 data에서 legend label을 추출합니다.', function() {
-            var labels = dataProcessor._pickLegendLabels([
-                {
-                    name: 'Legend1',
-                    data: [20, 30, 50]
-                },
-                {
-                    name: 'Legend2',
-                    data: [40, 40, 60]
-                },
-                {
-                    name: 'Legend3',
-                    data: [60, 50, 10]
-                },
-                {
-                    name: 'Legend4',
-                    data: [80, 10, 70]
-                }
-            ]);
-            expect(labels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
+            var actual, expected;
+
+            dataProcessor.rawData = {
+                series: [
+                    {
+                        name: 'Legend1',
+                        data: [20, 30, 50]
+                    },
+                    {
+                        name: 'Legend2',
+                        data: [40, 40, 60]
+                    },
+                    {
+                        name: 'Legend3',
+                        data: [60, 50, 10]
+                    },
+                    {
+                        name: 'Legend4',
+                        data: [80, 10, 70]
+                    }
+                ]
+            };
+            actual = dataProcessor._pickLegendLabels();
+            expected = ['Legend1', 'Legend2', 'Legend3', 'Legend4'];
+
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -141,55 +156,109 @@ describe('test DataProcessor', function() {
             var result = dataProcessor._findFormatFunctions();
             expect(result).toEqual([]);
         });
-        it("포맷이 '0.000'인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)", function() {
-            var result = dataProcessor._findFormatFunctions('0.000');
-            expect(result[0](1000)).toBe('1000.000');
+
+        it('포맷이 0.000인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)', function() {
+            var actual, expected;
+
+            dataProcessor.options = {
+                chart: {
+                    format: '0.000'
+                }
+            };
+            actual = dataProcessor._findFormatFunctions();
+            expected = '1000.000';
+
+            expect(actual[0](1000)).toBe(expected);
         });
 
-        it("포맷이 '1,000'인 경우에는 [_formatComma] 반환합니다.", function() {
-            var result = dataProcessor._findFormatFunctions('1,000');
-            expect(result[0](1000)).toBe('1,000');
+        it('포맷이 1,000인 경우에는 [_formatComma] 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.options = {
+                chart: {
+                    format: '1,000'
+                }
+            };
+            actual = dataProcessor._findFormatFunctions();
+            expected = '1,000';
+
+            expect(actual[0](1000)).toBe(expected);
         });
 
-        it("포맷이 '1,000.00'인 경우에는 [_formatDecimal, _formatComma] 반환합니다.", function() {
-            var result = dataProcessor._findFormatFunctions('1,000.00');
-            expect(result.length).toBe(2);
-            expect(result[1](result[0](1000))).toBe('1,000.00');
+        it('포맷이 1,000.00인 경우에는 [_formatDecimal, _formatComma] 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.options = {
+                chart: {
+                    format: '1,000.00'
+                }
+            };
+            actual = dataProcessor._findFormatFunctions();
+            expected = '1,000.00';
+
+            expect(actual.length).toBe(2);
+            expect(actual[1](actual[0](1000))).toBe(expected);
         });
 
-        it("포맷이 '0001'인 경우에는 [_formatZeroFill] 반환합니다.", function() {
-            var result = dataProcessor._findFormatFunctions('0001');
-            expect(result[0](11)).toBe('0011');
+        it('포맷이 0001인 경우에는 [_formatZeroFill] 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.options = {
+                chart: {
+                    format: '0001'
+                }
+            };
+            actual = dataProcessor._findFormatFunctions();
+            expected = '0011';
+
+            expect(actual[0](11)).toBe(expected);
         });
     });
 
     describe('_formatValues()', function() {
         it('단일 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
-            var formatFunctions = dataProcessor._findFormatFunctions('0.0'),
-                result = dataProcessor._formatValues([
-                    [20, 40, 60, 80],
-                    [30, 40, 50, 10],
-                    [50, 60, 10, 70]
-                ], formatFunctions);
-            expect(result).toEqual([
+            var actual, expected;
+
+            dataProcessor.groupValues = [
+                [20, 40, 60, 80],
+                [30, 40, 50, 10],
+                [50, 60, 10, 70]
+            ];
+            dataProcessor.options = {
+                chart: {
+                    format: '0.0'
+                }
+            };
+
+            actual = dataProcessor._formatValues();
+            expected = [
                 ['20.0', '40.0', '60.0', '80.0'],
                 ['30.0', '40.0', '50.0', '10.0'],
                 ['50.0', '60.0', '10.0', '70.0']
-            ]);
+            ];
+
+            expect(actual).toEqual(expected);
         });
 
         it('Combo 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
-            var formatFunctions = dataProcessor._findFormatFunctions('0.0'),
-                result = dataProcessor._formatValues({
-                    column: [
-                        [20, 40, 60, 80],
-                        [30, 40, 50, 10]
-                    ],
-                    line: [
-                        [50, 60, 10, 70]
-                    ]
-                }, formatFunctions);
-            expect(result).toEqual({
+            var actual, expected;
+
+            dataProcessor.groupValues = {
+                column: [
+                    [20, 40, 60, 80],
+                    [30, 40, 50, 10]
+                ],
+                line: [
+                    [50, 60, 10, 70]
+                ]
+            };
+            dataProcessor.options = {
+                chart: {
+                    format: '0.0'
+                }
+            };
+            actual = dataProcessor._formatValues();
+            expected = {
                 column: [
                     ['20.0', '40.0', '60.0', '80.0'],
                     ['30.0', '40.0', '50.0', '10.0']
@@ -198,84 +267,9 @@ describe('test DataProcessor', function() {
                 line: [
                     ['50.0', '60.0', '10.0', '70.0']
                 ]
-            });
-        });
-    });
+            };
 
-    describe('process()', function() {
-        it('사용자 data를 사용하기 좋은 형태로 변환하여 반환합니다.', function() {
-            var actual;
-
-            dataProcessor.process({
-                categories: ['cate1', 'cate2', 'cate3'],
-                series: [
-                    {
-                        name: 'Legend1',
-                        data: [20, 30, 50]
-                    },
-                    {
-                        name: 'Legend2',
-                        data: [40, 40, 60]
-                    },
-                    {
-                        name: 'Legend3',
-                        data: [60, 50, 10]
-                    },
-                    {
-                        name: 'Legend4',
-                        data: [80, 10, 70]
-                    }
-                ]
-            }, {
-                chart: {
-                    format: '0.0'
-                },
-                chartType: 'column'
-            });
-
-            actual = dataProcessor.data;
-
-            expect(actual.categories).toEqual(['cate1', 'cate2', 'cate3']);
-            expect(actual.values).toEqual([
-                [20, 40, 60, 80],
-                [30, 40, 50, 10],
-                [50, 60, 10, 70]
-            ]);
-            expect(actual.wholeValues).toEqual([
-                [20, 40, 60, 80],
-                [30, 40, 50, 10],
-                [50, 60, 10, 70]
-            ]);
-
-            expect(actual.formattedValues).toEqual([
-                ['20.0', '40.0', '60.0', '80.0'],
-                ['30.0', '40.0', '50.0', '10.0'],
-                ['50.0', '60.0', '10.0', '70.0']
-            ]);
-            expect(actual.legendLabels).toEqual(['Legend1', 'Legend2', 'Legend3', 'Legend4']);
-            expect(actual.wholeLegendData).toEqual([
-                {
-                    chartType: 'column',
-                    label: 'Legend1'
-                },
-                {
-                    chartType: 'column',
-                    label: 'Legend2'
-                },
-                {
-                    chartType: 'column',
-                    label: 'Legend3'
-                },
-                {
-                    chartType: 'column',
-                    label: 'Legend4'
-                }
-            ]);
-            expect(actual.formattedValues).toEqual([
-                ['20.0', '40.0', '60.0', '80.0'],
-                ['30.0', '40.0', '50.0', '10.0'],
-                ['50.0', '60.0', '10.0', '70.0']
-            ]);
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -312,9 +306,7 @@ describe('test DataProcessor', function() {
         it('category들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
             var actual, expected;
 
-            dataProcessor.data = {
-                categories: ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
-            };
+            dataProcessor.categories = ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
 
             actual = dataProcessor.getMultilineCategories(50, {
                 fontSize: 12,
@@ -328,15 +320,13 @@ describe('test DataProcessor', function() {
         it('캐쉬가 되어있는 경우에는 캐쉬된 결과를 반환합니다.', function() {
             var actual, expected;
 
-            dataProcessor.data = {
-                multilineCategories: ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']
-            };
+            dataProcessor.multilineCategories = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
 
             actual = dataProcessor.getMultilineCategories(50, {
                 fontSize: 12,
                 fontFamily: 'Verdana'
             });
-            expected = dataProcessor.data.multilineCategories;
+            expected = dataProcessor.multilineCategories;
 
             expect(actual).toEqual(expected);
         });
@@ -384,55 +374,44 @@ describe('test DataProcessor', function() {
 
     describe('_makePercentStackedPercentValues()', function() {
         it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makePercentStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]]);
-            expect(actual).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+            var actual = dataProcessor._makePercentStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]]),
+                expected = [[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]];
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('registerPercentValues()', function() {
         it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function() {
-            var actual;
+            var actual, expected;
 
-            dataProcessor.data = {
-                values: [[20], [40], [80], [120]],
-                percentValues: {}
-            };
-
+            dataProcessor.groupValues = [[20], [40], [80], [120]];
             dataProcessor.registerPercentValues({min: 0, max: 160}, null, 'column');
+            actual = dataProcessor.percentValues.column;
+            expected = [[0.125], [0.25], [0.5], [0.75]];
 
-            actual = dataProcessor.data.percentValues.column;
-
-            expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+            expect(actual).toEqual(expected);
         });
 
         it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function() {
-            var actual;
+            var actual, expected;
 
-            dataProcessor.data = {
-                values: [[20, 80], [40, 60], [60, 40], [80, 20]],
-                percentValues: {}
-            };
-
+            dataProcessor.groupValues = [[20, 80], [40, 60], [60, 40], [80, 20]];
             dataProcessor.registerPercentValues({min: 0, max: 160}, 'normal', 'column');
+            actual = dataProcessor.percentValues.column;
+            expected = [[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]];
 
-            actual = dataProcessor.data.percentValues.column;
-
-            expect(actual).toEqual([[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]]);
+            expect(actual).toEqual(expected);
         });
 
         it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
-            var actual;
+            var actual, expected;
 
-            dataProcessor.data = {
-                values: [[20, 80], [40, 60], [60, 40], [80, 20]],
-                percentValues: {}
-            };
-
+            dataProcessor.groupValues = [[20, 80], [40, 60], [60, 40], [80, 20]];
             dataProcessor.registerPercentValues({min: 0, max: 160}, 'percent', 'column');
+            actual = dataProcessor.percentValues.column;
+            expected = [[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]];
 
-            actual = dataProcessor.data.percentValues.column;
-
-            expect(actual).toEqual([[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]]);
+            expect(actual).toEqual(expected);
         });
     });
 });
