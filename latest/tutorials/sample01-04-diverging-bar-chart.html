@@ -20,18 +20,19 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "categories": ["100 ~", "90 ~ 99", "80 ~ 89", "70 ~ 79", "60 ~ 69", "50 ~ 59", "40 ~ 49", "30 ~ 39", "20 ~ 29", "10 ~ 19", "0 ~ 9"],
     "series": [
         {
-            "name": "Income",
-            "data": [3000, 4000, 5000, 5000, 3000, 4000, 5000]
+            "name": "Male",
+            "data": [3832, 38696, 395906, 1366738, 2482657, 4198869, 4510524, 3911135, 3526321, 2966126, 2362433]
         },
         {
-            "name": "Expenses",
-            "data": [4000, 4000, 3000, 2000, 4000, 5000, 7000]
+            "name": "Female",
+            "data": [12550, 128464, 839761, 1807901, 2630336, 4128479, 4359815, 3743214, 3170926, 2724383, 2232516]
         }
     ]
 }
+            
         </textarea>
     </div>
     <div>
@@ -41,18 +42,14 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "Diverging Bar Chart",
+        "title": "Population Distribution",
         "format": "1,000"
     },
     "yAxis": [{
-        "title": "Month"
+        "title": "Age group"
     }, {
-        "title": "Month"
+        "title": "Age group"
     }],
-    "xAxis": {
-        "title": "Amount",
-        "max": 9000
-    },
     "series": {
         "diverging": true
     }
@@ -84,15 +81,15 @@
 <script>
     var container = document.getElementById('chart-area'),
     data = {
-        categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: ['100 ~', '90 ~ 99', '80 ~ 89', '70 ~ 79', '60 ~ 69', '50 ~ 59', '40 ~ 49', '30 ~ 39', '20 ~ 29', '10 ~ 19', '0 ~ 9'],
         series: [
             {
-                name: 'Income',
-                data: [3000, 4000, 5000, 5000, 3000, 4000, 5000]
+                name: 'Male',
+                data: [3832, 38696, 395906, 1366738, 2482657, 4198869, 4510524, 3911135, 3526321, 2966126, 2362433]
             },
             {
-                name: 'Expenses',
-                data: [4000, 4000, 3000, 2000, 4000, 5000, 7000]
+                name: 'Female',
+                data: [12550, 128464, 839761, 1807901, 2630336, 4128479, 4359815, 3743214, 3170926, 2724383, 2232516]
             }
         ]
     },
@@ -100,18 +97,14 @@
         chart: {
             width: 700,
             height: 400,
-            title: 'Diverging Bar Chart',
-            'format': '1,000'
+            title: 'Population Distribution',
+            format: '1,000'
         },
         yAxis: [{
-            title: 'Month'
+            title: 'Age Group'
         }, {
-            title: 'Month'
+            title: 'Age Group'
         }],
-        xAxis: {
-            title: 'Amount',
-            max: 9000
-        },
         series: {
             diverging: true
         }
