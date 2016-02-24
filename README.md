@@ -21,19 +21,19 @@ This application supports drawing a chart on web browser.<br>
 
 ## Sample Images
 
-![bar chart](https://cloud.githubusercontent.com/assets/2888775/13277807/f1aae8e0-db0e-11e5-9cbe-a8959a384113.png)
+![bar chart](https://cloud.githubusercontent.com/assets/2888775/13280669/b41eee36-db22-11e5-92d6-3a456c74fec5.png)
 
-![column chart](https://cloud.githubusercontent.com/assets/2888775/13278007/36c35f9c-db10-11e5-9160-e1b87129cc9c.png)
+![column chart](https://cloud.githubusercontent.com/assets/2888775/13280677/bbd95e86-db22-11e5-9e98-2785820ecbb6.png)
 
-![line chart](https://cloud.githubusercontent.com/assets/2888775/13278095/fb7053cc-db10-11e5-9f98-37a438aa29cd.png)
+![line chart](https://cloud.githubusercontent.com/assets/2888775/13280685/c7f3eeca-db22-11e5-9d2b-9dd1eb81d247.png)
 
-![area chart](https://cloud.githubusercontent.com/assets/2888775/13278160/882b0672-db11-11e5-9069-df3397e5a05b.png)
+![area chart](https://cloud.githubusercontent.com/assets/2888775/13280693/d19dfb3c-db22-11e5-9dc3-845ae0552055.png)
 
-![pie chart](https://cloud.githubusercontent.com/assets/2888775/13278191/e14a1838-db11-11e5-9652-f6e1b64d4e5a.png)
+![pie chart](https://cloud.githubusercontent.com/assets/2888775/13280700/dad6c562-db22-11e5-8d48-9fe247f65b58.png)
 
-![combo chart](https://cloud.githubusercontent.com/assets/2888775/13278228/4ed03dc4-db12-11e5-9489-bcc444a9d71d.png)
+![combo chart](https://cloud.githubusercontent.com/assets/2888775/13280701/e07e3522-db22-11e5-9477-f124a9675671.png)
 
-![map chart](https://cloud.githubusercontent.com/assets/2888775/13278271/9c433250-db12-11e5-9e48-40a188a7b585.png)
+![map chart](https://cloud.githubusercontent.com/assets/2888775/13280706/e5334b66-db22-11e5-888a-5d3c49ee6ee0.png)
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
