@@ -10,7 +10,7 @@ This application supports drawing a chart on web browser.<br>
 * Column Chart<br>
    * A column chart is a type of bar chart. Unlike a bar chart, a column chart, position the vertical bar.
 * Line Chart<br>
-   * A line chart is a type of chart which displays information as a series of data by straight line segments.
+   * A line chart is a type of chart which displays information as a series of data by line segments.
 * Area Chart<br>
    * An area chart displays graphically quantitive data. It is based on the line chart.
 * Pie Chart<br>
@@ -22,38 +22,24 @@ This application supports drawing a chart on web browser.<br>
 
 ## Sample Images
 
-<img alt="bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045564/947679f6-aee9-11e5-99bd-e3e018dd8149.png">
+![bar chart](https://cloud.githubusercontent.com/assets/2888775/13277807/f1aae8e0-db0e-11e5-9cbe-a8959a384113.png)
 
-<img alt="negative bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045566/9480963e-aee9-11e5-9fa8-8ae565bd43a8.png">
+![column chart](https://cloud.githubusercontent.com/assets/2888775/13278007/36c35f9c-db10-11e5-9160-e1b87129cc9c.png)
 
-<img alt="stacked bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12045565/947979bc-aee9-11e5-842e-123190fcb621.png">
+![line chart](https://cloud.githubusercontent.com/assets/2888775/13278095/fb7053cc-db10-11e5-9f98-37a438aa29cd.png)
 
-<img alt="diverging bar chart" src="https://cloud.githubusercontent.com/assets/2888775/12807006/ab5edd8a-cb4e-11e5-88a4-ca9368c147af.png">
+![area chart](https://cloud.githubusercontent.com/assets/2888775/13278160/882b0672-db11-11e5-9069-df3397e5a05b.png)
 
-<img alt="column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045571/ac7db0c8-aee9-11e5-9270-0d54133c948e.png">
+![pie chart](https://cloud.githubusercontent.com/assets/2888775/13278191/e14a1838-db11-11e5-9652-f6e1b64d4e5a.png)
 
-<img alt="negative column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045572/ac8aafb2-aee9-11e5-853f-461ff565c0b8.png">
+![combo chart](https://cloud.githubusercontent.com/assets/2888775/13278228/4ed03dc4-db12-11e5-9489-bcc444a9d71d.png)
 
-<img alt="percent stacked column chart" src="https://cloud.githubusercontent.com/assets/2888775/12045573/ac8fd51e-aee9-11e5-8e73-23cf05929034.png">
-
-<img alt="line chart" src="https://cloud.githubusercontent.com/assets/2888775/12045582/bf4638e2-aee9-11e5-9e62-d5e66b842165.png">
-
-<img alt="spline line chart" src="https://cloud.githubusercontent.com/assets/2888775/12045581/bf45f788-aee9-11e5-8fe4-5a7d264d941b.png">
-
-<img alt="area chart" src="https://cloud.githubusercontent.com/assets/2888775/12045580/bf425740-aee9-11e5-9df7-b41c21db42f9.png">
-
-<img alt="stacked area chart" src="https://cloud.githubusercontent.com/assets/2888775/12045583/bf466e48-aee9-11e5-9c76-00c3a2a6d687.png">
-
-<img alt="pie chart" src="https://cloud.githubusercontent.com/assets/2888775/12045630/6c896a56-aeea-11e5-8321-a11467717478.png">
-
-<img alt="combo chart" src="https://cloud.githubusercontent.com/assets/2888775/12045602/e1bf9f12-aee9-11e5-9a39-29eae62be331.png">
-
-<img alt="map chart" src="https://cloud.githubusercontent.com/assets/2888775/12806980/6abdd4b6-cb4e-11e5-8214-bf77df4069d4.png">
-
+![map chart](https://cloud.githubusercontent.com/assets/2888775/13278271/9c433250-db12-11e5-9e48-40a188a7b585.png)
 
 ## Documentation
-* **API** : https://nhnent.github.io/tui.chart/latest/
+* **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
 * **Tutorial** : https://github.com/nhnent/tui.chart/wiki/tutorial/
+* **API** : https://nhnent.github.io/tui.chart/latest/
 * **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial.html
 
 ## Dependency
