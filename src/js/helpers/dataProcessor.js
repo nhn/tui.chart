@@ -42,7 +42,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {rawData} rawData raw data
      * @param {object} options options
      * @param {Array.<string>} seriesChartTypes chart types
-     * }} rawData raw data
      */
     init: function(rawData, options, seriesChartTypes) {
         var seriesOption = options.series || {};
@@ -622,7 +621,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {function[]} functions
      */
     _findFormatFunctions: function() {
-        var format = this.options.chart && this.options.chart.format || '',
+        var format = tui.util.pick(this.options, 'chart', 'format') || '',
             funcs = [],
             len;
 
@@ -706,7 +705,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             var sum = tui.util.sum(values);
 
             return tui.util.map(values, function(value) {
-                return value / sum;
+                return sum === 0 ? 0 : (value / sum);
             });
         });
     },
