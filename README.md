@@ -1,6 +1,5 @@
 <img alt="Toast UI Chart" src="https://cloud.githubusercontent.com/assets/2888775/12061211/9fe03df6-afc3-11e5-9077-81342dcb8f49.png">
 ===============
-Chart<br>
 This application supports drawing a chart on web browser.<br>
 
 ## Feature
