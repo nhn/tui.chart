@@ -568,7 +568,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var pow;
 
         if (len === 0) {
-            return Math.round(value, 10);
+            return Math.round(value);
         }
 
         pow = Math.pow(10, len);
