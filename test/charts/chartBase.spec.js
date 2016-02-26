@@ -57,7 +57,6 @@ describe('ChartBase', function() {
     describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            spyOn(DataProcessor.prototype, 'process').and.returnValue();
             actual = chartBase._createDataProcessor(DataProcessor, {
                 rawData: {
                     categories: ['a', 'b', 'c']

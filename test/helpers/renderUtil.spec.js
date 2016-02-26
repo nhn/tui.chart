@@ -98,41 +98,41 @@ describe('renderUtil', function() {
 
     describe('_getRenderedLabelsMaxSize()', function() {
         it('인자로 전달하는 레이블들을 전달한 함수로 실행하여 가장 큰 값을 반환합니다.', function() {
-            var acutal = renderUtil._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function (label) {
+            var actual = renderUtil._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function(label) {
                 return label.length;
             });
-            expect(acutal).toBe(7);
+            expect(actual).toBe(7);
         });
     });
 
     describe('getRenderedLabelsMaxWidth()', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function() {
-            var acutal = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label']);
+            var actual = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label'], {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            });
 
-            if (isFirefox) {
-                expect(acutal).toBe(37);
-            } else if (isOldBrowser || (isMac && isChrome)) {
-                expect(acutal).toBe(32);
-            } else if (isChrome) {
-                expect(acutal).toBe(36);
+            if (isOldBrowser || isFirefox) {
+                expect(actual).toBe(42);
+            } else if (isMac && isChrome) {
+                expect(actual).toBe(40);
             } else {
-                expect(acutal).toBe(33);
+                expect(actual).toBe(39);
             }
         });
     });
 
     describe('getRenderedLabelsMaxHeight()', function() {
         it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function() {
-            var acutal = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label']);
+            var actual = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label'], {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            });
 
-            if (isFirefox) {
-                expect(acutal).toBe(13);
-            } else if (isOldBrowser || (isMac && isChrome)) {
-                expect(acutal).toBe(15);
-            } else if (isChrome) {
-                expect(acutal).toBe(16);
+            if (isOldBrowser) {
+                expect(actual).toBe(14);
             } else {
-                expect(acutal).toBe(14);
+                expect(actual).toBe(15);
             }
         });
     });

@@ -6,11 +6,12 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
+var ComponentManager = require('./componentManager'),
     DefaultDataProcessor = require('../helpers/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
-    ComponentManager = require('./componentManager'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    predicate = require('../helpers/predicate'),
     UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -109,7 +110,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * original whole legend data
          * @type {Array.<object>}
          */
-        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+        this.orgWholeLegendData = null;
+
+        if (!predicate.isMapChart(this.chartType)) {
+            this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+        }
 
         this._addCustomEventComponent();
     },
@@ -125,10 +130,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData),
-            options = params.options;
+        var dataProcessor = new DataProcessor(params.rawData, params.options, params.seriesChartTypes);
 
-        dataProcessor.process(params.rawData, options, params.seriesChartTypes);
         return dataProcessor;
     },
 
@@ -318,7 +321,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
-        this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
+        this.dataProcessor.updateRawData(rawData);
 
         newWholeLegendData = this.dataProcessor.getWholeLegendData();
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함

@@ -544,15 +544,35 @@ describe('axisDataMaker', function() {
 
     describe('formatLabels()', function() {
         it('전달된 labels를 "1,000.00"타입으로 포맷팅하여 반환합니다.', function() {
-            var fns = DataProcessor.prototype._findFormatFunctions('1,000.00'),
-                result = maker.formatLabels([1000, 2000.2222, 300000.555555, 4, 5.55], fns);
-            expect(result).toEqual(['1,000.00', '2,000.22', '300,000.56', '4.00', '5.55']);
+            var options = {
+                    chart: {
+                        format: '1,000.00'
+                    }
+                },
+                dataProcessor = new DataProcessor({}, options),
+                fns, actual, expected;
+
+            fns = dataProcessor._findFormatFunctions();
+            actual = maker.formatLabels([1000, 2000.2222, 300000.555555, 4, 5.55], fns);
+            expected = ['1,000.00', '2,000.22', '300,000.56', '4.00', '5.55'];
+
+            expect(actual).toEqual(expected);
         });
 
         it('전달된 labels를 "0001"타입으로 포맷팅하여 반환합니다.', function() {
-            var fns = DataProcessor.prototype._findFormatFunctions('0001'),
-                result = maker.formatLabels([1, 2, 3], fns);
-            expect(result).toEqual(['0001', '0002', '0003']);
+            var options = {
+                    chart: {
+                        format: '0001'
+                    }
+                },
+                dataProcessor = new DataProcessor({}, options),
+                fns, actual, expected;
+
+            fns = dataProcessor._findFormatFunctions();
+            actual = maker.formatLabels([1, 2, 3], fns);
+            expected = ['0001', '0002', '0003'];
+
+            expect(actual).toEqual(expected);
         });
     });
 

@@ -40,7 +40,7 @@ tui.util.defineNamespace('tui.chart');
  *     min: number
  *   },
  *   xAxis: {
- *     title: strig,
+ *     title: string,
  *     min: number
  *   },
  *   tooltip: {
@@ -81,7 +81,6 @@ _createChart = function(container, data, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.labelInterval label interval of vertical axis
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of horizontal axis
@@ -662,7 +661,7 @@ tui.chart.mapChart = function(container, data, options) {
  *              @param {number} theme.yAxis.label.fontSize font size of vertical axis label
  *              @param {string} theme.yAxis.label.fontFamily font family of vertical axis label
  *              @param {string} theme.yAxis.label.color font color of vertical axis label
- *          @param {string} theme.yAxis.tickcolor color of vertical axis tick
+ *          @param {string} theme.yAxis.tickColor color of vertical axis tick
  *      @param {object} theme.xAxis theme of horizontal axis
  *          @param {object} theme.xAxis.title theme of horizontal axis title
  *              @param {number} theme.xAxis.title.fontSize font size of horizontal axis title
@@ -672,7 +671,7 @@ tui.chart.mapChart = function(container, data, options) {
  *              @param {number} theme.xAxis.label.fontSize font size of horizontal axis label
  *              @param {string} theme.xAxis.label.fontFamily font family of horizontal axis label
  *              @param {string} theme.xAxis.label.color font color of horizontal axis label
- *          @param {string} theme.xAxis.tickcolor color of horizontal axis tick
+ *          @param {string} theme.xAxis.tickColor color of horizontal axis tick
  *      @param {object} theme.plot plot theme
  *          @param {string} theme.plot.lineColor plot line color
  *          @param {string} theme.plot.background plot background
