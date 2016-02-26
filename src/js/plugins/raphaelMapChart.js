@@ -81,8 +81,8 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      */
     findSectorIndex: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top),
-            foundIndex = (sector && !tui.util.isUndefined(sector.data('index'))) ? sector.data('index') : null,
-            data = foundIndex && this.sectors[foundIndex];
+            foundIndex = sector && sector.data('index'),
+            data = !tui.util.isUndefined(foundIndex) && this.sectors[foundIndex];
 
         return data && !tui.util.isUndefined(data.percentValue) ? foundIndex : null;
     },
