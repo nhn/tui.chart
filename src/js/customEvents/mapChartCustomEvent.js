@@ -7,6 +7,7 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase'),
+    eventListener = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
 
@@ -121,6 +122,32 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
             this._onMouseEvent('move', e);
         }
         this.isDown = false;
+    },
+
+    /**
+     * On mouse wheel.
+     * @param {mouseevent} e mouse event
+     * @returns {?boolean}
+     * @private
+     */
+    _onMousewheel: function(e) {
+        this.fire('wheel', e.wheelDelta);
+
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
+        return false;
+    },
+
+    /**
+     * Attach event
+     * @param {HTMLElement} el target element
+     * @override
+     */
+    attachEvent: function(el) {
+        CustomEventBase.prototype.attachEvent.call(this, el);
+        eventListener.bindEvent('mousewheel', el, tui.util.bind(this._onMousewheel, this));
     }
 });
 
