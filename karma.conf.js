@@ -5,7 +5,7 @@ var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
   var webdriverConfig = {
-    hostname: '10.77.32.96',
+    hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
   };
