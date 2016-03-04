@@ -74,6 +74,8 @@ var calculator = {
             } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
                 standard = num;
             }
+
+            return true;
         });
 
         if (standard < 1) {

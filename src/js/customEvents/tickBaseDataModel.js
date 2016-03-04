@@ -96,6 +96,8 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
                 foundIndex = index;
                 return false;
             }
+
+            return true;
         });
 
         return foundIndex;

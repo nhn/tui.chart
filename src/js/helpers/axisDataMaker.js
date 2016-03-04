@@ -423,6 +423,8 @@ var axisDataMaker = {
                 (!isUndefinedMax && options.max <= curMax)) {
                 limit.max = curMax;
             }
+
+            return true;
         });
 
         labels = calculator.makeLabelsFromLimit(limit, step);

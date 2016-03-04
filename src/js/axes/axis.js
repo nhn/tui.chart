@@ -79,8 +79,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             tui.util.forEach(groupValues, function(values) {
                 if (!values.length) {
                     isInvalid = false;
-                    return false;
                 }
+                return isInvalid;
             });
         }
 

@@ -150,7 +150,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             moveMapSeries: mapSeries.onMoveSeries,
             dragStartMapSeries: mapSeries.onDragStartSeries,
             dragMapSeries: mapSeries.onDragSeries,
-            dragEndMapSeries: mapSeries.onDragEndSeries
+            dragEndMapSeries: mapSeries.onDragEndSeries,
+            wheel: tui.util.bind(zoom.onWheel, zoom)
         }, mapSeries);
 
         mapSeries.on({

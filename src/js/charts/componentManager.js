@@ -137,8 +137,9 @@ var ComponentManager = tui.util.defineClass(/** @lends ComponentManager.prototyp
             tui.util.forEach(conditionMap, function(value, key) {
                 if (component[key] !== value) {
                     contained = false;
-                    return false;
                 }
+
+                return contained;
             });
 
             return contained;
