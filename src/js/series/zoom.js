@@ -75,7 +75,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * Zoom
      * @param {number} magn magnification
-     * @param {?{left: number, top: number}} mouse position
+     * @param {?{left: number, top: number}} position mouse position
      * @private
      */
     _zoom: function(magn, position) {
@@ -141,7 +141,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * On wheel.
      * @param {number} wheelDelta wheelDelta
-     * @param {{left: number, top: number}} mouse position
+     * @param {{left: number, top: number}} position mouse position
      */
     onWheel: function(wheelDelta, position) {
         var magn;

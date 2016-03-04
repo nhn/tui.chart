@@ -433,7 +433,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * Move position for zoom.
-     * @param {{left: number, top: number}} mouse position
+     * @param {{left: number, top: number}} position mouse position
      * @param {number} changedRatio changed ratio
      * @private
      */
@@ -463,7 +463,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     /**
      * On zoom.
      * @param {number} newMagn new zoom magnification
-     * @param {?{left: number, top: number}} mouse position
+     * @param {?{left: number, top: number}} position mouse position
      */
     onZoom: function(newMagn, position) {
         var changedRatio = newMagn / this.zoomMagn;

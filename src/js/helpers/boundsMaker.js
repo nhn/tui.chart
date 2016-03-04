@@ -222,10 +222,13 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
             var compareWidth = (calculator.calculateAdjacent(degree, halfWidth) +
                 calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, halfHeight)) * 2;
+
             foundDegree = degree;
             if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
                 return false;
             }
+
+            return true;
         });
 
         return foundDegree;
