@@ -131,7 +131,10 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @private
      */
     _onMousewheel: function(e) {
-        this.fire('wheel', e.wheelDelta);
+        this.fire('wheel', e.wheelDelta, {
+            left: e.clientX,
+            top: e.clientY
+        });
 
         if (e.preventDefault) {
             e.preventDefault();

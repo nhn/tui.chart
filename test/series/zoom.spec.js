@@ -18,34 +18,51 @@ describe('Zoom', function() {
 
     describe('_zoom()', function() {
         it('2배율 값을 넣으면 2배율로 확대됩니다.', function() {
-            var expectedEventName = 'zoom',
-                expectedMagn = 2;
+            var magn = 2,
+                position;
 
             zoom.magn = 1;
-            zoom._zoom(2);
+            zoom._zoom(magn);
 
-            expect(zoom.magn).toBe(expectedMagn);
-            expect(zoom.fire).toHaveBeenCalledWith(expectedEventName, expectedMagn);
+            expect(zoom.magn).toBe(2);
+            expect(zoom.fire).toHaveBeenCalledWith('zoom', 2, position);
         });
 
         it('0.5배율 값을 넣으면 0.5배율로 축소됩니다.', function() {
-            var expectedEventName = 'zoom',
-                expectedMagn = 1;
+            var magn = 0.5,
+                position;
 
             zoom.magn = 2;
-            zoom._zoom(0.5);
+            zoom._zoom(magn);
 
-            expect(zoom.magn).toBe(expectedMagn);
-            expect(zoom.fire).toHaveBeenCalledWith(expectedEventName, expectedMagn);
+            expect(zoom.magn).toBe(1);
+            expect(zoom.fire).toHaveBeenCalledWith('zoom', 1, position);
+        });
+
+        it('position 값을 전달하면 magn값의 다음 인자로 전달합니다.', function() {
+            var magn = 2,
+                position = {
+                    left: 10,
+                    top: 20
+                };
+
+            zoom.magn = 1;
+            zoom._zoom(magn, position);
+
+            expect(zoom.magn).toBe(2);
+            expect(zoom.fire).toHaveBeenCalledWith('zoom', 2, {
+                left: 10,
+                top: 20
+            });
         });
 
         it('1배율에서 축소를 시도하면 변경되지 않습니다.', function() {
-            var expectedMagn = 1;
+            var magn = 0.5;
 
             zoom.magn = 1;
-            zoom._zoom(0.5);
+            zoom._zoom(magn);
 
-            expect(zoom.magn).toBe(expectedMagn);
+            expect(zoom.magn).toBe(1);
         });
     });
 

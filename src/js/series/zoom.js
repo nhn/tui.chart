@@ -75,14 +75,15 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * Zoom
      * @param {number} magn magnification
+     * @param {?{left: number, top: number}} mouse position
      * @private
      */
-    _zoom: function(magn) {
-        var changedMagn = Math.max(1, this.magn * magn);
+    _zoom: function(magn, position) {
+        var changedMagn = Math.min(Math.max(1, this.magn * magn), chartConst.MAX_ZOOM_MAGN);
 
         if (changedMagn !== this.magn) {
             this.magn = changedMagn;
-            this.fire('zoom', this.magn);
+            this.fire('zoom', this.magn, position);
         }
     },
 
@@ -140,8 +141,9 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
     /**
      * On wheel.
      * @param {number} wheelDelta wheelDelta
+     * @param {{left: number, top: number}} mouse position
      */
-    onWheel: function(wheelDelta) {
+    onWheel: function(wheelDelta, position) {
         var magn;
 
         if (Math.abs(wheelDelta) < chartConst.WHEEL_TICK) {
@@ -156,7 +158,7 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
         magn = this._calculateMagn(this.stackedWheelDelta);
 
-        this._zoom(magn);
+        this._zoom(magn, position);
 
         this.stackedWheelDelta = this.stackedWheelDelta % chartConst.WHEEL_TICK;
     }

@@ -79,6 +79,12 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
          */
         this.isDrag = false;
 
+        /**
+         * Start position.
+         * @type {?{left: number, top: number}}
+         */
+        this.startPosition = null;
+
         Series.call(this, params);
     },
 
@@ -381,9 +387,26 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     onDragStartSeries: function(position) {
         this.startPosition = {
-            left: position.left - this.basePosition.left,
-            top: position.top - this.basePosition.top
+            left: position.left,
+            top: position.top
         };
+    },
+
+    /**
+     * Move position.
+     * @param {{left: number, top: number}} startPosition start position
+     * @param {{left: number, top: number}} endPosition end position
+     * @private
+     */
+    _movePosition: function(startPosition, endPosition) {
+        var movementPosition = this._adjustMapPosition({
+            left: this.basePosition.left + (endPosition.left - startPosition.left),
+            top: this.basePosition.top + (endPosition.top - startPosition.top)
+        });
+
+        renderUtil.renderPosition(this.graphContainer, movementPosition);
+
+        this.basePosition = movementPosition;
     },
 
     /**
@@ -391,13 +414,9 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      * @param {{left: number, top: number}} position position
      */
     onDragSeries: function(position) {
-        var movePosition = this._adjustMapPosition({
-            left: position.left - this.startPosition.left,
-            top: position.top - this.startPosition.top
-        });
+        this._movePosition(this.startPosition, position);
 
-        renderUtil.renderPosition(this.graphContainer, movePosition);
-        this.basePosition = movePosition;
+        this.startPosition = position;
 
         if (!this.isDrag) {
             this.isDrag = true;
@@ -413,15 +432,50 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     },
 
     /**
+     * Move position for zoom.
+     * @param {{left: number, top: number}} mouse position
+     * @param {number} changedRatio changed ratio
+     * @private
+     */
+    _movePositionForZoom: function(position, changedRatio) {
+        var seriesDimension = this.boundsMaker.getDimension('series'),
+            containerBound = this._getContainerBound(),
+            startPosition = {
+                left: (seriesDimension.width / 2) + containerBound.left,
+                top: (seriesDimension.height / 2) + containerBound.top
+            },
+            movementPosition = {
+                left: position.left - startPosition.left,
+                top: position.top - startPosition.top
+            },
+            endPosition;
+
+        changedRatio = changedRatio > 1 ? -(changedRatio / 2) : changedRatio;
+
+        endPosition = {
+            left: startPosition.left + (movementPosition.left * changedRatio),
+            top: startPosition.top + (movementPosition.top * changedRatio)
+        };
+
+        this._movePosition(startPosition, endPosition);
+    },
+
+    /**
      * On zoom.
      * @param {number} newMagn new zoom magnification
+     * @param {?{left: number, top: number}} mouse position
      */
-    onZoom: function(newMagn) {
+    onZoom: function(newMagn, position) {
         var changedRatio = newMagn / this.zoomMagn;
 
         this.zoomMagn = newMagn;
 
         this._zoom(changedRatio);
+
+        if (position) {
+            this._movePositionForZoom(position, changedRatio);
+        }
+
         this.userEvent.fire('zoom', newMagn);
     },
 

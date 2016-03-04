@@ -244,6 +244,7 @@ var chartConst = {
     HIDE_DELAY: 200,
     OLD_BROWSER_OPACITY_100: 100,
     SERIES_LABEL_OPACITY: 0.3,
-    WHEEL_TICK: 120
+    WHEEL_TICK: 120,
+    MAX_ZOOM_MAGN: 32
 };
 module.exports = chartConst;

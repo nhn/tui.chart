@@ -147,6 +147,6 @@ describe('MapChartSeries', function() {
             expect(series.basePosition.top).toBe(-40);
             expect(series.limitPosition.left).toBe(-200);
             expect(series.limitPosition.top).toBe(-100);
-        })
+        });
     });
 });
