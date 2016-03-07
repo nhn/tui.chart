@@ -219,6 +219,17 @@ var predicate = {
      */
     isValidStackedOption: function(stacked) {
         return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
+    },
+
+    /**
+     * Whether align of yAxis is center or not.
+     * @memberOf module:predicate
+     * @param {boolean} hasRightYAxis whether has right yAxis.
+     * @param {string} alignOption align option of yAxis.
+     * @returns {boolean} whether align center or not.
+     */
+    isCenterYAxisAlign: function(hasRightYAxis, alignOption) {
+        return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
     }
 };
 

@@ -40,6 +40,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.options = params.options || {};
 
         this.options.legend = this.options.legend || {};
+        this.options.yAxis = this.options.yAxis || {};
 
         /**
          * theme
@@ -495,6 +496,22 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Make yAxis left position of yAxis.
+     * @param {number} leftLegendWidth
+     * @returns {number} left position value of yAxis
+     * @private
+     */
+    _makeYAxisLeftPosition: function(leftLegendWidth) {
+        var left = this.chartLeftPadding + leftLegendWidth;
+
+        if (this.options.yAxis.isCenter) {
+            left += (this.getDimension('series').width / 2) - 1;
+        }
+
+        return left;
+    },
+
+    /**
      * Register axes type component positions.
      * @param {position} seriesPosition series position
      * @param {number} leftLegendWidth legend width
@@ -512,7 +529,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         this.positions.yAxis = {
             top: seriesPosition.top,
-            left: this.chartLeftPadding + leftLegendWidth
+            left: this._makeYAxisLeftPosition(leftLegendWidth)
         };
 
         this.positions.xAxis = {
@@ -592,8 +609,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             leftLegendWidth = predicate.isLeftLegendAlign(alignOption) ? legendDimension.width : 0,
             seriesPosition = {
                 top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-                left: this.getDimension('yAxis').width + this.chartLeftPadding + leftLegendWidth
+                left: this.chartLeftPadding + leftLegendWidth
             };
+
+        if (!this.options.yAxis.isCenter) {
+            seriesPosition.left += this.getDimension('yAxis').width;
+        }
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();

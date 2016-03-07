@@ -10,6 +10,7 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
     barTypeMixer = require('./barTypeMixer'),
+    predicate = require('../helpers/predicate'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
@@ -37,11 +38,14 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         this.hasRightYAxis = false;
 
         options.series = options.series || {};
+        options.yAxis = options.yAxis || {};
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
             options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
             this.hasRightYAxis = options.yAxis && tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+            options.yAxis.isCenter = predicate.isCenterYAxisAlign(this.hasRightYAxis, options.yAxis.align);
         }
 
         ChartBase.call(this, {

@@ -63,6 +63,16 @@ describe('Axis', function() {
 
             expect(actual).toBe(expected);
         });
+
+        it('isCenter 옵션으로 인해 중앙에 배치될 경우에는 title영역의 너비는 배제되고 여백이 추가로 적용됩니다.', function() {
+            var actual, expected;
+
+            axis.options.isCenter = true;
+            actual = axis._makeYAxisWidth(['label1', 'label12']);
+            expected = 64;
+
+            expect(actual).toBe(expected);
+        });
     });
 
     describe('_isValidAxis()', function() {
@@ -200,10 +210,98 @@ describe('Axis', function() {
         });
     });
 
+    describe('_renderRightTickArea()', function() {
+        it('isCenter 옵션으로 인해 중앙에 배치될 경우 기존의 tick area html을 복사하며 우측을 표현하는 tick area를 추가적으로 생성하여 반환합니다.', function() {
+            var actual, expectedHtml, expectedClass;
+
+            axis.options.isCenter = true;
+            actual = axis._renderRightTickArea('html');
+            expectedHtml = 'html';
+            expectedClass = 'tui-chart-tick-area right';
+
+            expect(actual.innerHTML).toBe(expectedHtml);
+            expect(actual.className).toBe(expectedClass);
+        });
+    });
+
+    describe('_addCssClasses()', function() {
+        it('isVertical이 true인 경우에는 container의 css className에 vertical 값을 설정합니다.', function() {
+            var container = dom.create('DIV'),
+                isVertical = true,
+                actual, expected;
+
+            axis._addCssClasses(container, isVertical);
+            actual = container.className;
+            expected = 'vertical';
+
+            expect(actual).toMatch(expected);
+        });
+
+        it('isVertical이 없거나 false인 경우에는 container의 css className에 horizontal 값을 설정합니다.', function() {
+            var container = dom.create('DIV'),
+                actual, expected;
+
+            axis._addCssClasses(container);
+            actual = container.className;
+            expected = 'horizontal';
+
+            expect(actual).toMatch(expected);
+        });
+
+        it('isPositionRight이 true인 경우에는 container의 css className에 right 값을 설정합니다.', function() {
+            var container = dom.create('DIV'),
+                isPositionRight = true,
+                actual, expected;
+
+            axis._addCssClasses(container, null, isPositionRight);
+            actual = container.className;
+            expected = 'right';
+
+            expect(actual).toMatch(expected);
+        });
+
+        it('isPositionRight이 없거나 false인 경우에는 container의 css className에 right 값이 설정되지 않습니다.', function() {
+            var container = dom.create('DIV'),
+                actual, expected;
+
+            axis._addCssClasses(container);
+            actual = container.className;
+            expected = 'right';
+
+            expect(actual).not.toMatch(expected);
+        });
+
+        it('options의 isCenter가 true인 경우에는 container의 css className에 center 값을 설정합니다.', function() {
+            var container = dom.create('DIV'),
+                actual, expected;
+
+            axis.options.isCenter = true;
+            axis._addCssClasses(container);
+            actual = container.className;
+            expected = 'center';
+
+            expect(actual).toMatch(expected);
+        });
+
+        it('options의 isCenter가 없거나 false인 경우에는 container의 css className에 center 값이 설정되지 않습니다.', function() {
+            var container = dom.create('DIV'),
+                actual, expected;
+
+            axis._addCssClasses(container);
+            actual = container.className;
+            expected = 'center';
+
+            expect(actual).not.toMatch(expected);
+        });
+    });
+
     describe('_renderTitleAreaStyle()', function() {
         it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.', function() {
             var elTitle = dom.create('DIV');
-            axis._renderTitleAreaStyle(elTitle, 50);
+
+            axis._renderTitleAreaStyle(elTitle, {
+                size: 50
+            });
 
             // 세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.
             expect(elTitle.style.width).toBe('50px');
@@ -217,7 +315,11 @@ describe('Axis', function() {
 
         it('우측 y axis 타이틀 영역의 css style을 렌더링합니다. 우측에 배치되기 때문에 right값으로 설정됩니다.', function() {
             var elTitle = dom.create('DIV');
-            axis._renderTitleAreaStyle(elTitle, 50, true);
+
+            axis._renderTitleAreaStyle(elTitle, {
+                size: 50,
+                isPositionRight: true
+            });
             expect(elTitle.style.width).toBe('50px');
 
             if (renderUtil.isIE7()) {
@@ -226,6 +328,29 @@ describe('Axis', function() {
                 expect(elTitle.style.right).toBe('-50px');
             }
             expect(elTitle.style.top).toBe('0px');
+        });
+
+        it('isCenter 옵션으로 인해 중앙에 배치될 경우의 css style을 랜더링 합니다.', function() {
+            var elTitle = dom.create('DIV');
+
+            boundsMaker.getDimension.and.callFake(function(type) {
+                if (type === 'yAxis') {
+                    return {
+                        width: 80
+                    };
+                } else if (type === 'xAxis') {
+                    return {
+                        height: 30
+                    };
+                }
+            });
+            axis.options.isCenter = true;
+            axis._renderTitleAreaStyle(elTitle, {
+                title: 'Title'
+            });
+
+            expect(elTitle.style.left).toBe('15px');
+            expect(elTitle.style.bottom).toBe('-30px');
         });
     });
 

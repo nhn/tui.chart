@@ -565,6 +565,30 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_makeYAxisLeftPosition()', function() {
+        it('yAxis의 left position은 chartLeftPadding값에 전달받은 leftLegendWidth값을 더하여 반환합니다.', function() {
+            var actual, expected;
+
+            actual = boundsMaker._makeYAxisLeftPosition(0);
+            expected = 10;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('yAxis의 isCenter옵션이 true일 경우에는 series width를 반으로 나눈 값을 더하여 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.options.yAxis.isCenter = true;
+            boundsMaker.dimensions.series = {
+                width: 300
+            };
+            actual = boundsMaker._makeYAxisLeftPosition(0);
+            expected = 159;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
     describe('_registerAxisComponentsPosition()', function() {
         it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
             var seriesPosition = {
@@ -591,6 +615,28 @@ describe('boundsMaker', function() {
             expect(boundsMaker.getPosition('xAxis').left).toBe(49);
             expect(boundsMaker.getPosition('rightYAxis').top).toBe(50);
             expect(boundsMaker.getPosition('rightYAxis').left).toBe(339);
+        });
+
+
+        it('yAxis의 isCenter옵션이 true일 경우에는 yAxis의 left값에 series width를 반으로 나눈 값을 더하여 설정합니.', function() {
+            var seriesPosition = {
+                    left: 50,
+                    top: 50
+                },
+                leftLegendWidth = 0;
+
+            boundsMaker.options.yAxis.isCenter = true;
+            boundsMaker.dimensions.series = {
+                width: 300,
+                height: 200
+            };
+            boundsMaker.dimensions.yAxis = {
+                width: 30
+            };
+
+            boundsMaker._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+
+            expect(boundsMaker.getPosition('yAxis').left).toBe(159);
         });
     });
 

@@ -203,6 +203,10 @@ var chartConst = {
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /** yAxis align option
+     * @type {string}
+     */
+    YAXIS_ALIGN_CENTER: 'center',
     /** xAxis label compare margin */
     XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */

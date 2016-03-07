@@ -56,10 +56,16 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeYAxisWidth: function(labels) {
         var title = this.options.title || '',
-            titleAreaWidth, width;
+            titleAreaWidth = 0,
+            width = 0;
 
-        titleAreaWidth = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING;
-        width = renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth +
+        if (this.options.isCenter) {
+            width += chartConst.AXIS_LABEL_PADDING;
+        } else {
+            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING;
+        }
+
+        width += renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth +
             chartConst.AXIS_LABEL_PADDING;
 
         return width;
@@ -122,6 +128,36 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Render right tick area.
+     * @param {string} tickHtml tick html
+     * @returns {?HTMLElement} right tick area element
+     * @private
+     */
+    _renderRightTickArea: function(tickHtml) {
+        var tickContainer;
+
+        if (this.options.isCenter) {
+            tickContainer = dom.create('DIV', 'tui-chart-tick-area right');
+            tickContainer.innerHTML = tickHtml;
+        }
+
+        return tickContainer;
+    },
+
+    /**
+     * Add css classes.
+     * @param {HTMLElement} axisContainer axis container
+     * @param {boolean} isVertical whether vertical or not
+     * @param {boolean} isPositionRight whether right position or not
+     * @private
+     */
+    _addCssClasses: function(axisContainer, isVertical, isPositionRight) {
+        dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
+        dom.addClass(axisContainer, this.options.isCenter ? 'center' : '');
+        dom.addClass(axisContainer, isPositionRight ? 'right' : '');
+    },
+
+    /**
      * Render axis area.
      * @param {HTMLElement} axisContainer axis area element
      * @param {{isVertical: boolean, isPositionRight: boolean, aligned: aligned}} data rendering data
@@ -142,19 +178,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 size: size
             }),
             elLabelArea = this._renderLabelArea(data, size, dimension.width),
-            elTickArea;
+            tickContainer, rightTickContainer;
 
         this.data = data;
 
         if (!isVertical || !data.aligned) {
-            elTickArea = this._renderTickArea(size);
+            tickContainer = this._renderTickArea(size);
+            rightTickContainer = this._renderRightTickArea(tickContainer.innerHTML);
         }
 
         renderUtil.renderDimension(axisContainer, dimension);
         renderUtil.renderPosition(axisContainer, this.boundsMaker.getPosition(this.componentName));
-        dom.addClass(axisContainer, isVertical ? 'vertical' : 'horizontal');
-        dom.addClass(axisContainer, isPositionRight ? 'right' : '');
-        dom.append(axisContainer, [elTitleArea, elTickArea, elLabelArea]);
+
+        this._addCssClasses(axisContainer, isVertical, isPositionRight);
+
+        dom.append(axisContainer, [elTitleArea, tickContainer, rightTickContainer, elLabelArea]);
     },
 
     /**
@@ -197,22 +235,36 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Render css style of title area
      * @param {HTMLElement} elTitleArea title element
-     * @param {number} size (width or height)
-     * @param {boolean} isPositionRight whether right position or not?
+     * @param {object} params parameters
+     *      @param {string} params.title axis title
+     *      @param {object} params.theme title theme
+     *      @param {boolean} params.isPositionRight whether right position or not?
+     *      @param {number} params.size (width or height)
      * @private
      */
-    _renderTitleAreaStyle: function(elTitleArea, size, isPositionRight) {
-        var cssTexts = [
-            renderUtil.concatStr('width:', size, 'px')
-        ];
+    _renderTitleAreaStyle: function(elTitleArea, params) {
+        var size = params.size,
+            cssTexts = [
+                renderUtil.concatStr('width:', size, 'px')
+            ],
+            titleWidth, yAxisWidth, xAxisHeight;
 
-        if (isPositionRight) {
+        if (params.isPositionRight) {
             if (renderUtil.isIE7()) {
                 cssTexts.push(renderUtil.concatStr('right:', '0px'));
             } else {
                 cssTexts.push(renderUtil.concatStr('right:', -size, 'px'));
             }
             cssTexts.push('top:0px');
+        } else if (this.options.isCenter) {
+            titleWidth = renderUtil.getRenderedLabelWidth(params.title, params.theme);
+            yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
+            xAxisHeight = this.boundsMaker.getDimension('xAxis').height;
+
+            cssTexts = [
+                'left:' + ((yAxisWidth - titleWidth) / 2) + 'px',
+                'bottom: -' + xAxisHeight + 'px'
+            ];
         } else {
             cssTexts.push('left:0px');
             if (!renderUtil.isOldBrowser()) {
@@ -238,7 +290,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var elTitleArea = renderUtil.renderTitle(params.title, params.theme, 'tui-chart-title-area');
 
         if (elTitleArea && params.isVertical) {
-            this._renderTitleAreaStyle(elTitleArea, params.size, params.isPositionRight);
+            this._renderTitleAreaStyle(elTitleArea, params);
         }
 
         return elTitleArea;
