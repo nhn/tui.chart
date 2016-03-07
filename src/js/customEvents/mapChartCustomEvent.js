@@ -131,7 +131,9 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @private
      */
     _onMousewheel: function(e) {
-        this.fire('wheel', e.wheelDelta, {
+        var wheelDelta = e.wheelDelta || e.detail * -40;
+
+        this.fire('wheel', wheelDelta, {
             left: e.clientX,
             top: e.clientY
         });
@@ -150,7 +152,12 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      */
     attachEvent: function(el) {
         CustomEventBase.prototype.attachEvent.call(this, el);
-        eventListener.bindEvent('mousewheel', el, tui.util.bind(this._onMousewheel, this));
+
+        if (tui.util.browser.firefox) {
+            eventListener.bindEvent('DOMMouseScroll', el, tui.util.bind(this._onMousewheel, this));
+        } else {
+            eventListener.bindEvent('mousewheel', el, tui.util.bind(this._onMousewheel, this));
+        }
     }
 });
 
