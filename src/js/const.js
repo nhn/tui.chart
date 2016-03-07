@@ -245,6 +245,7 @@ var chartConst = {
     OLD_BROWSER_OPACITY_100: 100,
     SERIES_LABEL_OPACITY: 0.3,
     WHEEL_TICK: 120,
-    MAX_ZOOM_MAGN: 32
+    MAX_ZOOM_MAGN: 32,
+    FF_WHEELDELTA_ADJUSTING_VALUE: -40
 };
 module.exports = chartConst;

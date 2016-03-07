@@ -7,6 +7,7 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase'),
+    chartConst = require('../const'),
     eventListener = require('../helpers/eventListener'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
@@ -131,7 +132,7 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      * @private
      */
     _onMousewheel: function(e) {
-        var wheelDelta = e.wheelDelta || e.detail * -40;
+        var wheelDelta = e.wheelDelta || e.detail * chartConst.FF_WHEELDELTA_ADJUSTING_VALUE;
 
         this.fire('wheel', wheelDelta, {
             left: e.clientX,
