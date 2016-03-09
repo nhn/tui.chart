@@ -673,7 +673,7 @@ describe('boundsMaker', function() {
         });
 
 
-        it('yAxis의 isCenter옵션이 true일 경우에는 yAxis의 left값에 series width를 반으로 나눈 값을 더하여 설정합니.', function() {
+        it('yAxis의 isCenter옵션이 true일 경우에는 yAxis의 left값에 series width를 반으로 나눈 값을 더하여 설정합니다.', function() {
             var leftLegendWidth = 0;
 
             boundsMaker.options.yAxis.isCenter = true;

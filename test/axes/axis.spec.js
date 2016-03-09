@@ -881,7 +881,7 @@ describe('Axis', function() {
             expect(axis._renderDivisionAxisArea).toHaveBeenCalled();
         });
 
-        it('isDivision이 truer가 아니면 _renderSingleAxisArea()를 수행합니다.', function() {
+        it('isDivision이 true가 아니면 _renderSingleAxisArea()를 수행합니다.', function() {
             var container = dom.create('DIV');
 
 
