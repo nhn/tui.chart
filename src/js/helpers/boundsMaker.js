@@ -277,7 +277,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, this.theme.xAxis.label),
             newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
                 + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
-            diffLeft = newLabelWidth - this.getDimension('yAxis').width;
+            yAxisWidth = this.options.yAxis.isCenter ? 0 : this.getDimension('yAxis').width,
+            diffLeft = newLabelWidth - yAxisWidth;
         return diffLeft;
     },
 
@@ -293,6 +294,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.dimensions.series.width -= overflowLeft;
             this.dimensions.customEvent.width -= overflowLeft;
             this.dimensions.xAxis.width -= overflowLeft;
+            this.positions.series.left += overflowLeft;
         }
     },
 
@@ -485,15 +487,32 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Make customEvent dimension.
+     * @param {dimension} seriesDimension series dimension
+     * @returns {dimension} customEvent dimension
+     * @private
+     */
+    _makeCustomEventDimension: function(seriesDimension) {
+        var customEventDimension = tui.util.extend({}, seriesDimension);
+
+        if (this.options.yAxis.isCenter) {
+            customEventDimension.width += this.getDimension('yAxis').width;
+        }
+
+        return customEventDimension;
+    },
+
+    /**
      * Register center componets dimension.
      * @private
      */
     _registerCenterComponentsDimension: function() {
-        var seriesDimension = this._makeSeriesDimension();
+        var seriesDimension = this._makeSeriesDimension(),
+            customEventDimension = this._makeCustomEventDimension(seriesDimension);
 
         this._registerDimension('series', seriesDimension);
         this._registerDimension('tooltip', seriesDimension);
-        this._registerDimension('customEvent', seriesDimension);
+        this._registerDimension('customEvent', customEventDimension);
     },
 
     /**
@@ -507,6 +526,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         if (this.options.yAxis.isCenter) {
             left += (this.getDimension('series').width / 2) - 1;
+            left -= this.xAxisDegree ? 1 : 0;
         }
 
         return left;
@@ -514,12 +534,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register axes type component positions.
-     * @param {position} seriesPosition series position
      * @param {number} leftLegendWidth legend width
      * @private
      */
-    _registerAxisComponentsPosition: function(seriesPosition, leftLegendWidth) {
-        var seriesDimension = this.getDimension('series'),
+    _registerAxisComponentsPosition: function(leftLegendWidth) {
+        var seriesPosition = this.getPosition('series'),
+            seriesDimension = this.getDimension('series'),
             yAxisWidth = this.getDimension('yAxis').width,
             leftAreaWidth = yAxisWidth + seriesDimension.width + leftLegendWidth;
 
@@ -577,13 +597,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register essential components positions.
-     * @param {position} seriesPosition series position
      * @private
      */
-    _registerEssentialComponentsPositions: function(seriesPosition) {
-        var tooltipPosition;
+    _registerEssentialComponentsPositions: function() {
+        var seriesPosition = this.getPosition('series'),
+            tooltipPosition;
 
-        this.positions.series = seriesPosition;
         this.positions.customEvent = seriesPosition;
         this.positions.legend = this._makeLegendPosition();
 
@@ -613,16 +632,19 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
                 left: this.chartLeftPadding + leftLegendWidth
             };
 
-        if (!this.options.yAxis.isCenter) {
-            seriesPosition.left += this.getDimension('yAxis').width;
-        }
+        this.positions.series = seriesPosition;
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();
-            this._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+
+            if (!this.options.yAxis.isCenter) {
+                this.positions.series.left += this.getDimension('yAxis').width;
+            }
+
+            this._registerAxisComponentsPosition(leftLegendWidth);
         }
 
-        this._registerEssentialComponentsPositions(seriesPosition);
+        this._registerEssentialComponentsPositions();
     },
 
     /**

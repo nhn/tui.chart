@@ -228,8 +228,16 @@ describe('boundsMaker', function() {
                 series: {
                     width: 199
                 },
+                customEvent: {
+                    width: 199
+                },
                 xAxis: {
                     width: 200
+                }
+            };
+            boundsMaker.positions = {
+                series: {
+                    left: 0
                 }
             };
 
@@ -239,7 +247,9 @@ describe('boundsMaker', function() {
             expect(boundsMaker.chartLeftPadding).toBe(60);
             expect(boundsMaker.getDimension('plot').width).toBe(150);
             expect(boundsMaker.getDimension('series').width).toBe(149);
+            expect(boundsMaker.getDimension('customEvent').width).toBe(149);
             expect(boundsMaker.getDimension('xAxis').width).toBe(150);
+            expect(boundsMaker.getPosition('series').left).toBe(50);
         });
     });
 
@@ -547,6 +557,35 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_makeCustomEventDimension()', function() {
+        it('yAxis의 isCenter 옵션이 true일 경우에는 series width에 yAxis의 width를 더하여 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.dimensions.yAxis = {
+                width: 50
+            };
+            boundsMaker.options.yAxis.isCenter = true;
+
+            actual = boundsMaker._makeCustomEventDimension({
+                width: 300
+            });
+            expected = 350;
+
+            expect(actual.width).toBe(expected);
+        });
+
+        it('yAxis의 isCenter 옵션이 없을 경우에는 series dimension을 그대로 반환합니다.', function() {
+            var actual, expected;
+
+            actual = boundsMaker._makeCustomEventDimension({
+                width: 300
+            });
+            expected = 300;
+
+            expect(actual.width).toBe(expected);
+        });
+    });
+
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
             spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
@@ -562,6 +601,22 @@ describe('boundsMaker', function() {
             expect(boundsMaker.getDimension('tooltip').height).toBe(200);
             expect(boundsMaker.getDimension('customEvent').width).toBe(300);
             expect(boundsMaker.getDimension('customEvent').height).toBe(200);
+        });
+
+        it('yAxis의 isCenter 옵션이 true일 경우에는 customEvent의 width를 series width에 yAxis의 width를 더하여 설정합니다.', function() {
+            spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
+                width: 300,
+                height: 200
+            });
+
+            boundsMaker.dimensions.yAxis = {
+                width: 50
+            };
+            boundsMaker.options.yAxis.isCenter = true;
+
+            boundsMaker._registerCenterComponentsDimension();
+
+            expect(boundsMaker.getDimension('customEvent').width).toBe(350);
         });
     });
 
@@ -591,11 +646,7 @@ describe('boundsMaker', function() {
 
     describe('_registerAxisComponentsPosition()', function() {
         it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
-            var seriesPosition = {
-                    left: 50,
-                    top: 50
-                },
-                leftLegendWidth = 0;
+            var leftLegendWidth = 0;
 
             boundsMaker.dimensions.series = {
                 width: 300,
@@ -604,8 +655,12 @@ describe('boundsMaker', function() {
             boundsMaker.dimensions.yAxis = {
                 width: 30
             };
+            boundsMaker.positions.series = {
+                left: 50,
+                top: 50
+            };
 
-            boundsMaker._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+            boundsMaker._registerAxisComponentsPosition(leftLegendWidth);
 
             expect(boundsMaker.getPosition('plot').top).toBe(50);
             expect(boundsMaker.getPosition('plot').left).toBe(49);
@@ -619,11 +674,7 @@ describe('boundsMaker', function() {
 
 
         it('yAxis의 isCenter옵션이 true일 경우에는 yAxis의 left값에 series width를 반으로 나눈 값을 더하여 설정합니.', function() {
-            var seriesPosition = {
-                    left: 50,
-                    top: 50
-                },
-                leftLegendWidth = 0;
+            var leftLegendWidth = 0;
 
             boundsMaker.options.yAxis.isCenter = true;
             boundsMaker.dimensions.series = {
@@ -633,8 +684,12 @@ describe('boundsMaker', function() {
             boundsMaker.dimensions.yAxis = {
                 width: 30
             };
+            boundsMaker.positions.series = {
+                left: 50,
+                top: 50
+            };
 
-            boundsMaker._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+            boundsMaker._registerAxisComponentsPosition(leftLegendWidth);
 
             expect(boundsMaker.getPosition('yAxis').left).toBe(159);
         });
@@ -705,21 +760,18 @@ describe('boundsMaker', function() {
 
     describe('_registerEssentialComponentsPositions()', function() {
         it('계산된 series position정보를 이용하여 필수 component들의 position을 등록합니다.', function() {
-            var seriesPosition = {
-                left: 50,
-                top: 50
-            };
-
             spyOn(boundsMaker, '_makeLegendPosition').and.returnValue({
                 top: 30,
                 left: 250
             });
 
             boundsMaker.hasAxes = true;
-            boundsMaker._registerEssentialComponentsPositions(seriesPosition);
+            boundsMaker.positions.series = {
+                left: 50,
+                top: 50
+            };
+            boundsMaker._registerEssentialComponentsPositions();
 
-            expect(boundsMaker.getPosition('series').top).toBe(50);
-            expect(boundsMaker.getPosition('series').left).toBe(50);
             expect(boundsMaker.getPosition('customEvent').top).toBe(50);
             expect(boundsMaker.getPosition('customEvent').left).toBe(50);
             expect(boundsMaker.getPosition('legend').top).toBe(30);

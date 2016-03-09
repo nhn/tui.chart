@@ -76,6 +76,10 @@
           width: 5px;
           height: 1px;
         }
+
+        .tui-chart-tick-line {
+          display:none;
+        }
       }
 
       .tui-chart-label-area {
@@ -127,7 +131,7 @@
         }
       }
 
-      &.right .tui-chart-tick-area, &.center .tui-chart-tick-area.right{
+      &.right .tui-chart-tick-area, &.center .tui-chart-tick-area.opposite-side{
         border-right: none;
         border-left: 1px solid @axis-color;
         .tui-chart-tick {
@@ -144,14 +148,32 @@
         width: 100%;
         text-align: center;
       }
+
+      &.division {
+        .tui-chart-title-area {
+          left: 0;
+          width: auto;
+        }
+
+        .tui-chart-title-area.right {
+          left: auto;
+          right: 0;
+        }
+      }
+
       .tui-chart-tick-area, .tui-chart-label-area {
         left: 0;
       }
 
       .tui-chart-tick-area {
-        border-top: 1px solid @axis-color;
+        .tui-chart-tick-line {
+          top: 0;
+          height: 1px;
+          background-color: @axis-color;
+          position: absolute;
+        }
         .tui-chart-tick {
-          top: 0px;
+          top: 1px;
           width: 1px;
           height: 5px;
         }

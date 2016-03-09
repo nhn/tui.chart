@@ -180,14 +180,14 @@ describe('Axis', function() {
         });
     });
 
-    describe('_renderRightTickArea()', function() {
+    describe('_renderOppositeSideTickArea()', function() {
         it('isCenter 옵션으로 인해 중앙에 배치될 경우 기존의 tick area html을 복사하며 우측을 표현하는 tick area를 추가적으로 생성하여 반환합니다.', function() {
             var actual, expectedHtml, expectedClass;
 
             axis.options.isCenter = true;
-            actual = axis._renderRightTickArea('html');
+            actual = axis._renderOppositeSideTickArea('html');
             expectedHtml = 'html';
-            expectedClass = 'tui-chart-tick-area right';
+            expectedClass = 'tui-chart-tick-area opposite-side';
 
             expect(actual.innerHTML).toBe(expectedHtml);
             expect(actual.className).toBe(expectedClass);
@@ -197,10 +197,10 @@ describe('Axis', function() {
     describe('_addCssClasses()', function() {
         it('isVertical이 true인 경우에는 container의 css className에 vertical 값을 설정합니다.', function() {
             var container = dom.create('DIV'),
-                isVertical = true,
                 actual, expected;
 
-            axis._addCssClasses(container, isVertical);
+            axis.data.isVertical = true;
+            axis._addCssClasses(container);
             actual = container.className;
             expected = 'vertical';
 
@@ -223,7 +223,8 @@ describe('Axis', function() {
                 isPositionRight = true,
                 actual, expected;
 
-            axis._addCssClasses(container, null, isPositionRight);
+            axis.data.isPositionRight = true;
+            axis._addCssClasses(container);
             actual = container.className;
             expected = 'right';
 
@@ -269,9 +270,7 @@ describe('Axis', function() {
         it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.', function() {
             var elTitle = dom.create('DIV');
 
-            axis._renderTitleAreaStyle(elTitle, {
-                size: 50
-            });
+            axis._renderTitleAreaStyle(elTitle, 50);
 
             // 세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.
             expect(elTitle.style.width).toBe('50px');
@@ -286,10 +285,9 @@ describe('Axis', function() {
         it('우측 y axis 타이틀 영역의 css style을 렌더링합니다. 우측에 배치되기 때문에 right값으로 설정됩니다.', function() {
             var elTitle = dom.create('DIV');
 
-            axis._renderTitleAreaStyle(elTitle, {
-                size: 50,
-                isPositionRight: true
-            });
+            axis.data.isPositionRight = true;
+            axis._renderTitleAreaStyle(elTitle, 50);
+
             expect(elTitle.style.width).toBe('50px');
 
             if (renderUtil.isIE7()) {
@@ -315,10 +313,9 @@ describe('Axis', function() {
                     };
                 }
             });
+            axis.options.title = 'Title';
             axis.options.isCenter = true;
-            axis._renderTitleAreaStyle(elTitle, {
-                title: 'Title'
-            });
+            axis._renderTitleAreaStyle(elTitle);
 
             expect(elTitle.style.left).toBe('15px');
             expect(elTitle.style.bottom).toBe('-30px');
@@ -327,14 +324,12 @@ describe('Axis', function() {
 
     describe('_renderTitleArea()', function() {
         it('타이틀이 있을 경우에는 타이틀 영역이 설정값 대로 정상 렌더링됩니다.', function() {
-            var elTitle = axis._renderTitleArea({
-                title: 'Axis Title',
-                theme: {
-                    fontSize: 12
-                },
-                isVertical: true,
-                size: 200
-            });
+            var elTitle;
+
+            axis.options.title = 'Axis Title';
+            axis.theme.fontSize = 12;
+            axis.data.isVertical = true;
+            elTitle = axis._renderTitleArea(200);
 
             expect(elTitle.innerHTML).toBe('Axis Title');
             expect(elTitle.style.width).toBe('200px');
@@ -343,14 +338,10 @@ describe('Axis', function() {
             var elTitle;
 
             axis.options.title = '';
-            elTitle = axis._renderTitleArea({
-                title: '',
-                theme: {
-                    fontSize: 12
-                },
-                isVertical: true,
-                size: 200
-            });
+            axis.theme.fontSize = 12;
+            axis.data.isVertical = true;
+            elTitle = axis._renderTitleArea(200);
+
             expect(elTitle).toBeNull();
         });
     });
@@ -358,36 +349,35 @@ describe('Axis', function() {
 
     describe('_renderTickArea()', function() {
         it('axis 영역의 너비가 300이고 tick count가 5인 x축(레이블 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 좌측에서 부터 렌더링 됩니다.', function() {
-            var elTickArea, childNodes;
+            var size = 300,
+                tickCount = 5,
+                categories = [],
+                elTickArea, childNodes;
 
-            axis.data = {
-                tickCount: 5,
-                labels: [],
-                isLabelAxis: true,
-                isVertical: false
-            };
+            axis.data.isVertical = false;
 
-            elTickArea = axis._renderTickArea(300);
+            elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toBe(5);
-            expect(childNodes[0].style.left).toBe('0px');
-            expect(childNodes[1].style.left).toBe('75px');
-            expect(childNodes[2].style.left).toBe('150px');
-            expect(childNodes[3].style.left).toBe('224px');
-            expect(childNodes[4].style.left).toBe('299px');
+            expect(childNodes.length).toBe(6);
+            expect(childNodes[0].className).toBe('tui-chart-tick-line');
+            expect(childNodes[1].style.left).toBe('0px');
+            expect(childNodes[2].style.left).toBe('75px');
+            expect(childNodes[3].style.left).toBe('150px');
+            expect(childNodes[4].style.left).toBe('224px');
+            expect(childNodes[5].style.left).toBe('299px');
         });
 
         it('axis 영역의 높이가 300이고 tick count가 5인 y축(벨류 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 밑에서 부터 렌더링 됩니다.', function() {
-            var elTickArea, childNodes;
+            var size = 300,
+                tickCount = 5,
+                categories = [],
+                elTickArea, childNodes;
 
-            axis.data = {
-                tickCount: 5,
-                labels: [],
-                isLabelAxis: false,
-                isVertical: true
-            };
-            elTickArea = axis._renderTickArea(300);
+            axis.data.isLabelAxis = false;
+            axis.data.isVertical = true;
+
+            elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;
 
             expect(childNodes.length).toBe(5);
@@ -400,23 +390,23 @@ describe('Axis', function() {
 
 
         it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
-            var elTickArea, childNodes;
+            var size = 300,
+                tickCount = 5,
+                categories = ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
+                elTickArea, childNodes;
 
-            axis.data = {
-                tickCount: 5,
-                labels: ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
-                isLabelAxis: true,
-                isVertical: false,
-                aligned: true
-            };
+            axis.data.isLabelAxis = true;
+            axis.data.isVertical = false;
+            axis.data.aligned = true;
 
-            elTickArea = axis._renderTickArea(300);
+            elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toBe(3);
-            expect(childNodes[0].style.left).toBe('0px');
-            expect(childNodes[1].style.left).toBe('75px');
-            expect(childNodes[2].style.left).toBe('299px');
+            expect(childNodes.length).toBe(4);
+            expect(childNodes[0].className).toBe('tui-chart-tick-line');
+            expect(childNodes[1].style.left).toBe('0px');
+            expect(childNodes[2].style.left).toBe('75px');
+            expect(childNodes[3].style.left).toBe('299px');
         });
     });
 
@@ -430,14 +420,16 @@ describe('Axis', function() {
 
     describe('_renderLabelArea()', function() {
         it('axis 영역의 너비가 300인 레이블 타입 x축 레이블 영역은 너비 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
-            var elLabelArea, childNodes;
+            var size = 300,
+                axisWidth = 0,
+                tickCount = 4,
+                categories = ['label1', 'label2', 'label3'],
+                elLabelArea, childNodes;
 
-            elLabelArea = axis._renderLabelArea({
-                labels: ['label1', 'label2', 'label3'],
-                tickCount: 4,
-                isLabelAxis: true,
-                isVertical: false
-            }, 300);
+            axis.data.isLabelAxis = true;
+            axis.data.isVertical = false;
+
+            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -453,14 +445,16 @@ describe('Axis', function() {
         });
 
         it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
-            var elLabelArea, childNodes;
+            var size = 300,
+                axisWidth = 100,
+                tickCount = 4,
+                categories = ['label1', 'label2', 'label3'],
+                elLabelArea, childNodes;
 
-            elLabelArea = axis._renderLabelArea({
-                labels: ['label1', 'label2', 'label3'],
-                tickCount: 4,
-                isLabelAxis: true,
-                isVertical: true
-            }, 300, 100);
+            axis.data.isLabelAxis = true;
+            axis.data.isVertical = true;
+
+            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -479,12 +473,13 @@ describe('Axis', function() {
         });
 
         it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
-            var elLabelArea, childNodes;
+            var size = 300,
+                axisWidth = 0,
+                tickCount = 3,
+                categories = ['0.00', '30.00', '60.00'],
+                elLabelArea, childNodes;
 
-            elLabelArea = axis._renderLabelArea({
-                labels: ['0.00', '30.00', '60.00'],
-                tickCount: 3
-            }, 300);
+            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -502,13 +497,15 @@ describe('Axis', function() {
         });
 
         it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
-            var elLabelArea, childNodes;
+            var size = 300,
+                axisWidth = 100,
+                tickCount = 3,
+                categories = ['0.00', '30.00', '60.00'],
+                elLabelArea, childNodes;
 
-            elLabelArea = axis._renderLabelArea({
-                labels: ['0.00', '30.00', '60.00'],
-                tickCount: 3,
-                isVertical: true
-            }, 300, 100);
+            axis.data.isVertical = true;
+
+            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
@@ -775,37 +772,149 @@ describe('Axis', function() {
         });
     });
 
-    describe('_renderAxisArea()', function() {
+    describe('_renderDivisionAxisArea()', function() {
+        it('분할 axis영역을 렌더링 합니다.', function() {
+            var container = dom.create('DIV');
 
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
+            };
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+
+            axis._renderDivisionAxisArea(container, 300);
+
+            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(container.childNodes[1].className).toBe('tui-chart-label-area');
+            expect(container.childNodes[2].className).toBe('tui-chart-tick-area');
+            expect(container.childNodes[2].firstChild.className).toBe('tui-chart-tick-line');
+            expect(container.childNodes[2].firstChild.style.width).toBe('150px');
+            expect(container.childNodes[3].className).toBe('tui-chart-title-area right');
+            expect(container.childNodes[4].className).toBe('tui-chart-label-area');
+            expect(container.childNodes[5].className).toBe('tui-chart-tick-area');
+        });
+    });
+
+    describe('_renderSingleAxisArea()', function() {
+        it('단독 axis영역을 렌더링 합니다.', function() {
+            var container = dom.create('DIV');
+
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
+            };
+
+            axis._renderSingleAxisArea(container, {
+                width: 300,
+                height: 50
+            });
+
+            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(container.childNodes[1].className).toBe('tui-chart-label-area');
+            expect(container.childNodes[2].className).toBe('tui-chart-tick-area');
+            expect(container.childNodes[2].firstChild.className).toBe('tui-chart-tick-line');
+            expect(container.childNodes[2].firstChild.style.width).toBe('300px');
+        });
     });
 
     describe('_renderAxisArea()', function() {
-        it('axis의 전체 영역을 렌더링 합니다.', function() {
-            var container = dom.create('DIV'),
-                data = {
-                    labels: ['label1', 'label2', 'label3'],
-                    tickCount: 4,
-                    isLabelAxis: true,
-                    isVertical: false
-                };
+        it('axis의 전체 영역을 렌더링하면 className을 설정하고 dimension과 position을 설정합니다.', function() {
+            var container = dom.create('DIV');
 
             boundsMaker.getDimension.and.returnValue({
-                width: 100,
-                height: 200
+                width: 300,
+                height: 50
             });
             boundsMaker.getPosition.and.returnValue({
                 top: 20
             });
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
+            };
 
-            axis._renderAxisArea(container, data);
+            axis._renderAxisArea(container);
 
-            expect(container.style.width).toBe('100px');
-            expect(container.style.height).toBe('200px');
+            expect(container.style.width).toBe('300px');
+            expect(container.style.height).toBe('50px');
             expect(container.style.top).toBe('20px');
-            expect(dom.hasClass(container, 'horizontal')).toBeTruthy();
-            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
-            expect(container.childNodes[1].className).toBe('tui-chart-tick-area');
-            expect(container.childNodes[2].className).toBe('tui-chart-label-area');
+            expect(dom.hasClass(container, 'horizontal')).toBe(true);
+        });
+
+        it('isDivision이 true이면 _renderDivisionAxisArea()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
+            var container = dom.create('DIV');
+
+
+            spyOn(axis, '_renderSingleAxisArea');
+            spyOn(axis, '_renderDivisionAxisArea');
+            boundsMaker.getDimension.and.callFake(function(type) {
+                if (type === 'yAxis') {
+                    return {
+                        width: 80
+                    };
+                } else if (type === 'xAxis') {
+                    return {
+                        width: 300,
+                        height: 50
+                    };
+                }
+            });
+
+            boundsMaker.getPosition.and.returnValue({
+                top: 20
+            });
+
+            axis.componentName = 'xAxis';
+            axis.options.isDivision = true;
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
+            };
+
+            axis._renderAxisArea(container);
+
+            expect(container.style.width).toBe('380px');
+            expect(axis._renderSingleAxisArea).not.toHaveBeenCalled();
+            expect(axis._renderDivisionAxisArea).toHaveBeenCalled();
+        });
+
+        it('isDivision이 truer가 아니면 _renderSingleAxisArea()를 수행합니다.', function() {
+            var container = dom.create('DIV');
+
+
+            spyOn(axis, '_renderSingleAxisArea');
+            spyOn(axis, '_renderDivisionAxisArea');
+            boundsMaker.getDimension.and.callFake(function(type) {
+                if (type === 'yAxis') {
+                    return {
+                        width: 80
+                    };
+                } else if (type === 'xAxis') {
+                    return {
+                        width: 300,
+                        height: 50
+                    };
+                }
+            });
+
+            boundsMaker.getPosition.and.returnValue({
+                top: 20
+            });
+
+            axis.componentName = 'xAxis';
+            axis.data = {
+                labels: ['label1', 'label2', 'label3'],
+                tickCount: 4
+            };
+
+            axis._renderAxisArea(container);
+
+            expect(container.style.width).toBe('300px');
+            expect(axis._renderSingleAxisArea).toHaveBeenCalled();
+            expect(axis._renderDivisionAxisArea).not.toHaveBeenCalled();
         });
     });
 
