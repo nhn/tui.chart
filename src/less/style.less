@@ -27,7 +27,7 @@
     padding: 10px 0;
   }
   .tui-chart-axis-area {
-    z-index: 200;
+    z-index: 300;
     position: absolute;
 
     .tui-chart-title-area {
@@ -101,20 +101,37 @@
           left: 0;
         }
 
-        .tui-chart-tick-area {
-          border-right: none;
-          border-left: 1px solid @axis-color;
-          .tui-chart-tick {
-            left: 0;
-          }
-        }
-
         .tui-chart-label-area {
           .tui-chart-label {
             text-align: left;
             padding-right: 0;
             padding-left: 10px;
           }
+        }
+      }
+
+      &.center {
+        .tui-chart-title-area {
+          width: 100% !important;
+          .rotate(0deg);
+          filter: none;
+          top: auto;
+        }
+
+        .tui-chart-label-area {
+          left: 0;
+          width: 100% !important;
+          .tui-chart-label {
+            text-align: center;
+          }
+        }
+      }
+
+      &.right .tui-chart-tick-area, &.center .tui-chart-tick-area.right{
+        border-right: none;
+        border-left: 1px solid @axis-color;
+        .tui-chart-tick {
+          left: 0;
         }
       }
     }
@@ -206,7 +223,7 @@
   }
 
   .tui-chart-series-area {
-    z-index: 400;
+    z-index: 200;
     position: absolute;
     &:first-child {
       overflow: visible;
@@ -313,7 +330,7 @@
   }
 
   .tui-chart-legend-area {
-    z-index: 300;
+    z-index: 400;
     position: absolute;
     padding: 10px;
     .user-select();
@@ -528,5 +545,3 @@
     }
   }
 }
-
-
