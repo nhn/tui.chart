@@ -565,11 +565,11 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_makeYAxisLeftPosition()', function() {
+    describe('_calculateYAxisLeftPosition()', function() {
         it('yAxis의 left position은 chartLeftPadding값에 전달받은 leftLegendWidth값을 더하여 반환합니다.', function() {
             var actual, expected;
 
-            actual = boundsMaker._makeYAxisLeftPosition(0);
+            actual = boundsMaker._calculateYAxisLeftPosition(0);
             expected = 10;
 
             expect(actual).toBe(expected);
@@ -582,7 +582,7 @@ describe('boundsMaker', function() {
             boundsMaker.dimensions.series = {
                 width: 300
             };
-            actual = boundsMaker._makeYAxisLeftPosition(0);
+            actual = boundsMaker._calculateYAxisLeftPosition(0);
             expected = 159;
 
             expect(actual).toBe(expected);

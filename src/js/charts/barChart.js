@@ -45,7 +45,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
             this.hasRightYAxis = options.yAxis && tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 
-            options.yAxis.isCenter = predicate.isCenterYAxisAlign(this.hasRightYAxis, options.yAxis.align);
+            options.yAxis.isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
         }
 
         ChartBase.call(this, {

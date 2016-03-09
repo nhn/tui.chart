@@ -129,7 +129,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = predicate.isOuterLegendAlign(options.legendAlign) && options.showLabel,
+            isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
 
@@ -427,7 +427,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderSeriesLabel: function(seriesLabelContainer) {
         var legendAlign = this.legendAlign;
 
-        if (predicate.isOuterLegendAlign(legendAlign)) {
+        if (predicate.isLegendAlignOuter(legendAlign)) {
             this._renderOuterLegend(seriesLabelContainer);
         } else {
             this._renderCenterLegend(seriesLabelContainer);

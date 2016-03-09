@@ -61,12 +61,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.chartType = params.chartType;
 
         /**
-         * chart left padding
-         * @type {number}
-         */
-        this.chartLeftPadding = chartConst.CHART_PADDING;
-
-        /**
          * data processor
          * @type {DataProcessor}
          */
@@ -100,6 +94,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.axesData = {};
 
         this.xAxisDegree = 0;
+
+        /**
+         * chart left padding
+         * @type {number}
+         */
+        this.chartLeftPadding = chartConst.CHART_PADDING;
 
         if (chartOption) {
             this.options.chart = chartOption;
@@ -291,6 +291,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.chartLeftPadding += overflowLeft;
             this.dimensions.plot.width -= overflowLeft;
             this.dimensions.series.width -= overflowLeft;
+            this.dimensions.customEvent.width -= overflowLeft;
             this.dimensions.xAxis.width -= overflowLeft;
         }
     },
@@ -496,12 +497,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Make yAxis left position of yAxis.
-     * @param {number} leftLegendWidth
+     * Calculate yAxis left position of yAxis.
+     * @param {number} leftLegendWidth left legend width
      * @returns {number} left position value of yAxis
      * @private
      */
-    _makeYAxisLeftPosition: function(leftLegendWidth) {
+    _calculateYAxisLeftPosition: function(leftLegendWidth) {
         var left = this.chartLeftPadding + leftLegendWidth;
 
         if (this.options.yAxis.isCenter) {
@@ -529,7 +530,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         this.positions.yAxis = {
             top: seriesPosition.top,
-            left: this._makeYAxisLeftPosition(leftLegendWidth)
+            left: this._calculateYAxisLeftPosition(leftLegendWidth)
         };
 
         this.positions.xAxis = {
@@ -555,13 +556,13 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             top = dimensions.title.height,
             yAxisAreaWidth, left;
 
-        if (predicate.isBottomLegendAlign(legendOption.align)) {
+        if (predicate.isLegendAlignBottom(legendOption.align)) {
             top += sereisDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
         }
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
             left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
-        } else if (predicate.isLeftLegendAlign(legendOption.align)) {
+        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
             left = 0;
         } else {
             yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
@@ -605,8 +606,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _registerPositions: function() {
         var alignOption = this.options.legend.align,
             legendDimension = this.getDimension('legend'),
-            topLegendHeight = predicate.isTopLegendAlign(alignOption) ? legendDimension.height : 0,
-            leftLegendWidth = predicate.isLeftLegendAlign(alignOption) ? legendDimension.width : 0,
+            topLegendHeight = predicate.isLegendAlignTop(alignOption) ? legendDimension.height : 0,
+            leftLegendWidth = predicate.isLegendAlignLeft(alignOption) ? legendDimension.width : 0,
             seriesPosition = {
                 top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
                 left: this.chartLeftPadding + leftLegendWidth

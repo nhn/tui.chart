@@ -101,41 +101,29 @@ describe('Axis', function() {
 
     describe('registerDimension()', function() {
         it('_isValidAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            var actualDimensions = {};
-
             spyOn(axis, '_isValidAxis').and.returnValues(false);
             axis.componentName = 'yAxis';
 
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
-
             axis.registerDimension();
 
-            expect(actualDimensions[axis.componentName]).toBeUndefined();
+            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
         });
 
         it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
-            var actualDimensions = {},
-                expected = {
+            var expected = {
                     height: 60
                 };
 
             axis.componentName = 'xAxis';
             axis.componentType = 'xAxis';
 
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
-
             axis.registerDimension();
 
-            expect(actualDimensions[axis.componentName]).toEqual(expected);
+            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
         });
 
         it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
-            var actualDimensions = {},
-                expected = {
+            var expected = {
                     width: 97
                 };
 
@@ -144,51 +132,36 @@ describe('Axis', function() {
             axis.isLabel = true;
 
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.componentName]).toEqual(expected);
+            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
         });
 
         it('componentType이 xAxis가 아니면서 isLabel이 true가 아니면 boundsMaker에 등록하지 않습니다.', function() {
-            var actualDimensions = {};
-
             axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
 
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
 
             axis.registerDimension();
 
-            expect(actualDimensions[axis.componentName]).toBeUndefined();
+            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
         });
     });
 
     describe('registerAdditionalDimension()', function() {
         it('_isInvalidRightYAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            var actualDimensions = {};
-
             spyOn(axis, '_isValidAxis').and.returnValues(false);
             axis.componentName = 'yAxis';
 
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
-
             axis.registerAdditionalDimension();
 
-            expect(actualDimensions[axis.componentName]).toBeUndefined();
+            expect(boundsMaker.registerBaseDimension).not.toHaveBeenCalled();
         });
 
         it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
-            var actualDimensions = {},
-                expected = {
+            var expected = {
                     width: 97
                 };
 
@@ -200,13 +173,10 @@ describe('Axis', function() {
                     labels: ['label1', 'label2']
                 }
             };
-            boundsMaker.registerBaseDimension.and.callFake(function(name, dimension) {
-                actualDimensions[name] = dimension;
-            });
 
             axis.registerAdditionalDimension();
 
-            expect(actualDimensions[axis.componentName]).toEqual(expected);
+            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith(axis.componentName, expected);
         });
     });
 
@@ -327,6 +297,7 @@ describe('Axis', function() {
             } else {
                 expect(elTitle.style.right).toBe('-50px');
             }
+
             expect(elTitle.style.top).toBe('0px');
         });
 
@@ -598,65 +569,75 @@ describe('Axis', function() {
 
     describe('_calculateRotationMovingPosition()', function() {
         it('xAxis label 회전 시 위치해야 할 position을 계산합니다.', function() {
-            var actual = axis._calculateRotationMovingPosition({
-                    degree: 25,
-                    left: 40,
-                    moveLeft: 20,
-                    top: 30
-                }),
-                expected = {
-                    top: 30,
-                    left: 20
-                };
+            var actual, expected;
+
+            axis.boundsMaker.xAxisDegree = 25;
+            actual = axis._calculateRotationMovingPosition({
+                left: 40,
+                moveLeft: 20,
+                top: 30
+            });
+            expected = {
+                top: 30,
+                left: 20
+            };
             expect(actual).toEqual(expected);
         });
 
         it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
-            var actual = axis._calculateRotationMovingPosition({
-                    degree: 85,
-                    labelHeight: 20,
-                    left: 40,
-                    moveLeft: 20,
-                    top: 30
-                }),
-                expected = {
-                    top: 30,
-                    left: 10.038053019082547
-                };
+            var actual, expected;
+
+            axis.boundsMaker.xAxisDegree = 85;
+            actual = axis._calculateRotationMovingPosition({
+                labelHeight: 20,
+                left: 40,
+                moveLeft: 20,
+                top: 30
+            });
+            expected = {
+                top: 30,
+                left: 10.038053019082547
+            };
+
             expect(actual).toEqual(expected);
         });
     });
 
     describe('_calculateRotationMovingPositionForIE8()', function() {
         it('IE8은 회전 방식이 다르기 때문에 계산결과가 다릅니다.', function() {
-            var actual = axis._calculateRotationMovingPositionForIE8({
-                    degree: 25,
-                    labelWidth: 40,
-                    labelHeight: 20,
-                    left: 40,
-                    label: 'label1',
-                    theme: {}
-                }),
-                expected = {
-                    top: 10,
-                    left: 24.684610648167506
-                };
+            var actual, expected;
+
+            axis.boundsMaker.xAxisDegree = 25;
+            actual = axis._calculateRotationMovingPositionForIE8({
+                labelWidth: 40,
+                labelHeight: 20,
+                left: 40,
+                label: 'label1',
+                theme: {}
+            });
+            expected = {
+                top: 10,
+                left: 24.684610648167506
+            };
             expect(actual).toEqual(expected);
         });
 
         it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
-            var actual = axis._calculateRotationMovingPositionForIE8({
-                    degree: 85,
-                    labelWidth: 20,
-                    labelHeight: 20,
-                    left: 40,
-                    label: 'label1',
-                    theme: {}
-                }),
-                expected = {
-                    top: 10,
-                    left: 65.68026588169964
-                };
+            var actual, expected;
+
+            axis.boundsMaker.xAxisDegree = 85;
+            actual = axis._calculateRotationMovingPositionForIE8({
+                degree: 85,
+                labelWidth: 20,
+                labelHeight: 20,
+                left: 40,
+                label: 'label1',
+                theme: {}
+            });
+            expected = {
+                top: 10,
+                left: 65.68026588169964
+            };
             expect(actual).toEqual(expected);
         });
     });
@@ -841,15 +822,11 @@ describe('Axis', function() {
         });
 
         it('_isInvalidRightYAxis()가 false이서 this.options가 있을 경우 options의 내용을 갱신하면서 _renderAxisArea()를 수행합니다.', function() {
-            var acutal = false,
-                options = {
+            var options = {
                     title: 'ABC'
-                },
-                expected = true;
+                };
 
-            spyOn(axis, '_renderAxisArea').and.callFake(function() {
-                acutal = true;
-            });
+            spyOn(axis, '_renderAxisArea');
 
             axis.axisContainer = dom.create('DIV');
             axis.options = {};
@@ -858,7 +835,7 @@ describe('Axis', function() {
             });
 
             expect(axis.options).toEqual(options);
-            expect(acutal).toBe(expected);
+            expect(axis._renderAxisArea).toHaveBeenCalled();
         });
     });
 });

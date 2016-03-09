@@ -105,6 +105,7 @@ var predicate = {
 
     /**
      * Whether mouse position chart or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -113,62 +114,63 @@ var predicate = {
     },
 
     /**
-     * Whether outer legend align or not.
+     * Whether align of legend is outer or not.
      * @memberOf module:predicate
      * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isOuterLegendAlign: function(align) {
+    isLegendAlignOuter: function(align) {
         return align === chartConst.LEGEND_ALIGN_OUTER;
     },
 
     /**
-     * Whether center legend align or not.
+     * Whether align of legend is center or not.
      * @memberOf module:predicate
      * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isCenterLegendAlign: function(align) {
+    isLegendAlignCenter: function(align) {
         return align === chartConst.LEGEND_ALIGN_CENTER;
     },
 
     /**
-     * Whether left legend align or not.
+     * Whether align of legend is left or not.
      * @memberOf module:predicate
      * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isLeftLegendAlign: function(align) {
+    isLegendAlignLeft: function(align) {
         return align === chartConst.LEGEND_ALIGN_LEFT;
     },
 
     /**
-     * Whether top legend align or not.
+     * Whether align of legend is top or not.
      * @memberOf module:predicate
      * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isTopLegendAlign: function(align) {
+    isLegendAlignTop: function(align) {
         return align === chartConst.LEGEND_ALIGN_TOP;
     },
 
     /**
-     * Whether bottom legend align or not.
+     * Whether align of legend is bottom or not.
      * @memberOf module:predicate
      * @param {string} align legend type
      * @returns {boolean} result boolean
      */
-    isBottomLegendAlign: function(align) {
+    isLegendAlignBottom: function(align) {
         return align === chartConst.LEGEND_ALIGN_BOTTOM;
     },
 
     /**
      * Whether horizontal legend align or not.
+     * @memberOf module:predicate
      * @param {string} align align
      * @returns {boolean} result boolean
      */
     isHorizontalLegend: function(align) {
-        return this.isTopLegendAlign(align) || this.isBottomLegendAlign(align);
+        return this.isLegendAlignTop(align) || this.isLegendAlignBottom(align);
     },
 
     /**
@@ -180,13 +182,14 @@ var predicate = {
     isPieLegendAlign: function(align) {
         var result = false;
         if (align) {
-            result = this.isOuterLegendAlign(align) || this.isCenterLegendAlign(align);
+            result = this.isLegendAlignOuter(align) || this.isLegendAlignCenter(align);
         }
         return result;
     },
 
     /**
      * Whether allowed stacked option or not.
+     * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
@@ -196,6 +199,7 @@ var predicate = {
 
     /**
      * Whether normal stacked or not.
+     * @memberOf module:predicate
      * @param {boolean} stacked stacked option
      * @returns {boolean} result boolean
      */
@@ -205,6 +209,7 @@ var predicate = {
 
     /**
      * Whether percent stacked or not.
+     * @memberOf module:predicate
      * @param {boolean} stacked stacked option
      * @returns {boolean} result boolean
      */
@@ -214,6 +219,7 @@ var predicate = {
 
     /**
      * Whether valid stacked option or not.
+     * @memberOf module:predicate
      * @param {boolean} stacked stacked option
      * @returns {boolean} result boolean
      */
@@ -228,7 +234,7 @@ var predicate = {
      * @param {string} alignOption align option of yAxis.
      * @returns {boolean} whether align center or not.
      */
-    isCenterYAxisAlign: function(hasRightYAxis, alignOption) {
+    isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
         return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
     }
 };

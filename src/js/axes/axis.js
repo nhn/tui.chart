@@ -28,12 +28,47 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      *      @param {object} params.options axis options
      */
     init: function(params) {
-        tui.util.extend(this, params);
         /**
          * Axis view className
          * @type {string}
          */
         this.className = 'tui-chart-axis-area';
+
+        /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
+         * Bounds maker
+         * @type {BoundsMaker}
+         */
+        this.boundsMaker = params.boundsMaker;
+
+        /**
+         * Options
+         * @type {object}
+         */
+        this.options = params.options || {};
+
+        /**
+         * Theme
+         * @type {object}
+         */
+        this.theme = params.theme;
+
+        /**
+         * Whether label type or not.
+         * @type {boolean}
+         */
+        this.isLabel = params.isLabel;
+
+        /**
+         * Data for rendering
+         * @type {object}
+         */
+        this.data = {};
     },
 
     /**
@@ -434,7 +469,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Calculate rotation moving position.
      * @param {object} params parameters
-     *      @param {number} params.degree rotation degree
      *      @param {number} params.labelHeight label height
      *      @param {number} params.left normal left
      *      @param {number} params.moveLeft move left
@@ -443,10 +477,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _calculateRotationMovingPosition: function(params) {
-        var moveLeft = params.moveLeft;
+        var moveLeft = params.moveLeft,
+            degree = this.boundsMaker.xAxisDegree;
 
-        if (params.degree === chartConst.ANGLE_85) {
-            moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2);
+        if (degree === chartConst.ANGLE_85) {
+            moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
         }
 
         return {
@@ -458,7 +493,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Calculate rotation moving position for ie8.
      * @param {object} params parameters
-     *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
      *      @param {number} params.labelHeight label height
      *      @param {number} params.left normal left
@@ -469,12 +503,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _calculateRotationMovingPositionForIE8: function(params) {
         var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme),
-            smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - params.degree, params.labelHeight / 2),
-            newLabelWidth = (calculator.calculateAdjacent(params.degree, labelWidth / 2) + smallAreaWidth) * 2,
+            degree = this.boundsMaker.xAxisDegree,
+            smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2),
+            newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2,
             collectLeft = labelWidth - newLabelWidth,
             moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
 
-        if (params.degree === chartConst.ANGLE_85) {
+        if (degree === chartConst.ANGLE_85) {
             moveLeft += smallAreaWidth;
         }
 
@@ -487,7 +522,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make cssText for rotation moving.
      * @param {object} params parameters
-     *      @param {number} params.degree rotation degree
      *      @param {number} params.labelWidth label width
      *      @param {number} params.labelHeight label height
      *      @param {number} params.left normal left
@@ -533,7 +567,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             labelsHtml = tui.util.map(params.positions, function(position, index) {
                 var label = params.labels[index],
                     rotationCssText = self._makeCssTextForRotationMoving({
-                        degree: params.degree,
                         labelHeight: labelHeight,
                         labelWidth: params.labelSize,
                         top: top,
