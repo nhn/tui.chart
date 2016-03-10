@@ -192,7 +192,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render division axis area.
+     Render division xAxis area if yAxis rendered in the center.
      * @param {HTMLElement} axisContainer axis container element
      * @param {number} width axis area width
      * @private
@@ -225,7 +225,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render single axis area.
+     * Render single axis area if yAxis did not rendered in the center.
      * @param {HTMLElement} axisContainer axis container element
      * @param {{width: number, height: number}} dimension axis area dimension
      * @private
