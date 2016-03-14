@@ -56,7 +56,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
          * Theme
          * @type {object}
          */
-        this.theme = params.theme;
+        this.theme = params.theme || {};
 
         /**
          * Whether label type or not.
@@ -187,8 +187,35 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _addCssClasses: function(axisContainer) {
         dom.addClass(axisContainer, this.data.isVertical ? 'vertical' : 'horizontal');
         dom.addClass(axisContainer, this.options.isCenter ? 'center' : '');
-        dom.addClass(axisContainer, this.options.isDivision ? 'division' : '');
+        dom.addClass(axisContainer, this.options.divided ? 'division' : '');
         dom.addClass(axisContainer, this.data.isPositionRight ? 'right' : '');
+    },
+
+
+    /**
+     * Render child containers like title area, lable area and tick area.
+     * @param {number} size xAxis width or yAxis height
+     * @param {number} width axis width
+     * @param {number} tickCount tick count
+     * @param {Array.<number|string>} categories categories
+     * @param {number} additionalWidth aditional width
+     * @returns {Array.<HTMLElement>} child containers
+     * @private
+     */
+    _renderChildContainers: function(size, width, tickCount, categories, additionalWidth) {
+        var titleContainer = this._renderTitleArea(size),
+            labelContainer = this._renderLabelArea(size, width, tickCount, categories, additionalWidth),
+            childContainers = [titleContainer, labelContainer],
+            isLineType = this.data.isVertical && this.data.aligned,
+            tickContainer, oppositeSideTickContainer;
+
+            if (!isLineType) {
+                tickContainer = this._renderTickArea(size, tickCount, categories, additionalWidth);
+                oppositeSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
+                childContainers = childContainers.concat([tickContainer, oppositeSideTickContainer]);
+            }
+
+        return childContainers;
     },
 
     /**
@@ -198,30 +225,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderDivisionAxisArea: function(axisContainer, width) {
-        var self = this,
-            halfWidth = width / 2,
+        var halfWidth = width / 2,
             tickCount = this.data.tickCount,
             halfTickCount = parseInt(tickCount / 2, 10) + 1,
-            catetories = this.data.labels,
-            leftCategories = catetories.slice(0, halfTickCount),
-            rightCategories = catetories.slice(halfTickCount - 1, tickCount),
-            additionWidths = [0, halfWidth + this.boundsMaker.getDimension('yAxis').width],
-            containers = [],
-            rightTitleContainer;
+            categories = this.data.labels,
+            leftCategories = categories.slice(0, halfTickCount),
+            rightCategories = categories.slice(halfTickCount - 1, tickCount),
+            additionWidth = halfWidth + this.boundsMaker.getDimension('yAxis').width,
+            leftContainers, rightContainers, rightTitleContainer;
 
-        tui.util.forEachArray([leftCategories, rightCategories], function(categories, index) {
-            var additionWidth = additionWidths[index],
-                titleContainer = self._renderTitleArea(),
-                labelContainer = self._renderLabelArea(halfWidth, halfWidth, halfTickCount, categories, additionWidth),
-                tickContainer = self._renderTickArea(halfWidth, halfTickCount, categories, additionWidth);
+        leftContainers = this._renderChildContainers(halfWidth, halfWidth, halfTickCount, leftCategories);
+        rightContainers = this._renderChildContainers(halfWidth, halfWidth, halfTickCount, rightCategories, additionWidth);
 
-            containers = containers.concat([titleContainer, labelContainer, tickContainer]);
-        });
-
-        rightTitleContainer = containers[3];
-
+        rightTitleContainer = rightContainers[0];
         dom.addClass(rightTitleContainer, 'right');
-        dom.append(axisContainer, containers);
+        dom.append(axisContainer, leftContainers.concat(rightContainers));
     },
 
     /**
@@ -233,19 +251,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _renderSingleAxisArea: function(axisContainer, dimension) {
         var isVertical = !!this.data.isVertical,
             size = isVertical ? dimension.height : dimension.width,
-            tickCount = this.data.tickCount,
-            categories = this.data.labels,
-
-            titleContainer = this._renderTitleArea(size),
-            labelContainer = this._renderLabelArea(size, dimension.width, tickCount, categories),
-            childContainers = [titleContainer, labelContainer],
-            tickContainer, oppositSideTickContainer;
-
-        if (!isVertical || !this.data.aligned) {
-            tickContainer = this._renderTickArea(size, tickCount, categories);
-            oppositSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
-            childContainers = childContainers.concat([tickContainer, oppositSideTickContainer]);
-        }
+            childContainers = this._renderChildContainers(size, dimension.width, this.data.tickCount, this.data.labels);
 
         dom.append(axisContainer, childContainers);
     },
@@ -261,7 +267,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         this._addCssClasses(axisContainer);
 
-        if (this.options.isDivision) {
+        if (this.options.divided) {
             this._renderDivisionAxisArea(axisContainer, dimension.width);
             dimension.width += this.boundsMaker.getDimension('yAxis').width;
         } else {
@@ -372,33 +378,41 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} size size or height
      * @param {number} tickCount tick count
      * @param {Array.<string>} categories categories
-     * @param {?number} additionSize addition size (width or height)
+     * @param {?number} additionalSize additional size (width or height)
      * @returns {HTMLElement} tick area element
      * @private
      */
-    _renderTickArea: function(size, tickCount, categories, additionSize) {
+    _renderTickArea: function(size, tickCount, categories, additionalSize) {
         var data = this.data,
+            isSingleXAxis = !data.isVertical && !this.options.divided,
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
             elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
             posType = data.isVertical ? 'bottom' : 'left',
             template = axisTemplate.tplAxisTick,
-            lineHtml, ticksHtml;
+            lineHtml = '',
+            tickLineExtend, ticksHtml;
 
-        additionSize = additionSize || 0;
-        lineHtml = data.isVertical ? '' : axisTemplate.tplTickLine({
-            lineLeft: additionSize,
-            lineWidth: size
-        });
+        additionalSize = additionalSize || 0;
+
+        if (!data.isVertical) {
+            tickLineExtend = isSingleXAxis ? 1 : 0;
+            lineHtml = axisTemplate.tplTickLine({
+                lineLeft: additionalSize - tickLineExtend,
+                lineWidth: size + tickLineExtend
+            });
+        }
+
         ticksHtml = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
             if (data.aligned && (categories[index] === chartConst.EMPTY_AXIS_LABEL)) {
                 tickHtml = '';
             } else {
+                position -= (index === 0 && isSingleXAxis) ? 1 : 0;
                 cssTexts = [
                     renderUtil.concatStr('background-color:', tickColor),
-                    renderUtil.concatStr(posType, ': ', additionSize + position, 'px')
+                    renderUtil.concatStr(posType, ': ', additionalSize + position, 'px')
                 ].join(';');
                 tickHtml = template({cssText: cssTexts});
             }
@@ -423,60 +437,47 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Apply css style of label area.
+     * @param {HTMLElement} labelContainer label container
+     * @param {number} axisWidth axis width
+     * @private
+     */
+    _applyLabelAreaStyle: function(labelContainer, axisWidth) {
+        var cssText = renderUtil.makeFontCssText(this.theme.label),
+            titleAreaWidth;
+
+        if (this.data.isVertical) {
+            titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
+            cssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
+        }
+
+        labelContainer.style.cssText = cssText;
+    },
+
+    /**
      * Render label area.
      * @param {number} size label area size
      * @param {number} axisWidth axis area width
      * @param {number} tickCount tick count
      * @param {Array.<string>} categories categories
-     * @param {?number} additionSize addition size (width or height)
+     * @param {?number} additionalSize additional size (width or height)
      * @returns {HTMLElement} label area element
      * @private
      */
-    _renderLabelArea: function(size, axisWidth, tickCount, categories, additionSize) {
-        var tickPixelPositions = calculator.makeTickPixelPositions(size, tickCount),
+    _renderLabelArea: function(size, axisWidth, tickCount, categories, additionalSize) {
+        var labelContainer = dom.create('DIV', 'tui-chart-label-area'),
+            tickPixelPositions = calculator.makeTickPixelPositions(size, tickCount),
             labelSize = tickPixelPositions[1] - tickPixelPositions[0],
-            posType = 'left',
-            cssTexts = this._makeLabelCssTexts({
-                isVertical: this.data.isVertical,
-                isLabelAxis: this.data.isLabelAxis,
-                labelSize: labelSize
-            }),
-            elLabelArea = dom.create('DIV', 'tui-chart-label-area'),
-            areaCssText = renderUtil.makeFontCssText(this.theme.label),
-            labelsHtml, titleAreaWidth;
+            labelsHtml;
 
-        if (this.data.isVertical) {
-            posType = this.data.isLabelAxis ? 'top' : 'bottom';
-            titleAreaWidth = this._getRenderedTitleHeight() + chartConst.TITLE_AREA_WIDTH_PADDING;
-            areaCssText += this._makeVerticalLabelCssText(axisWidth, titleAreaWidth);
-        } else if (this.data.isLabelAxis && this.options.rotation === false) {
-            categories = this.dataProcessor.getMultilineCategories();
-        }
+        additionalSize = additionalSize || 0;
+        labelsHtml = this._makeLabelsHtml(tickPixelPositions, categories, labelSize, additionalSize);
+        labelContainer.innerHTML = labelsHtml;
 
-        tickPixelPositions.length = categories.length;
-        labelsHtml = this._makeLabelsHtml({
-            positions: tickPixelPositions,
-            labels: categories,
-            posType: posType,
-            cssTexts: cssTexts,
-            labelSize: labelSize,
-            theme: this.theme.label,
-            additionSize: additionSize
-        });
+        this._applyLabelAreaStyle(labelContainer, axisWidth);
+        this._changeLabelAreaPosition(labelContainer, labelSize);
 
-        elLabelArea.innerHTML = labelsHtml;
-        elLabelArea.style.cssText = areaCssText;
-
-        this._changeLabelAreaPosition({
-            elLabelArea: elLabelArea,
-            isVertical: this.data.isVertical,
-            isLabelAxis: this.data.isLabelAxis,
-            theme: this.theme.label,
-            labelSize: labelSize,
-            aligned: this.data.aligned
-        });
-
-        return elLabelArea;
+        return labelContainer;
     },
 
     /**
@@ -493,25 +494,23 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Make cssTexts of label.
-     * @param {object} params parameter
-     *      @param {boolean} params.isVertical whether vertical or not
-     *      @param {boolean} params.isLabelAxis whether label axis or not
-     *      @param {number} params.labelSize label size (width or height)
+     * Make cssText of label.
+     * @param {number} labelSize label size (width or height)
      * @returns {string[]} cssTexts
      * @private
      */
-    _makeLabelCssTexts: function(params) {
-        var cssTexts = [];
+    _makeLabelCssText: function(labelSize) {
+        var isVertical = this.data.isVertical,
+            cssTexts = [];
 
-        if (params.isVertical && params.isLabelAxis) {
-            cssTexts.push(renderUtil.concatStr('height:', params.labelSize, 'px'));
-            cssTexts.push(renderUtil.concatStr('line-height:', params.labelSize, 'px'));
-        } else if (!params.isVertical) {
-            cssTexts.push(renderUtil.concatStr('width:', params.labelSize, 'px'));
+        if (isVertical && this.data.isLabelAxis) {
+            cssTexts.push(renderUtil.concatStr('height:', labelSize, 'px'));
+            cssTexts.push(renderUtil.concatStr('line-height:', labelSize, 'px'));
+        } else if (!isVertical) {
+            cssTexts.push(renderUtil.concatStr('width:', labelSize, 'px'));
         }
 
-        return cssTexts;
+        return cssTexts.length ? cssTexts.join(';') + ';' : '';
     },
 
     /**
@@ -594,93 +593,106 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Make html of rotation labels.
-     * @param {object} params parameters
-     *      @param {Array.<object>} params.positions label position array
-     *      @param {string[]} params.labels label array
-     *      @param {string} params.posType position type (left or bottom)
-     *      @param {string[]} params.cssTexts css array
-     *      @param {number} params.additionSize addition size
+     * @param {Array.<object>} positions label position array
+     * @param {string[]} categories categories
+     * @param {number} labelSize label size
+     * @param {number} additionalSize additional size
      * @returns {string} labels html
      * @private
      */
-    _makeRotationLabelsHtml: function(params) {
+    _makeRotationLabelsHtml: function(positions, categories, labelSize, additionalSize) {
         var self = this,
             template = axisTemplate.tplAxisLabel,
-            labelHeight = renderUtil.getRenderedLabelHeight(params.labels[0], params.theme),
-            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            addClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + this.boundsMaker.xAxisDegree,
-            halfWidth = params.labelSize / 2,
+            labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label),
+            labelCssText = this._makeLabelCssText(labelSize),
+            additionalClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + this.boundsMaker.xAxisDegree,
+            halfWidth = labelSize / 2,
             moveLeft = calculator.calculateAdjacent(this.boundsMaker.xAxisDegree, halfWidth),
             top = calculator.calculateOpposite(this.boundsMaker.xAxisDegree, halfWidth) +
                 chartConst.XAXIS_LABEL_TOP_MARGIN,
-            additionSize = params.additionSize || 0,
-            labelsHtml = tui.util.map(params.positions, function(position, index) {
-                var label = params.labels[index],
-                    rotationCssText = self._makeCssTextForRotationMoving({
-                        labelHeight: labelHeight,
-                        labelWidth: params.labelSize,
-                        top: top,
-                        left: position + additionSize,
-                        moveLeft: moveLeft,
-                        label: label,
-                        theme: params.theme
-                    });
+            labelsHtml;
 
-                return template({
-                    addClass: addClass,
-                    cssText: labelCssText + rotationCssText,
-                    label: label
+        additionalSize = additionalSize || 0;
+        labelsHtml = tui.util.map(positions, function(position, index) {
+            var label = categories[index],
+                rotationCssText = self._makeCssTextForRotationMoving({
+                    labelHeight: labelHeight,
+                    labelWidth: labelSize,
+                    top: top,
+                    left: position + additionalSize,
+                    moveLeft: moveLeft,
+                    label: label,
+                    theme: self.theme.label
                 });
-            }).join('');
+
+            return template({
+                additionalClass: additionalClass,
+                cssText: labelCssText + rotationCssText,
+                label: label
+            });
+        }).join('');
 
         return labelsHtml;
     },
 
     /**
      * Make html of normal labels.
-     * @param {object} params parameters
-     *      @param {Array.<object>} params.positions label position array
-     *      @param {string[]} params.labels label array
-     *      @param {string} params.posType position type (left or bottom)
-     *      @param {string[]} params.cssTexts css array
-     *      @param {number} params.additionSize addition size
+     * @param {Array.<object>} positions label position array
+     * @param {string[]} categories categories
+     * @param {number} labelSize label size
+     * @param {number} additionalSize additional size
      * @returns {string} labels html
      * @private
      */
-    _makeNormalLabelsHtml: function(params) {
+    _makeNormalLabelsHtml: function(positions, categories, labelSize, additionalSize) {
         var template = axisTemplate.tplAxisLabel,
-            labelCssText = params.cssTexts.length ? params.cssTexts.join(';') + ';' : '',
-            additionSize = params.additionSize || 0,
-            labelsHtml = tui.util.map(params.positions, function(position, index) {
-                var addCssText = renderUtil.concatStr(params.posType, ':', (position + additionSize), 'px');
-                return template({
-                    addClass: '',
-                    cssText: labelCssText + addCssText,
-                    label: params.labels[index]
-                });
-            }, this).join('');
+            labelCssText = this._makeLabelCssText(labelSize),
+            posType, labelsHtml;
+
+        additionalSize = additionalSize || 0;
+
+        if (this.data.isVertical) {
+            posType = this.data.isLabelAxis ? 'top' : 'bottom';
+        } else {
+            posType = 'left';
+        }
+
+        labelsHtml = tui.util.map(positions, function(position, index) {
+            var addCssText = renderUtil.concatStr(posType, ':', (position + additionalSize), 'px');
+            return template({
+                additionalClass: '',
+                cssText: labelCssText + addCssText,
+                label: categories[index]
+            });
+        }, this).join('');
 
         return labelsHtml;
     },
 
     /**
-     * Make html of labels.
-     * @param {object} params parameters
-     *      @param {Array.<object>} params.positions label position array
-     *      @param {string[]} params.labels label array
-     *      @param {string} params.posType position type (left or bottom)
-     *      @param {string[]} params.cssTexts css array
-     *      @param {number} params.additionSize addition size
+     * Make labels html.
+     * @param {Array.<object>} positions label position array
+     * @param {string[]} categories categories
+     * @param {number} labelSize label size
+     * @param {number} additionalSize additional size
      * @returns {string} labels html
      * @private
      */
-    _makeLabelsHtml: function(params) {
-        var labelsHtml;
+    _makeLabelsHtml: function(positions, categories, labelSize, additionalSize) {
+        var isRotationlessXAxis = !this.data.isVertical && this.data.isLabelAxis && this.options.rotation === false,
+            hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree,
+            labelsHtml;
 
-        if (this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree) {
-            labelsHtml = this._makeRotationLabelsHtml(params);
+        if (isRotationlessXAxis) {
+            categories = this.dataProcessor.getMultilineCategories();
+        }
+
+        positions.length = categories.length;
+
+        if (hasRotatedXAxisLabel) {
+            labelsHtml = this._makeRotationLabelsHtml(positions, categories, labelSize, additionalSize);
         } else {
-            labelsHtml = this._makeNormalLabelsHtml(params);
+            labelsHtml = this._makeNormalLabelsHtml(positions, categories, labelSize, additionalSize);
         }
 
         return labelsHtml;
@@ -688,26 +700,22 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Change position of label area.
-     * @param {object} params parameter
-     *      @param {HTMLElement} params.elLabelArea label area element
-     *      @param {boolean} params.isVertical whether vertical or not
-     *      @param {boolean} params.isLabelAxis whether label axis or not
-     *      @param {{fontSize: number, fontFamily: string, color: string}} params.theme label theme
-     *      @param {number} params.labelSize label size (width or height)
+     * @param {HTMLElement} labelContainer label area element
+     * @param {number} labelSize label size (width or height)
      * @private
      */
-    _changeLabelAreaPosition: function(params) {
+    _changeLabelAreaPosition: function(labelContainer, labelSize) {
         var labelHeight;
 
-        if (params.isLabelAxis && !params.aligned) {
+        if (this.data.isLabelAxis && !this.data.aligned) {
             return;
         }
 
-        if (params.isVertical) {
-            labelHeight = renderUtil.getRenderedLabelHeight('ABC', params.theme);
-            params.elLabelArea.style.top = renderUtil.concatStr(parseInt(labelHeight / 2, 10), 'px');
+        if (this.data.isVertical) {
+            labelHeight = renderUtil.getRenderedLabelHeight('ABC', this.theme.label);
+            labelContainer.style.top = renderUtil.concatStr(parseInt(labelHeight / 2, 10), 'px');
         } else {
-            params.elLabelArea.style.left = renderUtil.concatStr('-', parseInt(params.labelSize / 2, 10), 'px');
+            labelContainer.style.left = renderUtil.concatStr('-', parseInt(labelSize / 2, 10), 'px');
         }
     }
 });
