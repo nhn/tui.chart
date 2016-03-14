@@ -256,10 +256,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         return {
             dimension: {
                 width: width,
-                height: range.end - range.start + chartConst.HIDDEN_WIDTH
+                height: range.end - range.start
             },
             position: {
-                left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
+                left: chartConst.SERIES_EXPAND_SIZE,
                 top: range.start + chartConst.SERIES_EXPAND_SIZE
             }
         };

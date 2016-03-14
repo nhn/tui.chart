@@ -93,6 +93,21 @@ describe('test Plot', function() {
         });
     });
 
+    describe('_makeDividedPlotPositions()', function() {
+        it('divided 옵션(yAxis 중앙 배치)에 따라 plot line position을 재계산 합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+            plot.data.hTickCount = 7;
+            actual = plot._makeDividedPlotPositions(350);
+            expected = [0, 50, 99, 250, 299, 349];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeHorizontalPixelPositions()', function() {
         it('hTickCount=5, size=200의 가로 라인들의 pixel타입 위치 정보(position.top)를 반환([50, 100, 149, 199])합니다.', function() {
             var positions;
@@ -110,6 +125,20 @@ describe('test Plot', function() {
             };
             positions = plot._makeHorizontalPixelPositions(200);
             expect(positions).toEqual([]);
+        });
+
+        it('divided옵션이 true인 경우 _makeDividedPlotPositions()의 수행 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+            plot.options.divided = true;
+            plot.data.hTickCount = 7;
+            actual = plot._makeHorizontalPixelPositions(350);
+            expected = plot._makeDividedPlotPositions(350);
+
+            expect(actual).toEqual(expected);
         });
     });
 

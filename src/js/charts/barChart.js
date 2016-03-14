@@ -38,9 +38,10 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
          */
         this.hasRightYAxis = false;
 
-        options.series = options.series || {};
         options.yAxis = options.yAxis || {};
         options.xAxis = options.xAxis || {};
+        options.plot = options.xAxis || {};
+        options.series = options.series || {};
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
@@ -51,6 +52,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
             options.yAxis.isCenter = isCenter;
             options.xAxis.divided = isCenter;
+            options.series.divided = isCenter;
+            options.plot.divided = isCenter;
         }
 
         ChartBase.call(this, {

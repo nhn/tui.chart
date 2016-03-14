@@ -164,7 +164,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var limitDistance = this._getLimitDistanceFromZeroPoint(dimension[sizeType], this.data.limit),
             baseBound = {},
             groupSize, barWidth, optionWidth, additionPadding,
-            anotherSizeType, positionTop, baseEndPosition;
+            anotherSizeType, positionTop, baseEndPosition, centerIndex;
 
         if (sizeType === 'height') {
             anotherSizeType = 'width';
@@ -210,17 +210,17 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 endPlusPosition = baseInfo.baseEndPosition,
                 endMinusPosition = baseInfo.baseEndPosition;
 
-            return tui.util.map(values, function(value) {
+            return tui.util.map(values, function(value, index) {
                 var bound = null,
                     endSize = Math.abs(value * baseInfo.dimensionSize);
                 baseInfo.baseBound[baseInfo.positionType] = padding;
 
                 if (value >= 0) {
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPlusPosition);
+                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPlusPosition, value);
                     endPlusPosition += endSize;
                 } else {
                     endMinusPosition -= endSize;
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endMinusPosition);
+                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endMinusPosition, value);
                 }
 
                 return bound;

@@ -110,13 +110,18 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeStackedBarChartBounds: function(dimension) {
         var self = this,
-            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'width');
+            divided = this.options.divided,
+            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'width'),
+            yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
 
-        return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
+        return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition, value) {
+            var additionLeft = (divided && value > 0) ? yAxisWidth + 1 : 0,
+                baseLeft = baseInfo.distance.toMin + additionLeft;
+
             return self._makeBarChartBound({
                 baseBound: baseBound,
-                startLeft: baseInfo.distance.toMin + chartConst.SERIES_EXPAND_SIZE,
-                endLeft: baseInfo.distance.toMin + endPosition,
+                startLeft: baseLeft + chartConst.SERIES_EXPAND_SIZE,
+                endLeft: baseLeft + endPosition,
                 endWidth: endSize
             });
         });

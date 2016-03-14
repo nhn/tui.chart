@@ -104,10 +104,9 @@ describe('Series', function() {
             var seriesContainer;
 
             series.hasAxes = true;
-
             boundsMaker.getBound.and.returnValue({
-                dimension: {width: 200, height: 100},
-                position: {top: 50, left: 50}
+                dimension: {width: 220, height: 120},
+                position: {top: 40, left: 40}
             });
 
             seriesContainer = series.render({});

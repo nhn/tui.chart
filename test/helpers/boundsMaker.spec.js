@@ -360,8 +360,8 @@ describe('boundsMaker', function() {
 
             actual = boundsMaker._makePlotDimension();
             expected = {
-                width: 200 + chartConst.HIDDEN_WIDTH,
-                height: 100 + chartConst.HIDDEN_WIDTH
+                width: 200,
+                height: 101
             };
 
             expect(actual).toEqual(expected);
@@ -557,35 +557,6 @@ describe('boundsMaker', function() {
         });
     });
 
-    describe('_makeCustomEventDimension()', function() {
-        it('yAxis의 isCenter 옵션이 true일 경우에는 series width에 yAxis의 width를 더하여 반환합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.dimensions.yAxis = {
-                width: 50
-            };
-            boundsMaker.options.yAxis.isCenter = true;
-
-            actual = boundsMaker._makeCustomEventDimension({
-                width: 300
-            });
-            expected = 350;
-
-            expect(actual.width).toBe(expected);
-        });
-
-        it('yAxis의 isCenter 옵션이 없을 경우에는 series dimension을 그대로 반환합니다.', function() {
-            var actual, expected;
-
-            actual = boundsMaker._makeCustomEventDimension({
-                width: 300
-            });
-            expected = 300;
-
-            expect(actual.width).toBe(expected);
-        });
-    });
-
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
             spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
@@ -601,46 +572,6 @@ describe('boundsMaker', function() {
             expect(boundsMaker.getDimension('tooltip').height).toBe(200);
             expect(boundsMaker.getDimension('customEvent').width).toBe(300);
             expect(boundsMaker.getDimension('customEvent').height).toBe(200);
-        });
-
-        it('yAxis의 isCenter 옵션이 true일 경우에는 customEvent의 width를 series width에 yAxis의 width를 더하여 설정합니다.', function() {
-            spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
-                width: 300,
-                height: 200
-            });
-
-            boundsMaker.dimensions.yAxis = {
-                width: 50
-            };
-            boundsMaker.options.yAxis.isCenter = true;
-
-            boundsMaker._registerCenterComponentsDimension();
-
-            expect(boundsMaker.getDimension('customEvent').width).toBe(350);
-        });
-    });
-
-    describe('_calculateYAxisLeftPosition()', function() {
-        it('yAxis의 left position은 chartLeftPadding값에 전달받은 leftLegendWidth값을 더하여 반환합니다.', function() {
-            var actual, expected;
-
-            actual = boundsMaker._calculateYAxisLeftPosition(0);
-            expected = 10;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('yAxis의 isCenter옵션이 true일 경우에는 series width를 반으로 나눈 값을 더하여 반환합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.options.yAxis.isCenter = true;
-            boundsMaker.dimensions.series = {
-                width: 300
-            };
-            actual = boundsMaker._calculateYAxisLeftPosition(0);
-            expected = 159;
-
-            expect(actual).toBe(expected);
         });
     });
 
@@ -663,35 +594,13 @@ describe('boundsMaker', function() {
             boundsMaker._registerAxisComponentsPosition(leftLegendWidth);
 
             expect(boundsMaker.getPosition('plot').top).toBe(50);
-            expect(boundsMaker.getPosition('plot').left).toBe(49);
+            expect(boundsMaker.getPosition('plot').left).toBe(50);
             expect(boundsMaker.getPosition('yAxis').top).toBe(50);
             expect(boundsMaker.getPosition('yAxis').left).toBe(10);
             expect(boundsMaker.getPosition('xAxis').top).toBe(250);
-            expect(boundsMaker.getPosition('xAxis').left).toBe(49);
+            expect(boundsMaker.getPosition('xAxis').left).toBe(50);
             expect(boundsMaker.getPosition('rightYAxis').top).toBe(50);
             expect(boundsMaker.getPosition('rightYAxis').left).toBe(339);
-        });
-
-
-        it('yAxis의 isCenter옵션이 true일 경우에는 yAxis의 left값에 series width를 반으로 나눈 값을 더하여 설정합니다.', function() {
-            var leftLegendWidth = 0;
-
-            boundsMaker.options.yAxis.isCenter = true;
-            boundsMaker.dimensions.series = {
-                width: 300,
-                height: 200
-            };
-            boundsMaker.dimensions.yAxis = {
-                width: 30
-            };
-            boundsMaker.positions.series = {
-                left: 50,
-                top: 50
-            };
-
-            boundsMaker._registerAxisComponentsPosition(leftLegendWidth);
-
-            expect(boundsMaker.getPosition('yAxis').left).toBe(159);
         });
     });
 
@@ -778,6 +687,74 @@ describe('boundsMaker', function() {
             expect(boundsMaker.getPosition('legend').left).toBe(250);
             expect(boundsMaker.getPosition('tooltip').top).toBe(40);
             expect(boundsMaker.getPosition('tooltip').left).toBe(40);
+        });
+    });
+
+    describe('_updateBoundsForYAxisCenterOption()', function() {
+        it('yAxis 중앙정렬을 위해 각종 컴포넌트들의 bounds를 갱신합니다.', function() {
+            boundsMaker.dimensions = {
+                extendedSeries: {
+                    width: 300
+                },
+                xAxis: {
+                    width: 300
+                },
+                plot: {
+                    width: 300
+                },
+                customEvent: {
+                    width: 300
+                },
+                tooltip: {
+                    width: 300
+                }
+            };
+            boundsMaker.positions = {
+                series: {
+                    left: 50
+                },
+                extendedSeries: {
+                    left: 50
+                },
+                plot: {
+                    left: 50
+                },
+                yAxis: {
+                    left: 50
+                },
+                xAxis: {
+                    left: 50
+                },
+                customEvent: {
+                    left: 50
+                },
+                tooltip: {
+                    left: 50
+                }
+            };
+
+            boundsMaker.dimensions.yAxis = {
+                width: 50
+            };
+            boundsMaker.dimensions.series = {
+                width: 300
+            };
+
+            boundsMaker._updateBoundsForYAxisCenterOption();
+
+            expect(boundsMaker.dimensions.extendedSeries.width).toBe(350);
+            expect(boundsMaker.dimensions.xAxis.width).toBe(301);
+            expect(boundsMaker.dimensions.plot.width).toBe(351);
+            expect(boundsMaker.dimensions.customEvent.width).toBe(350);
+            expect(boundsMaker.dimensions.tooltip.width).toBe(350);
+
+            expect(boundsMaker.positions.series.left).toBe(0);
+            expect(boundsMaker.positions.extendedSeries.left).toBe(1);
+            expect(boundsMaker.positions.plot.left).toBe(1);
+            expect(boundsMaker.positions.yAxis.left).toBe(200);
+            expect(boundsMaker.positions.xAxis.left).toBe(1);
+            expect(boundsMaker.positions.customEvent.left).toBe(1);
+            expect(boundsMaker.positions.tooltip.left).toBe(1);
         });
     });
 });

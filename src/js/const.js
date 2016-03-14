@@ -46,8 +46,8 @@ var chartConst = {
     CHART_DEFAULT_WIDTH: 500,
     /** chart default height */
     CHART_DEFAULT_HEIGHT: 400,
-    /** hidden width */
-    HIDDEN_WIDTH: 1,
+    /** overlapping width of xAxis and yAxis */
+    OVERLAPPING_WIDTH: 1,
     /** rendered text padding */
     TEXT_PADDING: 2,
     /** series expand size */
