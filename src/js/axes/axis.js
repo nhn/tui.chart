@@ -209,11 +209,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             isLineType = this.data.isVertical && this.data.aligned,
             tickContainer, oppositeSideTickContainer;
 
-            if (!isLineType) {
-                tickContainer = this._renderTickArea(size, tickCount, categories, additionalWidth);
-                oppositeSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
-                childContainers = childContainers.concat([tickContainer, oppositeSideTickContainer]);
-            }
+        if (!isLineType) {
+            tickContainer = this._renderTickArea(size, tickCount, categories, additionalWidth);
+            oppositeSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
+            childContainers = childContainers.concat([tickContainer, oppositeSideTickContainer]);
+        }
 
         return childContainers;
     },
@@ -225,17 +225,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderDivisionAxisArea: function(axisContainer, width) {
-        var halfWidth = width / 2,
+        var leftWidth = Math.round(width / 2),
+            rightWidth = width - leftWidth,
             tickCount = this.data.tickCount,
             halfTickCount = parseInt(tickCount / 2, 10) + 1,
             categories = this.data.labels,
             leftCategories = categories.slice(0, halfTickCount),
             rightCategories = categories.slice(halfTickCount - 1, tickCount),
-            additionWidth = halfWidth + this.boundsMaker.getDimension('yAxis').width,
+            additionWidth = leftWidth + this.boundsMaker.getDimension('yAxis').width,
             leftContainers, rightContainers, rightTitleContainer;
 
-        leftContainers = this._renderChildContainers(halfWidth, halfWidth, halfTickCount, leftCategories);
-        rightContainers = this._renderChildContainers(halfWidth, halfWidth, halfTickCount, rightCategories, additionWidth);
+        leftContainers = this._renderChildContainers(leftWidth, leftWidth, halfTickCount, leftCategories);
+        rightContainers = this._renderChildContainers(rightWidth, rightWidth, halfTickCount, rightCategories, additionWidth);
 
         rightTitleContainer = rightContainers[0];
         dom.addClass(rightTitleContainer, 'right');

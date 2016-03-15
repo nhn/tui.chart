@@ -115,7 +115,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
 
         return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition, value) {
-            var additionLeft = (divided && value > 0) ? yAxisWidth + 1 : 0,
+            var additionLeft = (divided && value > 0) ? yAxisWidth + chartConst.OVERLAPPING_WIDTH : 0,
                 baseLeft = baseInfo.distance.toMin + additionLeft;
 
             return self._makeBarChartBound({

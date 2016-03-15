@@ -40,7 +40,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
 
         options.yAxis = options.yAxis || {};
         options.xAxis = options.xAxis || {};
-        options.plot = options.xAxis || {};
+        options.plot = options.plot || {};
         options.series = options.series || {};
 
         if (options.series.diverging) {
