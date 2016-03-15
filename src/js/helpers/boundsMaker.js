@@ -149,6 +149,17 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Set bound.
+     * @param {string} name component name
+     * @param {bound} component bound
+     * @private
+     */
+    _setBound: function(name, bound) {
+        this.dimensions[name] = bound.dimension;
+        this.positions[name] = bound.position;
+    },
+
+    /**
      * Get dimension.
      * @param {string} name component name
      * @returns {dimension} component dimension
@@ -407,8 +418,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _makePlotDimension: function() {
         var seriesDimension = this.getDimension('series');
         return {
-            width: seriesDimension.width + chartConst.HIDDEN_WIDTH,
-            height: seriesDimension.height + chartConst.HIDDEN_WIDTH
+            width: seriesDimension.width,
+            height: seriesDimension.height + chartConst.OVERLAPPING_WIDTH
         };
     },
 
@@ -487,49 +498,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Make customEvent dimension.
-     * @param {dimension} seriesDimension series dimension
-     * @returns {dimension} customEvent dimension
-     * @private
-     */
-    _makeCustomEventDimension: function(seriesDimension) {
-        var customEventDimension = tui.util.extend({}, seriesDimension);
-
-        if (this.options.yAxis.isCenter) {
-            customEventDimension.width += this.getDimension('yAxis').width;
-        }
-
-        return customEventDimension;
-    },
-
-    /**
      * Register center componets dimension.
      * @private
      */
     _registerCenterComponentsDimension: function() {
-        var seriesDimension = this._makeSeriesDimension(),
-            customEventDimension = this._makeCustomEventDimension(seriesDimension);
+        var seriesDimension = this._makeSeriesDimension();
 
         this._registerDimension('series', seriesDimension);
         this._registerDimension('tooltip', seriesDimension);
-        this._registerDimension('customEvent', customEventDimension);
-    },
-
-    /**
-     * Calculate yAxis left position of yAxis.
-     * @param {number} leftLegendWidth left legend width
-     * @returns {number} left position value of yAxis
-     * @private
-     */
-    _calculateYAxisLeftPosition: function(leftLegendWidth) {
-        var left = this.chartLeftPadding + leftLegendWidth;
-
-        if (this.options.yAxis.isCenter) {
-            left += (this.getDimension('series').width / 2) - 1;
-            left -= this.xAxisDegree ? 1 : 0;
-        }
-
-        return left;
+        this._registerDimension('customEvent', seriesDimension);
     },
 
     /**
@@ -545,22 +522,22 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         this.positions.plot = {
             top: seriesPosition.top,
-            left: seriesPosition.left - chartConst.HIDDEN_WIDTH
+            left: seriesPosition.left
         };
 
         this.positions.yAxis = {
             top: seriesPosition.top,
-            left: this._calculateYAxisLeftPosition(leftLegendWidth)
+            left: this.chartLeftPadding + leftLegendWidth
         };
 
         this.positions.xAxis = {
             top: seriesPosition.top + seriesDimension.height,
-            left: seriesPosition.left - chartConst.HIDDEN_WIDTH
+            left: seriesPosition.left
         };
 
         this.positions.rightYAxis = {
             top: seriesPosition.top,
-            left: this.chartLeftPadding + leftAreaWidth - chartConst.HIDDEN_WIDTH
+            left: this.chartLeftPadding + leftAreaWidth - chartConst.OVERLAPPING_WIDTH
         };
     },
 
@@ -603,7 +580,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var seriesPosition = this.getPosition('series'),
             tooltipPosition;
 
-        this.positions.customEvent = seriesPosition;
+        this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
 
         if (this.hasAxes) {
@@ -629,18 +606,13 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             leftLegendWidth = predicate.isLegendAlignLeft(alignOption) ? legendDimension.width : 0,
             seriesPosition = {
                 top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-                left: this.chartLeftPadding + leftLegendWidth
+                left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
             };
 
         this.positions.series = seriesPosition;
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();
-
-            if (!this.options.yAxis.isCenter) {
-                this.positions.series.left += this.getDimension('yAxis').width;
-            }
-
             this._registerAxisComponentsPosition(leftLegendWidth);
         }
 
@@ -648,15 +620,56 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Register bound of extended series for rendering.
+     * @private
+     */
+    _registerExtendedSeriesBound: function() {
+        var seriesBound = this.getBound('series'),
+            expandedBound = this.hasAxes ? renderUtil.expandBound(seriesBound) : seriesBound;
+
+        this._setBound('extendedSeries', expandedBound);
+    },
+
+    /**
+     * Update bounds(positions, dimensions) of components for center option of yAxis.
+     * @private
+     */
+    _updateBoundsForYAxisCenterOption: function() {
+        var yAxisWidth = this.getDimension('yAxis').width,
+            yAxisExtensibleLeft = (this.getDimension('series').width / 2),
+            xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
+
+        this.dimensions.extendedSeries.width += yAxisWidth;
+        this.dimensions.xAxis.width += chartConst.OVERLAPPING_WIDTH;
+        this.dimensions.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
+        this.dimensions.customEvent.width += yAxisWidth;
+        this.dimensions.tooltip.width += yAxisWidth;
+
+        this.positions.series.left -= yAxisWidth;
+        this.positions.extendedSeries.left -= xAxisDecreasingLeft;
+        this.positions.plot.left -= xAxisDecreasingLeft;
+        this.positions.yAxis.left += yAxisExtensibleLeft;
+        this.positions.xAxis.left -= xAxisDecreasingLeft;
+        this.positions.customEvent.left -= xAxisDecreasingLeft;
+        this.positions.tooltip.left -= xAxisDecreasingLeft;
+    },
+
+    /**
      * Register bounds data.
-     * @param {{xAxis: object, yAxis: object, rightYAxis: ?object}} axesData axes data
      */
     registerBoundsData: function() {
         this._registerCenterComponentsDimension();
+
         if (this.hasAxes) {
             this._registerAxisComponentsDimension();
         }
+
         this._registerPositions();
+        this._registerExtendedSeriesBound();
+
+        if (this.options.yAxis.isCenter) {
+            this._updateBoundsForYAxisCenterOption();
+        }
     }
 });
 

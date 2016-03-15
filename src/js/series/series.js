@@ -161,19 +161,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
-        var bound = this.boundsMaker.getBound('series'),
-            expandedBound, seriesData, seriesLabelContainer;
+        var expansionBound = this.boundsMaker.getBound('extendedSeries'),
+            seriesData, seriesLabelContainer;
 
         this.data = data;
 
-        expandedBound = this.hasAxes ? renderUtil.expandBound(bound) : bound;
         this.seriesData = seriesData = this._makeSeriesData();
 
-        renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
-        this._renderPosition(seriesContainer, expandedBound.position);
+        renderUtil.renderDimension(seriesContainer, expansionBound.dimension);
+        this._renderPosition(seriesContainer, expansionBound.position);
 
         if (funcRenderGraph) {
-            funcRenderGraph(expandedBound.dimension, seriesData);
+            funcRenderGraph(expansionBound.dimension, seriesData);
         }
 
         seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
@@ -301,7 +300,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.OVERLAPPING_WIDTH : 0;
 
         renderUtil.renderPosition(el, {
             top: position.top - (hiddenWidth * 2),

@@ -21,12 +21,35 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
-        tui.util.extend(this, params);
         /**
          * Plot view className
          * @type {string}
          */
         this.className = 'tui-chart-plot-area';
+
+        /**
+         * Bounds maker
+         * @type {BoundsMaker}
+         */
+        this.boundsMaker = params.boundsMaker;
+
+        /**
+         * Options
+         * @type {object}
+         */
+        this.options = params.options || {};
+
+        /**
+         * Theme
+         * @type {object}
+         */
+        this.theme = params.theme || {};
+
+        /**
+         * Plot data.
+         * @type {object}
+         */
+        this.data = {};
     },
 
     /**
@@ -41,6 +64,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
         renderUtil.renderDimension(plotContainer, dimension);
         renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
+
         this._renderLines(plotContainer, dimension);
     },
 
@@ -150,14 +174,43 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
+     * Make divided positions of plot.
+     * @param {number} width plot width
+     * @returns {Array.<number>}
+     * @private
+     */
+    _makeDividedPlotPositions: function(width) {
+        var tickCount = parseInt(this.data.hTickCount / 2, 10) + 1,
+            yAxisWidth = this.boundsMaker.getDimension('yAxis').width,
+            leftPositions, rightPositions;
+
+        width = (width - yAxisWidth) / 2;
+        leftPositions = calculator.makeTickPixelPositions(width, tickCount);
+        rightPositions = tui.util.map(leftPositions, function(position) {
+            return position + width + yAxisWidth;
+        });
+
+        leftPositions.pop();
+        rightPositions.shift();
+
+        return leftPositions.concat(rightPositions);
+    },
+
+    /**
      * Make pixel value of horizontal positions.
      * @param {number} width plot width
      * @returns {Array.<number>} positions
      * @private
      */
     _makeHorizontalPixelPositions: function(width) {
-        var positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
-        positions.shift();
+        var positions;
+
+        if (this.options.divided) {
+            positions = this._makeDividedPlotPositions(width);
+        } else {
+            positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
+            positions.shift();
+        }
         return positions;
     }
 });

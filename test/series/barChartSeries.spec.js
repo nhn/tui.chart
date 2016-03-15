@@ -10,7 +10,7 @@ var BarChartSeries = require('../../src/js/series/barChartSeries.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarChartSeries', function() {
-    var series, dataProcessor;
+    var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
@@ -20,6 +20,8 @@ describe('BarChartSeries', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstFormattedValue', 'getFormatFunctions']);
         dataProcessor.getFirstFormattedValue.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
+
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
@@ -32,7 +34,8 @@ describe('BarChartSeries', function() {
                 }
             },
             options: {},
-            dataProcessor: dataProcessor
+            dataProcessor: dataProcessor,
+            boundsMaker: boundsMaker
         });
 
         spyOn(series, '_getPercentValues');
@@ -155,6 +158,9 @@ describe('BarChartSeries', function() {
         it('stacked 옵션이 있는 Bar차트의 bounds 정보는 end.left가 이전 end.width 만큼씩 감소합니다', function() {
             var bounds;
 
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
             series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
             series.data = {
                 limit: {

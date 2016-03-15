@@ -239,10 +239,10 @@ describe('GroupTooltip', function() {
                 expected = {
                     dimension: {
                         width: 200,
-                        height: 51
+                        height: 50
                     },
                     position: {
-                        left: 9,
+                        left: 10,
                         top: 10
                     }
                 };

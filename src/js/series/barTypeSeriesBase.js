@@ -216,11 +216,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 baseInfo.baseBound[baseInfo.positionType] = padding;
 
                 if (value >= 0) {
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPlusPosition);
+                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPlusPosition, value);
                     endPlusPosition += endSize;
                 } else {
                     endMinusPosition -= endSize;
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endMinusPosition);
+                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endMinusPosition, value);
                 }
 
                 return bound;
