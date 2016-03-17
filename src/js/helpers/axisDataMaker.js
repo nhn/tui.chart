@@ -73,7 +73,7 @@ var axisDataMaker = {
      * Make data about value axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @param {AxisRange} params.axisRange chart values
+     *      @param {AxisScaleMaker} params.axisScaleMaker chart values
      *      @param {boolean} params.isVertical whether vertical or not
      * @returns {{
      *      labels: Array.<string>,
@@ -85,15 +85,15 @@ var axisDataMaker = {
      * }} axis data
      */
     makeValueAxisData: function(params) {
-        var axisRange = params.axisRange,
-            rangeValues = axisRange.getFormattedRangeValues(),
+        var axisScaleMaker = params.axisScaleMaker,
+            rangeValues = axisScaleMaker.getFormattedScaleValues(),
             tickCount = rangeValues.length;
 
         return {
             labels: rangeValues,
             tickCount: tickCount,
             validTickCount: tickCount,
-            limit: axisRange.getLimit(),
+            limit: axisScaleMaker.getLimit(),
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned

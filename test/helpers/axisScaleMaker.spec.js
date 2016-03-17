@@ -6,16 +6,16 @@
 
 'use strict';
 
-var AxisRange = require('../../src/js/helpers/axisRange.js'),
+var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js'),
     chartConst = require('../../src/js/const'),
     DataProcessor = require('../../src/js/helpers/dataProcessor.js');
 
-describe('AxisRange', function() {
-    var axisRange, boundsMaker;
+describe('AxisScaleMaker', function() {
+    var axisScaleMaker, boundsMaker;
 
     beforeEach(function() {
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['makeSeriesHeight', 'makeSeriesWidth']);
-        axisRange = new AxisRange({
+        axisScaleMaker = new AxisScaleMaker({
             dataProcessor: new DataProcessor([], {}),
             boundsMaker: boundsMaker
         });
@@ -25,9 +25,9 @@ describe('AxisRange', function() {
         it('유효한 percent stacked 차트의 경우 %로 formatting 가능한 함수를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_isPercentStackedChart').and.returnValue(true);
+            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(true);
 
-            actual = axisRange._getFormatFunctions();
+            actual = axisScaleMaker._getFormatFunctions();
             expected = '10%';
 
             expect(actual[0](10)).toBe(expected);
@@ -36,32 +36,32 @@ describe('AxisRange', function() {
         it('유효한 percent stacked 차트가 아닌경우 dataProcessor에서 formatting 가능한 함수를 얻어 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_isPercentStackedChart').and.returnValue(false);
-            spyOn(axisRange.dataProcessor, 'getFormatFunctions').and.returnValue([
+            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
+            spyOn(axisScaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue([
                 function(value) {
                     return '00' + value;
                 }
             ]);
 
-            actual = axisRange._getFormatFunctions();
+            actual = axisScaleMaker._getFormatFunctions();
             expected = '0010';
 
             expect(actual[0](10)).toBe(expected);
         });
     });
 
-    describe('_getRangeValues()', function() {
+    describe('_getScaleValues()', function() {
         it('range정보에서 vlaues를 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_getRange').and.returnValue({
+            spyOn(axisScaleMaker, '_getScale').and.returnValue({
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             });
-            actual = axisRange._getRangeValues();
+            actual = axisScaleMaker._getScaleValues();
             expected = [-50, -25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
@@ -70,16 +70,16 @@ describe('AxisRange', function() {
         it('diverging 옵션이 있으면 음수를 양수로 변환하여 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_getRange').and.returnValue({
+            spyOn(axisScaleMaker, '_getScale').and.returnValue({
                 limit: {
                     min: -50,
                     max: 50
                 },
                 step: 25
             });
-            axisRange.chartType = 'bar';
-            axisRange.options.diverging = true;
-            actual = axisRange._getRangeValues();
+            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.options.diverging = true;
+            actual = axisScaleMaker._getScaleValues();
             expected = [50, 25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
@@ -91,13 +91,13 @@ describe('AxisRange', function() {
         it('baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.groupValues = [
+            axisScaleMaker.dataProcessor.groupValues = [
                 [70, 10],
                 [20, 20],
                 [80, 30]
             ];
 
-            actual = axisRange._makeBaseValues();
+            actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
 
             expect(actual).toEqual(expected);
@@ -106,7 +106,7 @@ describe('AxisRange', function() {
         it('comboChart에서 yAxis가 두개 있을 때, line차트의 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.groupValues = {
+            axisScaleMaker.dataProcessor.groupValues = {
                 column: [
                     [70, 10],
                     [20, 20],
@@ -117,8 +117,8 @@ describe('AxisRange', function() {
                 ]
             };
 
-            axisRange.chartType = 'line';
-            actual = axisRange._makeBaseValues();
+            axisScaleMaker.chartType = 'line';
+            actual = axisScaleMaker._makeBaseValues();
             expected = [1, 2, 3];
 
             expect(actual).toEqual(expected);
@@ -127,7 +127,7 @@ describe('AxisRange', function() {
         it('comboChart에서 yAxis가 하나 있을 경우의 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.groupValues = {
+            axisScaleMaker.dataProcessor.groupValues = {
                 column: [
                     [70, 10],
                     [20, 20],
@@ -138,9 +138,9 @@ describe('AxisRange', function() {
                 ]
             };
 
-            axisRange.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisRange.isSingleYAxis = true;
-            actual = axisRange._makeBaseValues();
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.isSingleYAxis = true;
+            actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 1, 2, 3, 20, 20, 80, 30];
 
             expect(actual).toEqual(expected);
@@ -149,15 +149,15 @@ describe('AxisRange', function() {
         it('stacked 옵션이 normal인 경우에 그룹별로 양수와 음수 각각의 합을 구하여 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.groupValues = [
+            axisScaleMaker.dataProcessor.groupValues = [
                 [70, -10, 10],
                 [-20, 20, -10],
                 [80, -30, -10]
             ];
 
-            axisRange.chartType = 'column';
-            axisRange.options.stacked = 'normal';
-            actual = axisRange._makeBaseValues();
+            axisScaleMaker.chartType = 'column';
+            axisScaleMaker.options.stacked = 'normal';
+            actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
 
             expect(actual).toEqual(expected);
@@ -170,7 +170,7 @@ describe('AxisRange', function() {
 
             boundsMaker.makeSeriesWidth.and.returnValue(400);
 
-            actual = axisRange._getBaseSize();
+            actual = axisScaleMaker._getBaseSize();
             expected = 400;
 
             expect(actual).toBe(expected);
@@ -181,8 +181,8 @@ describe('AxisRange', function() {
 
             boundsMaker.makeSeriesHeight.and.returnValue(300);
 
-            axisRange.isVertical = true;
-            actual = axisRange._getBaseSize();
+            axisScaleMaker.isVertical = true;
+            actual = axisScaleMaker._getBaseSize();
             expected = 300;
 
             expect(actual).toBe(expected);
@@ -195,7 +195,7 @@ describe('AxisRange', function() {
 
             boundsMaker.makeSeriesWidth.and.returnValue(320);
 
-            actual = axisRange._getCandidateValueCounts();
+            actual = axisScaleMaker._getCandidateValueCounts();
             expected = [5, 6, 7, 8];
 
             expect(actual).toEqual(expected);
@@ -206,7 +206,7 @@ describe('AxisRange', function() {
 
             boundsMaker.makeSeriesWidth.and.returnValue(450);
 
-            actual = axisRange._getCandidateValueCounts();
+            actual = axisScaleMaker._getCandidateValueCounts();
             expected = [7, 8, 9, 10, 11];
 
             expect(actual).toEqual(expected);
@@ -215,7 +215,7 @@ describe('AxisRange', function() {
 
     describe('_makeLimitForDivergingOption()', function() {
         it('min, max값의 절대값중 큰 숫자를 구해 새로운 min(-max), max를 반환합니다.', function() {
-            var actual = axisRange._makeLimitForDivergingOption({
+            var actual = axisScaleMaker._makeLimitForDivergingOption({
                     min: -20,
                     max: 10
                 }),
@@ -228,9 +228,9 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_makeIntegerTypeRange()', function() {
+    describe('_makeIntegerTypeScale()', function() {
         it('min, max가 정수인 경우에는 정수 변환 작업 없는 결과값을 반환합니다.', function() {
-            var actual = axisRange._makeIntegerTypeRange({
+            var actual = axisScaleMaker._makeIntegerTypeScale({
                     min: 1,
                     max: 100
                 }),
@@ -247,7 +247,7 @@ describe('AxisRange', function() {
         });
 
         it('min, max가 소수 경우에는 정수 변환 작업된 결과값을 반환합니다.', function() {
-            var actual = axisRange._makeIntegerTypeRange({
+            var actual = axisScaleMaker._makeIntegerTypeScale({
                     min: 0.1,
                     max: 0.9
                 }),
@@ -266,11 +266,11 @@ describe('AxisRange', function() {
         it('min, max가 소수이고 옵션이 있을 경우에는 옵션값 까지 변환 작업된 결과값을 반환합니다.', function() {
             var actual, expected;
 
-            axisRange.options.limit = {
+            axisScaleMaker.options.limit = {
                 min: 0.2,
                 max: 0.8
             };
-            actual = axisRange._makeIntegerTypeRange({
+            actual = axisScaleMaker._makeIntegerTypeScale({
                 min: 0.1,
                 max: 0.9
             });
@@ -292,7 +292,7 @@ describe('AxisRange', function() {
 
     describe('_makeLimitIfEqualMinMax()', function() {
         it('min, max값이 0보다 클 경우에는 min을 0으로 설정합니다.', function() {
-            var actual = axisRange._makeLimitIfEqualMinMax({
+            var actual = axisScaleMaker._makeLimitIfEqualMinMax({
                     min: 5,
                     max: 5
                 }),
@@ -305,7 +305,7 @@ describe('AxisRange', function() {
         });
 
         it('min, max값이 0보다 작을 경우에는 max를 0으로 설정합니다.', function() {
-            var actual = axisRange._makeLimitIfEqualMinMax({
+            var actual = axisScaleMaker._makeLimitIfEqualMinMax({
                     min: -5,
                     max: -5
                 }),
@@ -320,7 +320,7 @@ describe('AxisRange', function() {
 
     describe('_makeBaseLimit()', function() {
         it('기본 limit 값을 계산하여 반환합니다.', function() {
-            var actual = axisRange._makeBaseLimit({
+            var actual = axisScaleMaker._makeBaseLimit({
                     min: -90,
                     max: 0
                 }, {}),
@@ -333,7 +333,7 @@ describe('AxisRange', function() {
         });
 
         it('옵션이 있는 경우에는 계산된 기본 limit에 옵션 정보를 적용하여 반환합니다.', function() {
-            var actual = axisRange._makeBaseLimit({
+            var actual = axisScaleMaker._makeBaseLimit({
                     min: -90,
                     max: 0
                 }, {
@@ -348,7 +348,7 @@ describe('AxisRange', function() {
         });
 
         it('min, max값이 같고 양수라면 min을 0으로 변경하고 그대로 반환합니다.', function() {
-            var actual = axisRange._makeBaseLimit({
+            var actual = axisScaleMaker._makeBaseLimit({
                     min: 20,
                     max: 20
                 }, {}),
@@ -361,7 +361,7 @@ describe('AxisRange', function() {
         });
 
         it('min, max값이 같고 음수라면 max을 0으로 변경하고 그대로 반환합니다.', function() {
-            var actual = axisRange._makeBaseLimit({
+            var actual = axisScaleMaker._makeBaseLimit({
                     min: -20,
                     max: -20
                 }, {}),
@@ -376,59 +376,59 @@ describe('AxisRange', function() {
 
     describe('_normalizeMin()', function() {
         it('step이 2일때 min 1.6에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisRange._normalizeMin(1.6, 2);
+            var actual = axisScaleMaker._normalizeMin(1.6, 2);
             expect(actual).toBe(0);
         });
 
         it('step이 1일때 min 1.6에 대한 정규화 결과는 1입니다.', function() {
-            var actual = axisRange._normalizeMin(1.6, 1);
+            var actual = axisScaleMaker._normalizeMin(1.6, 1);
             expect(actual).toBe(1);
         });
 
         it('step이 2일때 min 2.3에 대한 정규화 결과는 2입니다.', function() {
-            var actual = axisRange._normalizeMin(2.3, 2);
+            var actual = axisScaleMaker._normalizeMin(2.3, 2);
             expect(actual).toBe(2);
         });
 
         it('step이 2일때 min 3.3에 대한 정규화 결과는 2입니다.', function() {
-            var actual = axisRange._normalizeMin(3.3, 2);
+            var actual = axisScaleMaker._normalizeMin(3.3, 2);
             expect(actual).toBe(2);
         });
 
         it('step이 5일때 min 3.3에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisRange._normalizeMin(3.3, 5);
+            var actual = axisScaleMaker._normalizeMin(3.3, 5);
             expect(actual).toBe(0);
         });
 
         it('step이 5일때 min 7.3에 대한 정규화 결과는 5입니다.', function() {
-            var actual = axisRange._normalizeMin(7.3, 5);
+            var actual = axisScaleMaker._normalizeMin(7.3, 5);
             expect(actual).toBe(5);
         });
 
         it('step이 10일때 min 7.3에 대한 정규화 결과는 0입니다.', function() {
-            var actual = axisRange._normalizeMin(7.3, 10);
+            var actual = axisScaleMaker._normalizeMin(7.3, 10);
             expect(actual).toBe(0);
         });
 
         it('step이 30일때 min -100에 대한 정규화 결과는 -120입니다.', function() {
-            var actual = axisRange._normalizeMin(-100, 30);
+            var actual = axisScaleMaker._normalizeMin(-100, 30);
             expect(actual).toBe(-120);
         });
 
         it('step이 30일때 min -10에 대한 정규화 결과는 -30입니다.', function() {
-            var actual = axisRange._normalizeMin(-10, 30);
+            var actual = axisScaleMaker._normalizeMin(-10, 30);
             expect(actual).toBe(-30);
         });
 
         it('step이 5일때 min -10에 대한 정규화 결과는 -10입니다.', function() {
-            var actual = axisRange._normalizeMin(-10, 5);
+            var actual = axisScaleMaker._normalizeMin(-10, 5);
             expect(actual).toBe(-10);
         });
     });
 
     describe('_makeNormalizedMax()', function() {
         it('정규화된 max 결과 값을 반환합니다.', function() {
-            var actual = axisRange._makeNormalizedMax({
+            var actual = axisScaleMaker._makeNormalizedMax({
                 min: 0,
                 max: 110
             }, 20, 5);
@@ -439,7 +439,7 @@ describe('AxisRange', function() {
 
     describe('_normalizeLimit()', function() {
         it('정규화된 limit 값을 반환합니다.', function() {
-            var actual = axisRange._normalizeLimit({
+            var actual = axisScaleMaker._normalizeLimit({
                 min: 10,
                 max: 110
             }, 20, 5);
@@ -455,9 +455,9 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            axisRange.chartType = 'line';
+            axisScaleMaker.chartType = 'line';
 
-            actual = axisRange._decreaseMinByStep(min, dataMin, step);
+            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -469,7 +469,7 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisRange._decreaseMinByStep(min, dataMin, step);
+            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -30;
 
             expect(actual).toEqual(expected);
@@ -482,7 +482,7 @@ describe('AxisRange', function() {
                 optionMin = 0,
                 actual, expected;
 
-            actual = axisRange._decreaseMinByStep(min, dataMin, step, optionMin);
+            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step, optionMin);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -494,7 +494,7 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisRange._decreaseMinByStep(min, dataMin, step);
+            actual = axisScaleMaker._decreaseMinByStep(min, dataMin, step);
             expected = -10;
 
             expect(actual).toEqual(expected);
@@ -508,9 +508,9 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            axisRange.chartType = 'line';
+            axisScaleMaker.chartType = 'line';
 
-            actual = axisRange._increaseMaxByStep(max, dataMax, step);
+            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 10;
 
             expect(actual).toEqual(expected);
@@ -522,7 +522,7 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisRange._increaseMaxByStep(max, dataMax, step);
+            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 110;
 
             expect(actual).toEqual(expected);
@@ -535,7 +535,7 @@ describe('AxisRange', function() {
                 optionMax = 80,
                 actual, expected;
 
-            actual = axisRange._increaseMaxByStep(max, dataMax, step, optionMax);
+            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step, optionMax);
             expected = 90;
 
             expect(actual).toEqual(expected);
@@ -547,16 +547,16 @@ describe('AxisRange', function() {
                 step = 20,
                 actual, expected;
 
-            actual = axisRange._increaseMaxByStep(max, dataMax, step);
+            actual = axisScaleMaker._increaseMaxByStep(max, dataMax, step);
             expected = 90;
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_divideRangeStep()', function() {
+    describe('_divideScaleStep()', function() {
         it('step을 반으로 나누었을 때의 valueCount가 후보로 계산된 valueCount와 인접하면 step을 반으로 나누어 반환합니다.', function() {
-            var actual = axisRange._divideRangeStep({
+            var actual = axisScaleMaker._divideScaleStep({
                     min: 0,
                     max: 100
                 }, 50, 4),
@@ -566,7 +566,7 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_minimizeRangeLimit()', function() {
+    describe('_minimizeScaleLimit()', function() {
         it('예상보다 작게 계산된 limit.min에 대해 options.min이 없는 경우,dataLimit.min보다 작은 범위에서 step 단위로 증가 시킵니다.', function() {
             var limit = {
                     min: -20,
@@ -579,7 +579,7 @@ describe('AxisRange', function() {
                 step = 20,
                 valueCount = 6,
                 options = {},
-                actual = axisRange._minimizeRangeLimit(limit, dataLimit, step, valueCount, options),
+                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 0,
                     max: 100
@@ -600,7 +600,7 @@ describe('AxisRange', function() {
                 step = 20,
                 valueCount = 6,
                 options = {},
-                actual = axisRange._minimizeRangeLimit(limit, dataLimit, step, valueCount, options),
+                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 0,
                     max: 100
@@ -623,7 +623,7 @@ describe('AxisRange', function() {
                 options = {
                     min: 10
                 },
-                actual = axisRange._minimizeRangeLimit(limit, dataLimit, step, valueCount, options),
+                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 10,
                     max: 110
@@ -646,7 +646,7 @@ describe('AxisRange', function() {
                 options = {
                     max: 110
                 },
-                actual = axisRange._minimizeRangeLimit(limit, dataLimit, step, valueCount, options),
+                actual = axisScaleMaker._minimizeScaleLimit(limit, dataLimit, step, valueCount, options),
                 expected = {
                     min: 10,
                     max: 110
@@ -656,15 +656,15 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_makeCandidateRange()', function() {
+    describe('_makeCandidateScale()', function() {
         it('입력 data를 기준으로 후고 axis range를 생성합니다.', function() {
             var dataLimit = {
                     min: 0,
                     max: 80
                 },
-                baseLimit = axisRange._makeBaseLimit(dataLimit, {}),
+                baseLimit = axisScaleMaker._makeBaseLimit(dataLimit, {}),
                 valueCount = 4,
-                actual = axisRange._makeCandidateRange(baseLimit, dataLimit, valueCount, {});
+                actual = axisScaleMaker._makeCandidateScale(baseLimit, dataLimit, valueCount, {});
 
             expect(actual).toEqual({
                 limit: {
@@ -676,9 +676,9 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_makeCandidateRanges()', function() {
+    describe('_makeCandidateScales()', function() {
         it('tickCounts정보에 해당하는 tick info 후보군을 계산하여 반환합니다.', function() {
-            var actual = axisRange._makeCandidateRanges({
+            var actual = axisScaleMaker._makeCandidateScales({
                     limit: {
                         min: 10,
                         max: 100
@@ -702,7 +702,7 @@ describe('AxisRange', function() {
 
     describe('_getComparingValue()', function() {
         it('axis range를 선정하는 기준이 되는 비교값을 계산하여 반환합니다.', function() {
-            var actual = axisRange._getComparingValue({
+            var actual = axisScaleMaker._getComparingValue({
                     min: 10,
                     max: 90
                 }, {
@@ -718,9 +718,9 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_selectAxisRange()', function() {
+    describe('_selectAxisScale()', function() {
         it('후보군들의 비교값 중 비교값이 제일 작은 axis range를 선정하여 반환합니다.', function() {
-            var actual = axisRange._selectAxisRange({
+            var actual = axisScaleMaker._selectAxisScale({
                     min: 10,
                     max: 90
                 }, [
@@ -744,7 +744,7 @@ describe('AxisRange', function() {
 
     describe('_restoreNumberState()', function() {
         it('애초에 정수형 변환이 없었던 tick info는 되돌리는 작업이 수행되지 않은 결과값을 반환합니다.', function() {
-            var tickInfo = axisRange._restoreNumberState({
+            var tickInfo = axisScaleMaker._restoreNumberState({
                 step: 5,
                 limit: {
                     min: 1,
@@ -761,7 +761,7 @@ describe('AxisRange', function() {
         });
 
         it('정수형으로 변환되었던 tick info를 원래 형태의 값으로 되롤린 결과값을 반환합니다.', function() {
-            var tickInfo = axisRange._restoreNumberState({
+            var tickInfo = axisScaleMaker._restoreNumberState({
                 step: 5,
                 limit: {
                     min: 1,
@@ -778,17 +778,17 @@ describe('AxisRange', function() {
         });
     });
 
-    describe('_calculateRange()', function() {
+    describe('_calculateScale()', function() {
         it('입력 data에 가장 적절한 tick info를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.makeSeriesWidth.and.returnValue(400);
-            axisRange.dataProcessor.groupValues = [
+            axisScaleMaker.dataProcessor.groupValues = [
                 [10, 20],
                 [40, 90]
             ];
 
-            actual = axisRange._calculateRange();
+            actual = axisScaleMaker._calculateScale();
             expected = {
                 limit: {min: 0, max: 100},
                 step: 20
@@ -802,8 +802,8 @@ describe('AxisRange', function() {
         it('axis가 하나 있을 경우에는 차트타입 구분없이 전체 음수값의 합을 계산합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisRange.dataProcessor.groupValues = {
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.groupValues = {
                 column: [
                     [70, 10],
                     [20, 20],
@@ -814,8 +814,8 @@ describe('AxisRange', function() {
                 ]
             };
 
-            axisRange.isSingleYAxis = true;
-            actual = axisRange._calculateMinusSum();
+            axisScaleMaker.isSingleYAxis = true;
+            actual = axisScaleMaker._calculateMinusSum();
             expected = -100;
 
             expect(actual).toEqual(expected);
@@ -824,8 +824,8 @@ describe('AxisRange', function() {
         it('axis가 두개 있을 경우에는 chartType에 해당하는 음수값의 합을 계산합니다.', function() {
             var actual, expected;
 
-            axisRange.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisRange.dataProcessor.groupValues = {
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.groupValues = {
                 column: [
                     [70, 10],
                     [20, 20],
@@ -836,22 +836,22 @@ describe('AxisRange', function() {
                 ]
             };
 
-            axisRange.chartType = 'column';
-            actual = axisRange._calculateMinusSum();
+            axisScaleMaker.chartType = 'column';
+            actual = axisScaleMaker._calculateMinusSum();
             expected = -80;
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_getPercentStackedRange()', function() {
+    describe('_getPercentStackedScale()', function() {
         it('음수의 합이 0일 경우에는 chartConst.PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_calculateMinusSum').and.returnValue(0);
+            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(0);
 
-            actual = axisRange._getPercentStackedRange();
-            expected = chartConst.PERCENT_STACKED_AXIS_RANGE;
+            actual = axisScaleMaker._getPercentStackedScale();
+            expected = chartConst.PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
         });
@@ -859,12 +859,12 @@ describe('AxisRange', function() {
         it('음수의 합이 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_calculateMinusSum').and.returnValue(-100);
-            axisRange.chartType = 'bar';
-            axisRange.options.diverging = true;
+            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.options.diverging = true;
 
-            actual = axisRange._getPercentStackedRange();
-            expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE;
+            actual = axisScaleMaker._getPercentStackedScale();
+            expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
         });
@@ -872,40 +872,40 @@ describe('AxisRange', function() {
         it('음수의 합이 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.NEGATIVE_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
 
-            actual = axisRange._getPercentStackedRange();
-            expected = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_RANGE;
+            actual = axisScaleMaker._getPercentStackedScale();
+            expected = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeRange()', function() {
-        it('유효한 percent stacked 차트일 경우에는 _getPercentStackedRange()의 수행결과를 반환합니다.', function() {
+    describe('_makeScale()', function() {
+        it('유효한 percent stacked 차트일 경우에는 _getPercentStackedScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_isPercentStackedChart').and.returnValue(true);
-            spyOn(axisRange, '_calculateMinusSum').and.returnValue(0);
+            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(true);
+            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(0);
 
-            actual = axisRange._makeRange();
-            expected = axisRange._getPercentStackedRange();
+            actual = axisScaleMaker._makeScale();
+            expected = axisScaleMaker._getPercentStackedScale();
 
             expect(actual).toBe(expected);
         });
 
-        it('유효한 percent stacked 차트가 아닌 경우에는 _calculateRange()의 수행결과를 반환합니다.', function() {
+        it('유효한 percent stacked 차트가 아닌 경우에는 _calculateScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisRange, '_isPercentStackedChart').and.returnValue(false);
+            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
             boundsMaker.makeSeriesWidth.and.returnValue(400);
-            axisRange.dataProcessor.groupValues = [
+            axisScaleMaker.dataProcessor.groupValues = [
                 [10, 20],
                 [40, 90]
             ];
 
-            actual = axisRange._makeRange();
-            expected = axisRange._calculateRange();
+            actual = axisScaleMaker._makeScale();
+            expected = axisScaleMaker._calculateScale();
 
             expect(actual).toEqual(expected);
         });

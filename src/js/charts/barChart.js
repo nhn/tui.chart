@@ -63,7 +63,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             hasAxes: true
         });
 
-        this.axisRange = this._createAxisRange({
+        this.axisScaleMaker = this._createAxisScaleMaker({
             min: options.xAxis.min,
             max: options.xAxis.max
         });
@@ -79,7 +79,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      */
     _makeAxesData: function() {
         var xAxisData = axisDataMaker.makeValueAxisData({
-                axisRange: this.axisRange
+                axisScaleMaker: this.axisScaleMaker
             }),
             yAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),

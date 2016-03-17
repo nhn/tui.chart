@@ -33,7 +33,7 @@ var lineTypeMixer = {
             isVertical: true
         });
 
-        this.axisRange = this._createAxisRange({
+        this.axisScaleMaker = this._createAxisScaleMaker({
             min: options.yAxis.min,
             max: options.yAxis.max
         });
@@ -55,7 +55,7 @@ var lineTypeMixer = {
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                axisRange: this.axisRange,
+                axisScaleMaker: this.axisScaleMaker,
                 isVertical: this.isVertical,
                 aligned: aligned
             });

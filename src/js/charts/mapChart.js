@@ -44,7 +44,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             DataProcessor: MapChartDataProcessor
         });
 
-        this.axisRange = this._createAxisRange({}, {
+        this.axisScaleMaker = this._createAxisScaleMaker({}, {
             valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
         });
 
@@ -89,7 +89,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _makeAxesData: function() {
         return axisDataMaker.makeValueAxisData({
-            axisRange: this.axisRange,
+            axisScaleMaker: this.axisScaleMaker,
             isVertical: true
         });
     },

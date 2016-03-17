@@ -8,7 +8,7 @@
 
 var maker = require('../../src/js/helpers/axisDataMaker'),
     chartConst = require('../../src/js/const'),
-    AxisRange = require('../../src/js/helpers/axisRange');
+    AxisRange = require('../../src/js/helpers/axisScaleMaker');
 
 describe('axisDataMaker', function() {
     describe('_makeLabels()', function() {
@@ -50,18 +50,18 @@ describe('axisDataMaker', function() {
     });
 
     describe('makeValueAxisData()', function() {
-        it('axisRange를 전달하여 value 타입 axis data를 생성합니다..', function() {
-            var axisRange = jasmine.createSpyObj('axisRange', ['getFormattedRangeValues', 'getLimit']),
+        it('axisScaleMaker를 전달하여 value 타입 axis data를 생성합니다..', function() {
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit']),
                 actual, expected;
 
-            axisRange.getFormattedRangeValues.and.returnValue([0, 25, 50, 75, 100]);
-            axisRange.getLimit.and.returnValue({
+            axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
+            axisScaleMaker.getLimit.and.returnValue({
                 min: 0,
                 max: 100
             });
 
             actual = maker.makeValueAxisData({
-                axisRange: axisRange,
+                axisScaleMaker: axisScaleMaker,
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true

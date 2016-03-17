@@ -264,13 +264,13 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         var index = params.index,
             chartType = params.chartTypes[index],
             yAxisOptions = this.yAxisOptionsMap[chartType],
-            axisRange, yAxisData;
+            axisScaleMaker, yAxisData;
 
         if (!chartType) {
             return {};
         }
 
-        axisRange = this._createAxisRange({
+        axisScaleMaker = this._createAxisScaleMaker({
             min: yAxisOptions.min,
             max: yAxisOptions.max
         }, {
@@ -278,7 +278,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         }, chartType);
 
         yAxisData = axisDataMaker.makeValueAxisData({
-            axisRange: axisRange,
+            axisScaleMaker: axisScaleMaker,
             isVertical: true,
             isSingleYAxis: params.isSingleYAxis
         });

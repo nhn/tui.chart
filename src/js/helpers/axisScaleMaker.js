@@ -1,5 +1,5 @@
 /**
- * @fileoverview Axis range.
+ * @fileoverview Axis scale maker.
  * @auth NHN Ent.
  *       FE Development Team <dl_javascript@nhnent.com>
  */
@@ -14,11 +14,11 @@ var chartConst = require('../const'),
 var abs = Math.abs,
     concat = Array.prototype.concat;
 
-var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
+var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
     /**
-     * Axis range.
+     * Axis scale.
      * @param {object} params parameters
-     * @constructs AxisRange
+     * @constructs AxisScaleMaker
      */
     init: function(params) {
         /**
@@ -57,35 +57,35 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
          */
         this.isSingleYAxis = !!params.isSingleYAxis;
         /**
-         * Count of range values.
+         * Count of scale values.
          * @type {number}
          */
         this.valueCounts = params.valueCount ? [params.valueCount] : null;
 
         /**
-         * Axis range
+         * Axis scale
          * @type {{limit: {min: number, max: number}, step: number}}
          */
-        this.range = null;
+        this.scale = null;
 
         /**
-         * Formatted range values.
+         * Formatted scale values.
          * @type {Array.<string | number>}
          */
         this.formattedValues = null;
     },
 
     /**
-     * Get range.
+     * Get scale.
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
-    _getRange: function() {
-        if (!this.range) {
-            this.range = this._makeRange();
+    _getScale: function() {
+        if (!this.scale) {
+            this.scale = this._makeScale();
         }
 
-        return this.range;
+        return this.scale;
     },
 
     /**
@@ -93,7 +93,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * @returns {{min: number, max: number}}
      */
     getLimit: function() {
-        return this._getRange().limit;
+        return this._getScale().limit;
     },
 
     /**
@@ -149,26 +149,26 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Get range values.
+     * Get scale values.
      * @returns {Array.<number>}
      * @private
      */
-    _getRangeValues: function() {
-        var range = this._getRange(),
-            values = calculator.makeLabelsFromLimit(range.limit, range.step);
+    _getScaleValues: function() {
+        var scale = this._getScale(),
+            values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
 
         return this._isDivergingChart() ? tui.util.map(values, abs) : values;
     },
 
     /**
-     * Get formatted range values.
+     * Get formatted scale values.
      * @returns {Array.<string|number>|*}
      */
-    getFormattedRangeValues: function() {
+    getFormattedScaleValues: function() {
         var values, formatFunctions;
 
         if (!this.formattedValues) {
-            values = this._getRangeValues();
+            values = this._getScaleValues();
             formatFunctions = this._getFormatFunctions();
             this.formattedValues = renderUtil.formatValues(values, formatFunctions);
         }
@@ -254,7 +254,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Make integer type range.
+     * Make integer type scale.
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} limit limit
      * @returns {{
@@ -264,7 +264,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * }} integer type info
      * @private
      */
-    _makeIntegerTypeRange: function(limit) {
+    _makeIntegerTypeScale: function(limit) {
         var options = this.options.limit || {},
             min = limit.min,
             max = limit.max,
@@ -364,7 +364,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * Normalize min.
      * @memberOf module:axisDataMaker
      * @param {number} min original min
-     * @param {number} step range step
+     * @param {number} step scale step
      * @returns {number} normalized min
      * @private
      */
@@ -384,7 +384,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * Make normalized max.
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} limit limit
-     * @param {number} step range step
+     * @param {number} step scale step
      * @param {number} valueCount value count
      * @returns {number} normalized max
      * @private
@@ -406,7 +406,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     /**
      * Normalize limit.
      * @param {{min: number, max: number}} limit base limit
-     * @param {number} step range step
+     * @param {number} step scale step
      * @param {number} valueCount value count
      * @returns {{min: number, max: number}} normalized limit
      * @private
@@ -423,7 +423,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * Add limit min padding.
      * @param {number} min base min
      * @param {number} dataMin minimum value of user data
-     * @param {number} step range step
+     * @param {number} step scale step
      * @param {?number} optionMin min option
      * @returns {number} changed min
      * @private
@@ -446,7 +446,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      *  when chart type is line or dataMin is plus, options is undefined, maximum values(max, dataMax) are same.
      * @param {number} max base max
      * @param {number} dataMax maximum value of user data
-     * @param {number} step range step
+     * @param {number} step scale step
      * @param {?number} optionMax max option
      * @returns {number} changed max
      * @private
@@ -465,14 +465,14 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Divide range step.
+     * Divide scale step.
      * @param {{min: number, max: number}} limit limit
      * @param {number} step step
      * @param {number} candidateValueCount candidate valueCount
-     * @returns {number} range step
+     * @returns {number} scale step
      * @private
      */
-    _divideRangeStep: function(limit, step, candidateValueCount) {
+    _divideScaleStep: function(limit, step, candidateValueCount) {
         var isEvenStep = ((step % 2) === 0),
             valueCount = calculator.makeLabelsFromLimit(limit, step).length,
             twiceValueCount = (valueCount * 2) - 1,
@@ -487,16 +487,16 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Minimize range limit.
+     * Minimize scale limit.
      * @param {{min: number, max: number}} limit base limit
      * @param {{min: number, max: number}} dataLimit limit of user data
-     * @param {number} step range step
+     * @param {number} step scale step
      * @param {number} valueCount value count
      * @param {{min: number, max:number}} options limit options of axis
      * @returns {{min: number, max: number}} minimized limit
      * @private
      */
-    _minimizeRangeLimit: function(limit, dataLimit, step, valueCount, options) {
+    _minimizeScaleLimit: function(limit, dataLimit, step, valueCount, options) {
         var min = limit.max,
             max = limit.min,
             comparisonMin = tui.util.isUndefined(options.min) ? dataLimit.min - 1 : options.min,
@@ -527,7 +527,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Make candidate axis range.
+     * Make candidate axis scale.
      * @param {{min: number, max: number}} baseLimit base limit
      * @param {{min: number, max: number}} dataLimit limit of user data
      * @param {number} valueCount value count
@@ -535,10 +535,10 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
      * @returns {{
      *      limit: {min: number, max: number},
      *      step: number
-     * }} range
+     * }} scale
      * @private
      */
-    _makeCandidateRange: function(baseLimit, dataLimit, valueCount, options) {
+    _makeCandidateScale: function(baseLimit, dataLimit, valueCount, options) {
         var limit = tui.util.extend({}, baseLimit),
             step;
 
@@ -558,10 +558,10 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
         limit.max = this._increaseMaxByStep(limit.max, dataLimit.max, step, options.max);
 
         // 05. axis limit이 사용자 min, max와 거리가 멀 경우 조절
-        limit = this._minimizeRangeLimit(limit, dataLimit, step, valueCount, options);
+        limit = this._minimizeScaleLimit(limit, dataLimit, step, valueCount, options);
 
         // 06. 조건에 따라 step값을 반으로 나눔
-        step = this._divideRangeStep(limit, step, valueCount);
+        step = this._divideScaleStep(limit, step, valueCount);
 
         return {
             limit: limit,
@@ -570,89 +570,89 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Make candidates about axis range.
+     * Make candidates about axis scale.
      * @param {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
      *      divideNum: number
-     * }} integerTypeRange integer type axis range
+     * }} integerTypeScale integer type axis scale
      * @param {Array.<number>} valueCounts value counts
-     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} candidates range
+     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} candidates scale
      * @private
      */
-    _makeCandidateRanges: function(integerTypeRange, valueCounts) {
+    _makeCandidateScales: function(integerTypeScale, valueCounts) {
         var self = this,
-            dataLimit = integerTypeRange.limit,
-            options = integerTypeRange.options,
+            dataLimit = integerTypeScale.limit,
+            options = integerTypeScale.options,
             baseLimit = this._makeBaseLimit(dataLimit, options);
 
         return tui.util.map(valueCounts, function(valueCount) {
-            return self._makeCandidateRange(baseLimit, dataLimit, valueCount, options);
+            return self._makeCandidateScale(baseLimit, dataLimit, valueCount, options);
         });
     },
 
     /**
-     * Get comparing value for selecting axis range.
+     * Get comparing value for selecting axis scale.
      * @param {{min: number, max: number}} baseLimit limit
-     * @param {{limit: {min: number, max: number}, step: number}} candidateRange range
+     * @param {{limit: {min: number, max: number}, step: number}} candidateScale scale
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(baseLimit, candidateRange) {
-        var diffMax = abs(candidateRange.limit.max - baseLimit.max),
-            diffMin = abs(baseLimit.min - candidateRange.limit.min),
+    _getComparingValue: function(baseLimit, candidateScale) {
+        var diffMax = abs(candidateScale.limit.max - baseLimit.max),
+            diffMin = abs(baseLimit.min - candidateScale.limit.min),
             // 소수점 이하 길이가 길 수록 가중치가 증가됨 (가중치가 크면 후보에서 제외될 가능성이 높음)
-            weight = Math.pow(10, tui.util.lengthAfterPoint(candidateRange.step));
+            weight = Math.pow(10, tui.util.lengthAfterPoint(candidateScale.step));
 
         return (diffMax + diffMin) * weight;
     },
 
     /**
-     * Select axis range.
+     * Select axis scale.
      * @param {{min: number, max: number}} baseLimit limit
-     * @param {Array.<{limit: {min: number, max: number}, step: number}>} candidates range candidates
-     * @returns {{limit: {min: number, max: number}, step: number}} selected range
+     * @param {Array.<{limit: {min: number, max: number}, step: number}>} candidates scale candidates
+     * @returns {{limit: {min: number, max: number}, step: number}} selected scale
      * @private
      */
-    _selectAxisRange: function(baseLimit, candidates) {
+    _selectAxisScale: function(baseLimit, candidates) {
         var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit),
             // 비교값이 가장 작은 후보가 선정됨
-            axisRange = tui.util.min(candidates, getComparingValue);
-        return axisRange;
+            axisScale = tui.util.min(candidates, getComparingValue);
+        return axisScale;
     },
 
     /**
-     * Restore number state of range.
+     * Restore number state of scale.
      * @memberOf module:axisDataMaker
-     * @param {{limit: {min: number, max: number}, step: number}} range range
+     * @param {{limit: {min: number, max: number}, step: number}} scale scale
      * @param {number} divideNum divide num
-     * @returns {{limit: {min: number, max: number}, step: number}} restored range
+     * @returns {{limit: {min: number, max: number}, step: number}} restored scale
      * @private
      */
-    _restoreNumberState: function(range, divideNum) {
+    _restoreNumberState: function(scale, divideNum) {
         if (divideNum === 1) {
-            return range;
+            return scale;
         }
 
-        range.step = tui.util.division(range.step, divideNum);
-        range.limit.min = tui.util.division(range.limit.min, divideNum);
-        range.limit.max = tui.util.division(range.limit.max, divideNum);
+        scale.step = tui.util.division(scale.step, divideNum);
+        scale.limit.min = tui.util.division(scale.limit.min, divideNum);
+        scale.limit.max = tui.util.division(scale.limit.max, divideNum);
 
-        return range;
+        return scale;
     },
 
     /**
-     * Calculate range.
+     * Calculate scale.
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
      */
-    _calculateRange: function() {
+    _calculateScale: function() {
         var baseValues = this._makeBaseValues(),
             dataLimit = {
                 min: tui.util.min(baseValues),
                 max: tui.util.max(baseValues)
             },
-            integerTypeRange, valueCounts, candidates, range;
+            integerTypeScale, valueCounts, candidates, scale;
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -663,21 +663,21 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
         }
 
         // 01. limit, options 정보를 정수형으로 변경
-        integerTypeRange = this._makeIntegerTypeRange(dataLimit);
+        integerTypeScale = this._makeIntegerTypeScale(dataLimit);
 
         // 02. value count 후보군 얻기
         valueCounts = this.valueCounts || this._getCandidateValueCounts();
 
-        // 03. axis range 후보군 얻기
-        candidates = this._makeCandidateRanges(integerTypeRange, valueCounts);
+        // 03. axis scale 후보군 얻기
+        candidates = this._makeCandidateScales(integerTypeScale, valueCounts);
 
-        // 04. axis range 후보군 중 하나 선택
-        range = this._selectAxisRange(integerTypeRange.limit, candidates);
+        // 04. axis scale 후보군 중 하나 선택
+        scale = this._selectAxisScale(integerTypeScale.limit, candidates);
 
-        // 05. 정수형으로 변경했던 range를 원래 형태로 변경
-        range = this._restoreNumberState(range, integerTypeRange.divideNum);
+        // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
+        scale = this._restoreNumberState(scale, integerTypeScale.divideNum);
 
-        return range;
+        return scale;
     },
 
     /**
@@ -698,41 +698,41 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Get percent stacked range.
+     * Get percent stacked scale.
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _getPercentStackedRange: function() {
+    _getPercentStackedScale: function() {
         var minusSum = this._calculateMinusSum(),
-            range;
+            scale;
 
         if (minusSum === 0) {
-            range = chartConst.PERCENT_STACKED_AXIS_RANGE;
+            scale = chartConst.PERCENT_STACKED_AXIS_SCALE;
         } else if (this._isDivergingChart()) {
-            range = chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE;
+            scale = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
         } else {
-            range = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_RANGE;
+            scale = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_SCALE;
         }
 
-        return range;
+        return scale;
     },
 
     /**
-     * Make range.
+     * Make scale.
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
-    _makeRange: function() {
-        var range;
+    _makeScale: function() {
+        var scale;
 
         if (this._isPercentStackedChart()) {
-            range = this._getPercentStackedRange();
+            scale = this._getPercentStackedScale();
         } else {
-            range = this._calculateRange();
+            scale = this._calculateScale();
         }
 
-        return range;
+        return scale;
     }
 });
 
-module.exports = AxisRange;
+module.exports = AxisScaleMaker;
