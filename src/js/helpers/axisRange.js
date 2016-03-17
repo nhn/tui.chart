@@ -254,7 +254,7 @@ var AxisRange = tui.util.defineClass(/** @lends AxisRange.prototype */{
     },
 
     /**
-     * Make integer type info
+     * Make integer type range.
      * @memberOf module:axisDataMaker
      * @param {{min: number, max: number}} limit limit
      * @returns {{

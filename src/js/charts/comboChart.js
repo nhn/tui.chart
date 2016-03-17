@@ -288,6 +288,12 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
         return yAxisData;
     },
 
+    /**
+     * Update yAxis tick count.
+     * @param {object} yAxisData yAxis data
+     * @param {object} rightYAxisData right yAxis data
+     * @private
+     */
     _updateYAxisTickCount: function(yAxisData, rightYAxisData) {
         var tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
         if (tickCountDiff > 0) {
@@ -337,18 +343,18 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     /**
      * Increase y axis tick count.
      * @param {number} increaseTickCount increase tick count
-     * @param {object} toData to tick info
+     * @param {object} yAxisData yAxis data
      * @private
      */
-    _increaseYAxisTickCount: function(increaseTickCount, toData) {
+    _increaseYAxisTickCount: function(increaseTickCount, yAxisData) {
         var formatFunctions = this.dataProcessor.getFormatFunctions(),
             labels;
 
-        toData.limit.max += toData.step * increaseTickCount;
-        labels = calculator.makeLabelsFromLimit(toData.limit, toData.step);
-        toData.labels = renderUtil.formatValues(labels, formatFunctions);
-        toData.tickCount += increaseTickCount;
-        toData.validTickCount += increaseTickCount;
+        yAxisData.limit.max += yAxisData.step * increaseTickCount;
+        labels = calculator.makeLabelsFromLimit(yAxisData.limit, yAxisData.step);
+        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions);
+        yAxisData.tickCount += increaseTickCount;
+        yAxisData.validTickCount += increaseTickCount;
     },
 
     /**
