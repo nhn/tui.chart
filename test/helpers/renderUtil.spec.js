@@ -185,10 +185,27 @@ describe('renderUtil', function() {
 
     describe('formatValue()', function() {
         it('두번째인자인 포맷함수를 이용하여 첫번째 인자인 값을 포맷팅합니다.', function() {
-            var actual = renderUtil.formatValue(3, [function(value) {
+            var formatFunctions = [function(value) {
                     return '00' + value;
-                }]),
+                }],
+                actual = renderUtil.formatValue(3, formatFunctions),
                 expected = '003';
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('formatValues()', function() {
+        it('전달된 value를 formatFunctions 함수들로 포맷팅하여 반환합니다.', function() {
+            var formatFunctions = [
+                    function(value) {
+                        return '00' + value;
+                    }, function(value) {
+                        return value + '%'
+                    }
+                ],
+                actual = renderUtil.formatValues([10, 20, 30, 40], formatFunctions),
+                expected = ['0010%', '0020%', '0030%', '0040%'];
+
             expect(actual).toEqual(expected);
         });
     });

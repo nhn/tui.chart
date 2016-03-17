@@ -230,13 +230,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             tickCount = this.data.tickCount,
             halfTickCount = parseInt(tickCount / 2, 10) + 1,
             categories = this.data.labels,
-            leftCategories = categories.slice(0, halfTickCount),
-            rightCategories = categories.slice(halfTickCount - 1, tickCount),
+            leftCates = categories.slice(0, halfTickCount),
+            rightCates = categories.slice(halfTickCount - 1, tickCount),
             additionWidth = leftWidth + this.boundsMaker.getDimension('yAxis').width,
             leftContainers, rightContainers, rightTitleContainer;
 
-        leftContainers = this._renderChildContainers(leftWidth, leftWidth, halfTickCount, leftCategories);
-        rightContainers = this._renderChildContainers(rightWidth, rightWidth, halfTickCount, rightCategories, additionWidth);
+        leftContainers = this._renderChildContainers(leftWidth, leftWidth, halfTickCount, leftCates);
+        rightContainers = this._renderChildContainers(rightWidth, rightWidth, halfTickCount, rightCates, additionWidth);
 
         rightTitleContainer = rightContainers[0];
         dom.addClass(rightTitleContainer, 'right');

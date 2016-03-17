@@ -112,12 +112,25 @@ describe('ComboChart', function() {
         it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function() {
             var actual, expected;
 
-            spyOn(comboChart.dataProcessor, 'getWholeGroupValues').and.returnValue([
-                [20, 30, 50],
-                [40, 40, 60],
-                [60, 50, 10],
-                [80, 10, 70]
-            ]);
+            comboChart.dataProcessor.groupValues = {
+                column: [
+                    [20, 30],
+                    [40, 40],
+                    [60, 50],
+                    [80, 10]
+                ],
+
+                line: [
+                    [50],
+                    [60],
+                    [10],
+                    [70]
+                ]
+            };
+            comboChart.boundsMaker.dimensions.series = {
+                width: 300,
+                height: 300
+            };
 
             comboChart.yAxisOptionsMap = {
                 'column': 'yAxisOptions'
@@ -130,7 +143,7 @@ describe('ComboChart', function() {
                     height: 300
                 },
                 chartTypes: ['column', 'line'],
-                isOneYAxis: true,
+                isSingleYAxis: true,
                 options: {
                     yAxis: {
                         title: 'Y Axis'
@@ -145,7 +158,6 @@ describe('ComboChart', function() {
                     min: 0,
                     max: 100
                 },
-                step: 25,
                 isVertical: true,
                 isPositionRight: false,
                 aligned: false,
@@ -158,10 +170,10 @@ describe('ComboChart', function() {
         it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function() {
             var actual, expected;
 
-            spyOn(comboChart.dataProcessor, 'getGroupValues').and.returnValue([
+            comboChart.dataProcessor.groupValues = [
                 [20, 30, 50],
                 [40, 40, 60]
-            ]);
+            ];
 
             comboChart.yAxisOptionsMap = {
                 'column': 'yAxisOptions'
@@ -174,7 +186,7 @@ describe('ComboChart', function() {
                     height: 300
                 },
                 chartTypes: ['column', 'line'],
-                isOneYAxis: false,
+                isSingleYAxis: false,
                 options: {
                     yAxis: [
                         {
@@ -195,7 +207,6 @@ describe('ComboChart', function() {
                     min: 10,
                     max: 70
                 },
-                step: 10,
                 isVertical: true,
                 isPositionRight: false,
                 aligned: false,

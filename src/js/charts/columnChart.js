@@ -33,6 +33,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         this.className = 'tui-column-chart';
 
         options.series = options.series || {};
+        options.yAxis = options.yAxis || {};
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
@@ -45,6 +46,11 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             options: options,
             hasAxes: true,
             isVertical: true
+        });
+
+        this.axisRange = this._createAxisRange({
+            min: options.yAxis.min,
+            max: options.yAxis.max
         });
 
         this._addComponents(options.chartType);
@@ -62,16 +68,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                values: this.dataProcessor.getGroupValues(),
-                seriesDimension: {
-                    height: this.boundsMaker.makeSeriesHeight()
-                },
-                stackedOption: options.series.stacked || '',
-                divergingOption: options.series.diverging,
-                chartType: options.chartType,
-                formatFunctions: this.dataProcessor.getFormatFunctions(),
-                options: options.yAxis,
-                isVertical: true
+                axisRange: this.axisRange,
+                isVertical: this.isVertical
             });
 
         return {

@@ -33,6 +33,11 @@ var lineTypeMixer = {
             isVertical: true
         });
 
+        this.axisRange = this._createAxisRange({
+            min: options.yAxis.min,
+            max: options.yAxis.max
+        });
+
         this._addComponents(options.chartType);
     },
 
@@ -50,15 +55,8 @@ var lineTypeMixer = {
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                values: this.dataProcessor.getGroupValues(),
-                seriesDimension: {
-                    height: this.boundsMaker.makeSeriesHeight()
-                },
-                stackedOption: options.series && options.series.stacked || '',
-                chartType: options.chartType,
-                formatFunctions: this.dataProcessor.getFormatFunctions(),
-                options: options.yAxis,
-                isVertical: true,
+                axisRange: this.axisRange,
+                isVertical: this.isVertical,
                 aligned: aligned
             });
 

@@ -44,6 +44,10 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             DataProcessor: MapChartDataProcessor
         });
 
+        this.axisRange = this._createAxisRange({}, {
+            valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
+        });
+
         this._addComponents(options);
     },
 
@@ -85,13 +89,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _makeAxesData: function() {
         return axisDataMaker.makeValueAxisData({
-            values: [this.dataProcessor.getValues()],
-            seriesDimension: {
-                height: this.boundsMaker.getDimension('legend').height
-            },
-            chartType: this.options.chartType,
-            formatFunctions: this.dataProcessor.getFormatFunctions(),
-            tickCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT,
+            axisRange: this.axisRange,
             isVertical: true
         });
     },

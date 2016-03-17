@@ -9,6 +9,7 @@
 var ComponentManager = require('./componentManager'),
     DefaultDataProcessor = require('../helpers/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
+    AxisRange = require('../helpers/axisRange'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
     predicate = require('../helpers/predicate'),
@@ -133,6 +134,33 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var dataProcessor = new DataProcessor(params.rawData, params.options, params.seriesChartTypes);
 
         return dataProcessor;
+    },
+
+    /**
+     * Create axis range.
+     * @param {{min: number, max: number}} limitOption limit
+     * @param {?object} additionalParams additional parameters
+     * @param {string} chartType chart type
+     * @returns {AxisRange}
+     * @private
+     */
+    _createAxisRange: function(limitOption, additionalParams, chartType) {
+        var seriesOptions = this.options.series || {};
+
+        chartType = chartType || this.chartType;
+        seriesOptions = seriesOptions[chartType] || seriesOptions;
+
+        return new AxisRange(tui.util.extend({
+            dataProcessor: this.dataProcessor,
+            boundsMaker: this.boundsMaker,
+            options: {
+                stacked: seriesOptions.stacked,
+                diverging: seriesOptions.diverging,
+                limit: limitOption
+            },
+            isVertical: this.isVertical,
+            chartType: chartType
+        }, additionalParams));
     },
 
     /**
