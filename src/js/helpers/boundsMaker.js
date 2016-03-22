@@ -38,7 +38,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          * @type {object}
          */
         this.options = params.options || {};
-
         this.options.legend = this.options.legend || {};
         this.options.yAxis = this.options.yAxis || {};
 
@@ -151,7 +150,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     /**
      * Set bound.
      * @param {string} name component name
-     * @param {bound} component bound
+     * @param {bound} bound component bound
      * @private
      */
     _setBound: function(name, bound) {
@@ -636,7 +635,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _updateBoundsForYAxisCenterOption: function() {
         var yAxisWidth = this.getDimension('yAxis').width,
-            yAxisExtensibleLeft = (this.getDimension('series').width / 2),
+            yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH,
             xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
 
         this.dimensions.extendedSeries.width += yAxisWidth;

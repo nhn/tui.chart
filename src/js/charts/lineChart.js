@@ -29,7 +29,6 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * @constructs LineChart
      * @extends ChartBase
      * @mixes axisTypeMixer
-     * @mixes verticalTypeMixer
      * @mixes lineTypeMixer
      */
     init: function() {

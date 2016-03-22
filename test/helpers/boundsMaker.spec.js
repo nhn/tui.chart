@@ -751,7 +751,7 @@ describe('boundsMaker', function() {
             expect(boundsMaker.positions.series.left).toBe(0);
             expect(boundsMaker.positions.extendedSeries.left).toBe(1);
             expect(boundsMaker.positions.plot.left).toBe(1);
-            expect(boundsMaker.positions.yAxis.left).toBe(200);
+            expect(boundsMaker.positions.yAxis.left).toBe(201);
             expect(boundsMaker.positions.xAxis.left).toBe(1);
             expect(boundsMaker.positions.customEvent.left).toBe(1);
             expect(boundsMaker.positions.tooltip.left).toBe(1);

@@ -376,6 +376,23 @@ var renderUtil = {
     },
 
     /**
+     * Format values.
+     * @param {Array.<number>} values values
+     * @param {Array.<function>} formatFunctions functions for format
+     * @returns {Array.<string>}
+     */
+    formatValues: function(values, formatFunctions) {
+        var formatedValues;
+        if (!formatFunctions || !formatFunctions.length) {
+            return values;
+        }
+        formatedValues = tui.util.map(values, function(label) {
+            return renderUtil.formatValue(label, formatFunctions);
+        });
+        return formatedValues;
+    },
+
+    /**
      * Cancel animation
      * @param {{id: number}} animation animaion object
      */

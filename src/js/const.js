@@ -147,40 +147,37 @@ var chartConst = {
     MIN_PIXEL_TYPE_STEP_SIZE: 40,
     /** maximum pixel type step size */
     MAX_PIXEL_TYPE_STEP_SIZE: 60,
-    /** tick info of percent stacked option
+    /** axis scale of percent stacked option
      * @type {object}
      */
-    PERCENT_STACKED_TICK_INFO: {
+    PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: 0,
             max: 100
         },
         step: 25,
-        tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     },
-    /** tick info of negative percent stacked option
+    /** axis scale of negative percent stacked option
      * @type {object}
      */
-    NEGATIVE_PERCENT_STACKED_TICK_INFO: {
+    NEGATIVE_PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: -100,
             max: 100
         },
         step: 25,
-        tickCount: 9,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** tick info of diverging percent stacked option
+    /** axis scale of diverging percent stacked option
      * @type {object}
      */
-    DIVERGENT_PERCENT_STACKED_TICK_INFO: {
+    DIVERGING_PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: -100,
             max: 100
         },
         step: 25,
-        tickCount: 9,
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
     /** title add padding */
