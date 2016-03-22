@@ -101,7 +101,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @override
      */
     _updatePercentValues: function(axesData) {
-        this.dataProcessor.registerPercentValues(axesData.limit);
+        this.dataProcessor.addDataRatios(axesData.limit);
     },
 
     /**

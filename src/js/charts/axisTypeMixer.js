@@ -175,7 +175,7 @@ var axisTypeMixer = {
             stackedOption = this.options.series && this.options.series.stacked;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.registerPercentValues(limitMap[chartType], stackedOption, chartType);
+            self.dataProcessor.addDataRatios(limitMap[chartType], stackedOption, chartType);
         });
     },
 

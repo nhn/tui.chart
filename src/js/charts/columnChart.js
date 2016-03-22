@@ -10,6 +10,7 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
     barTypeMixer = require('./barTypeMixer'),
+    predicate = require('../helpers/predicate'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/columnChartSeries');
 
@@ -34,6 +35,10 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
 
         options.series = options.series || {};
         options.yAxis = options.yAxis || {};
+
+        if (predicate.isValidStackedOption(options.series.stacked)) {
+            rawData.series = this._sortRawSeriesData(rawData);
+        }
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);

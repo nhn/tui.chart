@@ -113,12 +113,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _isValidAxis: function() {
         var isInvalid = true,
-            groupValues;
+            groupItems;
 
         if (this.componentName === 'rightYAxis') {
-            groupValues = this.dataProcessor.getGroupValues();
-            tui.util.forEach(groupValues, function(values) {
-                if (!values.length) {
+            groupItems = this.dataProcessor.getGroupItems();
+            tui.util.forEach(groupItems, function(items) {
+                if (!items.length) {
                     isInvalid = false;
                 }
                 return isInvalid;

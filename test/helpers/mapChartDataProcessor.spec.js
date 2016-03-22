@@ -134,8 +134,8 @@ describe('test MapChartDataProcessor', function() {
         });
     });
 
-    describe('registerPercentValues()', function() {
-        it('percent values를 등록합니다.', function() {
+    describe('addDataRatios()', function() {
+        it('data의 ratio를 계산하여 추가합니다.', function() {
             var limit = {
                     min: 0,
                     max: 200
@@ -150,13 +150,13 @@ describe('test MapChartDataProcessor', function() {
                     value: 50
                 }
             };
-            dataProcessor.registerPercentValues(limit);
+            dataProcessor.addDataRatios(limit);
             actual = dataProcessor.getValueMap();
             krExpected = 0.5;
             jpExpected = 0.25;
 
-            expect(actual.KR.percentValue).toBe(krExpected);
-            expect(actual.JP.percentValue).toBe(jpExpected);
+            expect(actual.KR.ratio).toBe(krExpected);
+            expect(actual.JP.ratio).toBe(jpExpected);
         });
     });
 });

@@ -12,7 +12,7 @@ describe('Tooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getFormattedGroupValues', 'getLegendLabels', 'getValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getGroupItems', 'getLegendLabels', 'getValue']);
     });
 
     beforeEach(function() {
@@ -27,7 +27,13 @@ describe('Tooltip', function() {
             var actual, expected;
 
             dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
-            dataProcessor.getFormattedGroupValues.and.returnValue([['10', '20']]);
+            dataProcessor.getGroupItems.and.returnValue([[
+                {
+                    formattedValue: '10'
+                }, {
+                    formattedValue: '20'
+                }
+            ]]);
             dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
             tooltip.chartType = 'column';
             actual = tooltip._makeTooltipData();

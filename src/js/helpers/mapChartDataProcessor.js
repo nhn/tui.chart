@@ -103,14 +103,14 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
     },
 
     /**
-     * Make percent value.
+     * Add data ratios of map chart.
      * @param {{min: number, max: number}} limit axis limit
      */
-    registerPercentValues: function(limit) {
+    addDataRatios: function(limit) {
         var min = limit.min,
             max = limit.max - min;
         tui.util.forEach(this.getValueMap(), function(map) {
-            map.percentValue = (map.value - min) / max;
+            map.ratio = (map.value - min) / max;
         }, this);
     }
 });

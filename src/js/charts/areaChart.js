@@ -9,6 +9,7 @@
 var ChartBase = require('./chartBase'),
     lineTypeMixer = require('./lineTypeMixer'),
     axisTypeMixer = require('./axisTypeMixer'),
+    rawDataHandler = require('../helpers/rawDataHandler'),
     Series = require('../series/areaChartSeries');
 
 var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -28,12 +29,15 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      * Area chart.
      * @constructs AreaChart
      * @extends ChartBase
+     * @param {Array.<Array>} rawData raw data
+     * @param {object} theme chart theme
+     * @param {object} options chart options
      * @mixes axisTypeMixer
-     * @mixes verticalTypeMixer
      * @mixes lineTypeMixer
      */
-    init: function() {
-        this._lineTypeInit.apply(this, arguments);
+    init: function(rawData, theme, options) {
+        rawDataHandler.removeSeriesStack(rawData.series);
+        this._lineTypeInit(rawData, theme, options);
     }
 });
 

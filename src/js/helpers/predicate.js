@@ -236,6 +236,15 @@ var predicate = {
      */
     isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
         return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
+    },
+
+    /**
+     * Whether minus limit or not.
+     * @param {{min: number, max: number}} limit limit
+     * @returns {boolean}
+     */
+    isMinusLimit: function(limit) {
+        return limit.min <= 0 && limit.max <= 0;
     }
 };
 

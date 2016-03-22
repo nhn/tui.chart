@@ -101,27 +101,27 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeTooltipData: function() {
         var categories = this.dataProcessor.getCategories(),
-            orgFormattedValues = this.dataProcessor.getFormattedGroupValues(),
+            orgGroupItems = this.dataProcessor.getGroupItems(),
             orgLegendLabels = this.dataProcessor.getLegendLabels(),
-            formattedValues = {},
+            groupItemMap = {},
             legendLabels = {},
             tooltipData = {};
 
-        if (tui.util.isArray(orgFormattedValues)) {
-            formattedValues[this.chartType] = orgFormattedValues;
+        if (tui.util.isArray(orgGroupItems)) {
+            groupItemMap[this.chartType] = orgGroupItems;
             legendLabels[this.chartType] = orgLegendLabels;
         } else {
-            formattedValues = orgFormattedValues;
+            groupItemMap = orgGroupItems;
             legendLabels = orgLegendLabels;
         }
 
-        tui.util.forEach(formattedValues, function(groupValues, chartType) {
-            tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
-                return tui.util.map(values, function(value, index) {
+        tui.util.forEach(groupItemMap, function(grupItems, chartType) {
+            tooltipData[chartType] = tui.util.map(grupItems, function(items, groupIndex) {
+                return tui.util.map(items, function(item, index) {
                     return {
                         category: categories ? categories[groupIndex] : '',
                         legend: legendLabels[chartType][index],
-                        value: value
+                        value: item.formattedValue
                     };
                 });
             });

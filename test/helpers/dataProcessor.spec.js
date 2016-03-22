@@ -6,7 +6,8 @@
 
 'use strict';
 
-var DataProcessor = require('../../src/js/helpers/dataProcessor.js');
+var DataProcessor = require('../../src/js/helpers/dataProcessor.js'),
+    chartConst = require('../../src/js/const');
 
 describe('test DataProcessor', function() {
     var dataProcessor;
@@ -26,8 +27,61 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_pickValuesFromRawData()', function() {
-        it('사용자가 입력한 data에서 value를 추출합니다.', function() {
+    describe('_pickItems()', function() {
+        it('rawSeriesDatum에서 stack, value를 추출하고 formattedValue를 생성하여 추가합니다.', function() {
+            var actual, expected;
+
+            spyOn(dataProcessor, 'getFormatFunctions').and.returnValue([
+                function(value) {
+                    return '00' + value;
+                }
+            ]);
+
+            actual = dataProcessor._pickItems({
+                stack: 'st',
+                data: [1, 2]
+            });
+            expected = [{
+                stack: 'st',
+                value: 1,
+                formattedValue: '001'
+            }, {
+                stack: 'st',
+                value: 2,
+                formattedValue: '002'
+            }];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('stack이 없을 경우에는 DEFAULT_STACK을 추가합니다.', function() {
+            var actual, expected;
+
+            spyOn(dataProcessor, 'getFormatFunctions').and.returnValue([
+                function(value) {
+                    return '00' + value;
+                }
+            ]);
+
+            actual = dataProcessor._pickItems({
+                data: [1, 2]
+            });
+            expected = [{
+                stack: chartConst.DEFAULT_STACK,
+                value: 1,
+                formattedValue: '001'
+            }, {
+                stack: chartConst.DEFAULT_STACK,
+                value: 2,
+                formattedValue: '002'
+            }];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_pickGroupItemsFromRawData()', function() {
+        it('rawData.series에서 전달한 callback function에 해당하는 item을 추출합니다.', function() {
             var actual, expected;
 
             dataProcessor.rawData = {
@@ -51,12 +105,160 @@ describe('test DataProcessor', function() {
                 ]
             };
 
-            actual = dataProcessor._pickValuesFromRawData();
+            spyOn(dataProcessor, '_pickItems').and.callFake(function(item) {
+                return item.data;
+            });
+            actual = dataProcessor._pickGroupItemsFromRawData();
             expected = [
                 [20, 40, 60, 80],
                 [30, 40, 50, 10],
                 [50, 60, 10, 70]
             ];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('rawData.series가 객체로 구성된 경우(combo chart)에는 객체 형태로 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.rawData = {
+                series: {
+                    column: [
+                        {
+                            name: 'Legend1',
+                            data: [20, 30, 50]
+                        },
+                        {
+                            name: 'Legend2',
+                            data: [40, 40, 60]
+                        }
+                    ],
+                    line: [
+                        {
+                            name: 'Legend3',
+                            data: [60, 50, 10]
+                        },
+                        {
+                            name: 'Legend4',
+                            data: [80, 10, 70]
+                        }
+                    ]
+                }
+            };
+
+            spyOn(dataProcessor, '_pickItems').and.callFake(function(item) {
+                return item.data;
+            });
+            actual = dataProcessor._pickGroupItemsFromRawData();
+            expected = {
+                column: [
+                    [20, 40],
+                    [30, 40],
+                    [50, 60]
+                ],
+                line: [
+                    [60, 80],
+                    [50, 10],
+                    [10, 70]
+                ]
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+
+    describe('_makeWholeGroupItems()', function() {
+        it('차트 타입별로 분리된 gropuItems를 하나로 모아서 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.groupItems = {
+                column: [[{
+                    value: 40
+                }]],
+                line: [[
+                {
+                    value: 60
+                }]],
+            };
+
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+            actual = dataProcessor._makeWholeGroupItems();
+            expected = [[{
+                value: 40
+            },
+            {
+                value: 60
+            }]];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('분리되지 않은 gropuItems는 그대로 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.groupItems = [[{
+                value: 40
+            },
+            {
+                value: 60
+            }]];
+
+            actual = dataProcessor._makeWholeGroupItems();
+            expected = [[{
+                value: 40
+            },
+            {
+                value: 60
+            }]];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeWholeItems()', function() {
+        it('차트 타입별로 분리된 gropuItems의 item들을 1차원 배열로 만들어 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.groupItems = {
+                column: [[{
+                    value: 40
+                }]],
+                line: [[
+                {
+                    value: 60
+                }]],
+            };
+
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+            actual = dataProcessor._makeWholeItems();
+            expected = [{
+                value: 40
+            },
+            {
+                value: 60
+            }];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('분리되지 않은 gropuItems의 item들을 1차원 배열로 만들어 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.groupItems = [[{
+                value: 40
+            },
+            {
+                value: 60
+            }]];
+
+            actual = dataProcessor._makeWholeItems();
+            expected = [{
+                value: 40
+            },
+            {
+                value: 60
+            }];
 
             expect(actual).toEqual(expected);
         });
@@ -215,64 +417,6 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_formatValues()', function() {
-        it('단일 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
-            var actual, expected;
-
-            dataProcessor.groupValues = [
-                [20, 40, 60, 80],
-                [30, 40, 50, 10],
-                [50, 60, 10, 70]
-            ];
-            dataProcessor.options = {
-                chart: {
-                    format: '0.0'
-                }
-            };
-
-            actual = dataProcessor._formatValues();
-            expected = [
-                ['20.0', '40.0', '60.0', '80.0'],
-                ['30.0', '40.0', '50.0', '10.0'],
-                ['50.0', '60.0', '10.0', '70.0']
-            ];
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('Combo 차트 data를 "0.0"으로 포맷팅하여 반환합니다.', function() {
-            var actual, expected;
-
-            dataProcessor.groupValues = {
-                column: [
-                    [20, 40, 60, 80],
-                    [30, 40, 50, 10]
-                ],
-                line: [
-                    [50, 60, 10, 70]
-                ]
-            };
-            dataProcessor.options = {
-                chart: {
-                    format: '0.0'
-                }
-            };
-            actual = dataProcessor._formatValues();
-            expected = {
-                column: [
-                    ['20.0', '40.0', '60.0', '80.0'],
-                    ['30.0', '40.0', '50.0', '10.0']
-
-                ],
-                line: [
-                    ['50.0', '60.0', '10.0', '70.0']
-                ]
-            };
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_makeMultilineCategory()', function() {
         it('카테고리의 너비가 limitWidth를 넘어가지 않으면 그대로 반환합니다.', function() {
             var actual = dataProcessor._makeMultilineCategory('ABCDE FGHIJK', 100, {
@@ -332,86 +476,280 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeNormalPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makePercentValues([[20], [40], [80], [120]], {min: 0, max: 160});
-            expect(actual).toEqual([[0.125], [0.25], [0.5], [0.75]]);
+    describe('_addRatios()', function() {
+        it('옵션이 없는 차트의 groupItems에 ratio 정보를 추가합니다.', function() {
+            var items;
+
+            dataProcessor.groupItems = [
+                [{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]
+            ];
+            dataProcessor._addRatios('bar', {min: 0, max: 80});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(0.25);
+            expect(items[1].ratio).toBe(0.5);
         });
 
-        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 percentValues도 음수로 표현됩니다.', function() {
-            var actual = dataProcessor._makePercentValues([[-20], [-40], [-80], [-120]], {min: 0, max: 160});
-            expect(actual).toEqual([[-0.125], [-0.25], [-0.5], [-0.75]]);
+        it('라인차트가 아니면서 모든 데이터가 음수일 경우에는 모든 값에 limit.max값을 더하여 ratio를 계산합니다.', function() {
+            var items;
+
+            dataProcessor.groupItems = [
+                [{
+                    value: -40
+                },
+                {
+                    value: -60
+                }]
+            ];
+            dataProcessor._addRatios('bar', {min: -100, max: -20});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(-0.25);
+            expect(items[1].ratio).toBe(-0.5);
         });
 
         it('라인차트이면서 모두 양수일 경우에는 모든 값에서 limit 최소값을 빼고 계산합니다.', function() {
-            var actual = dataProcessor._makePercentValues([[60], [40], [80], [120]], {min: 20, max: 180}, true);
-            expect(actual).toEqual([[0.25], [0.125], [0.375], [0.625]]);
+            var items;
+
+            dataProcessor.groupItems = [
+                [{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]
+            ];
+            dataProcessor._addRatios('bar', {min: 10, max: 90});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(0.125);
+            expect(items[1].ratio).toBe(0.375);
         });
     });
 
-    describe('_makeNormalStackedPercentValues()', function() {
-        it('stacked 옵션이 "normal"이 모든 데이터가 양수인 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [60, 60], [60, 40], [80, 20]], {min: 0, max: 160}),
-                expected = [[0.125, 0.5], [0.375, 0.375], [0.375, 0.25], [0.5, 0.125]];
+    describe('_addRatiosWhenNormalStacked()', function() {
+        it('normal stacked 옵션이며 라인타입 차트가 아닌 경우에는 _addRatios()와 동일하게 limit.min, limit.max의 간격 기준으로 ratio를 구하여 추가합니다.', function() {
+            var items;
 
-            expect(actual).toEqual(expected);
+            dataProcessor.groupItems = [
+                [{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]
+            ];
+
+            dataProcessor._addRatiosWhenNormalStacked('bar', {min: 0, max: 80});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(0.25);
+            expect(items[1].ratio).toBe(0.5);
         });
 
-        it('stacked 옵션이 "normal"이며 모든 데이터가 음수인 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makeNormalStackedPercentValues([[-20, -80], [-60, -60], [-60, -40], [-80, -20]], {min: 0, max: 160}),
-                expected = [[-0.125, -0.5], [-0.375, -0.375], [-0.375, -0.25], [-0.5, -0.125]];
+        it('라인타입 차트(영역)가 아니며 음수인 경우에는 _addRatios()와 달리 limit.min, limit.max의 간격 기준으로 ratio를 구하여 추가합니다.', function() {
+            var items;
 
-            expect(actual).toEqual(expected);
+            dataProcessor.groupItems = [
+                [{
+                    value: -20
+                },
+                {
+                    value: -40
+                }]
+            ];
+
+            dataProcessor._addRatiosWhenNormalStacked('bar', {min: 0, max: 80});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(-0.25);
+            expect(items[1].ratio).toBe(-0.5);
         });
 
-        it('stacked 옵션이 "normal"이며 데이터와 양수와 음수가 섞여있는 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makeNormalStackedPercentValues([[20, 80], [-60, 60], [-60, -40], [80, -20]], {min: -160, max: 160}),
-                expected = [[0.0625, 0.25], [-0.1875, 0.1875], [-0.1875, -0.125], [0.25, -0.0625]];
+        it('영역(라인타입) 차트이면서 모두 양수인 경우에는 _addRatios()와 달리 limit.min, limit.max의 간격 기준으로 ratio를 구하여 추가합니다.', function() {
+            var items;
+
+            dataProcessor.groupItems = [
+                [{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]
+            ];
+
+            dataProcessor._addRatiosWhenNormalStacked('area', {min: 0, max: 80});
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(0.25);
+            expect(items[1].ratio).toBe(0.5);
+        });
+    });
+
+    describe('_makeFlattenValues()', function() {
+        it('groupItems에서 value를 추출한 후 1차원 배열로 만들어 반환합니다.', function() {
+            var groupItems = [[{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]],
+                actual = dataProcessor._makeFlattenValues(groupItems),
+                expected = [20, 40];
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makePercentStackedPercentValues()', function() {
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
-            var actual = dataProcessor._makePercentStackedPercentValues([[20, 80], [40, 60], [60, 40], [80, 20]]),
-                expected = [[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]];
+    describe('_calculateBaseRatio()', function() {
+        it('groupItems에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
+            var groupItems = [[{
+                    value: -20
+                },
+                {
+                    value: 40
+                }]],
+                actual = dataProcessor._calculateBaseRatio(groupItems),
+                expected = 0.5;
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('groupItems에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
+            var groupItems = [[{
+                    value: 20
+                },
+                {
+                    value: 40
+                }]],
+                actual = dataProcessor._calculateBaseRatio(groupItems),
+                expected = 1;
+
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('registerPercentValues()', function() {
-        it('stacked 옵션이 없는 percent타입의 values를 생성합니다.', function() {
-            var actual, expected;
-
-            dataProcessor.groupValues = [[20], [40], [80], [120]];
-            dataProcessor.registerPercentValues({min: 0, max: 160}, null, 'column');
-            actual = dataProcessor.percentValues.column;
-            expected = [[0.125], [0.25], [0.5], [0.75]];
+    describe('_makeSumMapPerStack()', function() {
+        it('items에서 stack 기준으로 합산하여 sum map을 생성한 후 반환합니다.', function() {
+            var items = [{
+                    value: 20,
+                    stack: 'st1'
+                },
+                {
+                    value: 40,
+                    stack: 'st1'
+                },
+                {
+                    value: 10,
+                    stack: 'st2'
+                },
+                {
+                    value: 30,
+                    stack: 'st2'
+                }],
+                actual = dataProcessor._makeSumMapPerStack(items),
+                expected = {
+                    st1: 60,
+                    st2: 40
+                };
 
             expect(actual).toEqual(expected);
         });
+    });
 
-        it('stacked 옵션이 "normal"인 percent타입의 values를 생성합니다.', function() {
-            var actual, expected;
+    describe('_addRatiosWhenPercentStacked()', function() {
+        it('percent stacked 옵션인 경우의 ratio를 계산하여 추가합니다.', function() {
+            var items;
 
-            dataProcessor.groupValues = [[20, 80], [40, 60], [60, 40], [80, 20]];
-            dataProcessor.registerPercentValues({min: 0, max: 160}, 'normal', 'column');
-            actual = dataProcessor.percentValues.column;
-            expected = [[0.125, 0.5], [0.25, 0.375], [0.375, 0.25], [0.5, 0.125]];
+            dataProcessor.groupItems = [
+                [{
+                    value: 40
+                },
+                {
+                    value: 60
+                }]
+            ];
 
-            expect(actual).toEqual(expected);
+            dataProcessor._addRatiosWhenPercentStacked('bar');
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(0.4);
+            expect(items[1].ratio).toBe(0.6);
         });
 
-        it('stacked 옵션이 "percent"인 percent타입의 values를 생성합니다.', function() {
-            var actual, expected;
+        it('음수와 양수가 섞인 경우에는 계산된 ratio의 50%에 해당하는 ratio를  추가합니다.', function() {
+            var items;
 
-            dataProcessor.groupValues = [[20, 80], [40, 60], [60, 40], [80, 20]];
-            dataProcessor.registerPercentValues({min: 0, max: 160}, 'percent', 'column');
-            actual = dataProcessor.percentValues.column;
-            expected = [[0.2, 0.8], [0.4, 0.6], [0.6, 0.4], [0.8, 0.2]];
+            dataProcessor.groupItems = [
+                [{
+                    value: -40
+                },
+                {
+                    value: 60
+                }]
+            ];
 
-            expect(actual).toEqual(expected);
+            dataProcessor._addRatiosWhenPercentStacked('bar');
+            items = dataProcessor.groupItems[0];
+
+            expect(items[0].ratio).toBe(-0.2);
+            expect(items[1].ratio).toBe(0.3);
+        });
+    });
+
+    describe('addDataRatios()', function() {
+        it('옵션이 없는 경우에는 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatios');
+
+            dataProcessor.addDataRatios({min: 0, max: 160}, null, 'column');
+
+            expect(dataProcessor._addRatios).toHaveBeenCalled();
+        });
+
+        it('stacked option이 유효한 차트의 옵션이 normal stacked인 경우에는 _addRatiosWhenNormalStacked()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatiosWhenNormalStacked');
+
+            dataProcessor.addDataRatios({min: 0, max: 160}, 'normal', 'bar');
+
+            expect(dataProcessor._addRatiosWhenNormalStacked).toHaveBeenCalled();
+        });
+
+        it('stacked option이 유효하지 않는 라인 차트에는 normal stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatios');
+
+            dataProcessor.addDataRatios({min: 0, max: 160}, 'normal', 'line');
+
+            expect(dataProcessor._addRatios).toHaveBeenCalled();
+        });
+
+        it('stacked option이 유효한 차트의 옵션이 diverging percent stacked인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatiosWhenDivergingStacked');
+
+            dataProcessor.divergingOption = true;
+            dataProcessor.addDataRatios({min: 0, max: 160}, 'percent', 'bar');
+
+            expect(dataProcessor._addRatiosWhenDivergingStacked).toHaveBeenCalled();
+        });
+
+        it('stacked option이 유효한 차트의 옵션이 percent stacked인 경우에는 _addRatiosWhenPercentStacked()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatiosWhenPercentStacked');
+
+            dataProcessor.addDataRatios({min: 0, max: 160}, 'percent', 'bar');
+
+            expect(dataProcessor._addRatiosWhenPercentStacked).toHaveBeenCalled();
+        });
+
+        it('stacked option이 유효하지 않는 라인 차트에는 percent stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+            spyOn(dataProcessor, '_addRatios');
+
+            dataProcessor.addDataRatios({min: 0, max: 160}, 'percent', 'line');
+
+            expect(dataProcessor._addRatios).toHaveBeenCalled();
         });
     });
 });
