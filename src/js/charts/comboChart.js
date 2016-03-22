@@ -289,13 +289,14 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Update yAxis tick count.
+     * Update tick count to make the same tick count of yAxes.
      * @param {object} yAxisData yAxis data
      * @param {object} rightYAxisData right yAxis data
      * @private
      */
     _updateYAxisTickCount: function(yAxisData, rightYAxisData) {
         var tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
+
         if (tickCountDiff > 0) {
             this._increaseYAxisTickCount(tickCountDiff, yAxisData);
         } else if (tickCountDiff < 0) {
@@ -341,7 +342,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Increase y axis tick count.
+     * Increase yAxis tick count.
      * @param {number} increaseTickCount increase tick count
      * @param {object} yAxisData yAxis data
      * @private

@@ -11,8 +11,7 @@ var chartConst = require('../const'),
     calculator = require('./calculator'),
     renderUtil = require('./renderUtil');
 
-var abs = Math.abs,
-    concat = Array.prototype.concat;
+var abs = Math.abs;
 
 var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
     /**
@@ -353,8 +352,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                 baseLimit.max = -tmpMin;
             }
 
-            baseLimit.min = !tui.util.isUndefined(options.min) ? options.min : baseLimit.min;
-            baseLimit.max = !tui.util.isUndefined(options.max) ? options.max : baseLimit.max;
+            baseLimit.min = tui.util.isUndefined(options.min) ? baseLimit.min : options.min;
+            baseLimit.max = tui.util.isUndefined(options.max) ? baseLimit.max : options.max;
         }
 
         return baseLimit;
@@ -420,7 +419,6 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     /**
      * Decrease minimum value by step value,
      *  when chart type is line or dataMin is minus, options is undefined, minimum values(min, dataMin) are same.
-     * Add limit min padding.
      * @param {number} min base min
      * @param {number} dataMin minimum value of user data
      * @param {number} step scale step
@@ -554,7 +552,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         // 04. line차트의 경우 사용자의 min값이 limit의 min값과 같을 경우, min값을 1 step 감소 시킴
         limit.min = this._decreaseMinByStep(limit.min, dataLimit.min, step, options.min);
 
-        // 04. 사용자의 max값이 scael max와 같을 경우, max값을 1 step 증가 시킴
+        // 04. 사용자의 max값이 scale max와 같을 경우, max값을 1 step 증가 시킴
         limit.max = this._increaseMaxByStep(limit.max, dataLimit.max, step, options.max);
 
         // 05. axis limit이 사용자 min, max와 거리가 멀 경우 조절
@@ -616,8 +614,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _selectAxisScale: function(baseLimit, candidates) {
         var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit),
-            // 비교값이 가장 작은 후보가 선정됨
             axisScale = tui.util.min(candidates, getComparingValue);
+
         return axisScale;
     },
 

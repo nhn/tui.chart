@@ -7,8 +7,7 @@
 'use strict';
 
 var maker = require('../../src/js/helpers/axisDataMaker'),
-    chartConst = require('../../src/js/const'),
-    AxisRange = require('../../src/js/helpers/axisScaleMaker');
+    chartConst = require('../../src/js/const');
 
 describe('axisDataMaker', function() {
     describe('_makeLabels()', function() {

@@ -21,7 +21,6 @@ var lineTypeMixer = {
      * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      * @private
      */
     _lineTypeInit: function(rawData, theme, options) {

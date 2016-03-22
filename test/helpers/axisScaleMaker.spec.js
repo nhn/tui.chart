@@ -1,5 +1,5 @@
 /**
- * @fileoverview test AxisRange
+ * @fileoverview test AxisScaleMaker
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
