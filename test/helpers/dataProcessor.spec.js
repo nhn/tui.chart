@@ -27,7 +27,7 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_pickItems()', function() {
+    describe('_createItems()', function() {
         it('rawSeriesDatum에서 stack, value를 추출하고 formattedValue를 생성하여 추가합니다.', function() {
             var actual, expected;
 
@@ -37,7 +37,7 @@ describe('test DataProcessor', function() {
                 }
             ]);
 
-            actual = dataProcessor._pickItems({
+            actual = dataProcessor._createItems({
                 stack: 'st',
                 data: [1, 2]
             });
@@ -63,7 +63,7 @@ describe('test DataProcessor', function() {
                 }
             ]);
 
-            actual = dataProcessor._pickItems({
+            actual = dataProcessor._createItems({
                 data: [1, 2]
             });
             expected = [{
@@ -105,7 +105,7 @@ describe('test DataProcessor', function() {
                 ]
             };
 
-            spyOn(dataProcessor, '_pickItems').and.callFake(function(item) {
+            spyOn(dataProcessor, '_createItems').and.callFake(function(item) {
                 return item.data;
             });
             actual = dataProcessor._pickGroupItemsFromRawData();
@@ -146,7 +146,7 @@ describe('test DataProcessor', function() {
                 }
             };
 
-            spyOn(dataProcessor, '_pickItems').and.callFake(function(item) {
+            spyOn(dataProcessor, '_createItems').and.callFake(function(item) {
                 return item.data;
             });
             actual = dataProcessor._pickGroupItemsFromRawData();

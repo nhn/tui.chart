@@ -45,7 +45,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
                 return template(tui.util.extend({
                     cssText: cssTextTemplate({color: colors[index]})
                 }, item));
-            }, this).join('');
+            }).join('');
 
         return tooltipTemplate.tplGroup({
             category: category,

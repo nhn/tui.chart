@@ -226,12 +226,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Pick items from raw series datum.
+     * Create items from raw series datum.
      * @param {rawSeriesDatum} rawSeriesDatum raw series datum
      * @returns {items} picked items.
      * @private
      */
-    _pickItems: function(rawSeriesDatum) {
+    _createItems: function(rawSeriesDatum) {
         var formatFunctions = this.getFormatFunctions();
 
         return tui.util.map([].concat(rawSeriesDatum.data), function(value) {
@@ -250,15 +250,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _pickGroupItemsFromRawData: function() {
         var seriesData = this.rawData.series,
-            pickItems = tui.util.bind(this._pickItems, this),
+            funcCreateItems = tui.util.bind(this._createItems, this),
             items, result;
         if (tui.util.isArray(seriesData)) {
-            items = tui.util.map(seriesData, pickItems);
+            items = tui.util.map(seriesData, funcCreateItems);
             result = tui.util.pivot(items);
         } else {
             result = {};
             tui.util.forEach(seriesData, function(groupData, type) {
-                items = tui.util.map(groupData, pickItems);
+                items = tui.util.map(groupData, funcCreateItems);
                 result[type] = tui.util.pivot(items);
             });
         }
@@ -471,6 +471,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 result[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
             });
         }
+
         return result;
     },
 
@@ -504,6 +505,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 wholeLabels = wholeLabels.concat(labels);
             });
         }
+
         return wholeLabels;
     },
 
@@ -521,7 +523,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             if (len > max) {
                 max = len;
             }
-        }, this);
+        });
 
         return max;
     },
@@ -544,6 +546,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _isDecimal: function(format) {
         var indexOf = format.indexOf('.');
+
         return indexOf > -1 && indexOf < format.length - 1;
     },
 
@@ -598,6 +601,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         pow = Math.pow(10, len);
         value = Math.round(value * pow) / pow;
         value = parseFloat(value).toFixed(len);
+
         return value;
     },
 
@@ -800,6 +804,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
             tui.util.forEachArray(items, function(item) {
                 var sum = sumMap[item.stack];
+
                 item.ratio = (sum === 0) ? 0 : (baseRatio * (item.value / sum));
             });
         });
@@ -819,8 +824,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 minusSum = Math.abs(calculator.sumMinusValues(values));
 
             tui.util.forEachArray(items, function(item) {
-                var sum = item.value >= 0 ? plusSum : minusSum;
-                item.ratio = sum === 0 ? 0 : 0.5 * (item.value / sum);
+                var sum = (item.value >= 0) ? plusSum : minusSum;
+
+                item.ratio = (sum === 0) ? 0 : 0.5 * (item.value / sum);
             });
         });
     },

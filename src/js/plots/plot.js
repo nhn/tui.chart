@@ -157,7 +157,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
                 data = {className: params.className, cssText: cssTexts.join(';')};
                 return template(data);
-            }, this).join('');
+            }).join('');
         return lineHtml;
     },
 

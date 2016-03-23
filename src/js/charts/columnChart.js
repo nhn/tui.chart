@@ -37,7 +37,7 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         options.yAxis = options.yAxis || {};
 
         if (predicate.isValidStackedOption(options.series.stacked)) {
-            rawData.series = this._sortRawSeriesData(rawData);
+            rawData.series = this._sortRawSeriesData(rawData.series);
         }
 
         if (options.series.diverging) {

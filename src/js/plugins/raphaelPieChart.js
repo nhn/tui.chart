@@ -182,7 +182,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
                 raphaelRenderUtil.makeLinePath(positions.middle, positions.end),
                 'Z'
             ].join('');
-        }, this);
+        });
 
         return paths;
     },
@@ -254,7 +254,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
             item.sector.animate(anim.delay(delayTime));
             delayTime += animationTime;
-        }, this);
+        });
 
         if (callback) {
             setTimeout(callback, delayTime);
@@ -297,7 +297,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             item.sector.attr({
                 sector: [circleBound.cx, circleBound.cy, circleBound.r, angles.startAngle, angles.endAngle]
             });
-        }, this);
+        });
     },
 
     /**
@@ -437,7 +437,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             item.sector.attr({
                 'fill-opacity': opacity
             });
-        }, this);
+        });
     }
 });
 

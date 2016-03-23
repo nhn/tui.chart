@@ -344,7 +344,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     value: item.value
                 });
             });
-        }, this);
+        });
 
         return groupBorders;
     },

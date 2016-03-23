@@ -97,7 +97,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
         var self = this,
             lineWidths = tui.util.map(dividedLabels, function(_labels) {
                 return self._calculateLegendsWidthSum(_labels, labelTheme);
-            }, this);
+            });
 
         return Math.max.apply(null, lineWidths);
     },
@@ -146,7 +146,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
     _calculateHorizontalLegendHeight: function(dividedLabels, labelTheme) {
         return tui.util.sum(tui.util.map(dividedLabels, function(labels) {
             return renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
-        }, this));
+        }));
     },
 
     /**

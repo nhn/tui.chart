@@ -102,10 +102,16 @@ var barTypeMixer = {
         return rawSeriesData;
     },
 
-    _sortRawSeriesData: function(rawData) {
-        var stacks = rawDataHandler.pickStacks(rawData.series);
+    /**
+     * Sort raw series data from stacks.
+     * @param {Array.<{data: Array.<number>, stack: string}>} rawSeriesData raw series data
+     * @returns {Array.<{data: Array.<number>, stack: string}>}
+     * @private
+     */
+    _sortRawSeriesData: function(rawSeriesData) {
+        var stacks = rawDataHandler.pickStacks(rawSeriesData);
 
-        return rawDataHandler.sortSeriesData(rawData.series, stacks);
+        return rawDataHandler.sortSeriesData(rawSeriesData, stacks);
     },
 
     /**

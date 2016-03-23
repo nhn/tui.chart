@@ -198,7 +198,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                     minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
-        }, this);
+        });
 
         return baseValues;
     },

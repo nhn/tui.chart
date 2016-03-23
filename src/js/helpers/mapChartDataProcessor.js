@@ -111,7 +111,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
             max = limit.max - min;
         tui.util.forEach(this.getValueMap(), function(map) {
             map.ratio = (map.value - min) / max;
-        }, this);
+        });
     }
 });
 

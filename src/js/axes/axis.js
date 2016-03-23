@@ -419,7 +419,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             }
 
             return tickHtml;
-        }, this).join('');
+        }).join('');
 
         elTickArea.innerHTML = lineHtml + ticksHtml;
 
@@ -665,7 +665,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
                 cssText: labelCssText + addCssText,
                 label: categories[index]
             });
-        }, this).join('');
+        }).join('');
 
         return labelsHtml;
     },

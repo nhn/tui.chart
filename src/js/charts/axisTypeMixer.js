@@ -258,7 +258,7 @@ var axisTypeMixer = {
             }
             tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
             tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
-        }, this);
+        });
     },
 
     /**
@@ -281,7 +281,7 @@ var axisTypeMixer = {
                 tooltip.on(showAnimationEventName, series.onShowAnimation, series);
                 tooltip.on(hideAnimationEventName, series.onHideAnimation, series);
             }
-        }, this);
+        });
     },
 
     /**
@@ -297,7 +297,7 @@ var axisTypeMixer = {
 
             customEvent.on(selectSeriesEventName, series.onSelectSeries, series);
             customEvent.on(unselectSeriesEventName, series.onUnselectSeries, series);
-        }, this);
+        });
     },
 
     /**

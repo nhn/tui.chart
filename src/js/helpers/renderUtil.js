@@ -198,7 +198,7 @@ var renderUtil = {
     _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
         var sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
-            }, this),
+            }),
             maxSize = tui.util.max(sizes);
         return maxSize;
     },
