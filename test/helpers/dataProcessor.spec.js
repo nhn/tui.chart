@@ -589,44 +589,33 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeFlattenValues()', function() {
-        it('groupItems에서 value를 추출한 후 1차원 배열로 만들어 반환합니다.', function() {
-            var groupItems = [[{
-                    value: 20
-                },
-                {
-                    value: 40
-                }]],
-                actual = dataProcessor._makeFlattenValues(groupItems),
-                expected = [20, 40];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_calculateBaseRatio()', function() {
         it('groupItems에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
-            var groupItems = [[{
-                    value: -20
-                },
-                {
-                    value: 40
-                }]],
-                actual = dataProcessor._calculateBaseRatio(groupItems),
-                expected = 0.5;
+            var actual, expected;
+
+            dataProcessor.groupItems = [[{
+                value: -20
+            }, {
+                value: 40
+            }]];
+
+            actual = dataProcessor._calculateBaseRatio('bar');
+            expected = 0.5;
 
             expect(actual).toEqual(expected);
         });
 
         it('groupItems에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
-            var groupItems = [[{
-                    value: 20
-                },
-                {
-                    value: 40
-                }]],
-                actual = dataProcessor._calculateBaseRatio(groupItems),
-                expected = 1;
+            var actual, expected;
+
+            dataProcessor.groupItems = [[{
+                value: 20
+            }, {
+                value: 40
+            }]];
+
+            actual = dataProcessor._calculateBaseRatio('bar');
+            expected = 1;
 
             expect(actual).toEqual(expected);
         });

@@ -740,31 +740,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make flatten values from group items.
-     * @param {groupItems} groupItems group items.
-     * @returns {Array.<number>}
-     * @private
-     */
-    _makeFlattenValues: function(groupItems) {
-        var groupValues = tui.util.map(groupItems, function(items) {
-            return tui.util.map(items, function(item) {
-                return item.value;
-            });
-        });
-
-        return concat.apply([], groupValues);
-    },
-
-    /**
      * Calculate base ratio for calculating ratio of item.
-     * @param {groupItems} groupItems group items
+     * @param {string} chartType chart type
      * @returns {number}
      * @private
      */
-    _calculateBaseRatio: function(groupItems) {
-        var flattenValues = this._makeFlattenValues(groupItems),
-            plusSum = calculator.sumPlusValues(flattenValues),
-            minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
+    _calculateBaseRatio: function(chartType) {
+        var values = this.getValues(chartType),
+            plusSum = calculator.sumPlusValues(values),
+            minusSum = Math.abs(calculator.sumMinusValues(values)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
         return ratio;
@@ -797,7 +781,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _addRatiosWhenPercentStacked: function(chartType) {
         var self = this,
             groupItems = this.getGroupItems(chartType),
-            baseRatio = this._calculateBaseRatio(groupItems);
+            baseRatio = this._calculateBaseRatio(chartType);
 
         tui.util.forEachArray(groupItems, function(items) {
             var sumMap = self._makeSumMapPerStack(items);
