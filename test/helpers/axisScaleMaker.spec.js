@@ -83,6 +83,31 @@ describe('AxisScaleMaker', function() {
 
     });
 
+    describe('_makeValuesMapPerStack()', function() {
+        it('item에서 value를 추출하여 stack 기준으로 values map을 생성합니다.', function() {
+            var items = [{
+                    value: 10,
+                    stack: 'st1'
+                }, {
+                    value: 20,
+                    stack: 'st2'
+                }, {
+                    value: 30,
+                    stack: 'st1'
+                }, {
+                    value: 40,
+                    stack: 'st2'
+                }],
+                actual = axisScaleMaker._makeValuesMapPerStack(items),
+                expected = {
+                    st1: [10, 30],
+                    st2: [20, 40]
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeBaseValuesForNormalStackedChart()', function() {
         it('normal stacked 차트의 baes values를 생성합니다.', function() {
             var actual, expected;
