@@ -176,10 +176,9 @@ describe('test DataProcessor', function() {
                 column: [[{
                     value: 40
                 }]],
-                line: [[
-                {
+                line: [[{
                     value: 60
-                }]],
+                }]]
             };
 
             dataProcessor.seriesChartTypes = ['column', 'line'];
@@ -224,10 +223,9 @@ describe('test DataProcessor', function() {
                 column: [[{
                     value: 40
                 }]],
-                line: [[
-                {
+                line: [[{
                     value: 60
-                }]],
+                }]]
             };
 
             dataProcessor.seriesChartTypes = ['column', 'line'];

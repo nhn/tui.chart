@@ -111,6 +111,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.categories = null;
 
         /**
+         * stacks
+         * @type {Array.<number>}
+         */
+        this.stacks = null;
+
+        /**
          * group items
          * @type {groupItems}
          */

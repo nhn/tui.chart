@@ -888,10 +888,7 @@ describe('AxisScaleMaker', function() {
 
             spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
             boundsMaker.makeSeriesWidth.and.returnValue(400);
-            axisScaleMaker.dataProcessor.groupValues = [
-                [10, 20],
-                [40, 90]
-            ];
+            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
             actual = axisScaleMaker._makeScale();
             expected = axisScaleMaker._calculateScale();
