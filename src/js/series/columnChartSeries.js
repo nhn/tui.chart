@@ -28,138 +28,114 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Make start end tops.
-     * @param {number} endTop end top
-     * @param {number} endHeight end height
-     * @param {number} value value
-     * @param {boolean} isMinus whether minus or not
-     * @returns {{startTop: number, endTop: number}} start end tops
-     * @private
-     */
-    _makeStartEndTops: function(endTop, endHeight, value) {
-        var startTop;
-
-        if (value < 0) {
-            startTop = endTop;
-        } else {
-            startTop = endTop;
-            endTop -= endHeight;
-        }
-
-        return {
-            startTop: startTop,
-            endTop: endTop
-        };
-    },
-
-    /**
      * Make bound of column chart.
-     * @param {object} params parameters
-     *      @param {{left: number, width: number}} params.baseBound base bound
-     *      @param {number} params.startTop start top
-     *      @param {number} params.endTop end top
-     *      @param {number} params.endHeight end height
+     * @param {number} width width
+     * @param {number} height height
+     * @param {number} left top position value
+     * @param {number} startTop start top position value
+     * @param {number} endTop end top position value
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
      * }} column chart bound
      * @private
      */
-    _makeColumnChartBound: function(params) {
+    _makeBound: function(width, height, left, startTop, endTop) {
         return {
-            start: tui.util.extend({
-                top: params.startTop,
+            start: {
+                top: startTop,
+                left: left,
+                width: width,
                 height: 0
-            }, params.baseBound),
-            end: tui.util.extend({
-                top: params.endTop,
-                height: params.endHeight
-            }, params.baseBound)
+            },
+            end: {
+                top: endTop,
+                left: left,
+                width: width,
+                height: height
+            }
         };
     },
 
     /**
-     * Make normal column chart bound.
+     * Make column chart bound.
      * @param {{
-     *      dimension: {width: number, height: number},
-     *      groupValues: Array.<Array.<number>>,
-     *      groupSize: number, barSize: number, step: number,
-     *      distanceToMin: number, isMinus: boolean
-     * }} baseInfo base info
-     * @param {number} value value
-     * @param {number} paddingLeft padding left
+     *      baseSize: number,
+     *      basePosition: number,
+     *      step: number,
+     *      additionalPosition: ?number,
+     *      barSize: number
+     * }} baseData base data for making bound
+     * @param {{
+     *      baseLeft: number,
+     *      left: number,
+     *      plusTop: number,
+     *      minusTop: number,
+     *      prevStack: ?string
+     * }} iterationData iteration data
+     * @param {?boolean} isStacked whether stacked option or not.
+     * @param {{value: number, ratio: number, stack: string}} item item
      * @param {number} index index
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
-     * }} column chart bound
+     * }}
      * @private
      */
-    _makeNormalColumnChartBound: function(baseInfo, value, paddingLeft, index) {
-        var endHeight = Math.abs(value * baseInfo.dimension.height),
-            maxPosValue = baseInfo.distance.toMax || baseInfo.dimension.height,
-            endTop = (baseInfo.isMinus ? 0 : maxPosValue) + chartConst.SERIES_EXPAND_SIZE,
-            startEndTops = this._makeStartEndTops(endTop, endHeight, value);
+    _makeColumnChartBound: function(baseData, iterationData, isStacked, item, index) {
+        var barHeight = Math.abs(baseData.baseBarSize * item.ratio),
+            startTop = baseData.basePosition + chartConst.SERIES_EXPAND_SIZE,
+            changedStack = (item.stack !== iterationData.prevStack),
+            stackIndex, endTop, bound;
 
-        return this._makeColumnChartBound(tui.util.extend({
-            baseBound: {
-                left: paddingLeft + (baseInfo.step * index) + chartConst.SERIES_EXPAND_SIZE,
-                width: baseInfo.barSize
-            },
-            endHeight: endHeight
-        }, startEndTops));
-    },
+        if (!isStacked || (!this.options.diverging && changedStack)) {
+            stackIndex = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
 
-    /**
-     * Make bounds of normal column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeNormalColumnChartBounds: function(dimension) {
-        var baseInfo = this._makeBaseInfoForNormalChartBounds(dimension, 'height', 'width'),
-            bounds = this._makeNormalBounds(baseInfo, tui.util.bind(this._makeNormalColumnChartBound, this));
+            iterationData.left = (stackIndex * baseData.step) + iterationData.baseLeft + baseData.additionalPosition;
+            iterationData.plusTop = 0;
+            iterationData.minusTop = 0;
+        }
 
-        return bounds;
-    },
+        if (item.value >= 0) {
+            iterationData.plusTop -= barHeight;
+            endTop = startTop + iterationData.plusTop;
+        } else {
+            endTop = startTop + iterationData.minusTop;
+            iterationData.minusTop += barHeight;
+        }
 
-    /**
-     * Make bounds of stacked column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeStackedColumnChartBounds: function(dimension) {
-        var self = this,
-            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'height'),
-            bounds = this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
-                return self._makeColumnChartBound({
-                    baseBound: baseBound,
-                    startTop: baseInfo.distance.toMax + chartConst.SERIES_EXPAND_SIZE,
-                    endTop: baseInfo.distance.toMax - endSize - endPosition,
-                    endHeight: endSize
-                });
-            });
+        iterationData.prevStack = item.stack;
+        bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
 
-        return bounds;
+        return bound;
     },
 
     /**
      * Make bounds of column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeBounds: function(dimension) {
-        var bounds;
+    _makeBounds: function() {
+        var self = this,
+            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            isStacked = predicate.isValidStackedOption(this.options.stacked),
+            dimension = this.boundsMaker.getDimension('series'),
+            baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
-        if (predicate.isValidStackedOption(this.options.stacked)) {
-            bounds = this._makeStackedColumnChartBounds(dimension);
-        } else {
-            bounds = this._makeNormalColumnChartBounds(dimension);
-        }
+        return tui.util.map(groupItems, function(items, groupIndex) {
+            var baseLeft = (groupIndex * baseData.groupSize) + baseData.groupPosition
+                        + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
+                iterationData = {
+                    baseLeft: baseLeft,
+                    left: baseLeft,
+                    plusTop: 0,
+                    minusTop: 0,
+                    prevStack: null
+                },
+                iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
-        return bounds;
+            return tui.util.map(items, iteratee);
+        });
     },
 
     /**

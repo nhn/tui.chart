@@ -18,15 +18,13 @@ describe('LineTypeSeriesBase', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        _getPercentValues = jasmine.createSpy('_getPercentValues').and.returnValue([]);
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormattedGroupValues', 'getFirstFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupItems', 'getFirstFormattedValue']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
-        series._getPercentValues = _getPercentValues;
         series.dataProcessor = dataProcessor;
         series.boundsMaker = boundsMaker;
     });
@@ -35,14 +33,24 @@ describe('LineTypeSeriesBase', function() {
         it('라인차트의 position 정보를 생성합니다.', function() {
             var actual;
 
-            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
-            series.data = {
-                aligned: false
-            };
+            dataProcessor.getGroupItems.and.returnValue([
+                [{
+                    ratio: 0.25
+                }],
+                [{
+                    ratio: 0.5
+                }],
+                [{
+                    ratio: 0.4
+                }]
+            ]);
             boundsMaker.getDimension.and.returnValue({
                 width: 300,
                 height: 200
             });
+            series.data = {
+                aligned: false
+            };
             actual = series._makeBasicPositions();
             expect(actual).toEqual([
                 [
@@ -65,7 +73,17 @@ describe('LineTypeSeriesBase', function() {
         it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function() {
             var actual;
 
-            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
+            dataProcessor.getGroupItems.and.returnValue([
+                [{
+                    ratio: 0.25
+                }],
+                [{
+                    ratio: 0.5
+                }],
+                [{
+                    ratio: 0.4
+                }]
+            ]);
             series.data = {
                 aligned: true
             };
@@ -150,8 +168,12 @@ describe('LineTypeSeriesBase', function() {
                 label: {}
             };
 
-            dataProcessor.getFormattedGroupValues.and.returnValue([
-                ['1.5'], ['2.2']
+            dataProcessor.getGroupItems.and.returnValue([
+                [{
+                    formattedValue: '1.5'
+                }], [{
+                    formattedValue: '2.2'}
+                ]
             ]);
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
             series.seriesData = {

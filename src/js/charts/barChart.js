@@ -25,7 +25,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        var isCenter;
         /**
          * className
          * @type {string}
@@ -43,17 +42,13 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         options.plot = options.plot || {};
         options.series = options.series || {};
 
+        if (predicate.isValidStackedOption(options.series.stacked)) {
+            rawData.series = this._sortRawSeriesData(rawData.series);
+        }
+
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
-            options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
-            this.hasRightYAxis = options.yAxis && tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
-
-            isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
-
-            options.yAxis.isCenter = isCenter;
-            options.xAxis.divided = isCenter;
-            options.series.divided = isCenter;
-            options.plot.divided = isCenter;
+            this._updateDivergingOption(options);
         }
 
         ChartBase.call(this, {
@@ -69,6 +64,25 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         });
 
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Update options for diverging option.
+     * @param {object} options options
+     * @private
+     */
+    _updateDivergingOption: function(options) {
+        var isCenter;
+
+        options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+        isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
+
+        options.yAxis.isCenter = isCenter;
+        options.xAxis.divided = isCenter;
+        options.series.divided = isCenter;
+        options.plot.divided = isCenter;
     },
 
     /**

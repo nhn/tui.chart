@@ -147,7 +147,7 @@ var domHandler = {
                 return;
             }
             container.appendChild(child);
-        }, this);
+        });
     }
 };
 

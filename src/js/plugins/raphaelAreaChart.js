@@ -96,7 +96,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 }),
                 line: raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor)
             };
-        }, this);
+        });
 
         return groupAreas.reverse();
     },

@@ -18,8 +18,22 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getItem']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+
+        dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
+        dataProcessor.getItem.and.returnValue(function(groupIndex, index) {
+            var values = [
+                {
+                    formattedValue: '1.1'
+                }, {
+                    formattedValue: '2.2'
+                }, {
+                    formattedValue: '3.3'
+                }
+            ];
+            return values[index];
+        });
     });
 
     beforeEach(function() {
@@ -39,7 +53,19 @@ describe('PieChartSeries', function() {
 
     describe('_makeSectorData()', function() {
         it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
-            var actual = series._makeSectorData([0.25, 0.125, 0.1, 0.35, 0.175], {
+            var actual = series._makeSectorData([
+                {
+                    ratio: 0.25
+                }, {
+                    ratio: 0.125
+                }, {
+                    ratio: 0.1
+                }, {
+                    ratio: 0.35
+                }, {
+                    ratio: 0.175
+                }
+            ], {
                 cx: 100,
                 cy: 100,
                 r: 100
@@ -171,11 +197,6 @@ describe('PieChartSeries', function() {
             var elLabelArea = dom.create('div'),
                 children;
 
-            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
-                var values = ['1.1', '2.2', '3.3'];
-                return values[index];
-            });
             series.legendAlign = 'center';
             series.seriesData = {
                 sectorData: [
@@ -285,11 +306,6 @@ describe('PieChartSeries', function() {
             var labelContainer = dom.create('div'),
                 children;
 
-            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
-                var values = ['1.1', '2.2', '3.3'];
-                return values[index];
-            });
             spyOn(series.graphRenderer, 'renderLegendLines');
             boundsMaker.getDimension.and.returnValue({
                 width: 220
@@ -350,11 +366,6 @@ describe('PieChartSeries', function() {
             var actual = dom.create('div'),
                 expected = dom.create('div');
 
-            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
-                var values = ['1.1', '2.2', '3.3'];
-                return values[index];
-            });
             spyOn(series.graphRenderer, 'renderLegendLines');
             boundsMaker.getDimension.and.returnValue({
                 width: 220
@@ -402,11 +413,6 @@ describe('PieChartSeries', function() {
             var actual = dom.create('div'),
                 expected = dom.create('div');
 
-            dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-            dataProcessor.getFormattedValue.and.returnValue(function(groupIndex, index) {
-                var values = ['1.1', '2.2', '3.3'];
-                return values[index];
-            });
             spyOn(series.graphRenderer, 'renderLegendLines');
             boundsMaker.getDimension.and.returnValue({
                 width: 220

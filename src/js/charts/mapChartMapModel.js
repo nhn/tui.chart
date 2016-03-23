@@ -290,11 +290,11 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             var coordinate = self._makeCoordinatesFromPath(datum.path),
                 bound = self._findBoundFromCoordinates(coordinate),
                 userData = self.dataProcessor.getValueMapDatum(datum.code),
-                name, labelCoordinate, formattedValue, percentValue, resultData;
+                name, labelCoordinate, formattedValue, ratio, resultData;
 
             if (userData) {
                 formattedValue = userData.formattedValue;
-                percentValue = userData.percentValue;
+                ratio = userData.ratio;
                 name = userData.name || datum.name;
                 labelCoordinate = userData.labelCoordinate || datum.labelCoordinate;
             }
@@ -311,8 +311,8 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 resultData.formattedValue = formattedValue;
             }
 
-            if (percentValue) {
-                resultData.percentValue = percentValue;
+            if (ratio) {
+                resultData.ratio = ratio;
             }
 
             return resultData;

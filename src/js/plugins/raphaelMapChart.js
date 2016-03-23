@@ -55,8 +55,8 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             colorModel = data.colorModel;
 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
-            var percentValue = datum.percentValue || 0,
-                color = colorModel.getColor(percentValue),
+            var ratio = datum.ratio || 0,
+                color = colorModel.getColor(ratio),
                 sector = raphaelRenderUtil.renderArea(paper, datum.path, {
                     fill: color,
                     opacity: 1,
@@ -69,7 +69,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             return {
                 sector: sector,
                 color: color,
-                percentValue: datum.percentValue
+                ratio: datum.ratio
             };
         });
     },
@@ -84,7 +84,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
             foundIndex = sector && sector.data('index'),
             data = !tui.util.isUndefined(foundIndex) && this.sectors[foundIndex];
 
-        return data && !tui.util.isUndefined(data.percentValue) ? foundIndex : null;
+        return data && !tui.util.isUndefined(data.ratio) ? foundIndex : null;
     },
 
     /**

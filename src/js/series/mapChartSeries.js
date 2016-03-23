@@ -310,8 +310,8 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
     _showWedge: function(index) {
         var datum = this.mapModel.getDatum(index);
 
-        if (!tui.util.isUndefined(datum.percentValue)) {
-            this.fire('showWedge', datum.percentValue);
+        if (!tui.util.isUndefined(datum.ratio)) {
+            this.fire('showWedge', datum.ratio);
         }
     },
 

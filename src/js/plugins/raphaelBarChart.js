@@ -39,7 +39,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         baseParams = {
             theme: data.theme,
             groupBounds: groupBounds,
-            groupValues: data.groupValues,
+            groupItems: data.groupItems,
             chartType: data.chartType
         };
 
@@ -119,28 +119,28 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             var singleColor = singleColors[groupIndex];
 
             return tui.util.map(bounds, function(bound, index) {
-                var color, rect, value;
+                var color, rect, item;
 
                 if (!bound) {
                     return null;
                 }
 
+                item = params.groupItems[groupIndex][index];
                 color = singleColor || colors[index];
-                value = params.groupValues[groupIndex][index];
 
                 rect = self._renderBar({
                     chartType: params.chartType,
                     color: color,
                     borderColor: params.theme.borderColor,
                     bound: bound.start,
-                    value: value
+                    value: item.value
                 });
 
                 return {
                     rect: rect,
                     color: color,
                     bound: bound.end,
-                    value: value,
+                    value: item.value,
                     groupIndex: groupIndex,
                     index: index
                 };
@@ -328,23 +328,23 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
-                var value;
+                var item;
 
                 if (!bound) {
                     return null;
                 }
 
-                value = params.groupValues[groupIndex][index];
+                item = params.groupItems[groupIndex][index];
 
                 return self._renderBorderLines({
                     paper: self.paper,
                     bound: bound.start,
                     borderColor: borderColor,
                     chartType: params.chartType,
-                    value: value
+                    value: item.value
                 });
             });
-        }, this);
+        });
 
         return groupBorders;
     },

@@ -14,7 +14,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeFormattedValues', 'getCategory', 'getWholeLegendData', 'getLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeGroupItems', 'getCategory', 'getWholeLegendData', 'getLegendData']);
     });
 
     beforeEach(function() {
@@ -28,9 +28,17 @@ describe('GroupTooltip', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getWholeFormattedValues.and.returnValue([
-                ['10', '20'],
-                ['30', '40']
+            dataProcessor.getWholeGroupItems.and.returnValue([
+                [{
+                    formattedValue: '10'
+                }, {
+                    formattedValue: '20'
+                }],
+                [{
+                    formattedValue: '30'
+                }, {
+                    formattedValue: '40'
+                }]
             ]);
             dataProcessor.getCategory.and.callFake(function(index) {
                 var categories = [

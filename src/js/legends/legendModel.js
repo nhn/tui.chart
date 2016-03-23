@@ -86,7 +86,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         var checkedWholeIndexes = [];
         tui.util.forEachArray(this.legendData, function(legendDatum, index) {
             checkedWholeIndexes[index] = true;
-        }, this);
+        });
         this.checkedWholeIndexes = checkedWholeIndexes;
     },
 
@@ -125,7 +125,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             }
 
             return datum;
-        }, this);
+        });
     },
 
     /**

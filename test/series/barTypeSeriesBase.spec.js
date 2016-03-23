@@ -19,7 +19,7 @@ describe('BarTypeSeriesBase', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getFirstFormattedValue', 'getGroupValues', 'getFormattedValue']);
+            ['getFormatFunctions', 'getFirstFormattedValue', 'getGroupItems', 'getFormattedValue']);
 
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -89,17 +89,55 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('_makeAdditionPadding()', function() {
-        it('시리즈 양쪽 사이드 영역의 추가적인 padding값을 구합니다. 옵션이 없을 경우에는 barSize(첫번째인자)을 반으로 나눈 값을 반환합니다.', function() {
-            var actual = series._makeAdditionPadding(14),
-                expected = 7;
+    describe('_calculateAdditionalPosition()', function() {
+        it('시리즈 양쪽 사이드 영역의 추가적인 position값을 구합니다. 옵션이 없을 경우에는 0을 반환합니다.', function() {
+            var actual = series._calculateAdditionalPosition(14),
+                expected = 0;
             expect(actual).toBe(expected);
         });
 
         it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에 barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
-            var actual = series._makeAdditionPadding(14, 10, 4),
+            var actual = series._calculateAdditionalPosition(14, 10, 4),
                 expected = 15;
             expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeBaseDataForMakingBound()', function() {
+        it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
+            var baseGroupSize = 100,
+                baseBarSize = 100,
+                actual, expected;
+
+            dataProcessor.getGroupItems.and.returnValue([[{
+                value: 10
+            }, {
+                value: 20
+            }]]);
+            series.options = {};
+            series.data = {
+                limit: {
+                    min: 0,
+                    max: 80
+                }
+            };
+
+            series._getLimitDistanceFromZeroPoint = jasmine.createSpy('_getLimitDistanceFromZeroPoint').and.returnValue({
+                toMin: 0
+            });
+
+            actual = series._makeBaseDataForMakingBound(baseGroupSize, baseBarSize);
+            expected = {
+                baseBarSize: 100,
+                groupSize: 100,
+                barSize: 32,
+                step: 36,
+                groupPosition: 16,
+                additionalPosition: 0,
+                basePosition: 0
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
@@ -108,8 +146,13 @@ describe('BarTypeSeriesBase', function() {
             var labelContainer = dom.create('div');
 
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
-            dataProcessor.getFormattedValue.and.returnValue('1.5');
+            dataProcessor.getGroupItems.and.returnValue([[{
+                value: 1.5,
+                formattedValue: '1.5'
+            }, {
+                value: 2.2,
+                formattedValue: '2.2'
+            }]]);
             series.seriesData = {
                 groupBounds: [
                     [
@@ -153,8 +196,13 @@ describe('BarTypeSeriesBase', function() {
             };
 
             html = series._makeStackedLabelsHtml({
-                values: [1.5, 2.2],
-                formattedValues: ['1.5', '2.2'],
+                items: [{
+                    value: 1.5,
+                    formattedValue: '1.5'
+                }, {
+                    value: 2.2,
+                    formattedValue: '2.2'
+                }],
                 bounds: [
                     {
                         end: {}
@@ -177,8 +225,13 @@ describe('BarTypeSeriesBase', function() {
             };
 
             html = series._makeStackedLabelsHtml({
-                values: [1.5, 2.2],
-                formattedValues: ['1.5', '2.2'],
+                items: [{
+                    value: 1.5,
+                    formattedValue: '1.5'
+                }, {
+                    value: 2.2,
+                    formattedValue: '2.2'
+                }],
                 bounds: [
                     {
                         end: {}
@@ -199,7 +252,7 @@ describe('BarTypeSeriesBase', function() {
             var elLabelArea = dom.create('div');
 
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            dataProcessor.getGroupValues.and.returnValue([[1.5, 2.2]]);
+            dataProcessor.getGroupItems.and.returnValue([[1.5, 2.2]]);
             series.options = {
                 stacked: 'normal'
             };

@@ -131,14 +131,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderSeriesLabel: function() {},
 
     /**
-     * Get percent values.
-     * @returns {Array.<Array.<number>>} percent values.
-     * @private
-     */
-    _getPercentValues: function() {
-        return this.dataProcessor.getPercentValues(this.chartType);
-    },
-    /**
      * Render series label area
      * @param {?HTMLElement} seriesLabelContainer series label area element
      * @returns {HTMLElement} series label area element
@@ -251,7 +243,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(data) {
-        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
+        var gropuItems = this.dataProcessor.getGroupItems(this.chartType);
 
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
@@ -262,7 +254,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (groupValues && groupValues.length) {
+        if (gropuItems && gropuItems.length) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShower) {
@@ -552,7 +544,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {?number} legendIndex legend index
      */
     onSelectLegend: function(chartType, legendIndex) {
-        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
+        var groupItems = this.dataProcessor.getGroupItems(this.chartType);
 
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
@@ -560,7 +552,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.selectedLegendIndex = legendIndex;
 
-        if (groupValues && groupValues.length) {
+        if (groupItems && groupItems.length) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

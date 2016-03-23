@@ -45,7 +45,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
                 return template(tui.util.extend({
                     cssText: cssTextTemplate({color: colors[index]})
                 }, item));
-            }, this).join('');
+            }).join('');
 
         return tooltipTemplate.tplGroup({
             category: category,
@@ -126,10 +126,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeTooltipData: function() {
         var self = this;
 
-        return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
+        return tui.util.map(this.dataProcessor.getWholeGroupItems(), function(items, index) {
             return {
                 category: self.dataProcessor.getCategory(index),
-                values: values
+                values: tui.util.pluck(items, 'formattedValue')
             };
         });
     },

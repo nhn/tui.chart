@@ -207,7 +207,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             tui.util.forEach(serieses, function(series) {
                 var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
                 legend.on(selectLegendEventName, series.onSelectLegend, series);
-            }, this);
+            });
         }
     },
 

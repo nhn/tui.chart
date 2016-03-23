@@ -105,28 +105,20 @@ describe('ComboChart', function() {
     });
 
     describe('_makeYAxisData()', function() {
-        beforeEach(function() {
-            spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
-        });
-
-        it('y axis 영역이 하나일 경우의 axis data를 생성합니다.', function() {
+        it('y axis data를 생성합니다.', function() {
             var actual, expected;
 
-            comboChart.dataProcessor.groupValues = {
-                column: [
-                    [20, 30],
-                    [40, 40],
-                    [60, 50],
-                    [80, 10]
-                ],
+            spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
+            spyOn(comboChart, '_createAxisScaleMaker').and.callFake(function() {
+                var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit']);
+                axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
+                axisScaleMaker.getLimit.and.returnValue({
+                    min: 0,
+                    max: 100
+                });
+                return axisScaleMaker;
+            });
 
-                line: [
-                    [50],
-                    [60],
-                    [10],
-                    [70]
-                ]
-            };
             comboChart.boundsMaker.dimensions.series = {
                 width: 300,
                 height: 300
@@ -167,51 +159,16 @@ describe('ComboChart', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('y axis 영역이 두개일 경우의 axis data 생성합니다.', function() {
-            var actual, expected;
-
-            comboChart.dataProcessor.groupValues = [
-                [20, 30, 50],
-                [40, 40, 60]
-            ];
-
-            comboChart.yAxisOptionsMap = {
-                'column': 'yAxisOptions'
-            };
-
-            actual = comboChart._makeYAxisData({
-                index: 0,
-                seriesDimension: {
-                    width: 300,
-                    height: 300
-                },
-                chartTypes: ['column', 'line'],
-                isSingleYAxis: false,
-                options: {
-                    yAxis: [
-                        {
-                            title: 'Y Axis'
-                        },
-                        {
-                            title: 'Y Right Axis'
-                        }
-                    ]
-                }
-            });
-
-            expected = {
-                labels: [10, 20, 30, 40, 50, 60, 70],
-                tickCount: 7,
-                validTickCount: 7,
-                limit: {
-                    min: 10,
-                    max: 70
-                },
-                isVertical: true,
-                isPositionRight: false,
-                aligned: false,
-                options: 'yAxisOptions'
-            };
+        it('chartType이 없을 경우 빈 객체를 반환합니다.', function() {
+            var actual = comboChart._makeYAxisData({
+                    index: 1,
+                    seriesDimension: {
+                        width: 300,
+                        height: 300
+                    },
+                    chartTypes: ['column']
+                }),
+                expected = {};
 
             expect(actual).toEqual(expected);
         });

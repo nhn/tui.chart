@@ -17,7 +17,7 @@ describe('BarChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupItems', 'getFirstFormattedValue', 'getFormatFunctions']);
         dataProcessor.getFirstFormattedValue.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -37,21 +37,16 @@ describe('BarChartSeries', function() {
             dataProcessor: dataProcessor,
             boundsMaker: boundsMaker
         });
-
-        spyOn(series, '_getPercentValues');
     });
 
-    describe('_makeBarChartBound()', function() {
+    describe('_makeBound()', function() {
         it('baseBound 정보에 startLeft, endLeft, endWidth정보를 더하여 start, end로 구분된 bound 정보를 생성합니다.', function() {
-            var actual = series._makeBarChartBound({
-                    baseBound: {
-                        top: 10,
-                        height: 30
-                    },
-                    startLeft: 10,
-                    endLeft: 10,
-                    endWidth: 40
-                }),
+            var width = 40,
+                height = 30,
+                top = 10,
+                startLeft = 10,
+                endLeft = 10,
+                actual = series._makeBound(width, height, top, startLeft, endLeft),
                 expected = {
                     start: {
                         left: 10,
@@ -66,35 +61,81 @@ describe('BarChartSeries', function() {
                         height: 30
                     }
                 };
+
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_makeNormalBarChartBound()', function() {
-        it('normal bar chart bar 하나의 bound정보를 생성합니다.', function() {
-            var actual = series._makeNormalBarChartBound({
-                    distance: {
-                        toMin: 0
-                    },
-                    dimension: {
-                        width: 400,
-                        height: 200
-                    },
-                    step: 40,
-                    barSize: 30
-                }, 0.3, 10, 0),
+    describe('_calculateAdditionalLeft()', function() {
+        it('divided 옵션이 있고 value가 0보다 크면 additional yAxis 너비와 OVERLAPPING_WIDTH를 더하여 반환합니다.', function() {
+            var value = 10,
+                actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+            series.options.divided = true;
+            actual = series._calculateAdditionalLeft(value);
+            expected = 51;
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('divided 옵션이 없으면 0을 반환합니다.', function() {
+            var value = 10,
+                actual, expected;
+
+            actual = series._calculateAdditionalLeft(value);
+            expected = 0;
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('divided 옵션이 있어도 value가 0보다 작으면 0을 반환합니다.', function() {
+            var value = -10,
+                actual, expected;
+
+            series.options.divided = true;
+            actual = series._calculateAdditionalLeft(value);
+            expected = 0;
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeBarChartBound()', function() {
+        it('옵션 없는 바 차트의 bound 정보를 생성합니다.', function() {
+            var baseData = {
+                    baseBarSize: 100,
+                    basePosition: 10,
+                    barSize: 20,
+                    step: 20,
+                    additionalPosition: 0
+                },
+                iterationData = {
+                    baseTop: 10,
+                    top: 0,
+                    plusLeft: 0
+                },
+                isStacked = false,
+                item = {
+                    value: 10,
+                    ratio: 0.4
+                },
+                index = 0,
+                actual = series._makeBarChartBound(baseData, iterationData, isStacked, item, index),
                 expected = {
                     start: {
-                        left: 10,
-                        top: 20,
+                        top: 10,
+                        left: 20,
                         width: 0,
-                        height: 30
+                        height: 20
                     },
                     end: {
-                        left: 10,
-                        top: 20,
-                        width: 120,
-                        height: 30
+                        top: 10,
+                        left: 20,
+                        width: 40,
+                        height: 20
                     }
                 };
 
@@ -102,129 +143,63 @@ describe('BarChartSeries', function() {
         });
     });
 
-    describe('_makeNormalBarChartBounds()', function() {
-        it('percentValues 배열과 동일한 배열 형태로 bounds 정보를 생성합니다.', function() {
-            var actual;
-
-            series.data = {
-                limit: {
-                    min: 0,
-                    max: 100
-                }
-            };
-            series._getPercentValues.and.returnValue([[0.2, 0.4, 0.1]]);
-            actual = series._makeNormalBarChartBounds({
-                width: 400,
-                height: 200
-            }, 1);
-
-            expect(actual.length).toBe(1);
-            expect(actual[0].length).toBe(3);
-            expect(!!actual[0][0].start).toBe(true);
-            expect(!!actual[0][0].end).toBe(true);
-        });
-
-        it('값에 음수, 양수 모두가 포함되어 있을 경우 bounds 정보는 0점 기준으로 좌우로 설정됩니다.', function() {
-            var actual;
-
-            series._getPercentValues.and.returnValue([[-0.2, 0.4, 0.1]]);
-            series.data = {
-                limit: {
-                    min: -40,
-                    max: 60
-                }
-            };
-            actual = series._makeNormalBarChartBounds({
-                width: 400,
-                height: 200
-            }, 1);
-
-            // 0점의 위치가 left 170임
-            // 음수의 경우 left, width 값이 같이 변함
-            expect(actual[0][0].start.left).toBe(170);
-            expect(actual[0][0].start.width).toBe(0);
-            expect(actual[0][0].end.left).toBe(90);
-            expect(actual[0][0].end.width).toBe(80);
-
-            // 양수의 경우는 width만 변화됨
-            expect(actual[0][1].start.left).toBe(170);
-            expect(actual[0][1].start.width).toBe(0);
-            expect(actual[0][1].end.left).toBe(170);
-            expect(actual[0][1].end.width).toBe(160);
-        });
-    });
-
-    describe('_makeStackedBarChartBounds()', function() {
-        it('stacked 옵션이 있는 Bar차트의 bounds 정보는 end.left가 이전 end.width 만큼씩 감소합니다', function() {
-            var bounds;
-
-            boundsMaker.getDimension.and.returnValue({
-                width: 50
-            });
-            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-            series.data = {
-                limit: {
-                    min: 0,
-                    max: 100
-                }
-            };
-            bounds = series._makeStackedBarChartBounds({
-                width: 400,
-                height: 100
-            }, 1);
-
-            expect(bounds[0][0].end.left).toBe(10);
-            expect(bounds[0][0].end.width).toBe(80);
-
-            expect(bounds[0][1].end.left).toBe(90);
-            expect(bounds[0][1].end.width).toBe(120);
-
-            expect(bounds[0][2].end.left).toBe(210);
-            expect(bounds[0][2].end.width).toBe(200);
-        });
-    });
-
     describe('_makeBounds()', function() {
-        it('stacked 옵션이 없으면 _makeNormalBarChartBounds()가 수행됩니다.', function() {
+        it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
             var actual, expected;
 
-            series._getPercentValues.and.returnValue([[0.2, 0.4, 0.1]]);
-            series.data = {
-                limit: {
-                    min: 0,
-                    max: 100
-                }
-            };
-            actual = series._makeBounds({
-                width: 400,
-                height: 200
-            }, 1);
-            expected = series._makeNormalBarChartBounds({
-                width: 400,
-                height: 200
-            }, 1);
-            expect(actual).toEqual(expected);
-        });
-
-        it('stacked 옵션이 있으면 _makeStackedBarChartBounds()가 수행됩니다.', function() {
-            var actual, expected;
-
-            series._getPercentValues.and.returnValue([[0.2, 0.3, 0.5]]);
-            series.data = {
-                limit: {
-                    min: 0,
-                    max: 100
-                }
-            };
-            series.options.stacked = 'normal';
-            actual = series._makeBounds({
-                width: 400,
+            dataProcessor.getGroupItems.and.returnValue([
+                [{
+                    value: 40,
+                    ratio: 0.4
+                }, {
+                    value: 60,
+                    ratio: 0.6
+                }]
+            ]);
+            boundsMaker.getDimension.and.returnValue({
+                width: 100,
                 height: 100
-            }, 1);
-            expected = series._makeStackedBarChartBounds({
-                width: 400,
-                height: 100
-            }, 1);
+            });
+            spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
+                groupSize: 25,
+                groupPosition: 0,
+                baseBarSize: 100,
+                basePosition: 10,
+                barSize: 20,
+                step: 20,
+                additionalPosition: 0
+            });
+            actual = series._makeBounds();
+            expected = [[
+                {
+                    start: {
+                        top: 10,
+                        left: 20,
+                        width: 0,
+                        height: 20
+                    },
+                    end: {
+                        top: 10,
+                        left: 20,
+                        width: 40,
+                        height: 20
+                    }
+                }, {
+                    start: {
+                        top: 30,
+                        left: 20,
+                        width: 0,
+                        height: 20
+                    },
+                    end: {
+                        top: 30,
+                        left: 20,
+                        width: 60,
+                        height: 20
+                    }
+                }
+            ]];
+
             expect(actual).toEqual(expected);
         });
     });

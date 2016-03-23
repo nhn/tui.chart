@@ -33,25 +33,21 @@ describe('AxisScaleMaker', function() {
             expect(actual[0](10)).toBe(expected);
         });
 
-        it('유효한 percent stacked 차트가 아닌경우 dataProcessor에서 formatting 가능한 함수를 얻어 반환합니다.', function() {
-            var actual, expected;
+        it('유효한 percent stacked 차트가 아닌경우 dataProcessor에서 getFormatFunctions를 호출하여 formatting 가능한 함수를 얻어 반환합니다.', function() {
+            var actual;
 
             spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
-            spyOn(axisScaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue([
-                function(value) {
-                    return '00' + value;
-                }
-            ]);
+            spyOn(axisScaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue('formatFunctions');
 
             actual = axisScaleMaker._getFormatFunctions();
-            expected = '0010';
 
-            expect(actual[0](10)).toBe(expected);
+            expect(axisScaleMaker.dataProcessor.getFormatFunctions).toHaveBeenCalled();
+            expect(actual).toBe('formatFunctions');
         });
     });
 
     describe('_getScaleValues()', function() {
-        it('range정보에서 vlaues를 계산하여 반환합니다.', function() {
+        it('range정보에서 values를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             spyOn(axisScaleMaker, '_getScale').and.returnValue({
@@ -87,15 +83,75 @@ describe('AxisScaleMaker', function() {
 
     });
 
+    describe('_makeValuesMapPerStack()', function() {
+        it('item에서 value를 추출하여 stack 기준으로 values map을 생성합니다.', function() {
+            var items = [{
+                    value: 10,
+                    stack: 'st1'
+                }, {
+                    value: 20,
+                    stack: 'st2'
+                }, {
+                    value: 30,
+                    stack: 'st1'
+                }, {
+                    value: 40,
+                    stack: 'st2'
+                }],
+                actual = axisScaleMaker._makeValuesMapPerStack(items),
+                expected = {
+                    st1: [10, 30],
+                    st2: [20, 40]
+                };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeBaseValuesForNormalStackedChart()', function() {
+        it('normal stacked 차트의 baes values를 생성합니다.', function() {
+            var actual, expected;
+
+            axisScaleMaker.dataProcessor.groupItems = [
+                [{
+                    value: 10,
+                    stack: 'st1'
+                }, {
+                    value: 20,
+                    stack: 'st1'
+                }, {
+                    value: -30,
+                    stack: 'st1'
+                }, {
+                    value: -40,
+                    stack: 'st1'
+                }, {
+                    value: 50,
+                    stack: 'st2'
+                }, {
+                    value: 60,
+                    stack: 'st2'
+                }, {
+                    value: -70,
+                    stack: 'st2'
+                }, {
+                    value: -80,
+                    stack: 'st2'
+                }]
+            ];
+
+            actual = axisScaleMaker._makeBaseValuesForNormalStackedChart();
+            expected = [30, -70, 110, -150];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeBaseValues()', function() {
         it('baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.groupValues = [
-                [70, 10],
-                [20, 20],
-                [80, 30]
-            ];
+            axisScaleMaker.dataProcessor.values = [70, 10, 20, 20, 80, 30];
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
@@ -103,42 +159,11 @@ describe('AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('comboChart에서 yAxis가 두개 있을 때, line차트의 baseValues를 생성합니다.', function() {
-            var actual, expected;
-
-            axisScaleMaker.dataProcessor.groupValues = {
-                column: [
-                    [70, 10],
-                    [20, 20],
-                    [80, 30]
-                ],
-                line: [
-                    [1, 2, 3]
-                ]
-            };
-
-            axisScaleMaker.chartType = 'line';
-            actual = axisScaleMaker._makeBaseValues();
-            expected = [1, 2, 3];
-
-            expect(actual).toEqual(expected);
-        });
-
         it('comboChart에서 yAxis가 하나 있을 경우의 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.groupValues = {
-                column: [
-                    [70, 10],
-                    [20, 20],
-                    [80, 30]
-                ],
-                line: [
-                    [1, 2, 3]
-                ]
-            };
+            axisScaleMaker.dataProcessor.wholeValues = [70, 10, 1, 2, 3, 20, 20, 80, 30];
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 1, 2, 3, 20, 20, 80, 30];
@@ -146,19 +171,29 @@ describe('AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 normal인 경우에 그룹별로 양수와 음수 각각의 합을 구하여 baseValues를 생성합니다.', function() {
+        it('stacked 옵션이 normal인 경우에는 _makeBaseValuesOfNormalStackedChart()를 수행하여 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.groupValues = [
-                [70, -10, 10],
-                [-20, 20, -10],
-                [80, -30, -10]
-            ];
+            spyOn(axisScaleMaker, '_makeBaseValuesForNormalStackedChart').and.returnValue([
+                80, -10, 20, -30, 80, -40
+            ]);
 
             axisScaleMaker.chartType = 'column';
             axisScaleMaker.options.stacked = 'normal';
             actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('map 차트의 baseValues를 생성합니다.', function() {
+            var actual, expected;
+
+            spyOn(axisScaleMaker.dataProcessor, 'getValues').and.returnValue([20, 30, 40, 50]);
+
+            axisScaleMaker.chartType = 'map';
+            actual = axisScaleMaker._makeBaseValues();
+            expected = [20, 30, 40, 50];
 
             expect(actual).toEqual(expected);
         });
@@ -783,10 +818,7 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             boundsMaker.makeSeriesWidth.and.returnValue(400);
-            axisScaleMaker.dataProcessor.groupValues = [
-                [10, 20],
-                [40, 90]
-            ];
+            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
             actual = axisScaleMaker._calculateScale();
             expected = {
@@ -799,20 +831,11 @@ describe('AxisScaleMaker', function() {
     });
 
     describe('_calculateMinusSum()', function() {
-        it('axis가 하나 있을 경우에는 차트타입 구분없이 전체 음수값의 합을 계산합니다.', function() {
+        it('axis가 하나 있을 경우의 음수값의 합을 계산합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.groupValues = {
-                column: [
-                    [70, 10],
-                    [20, 20],
-                    [-80, 30]
-                ],
-                line: [
-                    [10, -20, 30]
-                ]
-            };
+            axisScaleMaker.dataProcessor.wholeValues = [70, 10, -80, -20, 30];
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculateMinusSum();
@@ -821,20 +844,11 @@ describe('AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('axis가 두개 있을 경우에는 chartType에 해당하는 음수값의 합을 계산합니다.', function() {
+        it('axis가 두개 있을 경우에는 음수값의 합을 계산합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.groupValues = {
-                column: [
-                    [70, 10],
-                    [20, 20],
-                    [-80, 30]
-                ],
-                line: [
-                    [10, -20, 30]
-                ]
-            };
+            axisScaleMaker.dataProcessor.values = [10, -80, 50, 40];
 
             axisScaleMaker.chartType = 'column';
             actual = axisScaleMaker._calculateMinusSum();
@@ -899,10 +913,7 @@ describe('AxisScaleMaker', function() {
 
             spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
             boundsMaker.makeSeriesWidth.and.returnValue(400);
-            axisScaleMaker.dataProcessor.groupValues = [
-                [10, 20],
-                [40, 90]
-            ];
+            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 
             actual = axisScaleMaker._makeScale();
             expected = axisScaleMaker._calculateScale();

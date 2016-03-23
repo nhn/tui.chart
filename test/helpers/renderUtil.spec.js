@@ -88,9 +88,7 @@ describe('renderUtil', function() {
                 fontSize: 12
             });
 
-            if (isFirefox) {
-                expect(actual).toBe(16);
-            } else if (isOldBrowser) {
+            if (isOldBrowser) {
                 expect(actual).toBe(14);
             } else {
                 expect(actual).toBe(15);
@@ -131,9 +129,7 @@ describe('renderUtil', function() {
                 fontSize: 12
             });
 
-            if (isFirefox) {
-                expect(actual).toBe(16);
-            } else if (isOldBrowser) {
+            if (isOldBrowser) {
                 expect(actual).toBe(14);
             } else {
                 expect(actual).toBe(15);

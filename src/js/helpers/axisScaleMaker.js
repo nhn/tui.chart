@@ -176,6 +176,48 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * Make values map per stack.
+     * @param {Array.<{stack: string, value: number}>} items - items
+     * @returns {object}
+     * @private
+     */
+    _makeValuesMapPerStack: function(items) {
+        var valuesMap = {};
+
+        tui.util.forEachArray(items, function(item) {
+            if (!valuesMap[item.stack]) {
+                valuesMap[item.stack] = [];
+            }
+            valuesMap[item.stack].push(item.value);
+        });
+
+        return valuesMap;
+    },
+
+    /**
+     * Make base values of normal stacked chart.
+     * @returns {Array.<number>}
+     * @private
+     */
+    _makeBaseValuesForNormalStackedChart: function() {
+        var self = this,
+            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            baseValues = [];
+
+        tui.util.forEachArray(groupItems, function(items) {
+            var valuesMap = self._makeValuesMapPerStack(items);
+
+            tui.util.forEach(valuesMap, function(values) {
+                var plusSum = calculator.sumPlusValues(values),
+                    minusSum = calculator.sumMinusValues(values);
+                baseValues = baseValues.concat([plusSum, minusSum]);
+            });
+        });
+
+        return baseValues;
+    },
+
+    /**
      * Make base values.
      * @returns {Array.<number>} base values
      * @private
@@ -186,20 +228,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this.isSingleYAxis) {
-            baseValues = this.dataProcessor.getWholeGroupValues();
+            baseValues = this.dataProcessor.getWholeValues();
+        } else if (this._isNormalStackedChart()) {
+            baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
-            baseValues = this.dataProcessor.getGroupValues(this.chartType);
+            baseValues = this.dataProcessor.getValues(this.chartType);
         }
 
-        if (this._isNormalStackedChart()) {
-            baseValues = tui.util.map(baseValues, function(values) {
-                var plusSum = calculator.sumPlusValues(values),
-                    minusSum = calculator.sumMinusValues(values);
-                return [plusSum, minusSum];
-            }, this);
-        }
-
-        return concat.apply([], baseValues);
+        return baseValues;
     },
 
     /**
@@ -329,7 +365,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseLimit: function(dataLimit, options) {
-        var isMinus = false,
+        var isMinusLimit = predicate.isMinusLimit(dataLimit),
             min = dataLimit.min,
             max = dataLimit.max,
             baseLimit, tmpMin;
@@ -337,8 +373,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (min === max) {
             baseLimit = this._makeLimitIfEqualMinMax(dataLimit);
         } else {
-            if (min < 0 && max <= 0) {
-                isMinus = true;
+            if (isMinusLimit) {
                 tmpMin = min;
                 min = -max;
                 max = -tmpMin;
@@ -346,7 +381,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
             baseLimit = calculator.calculateLimit(min, max);
 
-            if (isMinus) {
+            if (isMinusLimit) {
                 tmpMin = baseLimit.min;
                 baseLimit.min = -baseLimit.max;
                 baseLimit.max = -tmpMin;
@@ -687,12 +722,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         var groupValues;
 
         if (this.isSingleYAxis) {
-            groupValues = this.dataProcessor.getWholeGroupValues();
+            groupValues = this.dataProcessor.getWholeValues();
         } else {
-            groupValues = this.dataProcessor.getGroupValues(this.chartType);
+            groupValues = this.dataProcessor.getValues(this.chartType);
         }
 
-        return calculator.sumMinusValues(concat.apply([], groupValues));
+        return calculator.sumMinusValues(groupValues);
     },
 
     /**

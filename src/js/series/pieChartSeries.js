@@ -39,12 +39,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Make sectors information.
-     * @param {Array.<number>} percentValues percent values
+     * @param {Array.<number>} groupItems percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
      * @returns {Array.<object>} sectors information
      * @private
      */
-    _makeSectorData: function(percentValues, circleBound) {
+    _makeSectorData: function(groupItems, circleBound) {
         var self = this,
             cx = circleBound.cx,
             cy = circleBound.cy,
@@ -53,8 +53,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             delta = 10,
             paths;
 
-        paths = tui.util.map(percentValues, function(percentValue) {
-            var addAngle = chartConst.ANGLE_360 * percentValue,
+        paths = tui.util.map(groupItems, function(items) {
+            var addAngle = chartConst.ANGLE_360 * items.ratio,
                 endAngle = angle + addAngle,
                 popupAngle = angle + (addAngle / 2),
                 angles = {
@@ -76,7 +76,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             angle = endAngle;
 
             return {
-                percentValue: percentValue,
+                percentValue: items.ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
@@ -110,7 +110,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 showLabel: this.options.showLabel,
                 legendAlign: this.legendAlign
             }),
-            sectorData = this._makeSectorData(this._getPercentValues()[0], circleBound);
+            sectorData = this._makeSectorData(this.dataProcessor.getGroupItems()[0], circleBound);
 
         return {
             chartBackground: this.chartBackground,
@@ -294,7 +294,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             if (positions[index]) {
                 label = self._getSeriesLabel({
                     legend: legend,
-                    label: self.dataProcessor.getFormattedValue(0, index, self.chartType),
+                    label: self.dataProcessor.getItem(0, index, self.chartType).formattedValue,
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);

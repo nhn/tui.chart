@@ -81,6 +81,7 @@ var chartConst = {
     STACKED_NORMAL_TYPE: 'normal',
     /** @type {string} */
     STACKED_PERCENT_TYPE: 'percent',
+    DEFAULT_STACK: '___default___stack___',
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */

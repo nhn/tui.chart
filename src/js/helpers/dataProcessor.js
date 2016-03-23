@@ -6,15 +6,22 @@
 
 'use strict';
 
-var predicate = require('./predicate'),
+var chartConst = require('../const'),
+    predicate = require('./predicate'),
+    rawDataHandler = require('./rawDataHandler'),
     renderUtil = require('./renderUtil'),
     calculator = require('./calculator');
 
 var concat = Array.prototype.concat;
 
 /**
+ * Raw series datum.
+ * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
+ */
+
+/**
  * Raw series data.
- * @typedef {Array.<{name: string, data: Array.<number>}>} rawSeriesData
+ * @typedef {Array.<rawSeriesDatum>} rawSeriesData
  */
 
 /**
@@ -26,13 +33,18 @@ var concat = Array.prototype.concat;
  */
 
 /**
- * Group values.
- * @typedef {Array.<Array.<number>>} groupValues
+ * Item
+ * @typedef {{stack: string, value: number, formattedValue: (string | number)}} item
  */
 
 /**
- * Formatted group values.
- * @typedef {Array.<Array.<string | number>>} formattedValues
+ * Items.
+ * @typedef {Array.<item>} items
+ */
+
+/**
+ * Group Items.
+ * @typedef {Array.<items>} groupItems
  */
 
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
@@ -99,16 +111,34 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.categories = null;
 
         /**
-         * group values
-         * @type {{column: groupValues, line: groupValues} | groupValues}
+         * stacks
+         * @type {Array.<number>}
          */
-        this.groupValues = null;
+        this.stacks = null;
+
+        /**
+         * group items
+         * @type {groupItems}
+         */
+        this.groupItems = null;
+
+        /**
+         * whole group items
+         * @type {groupItems}
+         */
+        this.wholeGroupItems = null;
 
         /**
          * whole values
-         * @type {groupValues}
+         * @type {Array.<number>}
          */
         this.wholeValues = null;
+
+        /**
+         * values
+         * @type {Array.<number>}
+         */
+        this.values = null;
 
         /**
          * legend labels
@@ -129,28 +159,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.formatFunctions = null;
 
         /**
-         * foramtted values
-         * @type {{column: formattedValues, line: formattedValues} | formattedValues}
-         */
-        this.formattedValues = null;
-
-        /**
-         * whole formatted values
-         * @type {formattedValues}
-         */
-        this.wholeFormattedValues = null;
-
-        /**
          * multiline categories
          * @type {Array.<string>}
          */
         this.multilineCategories = null;
-
-        /**
-         * percent values
-         * @type {{column: groupValues, line: groupValues} | groupValues}
-         */
-        this.percentValues = null;
     },
 
     /**
@@ -184,38 +196,136 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         return this.getCategories()[index];
     },
 
+    /**
+     * Get stacks.
+     * @returns {Array.<string>}
+     */
+    getStacks: function() {
+        if (!this.stacks) {
+            this.stacks = rawDataHandler.pickStacks(this.rawData.series);
+        }
+
+        return this.stacks;
+    },
 
     /**
-     * Pick values from raw data.
-     * @returns {{column: groupValues, line: groupValues} | groupValues} values
+     * Get stack count.
+     * @returns {Number}
      */
-    _pickValuesFromRawData: function() {
-        var self = this,
-            seriesData = this.rawData.series,
-            values, result;
+    getStackCount: function() {
+        return this.getStacks().length;
+    },
+
+    /**
+     * Find stack index.
+     * @param {string} stack stack
+     * @returns {number}
+     */
+    findStackIndex: function(stack) {
+        return tui.util.inArray(stack, this.getStacks());
+    },
+
+    /**
+     * Create items from raw series datum.
+     * @param {rawSeriesDatum} rawSeriesDatum raw series datum
+     * @returns {items} picked items.
+     * @private
+     */
+    _createItems: function(rawSeriesDatum) {
+        var formatFunctions = this.getFormatFunctions();
+
+        return tui.util.map([].concat(rawSeriesDatum.data), function(value) {
+            return {
+                stack: rawSeriesDatum.stack || chartConst.DEFAULT_STACK,
+                value: parseFloat(value),
+                formattedValue: renderUtil.formatValue(value, formatFunctions)
+            };
+        });
+    },
+
+    /**
+     * Pick data from raw data.
+     * @returns {groupItems} picked group items
+     * @private
+     */
+    _pickGroupItemsFromRawData: function() {
+        var seriesData = this.rawData.series,
+            funcCreateItems = tui.util.bind(this._createItems, this),
+            items, result;
         if (tui.util.isArray(seriesData)) {
-            values = tui.util.map(seriesData, this._pickValue);
-            result = tui.util.pivot(values);
+            items = tui.util.map(seriesData, funcCreateItems);
+            result = tui.util.pivot(items);
         } else {
             result = {};
-            tui.util.forEach(seriesData, function(groupValues, type) {
-                values = tui.util.map(groupValues, self._pickValue);
-                result[type] = tui.util.pivot(values);
+            tui.util.forEach(seriesData, function(groupData, type) {
+                items = tui.util.map(groupData, funcCreateItems);
+                result[type] = tui.util.pivot(items);
             });
         }
         return result;
     },
 
     /**
-     * Get group values.
-     * @param {?string} chartType chart type
-     * @returns {Array.Array.<number>} group values
+     * Get group items.
+     * @param {string} chartType chart type.
+     * @returns {groupItems}
      */
-    getGroupValues: function(chartType) {
-        if (!this.groupValues) {
-            this.groupValues = this._pickValuesFromRawData();
+    getGroupItems: function(chartType) {
+        if (!this.groupItems) {
+            this.groupItems = this._pickGroupItemsFromRawData();
         }
-        return this.groupValues[chartType] || this.groupValues;
+
+        return this.groupItems[chartType] || this.groupItems;
+    },
+
+    /**
+     * Make whole group items.
+     * @returns {groupItems} group items.
+     * @private
+     */
+    _makeWholeGroupItems: function() {
+        var groupItems = this.getGroupItems(),
+            wholeGroupItems = [];
+
+        if (!this.seriesChartTypes) {
+            wholeGroupItems = groupItems;
+        } else {
+            tui.util.forEachArray(this.seriesChartTypes, function(chartType) {
+                tui.util.forEach(groupItems[chartType], function(items, index) {
+                    if (!wholeGroupItems[index]) {
+                        wholeGroupItems[index] = [];
+                    }
+                    wholeGroupItems[index] = wholeGroupItems[index].concat(items);
+                });
+            });
+        }
+
+        return wholeGroupItems;
+    },
+
+    /**
+     * Get whole group items.
+     * @returns {groupItems}
+     */
+    getWholeGroupItems: function() {
+        if (!this.wholeGroupItems) {
+            this.wholeGroupItems = this._makeWholeGroupItems();
+        }
+
+        return this.wholeGroupItems;
+    },
+
+    /**
+     * Get item.
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {string} chartType chart type
+     * @returns {item}
+     */
+    getItem: function(groupIndex, index, chartType) {
+        var groupItems = this.getGroupItems(chartType);
+
+        return groupItems[groupIndex][index];
     },
 
     /**
@@ -226,20 +336,53 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {number} value
      */
     getValue: function(groupIndex, index, chartType) {
-        var groupValues = this.getGroupValues(chartType);
-        return groupValues[groupIndex][index];
+        return this.getItem(groupIndex, index, chartType).value;
     },
 
     /**
-     * Get whole group values.
-     * @returns {groupValues} gruop values
+     * Make whole values.
+     * @returns {Array.<number>} values
+     * @private
      */
-    getWholeGroupValues: function() {
+    _makeWholeItems: function() {
+        var wholeItems;
+
+        if (!this.seriesChartTypes) {
+            wholeItems = this.getGroupItems();
+        } else {
+            wholeItems = tui.util.map(this.seriesChartTypes, tui.util.bind(this.getGroupItems, this));
+            wholeItems = concat.apply([], wholeItems);
+        }
+
+        return concat.apply([], wholeItems);
+    },
+
+    /**
+     * Get whole values.
+     * @returns {Array.<number>} values
+     */
+    getWholeValues: function() {
         if (!this.wholeValues) {
-            this.wholeValues = this._makeWholeValues(this.getGroupValues());
+            this.wholeValues = tui.util.pluck(this._makeWholeItems(), 'value');
         }
 
         return this.wholeValues;
+    },
+
+    /**
+     * Get values.
+     * @param {string} chartType chart type
+     * @returns {Array.<number>}
+     */
+    getValues: function(chartType) {
+        var items;
+
+        if (!this.values) {
+            items = concat.apply([], this.getGroupItems(chartType));
+            this.values = tui.util.pluck(items, 'value');
+        }
+
+        return this.values;
     },
 
     /**
@@ -294,108 +437,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Format converted values.
-     * @returns {string[]} formatted values
-     * @private
-     */
-    _formatValues: function() {
-        var values = this.getGroupValues(),
-            formatFunctions = this.getFormatFunctions(),
-            self = this,
-            result;
-
-        formatFunctions = formatFunctions || [];
-
-        if (tui.util.isArray(values)) {
-            result = this._formatGroupValues(values, formatFunctions);
-        } else {
-            result = {};
-            tui.util.forEach(values, function(groupValues, chartType) {
-                result[chartType] = self._formatGroupValues(groupValues, formatFunctions);
-            });
-        }
-        return result;
-    },
-
-    /**
-     * Get formatted group values
-     * @param {string} chartType chart type
-     * @returns {Array.<string>} group values
-     */
-    getFormattedGroupValues: function(chartType) {
-        if (!this.formattedValues) {
-            this.formattedValues = this._formatValues();
-        }
-
-        return this.formattedValues[chartType] || this.formattedValues;
-    },
-
-    /**
-     * Get formatted value.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @param {?string} chartType chartType
-     * @returns {string} formatted value
-     */
-    getFormattedValue: function(groupIndex, index, chartType) {
-        var formattedGroupValues = this.getFormattedGroupValues(chartType);
-        return formattedGroupValues[groupIndex][index];
-    },
-
-    /**
      * Get first formatted vlaue.
      * @param {?string} chartType chartType
      * @returns {string} formatted value
      */
     getFirstFormattedValue: function(chartType) {
-        return this.getFormattedValue(0, 0, chartType);
-    },
-
-    /**
-     * Get whole formatted values.
-     * @returns {Array.Array.<string>} formatted values
-     */
-    getWholeFormattedValues: function() {
-        if (!this.wholeFormattedValues) {
-            this.wholeFormattedValues = this._makeWholeValues(this.getFormattedGroupValues());
-        }
-        return this.wholeFormattedValues;
-    },
-
-    /**
-     * Pick value.
-     * @param {{name: string, data: (Array.<number> | number)}} items items
-     * @returns {Array} picked value
-     * @private
-     */
-    _pickValue: function(items) {
-        return tui.util.map([].concat(items.data), parseFloat);
-    },
-
-
-    /**
-     * Make whole values.
-     * @param {Array.<Array>} groupValues values
-     * @returns {Array.<number>} join values
-     * @private
-     */
-    _makeWholeValues: function(groupValues) {
-        var wholeValues = [];
-
-        if (!this.seriesChartTypes) {
-            wholeValues = groupValues;
-        } else {
-            tui.util.forEachArray(this.seriesChartTypes, function(_chartType) {
-                tui.util.forEach(groupValues[_chartType], function(values, index) {
-                    if (!wholeValues[index]) {
-                        wholeValues[index] = [];
-                    }
-                    wholeValues[index] = wholeValues[index].concat(values);
-                });
-            });
-        }
-
-        return wholeValues;
+        return this.getItem(0, 0, chartType).formattedValue;
     },
 
     /**
@@ -409,7 +456,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Pick legend labels from axis data.
+     * Pick legend labels from raw data.
      * @returns {string[]} labels
      */
     _pickLegendLabels: function() {
@@ -420,10 +467,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             result = tui.util.map(seriesData, this._pickLegendLabel);
         } else {
             result = {};
-            tui.util.forEach(seriesData, function(groupValues, type) {
-                result[type] = tui.util.map(groupValues, self._pickLegendLabel);
+            tui.util.forEach(seriesData, function(seriesDatum, type) {
+                result[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
             });
         }
+
         return result;
     },
 
@@ -457,30 +505,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 wholeLabels = wholeLabels.concat(labels);
             });
         }
+
         return wholeLabels;
-    },
-
-    /**
-     * Format group values.
-     * @param {Array.<Array>} groupValues group values
-     * @param {function[]} formatFunctions format functions
-     * @returns {string[]} formatted values
-     * @private
-     */
-    _formatGroupValues: function(groupValues, formatFunctions) {
-        var self = this;
-
-        return tui.util.map(groupValues, function(values) {
-            if (self.divergingOption) {
-                values = tui.util.map(values, Math.abs);
-            }
-            return tui.util.map(values, function(value) {
-                var fns = [value].concat(formatFunctions);
-                return tui.util.reduce(fns, function(stored, fn) {
-                    return fn(stored);
-                });
-            });
-        });
     },
 
     /**
@@ -497,7 +523,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             if (len > max) {
                 max = len;
             }
-        }, this);
+        });
 
         return max;
     },
@@ -520,6 +546,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _isDecimal: function(format) {
         var indexOf = format.indexOf('.');
+
         return indexOf > -1 && indexOf < format.length - 1;
     },
 
@@ -574,6 +601,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         pow = Math.pow(10, len);
         value = Math.round(value * pow) / pow;
         value = parseFloat(value).toFixed(len);
+
         return value;
     },
 
@@ -695,110 +723,137 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make percent value.
-     * @param {groupValues} groupValues gruop values
-     * @returns {groupValues} percent values
-     * @private
-     */
-    _makePieChartPercentValues: function(groupValues) {
-        return tui.util.map(groupValues, function(values) {
-            var sum = tui.util.sum(values);
-
-            return tui.util.map(values, function(value) {
-                return sum === 0 ? 0 : (value / sum);
-            });
-        });
-    },
-
-    /**
-     * Make percent values for normal stacked option.
-     * @param {groupValues} groupValues gruop values
+     * Add ratios, when has normal stacked option.
+     * @param {string} chartType chart type
      * @param {{min: number, max: number}} limit axis limit
-     * @returns {Array} percent values about normal stacked option.
      * @private
      */
-    _makeNormalStackedPercentValues: function(groupValues, limit) {
-        var distance = Math.abs(limit.max - limit.min);
+    _addRatiosWhenNormalStacked: function(chartType, limit) {
+        var groupItems = this.getGroupItems(chartType),
+            distance = Math.abs(limit.max - limit.min);
 
-        return tui.util.map(groupValues, function(values) {
-            return tui.util.map(values, function(value) {
-                return value / distance;
+        tui.util.forEachArray(groupItems, function(items) {
+            tui.util.forEachArray(items, function(item) {
+                item.ratio = item.value / distance;
             });
         });
     },
 
     /**
-     * Make percent values for percent stacked option.
-     * @param {groupValues} groupValues gruop values
-     * @returns {Array} percent values about percent stacked option
+     * Make flatten values from group items.
+     * @param {groupItems} groupItems group items.
+     * @returns {Array.<number>}
      * @private
      */
-    _makePercentStackedPercentValues: function(groupValues) {
-        var flattenValues = concat.apply([], groupValues),
+    _makeFlattenValues: function(groupItems) {
+        var groupValues = tui.util.map(groupItems, function(items) {
+            return tui.util.map(items, function(item) {
+                return item.value;
+            });
+        });
+
+        return concat.apply([], groupValues);
+    },
+
+    /**
+     * Calculate base ratio for calculating ratio of item.
+     * @param {groupItems} groupItems group items
+     * @returns {number}
+     * @private
+     */
+    _calculateBaseRatio: function(groupItems) {
+        var flattenValues = this._makeFlattenValues(groupItems),
             plusSum = calculator.sumPlusValues(flattenValues),
             minusSum = Math.abs(calculator.sumMinusValues(flattenValues)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
 
-        return tui.util.map(groupValues, function(values) {
-            var sum = tui.util.sum(tui.util.map(values, function(value) {
-                return Math.abs(value);
-            }));
+        return ratio;
+    },
 
-            return tui.util.map(values, function(value) {
-                return sum === 0 ? 0 : ratio * (value / sum);
+    /**
+     * Make sum map per stack.
+     * @param {items} items items
+     * @returns {object} sum map
+     * @private
+     */
+    _makeSumMapPerStack: function(items) {
+        var sumMap = {};
+        tui.util.forEachArray(items, function(item) {
+            if (!sumMap[item.stack]) {
+                sumMap[item.stack] = 0;
+            }
+
+            sumMap[item.stack] += Math.abs(item.value);
+        });
+
+        return sumMap;
+    },
+
+    /**
+     * Add ratios, when has percent stacked option.
+     * @param {string} chartType chart type
+     * @private
+     */
+    _addRatiosWhenPercentStacked: function(chartType) {
+        var self = this,
+            groupItems = this.getGroupItems(chartType),
+            baseRatio = this._calculateBaseRatio(groupItems);
+
+        tui.util.forEachArray(groupItems, function(items) {
+            var sumMap = self._makeSumMapPerStack(items);
+
+            tui.util.forEachArray(items, function(item) {
+                var sum = sumMap[item.stack];
+
+                item.ratio = (sum === 0) ? 0 : (baseRatio * (item.value / sum));
             });
         });
     },
 
     /**
-     * Make percent values for percent diverging stacked option.
-     * @param {groupValues} groupValues group values
-     * @returns {groupValues} percent values
+     * Add ratios, when has diverging stacked option.
+     * @param {string} chartType chart type
      * @private
      */
-    _makePercentDivergentStackedPercentValues: function(groupValues) {
-        return tui.util.map(groupValues, function(values) {
-            var plusSum = calculator.sumPlusValues(values),
+    _addRatiosWhenDivergingStacked: function(chartType) {
+        var groupItems = this.getGroupItems(chartType);
+
+        tui.util.forEachArray(groupItems, function(items) {
+            var values = tui.util.pluck(items, 'value'),
+                plusSum = calculator.sumPlusValues(values),
                 minusSum = Math.abs(calculator.sumMinusValues(values));
 
-            return tui.util.map(values, function(value) {
-                var sum = value >= 0 ? plusSum : minusSum;
-                return sum === 0 ? 0 : 0.5 * (value / sum);
+            tui.util.forEachArray(items, function(item) {
+                var sum = (item.value >= 0) ? plusSum : minusSum;
+
+                item.ratio = (sum === 0) ? 0 : 0.5 * (item.value / sum);
             });
         });
     },
 
     /**
-     * Make percent value.
-     * @param {groupValues} groupValues group values
+     * Add ratios, when has not option.
+     * @param {string} chartType chart type
      * @param {{min: number, max: number}} limit axis limit
-     * @param {boolean} isLineTypeChart whether line type chart or not.
-     * @returns {groupValues} percent values
      * @private
      */
-    _makePercentValues: function(groupValues, limit, isLineTypeChart) {
-        var min = limit.min,
-            max = limit.max,
-            distance = max - min,
-            flag = 1,
-            subValue = 0,
-            percentValues;
+    _addRatios: function(chartType, limit) {
+        var groupItems = this.getGroupItems(chartType),
+            isLineTypeChart = predicate.isLineTypeChart(chartType),
+            distance = Math.abs(limit.max - limit.min),
+            subValue = 0;
 
-        if (!isLineTypeChart && min < 0 && max <= 0) {
-            flag = -1;
-            subValue = max;
-            distance = min - max;
-        } else if (isLineTypeChart || min >= 0) {
-            subValue = min;
+        if (!isLineTypeChart && predicate.isMinusLimit(limit)) {
+            subValue = limit.max;
+        } else if (isLineTypeChart || limit.min >= 0) {
+            subValue = limit.min;
         }
 
-        percentValues = tui.util.map(groupValues, function(values) {
-            return tui.util.map(values, function(value) {
-                return (value - subValue) * flag / distance;
+        tui.util.forEachArray(groupItems, function(items) {
+            tui.util.forEachArray(items, function(item) {
+                item.ratio = (item.value - subValue) / distance;
             });
         });
-
-        return percentValues;
     },
 
     /**
@@ -806,9 +861,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {string} chartType chart type
      */
     registerPieChartPercentValues: function(chartType) {
-        var groupValues = this.getGroupValues(chartType);
-        this.percentValues = {};
-        this.percentValues[chartType] = this._makePieChartPercentValues(groupValues);
+        var groupItems = this.getGroupItems(chartType);
+
+        tui.util.forEachArray(groupItems, function(items) {
+            var sum = tui.util.sum(tui.util.pluck(items, 'value'));
+
+            tui.util.forEachArray(items, function(item) {
+                item.ratio = (sum === 0) ? 0 : (item.value / sum);
+            });
+        });
     },
 
     /**
@@ -818,37 +879,20 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {string} chartType chart type
      * @private
      */
-    registerPercentValues: function(limit, stacked, chartType) {
-        var result,
-            groupValues = this.getGroupValues(chartType),
-            isAllowedStackedOption = predicate.isAllowedStackedOption(chartType),
-            isLineTypeChart = predicate.isLineTypeChart(chartType);
+    addDataRatios: function(limit, stacked, chartType) {
+        var isAllowedStackedOption = predicate.isAllowedStackedOption(chartType);
 
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
-            result = this._makeNormalStackedPercentValues(groupValues, limit);
+            this._addRatiosWhenNormalStacked(chartType, limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             if (this.divergingOption) {
-                result = this._makePercentDivergentStackedPercentValues(groupValues);
+                this._addRatiosWhenDivergingStacked(chartType);
             } else {
-                result = this._makePercentStackedPercentValues(groupValues);
+                this._addRatiosWhenPercentStacked(chartType);
             }
         } else {
-            result = this._makePercentValues(groupValues, limit, isLineTypeChart);
+            this._addRatios(chartType, limit);
         }
-
-        if (!this.percentValues) {
-            this.percentValues = {};
-        }
-        this.percentValues[chartType] = isLineTypeChart ? tui.util.pivot(result) : result;
-    },
-
-    /**
-     * Get percent values.
-     * @param {string} chartType chart type
-     * @returns {groupValues} percent values
-     */
-    getPercentValues: function(chartType) {
-        return this.percentValues[chartType];
     }
 });
 
