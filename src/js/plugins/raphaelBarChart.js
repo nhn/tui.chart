@@ -28,7 +28,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     render: function(container, data) {
         var groupBounds = data.groupBounds,
             dimension = data.dimension,
-            paper, baseParams;
+            paper;
 
         if (!groupBounds) {
             return null;
@@ -36,15 +36,12 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         this.paper = paper = raphael(container, dimension.width, dimension.height);
 
-        baseParams = {
-            theme: data.theme,
-            groupBounds: groupBounds,
-            groupItems: data.groupItems,
-            chartType: data.chartType
-        };
+        this.theme = data.theme;
+        this.itemGroup = data.itemGroup;
+        this.chartType = data.chartType;
 
-        this.groupBars = this._renderBars(baseParams);
-        this.groupBorders = this._renderBarBorders(baseParams);
+        this.groupBars = this._renderBars(groupBounds);
+        this.groupBorders = this._renderBarBorders(groupBounds);
 
         this.overlay = this._renderOverlay();
         this.theme = data.theme;
@@ -77,16 +74,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render rect
-     * @param {object} params parameters
-     *      @param {string} params.color series color
-     *      @param {string} params.borderColor series borderColor
-     *      @param {{left: number, top: number, width: number, height: number}} params.bound bound
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     * @param {string} color series color
      * @returns {object} bar rect
      * @private
      */
-    _renderBar: function(params) {
-        var bound = params.bound,
-            rect;
+    _renderBar: function(bound, color) {
+        var rect;
 
         if (bound.width < 0 || bound.height < 0) {
             return null;
@@ -94,7 +88,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         rect = this.paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
-            fill: params.color,
+            fill: color,
             stroke: 'none'
         });
 
@@ -103,19 +97,17 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render bars.
-     * @param {object} params parameters
-     *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @returns {Array.<Array.<object>>} bars
      * @private
      */
-    _renderBars: function(params) {
+    _renderBars: function(groupBounds) {
         var self = this,
-            singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
-            colors = params.theme.colors,
+            singleColors = (groupBounds[0].length === 1) && this.theme.singleColors || [],
+            colors = this.theme.colors,
             groupBars;
 
-        groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
 
             return tui.util.map(bounds, function(bound, index) {
@@ -125,16 +117,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                item = params.groupItems[groupIndex][index];
-                color = singleColor || colors[index];
+                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
 
-                rect = self._renderBar({
-                    chartType: params.chartType,
-                    color: color,
-                    borderColor: params.theme.borderColor,
-                    bound: bound.start,
-                    value: item.value
-                });
+                color = singleColor || colors[index];
+                rect = self._renderBar(bound.start, color);
 
                 return {
                     rect: rect,
@@ -311,22 +297,20 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render bar borders.
-     * @param {object} params parameters
-     *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @returns {Array.<Array.<object>>} borders
      * @private
      */
-    _renderBarBorders: function(params) {
+    _renderBarBorders: function(groupBounds) {
         var self = this,
-            borderColor = params.theme.borderColor,
+            borderColor = this.theme.borderColor,
             groupBorders;
 
         if (!borderColor) {
             return null;
         }
 
-        groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        groupBorders = tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
                 var item;
 
@@ -334,13 +318,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                item = params.groupItems[groupIndex][index];
+                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
 
                 return self._renderBorderLines({
                     paper: self.paper,
                     bound: bound.start,
                     borderColor: borderColor,
-                    chartType: params.chartType,
+                    chartType: self.chartType,
                     value: item.value
                 });
             });

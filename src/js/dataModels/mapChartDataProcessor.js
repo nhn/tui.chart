@@ -7,7 +7,7 @@
 'use strict';
 
 var DataProcessor = require('./dataProcessor'),
-    renderUtil = require('./renderUtil');
+    renderUtil = require('../helpers/renderUtil');
 
 /**
  * Raw series data.

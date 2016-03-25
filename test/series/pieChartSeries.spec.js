@@ -7,6 +7,8 @@
 'use strict';
 
 var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -14,26 +16,17 @@ describe('PieChartSeries', function() {
     var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
+        var itemGroup;
+
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getItem']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getItemGroup', 'getFirstFormattedValue']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-        dataProcessor.getItem.and.returnValue(function(groupIndex, index) {
-            var values = [
-                {
-                    formattedValue: '1.1'
-                }, {
-                    formattedValue: '2.2'
-                }, {
-                    formattedValue: '3.3'
-                }
-            ];
-            return values[index];
-        });
+        dataProcessor.getFirstFormattedValue.and.returnValue('2.2');
     });
 
     beforeEach(function() {
@@ -53,19 +46,27 @@ describe('PieChartSeries', function() {
 
     describe('_makeSectorData()', function() {
         it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
-            var actual = series._makeSectorData([
-                {
-                    ratio: 0.25
-                }, {
-                    ratio: 0.125
-                }, {
-                    ratio: 0.1
-                }, {
-                    ratio: 0.35
-                }, {
-                    ratio: 0.175
-                }
-            ], {
+            var itemGroup = new ItemGroup(),
+                actual;
+
+            itemGroup.groups = [
+                new Items([
+                    {
+                        ratio: 0.25
+                    }, {
+                        ratio: 0.125
+                    }, {
+                        ratio: 0.1
+                    }, {
+                        ratio: 0.35
+                    }, {
+                        ratio: 0.175
+                    }
+                ])
+            ];
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+
+            actual = series._makeSectorData({
                 cx: 100,
                 cy: 100,
                 r: 100

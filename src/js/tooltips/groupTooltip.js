@@ -126,10 +126,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeTooltipData: function() {
         var self = this;
 
-        return tui.util.map(this.dataProcessor.getWholeGroupItems(), function(items, index) {
+        return tui.util.map(this.dataProcessor.getWholeGroups(), function(items, index) {
             return {
                 category: self.dataProcessor.getCategory(index),
-                values: tui.util.pluck(items, 'formattedValue')
+                values: items.pluck('formattedValue')
             };
         });
     },

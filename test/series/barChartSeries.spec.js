@@ -6,8 +6,10 @@
 
 'use strict';
 
-var BarChartSeries = require('../../src/js/series/barChartSeries.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var BarChartSeries = require('../../src/js/series/barChartSeries'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items'),
+    renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BarChartSeries', function() {
     var series, dataProcessor, boundsMaker;
@@ -17,7 +19,7 @@ describe('BarChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupItems', 'getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue', 'getFormatFunctions']);
         dataProcessor.getFirstFormattedValue.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -145,17 +147,19 @@ describe('BarChartSeries', function() {
 
     describe('_makeBounds()', function() {
         it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
-            var actual, expected;
+            var itemGroup, actual, expected;
 
-            dataProcessor.getGroupItems.and.returnValue([
-                [{
+            itemGroup = new ItemGroup();
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
                     value: 40,
                     ratio: 0.4
                 }, {
                     value: 60,
                     ratio: 0.6
-                }]
-            ]);
+                }])
+            ];
             boundsMaker.getDimension.and.returnValue({
                 width: 100,
                 height: 100
@@ -169,6 +173,7 @@ describe('BarChartSeries', function() {
                 step: 20,
                 additionalPosition: 0
             });
+
             actual = series._makeBounds();
             expected = [[
                 {

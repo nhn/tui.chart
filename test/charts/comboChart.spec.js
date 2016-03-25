@@ -7,7 +7,7 @@
 'use strict';
 
 var ComboChart = require('../../src/js/charts/comboChart.js'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor'),
+    DataProcessor = require('../../src/js/dataModels/dataProcessor'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 

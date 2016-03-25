@@ -6,13 +6,15 @@
 
 'use strict';
 
-var Tooltip = require('../../src/js/tooltips/tooltip');
+var Tooltip = require('../../src/js/tooltips/tooltip'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items');
 
 describe('Tooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getGroupItems', 'getLegendLabels', 'getValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getItemGroup', 'getLegendLabels', 'getValue']);
     });
 
     beforeEach(function() {
@@ -24,16 +26,21 @@ describe('Tooltip', function() {
 
     describe('_makeTooltipData()', function() {
         it('툴팁 렌더링에 사용될 data를 생성합니다.', function() {
-            var actual, expected;
+            var itemGroup = new ItemGroup(),
+                actual, expected;
 
             dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
-            dataProcessor.getGroupItems.and.returnValue([[
-                {
-                    formattedValue: '10'
-                }, {
-                    formattedValue: '20'
-                }
-            ]]);
+            itemGroup.groups = [
+                new Items([
+                    {
+                        formattedValue: '10'
+                    }, {
+                        formattedValue: '20'
+                    }
+                ])
+            ];
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+
             dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
             tooltip.chartType = 'column';
             actual = tooltip._makeTooltipData();

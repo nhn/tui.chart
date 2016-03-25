@@ -88,7 +88,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _updatePercentValues: function() {
-        this.dataProcessor.registerPieChartPercentValues(this.options.chartType);
+        this.dataProcessor.addDataRatiosOfPieChart();
     },
 
     /**

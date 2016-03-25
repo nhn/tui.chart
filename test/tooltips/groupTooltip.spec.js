@@ -7,6 +7,7 @@
 'use strict';
 
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
+    Items = require('../../src/js/dataModels/items'),
     defaultTheme = require('../../src/js/themes/defaultTheme'),
     dom = require('../../src/js/helpers/domHandler');
 
@@ -14,7 +15,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeGroupItems', 'getCategory', 'getWholeLegendData', 'getLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeGroups', 'getCategory', 'getWholeLegendData', 'getLegendData']);
     });
 
     beforeEach(function() {
@@ -28,18 +29,20 @@ describe('GroupTooltip', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getWholeGroupItems.and.returnValue([
-                [{
+
+            dataProcessor.getWholeGroups.and.returnValue([
+                new Items([{
                     formattedValue: '10'
                 }, {
                     formattedValue: '20'
-                }],
-                [{
+                }]),
+                new Items([{
                     formattedValue: '30'
                 }, {
                     formattedValue: '40'
-                }]
+                }])
             ]);
+
             dataProcessor.getCategory.and.callFake(function(index) {
                 var categories = [
                     'Silver',

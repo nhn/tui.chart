@@ -7,6 +7,8 @@
 'use strict';
 
 var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -17,11 +19,6 @@ describe('BarTypeSeriesBase', function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-
-        dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getFirstFormattedValue', 'getGroupItems', 'getFormattedValue']);
-
-        dataProcessor.getFormatFunctions.and.returnValue([]);
 
         makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
             left: 0,
@@ -40,6 +37,12 @@ describe('BarTypeSeriesBase', function() {
                 fontSize: 11
             }
         };
+
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getFormatFunctions', 'getFirstFormattedValue', 'getItemGroup', 'getFormattedValue']);
+
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
         series.dataProcessor = dataProcessor;
         series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
@@ -107,13 +110,18 @@ describe('BarTypeSeriesBase', function() {
         it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
             var baseGroupSize = 100,
                 baseBarSize = 100,
+                itemGroup = new ItemGroup(),
                 actual, expected;
 
-            dataProcessor.getGroupItems.and.returnValue([[{
-                value: 10
-            }, {
-                value: 20
-            }]]);
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
+                    value: 10
+                }, {
+                    value: 20
+                }])
+            ];
+
             series.options = {};
             series.data = {
                 limit: {
@@ -143,16 +151,21 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var labelContainer = dom.create('div');
+            var labelContainer = dom.create('div'),
+                itemGroup = new ItemGroup();
 
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            dataProcessor.getGroupItems.and.returnValue([[{
-                value: 1.5,
-                formattedValue: '1.5'
-            }, {
-                value: 2.2,
-                formattedValue: '2.2'
-            }]]);
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
+                    value: 1.5,
+                    formattedValue: '1.5'
+                }, {
+                    value: 2.2,
+                    formattedValue: '2.2'
+                }])
+            ];
+
             series.seriesData = {
                 groupBounds: [
                     [
@@ -220,18 +233,19 @@ describe('BarTypeSeriesBase', function() {
         it('stacked옵션이 normal일 경우에는 series label html을 전달하는 values + 1(sum)만큼 생성합니다.', function() {
             var container = dom.create('div'),
                 html;
+
             series.options = {
                 stacked: 'normal'
             };
 
             html = series._makeStackedLabelsHtml({
-                items: [{
+                items: new Items([{
                     value: 1.5,
                     formattedValue: '1.5'
                 }, {
                     value: 2.2,
                     formattedValue: '2.2'
-                }],
+                }]),
                 bounds: [
                     {
                         end: {}
@@ -249,10 +263,19 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderStackedSeriesLabel()', function() {
         it('bar type(bar, column) stacked=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
-            var elLabelArea = dom.create('div');
+            var elLabelArea = dom.create('div'),
+                itemGroup = new ItemGroup();
 
             dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            dataProcessor.getGroupItems.and.returnValue([[1.5, 2.2]]);
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
+                    value: 1.5
+                }, {
+                    value: 2.2
+                }])
+            ];
+
             series.options = {
                 stacked: 'normal'
             };
@@ -278,7 +301,18 @@ describe('BarTypeSeriesBase', function() {
         it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
-                params;
+                itemGroup = new ItemGroup();
+
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
+                    value: -1.5,
+                    formattedValue: '-1.5'
+                }, {
+                    value: -2.2,
+                    formattedValue: '-2.2'
+                }])
+            ];
 
             series.options = {};
             series.seriesData = {
@@ -293,16 +327,9 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
-            params = {
-                formattedValues: [
-                    ['-1.5', '-2.2']
-                ],
-                values: [
-                    [-1.5, -2.2]
-                ]
-            };
-            series._renderSeriesLabel(params, elLabelArea);
-            series._renderNormalSeriesLabel(params, elExpected);
+
+            series._renderSeriesLabel(elLabelArea);
+            series._renderNormalSeriesLabel(elExpected);
 
             expect(elLabelArea.className).toEqual(elExpected.className);
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
@@ -311,7 +338,18 @@ describe('BarTypeSeriesBase', function() {
         it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
-                params;
+                itemGroup = new ItemGroup();
+
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
+                    value: -1.5,
+                    formattedValue: '-1.5'
+                }, {
+                    value: -2.2,
+                    formattedValue: '-2.2'
+                }])
+            ];
 
             series.options = {
                 stacked: 'normal'
@@ -328,17 +366,9 @@ describe('BarTypeSeriesBase', function() {
                     ]
                 ]
             };
-            params = {
-                formattedValues: [
-                    ['-1.5', '-2.2']
-                ],
-                values: [
-                    [-1.5, -2.2]
-                ]
-            };
 
-            series._renderSeriesLabel(params, elLabelArea);
-            series._renderStackedSeriesLabel(params, elExpected);
+            series._renderSeriesLabel(elLabelArea);
+            series._renderStackedSeriesLabel(elExpected);
 
             expect(elLabelArea.className).toEqual(elExpected.className);
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);

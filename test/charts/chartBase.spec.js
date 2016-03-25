@@ -8,7 +8,7 @@
 
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor');
+    DataProcessor = require('../../src/js/dataModels/dataProcessor');
 
 describe('ChartBase', function() {
     var chartBase, componentManager;

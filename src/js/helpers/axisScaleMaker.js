@@ -176,43 +176,23 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Make values map per stack.
-     * @param {Array.<{stack: string, value: number}>} items - items
-     * @returns {object}
-     * @private
-     */
-    _makeValuesMapPerStack: function(items) {
-        var valuesMap = {};
-
-        tui.util.forEachArray(items, function(item) {
-            if (!valuesMap[item.stack]) {
-                valuesMap[item.stack] = [];
-            }
-            valuesMap[item.stack].push(item.value);
-        });
-
-        return valuesMap;
-    },
-
-    /**
      * Make base values of normal stacked chart.
      * @returns {Array.<number>}
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var self = this,
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+        var itemGroup = this.dataProcessor.getItemGroup(),
             baseValues = [];
 
-        tui.util.forEachArray(groupItems, function(items) {
-            var valuesMap = self._makeValuesMapPerStack(items);
+        itemGroup.each(function(items) {
+            var valuesMap = items._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
                 var plusSum = calculator.sumPlusValues(values),
                     minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
-        });
+        }, this.chartType);
 
         return baseValues;
     },

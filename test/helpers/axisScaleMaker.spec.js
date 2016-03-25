@@ -8,7 +8,8 @@
 
 var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js'),
     chartConst = require('../../src/js/const'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor.js');
+    DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup');
 
 describe('AxisScaleMaker', function() {
     var axisScaleMaker, boundsMaker;
@@ -80,68 +81,25 @@ describe('AxisScaleMaker', function() {
 
             expect(actual).toEqual(expected);
         });
-
-    });
-
-    describe('_makeValuesMapPerStack()', function() {
-        it('item에서 value를 추출하여 stack 기준으로 values map을 생성합니다.', function() {
-            var items = [{
-                    value: 10,
-                    stack: 'st1'
-                }, {
-                    value: 20,
-                    stack: 'st2'
-                }, {
-                    value: 30,
-                    stack: 'st1'
-                }, {
-                    value: 40,
-                    stack: 'st2'
-                }],
-                actual = axisScaleMaker._makeValuesMapPerStack(items),
-                expected = {
-                    st1: [10, 30],
-                    st2: [20, 40]
-                };
-
-            expect(actual).toEqual(expected);
-        });
     });
 
     describe('_makeBaseValuesForNormalStackedChart()', function() {
         it('normal stacked 차트의 baes values를 생성합니다.', function() {
-            var actual, expected;
+            var items, actual, expected;
 
-            axisScaleMaker.dataProcessor.groupItems = [
-                [{
-                    value: 10,
-                    stack: 'st1'
-                }, {
-                    value: 20,
-                    stack: 'st1'
-                }, {
-                    value: -30,
-                    stack: 'st1'
-                }, {
-                    value: -40,
-                    stack: 'st1'
-                }, {
-                    value: 50,
-                    stack: 'st2'
-                }, {
-                    value: 60,
-                    stack: 'st2'
-                }, {
-                    value: -70,
-                    stack: 'st2'
-                }, {
-                    value: -80,
-                    stack: 'st2'
-                }]
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+
+            items = jasmine.createSpyObj('items', ['_makeValuesMapPerStack']);
+            items._makeValuesMapPerStack.and.returnValue({
+                st1: [-10, 30, -50],
+                st2: [-20, 40, 60]
+            });
+            axisScaleMaker.dataProcessor.itemGroup.groups = [
+                items
             ];
 
             actual = axisScaleMaker._makeBaseValuesForNormalStackedChart();
-            expected = [30, -70, 110, -150];
+            expected = [30, -60, 100, -20];
 
             expect(actual).toEqual(expected);
         });
@@ -151,7 +109,8 @@ describe('AxisScaleMaker', function() {
         it('baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.values = [70, 10, 20, 20, 80, 30];
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
@@ -162,7 +121,8 @@ describe('AxisScaleMaker', function() {
         it('comboChart에서 yAxis가 하나 있을 경우의 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.wholeValues = [70, 10, 1, 2, 3, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.wholeValues = [70, 10, 1, 2, 3, 20, 20, 80, 30];
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._makeBaseValues();
@@ -835,7 +795,8 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.wholeValues = [70, 10, -80, -20, 30];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.wholeValues = [70, 10, -80, -20, 30];
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculateMinusSum();
@@ -848,7 +809,8 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.values = [10, -80, 50, 40];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.values = [10, -80, 50, 40];
 
             axisScaleMaker.chartType = 'column';
             actual = axisScaleMaker._calculateMinusSum();

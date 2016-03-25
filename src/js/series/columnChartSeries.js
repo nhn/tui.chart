@@ -117,12 +117,12 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _makeBounds: function() {
         var self = this,
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            itemGroup = this.dataProcessor.getItemGroup(),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
-        return tui.util.map(groupItems, function(items, groupIndex) {
+        return itemGroup.map(function(items, groupIndex) {
             var baseLeft = (groupIndex * baseData.groupSize) + baseData.groupPosition
                         + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -134,8 +134,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 },
                 iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
-            return tui.util.map(items, iteratee);
-        });
+            return items.map(iteratee);
+        }, this.chartType);
     },
 
     /**

@@ -133,12 +133,13 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeBounds: function() {
         var self = this,
-            groupItems = this.dataProcessor.getGroupItems(),
+            itemGroup = this.dataProcessor.getItemGroup(),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
-        return tui.util.map(groupItems, function(items, groupIndex) {
+
+        return itemGroup.map(function(items, groupIndex) {
             var baseTop = (groupIndex * baseData.groupSize) + baseData.groupPosition
                         + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -150,7 +151,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 },
                 iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
-            return tui.util.map(items, iteratee);
+            return items.map(iteratee);
         });
     },
 

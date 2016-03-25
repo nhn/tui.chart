@@ -7,7 +7,7 @@
 'use strict';
 
 var ComponentManager = require('./componentManager'),
-    DefaultDataProcessor = require('../helpers/dataProcessor'),
+    DefaultDataProcessor = require('../dataModels/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
     AxisScaleMaker = require('../helpers/axisScaleMaker'),
     dom = require('../helpers/domHandler'),
