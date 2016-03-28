@@ -1,5 +1,5 @@
 /**
- * @fileoverview Item group.
+ * @fileoverview Item group has itemses(Items instance).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

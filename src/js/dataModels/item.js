@@ -1,5 +1,5 @@
 /**
- * @fileoverview Item.
+ * @fileoverview Item has value, formattedValue, ratio, ... .
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

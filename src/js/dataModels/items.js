@@ -1,15 +1,15 @@
 /**
- * @fileoverview Items.
+ * @fileoverview Items has items(Item instance).
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Items = tui.util.defineClass(/** @lends Item.prototype */{
+var Items = tui.util.defineClass(/** @lends Items.prototype */{
     /**
-     * Item.
-     * @constructs Item
+     * Items.
+     * @constructs Items
      * @param {Items} items - items
      */
     init: function(items) {
