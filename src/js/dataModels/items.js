@@ -8,7 +8,7 @@
 
 var Items = tui.util.defineClass(/** @lends Item.prototype */{
     /**
-     * Item
+     * Item.
      * @constructs Item
      * @param {Items} items - items
      */
@@ -29,7 +29,7 @@ var Items = tui.util.defineClass(/** @lends Item.prototype */{
     },
 
     /**
-     * Get item
+     * Get item.
      * @param {number} index - index of items
      * @returns {Item}
      */

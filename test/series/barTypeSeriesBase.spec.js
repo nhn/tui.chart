@@ -201,7 +201,7 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_makeStackedLabelsHtml()', function() {
-        it('bar type(bar, column) stacked 차트의 series label html을 전달하는 values의 수만큼 생성합니다.', function() {
+        it('bar type(bar, column) stacked 차트의 series label html을 전달하는 values의 수 만큼 생성합니다.', function() {
             var container = dom.create('div'),
                 html;
             series.options = {
@@ -209,13 +209,13 @@ describe('BarTypeSeriesBase', function() {
             };
 
             html = series._makeStackedLabelsHtml({
-                items: [{
+                items: new Items([{
                     value: 1.5,
                     formattedValue: '1.5'
                 }, {
                     value: 2.2,
                     formattedValue: '2.2'
-                }],
+                }]),
                 bounds: [
                     {
                         end: {}
