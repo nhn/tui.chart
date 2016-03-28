@@ -58,11 +58,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
             hasAxes: true
         });
 
-        this.axisScaleMaker = this._createAxisScaleMaker({
-            min: options.xAxis.min,
-            max: options.xAxis.max
-        });
-
         this._addComponents(options.chartType);
     },
 
@@ -92,8 +87,12 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
      * @private
      */
     _makeAxesData: function() {
-        var xAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: this.axisScaleMaker
+        var axisScaleMaker = this._createAxisScaleMaker({
+                min: this.options.xAxis.min,
+                max: this.options.xAxis.max
+            }),
+            xAxisData = axisDataMaker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker
             }),
             yAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),

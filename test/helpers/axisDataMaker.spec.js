@@ -50,7 +50,7 @@ describe('axisDataMaker', function() {
 
     describe('makeValueAxisData()', function() {
         it('axisScaleMaker를 전달하여 value 타입 axis data를 생성합니다..', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit']),
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit', 'getStep']),
                 actual, expected;
 
             axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
@@ -58,6 +58,7 @@ describe('axisDataMaker', function() {
                 min: 0,
                 max: 100
             });
+            axisScaleMaker.getStep.and.returnValue(25);
 
             actual = maker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
@@ -73,6 +74,7 @@ describe('axisDataMaker', function() {
                     min: 0,
                     max: 100
                 },
+                step: 25,
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true

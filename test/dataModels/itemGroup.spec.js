@@ -35,9 +35,22 @@ describe('test ItemGroup', function() {
             expect(actual[1][2].value).toBe(60);
             expect(actual[1][2].stack).toBe('st2');
         });
+
+        it('data가 숫자인 파이차트형의 경우의 baseGroups를 생성합니다.', function() {
+            var rawSeriesData = [{
+                    data: 10
+                }, {
+                    data: 20
+                }],
+                actual = itemGroup._createBaseGroups(rawSeriesData);
+
+            expect(actual.length).toBe(2);
+            expect(actual[0][0].value).toBe(10);
+            expect(actual[1][0].value).toBe(20);
+        });
     });
 
-    describe('createItemsGroupsFromRawData()', function() {
+    describe('createArrayTypeGroupsFromRawData()', function() {
         it('Items를 요소로 갖는 배열 타입의 groups를 생성합니다.', function() {
             var rawSeriesData = [{
                     data: [10, 20, 30],
@@ -47,7 +60,7 @@ describe('test ItemGroup', function() {
                     stack: 'st2'
                 }],
                 chartType = 'line',
-                actual = itemGroup.createItemsGroupsFromRawData(rawSeriesData, chartType);
+                actual = itemGroup.createArrayTypeGroupsFromRawData(rawSeriesData, chartType);
 
             expect(actual.length).toBe(2);
             expect(actual[0].getItemCount()).toBe(3);
@@ -64,7 +77,7 @@ describe('test ItemGroup', function() {
                 }],
                 chartType = 'bar',
                 isPivot = true,
-                actual = itemGroup.createItemsGroupsFromRawData(rawSeriesData, chartType, isPivot);
+                actual = itemGroup.createArrayTypeGroupsFromRawData(rawSeriesData, chartType, isPivot);
 
             expect(actual.length).toBe(3);
             expect(actual[0].getItemCount()).toBe(2);
@@ -73,7 +86,7 @@ describe('test ItemGroup', function() {
     });
 
     describe('_createGroupsFromRawData()', function() {
-        it('rawSeriesData가 배열이면 createItemsGroupsFromRawData()의 결과를 반환합니다.', function() {
+        it('rawSeriesData가 배열이면 createArrayTypeGroupsFromRawData()의 결과를 반환합니다.', function() {
             var rawSeriesData = [{
                     data: [10, 20, 30],
                     stack: 'st1'
@@ -85,12 +98,12 @@ describe('test ItemGroup', function() {
 
             itemGroup.rawSeriesData = rawSeriesData;
             actual = itemGroup._createGroupsFromRawData();
-            expected = itemGroup.createItemsGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY);
+            expected = itemGroup.createArrayTypeGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY);
 
             expect(actual).toEqual(expected);
         });
 
-        it('rawSeriesData가 객체면 createItemsGroupsFromRawData()의 결과를 각 key에 담아 반환합니다.', function() {
+        it('rawSeriesData가 객체면 createArrayTypeGroupsFromRawData()의 결과를 각 key에 담아 반환합니다.', function() {
             var rawSeriesData = {
                     column: [{
                         data: [10, 20, 30]
@@ -110,6 +123,54 @@ describe('test ItemGroup', function() {
             expect(actual.line.length).toBe(1);
             expect(actual.line[0].getItemCount()).toBe(3);
             expect(actual.line[0] instanceof Items);
+        });
+    });
+
+    describe('isValidAllGroup()', function() {
+        it('모든 그룹이 유효한 items를 갖고 있으면 true를 반환합니다.', function() {
+            var actual, expected;
+
+            itemGroup.groups = {
+                column: [
+                    new Items([{
+                        value: 10
+                    }, {
+                        value: 20
+                    }])
+                ],
+                line: [
+                    new Items([{
+                        value: 30
+                    }, {
+                        value: 40
+                    }])
+                ]
+            };
+
+            actual = itemGroup.isValidAllGroup();
+            expected = true;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('하나의 그룹이라도 유효한 items를 갖고 있지 않으면 false를 반환합니다.', function() {
+            var actual, expected;
+
+            itemGroup.groups = {
+                column: [
+                    new Items([{
+                        value: 10
+                    }, {
+                        value: 20
+                    }])
+                ],
+                line: []
+            };
+
+            actual = itemGroup.isValidAllGroup();
+            expected = false;
+
+            expect(actual).toBe(expected);
         });
     });
 
@@ -224,7 +285,9 @@ describe('test ItemGroup', function() {
         it('groupItems에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
             var actual, expected;
 
-            itemGroup.values = [-20, 40];
+            itemGroup.values = {
+                bar: [-20, 40]
+            };
 
             actual = itemGroup._calculateBaseRatio('bar');
             expected = 0.5;
@@ -235,7 +298,9 @@ describe('test ItemGroup', function() {
         it('groupItems에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
             var actual, expected;
 
-            itemGroup.values = [20, 40];
+            itemGroup.values = {
+                bar: [20, 40]
+            };
 
             actual = itemGroup._calculateBaseRatio('bar');
             expected = 1;
@@ -249,7 +314,9 @@ describe('test ItemGroup', function() {
             var items = jasmine.createSpyObj('items', ['addRatiosWhenPercentStacked']);
 
             itemGroup.groups = [items];
-            itemGroup.values = [20, 40];
+            itemGroup.values = {
+                bar: [20, 40]
+            };
 
             itemGroup._addRatiosWhenPercentStacked('bar');
 

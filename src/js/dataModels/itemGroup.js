@@ -27,6 +27,7 @@ var Items = require('./items'),
     predicate = require('../helpers/predicate'),
     calculator = require('../helpers/calculator');
 
+var concat = Array.prototype.concat;
 
 var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
     /**
@@ -38,15 +39,34 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
      * @param {Array.<function>} formatFunctions format functions
      */
     init: function(rawSeriesData, options, seriesChartTypes, formatFunctions) {
+        /**
+         * chart options
+         * @type {Object}
+         */
         this.options = options;
 
+        /**
+         * series chart types
+         * @type {Array.<string>}
+         */
         this.seriesChartTypes = seriesChartTypes;
 
+        /**
+         * functions for formatting
+         * @type {Array.<function>}
+         */
         this.formatFunctions = formatFunctions;
 
-
+        /**
+         * rawData.series
+         * @type {rawSeriesData}
+         */
         this.rawSeriesData = rawSeriesData;
 
+        /**
+         * base groups
+         * @type {object}
+         */
         this.baseGroups = {};
 
         /**
@@ -54,6 +74,12 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
          * @type {groups}
          */
         this.groups = null;
+
+        /**
+         * all values of groups
+         * @type {object}
+         */
+        this.values = {};
     },
 
     /**
@@ -66,7 +92,7 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
         var self = this;
 
         return tui.util.map(rawSeriesData, function(rawDatum) {
-            return tui.util.map(rawDatum.data, function(value) {
+            return tui.util.map(concat.apply(rawDatum.data), function(value) {
                 return new Item(value, rawDatum.stack, self.formatFunctions);
             });
         });
@@ -87,14 +113,14 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
     },
 
     /**
-     * Crete items groups from rawData.series.
+     * Create array type groups from rawData.series.
      * @param {rawSeriesData} rawSeriesData - rawData.series
      * @param {string} chartType - chart type
      * @param {boolean} isPivot - whether pivot or not
      * @returns {Array.<Items>}
      * @private
      */
-    createItemsGroupsFromRawData: function(rawSeriesData, chartType, isPivot) {
+    createArrayTypeGroupsFromRawData: function(rawSeriesData, chartType, isPivot) {
         var groups = this.getBaseGroups(rawSeriesData, chartType);
 
         if (isPivot) {
@@ -118,11 +144,11 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
             groups;
 
         if (tui.util.isArray(rawSeriesData)) {
-            groups = this.createItemsGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY, isPivot);
+            groups = this.createArrayTypeGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY, isPivot);
         } else {
             groups = {};
             tui.util.forEach(rawSeriesData, function(groupData, type) {
-                groups[type] = self.createItemsGroupsFromRawData(groupData, type, isPivot);
+                groups[type] = self.createArrayTypeGroupsFromRawData(groupData, type, isPivot);
             });
         }
 
@@ -131,7 +157,7 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
 
     /**
      * Get groups.
-     * @param {string} chartType - chart type
+     * @param {?string} chartType - chart type
      * @returns {(Array.<Items>|object)}
      */
     getGroups: function(chartType) {
@@ -149,6 +175,24 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
      */
     getGroupCount: function(chartType) {
         return this.getGroups(chartType).length;
+    },
+
+    /**
+     * Whether valid all group or not.
+     * @returns {boolean}
+     */
+    isValidAllGroup: function() {
+        var groupMap = this.getGroups(),
+            isValid = true;
+
+        tui.util.forEach(groupMap, function(groups) {
+            if (!groups.length) {
+                isValid = false;
+            }
+            return isValid;
+        });
+
+        return isValid;
     },
 
     /**
@@ -236,11 +280,11 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
      * @returns {Array.<number>}
      */
     getValues: function(chartType) {
-        if (!this.values) {
-            this.values = this._makeValues(chartType);
+        if (!this.values[chartType]) {
+            this.values[chartType] = this._makeValues(chartType);
         }
 
-        return this.values;
+        return this.values[chartType];
     },
 
     /**
@@ -459,6 +503,7 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
         } else {
             groupMap = groups;
         }
+
 
         tui.util.forEach(groupMap, function(_groups, key) {
             key = (key === chartConst.DUMMY_KEY) ? null : key;

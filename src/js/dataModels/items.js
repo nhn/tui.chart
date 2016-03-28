@@ -13,6 +13,10 @@ var Items = tui.util.defineClass(/** @lends Item.prototype */{
      * @param {Items} items - items
      */
     init: function(items) {
+        /**
+         * items
+         * @type {Array.<Item>}
+         */
         this.items = items;
     },
 

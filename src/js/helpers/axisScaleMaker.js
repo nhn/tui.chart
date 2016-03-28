@@ -96,6 +96,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * Get step.
+     * @returns {number}
+     */
+    getStep: function() {
+        return this._getScale().step;
+    },
+
+    /**
      * Whether percent stacked chart or not.
      * @returns {boolean}
      * @private

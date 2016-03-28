@@ -110,7 +110,10 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
-            axisScaleMaker.dataProcessor.itemGroup.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.itemGroup.values = {
+                bar: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.chartType = 'bar';
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
@@ -810,7 +813,9 @@ describe('AxisScaleMaker', function() {
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
             axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
-            axisScaleMaker.dataProcessor.itemGroup.values = [10, -80, 50, 40];
+            axisScaleMaker.dataProcessor.itemGroup.values = {
+                column: [10, -80, 50, 40]
+            };
 
             axisScaleMaker.chartType = 'column';
             actual = axisScaleMaker._calculateMinusSum();

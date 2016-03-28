@@ -31,21 +31,6 @@ var concat = Array.prototype.concat;
  * }} rawData
  */
 
-/**
- * Item
- * @typedef {{stack: string, value: number, formattedValue: (string | number)}} item
- */
-
-/**
- * Items.
- * @typedef {Array.<item>} items
- */
-
-/**
- * Group Items.
- * @typedef {Array.<items>} groupItems
- */
-
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Data processor.
@@ -214,7 +199,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getItemGroup: function() {
         if (!this.itemGroup) {
             this.itemGroup = new ItemGroup(this.rawData.series, this.options,
-                                    this.seriesChartTypes, this.getFormatFunctions());
+                this.seriesChartTypes, this.getFormatFunctions());
         }
 
         return this.itemGroup;
@@ -230,8 +215,16 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether valid all group or not.
+     * @returns {boolean}
+     */
+    isValidAllGroup: function() {
+        return this.getItemGroup().isValidAllGroup();
+    },
+
+    /**
      * Get whole group items.
-     * @returns {groupItems}
+     * @returns {Array.<Items>}
      */
     getWholeGroups: function() {
         return this.getItemGroup().getWholeGroups();

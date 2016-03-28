@@ -121,7 +121,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var isValid = true;
 
         if (this.componentName === 'rightYAxis') {
-            isValid = !!this.dataProcessor.getGroupCount(this.chartType);
+            isValid = this.dataProcessor.isValidAllGroup();
         }
 
         return isValid;
