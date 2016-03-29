@@ -7,7 +7,7 @@
 'use strict';
 
 var ComboChart = require('../../src/js/charts/comboChart.js'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor'),
+    DataProcessor = require('../../src/js/dataModels/dataProcessor'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
@@ -110,12 +110,13 @@ describe('ComboChart', function() {
 
             spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
             spyOn(comboChart, '_createAxisScaleMaker').and.callFake(function() {
-                var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit']);
+                var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit', 'getStep']);
                 axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
                 axisScaleMaker.getLimit.and.returnValue({
                     min: 0,
                     max: 100
                 });
+                axisScaleMaker.getStep.and.returnValue(25);
                 return axisScaleMaker;
             });
 
@@ -150,6 +151,7 @@ describe('ComboChart', function() {
                     min: 0,
                     max: 100
                 },
+                step: 25,
                 isVertical: true,
                 isPositionRight: false,
                 aligned: false,

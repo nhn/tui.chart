@@ -6,7 +6,7 @@
 
 'use strict';
 
-var MapChartDataProcessor = require('../../src/js/helpers/mapChartDataProcessor.js');
+var MapChartDataProcessor = require('../../src/js/dataModels/mapChartDataProcessor.js');
 
 describe('test MapChartDataProcessor', function() {
     var dataProcessor;

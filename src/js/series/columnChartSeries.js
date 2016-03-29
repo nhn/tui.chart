@@ -117,12 +117,12 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _makeBounds: function() {
         var self = this,
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            itemGroup = this.dataProcessor.getItemGroup(),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
-        return tui.util.map(groupItems, function(items, groupIndex) {
+        return itemGroup.map(function(items, groupIndex) {
             var baseLeft = (groupIndex * baseData.groupSize) + baseData.groupPosition
                         + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -134,8 +134,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 },
                 iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
-            return tui.util.map(items, iteratee);
-        });
+            return items.map(iteratee);
+        }, this.chartType);
     },
 
     /**
@@ -166,13 +166,13 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Calculate sum label left position.
+     * Calculate left position of sum label.
      * @param {{left: number, top: number}} bound bound
      * @param {string} formattedSum formatted sum.
      * @returns {number} left position value
      * @private
      */
-    _calculateSumLabelLeftPosition: function(bound, formattedSum) {
+    _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
         return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
     },
@@ -193,9 +193,9 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             sum = calculator.sumPlusValues(values);
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
-                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1, -1);
+            }, formattedSum, -1);
         }
 
         return html;
@@ -221,9 +221,9 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
-                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1, -1);
+            }, formattedSum, -1);
         }
 
         return html;

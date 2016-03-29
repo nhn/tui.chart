@@ -7,6 +7,8 @@
 'use strict';
 
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
@@ -17,14 +19,15 @@ describe('ColumnChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupItems', 'getFirstFormattedValue', 'getFormatFunctions']);
-        dataProcessor.getFirstFormattedValue.and.returnValue('1');
-        dataProcessor.getFormatFunctions.and.returnValue([]);
 
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor.getFirstFormattedValue.and.returnValue('1');
+        dataProcessor.getFormatFunctions.and.returnValue([]);
+
         series = new ColumnChartSeries({
             chartType: 'column',
             theme: {
@@ -107,17 +110,19 @@ describe('ColumnChartSeries', function() {
 
     describe('_makeBounds()', function() {
         it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
-            var actual, expected;
+            var actual, expected,
+                itemGroup = new ItemGroup();
 
-            dataProcessor.getGroupItems.and.returnValue([
-                [{
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.groups = [
+                new Items([{
                     value: 40,
                     ratio: 0.4
                 }, {
                     value: 60,
                     ratio: 0.6
-                }]
-            ]);
+                }])
+            ];
             boundsMaker.getDimension.and.returnValue({
                 width: 100,
                 height: 100
@@ -206,9 +211,9 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_calculateSumLabelLeftPosition()', function() {
+    describe('_calculateLeftPositionOfSumLabel()', function() {
         it('합계 레이블의 left position값을 계산합니다.', function() {
-            var actual = series._calculateSumLabelLeftPosition({
+            var actual = series._calculateLeftPositionOfSumLabel({
                     left: 10,
                     width: 30
                 }, 20),
@@ -228,7 +233,7 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px">60</div>';
             expect(actual).toBe(expected);
         });
     });
@@ -244,7 +249,7 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px">-60</div>';
 
             expect(actual).toBe(expected);
         });

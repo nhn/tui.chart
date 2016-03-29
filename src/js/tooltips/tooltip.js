@@ -100,31 +100,37 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @override
      */
     _makeTooltipData: function() {
-        var categories = this.dataProcessor.getCategories(),
-            orgGroupItems = this.dataProcessor.getGroupItems(),
+        var self = this,
+            categories = this.dataProcessor.getCategories(),
+            itemGroup = this.dataProcessor.getItemGroup(),
             orgLegendLabels = this.dataProcessor.getLegendLabels(),
-            groupItemMap = {},
             legendLabels = {},
             tooltipData = {};
 
-        if (tui.util.isArray(orgGroupItems)) {
-            groupItemMap[this.chartType] = orgGroupItems;
+        if (tui.util.isArray(orgLegendLabels)) {
             legendLabels[this.chartType] = orgLegendLabels;
         } else {
-            groupItemMap = orgGroupItems;
             legendLabels = orgLegendLabels;
         }
 
-        tui.util.forEach(groupItemMap, function(grupItems, chartType) {
-            tooltipData[chartType] = tui.util.map(grupItems, function(items, groupIndex) {
-                return tui.util.map(items, function(item, index) {
-                    return {
-                        category: categories ? categories[groupIndex] : '',
-                        legend: legendLabels[chartType][index],
-                        value: item.formattedValue
-                    };
-                });
+        itemGroup.each(function(items, groupIndex, chartType) {
+            var datum;
+
+            chartType = chartType || self.chartType;
+
+            if (!tooltipData[chartType]) {
+                tooltipData[chartType] = [];
+            }
+
+            datum = items.map(function(item, index) {
+                return {
+                    category: categories ? categories[groupIndex] : '',
+                    legend: legendLabels[chartType][index],
+                    value: item.formattedValue
+                };
             });
+
+            tooltipData[chartType].push(datum);
         });
 
         return tooltipData;

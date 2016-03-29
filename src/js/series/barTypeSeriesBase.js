@@ -22,7 +22,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            groupItems: this.dataProcessor.getGroupItems(this.chartType)
+            itemGroup: this.dataProcessor.getItemGroup()
         };
     },
 
@@ -110,12 +110,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
         var isStacked = predicate.isValidStackedOption(this.options.stacked),
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
-            groupSize = baseGroupSize / groupItems.length,
+            itemGroup = this.dataProcessor.getItemGroup(),
+            groupSize = baseGroupSize / itemGroup.getGroupCount(this.chartType),
             itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
-
         if (!isStacked) {
-            itemCount = groupItems[0].length;
+            itemCount = itemGroup.getFirstItems(this.chartType).getItemCount();
         } else {
             itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
         }
@@ -152,12 +151,13 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             groupBounds = this.seriesData.groupBounds,
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            itemGroup = this.dataProcessor.getItemGroup(),
             html;
 
-        html = tui.util.map(groupItems, function(items, groupIndex) {
-            return tui.util.map(items, function(item, index) {
+        html = itemGroup.map(function(items, groupIndex) {
+            return items.map(function(item, index) {
                 var bound, renderingPosition;
+
                 bound = groupBounds[groupIndex][index].end;
                 renderingPosition = self.makeSeriesRenderingPosition({
                     value: item.value,
@@ -167,7 +167,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 });
                 return self._makeSeriesLabelHtml(renderingPosition, item.formattedValue, groupIndex, index);
             }).join('');
-        }).join('');
+        }, this.chartType).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },
@@ -215,9 +215,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var self = this,
             items = params.items,
             labelHeight = params.labelHeight,
-            htmls, plusBound, minusBound;
+            htmls, plusBound, minusBound, values;
 
-        htmls = tui.util.map(items, function(item, index) {
+        htmls = items.map(function(item, index) {
             var bound = params.bounds[index],
                 labelHtml = '',
                 boundEnd, position;
@@ -225,7 +225,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             if (bound && item) {
                 boundEnd = bound.end;
                 position = self._makeStackedLabelPosition(boundEnd, item.formattedValue, params.labelHeight);
-                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, params.groupIndex, index);
+                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, index);
             }
 
             if (item.value > 0) {
@@ -238,8 +238,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         });
 
         if (this.options.stacked === 'normal') {
-            htmls.push(this._makePlusSumLabelHtml(items, plusBound, labelHeight));
-            htmls.push(this._makeMinusSumLabelHtml(items, minusBound, labelHeight));
+            values = items.pluck('value');
+            htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
+            htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
         }
 
         return htmls.join('');
@@ -253,12 +254,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             groupBounds = this.seriesData.groupBounds,
-            groupItems = this.dataProcessor.getGroupItems(this.chartType),
+            itemGroup = this.dataProcessor.getItemGroup(),
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
 
-        html = tui.util.map(groupItems, function(items, index) {
+        html = itemGroup.map(function(items, index) {
             var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
                 items: items,
@@ -266,7 +267,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 labelHeight: labelHeight
             });
             return labelsHtml;
-        }).join('');
+        }, this.chartType).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },

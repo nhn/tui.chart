@@ -243,8 +243,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(data) {
-        var gropuItems = this.dataProcessor.getGroupItems(this.chartType);
-
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
         }
@@ -254,7 +252,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (gropuItems && gropuItems.length) {
+        if (this.dataProcessor.getGroupCount(this.chartType)) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShower) {
@@ -420,12 +418,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Make html about series label.
      * @param {{left: number, top: number}} position position
      * @param {string} value value
-     * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
      * @private
      */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+    _makeSeriesLabelHtml: function(position, value, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
 
         if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
@@ -436,7 +433,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
-            groupIndex: groupIndex,
             index: index
         });
     },
@@ -544,15 +540,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {?number} legendIndex legend index
      */
     onSelectLegend: function(chartType, legendIndex) {
-        var groupItems = this.dataProcessor.getGroupItems(this.chartType);
-
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 
         this.selectedLegendIndex = legendIndex;
 
-        if (groupItems && groupItems.length) {
+        if (this.dataProcessor.getItemGroup().getGroupCount(this.chartType)) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

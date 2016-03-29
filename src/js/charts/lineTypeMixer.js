@@ -32,11 +32,6 @@ var lineTypeMixer = {
             isVertical: true
         });
 
-        this.axisScaleMaker = this._createAxisScaleMaker({
-            min: options.yAxis.min,
-            max: options.yAxis.max
-        });
-
         this._addComponents(options.chartType);
     },
 
@@ -47,6 +42,10 @@ var lineTypeMixer = {
      */
     _makeAxesData: function() {
         var options = this.options,
+            axisScaleMaker = this._createAxisScaleMaker({
+                min: options.yAxis.min,
+                max: options.yAxis.max
+            }),
             aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
@@ -54,7 +53,7 @@ var lineTypeMixer = {
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: this.axisScaleMaker,
+                axisScaleMaker: axisScaleMaker,
                 isVertical: this.isVertical,
                 aligned: aligned
             });

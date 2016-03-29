@@ -21,7 +21,7 @@ describe('Axis', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getGroupItems', 'getCategories', 'getMultilineCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllGroup', 'getCategories', 'getMultilineCategories']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
         axis = new Axis({
             theme: {
@@ -86,11 +86,12 @@ describe('Axis', function() {
             expect(actual).toBe(expected);
         });
 
-        it('component name이 rightYAxis면서 getGroupItems에 length가 0인 values가 하나라도 존재하면 false를 반환합니다.', function() {
+        it('component name이 rightYAxis면서 isValidAllGroup이 false이면  false를 반환합니다.', function() {
             var actual, expected;
 
             axis.componentName = 'rightYAxis';
-            dataProcessor.getGroupItems.and.returnValue([[], []]);
+
+            dataProcessor.isValidAllGroup.and.returnValue(false);
 
             actual = axis._isValidAxis();
             expected = false;

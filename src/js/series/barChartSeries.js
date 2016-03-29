@@ -133,12 +133,13 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeBounds: function() {
         var self = this,
-            groupItems = this.dataProcessor.getGroupItems(),
+            itemGroup = this.dataProcessor.getItemGroup(),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
-        return tui.util.map(groupItems, function(items, groupIndex) {
+
+        return itemGroup.map(function(items, groupIndex) {
             var baseTop = (groupIndex * baseData.groupSize) + baseData.groupPosition
                         + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -150,7 +151,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 },
                 iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
-            return tui.util.map(items, iteratee);
+            return items.map(iteratee);
         });
     },
 
@@ -182,18 +183,18 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * Calculate sum label top position.
+     * Calculate top position of sum label.
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
      * @returns {number} top position value
      * @private
      */
-    _calculateSumLabelTopPosition: function(bound, labelHeight) {
+    _calculateTopPositionOfSumLabel: function(bound, labelHeight) {
         return bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
     },
 
     /**
-     * Make plus sum label html.
+     * Make html of plus sum label.
      * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
@@ -209,8 +210,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
                 left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateSumLabelTopPosition(bound, labelHeight)
-            }, formattedSum, -1, -1);
+                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
+            }, formattedSum, -1);
         }
 
         return html;
@@ -239,8 +240,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({
                 left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateSumLabelTopPosition(bound, labelHeight)
-            }, formattedSum, -1, -1);
+                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
+            }, formattedSum, -1);
         }
 
         return html;

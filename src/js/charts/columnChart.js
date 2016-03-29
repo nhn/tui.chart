@@ -53,11 +53,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             isVertical: true
         });
 
-        this.axisScaleMaker = this._createAxisScaleMaker({
-            min: options.yAxis.min,
-            max: options.yAxis.max
-        });
-
         this._addComponents(options.chartType);
     },
 
@@ -68,12 +63,16 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      */
     _makeAxesData: function() {
         var options = this.options,
+            axisScaleMaker = this._createAxisScaleMaker({
+                min: options.yAxis.min,
+                max: options.yAxis.max
+            }),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: this.axisScaleMaker,
+                axisScaleMaker: axisScaleMaker,
                 isVertical: this.isVertical
             });
 

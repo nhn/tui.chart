@@ -183,7 +183,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
                 return self._makeSeriesLabelHtml({
                     left: left,
                     top: top
-                }, datum.name, 0, index);
+                }, datum.name, index);
             });
         seriesLabelContainer.innerHTML = htmls.join('');
     },

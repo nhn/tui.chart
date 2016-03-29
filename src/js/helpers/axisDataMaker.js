@@ -94,6 +94,7 @@ var axisDataMaker = {
             tickCount: tickCount,
             validTickCount: tickCount,
             limit: axisScaleMaker.getLimit(),
+            step: axisScaleMaker.getStep(),
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned

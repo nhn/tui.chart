@@ -35,6 +35,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.className = 'tui-chart-axis-area';
 
         /**
+         * Chart type
+         * @type {string}
+         */
+        this.chartType = params.chartType;
+
+        /**
          * Data processor
          * @type {DataProcessor}
          */
@@ -112,20 +118,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _isValidAxis: function() {
-        var isInvalid = true,
-            groupItems;
+        var isValid = true;
 
         if (this.componentName === 'rightYAxis') {
-            groupItems = this.dataProcessor.getGroupItems();
-            tui.util.forEach(groupItems, function(items) {
-                if (!items.length) {
-                    isInvalid = false;
-                }
-                return isInvalid;
-            });
+            isValid = this.dataProcessor.isValidAllGroup();
         }
 
-        return isInvalid;
+        return isValid;
     },
 
     /**
