@@ -83,8 +83,9 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeColumnChartBound: function(baseData, iterationData, isStacked, item, index) {
-        var barHeight = Math.abs(baseData.baseBarSize * item.ratio),
-            startTop = baseData.basePosition + chartConst.SERIES_EXPAND_SIZE,
+        var barHeight = Math.abs(baseData.baseBarSize * item.ratioDistance),
+            barStartTop = baseData.baseBarSize * item.startRatio,
+            startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE,
             changedStack = (item.stack !== iterationData.prevStack),
             stackIndex, endTop, bound;
 
@@ -140,21 +141,20 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
     /**
      * Make series rendering position
-     * @param {obeject} params parameters
-     *      @param {number} params.value value
-     *      @param {{left: number, top: number, width:number, width:number, height: number}} params.bound bound
-     *      @param {string} params.formattedValue formatted value
-     *      @param {number} params.labelHeight label height
+     * @param {{left: number, top: number, width:number, height: number}} bound - bound
+     * @param {number} labelHeight - label height
+     * @param {number} value - value
+     * @param {string} formattedValue - formatted value
+     * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} rendering position
      */
-    makeSeriesRenderingPosition: function(params) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(params.formattedValue, this.theme.label),
-            bound = params.bound,
+    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             top = bound.top,
             left = bound.left + (bound.width - labelWidth) / 2;
 
-        if (params.value >= 0) {
-            top -= params.labelHeight + chartConst.SERIES_LABEL_PADDING;
+        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
+            top -= labelHeight + chartConst.SERIES_LABEL_PADDING;
         } else {
             top += bound.height + chartConst.SERIES_LABEL_PADDING;
         }

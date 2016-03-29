@@ -99,9 +99,10 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeBarChartBound: function(baseData, iterationData, isStacked, item, index) {
-        var barWidth = Math.abs(baseData.baseBarSize * item.ratio),
+        var barWidth = baseData.baseBarSize * item.ratioDistance,
             additionalLeft = this._calculateAdditionalLeft(item.value),
-            startLeft = baseData.basePosition + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
+            barStartLeft = baseData.baseBarSize * item.startRatio,
+            startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
             changedStack = (item.stack !== iterationData.prevStack),
             barIndex, endLeft, bound;
 
@@ -157,20 +158,19 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
     /**
      * Make series rendering position
-     * @param {obeject} params parameters
-     *      @param {number} params.value value
-     *      @param {{left: number, top: number, width:number, height: number}} params.bound bound
-     *      @param {string} params.formattedValue formatted value
-     *      @param {number} params.labelHeight label height
-     * @returns {{left: number, top: number}} rendering position
+     * @param {{left: number, top: number, width:number, height: number}} bound - bound
+     * @param {number} labelHeight - label height
+     * @param {number} value - value
+     * @param {string} formattedValue - formatted value
+     * @param {?boolean} isStart - whether start or not
+     * @returns {{left: number, top: number}} - rendering position
      */
-    makeSeriesRenderingPosition: function(params) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(params.formattedValue, this.theme.label),
-            bound = params.bound,
+    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             left = bound.left,
-            top = bound.top + (bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2;
+            top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
 
-        if (params.value >= 0) {
+        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
             left += bound.width + chartConst.SERIES_LABEL_PADDING;
         } else {
             left -= labelWidth + chartConst.SERIES_LABEL_PADDING;

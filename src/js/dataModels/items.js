@@ -18,6 +18,12 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
          * @type {Array.<Item>}
          */
         this.items = items;
+
+        /**
+         * item vlaues.
+         * @type {Array.<number>}
+         */
+        this.values = null;
     },
 
     /**
@@ -35,6 +41,36 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
      */
     getItem: function(index) {
         return this.items[index];
+    },
+
+    /**
+     * Make values of item.
+     * @returns {Array.<number>}
+     * @private
+     */
+    _makeValues: function() {
+        var values = [];
+
+        this.each(function(item) {
+            values.push(item.value);
+            if (!tui.util.isNull(item.start)) {
+                values.push(item.start);
+            }
+        });
+
+        return values;
+    },
+
+    /**
+     * Get
+     * @returns {Array}
+     */
+    getValues: function() {
+        if (!this.values) {
+            this.values = this._makeValues();
+        }
+
+        return this.values;
     },
 
     /**
@@ -83,6 +119,16 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
         }
 
         return this.valuesMap;
+    },
+
+    /**
+     * Update start value of item.
+     * @param {number} start start value
+     */
+    updateItemStart: function(start) {
+        this.each(function(item) {
+            item.addStart(start);
+        });
     },
 
     /**

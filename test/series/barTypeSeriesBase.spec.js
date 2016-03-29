@@ -144,6 +144,66 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
+    describe('_makeSeriesLabelsHtml()', function() {
+        it('position을 계산하고 _makeSeriesLabelHtml을 호출하여 하나의 item에 대한 레이블 html을 생성합니다.', function() {
+            var groupIndex = 0,
+                labelHeight = 20,
+                item = {
+                    value: 40,
+                    formattedEnd: '40'
+                },
+                index = 0;
+
+            series.seriesData = {
+                groupBounds: [
+                    [
+                        {
+                            end: {}
+                        }
+                    ]
+                ]
+            };
+            series._makeSeriesLabelsHtml(groupIndex, labelHeight, item, index);
+
+            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
+                left: 0,
+                top: 0
+            }, '40', 0);
+        });
+
+        it('range item의 경우에는 _makeSeriesLabelHtml를 두번 호출하여 양쪽 두개의 레이블 html을 생성합니다.', function() {
+            var groupIndex = 0,
+                labelHeight = 20,
+                item = {
+                    value: 40,
+                    formattedEnd: '40',
+                    formattedStart: '10',
+                    isRange: true
+                },
+                index = 0;
+
+            series.seriesData = {
+                groupBounds: [
+                    [
+                        {
+                            end: {}
+                        }
+                    ]
+                ]
+            };
+            series._makeSeriesLabelsHtml(groupIndex, labelHeight, item, index);
+
+            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
+                left: 0,
+                top: 0
+            }, '40', 0);
+            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
+                left: 0,
+                top: 0
+            }, '10', 0);
+        });
+    });
+
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
             var labelContainer = dom.create('div'),
@@ -154,10 +214,10 @@ describe('BarTypeSeriesBase', function() {
             itemGroup.groups = [
                 new Items([{
                     value: 1.5,
-                    formattedValue: '1.5'
+                    formattedEnd: '1.5'
                 }, {
                     value: 2.2,
-                    formattedValue: '2.2'
+                    formattedEnd: '2.2'
                 }])
             ];
 
