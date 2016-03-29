@@ -16,6 +16,38 @@ describe('test Items', function() {
         items = new Items();
     });
 
+    describe('_makeValues()', function() {
+        it('item들에서 values를 추출합니다.', function() {
+            var actual, expected;
+            items.items = [
+                new Item(10),
+                new Item(20),
+                new Item(30),
+                new Item(40)
+            ];
+
+            actual = items._makeValues();
+            expected = [10, 20, 30, 40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('item이 range 타입일 경우 start값을 포함하여 추출합니다.', function() {
+            var actual, expected;
+            items.items = [
+                new Item([10, 20]),
+                new Item([20, 30]),
+                new Item([30, 40]),
+                new Item([40, 50])
+            ];
+
+            actual = items._makeValues();
+            expected = [20, 10, 30, 20, 40, 30, 50, 40];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeValuesMapPerStack()', function() {
         it('item에서 value를 추출하여 stack 기준으로 values map을 생성합니다.', function() {
             var actual, expected;

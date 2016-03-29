@@ -95,12 +95,12 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     },
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @param {object} axesData axes data
      * @private
      * @override
      */
-    _updatePercentValues: function(axesData) {
+    _addDataRatios: function(axesData) {
         this.dataProcessor.addDataRatios(axesData.limit);
     },
 

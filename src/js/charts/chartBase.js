@@ -219,11 +219,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeAxesData: function() {},
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @private
      * @abstract
      */
-    _updatePercentValues: function() {},
+    _addDataRatios: function() {},
 
     /**
      * Execute component function.
@@ -248,10 +248,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this._executeComponentFunc('registerDimension');
         axesData = this._makeAxesData();
+
         this.boundsMaker.registerAxesData(axesData);
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerBoundsData();
-        this._updatePercentValues(axesData);
+
+        this._addDataRatios(axesData);
+
         renderingData = this._makeRenderingData(axesData);
 
         onRender(renderingData);

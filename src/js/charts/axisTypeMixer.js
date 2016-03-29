@@ -163,12 +163,12 @@ var axisTypeMixer = {
     },
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @param {object} axesData axes data
      * @private
      * @override
      */
-    _updatePercentValues: function(axesData) {
+    _addDataRatios: function(axesData) {
         var self = this,
             chartTypes = this.chartTypes || [this.chartType],
             limitMap = this._getLimitMap(axesData, chartTypes),

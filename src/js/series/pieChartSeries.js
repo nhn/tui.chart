@@ -54,9 +54,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             paths;
 
         paths = items.map(function(item) {
-            var addAngle = chartConst.ANGLE_360 * item.ratio,
-                endAngle = angle + addAngle,
-                popupAngle = angle + (addAngle / 2),
+            var additionalAngle = chartConst.ANGLE_360 * item.ratio,
+                endAngle = angle + additionalAngle,
+                popupAngle = angle + (additionalAngle / 2),
                 angles = {
                     start: {
                         startAngle: angle,
@@ -298,7 +298,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);
-                html = self._makeSeriesLabelHtml(position, label, 0, index);
+                html = self._makeSeriesLabelHtml(position, label, index);
             }
 
             return html;

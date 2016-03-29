@@ -249,9 +249,9 @@ describe('BarChartSeries', function() {
         });
     });
 
-    describe('_calculateSumLabelTopPosition()', function() {
+    describe('_calculateTopPositionOfSumLabel()', function() {
         it('합계 레이블의 top position값을 계산합니다.', function() {
-            var actual = series._calculateSumLabelTopPosition({
+            var actual = series._calculateTopPositionOfSumLabel({
                     top: 10,
                     height: 30
                 }, 20),
@@ -271,7 +271,7 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px">60</div>';
             expect(actual).toBe(expected);
         });
     });
@@ -287,7 +287,7 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:35px;top:11px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:35px;top:11px;font-family:Verdana;font-size:11px">-60</div>';
             expect(actual).toBe(expected);
         });
     });

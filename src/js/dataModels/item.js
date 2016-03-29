@@ -19,7 +19,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
      */
     init: function(value, stack, formatFunctions) {
         /**
-         * stack
+         * for group stack option.
          * @type {string}
          */
         this.stack = stack || chartConst.DEFAULT_STACK;
@@ -30,39 +30,90 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
          */
         this.formatFunctions = formatFunctions;
 
-        this._setData(value, stack, formatFunctions);
-    },
-
-    /**
-     * Set data of item.
-     * @param {number} value - value
-     * @param {?string} stack - stack
-     * @param {?Array.<function>} formatFunctions - format functions
-     * @private
-     */
-    _setData: function(value, stack, formatFunctions) {
-        var values = this._createValues(value);
-
         /**
-         * whether has start or not.
+         * whether range item or not
          * @type {boolean}
          */
-        this.hasStart = values.length > 1;
+        this.isRange = false;
 
         /**
          * value of item
          * @type {number}
          */
-        this.value = this.end = values[0];
+        this.value = null;
 
         /**
          * formatted value
          * @type {string}
          */
-        this.formattedValue = this.formattedEnd = renderUtil.formatValue(this.value, formatFunctions);
+        this.formattedValue = null;
 
-        if (this.hasStart) {
-            this._updateStart(values[1]);
+        /**
+         * ratio of value about distance of limit
+         * @type {number}
+         */
+        this.ratio = null;
+
+        /**
+         * end value of item.
+         * @type {number}
+         */
+        this.end = null;
+
+        /**
+         * formatted end value
+         * @type {number}
+         */
+        this.formattedEnd = null;
+
+        /**
+         * ratio of end value
+         * @type {number}
+         */
+        this.endRatio = null;
+
+        /**
+         * start value of item.
+         * @type {number}
+         */
+        this.start = null;
+
+        /**
+         * formatted end value
+         * @type {number}
+         */
+        this.formattedStart = null;
+
+        /**
+         * ratio of start value
+         * @type {number}
+         */
+        this.startRatio = null;
+
+        /**
+         * distance of start ratio and end ratio
+         * @type {null}
+         */
+        this.ratioDistance = null;
+
+        this._initValues(value);
+    },
+
+    /**
+     * Initialize values of item.
+     * @param {number} value - value
+     * @param {?Array.<function>} formatFunctions - format functions
+     * @private
+     */
+    _initValues: function(value) {
+        var values = this._createValues(value),
+            hasStart = values.length > 1;
+
+        this.value = this.end = values[0];
+        this.formattedValue = this.formattedEnd = renderUtil.formatValue(this.value, this.formatFunctions);
+
+        if (hasStart) {
+            this.addStart(values[1], true);
         }
     },
 
@@ -83,11 +134,15 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     },
 
     /**
-     * Update start.
+     * Add start.
      * @param {number} value - value
      * @private
      */
-    _updateStart: function(value) {
+    addStart: function(value) {
+        if (!tui.util.isNull(this.start)) {
+            return;
+        }
+
         this.start = value;
         this.formattedStart = renderUtil.formatValue(value, this.formatFunctions);
     },
@@ -108,8 +163,8 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     /**
      * Add ratio.
      * @param {number} divNumber - number for division
-     * @param {number} subNumber - number for subtraction
-     * @param {number} baseRatio - base ratio
+     * @param {?number} subNumber - number for subtraction
+     * @param {?number} baseRatio - base ratio
      */
     addRatio: function(divNumber, subNumber, baseRatio) {
         divNumber = divNumber || 1;
@@ -118,7 +173,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
 
         this.ratio = this.endRatio = this._calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
-        if (this.hasStart) {
+        if (!tui.util.isNull(this.start)) {
             this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
         }
     }

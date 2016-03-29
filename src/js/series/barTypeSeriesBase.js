@@ -225,7 +225,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             if (bound && item) {
                 boundEnd = bound.end;
                 position = self._makeStackedLabelPosition(boundEnd, item.formattedValue, params.labelHeight);
-                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, params.groupIndex, index);
+                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, index);
             }
 
             if (item.value > 0) {

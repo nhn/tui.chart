@@ -91,7 +91,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                     labelHtml = self._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
                         top: self._makeLabelPositionTop(position, item.formattedValue, labelHeight)
-                    }, item.formattedValue, index, groupIndex);
+                    }, item.formattedValue, groupIndex);
                 }
                 return labelHtml;
             }).join('');

@@ -208,7 +208,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get group count.
      * @param {string} chartType chart type
-     * @returns {boolean}
+     * @returns {number}
      */
     getGroupCount: function(chartType) {
         return this.getItemGroup().getGroupCount(chartType);

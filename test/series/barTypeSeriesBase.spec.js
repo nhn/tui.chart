@@ -13,20 +13,12 @@ var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('BarTypeSeriesBase', function() {
-    var series, dataProcessor, makeSeriesRenderingPosition, makeSeriesLabelHtml, makePlusSumLabelHtml, makeMinusSumLabelHtml;
+    var series, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
-
-        makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
-            left: 0,
-            top: 0
-        });
-        makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');
-        makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');
     });
 
     beforeEach(function() {
@@ -44,10 +36,13 @@ describe('BarTypeSeriesBase', function() {
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         series.dataProcessor = dataProcessor;
-        series.makeSeriesRenderingPosition = makeSeriesRenderingPosition;
-        series._makeSeriesLabelHtml = makeSeriesLabelHtml;
-        series._makePlusSumLabelHtml = makePlusSumLabelHtml;
-        series._makeMinusSumLabelHtml = makeMinusSumLabelHtml;
+        series.makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
+            left: 0,
+            top: 0
+        });
+        series._makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');;
+        series._makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');;
+        series._makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');;
     });
 
     describe('_makeBarGutter()', function() {

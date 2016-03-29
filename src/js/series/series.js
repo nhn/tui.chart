@@ -418,12 +418,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Make html about series label.
      * @param {{left: number, top: number}} position position
      * @param {string} value value
-     * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
      * @private
      */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+    _makeSeriesLabelHtml: function(position, value, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
 
         if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
@@ -434,7 +433,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
-            groupIndex: groupIndex,
             index: index
         });
     },

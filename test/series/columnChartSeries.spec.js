@@ -211,9 +211,9 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_calculateSumLabelLeftPosition()', function() {
+    describe('_calculateLeftPositionOfSumLabel()', function() {
         it('합계 레이블의 left position값을 계산합니다.', function() {
-            var actual = series._calculateSumLabelLeftPosition({
+            var actual = series._calculateLeftPositionOfSumLabel({
                     left: 10,
                     width: 30
                 }, 20),
@@ -233,7 +233,7 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px">60</div>';
             expect(actual).toBe(expected);
         });
     });
@@ -249,7 +249,7 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px" data-group-index="-1" data-index="-1">-60</div>';
+                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px">-60</div>';
 
             expect(actual).toBe(expected);
         });
