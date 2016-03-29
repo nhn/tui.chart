@@ -11,6 +11,9 @@
   "sample01-04-diverging-bar-chart": {
     "title": "Diverging Bar Chart Sample"
   },
+  "sample01-05-range-bar-chart": {
+    "title": "Range Bar Chart Sample"
+  },
   "sample02-01-column-chart": {
     "title": "Column Chart Sample"
   },
