@@ -103,9 +103,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _renderBars: function(groupBounds) {
         var self = this,
-            singleColors = (groupBounds[0].length === 1) ? this.theme.singleColors : [],
+            singleColors = [],
             colors = this.theme.colors,
             groupBars;
+
+        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+            singleColors = this.theme.singleColors;
+        }
 
         groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
