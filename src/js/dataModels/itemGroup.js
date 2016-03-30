@@ -224,12 +224,12 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
         var groupMap = this.getGroups(),
             isValid = true;
 
-        tui.util.forEach(groupMap, function(groups) {
-            if (!groups.length) {
-                isValid = false;
-            }
-            return isValid;
-        });
+        if (!tui.util.isArray(groupMap)) {
+            tui.util.forEach(groupMap, function(groups) {
+                isValid = !!groups.length;
+                return isValid;
+            });
+        }
 
         return isValid;
     },

@@ -133,14 +133,16 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     registerDimension: function() {
         var dimension = {};
 
-        if (this._isValidAxis()) {
-            if (this.componentType === 'xAxis') {
-                dimension.height = this._makeXAxisHeight();
-                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-            } else if (this.isLabel) {
-                dimension.width = this._makeYAxisWidth(this.dataProcessor.getCategories());
-                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-            }
+        if (!this._isValidAxis()) {
+            return;
+        }
+
+        if (this.componentType === 'xAxis') {
+            dimension.height = this._makeXAxisHeight();
+            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
+        } else if (this.isLabel) {
+            dimension.width = this._makeYAxisWidth(this.dataProcessor.getCategories());
+            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
         }
     },
 
@@ -151,13 +153,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var dimension,
             axesData = this.boundsMaker.axesData;
 
-        if (this._isValidAxis()) {
-            if (this.componentType === 'yAxis' && !this.isLabel) {
-                dimension = {
-                    width: this._makeYAxisWidth(axesData.yAxis.labels)
-                };
-                this.boundsMaker.registerBaseDimension(this.componentName, dimension);
-            }
+        if (!this._isValidAxis()) {
+            return;
+        }
+
+        if ((this.componentType === 'yAxis') && !this.isLabel) {
+            dimension = {
+                width: this._makeYAxisWidth(axesData.yAxis.labels)
+            };
+            this.boundsMaker.registerBaseDimension(this.componentName, dimension);
         }
     },
 
