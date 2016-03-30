@@ -50,7 +50,28 @@
   "sample06-02-stacked-area-chart": {
     "title": "Stacked Area Chart Sample"
   },
-  "sample07-01-map-chart": {
-    "title": "Map Chart Sample"
+  "sample07-01-world-map-chart": {
+    "title": "World Map Chart Sample"
+  },
+  "sample07-02-south-korea-map-chart": {
+    "title": "South Korea Map Chart Sample"
+  },
+  "sample07-03-usa-map-chart": {
+    "title": "USA Map Chart Sample"
+  },
+  "sample07-04-china-map-chart": {
+    "title": "China Map Chart Sample"
+  },
+  "sample07-05-japan-map-chart": {
+    "title": "Japan Map Chart Sample"
+  },
+  "sample07-06-singapore-map-chart": {
+    "title": "Singapore Map Chart Sample"
+  },
+  "sample07-07-thailand-map-chart": {
+    "title": "Thailand Map Chart Sample"
+  },
+  "sample07-08-taiwan-map-chart": {
+    "title": "Taiwan Map Chart Sample"
   }
 }

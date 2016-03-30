@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Column Chart Sample</title>
+    <title>Singapore Map Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -14,29 +14,32 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="columnChart" />
+        <input type="hidden" id="type" value="mapChart" />
     </div>
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["June, 2015", "July, 2015", "August, 2015", "September, 2015", "October, 2015", "November, 2015", "December, 2015"],
     "series": [
         {
-            "name": "Budget",
-            "data": [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+            "code": "SG-CS",
+            "data": 946240
         },
         {
-            "name": "Income",
-            "data": [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+            "code": "SG-NE",
+            "data": 810200
         },
         {
-            "name": "Expenses",
-            "data": [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+            "code": "SG-NW",
+            "data": 521510
         },
         {
-            "name": "Debt",
-            "data": [6000, 3000, 3000, 1000, 2000, 4000, 3000]
+            "code": "SG-SE",
+            "data": 692040
+        },
+        {
+            "code": "SG-SW",
+            "data": 900820
         }
     ]
 }
@@ -47,21 +50,14 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 700,
-        "height": 400,
-        "title": "Monthly Revenue",
+        "width": 640,
+        "height": 500,
+        "title": "Population of Singapore (thousand person)",
         "format": "1,000"
     },
-    "yAxis": {
-        "title": "Amount",
-        "min": 0,
-        "max": 9000
-    },
-    "xAxis": {
-        "title": "Month"
-    },
+    "map": "singapore",
     "legend": {
-        "align": "top"
+        "align": "bottom"
     }
 }
         </textarea>
@@ -74,7 +70,9 @@
         <textarea id="theme">
 {
     "series": {
-        "colors": [ "#012744", "#155764", "#588681", "#8C9C88"]
+            "startColor": "#ffefef",
+            "endColor": "#ac4142",
+            "overColor": "#75b5aa"
     }
 }
         </textarea>
@@ -87,51 +85,48 @@
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
-<script src="dist/chart.min.js"></script>
+<script src="../dist/chart.js"></script>
+<script src="dist/maps/singapore.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['June, 2015', 'July, 2015', 'August, 2015', 'September, 2015', 'October, 2015', 'November, 2015', 'December, 2015'],
             series: [
                 {
-                    name: 'Budget',
-                    data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+                    code: 'SG-CS',
+                    data: 946
                 },
                 {
-                    name: 'Income',
-                    data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+                    code: 'SG-NE',
+                    data: 810
                 },
                 {
-                    name: 'Expenses',
-                    data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+                    code: 'SG-NW',
+                    data: 522
                 },
                 {
-                    name: 'Debt',
-                    data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
+                    code: 'SG-SE',
+                    data: 692
+                },
+                {
+                    code: 'SG-SW',
+                    data: 901
                 }
             ]
         },
         options = {
             chart: {
-                width: 700,
-                height: 400,
-                title: 'Monthly Revenue',
+                width:640,
+                height: 500,
+                title: 'Population of Singapore (thousand person)',
                 format: '1,000'
             },
-            yAxis: {
-                title: 'Amount',
-                min: 0,
-                max: 9000
-            },
-            xAxis: {
-                title: 'Month'
-            },
+            map: 'singapore',
             legend: {
-                align: 'top'
+                align: 'bottom'
             }
         };
-    tui.chart.columnChart(container, data, options);
+    tui.chart.mapChart(container, data, options);
 </script>
 </body>
 </html>
