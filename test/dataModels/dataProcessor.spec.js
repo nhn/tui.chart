@@ -98,9 +98,19 @@ describe('test DataProcessor', function() {
             expect(result).toBe('1,000,000');
         });
 
+        it('음수 1000000을 comma형으로 포맷팅하면 "-1,000,000"이 반환됩니다.', function() {
+            var result = dataProcessor._formatComma(1000000);
+            expect(result).toBe('-1,000,000');
+        });
+
         it('자리수가 4 미만인 값은 그대로 반환합니다', function() {
             var result = dataProcessor._formatComma(900);
             expect(result).toBe(900);
+        });
+
+        fit('자리수가 4 미만인 음수 값도 그대로 반환합니다', function() {
+            var result = dataProcessor._formatComma(-900);
+            expect(result).toBe(-900);
         });
 
         it('소수점이 포함된 경우 소수점을 고려하여 포맷팅합니다', function() {

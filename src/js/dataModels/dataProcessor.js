@@ -489,10 +489,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var comma = ',',
             underPointValue = '',
             betweenLen = 3,
+            sign = value < 0 ? '-' : '',
             orgValue = value,
             values, lastIndex, formattedValue;
 
-        value = String(value);
+        value = String(Math.abs(value));
 
         if (value.indexOf('.') > -1) {
             values = value.split('.');
@@ -512,7 +513,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
                 }
                 return result;
             });
-            formattedValue = concat.apply([], values).reverse().join('') + underPointValue;
+            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
         }
 
         return formattedValue;
