@@ -353,7 +353,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
         if (!tui.util.isNull(foundIndex)) {
             if (this.prevMovedIndex !== foundIndex) {
-                if (this.prevMovedIndex) {
+                if (!tui.util.isNull(this.prevMovedIndex)) {
                     this.graphRenderer.restoreColor(this.prevMovedIndex);
                     this.fire('hideWedge');
                     this.fire('hideTooltip');

@@ -51,11 +51,13 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
      * @private
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
-        var datum = this.mapModel.getDatum(indexes.index);
+        var datum = this.mapModel.getDatum(indexes.index),
+            suffix = this.options.suffix ? ' ' + this.options.suffix : '';
 
         return this.templateFunc({
             name: datum.name || datum.code,
-            value: datum.formattedValue
+            value: datum.formattedValue,
+            suffix: suffix
         });
     },
 

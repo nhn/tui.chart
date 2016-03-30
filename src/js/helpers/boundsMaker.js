@@ -547,22 +547,23 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _makeLegendPosition: function() {
         var dimensions = this.dimensions,
-            sereisDimension = this.getDimension('series'),
+            seriesDimension = this.getDimension('series'),
             legendOption = this.options.legend,
             top = dimensions.title.height,
             yAxisAreaWidth, left;
 
         if (predicate.isLegendAlignBottom(legendOption.align)) {
-            top += sereisDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
+            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
         }
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
-            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
+            left = ((this.getDimension('chart').width - this.getDimension('legend').width) / 2)
+                - chartConst.LEGEND_AREA_PADDING;
         } else if (predicate.isLegendAlignLeft(legendOption.align)) {
             left = 0;
         } else {
             yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
-            left = sereisDimension.width + yAxisAreaWidth + this.chartLeftPadding;
+            left = seriesDimension.width + yAxisAreaWidth + this.chartLeftPadding;
         }
 
         return {

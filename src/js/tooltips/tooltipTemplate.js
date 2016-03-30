@@ -28,7 +28,7 @@ var htmls = {
     '</div>',
     GROUP_CSS_TEXT: 'background-color:{{ color }}',
     HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div>{{ name }}: {{ value }}</div>' +
+        '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
     '</div>'
 };
 

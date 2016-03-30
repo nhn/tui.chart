@@ -595,6 +595,7 @@ tui.chart.pieChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
