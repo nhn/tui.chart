@@ -85,7 +85,8 @@ describe('ColumnChartSeries', function() {
                 isStacked = false,
                 item = {
                     value: 10,
-                    ratio: 0.4
+                    startRatio: 0,
+                    ratioDistance: 0.4
                 },
                 index = 0,
                 actual = series._makeColumnChartBound(baseData, iterationData, isStacked, item, index),
@@ -117,10 +118,12 @@ describe('ColumnChartSeries', function() {
             itemGroup.groups = [
                 new Items([{
                     value: 40,
-                    ratio: 0.4
+                    startRatio: 0,
+                    ratioDistance: 0.4
                 }, {
                     value: 60,
-                    ratio: 0.6
+                    startRatio: 0,
+                    ratioDistance: 0.6
                 }])
             ];
             boundsMaker.getDimension.and.returnValue({
@@ -173,17 +176,16 @@ describe('ColumnChartSeries', function() {
 
     describe('_makeSeriesRenderingPosition()', function() {
         it('series label의 렌더링 포지션을 구합니다.', function() {
-            var actual = series.makeSeriesRenderingPosition({
-                    value: 10,
-                    bound: {
-                        left: 10,
-                        top: 30,
-                        width: 40,
-                        height: 20
-                    },
-                    formattedValue: '10',
-                    labelHeight: 20
-                }),
+            var bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = 10,
+                formattedValue = '10',
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 5
@@ -192,17 +194,16 @@ describe('ColumnChartSeries', function() {
         });
 
         it('value가 음수일 경우의 series label 렌더링 포지션을 구합니다.', function() {
-            var actual = series.makeSeriesRenderingPosition({
-                    value: -10,
-                    bound: {
-                        left: 10,
-                        top: 30,
-                        width: 40,
-                        height: 20
-                    },
-                    formattedValue: '-10',
-                    labelHeight: 20
-                }),
+            var bound = {
+                    left: 10,
+                    top: 30,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = -10,
+                formattedValue = '-10',
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 55

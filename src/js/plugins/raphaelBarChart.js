@@ -103,9 +103,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      */
     _renderBars: function(groupBounds) {
         var self = this,
-            singleColors = (groupBounds[0].length === 1) ? this.theme.singleColors : [],
+            singleColors = [],
             colors = this.theme.colors,
             groupBars;
+
+        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+            singleColors = this.theme.singleColors;
+        }
 
         groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
@@ -126,9 +130,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     rect: rect,
                     color: color,
                     bound: bound.end,
-                    value: item.value,
+                    item: item,
                     groupIndex: groupIndex,
-                    index: index
+                    index: index,
+                    isRange: item.isRange
                 };
             });
         });
@@ -174,15 +179,16 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      *      @param {{left: number, top: number}} points.leftTop left top
      *      @param {{left: number, top: number}} points.rightTop right top
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {string} top line path
      * @private
      */
-    _makeTopLinePath: function(points, chartType, value) {
+    _makeTopLinePath: function(points, chartType, item) {
         var linePath = null,
+            value = item.value,
             cloneLeftTop;
 
-        if (chartType === 'bar' || value >= 0) {
+        if (chartType === 'bar' || value >= 0 || item.isRange) {
             cloneLeftTop = tui.util.extend({}, points.leftTop);
             cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
             linePath = raphaelRenderUtil.makeLinePath(cloneLeftTop, points.rightTop).join(' ');
@@ -197,14 +203,14 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      *      @param {{left: number, top: number}} points.rightTop right top
      *      @param {{left: number, top: number}} points.rightBottom right bottom
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {string} top line path
      * @private
      */
-    _makeRightLinePath: function(points, chartType, value) {
+    _makeRightLinePath: function(points, chartType, item) {
         var linePath = null;
 
-        if (chartType === 'column' || value >= 0) {
+        if (chartType === 'column' || item.value >= 0 || item.isRange) {
             linePath = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom).join(' ');
         }
 
@@ -217,14 +223,14 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      *      @param {{left: number, top: number}} points.lefBottom left bottom
      *      @param {{left: number, top: number}} points.rightBottom right bottom
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {string} top line path
      * @private
      */
-    _makeBottomLinePath: function(points, chartType, value) {
+    _makeBottomLinePath: function(points, chartType, item) {
         var linePath = null;
 
-        if (chartType === 'bar' || value < 0) {
+        if (chartType === 'bar' || item.value < 0 || item.isRange) {
             linePath = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom).join(' ');
         }
 
@@ -237,14 +243,14 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      *      @param {{left: number, top: number}} points.lefTop left top
      *      @param {{left: number, top: number}} points.leftBottom left bottom
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {string} top line path
      * @private
      */
-    _makeLeftLinePath: function(points, chartType, value) {
+    _makeLeftLinePath: function(points, chartType, item) {
         var linePath = null;
 
-        if (chartType === 'column' || value < 0) {
+        if (chartType === 'column' || item.value < 0 || item.isRange) {
             linePath = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom).join(' ');
         }
 
@@ -255,17 +261,17 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Make border lines paths.
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {{top: string, right: string, bottom: string, left: string}} paths
      * @private
      */
-    _makeBorderLinesPaths: function(bound, chartType, value) {
+    _makeBorderLinesPaths: function(bound, chartType, item) {
         var points = this._makeRectPoints(bound),
             paths = {
-                top: this._makeTopLinePath(points, chartType, value),
-                right: this._makeRightLinePath(points, chartType, value),
-                bottom: this._makeBottomLinePath(points, chartType, value),
-                left: this._makeLeftLinePath(points, chartType, value)
+                top: this._makeTopLinePath(points, chartType, item),
+                right: this._makeRightLinePath(points, chartType, item),
+                bottom: this._makeBottomLinePath(points, chartType, item),
+                left: this._makeLeftLinePath(points, chartType, item)
             };
 
         return tui.util.filter(paths, function(path) {
@@ -275,21 +281,20 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render border lines;
-     * @param {object} params parameters
-     *      @param {{left: number, top:number, width: number, height: number}} params.bound bar bound
-     *      @param {string} params.borderColor border color
-     *      @param {string} params.chartType chart type
-     *      @param {number} params.value value
+     * @param {{left: number, top:number, width: number, height: number}} bound bar bound
+     * @param {string} borderColor border color
+     * @param {string} chartType chart type
+     * @param {Item} item item
      * @returns {object} raphael object
      * @private
      */
-    _renderBorderLines: function(params) {
+    _renderBorderLines: function(bound, borderColor, chartType, item) {
         var self = this,
-            borderLinePaths = this._makeBorderLinesPaths(params.bound, params.chartType, params.value),
+            borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item),
             lines = {};
 
         tui.util.forEach(borderLinePaths, function(path, name) {
-            lines[name] = raphaelRenderUtil.renderLine(self.paper, path, params.borderColor, 1);
+            lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
         });
 
         return lines;
@@ -320,13 +325,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
                 item = self.itemGroup.getItem(groupIndex, index, self.chartType);
 
-                return self._renderBorderLines({
-                    paper: self.paper,
-                    bound: bound.start,
-                    borderColor: borderColor,
-                    chartType: self.chartType,
-                    value: item.value
-                });
+                return self._renderBorderLines(bound.start, borderColor, self.chartType, item);
             });
         });
 
@@ -353,11 +352,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @private
      */
-    _animateBorders: function(lines, bound, chartType, value) {
-        var paths = this._makeBorderLinesPaths(bound, chartType, value);
+    _animateBorders: function(lines, bound, chartType, item) {
+        var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
             line.animate({path: paths[name]}, ANIMATION_TIME);
@@ -383,7 +382,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             }
             self._animateRect(bar.rect, bar.bound);
             if (lines) {
-                self._animateBorders(lines, bar.bound, self.chartType, bar.value);
+                self._animateBorders(lines, bar.bound, self.chartType, bar.item);
             }
         });
 
@@ -444,11 +443,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @private
      */
-    _updateBordersPath: function(lines, bound, chartType, value) {
-        var paths = this._makeBorderLinesPaths(bound, chartType, value);
+    _updateBordersPath: function(lines, bound, chartType, item) {
+        var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
             line.attr({path: paths[name]});
@@ -485,7 +484,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             self._updateRectBound(bar.rect, bound);
 
             if (lines) {
-                self._updateBordersPath(lines, bound, self.chartType, bar.value);
+                self._updateBordersPath(lines, bound, self.chartType, bar.item);
             }
         });
     },

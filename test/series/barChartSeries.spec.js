@@ -122,7 +122,8 @@ describe('BarChartSeries', function() {
                 isStacked = false,
                 item = {
                     value: 10,
-                    ratio: 0.4
+                    startRatio: 0,
+                    ratioDistance: 0.4
                 },
                 index = 0,
                 actual = series._makeBarChartBound(baseData, iterationData, isStacked, item, index),
@@ -154,10 +155,12 @@ describe('BarChartSeries', function() {
             itemGroup.groups = [
                 new Items([{
                     value: 40,
-                    ratio: 0.4
+                    startRatio: 0,
+                    ratioDistance: 0.4
                 }, {
                     value: 60,
-                    ratio: 0.6
+                    startRatio: 0,
+                    ratioDistance: 0.6
                 }])
             ];
             boundsMaker.getDimension.and.returnValue({
@@ -210,39 +213,75 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeSeriesRenderingPosition()', function() {
-        it('series label의 렌더링 포지션을 구합니다.', function() {
-            var actual = series.makeSeriesRenderingPosition({
-                    value: 10,
-                    bound: {
-                        left: 10,
-                        top: 10,
-                        width: 40,
-                        height: 20
-                    },
-                    formattedValue: '10',
-                    labelHeight: 20
-                }),
+        it('value가 양수일 경우의 series label의 렌더링 포지션을 구합니다.', function() {
+            var bound = {
+                    left: 50,
+                    top: 10,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = 10,
+                formattedValue = '10',
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
-                    left: 55,
+                    left: 95,
+                    top: 11
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('value가 양수이면서 start일 경우의 series label의 렌더링 포지션을 구합니다.', function() {
+            var bound = {
+                    left: 50,
+                    top: 10,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = 10,
+                formattedValue = '10',
+                isStart = true,
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                expected = {
+                    left: 5,
                     top: 11
                 };
             expect(actual).toEqual(expected);
         });
 
         it('value가 음수일 경우의 series label 렌더링 포지션을 구합니다.', function() {
-            var actual = series.makeSeriesRenderingPosition({
-                    value: -10,
-                    bound: {
-                        left: 50,
-                        top: 10,
-                        width: 40,
-                        height: 20
-                    },
-                    formattedValue: '-10',
-                    labelHeight: 20
-                }),
+            var bound = {
+                    left: 50,
+                    top: 10,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = -10,
+                formattedValue = '-10',
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 5,
+                    top: 11
+                };
+            expect(actual).toEqual(expected);
+        });
+
+        it('value가 음수이면서 start일 경우의 series label 렌더링 포지션을 구합니다.', function() {
+            var bound = {
+                    left: 50,
+                    top: 10,
+                    width: 40,
+                    height: 20
+                },
+                labelHeight = 20,
+                value = -10,
+                formattedValue = '-10',
+                isStart = true,
+                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                expected = {
+                    left: 95,
                     top: 11
                 };
             expect(actual).toEqual(expected);

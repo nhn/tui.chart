@@ -266,4 +266,26 @@ describe('test DataProcessor', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('_updateItemStart()', function() {
+        it('limit의 값들이 모두 양수거나 모두 음수라면 start값을 limit.min으로 설정하여 itemGroup.updateItemStart에 전달합니다.', function() {
+            dataProcessor.itemGroup = jasmine.createSpyObj('itemGroup', ['updateItemStart']);
+            dataProcessor._updateItemStart({
+                min: 10,
+                max: 80
+            }, 'bar');
+
+            expect(dataProcessor.itemGroup.updateItemStart).toHaveBeenCalledWith(10, 'bar');
+        });
+
+        it('limit의 min은 음수이고 max는 양수이면 start값을 0으로 설정하여 itemGroup.updateItemStart에 전달합니다.', function() {
+            dataProcessor.itemGroup = jasmine.createSpyObj('itemGroup', ['updateItemStart']);
+            dataProcessor._updateItemStart({
+                min: -40,
+                max: 80
+            }, 'bar');
+
+            expect(dataProcessor.itemGroup.updateItemStart).toHaveBeenCalledWith(0, 'bar');
+        });
+    });
 });

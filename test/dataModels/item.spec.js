@@ -15,10 +15,47 @@ describe('test Item', function() {
         item = new Item();
     });
 
+    describe('_initValues()', function() {
+        it('item의 value들을 초기화 합니다.', function() {
+            item.formatFunctions = [function(value) {
+                return '00' + value;
+            }];
+            item._initValues(10);
+
+            expect(item.value).toBe(10);
+            expect(item.end).toBe(10);
+            expect(item.formattedValue).toBe('0010');
+            expect(item.formattedEnd).toBe('0010');
+            expect(item.isRange).toBe(false);
+        });
+
+        it('value가 배열값이면 start도 초기화하고 formattedValue도 변경 합니다.', function() {
+            item.formatFunctions = [function(value) {
+                return '00' + value;
+            }];
+            item._initValues([10, 40]);
+
+            expect(item.value).toBe(40);
+            expect(item.end).toBe(40);
+            expect(item.start).toBe(10);
+            expect(item.formattedValue).toBe('0010 ~ 0040');
+            expect(item.formattedEnd).toBe('0040');
+            expect(item.formattedStart).toBe('0010');
+            expect(item.isRange).toBe(true);
+        });
+    });
+
     describe('_createValues()', function() {
         it('전달된 value가 배열여부와 상관없이 무조건 배열로 만들고 내림차순 정렬하여 반환합니다.', function() {
             var actual = item._createValues([3, 1, 2, 10]),
                 expected = [10, 3, 2, 1];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('음수가 포함된 경우도 문제없이 내림차순 정렬하여 반환합니다.', function() {
+            var actual = item._createValues([3, 1, -2, 10]),
+                expected = [10, 3, 1, -2];
 
             expect(actual).toEqual(expected);
         });

@@ -8,13 +8,48 @@
 
 var ItemGroup = require('../../src/js/dataModels/itemGroup'),
     Items = require('../../src/js/dataModels/items'),
+    Item = require('../../src/js/dataModels/item'),
     chartConst = require('../../src/js/const');
 
 describe('test ItemGroup', function() {
     var itemGroup;
 
     beforeEach(function() {
-        itemGroup = new ItemGroup();
+        itemGroup = new ItemGroup([]);
+    });
+
+    describe('_removeRangeValue()', function() {
+        it('range형의 item에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [[10, 20], [20, 30]]
+                }, {
+                    data: [[-20, 10], [30, 40]]
+                }
+            ];
+
+            itemGroup._removeRangeValue(rawSeriesData);
+
+            expect(rawSeriesData[0].data).toEqual([10, 20]);
+            expect(rawSeriesData[1].data).toEqual([-20, 30]);
+        });
+    });
+
+    describe('_removeRangeValue()', function() {
+        it('range형의 item에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [[10, 20], [20, 30]]
+                }, {
+                    data: [[-20, 10], [30, 40]]
+                }
+            ];
+
+            itemGroup._removeRangeValue(rawSeriesData);
+
+            expect(rawSeriesData[0].data).toEqual([10, 20]);
+            expect(rawSeriesData[1].data).toEqual([-20, 30]);
+        });
     });
 
     describe('_createBaseGroups()', function() {
@@ -179,16 +214,14 @@ describe('test ItemGroup', function() {
             var actual, expected;
 
             itemGroup.groups = [
-                new Items([{
-                    value: 10
-                }, {
-                    value: 20
-                }]),
-                new Items([{
-                    value: 30
-                }, {
-                    value: 40
-                }])
+                new Items([
+                    new Item(10),
+                    new Item(20)
+                ]),
+                new Items([
+                    new Item(30),
+                    new Item(40)
+                ])
             ];
 
             actual = itemGroup._makeValues('bar');

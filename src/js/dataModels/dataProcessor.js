@@ -623,6 +623,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Update start value of item.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {string} chartType - chart type
+     * @private
+     */
+    _updateItemStart: function(limit, chartType) {
+        var isOneSign = limit.min >= 0 || predicate.isMinusLimit(limit),
+            start = 0;
+
+        if (isOneSign) {
+            start = limit.min;
+        }
+
+        this.getItemGroup().updateItemStart(start, chartType);
+    },
+
+    /**
      * Register percent values.
      * @param {{min: number, max: number}} limit axis limit
      * @param {string} stacked stacked option
@@ -630,7 +647,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     addDataRatios: function(limit, stacked, chartType) {
-        this.getItemGroup().addDataRatios(limit, stacked, chartType);
+        var itemGroup = this.getItemGroup();
+
+        this._updateItemStart(limit, chartType);
+        itemGroup.addDataRatios(limit, stacked, chartType);
     }
 });
 

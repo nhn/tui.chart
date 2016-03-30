@@ -43,7 +43,7 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
          * chart options
          * @type {Object}
          */
-        this.options = options;
+        this.options = options || {};
 
         /**
          * series chart types
@@ -80,6 +80,45 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
          * @type {object}
          */
         this.values = {};
+
+        this._updateRawSeriesData();
+    },
+
+    /**
+     * Remove range value of item.
+     * @param {rawSeriesData} rawSeriesData - rawData.series
+     * @private
+     */
+    _removeRangeValue: function(rawSeriesData) {
+        tui.util.forEachArray(rawSeriesData, function(seriesDatum) {
+            if (!tui.util.isArray(seriesDatum.data)) {
+                return;
+            }
+            tui.util.forEachArray(seriesDatum.data, function(value, index) {
+                seriesDatum.data[index] = concat.apply(value)[0];
+            });
+        });
+    },
+
+    /**
+     * Update data of rawData.series.
+     * @private
+     */
+    _updateRawSeriesData: function() {
+        var self = this,
+            rawSeriesData = this.rawSeriesData;
+
+        if (!tui.util.pick(this.options, 'series', 'stacked')) {
+            return;
+        }
+
+        if (tui.util.isArray(rawSeriesData)) {
+            this._removeRangeValue(rawSeriesData);
+        } else {
+            tui.util.forEach(rawSeriesData, function(groupData) {
+                self._removeRangeValue(groupData);
+            });
+        }
     },
 
     /**
@@ -265,13 +304,11 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
      * @private
      */
     _makeValues: function(chartType) {
-        var values = [];
-
-        this.each(function(items) {
-            values = values.concat(items.pluck('value'));
+        var values = this.map(function(items) {
+            return items.getValues();
         }, chartType);
 
-        return values;
+        return concat.apply([], values);
     },
 
     /**
@@ -485,6 +522,17 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
             var sum = tui.util.sum(items.pluck('value'));
 
             items.addRatios(sum);
+        }, chartType);
+    },
+
+    /**
+     * Update start value of item.
+     * @param {number} start - start value
+     * @param {string} chartType - chart type
+     */
+    updateItemStart: function(start, chartType) {
+        this.each(function(items) {
+            items.updateItemStart(start);
         }, chartType);
     },
 

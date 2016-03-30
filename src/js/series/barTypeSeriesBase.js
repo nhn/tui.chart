@@ -142,31 +142,43 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
+     * Make html for series labels
+     * @param {number} groupIndex index of groups
+     * @param {number} labelHeight label height
+     * @param {Item} item item
+     * @param {number} index index of items
+     * @returns {string}
+     * @private
+     */
+    _makeSeriesLabelsHtml: function(groupIndex, labelHeight, item, index) {
+        var bound = this.seriesData.groupBounds[groupIndex][index].end,
+            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedEnd),
+            labelHtml = this._makeSeriesLabelHtml(position, item.formattedEnd, index);
+
+        if (item.isRange) {
+            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedStart, true);
+            labelHtml += this._makeSeriesLabelHtml(position, item.formattedStart, index);
+        }
+
+        return labelHtml;
+    },
+
+    /**
      * Render normal series label.
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
-            groupBounds = this.seriesData.groupBounds,
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             itemGroup = this.dataProcessor.getItemGroup(),
             html;
 
         html = itemGroup.map(function(items, groupIndex) {
-            return items.map(function(item, index) {
-                var bound, renderingPosition;
+            var makeSeriesLabelsHtml = tui.util.bind(self._makeSeriesLabelsHtml, self, groupIndex, labelHeight);
 
-                bound = groupBounds[groupIndex][index].end;
-                renderingPosition = self.makeSeriesRenderingPosition({
-                    value: item.value,
-                    bound: bound,
-                    formattedValue: item.formattedValue,
-                    labelHeight: labelHeight
-                });
-                return self._makeSeriesLabelHtml(renderingPosition, item.formattedValue, groupIndex, index);
-            }).join('');
+            return items.map(makeSeriesLabelsHtml).join('');
         }, this.chartType).join('');
 
         elSeriesLabelArea.innerHTML = html;

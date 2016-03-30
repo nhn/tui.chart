@@ -114,6 +114,8 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
 
         if (hasStart) {
             this.addStart(values[1], true);
+            this._updateFormattedValueforRange();
+            this.isRange = true;
         }
     },
 
@@ -127,6 +129,10 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
         var values = tui.util.map([].concat(value), parseFloat);
 
         values = values.sort(function(a, b) {
+            if (a < 0 && b < 0) {
+                return a - b;
+            }
+
             return b - a;
         });
 
@@ -145,6 +151,14 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
 
         this.start = value;
         this.formattedStart = renderUtil.formatValue(value, this.formatFunctions);
+    },
+
+    /**
+     * Update formatted value for range.
+     * @private
+     */
+    _updateFormattedValueforRange: function() {
+        this.formattedValue = this.formattedStart + ' ~ ' + this.formattedEnd;
     },
 
     /**
@@ -175,6 +189,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
 
         if (!tui.util.isNull(this.start)) {
             this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
+            this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
     }
 });
