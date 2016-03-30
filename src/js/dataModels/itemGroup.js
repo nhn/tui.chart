@@ -532,7 +532,7 @@ var ItemGroup = tui.util.defineClass(/** @lends ItemGroup.prototype */{
      */
     updateItemStart: function(start, chartType) {
         this.each(function(items) {
-            items.updateItemStart(start);
+            items.addStartToAllItem(start);
         }, chartType);
     },
 
