@@ -87,12 +87,11 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             barStartTop = baseData.baseBarSize * item.startRatio,
             startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE,
             changedStack = (item.stack !== iterationData.prevStack),
-            stackIndex, endTop, bound;
+            stepCount, endTop, bound;
 
         if (!isStacked || (!this.options.diverging && changedStack)) {
-            stackIndex = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
-
-            iterationData.left = (stackIndex * baseData.step) + iterationData.baseLeft + baseData.additionalPosition;
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            iterationData.left = (baseData.step * stepCount) + iterationData.baseLeft + baseData.additionalPosition;
             iterationData.plusTop = 0;
             iterationData.minusTop = 0;
         }

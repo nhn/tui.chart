@@ -377,6 +377,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _updateDimensionsHeight: function(diffHeight) {
         this.dimensions.plot.height -= diffHeight;
         this.dimensions.series.height -= diffHeight;
+        this.dimensions.customEvent.height -= diffHeight;
+        this.dimensions.tooltip.height -= diffHeight;
         this.dimensions.yAxis.height -= diffHeight;
         this.dimensions.rightYAxis.height -= diffHeight;
         this.dimensions.xAxis.height += diffHeight;

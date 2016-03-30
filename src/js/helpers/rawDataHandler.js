@@ -19,21 +19,23 @@ var rawDataHandler = {
      * @returns {Array.<string>} stacks
      */
     pickStacks: function(seriesData) {
-        var stacks;
+        var stacks, uniqStacks, filteredStack;
 
         stacks = tui.util.map(seriesData, function(seriesDatum) {
             return seriesDatum.stack;
         });
 
-        stacks = tui.util.filter(stacks, function(stack) {
+        uniqStacks = tui.util.unique(stacks).slice(0, 2);
+
+        filteredStack = tui.util.filter(uniqStacks, function(stack) {
             return !!stack;
         });
 
-        stacks = tui.util.unique(stacks).slice(0, 2);
+        if (filteredStack.length < uniqStacks.length) {
+            filteredStack.push(chartConst.DEFAULT_STACK);
+        }
 
-        stacks.push(chartConst.DEFAULT_STACK);
-
-        return stacks;
+        return filteredStack;
     },
 
     /**

@@ -21,11 +21,11 @@ describe('domHandler', function() {
                     stack: 'stack2'
                 }],
                 actual = rawDataHandler.pickStacks(rawSeriesData),
-                expected = ['stack1', 'stack2', chartConst.DEFAULT_STACK];
+                expected = ['stack1', 'stack2'];
             expect(actual).toEqual(expected);
         });
 
-        it('stack 값이 없는 경우에는 결과에서 배제되어야 합니다.(undefined가 추출되면 안됨)', function() {
+        it('stack 값이 없는 경우에는 chartConst.DEFAULT_STACK을 추가합니다.', function() {
             var rawSeriesData = [{
                     data: []
                 },
@@ -52,7 +52,7 @@ describe('domHandler', function() {
                     stack: 'stack2'
                 }],
                 actual = rawDataHandler.pickStacks(rawSeriesData),
-                expected = ['stack1', 'stack2', chartConst.DEFAULT_STACK];
+                expected = ['stack1', 'stack2'];
             expect(actual).toEqual(expected);
         });
 
@@ -70,7 +70,7 @@ describe('domHandler', function() {
                     stack: 'stack3'
                 }],
                 actual = rawDataHandler.pickStacks(rawSeriesData),
-                expected = ['stack1', 'stack2', chartConst.DEFAULT_STACK];
+                expected = ['stack1', 'stack2'];
             expect(actual).toEqual(expected);
         });
 

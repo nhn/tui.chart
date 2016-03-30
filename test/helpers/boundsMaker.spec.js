@@ -329,6 +329,12 @@ describe('boundsMaker', function() {
                 series: {
                     height: 200
                 },
+                customEvent: {
+                    height: 200
+                },
+                tooltip: {
+                    height: 200
+                },
                 xAxis: {
                     height: 50
                 },
@@ -343,6 +349,8 @@ describe('boundsMaker', function() {
 
             expect(boundsMaker.getDimension('plot').height).toBe(150);
             expect(boundsMaker.getDimension('series').height).toBe(150);
+            expect(boundsMaker.getDimension('customEvent').height).toBe(150);
+            expect(boundsMaker.getDimension('tooltip').height).toBe(150);
             expect(boundsMaker.getDimension('xAxis').height).toBe(100);
             expect(boundsMaker.getDimension('yAxis').height).toBe(150);
             expect(boundsMaker.getDimension('rightYAxis').height).toBe(150);

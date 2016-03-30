@@ -104,11 +104,11 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             barStartLeft = baseData.baseBarSize * item.startRatio,
             startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
             changedStack = (item.stack !== iterationData.prevStack),
-            barIndex, endLeft, bound;
+            stepCount, endLeft, bound;
 
         if (!isStacked || (!this.options.diverging && changedStack)) {
-            barIndex = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
-            iterationData.top = (barIndex * baseData.step) + iterationData.baseTop + baseData.additionalPosition;
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            iterationData.top = (baseData.step * stepCount) + iterationData.baseTop + baseData.additionalPosition;
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
         }
