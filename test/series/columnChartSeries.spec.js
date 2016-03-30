@@ -132,7 +132,7 @@ describe('ColumnChartSeries', function() {
             });
             spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
                 groupSize: 25,
-                groupPosition: 0,
+                firstAdditionalPosition: 0,
                 baseBarSize: 100,
                 basePosition: 60,
                 barSize: 20,

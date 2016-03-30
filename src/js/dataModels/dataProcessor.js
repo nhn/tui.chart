@@ -489,16 +489,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var comma = ',',
             underPointValue = '',
             betweenLen = 3,
-            sign = value < 0 ? '-' : '',
             orgValue = value,
-            values, lastIndex, formattedValue;
+            sign, values, lastIndex, formattedValue;
 
-        value = String(Math.abs(value));
+        value = String(value);
+        sign = value.indexOf('-') > -1 ? '-' : '';
 
         if (value.indexOf('.') > -1) {
             values = value.split('.');
-            value = values[0];
+            value = String(Math.abs(values[0]));
             underPointValue = '.' + values[1];
+        } else {
+            value = String(Math.abs(value));
         }
 
         if (value.length <= betweenLen) {

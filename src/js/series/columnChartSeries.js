@@ -105,6 +105,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         }
 
         iterationData.prevStack = item.stack;
+
         bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
 
         return bound;
@@ -123,8 +124,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
         return itemGroup.map(function(items, groupIndex) {
-            var baseLeft = (groupIndex * baseData.groupSize) + baseData.groupPosition
-                        + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
+            var baseLeft = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
+                        + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
                     baseLeft: baseLeft,
                     left: baseLeft,

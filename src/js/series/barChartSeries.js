@@ -122,6 +122,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
         }
 
         iterationData.prevStack = item.stack;
+
         bound = this._makeBound(barWidth, baseData.barSize, iterationData.top, startLeft, endLeft);
 
         return bound;
@@ -141,8 +142,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
 
         return itemGroup.map(function(items, groupIndex) {
-            var baseTop = (groupIndex * baseData.groupSize) + baseData.groupPosition
-                        + baseData.additionalPosition + chartConst.SERIES_EXPAND_SIZE,
+            var baseTop = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
+                        + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
                     baseTop: baseTop,
                     top: baseTop,

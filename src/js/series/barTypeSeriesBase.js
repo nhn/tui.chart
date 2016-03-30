@@ -102,7 +102,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      *      groupSize: number,
      *      barSize: number,
      *      step: number,
-     *      groupPosition: number,
+     *      firstAdditionalPosition: number,
      *      additionalPosition: number,
      *      basePosition: number
      * }}
@@ -112,7 +112,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var isStacked = predicate.isValidStackedOption(this.options.stacked),
             itemGroup = this.dataProcessor.getItemGroup(),
             groupSize = baseGroupSize / itemGroup.getGroupCount(this.chartType),
+            firstAdditionalPosition = 0,
             itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
+
         if (!isStacked) {
             itemCount = itemGroup.getFirstItems(this.chartType).getItemCount();
         } else {
@@ -130,12 +132,16 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             basePosition = baseBarSize - basePosition;
         }
 
+        if (!this.options.barWidth || barSize < this.options.barWidth) {
+            firstAdditionalPosition = (barSize / 2) + additionalPosition;
+        }
+
         return {
             baseBarSize: baseBarSize,
             groupSize: groupSize,
             barSize: barSize,
             step: barGutter + barSize,
-            groupPosition: barSize / 2,
+            firstAdditionalPosition: firstAdditionalPosition,
             additionalPosition: additionalPosition,
             basePosition: basePosition
         };

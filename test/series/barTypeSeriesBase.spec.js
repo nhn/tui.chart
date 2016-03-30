@@ -135,7 +135,7 @@ describe('BarTypeSeriesBase', function() {
                 groupSize: 100,
                 barSize: 32,
                 step: 36,
-                groupPosition: 16,
+                firstAdditionalPosition: 16,
                 additionalPosition: 0,
                 basePosition: 0
             };

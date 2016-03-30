@@ -83,6 +83,7 @@ _createChart = function(container, data, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {string} options.yAxis.align align option for diverging option
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of horizontal axis

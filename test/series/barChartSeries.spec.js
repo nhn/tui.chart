@@ -169,7 +169,7 @@ describe('BarChartSeries', function() {
             });
             spyOn(series, '_makeBaseDataForMakingBound').and.returnValue({
                 groupSize: 25,
-                groupPosition: 0,
+                firstAdditionalPosition: 0,
                 baseBarSize: 100,
                 basePosition: 10,
                 barSize: 20,
