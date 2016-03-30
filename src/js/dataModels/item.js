@@ -114,7 +114,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
 
         if (hasStart) {
             this.addStart(values[1], true);
-            this._updateFormattedValue();
+            this._updateFormattedValueforRange();
             this.isRange = true;
         }
     },
@@ -154,10 +154,10 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     },
 
     /**
-     * Update formatted value.
+     * Update formatted value for range.
      * @private
      */
-    _updateFormattedValue: function() {
+    _updateFormattedValueforRange: function() {
         this.formattedValue = this.formattedStart + ' ~ ' + this.formattedEnd;
     },
 

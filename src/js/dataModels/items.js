@@ -122,10 +122,10 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Update start value of item.
+     * Add start to all item.
      * @param {number} start start value
      */
-    updateItemStart: function(start) {
+    addStartToAllItem: function(start) {
         this.each(function(item) {
             item.addStart(start);
         });

@@ -52,6 +52,13 @@ describe('test Item', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('음수가 포함된 경우도 문제없이 내림차순 정렬하여 반환합니다.', function() {
+            var actual = item._createValues([3, 1, -2, 10]),
+                expected = [10, 3, 1, -2];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_calculateRatio()', function() {

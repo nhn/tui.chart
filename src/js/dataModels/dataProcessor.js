@@ -626,6 +626,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Update start value of item.
      * @param {{min: number, max: number}} limit - limit
      * @param {string} chartType - chart type
+     * @private
      */
     _updateItemStart: function(limit, chartType) {
         var isOneSign = limit.min >= 0 || predicate.isMinusLimit(limit),
