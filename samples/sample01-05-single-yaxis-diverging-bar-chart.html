@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Diverging Bar Chart Sample</title>
+    <title>Single yAxis Diverging Bar Chart Sample</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -45,11 +45,10 @@
         "title": "Population Distribution",
         "format": "1,000"
     },
-    "yAxis": [{
-        "title": "Age group"
-    }, {
-        "title": "Age group"
-    }],
+    "yAxis": {
+        "title": "Age group",
+        "align": "center"
+    },
     "series": {
         "diverging": true
     }
@@ -100,16 +99,12 @@
             title: 'Population Distribution',
             format: '1,000'
         },
-        yAxis: [{
-            title: 'Age Group'
-        }, {
-            title: 'Age Group'
-        }],
+        yAxis: {
+            title: 'Age Group',
+            align: 'center'
+        },
         series: {
             diverging: true
-        },
-        tooltip: {
-            grouped: true
         }
     };
     tui.chart.barChart(container, data, options);

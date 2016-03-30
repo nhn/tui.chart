@@ -23,22 +23,22 @@
     "categories": ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
     "series": [
         {
-            "name": "Seoul Male",
+            "name": "Male - Seoul",
             "data": [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
             "stack": "Male"
         },
         {
-            "name": "Seoul Female",
+            "name": "Female - Seoul",
             "data": [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
             "stack": "Female"
         },
         {
-            "name": "Incheon Male",
+            "name": "Male - Incheon",
             "data": [139283, 167132, 209256, 233977, 261195, 251151, 127721, 61452, 17138, 1974, 194],
             "stack": "Male"
         },
         {
-            "name": "Incheon Female",
+            "name": "Female - Incheon",
             "data": [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 523],
             "stack": "Female"
         }
@@ -65,6 +65,9 @@
     },
     "legend": {
         "align": "top"
+    },
+    "tooltip": {
+        "grouped": true
     }
 }
         </textarea>
@@ -98,22 +101,22 @@
             categories: ["0 ~ 9", "10 ~ 19", "20 ~ 29", "30 ~ 39", "40 ~ 49", "50 ~ 59", "60 ~ 69", "70 ~ 79", "80 ~ 89", "90 ~ 99", "100 ~"],
             series: [
                 {
-                    name: 'Seoul Male',
+                    name: 'Male - Seoul',
                     data: [400718, 506749, 722122, 835851, 850007, 773094, 496232, 267037, 67004, 7769, 1314],
                     stack: 'Male'
                 },
                 {
-                    name: 'Seoul Female',
+                    name: 'Female - Seoul',
                     data: [380595, 472893, 724408, 829149, 853032, 812687, 548381, 316142, 127406, 22177, 3770],
                     stack: 'Female'
                 },
                 {
-                    name: 'Incheon Male',
+                    name: 'Male - Incheon',
                     data: [139283, 167132, 209256, 233977, 261195, 251151, 127721, 61452, 17138, 1974, 194],
                     stack: 'Male'
                 },
                 {
-                    name: 'Incheon Female',
+                    name: 'Female - Incheon',
                     data: [132088, 155895, 192760, 221250, 255601, 243374, 130406, 80763, 38005, 6057, 523],
                     stack: 'Female'
                 }
@@ -135,6 +138,9 @@
             },
             legend: {
                 align: 'top'
+            },
+            tooltip: {
+                grouped: true
             }
         };
     tui.chart.columnChart(container, data, options);

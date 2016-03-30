@@ -11,7 +11,10 @@
   "sample01-04-diverging-bar-chart": {
     "title": "Diverging Bar Chart Sample"
   },
-  "sample01-05-range-bar-chart": {
+  "sample01-05-single-yaxis-diverging-bar-chart": {
+    "title": "Single yAxis Diverging Bar Chart Sample"
+  },
+  "sample01-06-range-bar-chart": {
     "title": "Range Bar Chart Sample"
   },
   "sample02-01-column-chart": {
@@ -23,7 +26,10 @@
   "sample02-03-percent-stacked-column-chart": {
     "title": "Percent Stacked Column Chart Sample"
   },
-  "sample02-04-stacked-diverging-column-chart": {
+  "sample02-04-group-stacked-column-chart": {
+    "title": "Group Stacked Column Chart Sample"
+  },
+  "sample02-05-stacked-diverging-column-chart": {
     "title": "Diverging Stacked Column Chart Sample"
   },
   "sample03-01-line-chart": {
