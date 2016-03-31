@@ -606,14 +606,16 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeRotationLabelsHtml: function(positions, categories, labelSize, additionalSize) {
         var self = this,
+            degree = this.boundsMaker.xAxisDegree,
             template = axisTemplate.tplAxisLabel,
             labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label),
             labelCssText = this._makeLabelCssText(labelSize),
-            additionalClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + this.boundsMaker.xAxisDegree,
+            additionalClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + degree,
             halfWidth = labelSize / 2,
-            moveLeft = calculator.calculateAdjacent(this.boundsMaker.xAxisDegree, halfWidth),
-            top = calculator.calculateOpposite(this.boundsMaker.xAxisDegree, halfWidth) +
+            moveLeft = calculator.calculateAdjacent(degree, halfWidth),
+            top = calculator.calculateOpposite(degree, halfWidth) +
                 chartConst.XAXIS_LABEL_TOP_MARGIN,
+            spanCssText = (renderUtil.isIE7() && degree) ? chartConst.IE7_ROTATION_FILTER_STYLE_MAP[degree] : '',
             labelsHtml;
 
         additionalSize = additionalSize || 0;
@@ -632,6 +634,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             return template({
                 additionalClass: additionalClass,
                 cssText: labelCssText + rotationCssText,
+                spanCssText: spanCssText,
                 label: label
             });
         }).join('');
@@ -666,7 +669,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             return template({
                 additionalClass: '',
                 cssText: labelCssText + addCssText,
-                label: categories[index]
+                label: categories[index],
+                spanCssText: ''
             });
         }).join('');
 

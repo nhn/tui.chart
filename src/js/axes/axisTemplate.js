@@ -13,7 +13,7 @@ var htmls = {
         '</div>',
     HTML_AXIS_TICK: '<div class="tui-chart-tick" style="{{ cssText }}"></div>',
     HTML_AXIS_LABEL: '<div class="tui-chart-label{{ additionalClass }}" style="{{ cssText }}">' +
-        '<span>{{ label }}</span></div>'
+        '<span{{ spanCssText }}>{{ label }}</span></div>'
 };
 
 module.exports = {

@@ -724,11 +724,30 @@ describe('Axis', function() {
                 actual, expected;
 
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
             boundsMaker.xAxisDegree = 45;
             actual = axis._makeRotationLabelsHtml(positions, categories, labelSize);
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label1</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label2</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label3</span></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('IE7일 경우의 45도로 회전된 레이블 영역 html을 생성합니다.', function() {
+            var positions = [30],
+                categories = ['label1'],
+                labelSize = 80,
+                actual, expected;
+
+            spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
+            spyOn(renderUtil, 'isIE7').and.returnValue(true);
+            boundsMaker.xAxisDegree = 45;
+            actual = axis._makeRotationLabelsHtml(positions, categories, labelSize);
+            expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px">' +
+                    '<span style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
+                    ' M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)">label1</span>' +
+                '</div>';
 
             expect(actual).toBe(expected);
         });
