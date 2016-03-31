@@ -23,7 +23,7 @@ This application supports drawing a chart on web browser.<br>
 
 ![bar chart](https://cloud.githubusercontent.com/assets/2888775/14166360/c7fed622-f74d-11e5-88e4-1eeb0ec3cc73.png)
 
-![column chart](https://cloud.githubusercontent.com/assets/2888775/14166361/c810765c-f74d-11e5-9742-b12d3aac657f.png)
+![column chart](https://cloud.githubusercontent.com/assets/2888775/14168827/6d4a3250-f75f-11e5-9bf5-978ad18932d9.png)
 
 ![line chart](https://cloud.githubusercontent.com/assets/2888775/13280685/c7f3eeca-db22-11e5-9d2b-9dd1eb81d247.png)
 
@@ -33,7 +33,7 @@ This application supports drawing a chart on web browser.<br>
 
 ![combo chart](https://cloud.githubusercontent.com/assets/2888775/13280701/e07e3522-db22-11e5-9477-f124a9675671.png)
 
-![map chart](https://cloud.githubusercontent.com/assets/2888775/14166399/06d8be12-f74e-11e5-87dc-acc5700628bd.png)
+![map chart](https://cloud.githubusercontent.com/assets/2888775/14169302/e228221a-f761-11e5-88ed-20e9a2aba45c.png)
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
