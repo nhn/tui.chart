@@ -8,7 +8,7 @@
 
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
-    DataProcessor = require('../../src/js/helpers/dataProcessor');
+    DataProcessor = require('../../src/js/dataModels/dataProcessor');
 
 describe('ChartBase', function() {
     var chartBase, componentManager;
@@ -57,7 +57,6 @@ describe('ChartBase', function() {
     describe('_makeProcessedData()', function() {
         it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            spyOn(DataProcessor.prototype, 'process').and.returnValue();
             actual = chartBase._createDataProcessor(DataProcessor, {
                 rawData: {
                     categories: ['a', 'b', 'c']
@@ -106,7 +105,7 @@ describe('ChartBase', function() {
 
             componentManager.where.and.returnValue([
                 {
-                    name: 'columnSeries',
+                    componentName: 'columnSeries',
                     chartType: 'column'
                 }
             ]);
@@ -119,7 +118,7 @@ describe('ChartBase', function() {
     });
 
     describe('_renderTitle()', function() {
-        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function () {
+        it('글꼴크기가 14px이고 타이틀이 "Chart Title"인 차트 타이틀을 렌더링 합니다.', function() {
             var el = dom.create('DIV');
             chartBase._renderTitle(el);
             expect(el.firstChild.innerHTML).toBe('Chart Title');

@@ -28,159 +28,133 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Make start end tops.
-     * @param {number} endTop end top
-     * @param {number} endHeight end height
-     * @param {number} value value
-     * @param {boolean} isMinus whether minus or not
-     * @returns {{startTop: number, endTop: number}} start end tops
-     * @private
-     */
-    _makeStartEndTops: function(endTop, endHeight, value) {
-        var startTop;
-
-        if (value < 0) {
-            startTop = endTop;
-        } else {
-            startTop = endTop;
-            endTop -= endHeight;
-        }
-
-        return {
-            startTop: startTop,
-            endTop: endTop
-        };
-    },
-
-    /**
      * Make bound of column chart.
-     * @param {object} params parameters
-     *      @param {{left: number, width: number}} params.baseBound base bound
-     *      @param {number} params.startTop start top
-     *      @param {number} params.endTop end top
-     *      @param {number} params.endHeight end height
+     * @param {number} width width
+     * @param {number} height height
+     * @param {number} left top position value
+     * @param {number} startTop start top position value
+     * @param {number} endTop end top position value
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
      * }} column chart bound
      * @private
      */
-    _makeColumnChartBound: function(params) {
+    _makeBound: function(width, height, left, startTop, endTop) {
         return {
-            start: tui.util.extend({
-                top: params.startTop,
+            start: {
+                top: startTop,
+                left: left,
+                width: width,
                 height: 0
-            }, params.baseBound),
-            end: tui.util.extend({
-                top: params.endTop,
-                height: params.endHeight
-            }, params.baseBound)
+            },
+            end: {
+                top: endTop,
+                left: left,
+                width: width,
+                height: height
+            }
         };
     },
 
     /**
-     * Make normal column chart bound.
+     * Make column chart bound.
      * @param {{
-     *      dimension: {width: number, height: number},
-     *      groupValues: Array.<Array.<number>>,
-     *      groupSize: number, barSize: number, step: number,
-     *      distanceToMin: number, isMinus: boolean
-     * }} baseInfo base info
-     * @param {number} value value
-     * @param {number} paddingLeft padding left
+     *      baseSize: number,
+     *      basePosition: number,
+     *      step: number,
+     *      additionalPosition: ?number,
+     *      barSize: number
+     * }} baseData base data for making bound
+     * @param {{
+     *      baseLeft: number,
+     *      left: number,
+     *      plusTop: number,
+     *      minusTop: number,
+     *      prevStack: ?string
+     * }} iterationData iteration data
+     * @param {?boolean} isStacked whether stacked option or not.
+     * @param {{value: number, ratio: number, stack: string}} item item
      * @param {number} index index
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
-     * }} column chart bound
+     * }}
      * @private
      */
-    _makeNormalColumnChartBound: function(baseInfo, value, paddingLeft, index) {
-        var endHeight, endTop, startEndTops, bound;
+    _makeColumnChartBound: function(baseData, iterationData, isStacked, item, index) {
+        var barHeight = Math.abs(baseData.baseBarSize * item.ratioDistance),
+            barStartTop = baseData.baseBarSize * item.startRatio,
+            startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE,
+            changedStack = (item.stack !== iterationData.prevStack),
+            stepCount, endTop, bound;
 
-        endHeight = Math.abs(value * baseInfo.dimension.height);
-        endTop = (baseInfo.isMinus ? 0 : (baseInfo.distance.toMax || baseInfo.dimension.height)) + chartConst.SERIES_EXPAND_SIZE;
-        startEndTops = this._makeStartEndTops(endTop, endHeight, value);
-        bound = this._makeColumnChartBound(tui.util.extend({
-            baseBound: {
-                left: paddingLeft + (baseInfo.step * index) + chartConst.SERIES_EXPAND_SIZE,
-                width: baseInfo.barSize
-            },
-            endHeight: endHeight
-        }, startEndTops));
+        if (!isStacked || (!this.options.diverging && changedStack)) {
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            iterationData.left = (baseData.step * stepCount) + iterationData.baseLeft + baseData.additionalPosition;
+            iterationData.plusTop = 0;
+            iterationData.minusTop = 0;
+        }
+
+        if (item.value >= 0) {
+            iterationData.plusTop -= barHeight;
+            endTop = startTop + iterationData.plusTop;
+        } else {
+            endTop = startTop + iterationData.minusTop;
+            iterationData.minusTop += barHeight;
+        }
+
+        iterationData.prevStack = item.stack;
+
+        bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
 
         return bound;
     },
 
     /**
-     * Make bounds of normal column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeNormalColumnChartBounds: function(dimension) {
-        var baseInfo = this._makeBaseInfoForNormalChartBounds(dimension, 'height', 'width'),
-            bounds = this._makeNormalBounds(baseInfo, tui.util.bind(this._makeNormalColumnChartBound, this));
-
-        return bounds;
-    },
-
-    /**
-     * Make bounds of stacked column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeStackedColumnChartBounds: function(dimension) {
-        var that = this,
-            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'height'),
-            bounds = this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
-                return that._makeColumnChartBound({
-                    baseBound: baseBound,
-                    startTop: baseInfo.distance.toMax + chartConst.SERIES_EXPAND_SIZE,
-                    endTop: baseInfo.distance.toMax - endSize - endPosition,
-                    endHeight: endSize
-                });
-            });
-
-        return bounds;
-    },
-
-    /**
      * Make bounds of column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeBounds: function(dimension) {
-        var bounds;
+    _makeBounds: function() {
+        var self = this,
+            itemGroup = this.dataProcessor.getItemGroup(),
+            isStacked = predicate.isValidStackedOption(this.options.stacked),
+            dimension = this.boundsMaker.getDimension('series'),
+            baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
-        if (predicate.isValidStackedOption(this.options.stacked)) {
-            bounds = this._makeStackedColumnChartBounds(dimension);
-        } else {
-            bounds = this._makeNormalColumnChartBounds(dimension);
-        }
+        return itemGroup.map(function(items, groupIndex) {
+            var baseLeft = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
+                        + chartConst.SERIES_EXPAND_SIZE,
+                iterationData = {
+                    baseLeft: baseLeft,
+                    left: baseLeft,
+                    plusTop: 0,
+                    minusTop: 0,
+                    prevStack: null
+                },
+                iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
-        return bounds;
+            return items.map(iteratee);
+        }, this.chartType);
     },
 
     /**
      * Make series rendering position
-     * @param {obeject} params parameters
-     *      @param {number} params.value value
-     *      @param {{left: number, top: number, width:number, width:number, height: number}} params.bound bound
-     *      @param {string} params.formattedValue formatted value
-     *      @param {number} params.labelHeight label height
+     * @param {{left: number, top: number, width:number, height: number}} bound - bound
+     * @param {number} labelHeight - label height
+     * @param {number} value - value
+     * @param {string} formattedValue - formatted value
+     * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} rendering position
      */
-    makeSeriesRenderingPosition: function(params) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(params.formattedValue, this.theme.label),
-            bound = params.bound,
+    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             top = bound.top,
             left = bound.left + (bound.width - labelWidth) / 2;
 
-        if (params.value >= 0) {
-            top -= params.labelHeight + chartConst.SERIES_LABEL_PADDING;
+        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
+            top -= labelHeight + chartConst.SERIES_LABEL_PADDING;
         } else {
             top += bound.height + chartConst.SERIES_LABEL_PADDING;
         }
@@ -192,13 +166,13 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Calculate sum label left position.
+     * Calculate left position of sum label.
      * @param {{left: number, top: number}} bound bound
      * @param {string} formattedSum formatted sum.
      * @returns {number} left position value
      * @private
      */
-    _calculateSumLabelLeftPosition: function(bound, formattedSum) {
+    _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
         return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
     },
@@ -219,9 +193,9 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             sum = calculator.sumPlusValues(values);
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
-                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1, -1);
+            }, formattedSum, -1);
         }
 
         return html;
@@ -247,9 +221,9 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
-                left: this._calculateSumLabelLeftPosition(bound, formattedSum),
+                left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING
-            }, formattedSum, -1, -1);
+            }, formattedSum, -1);
         }
 
         return html;

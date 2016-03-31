@@ -29,133 +29,149 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
     /**
      * Make bound of bar chart.
-     * @param {object} params parameters
-     *      @param {{top: number, height: number}} params.baseBound base bound
-     *      @param {number} params.startLeft start left
-     *      @param {number} params.endLeft end left
-     *      @param {number} params.endWidth end width
+     * @param {number} width width
+     * @param {number} height height
+     * @param {number} top top position value
+     * @param {number} startLeft start left position value
+     * @param {number} endLeft end left position value
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
      * }} column chart bound
      * @private
      */
-    _makeBarChartBound: function(params) {
+    _makeBound: function(width, height, top, startLeft, endLeft) {
         return {
-            start: tui.util.extend({
-                left: params.startLeft,
-                width: 0
-            }, params.baseBound),
-            end: tui.util.extend({
-                left: params.endLeft,
-                width: params.endWidth
-            }, params.baseBound)
+            start: {
+                top: top,
+                left: startLeft,
+                width: 0,
+                height: height
+            },
+            end: {
+                top: top,
+                left: endLeft,
+                width: width,
+                height: height
+            }
         };
     },
 
     /**
-     * Make normal bar chart bound.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      groupValues: Array.<Array.<number>>,
-     *      groupSize: number, barSize: number, step: number,
-     *      distanceToMin: number, isMinus: boolean
-     * }} baseInfo base info
+     * Calculate additional left for divided option.
      * @param {number} value value
-     * @param {number} paddingTop padding top
+     * @returns {number}
+     * @private
+     */
+    _calculateAdditionalLeft: function(value) {
+        var additionalLeft = 0;
+
+        if (this.options.divided && value > 0) {
+            additionalLeft = this.boundsMaker.getDimension('yAxis').width + chartConst.OVERLAPPING_WIDTH;
+        }
+
+        return additionalLeft;
+    },
+
+    /**
+     * Make bar chart bound.
+     * @param {{
+     *      baseSize: number,
+     *      basePosition: number,
+     *      step: number,
+     *      additionalPosition: ?number,
+     *      barSize: number
+     * }} baseData base data for making bound
+     * @param {{
+     *      baseTop: number,
+     *      top: number,
+     *      plusLeft: number,
+     *      minusLeft: number,
+     *      prevStack: ?string
+     * }} iterationData iteration data
+     * @param {?boolean} isStacked whether stacked option or not.
+     * @param {{value: number, ratio: number, stack: string}} item item
      * @param {number} index index
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
      *      end: {left: number, top: number, width: number, height: number}
-     * }} column chart bound
+     * }}
      * @private
      */
-    _makeNormalBarChartBound: function(baseInfo, value, paddingTop, index) {
-        var startLeft, endWidth, bound, baseBound;
+    _makeBarChartBound: function(baseData, iterationData, isStacked, item, index) {
+        var barWidth = baseData.baseBarSize * item.ratioDistance,
+            additionalLeft = this._calculateAdditionalLeft(item.value),
+            barStartLeft = baseData.baseBarSize * item.startRatio,
+            startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
+            changedStack = (item.stack !== iterationData.prevStack),
+            stepCount, endLeft, bound;
 
-        startLeft = baseInfo.distance.toMin + chartConst.SERIES_EXPAND_SIZE;
-        endWidth = Math.abs(value * baseInfo.dimension.width);
-        baseBound = {
-            top: paddingTop + ((baseInfo.step) * index) + chartConst.SERIES_EXPAND_SIZE,
-            height: baseInfo.barSize
-        };
-        bound = this._makeBarChartBound({
-            baseBound: baseBound,
-            startLeft: startLeft,
-            endLeft: startLeft + (value < 0 ? -endWidth : 0),
-            endWidth: endWidth
-        });
+        if (!isStacked || (!this.options.diverging && changedStack)) {
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            iterationData.top = (baseData.step * stepCount) + iterationData.baseTop + baseData.additionalPosition;
+            iterationData.plusLeft = 0;
+            iterationData.minusLeft = 0;
+        }
+
+        if (item.value >= 0) {
+            endLeft = startLeft + iterationData.plusLeft;
+            iterationData.plusLeft += barWidth;
+        } else {
+            iterationData.minusLeft -= barWidth;
+            endLeft = startLeft + iterationData.minusLeft;
+        }
+
+        iterationData.prevStack = item.stack;
+
+        bound = this._makeBound(barWidth, baseData.barSize, iterationData.top, startLeft, endLeft);
 
         return bound;
     },
 
     /**
-     * Make bounds of normal bar chart.
-     * @param {{width: number, height:number}} dimension bar chart dimension
+     * Make bounds of bar chart.
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */
-    _makeNormalBarChartBounds: function(dimension) {
-        var baseInfo = this._makeBaseInfoForNormalChartBounds(dimension, 'width', 'height'),
-            bounds = this._makeNormalBounds(baseInfo, tui.util.bind(this._makeNormalBarChartBound, this));
+    _makeBounds: function() {
+        var self = this,
+            itemGroup = this.dataProcessor.getItemGroup(),
+            isStacked = predicate.isValidStackedOption(this.options.stacked),
+            dimension = this.boundsMaker.getDimension('series'),
+            baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
-        return bounds;
-    },
 
-    /**
-     * Make bounds of stacked bar chart.
-     * @param {{width: number, height:number}} dimension bar chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeStackedBarChartBounds: function(dimension) {
-        var that = this,
-            baseInfo = this._makeBaseInfoForStackedChartBounds(dimension, 'width');
+        return itemGroup.map(function(items, groupIndex) {
+            var baseTop = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
+                        + chartConst.SERIES_EXPAND_SIZE,
+                iterationData = {
+                    baseTop: baseTop,
+                    top: baseTop,
+                    plusLeft: 0,
+                    minusLeft: 0,
+                    prevStack: null
+                },
+                iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
-        return this._makeStackedBounds(dimension, baseInfo, function(baseBound, endSize, endPosition) {
-            return that._makeBarChartBound({
-                baseBound: baseBound,
-                startLeft: baseInfo.distance.toMin + chartConst.SERIES_EXPAND_SIZE,
-                endLeft: baseInfo.distance.toMin + endPosition,
-                endWidth: endSize
-            });
+            return items.map(iteratee);
         });
     },
 
     /**
-     * Make bounds of bar chart.
-     * @param {{width: number, height:number}} dimension bar chart dimension
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeBounds: function(dimension) {
-        var bounds;
-
-        if (predicate.isValidStackedOption(this.options.stacked)) {
-            bounds = this._makeStackedBarChartBounds(dimension);
-        } else {
-            bounds = this._makeNormalBarChartBounds(dimension);
-        }
-
-        return bounds;
-    },
-
-    /**
      * Make series rendering position
-     * @param {obeject} params parameters
-     *      @param {number} params.value value
-     *      @param {{left: number, top: number, width:number, height: number}} params.bound bound
-     *      @param {string} params.formattedValue formatted value
-     *      @param {number} params.labelHeight label height
-     * @returns {{left: number, top: number}} rendering position
+     * @param {{left: number, top: number, width:number, height: number}} bound - bound
+     * @param {number} labelHeight - label height
+     * @param {number} value - value
+     * @param {string} formattedValue - formatted value
+     * @param {?boolean} isStart - whether start or not
+     * @returns {{left: number, top: number}} - rendering position
      */
-    makeSeriesRenderingPosition: function(params) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(params.formattedValue, this.theme.label),
-            bound = params.bound,
+    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             left = bound.left,
-            top = bound.top + (bound.height - params.labelHeight + chartConst.TEXT_PADDING) / 2;
+            top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
 
-        if (params.value >= 0) {
+        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
             left += bound.width + chartConst.SERIES_LABEL_PADDING;
         } else {
             left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
@@ -168,18 +184,18 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     },
 
     /**
-     * Calculate sum label top position.
+     * Calculate top position of sum label.
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
      * @returns {number} top position value
      * @private
      */
-    _calculateSumLabelTopPosition: function(bound, labelHeight) {
+    _calculateTopPositionOfSumLabel: function(bound, labelHeight) {
         return bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
     },
 
     /**
-     * Make plus sum label html.
+     * Make html of plus sum label.
      * @param {Array.<number>} values values
      * @param {{left: number, top: number}} bound bound
      * @param {number} labelHeight label height
@@ -195,8 +211,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
             html = this._makeSeriesLabelHtml({
                 left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateSumLabelTopPosition(bound, labelHeight)
-            }, formattedSum, -1, -1);
+                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
+            }, formattedSum, -1);
         }
 
         return html;
@@ -225,8 +241,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({
                 left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,
-                top: this._calculateSumLabelTopPosition(bound, labelHeight)
-            }, formattedSum, -1, -1);
+                top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
+            }, formattedSum, -1);
         }
 
         return html;

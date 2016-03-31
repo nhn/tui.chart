@@ -11,7 +11,8 @@ var raphael = window.Raphael;
 
 var ANIMATION_TIME = 700,
     EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+    DE_EMPHASIS_OPACITY = 0.3,
+    DEFAULT_LUMINANC = 0.2;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -27,7 +28,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     render: function(container, data) {
         var groupBounds = data.groupBounds,
             dimension = data.dimension,
-            paper, baseParams;
+            paper;
 
         if (!groupBounds) {
             return null;
@@ -35,15 +36,12 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         this.paper = paper = raphael(container, dimension.width, dimension.height);
 
-        baseParams = {
-            theme: data.theme,
-            groupBounds: groupBounds,
-            groupValues: data.groupValues,
-            chartType: data.chartType
-        };
+        this.theme = data.theme;
+        this.itemGroup = data.itemGroup;
+        this.chartType = data.chartType;
 
-        this.groupBars = this._renderBars(baseParams);
-        this.groupBorders = this._renderBarBorders(baseParams);
+        this.groupBars = this._renderBars(groupBounds);
+        this.groupBorders = this._renderBarBorders(groupBounds);
 
         this.overlay = this._renderOverlay();
         this.theme = data.theme;
@@ -76,16 +74,13 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render rect
-     * @param {object} params parameters
-     *      @param {string} params.color series color
-     *      @param {string} params.borderColor series borderColor
-     *      @param {{left: number, top: number, width: number, height: number}} params.bound bound
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     * @param {string} color series color
      * @returns {object} bar rect
      * @private
      */
-    _renderBar: function(params) {
-        var bound = params.bound,
-            rect;
+    _renderBar: function(bound, color) {
+        var rect;
 
         if (bound.width < 0 || bound.height < 0) {
             return null;
@@ -93,7 +88,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         rect = this.paper.rect(bound.left, bound.top, bound.width, bound.height);
         rect.attr({
-            fill: params.color,
+            fill: color,
             stroke: 'none'
         });
 
@@ -102,47 +97,46 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Render bars.
-     * @param {object} params parameters
-     *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @returns {Array.<Array.<object>>} bars
      * @private
      */
-    _renderBars: function(params) {
-        var singleColors = (params.groupBounds[0].length === 1) && params.theme.singleColors || [],
-            colors = params.theme.colors,
+    _renderBars: function(groupBounds) {
+        var self = this,
+            singleColors = [],
+            colors = this.theme.colors,
             groupBars;
 
-        groupBars = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        if ((groupBounds[0].length === 1) && this.theme.singleColors) {
+            singleColors = this.theme.singleColors;
+        }
+
+        groupBars = tui.util.map(groupBounds, function(bounds, groupIndex) {
             var singleColor = singleColors[groupIndex];
+
             return tui.util.map(bounds, function(bound, index) {
-                var color, rect, value;
+                var color, rect, item;
 
                 if (!bound) {
                     return null;
                 }
 
-                color = singleColor || colors[index];
-                value = params.groupValues[groupIndex][index];
+                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
 
-                rect = this._renderBar({
-                    chartType: params.chartType,
-                    color: color,
-                    borderColor: params.theme.borderColor,
-                    bound: bound.start,
-                    value: value
-                });
+                color = singleColor || colors[index];
+                rect = self._renderBar(bound.start, color);
 
                 return {
                     rect: rect,
                     color: color,
                     bound: bound.end,
-                    value: value,
+                    item: item,
                     groupIndex: groupIndex,
-                    index: index
+                    index: index,
+                    isRange: item.isRange
                 };
-            }, this);
-        }, this);
+            });
+        });
 
         return groupBars;
     },
@@ -181,106 +175,159 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Make top line path.
-     * @param {{left: numbrer, top: number}} leftTop left top
-     * @param {{left: numbrer, top: number}} rightTop right top
+     * @param {object} points points
+     *      @param {{left: number, top: number}} points.leftTop left top
+     *      @param {{left: number, top: number}} points.rightTop right top
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {string} top line path
      * @private
      */
-    _makeTopLinePath: function(leftTop, rightTop, chartType, value) {
-        var cloneLeftTop = tui.util.extend({}, leftTop);
-        cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
-        return raphaelRenderUtil.makeLinePath(cloneLeftTop, rightTop).join(' ');
+    _makeTopLinePath: function(points, chartType, item) {
+        var linePath = null,
+            value = item.value,
+            cloneLeftTop;
+
+        if (chartType === 'bar' || value >= 0 || item.isRange) {
+            cloneLeftTop = tui.util.extend({}, points.leftTop);
+            cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
+            linePath = raphaelRenderUtil.makeLinePath(cloneLeftTop, points.rightTop).join(' ');
+        }
+
+        return linePath;
+    },
+
+    /**
+     * Make right line path.
+     * @param {object} points points
+     *      @param {{left: number, top: number}} points.rightTop right top
+     *      @param {{left: number, top: number}} points.rightBottom right bottom
+     * @param {string} chartType chart type
+     * @param {Item} item item
+     * @returns {string} top line path
+     * @private
+     */
+    _makeRightLinePath: function(points, chartType, item) {
+        var linePath = null;
+
+        if (chartType === 'column' || item.value >= 0 || item.isRange) {
+            linePath = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom).join(' ');
+        }
+
+        return linePath;
+    },
+
+    /**
+     * Make bottom line path.
+     * @param {object} points points
+     *      @param {{left: number, top: number}} points.lefBottom left bottom
+     *      @param {{left: number, top: number}} points.rightBottom right bottom
+     * @param {string} chartType chart type
+     * @param {Item} item item
+     * @returns {string} top line path
+     * @private
+     */
+    _makeBottomLinePath: function(points, chartType, item) {
+        var linePath = null;
+
+        if (chartType === 'bar' || item.value < 0 || item.isRange) {
+            linePath = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom).join(' ');
+        }
+
+        return linePath;
+    },
+
+    /**
+     * Make left line path.
+     * @param {object} points points
+     *      @param {{left: number, top: number}} points.lefTop left top
+     *      @param {{left: number, top: number}} points.leftBottom left bottom
+     * @param {string} chartType chart type
+     * @param {Item} item item
+     * @returns {string} top line path
+     * @private
+     */
+    _makeLeftLinePath: function(points, chartType, item) {
+        var linePath = null;
+
+        if (chartType === 'column' || item.value < 0 || item.isRange) {
+            linePath = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom).join(' ');
+        }
+
+        return linePath;
     },
 
     /**
      * Make border lines paths.
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @returns {{top: string, right: string, bottom: string, left: string}} paths
      * @private
      */
-    _makeBorderLinesPaths: function(bound, chartType, value) {
+    _makeBorderLinesPaths: function(bound, chartType, item) {
         var points = this._makeRectPoints(bound),
-            paths = {};
+            paths = {
+                top: this._makeTopLinePath(points, chartType, item),
+                right: this._makeRightLinePath(points, chartType, item),
+                bottom: this._makeBottomLinePath(points, chartType, item),
+                left: this._makeLeftLinePath(points, chartType, item)
+            };
 
-        if (chartType === 'bar' || value >= 0) {
-            paths.top = this._makeTopLinePath(points.leftTop, points.rightTop, chartType, value);
-        }
-
-        if (chartType === 'column' || value >= 0) {
-            paths.right = raphaelRenderUtil.makeLinePath(points.rightTop, points.rightBottom).join(' ');
-        }
-
-        if (chartType === 'bar' || value < 0) {
-            paths.bottom = raphaelRenderUtil.makeLinePath(points.leftBottom, points.rightBottom).join(' ');
-        }
-
-        if (chartType === 'column' || value < 0) {
-            paths.left = raphaelRenderUtil.makeLinePath(points.leftTop, points.leftBottom).join(' ');
-        }
-
-        return paths;
+        return tui.util.filter(paths, function(path) {
+            return path;
+        });
     },
 
     /**
      * Render border lines;
-     * @param {object} params parameters
-     *      @param {{left: number, top:number, width: number, height: number}} params.bound bar bound
-     *      @param {string} params.borderColor border color
-     *      @param {string} params.chartType chart type
-     *      @param {number} params.value value
+     * @param {{left: number, top:number, width: number, height: number}} bound bar bound
+     * @param {string} borderColor border color
+     * @param {string} chartType chart type
+     * @param {Item} item item
      * @returns {object} raphael object
      * @private
      */
-    _renderBorderLines: function(params) {
-        var borderLinePaths = this._makeBorderLinesPaths(params.bound, params.chartType, params.value),
+    _renderBorderLines: function(bound, borderColor, chartType, item) {
+        var self = this,
+            borderLinePaths = this._makeBorderLinesPaths(bound, chartType, item),
             lines = {};
 
         tui.util.forEach(borderLinePaths, function(path, name) {
-            lines[name] = raphaelRenderUtil.renderLine(this.paper, path, params.borderColor, 1);
-        }, this);
+            lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
+        });
 
         return lines;
     },
 
     /**
      * Render bar borders.
-     * @param {object} params parameters
-     *      @param {{colors: string[], singleColors: string[], borderColor: string}} params.theme bar chart theme
-     *      @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} params.groupBounds bounds
+     * @param {Array.<Array.<{left: number, top:number, width: number, height: number}>>} groupBounds bounds
      * @returns {Array.<Array.<object>>} borders
      * @private
      */
-    _renderBarBorders: function(params) {
-        var borderColor = params.theme.borderColor,
+    _renderBarBorders: function(groupBounds) {
+        var self = this,
+            borderColor = this.theme.borderColor,
             groupBorders;
 
         if (!borderColor) {
             return null;
         }
 
-        groupBorders = tui.util.map(params.groupBounds, function(bounds, groupIndex) {
+        groupBorders = tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
-                var value;
+                var item;
 
                 if (!bound) {
                     return null;
                 }
 
-                value = params.groupValues[groupIndex][index];
+                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
 
-                return this._renderBorderLines({
-                    paper: this.paper,
-                    bound: bound.start,
-                    borderColor: borderColor,
-                    chartType: params.chartType,
-                    value: value
-                });
-            }, this);
-        }, this);
+                return self._renderBorderLines(bound.start, borderColor, self.chartType, item);
+            });
+        });
 
         return groupBorders;
     },
@@ -305,11 +352,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @private
      */
-    _animateBorders: function(lines, bound, chartType, value) {
-        var paths = this._makeBorderLinesPaths(bound, chartType, value);
+    _animateBorders: function(lines, bound, chartType, item) {
+        var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
             line.animate({path: paths[name]}, ANIMATION_TIME);
@@ -318,10 +365,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
     /**
      * Animate.
-     * @param {function} callback callback
+     * @param {function} onFinish finish callback function
      */
-    animate: function(callback) {
-        var that = this,
+    animate: function(onFinish) {
+        var self = this,
             groupBorders = this.groupBorders || [];
 
         if (this.callbackTimeout) {
@@ -333,16 +380,16 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             if (!bar) {
                 return;
             }
-            that._animateRect(bar.rect, bar.bound);
+            self._animateRect(bar.rect, bar.bound);
             if (lines) {
-                that._animateBorders(lines, bar.bound, that.chartType, bar.value);
+                self._animateBorders(lines, bar.bound, self.chartType, bar.item);
             }
         });
 
-        if (callback) {
+        if (onFinish) {
             this.callbackTimeout = setTimeout(function() {
-                callback();
-                delete that.callbackTimeout;
+                onFinish();
+                delete self.callbackTimeout;
             }, ANIMATION_TIME);
         }
     },
@@ -396,11 +443,11 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @param {Array.<object>} lines raphael objects
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} chartType chart type
-     * @param {number} value value
+     * @param {Item} item item
      * @private
      */
-    _updateBordersPath: function(lines, bound, chartType, value) {
-        var paths = this._makeBorderLinesPaths(bound, chartType, value);
+    _updateBordersPath: function(lines, bound, chartType, item) {
+        var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
             line.attr({path: paths[name]});
@@ -411,10 +458,12 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Resize graph of bar type chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {Array.<Array.<{left:number, top:number, width: number, height: number}>>} params.groupBounds group bounds
+     *      @param {Array.<Array.<{
+     *                  left:number, top:number, width: number, height: number
+     *              }>>} params.groupBounds group bounds
      */
     resize: function(params) {
-        var that = this,
+        var self = this,
             groupBorders = this.groupBorders || [],
             dimension = params.dimension,
             groupBounds = params.groupBounds;
@@ -432,10 +481,10 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             bound = groupBounds[groupIndex][index].end;
             bar.bound = bound;
-            that._updateRectBound(bar.rect, bound);
+            self._updateRectBound(bar.rect, bound);
 
             if (lines) {
-                that._updateBordersPath(lines, bound, that.chartType, bar.value);
+                self._updateBordersPath(lines, bound, self.chartType, bar.item);
             }
         });
     },
@@ -480,13 +529,14 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     selectSeries: function(indexes) {
         var bar = this.groupBars[indexes.groupIndex][indexes.index],
             objColor = raphael.color(bar.color),
-            color = this.theme.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, 0.2),
+            selectionColorTheme = this.theme.selectionColor,
+            color = selectionColorTheme || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC),
             borderColor = this.theme.borderColor,
             objBorderColor;
 
         if (borderColor) {
             objBorderColor = raphael.color(borderColor);
-            borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, 0.2);
+            borderColor = raphaelRenderUtil.makeChangedLuminanceColor(objBorderColor.hex, DEFAULT_LUMINANC);
         }
 
         this._changeBarColor(indexes, color, borderColor);

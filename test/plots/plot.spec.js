@@ -26,7 +26,7 @@ describe('test Plot', function() {
     });
 
     describe('_renderLines()', function() {
-        it('vTickCount=5 width=400인 경우에는 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 아래에서 부터 렌더링합니다.', function () {
+        it('vTickCount=5 width=400인 경우에는 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 아래에서 부터 렌더링합니다.', function() {
             var el = dom.create('DIV'),
                 childNodes;
             plot.bound = {
@@ -52,7 +52,7 @@ describe('test Plot', function() {
     });
 
     describe('_makeLineHtml()', function() {
-        it('position(라인 각각의 위치), size(라인 높이 or 너비), className(vertical or horizontal), positionType (left or top), sizeType(width or height) 정보를 이용하여 세로라인 html을 생성합니다.', function () {
+        it('position(라인 각각의 위치), size(라인 높이 or 너비), className(vertical or horizontal), positionType (left or top), sizeType(width or height) 정보를 이용하여 세로라인 html을 생성합니다.', function() {
             var positions = [10, 20, 30, 40],
                 size = 200,
                 className = 'vertical',
@@ -74,7 +74,7 @@ describe('test Plot', function() {
     });
 
     describe('_makeVerticalPixelPositions()', function() {
-        it('vTickCount=5, size=200의 세로 라인들의 pixel타입 위치 정보(position.left)를 반환([50, 100, 149, 199])합니다.', function () {
+        it('vTickCount=5, size=200의 세로 라인들의 pixel타입 위치 정보(position.left)를 반환([50, 100, 149, 199])합니다.', function() {
             var positions;
             plot.data = {
                 vTickCount: 5
@@ -83,7 +83,7 @@ describe('test Plot', function() {
             expect(positions).toEqual([50, 100, 149, 199]);
         });
 
-        it('vTickCount=0일 경우에는 빈 배열을 반환합니다.', function () {
+        it('vTickCount=0일 경우에는 빈 배열을 반환합니다.', function() {
             var positions;
             plot.data = {
                 vTickCount: 0
@@ -93,8 +93,23 @@ describe('test Plot', function() {
         });
     });
 
+    describe('_makeDividedPlotPositions()', function() {
+        it('divided 옵션(yAxis 중앙 배치)에 따라 plot line position을 재계산 합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+            plot.data.hTickCount = 7;
+            actual = plot._makeDividedPlotPositions(350);
+            expected = [0, 50, 99, 250, 299, 349];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_makeHorizontalPixelPositions()', function() {
-        it('hTickCount=5, size=200의 가로 라인들의 pixel타입 위치 정보(position.top)를 반환([50, 100, 149, 199])합니다.', function () {
+        it('hTickCount=5, size=200의 가로 라인들의 pixel타입 위치 정보(position.top)를 반환([50, 100, 149, 199])합니다.', function() {
             var positions;
             plot.data = {
                 hTickCount: 5
@@ -103,7 +118,7 @@ describe('test Plot', function() {
             expect(positions).toEqual([50, 100, 149, 199]);
         });
 
-        it('hTickCount=0일 경우에는 빈 배열을 반환합니다.', function () {
+        it('hTickCount=0일 경우에는 빈 배열을 반환합니다.', function() {
             var positions;
             plot.data = {
                 hTickCount: 0
@@ -111,10 +126,24 @@ describe('test Plot', function() {
             positions = plot._makeHorizontalPixelPositions(200);
             expect(positions).toEqual([]);
         });
+
+        it('divided옵션이 true인 경우 _makeDividedPlotPositions()의 수행 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 50
+            });
+            plot.options.divided = true;
+            plot.data.hTickCount = 7;
+            actual = plot._makeHorizontalPixelPositions(350);
+            expected = plot._makeDividedPlotPositions(350);
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('render()', function() {
-        it('vTickCount=5 width=400, height=200인 plot 영역은 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 렌더링합니다.', function () {
+        it('vTickCount=5 width=400, height=200인 plot 영역은 시작 라인을 제외한 4개의 가로라인(horizontal)을 라인을 50px(or 40px) 간격으로 렌더링합니다.', function() {
             var container, childNodes;
 
             boundsMaker.getPosition.and.returnValue({

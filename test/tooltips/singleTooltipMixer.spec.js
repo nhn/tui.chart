@@ -29,8 +29,7 @@ describe('Tooltip', function() {
     describe('_setIndexesCustomAttribute()', function() {
         it('툴팁 엘리먼트에 index정보들을 custom attribute로 설정합니다.', function() {
             var elTooltip = dom.create('DIV');
-            tooltip._setIndexesCustomAttribute(elTooltip,
-                {
+            tooltip._setIndexesCustomAttribute(elTooltip, {
                 groupIndex: 0,
                 index: 1
             });
@@ -72,9 +71,49 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculateTooltipPositionAboutNotBarChart()', function() {
-        it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var actual = tooltip._calculateTooltipPositionAboutNotBarChart({
+    describe('_makeLeftPositionOfNotBarChart()', function() {
+        it('Bar차트가 아닌 차트에서 align옵션에 "left"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfNotBarChart(50, 'left', -30, 5),
+                expected = 75;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트가 아닌 차트에서 align옵션에 "center"가 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfNotBarChart(50, 'center', -30),
+                expected = 65;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트가 아닌 차트에서 align옵션에 "right"가 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfNotBarChart(50, 'right', -30, 5),
+                expected = 55;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTopPositionOfNotBarChart()', function() {
+        it('Bar차트가 아닌 차트에서 align옵션에 "bottom"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeTopPositionOfNotBarChart(50, 'bottom', 30, 5),
+                expected = 85;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트가 아닌 차트에서 align옵션에 "middle"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeTopPositionOfNotBarChart(50, 'middle', 30),
+                expected = 65;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트가 아닌 차트에서 align옵션에 "top"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeTopPositionOfNotBarChart(50, 'top'),
+                expected = 45;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTooltipPositionOfNotBarChart()', function() {
+        it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
+            var actual = tooltip._makeTooltipPositionOfNotBarChart({
                     bound: {
                         width: 25,
                         height: 50,
@@ -100,8 +139,8 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculateTooltipPositionToMousePosition()', function() {
-        it('PIE 차트인 경우에는 마우스 이동 포지션 기준으로 계산하여 반환합니다.', function () {
+    describe('_makeTooltipPositionToMousePosition()', function() {
+        it('PIE 차트인 경우에는 마우스 이동 포지션 기준으로 계산하여 반환합니다.', function() {
             var actual, expected;
             tooltip.seriesPosition = {
                 left: 10,
@@ -109,7 +148,7 @@ describe('Tooltip', function() {
             };
 
             tooltip.containerBound = {left: 10, top: 0};
-            actual = tooltip._calculateTooltipPositionToMousePosition({
+            actual = tooltip._makeTooltipPositionToMousePosition({
                 bound: {},
                 mousePosition: {
                     left: 50,
@@ -134,9 +173,43 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculateTooltipPositionAboutBarChart()', function() {
-        it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
-            var acutal = tooltip._calculateTooltipPositionAboutBarChart({
+    describe('_makeLeftPositionOfBarChart()', function() {
+        it('Bar차트의 align옵션에 "left"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfBarChart(50, 'left', 30),
+                expected = 20;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트의 align옵션에 "center"가 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfBarChart(50, 'center', 30),
+                expected = 35;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트의 align옵션에 "right"가 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeLeftPositionOfBarChart(50, 'right', 30),
+                expected = 55;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTopPositionOfBarChart()', function() {
+        it('Bar차트의 align옵션에 "top"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeTopPositionOfBarChart(50, 'top', -30),
+                expected = 80;
+            expect(actual).toBe(expected);
+        });
+
+        it('Bar차트의 align옵션에 "middle"이나 "bottom"이 포함된 경우의 left position 정보를 계산합니다.', function() {
+            var actual = tooltip._makeTopPositionOfBarChart(50, 'middle', -30),
+                expected = 65;
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTooltipPositionOfBarChart()', function() {
+        it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
+            var acutal = tooltip._makeTooltipPositionOfBarChart({
                     bound: {
                         width: 50,
                         height: 25,
@@ -274,14 +347,14 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_calculateTooltipPosition()', function() {
-        it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
+    describe('_makeTooltipPosition()', function() {
+        it('세로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
             var actual, expected;
             tooltip.bound = {};
             spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
                 return position;
             });
-            actual = tooltip._calculateTooltipPosition({
+            actual = tooltip._makeTooltipPosition({
                 bound: {
                     width: 25,
                     height: 50,
@@ -306,13 +379,13 @@ describe('Tooltip', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function () {
+        it('가로 타입 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
             var actual, expected;
             tooltip.bound = {};
             spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
                 return position;
             });
-            actual = tooltip._calculateTooltipPosition({
+            actual = tooltip._makeTooltipPosition({
                 bound: {
                     width: 50,
                     height: 25,

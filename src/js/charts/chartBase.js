@@ -6,11 +6,13 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    DefaultDataProcessor = require('../helpers/dataProcessor'),
+var ComponentManager = require('./componentManager'),
+    DefaultDataProcessor = require('../dataModels/dataProcessor'),
     BoundsMaker = require('../helpers/boundsMaker'),
-    ComponentManager = require('./componentManager'),
+    AxisScaleMaker = require('../helpers/axisScaleMaker'),
+    dom = require('../helpers/domHandler'),
+    renderUtil = require('../helpers/renderUtil'),
+    predicate = require('../helpers/predicate'),
     UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -109,7 +111,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * original whole legend data
          * @type {Array.<object>}
          */
-        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+        this.orgWholeLegendData = null;
+
+        if (!predicate.isMapChart(this.chartType)) {
+            this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
+        }
 
         this._addCustomEventComponent();
     },
@@ -125,11 +131,36 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData),
-            options = params.options;
+        var dataProcessor = new DataProcessor(params.rawData, params.options, params.seriesChartTypes);
 
-        dataProcessor.process(params.rawData, options, params.seriesChartTypes);
         return dataProcessor;
+    },
+
+    /**
+     * Create axis scale maker.
+     * @param {{min: number, max: number}} limitOption limit
+     * @param {?object} additionalParams additional parameters
+     * @param {string} chartType chart type
+     * @returns {AxisScaleMaker}
+     * @private
+     */
+    _createAxisScaleMaker: function(limitOption, additionalParams, chartType) {
+        var seriesOptions = this.options.series || {};
+
+        chartType = chartType || this.chartType;
+        seriesOptions = seriesOptions[chartType] || seriesOptions;
+
+        return new AxisScaleMaker(tui.util.extend({
+            dataProcessor: this.dataProcessor,
+            boundsMaker: this.boundsMaker,
+            options: {
+                stacked: seriesOptions.stacked,
+                diverging: seriesOptions.diverging,
+                limit: limitOption
+            },
+            isVertical: this.isVertical,
+            chartType: chartType
+        }, additionalParams));
     },
 
     /**
@@ -173,9 +204,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         if (legend) {
             legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
-            tui.util.forEach(serieses, function (series) {
-                legend.on(renderUtil.makeCustomEventName('select', series.chartType, 'legend'), series.onSelectLegend, series);
-            }, this);
+            tui.util.forEach(serieses, function(series) {
+                var selectLegendEventName = renderUtil.makeCustomEventName('select', series.chartType, 'legend');
+                legend.on(selectLegendEventName, series.onSelectLegend, series);
+            });
         }
     },
 
@@ -187,11 +219,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeAxesData: function() {},
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @private
      * @abstract
      */
-    _updatePercentValues: function() {},
+    _addDataRatios: function() {},
 
     /**
      * Execute component function.
@@ -208,21 +240,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render.
-     * @param {function} callback callback function
+     * @param {function} onRender render callback function
      * @private
      */
-    _render: function(callback) {
+    _render: function(onRender) {
         var axesData, renderingData;
 
         this._executeComponentFunc('registerDimension');
         axesData = this._makeAxesData();
+
         this.boundsMaker.registerAxesData(axesData);
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerBoundsData();
-        this._updatePercentValues(axesData);
+
+        this._addDataRatios(axesData);
+
         renderingData = this._makeRenderingData(axesData);
 
-        callback(renderingData);
+        onRender(renderingData);
 
         this._sendSeriesData();
     },
@@ -233,7 +268,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     render: function() {
         var el = dom.create('DIV', this.className),
-            that = this;
+            self = this;
 
         dom.addClass(el, 'tui-chart');
         this._renderTitle(el);
@@ -242,7 +277,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderFontFamily(el, this.theme.chart.fontFamily);
 
         this._render(function(renderingData) {
-            that._renderComponents(renderingData, 'render', el);
+            self._renderComponents(renderingData, 'render', el);
         });
 
         this._attachCustomEvent();
@@ -296,9 +331,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }, tooltipData, renderingData.tooltip);
 
         tui.util.forEach(serieses, function(series) {
-            renderingData[series.name] = tui.util.extend({
+            renderingData[series.componentName] = tui.util.extend({
                 checkedLegends: checkedLegends[series.chartType] || checkedLegends
-            }, renderingData[series.name]);
+            }, renderingData[series.componentName]);
         });
 
         return renderingData;
@@ -312,12 +347,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _rerender: function(checkedLegends, rawData) {
-        var that = this,
+        var self = this,
             newWholeLegendData;
 
         rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
 
-        this.dataProcessor.process(rawData, this.options, this.seriesChartTypes);
+        this.dataProcessor.updateRawData(rawData);
 
         newWholeLegendData = this.dataProcessor.getWholeLegendData();
         // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
@@ -325,9 +360,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
-            renderingData = that._makeRerenderingData(renderingData, checkedLegends);
-            that.dataProcessor.setWholeLegendData(newWholeLegendData);
-            that._renderComponents(renderingData, 'rerender');
+            renderingData = self._makeRerenderingData(renderingData, checkedLegends);
+            self.dataProcessor.setWholeLegendData(newWholeLegendData);
+            self._renderComponents(renderingData, 'rerender');
         });
     },
 
@@ -362,7 +397,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderComponents: function(renderingData, funcName, container) {
         var elements = this.componentManager.map(function(component) {
-            var data = renderingData[component.name],
+            var data = renderingData[component.componentName],
                 element = null;
 
             if (component[funcName]) {
@@ -382,7 +417,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function() {
-        var customEvent = this.componentManager.get('customEvent'),
+        var self = this,
+            customEvent = this.componentManager.get('customEvent'),
             seriesInfos, chartTypes;
 
         if (!customEvent) {
@@ -391,13 +427,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         chartTypes = this.chartTypes || [this.chartType];
         seriesInfos = tui.util.map(chartTypes, function(chartType) {
-            var component = this.componentManager.get(chartType + 'Series') || this.componentManager.get('series');
+            var component = self.componentManager.get(chartType + 'Series') || self.componentManager.get('series');
 
             return {
                 chartType: chartType,
                 data: component.getSeriesData()
             };
-        }, this);
+        });
 
         customEvent.initCustomEventData(seriesInfos);
     },
@@ -463,7 +499,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var that = this,
+        var self = this,
             updated;
 
         if (!dimension) {
@@ -480,7 +516,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
 
         this._render(function(renderingData) {
-            that._renderComponents(renderingData, 'resize');
+            self._renderComponents(renderingData, 'resize');
         });
     },
 

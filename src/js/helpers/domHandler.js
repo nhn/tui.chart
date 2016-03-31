@@ -57,8 +57,14 @@ var domHandler = {
      * @param {string} newClass add class name
      */
     addClass: function(el, newClass) {
-        var classNames = this._getClassNames(el),
-            index = tui.util.inArray(newClass, classNames);
+        var classNames, index;
+
+        if (!el || !newClass) {
+            return;
+        }
+
+        classNames = this._getClassNames(el);
+        index = tui.util.inArray(newClass, classNames);
 
         if (index > -1) {
             return;
@@ -141,7 +147,7 @@ var domHandler = {
                 return;
             }
             container.appendChild(child);
-        }, this);
+        });
     }
 };
 

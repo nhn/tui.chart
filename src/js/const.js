@@ -4,6 +4,10 @@
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
+'use strict';
+
+/*eslint no-magic-numbers: 0*/
+
 /**
  * Chart const
  * @readonly
@@ -42,8 +46,8 @@ var chartConst = {
     CHART_DEFAULT_WIDTH: 500,
     /** chart default height */
     CHART_DEFAULT_HEIGHT: 400,
-    /** hidden width */
-    HIDDEN_WIDTH: 1,
+    /** overlapping width of xAxis and yAxis */
+    OVERLAPPING_WIDTH: 1,
     /** rendered text padding */
     TEXT_PADDING: 2,
     /** series expand size */
@@ -77,6 +81,8 @@ var chartConst = {
     STACKED_NORMAL_TYPE: 'normal',
     /** @type {string} */
     STACKED_PERCENT_TYPE: 'percent',
+    DEFAULT_STACK: '___DEFAULT___STACK___',
+    DUMMY_KEY: '___DUMMY___KEY___',
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */
@@ -143,40 +149,37 @@ var chartConst = {
     MIN_PIXEL_TYPE_STEP_SIZE: 40,
     /** maximum pixel type step size */
     MAX_PIXEL_TYPE_STEP_SIZE: 60,
-    /** tick info of percent stacked option
+    /** axis scale of percent stacked option
      * @type {object}
      */
-    PERCENT_STACKED_TICK_INFO: {
+    PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: 0,
             max: 100
         },
         step: 25,
-        tickCount: 5,
         labels: [0, 25, 50, 75, 100]
     },
-    /** tick info of negative percent stacked option
+    /** axis scale of negative percent stacked option
      * @type {object}
      */
-    NEGATIVE_PERCENT_STACKED_TICK_INFO: {
+    NEGATIVE_PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: -100,
             max: 100
         },
         step: 25,
-        tickCount: 9,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** tick info of diverging percent stacked option
+    /** axis scale of diverging percent stacked option
      * @type {object}
      */
-    DIVERGENT_PERCENT_STACKED_TICK_INFO: {
+    DIVERGING_PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: -100,
             max: 100
         },
         step: 25,
-        tickCount: 9,
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
     /** title add padding */
@@ -199,6 +202,10 @@ var chartConst = {
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /** yAxis align option
+     * @type {string}
+     */
+    YAXIS_ALIGN_CENTER: 'center',
     /** xAxis label compare margin */
     XAXIS_LABEL_COMPARE_MARGIN: 20,
     /** xAxis label gutter */
@@ -237,6 +244,21 @@ var chartConst = {
     /** @type {string} */
     TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION: 'center bottom',
     /** hide delay */
-    HIDE_DELAY: 200
+    HIDE_DELAY: 200,
+    OLD_BROWSER_OPACITY_100: 100,
+    SERIES_LABEL_OPACITY: 0.3,
+    WHEEL_TICK: 120,
+    MAX_ZOOM_MAGN: 32,
+    FF_WHEELDELTA_ADJUSTING_VALUE: -40,
+    IE7_ROTATION_FILTER_STYLE_MAP: {
+        25: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
+                ' M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)"',
+        45: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
+                ' M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)"',
+        65: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
+                ' M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)"',
+        85: ' style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
+                ' M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)"'
+    }
 };
 module.exports = chartConst;

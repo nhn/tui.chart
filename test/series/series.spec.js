@@ -93,21 +93,20 @@ describe('Series', function() {
             var result = series._makeSeriesLabelHtml({
                 left: 10,
                 top: 10
-            }, 'label1', 0, 0);
+            }, 'label1', 0);
 
-            expect(result).toBe('<div class="tui-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px" data-group-index="0" data-index="0">label1</div>');
+            expect(result).toBe('<div class="tui-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px">label1</div>');
         });
     });
 
     describe('render()', function() {
-        it('width=200, height=100의 series 영역을 렌더링합니다.', function () {
+        it('width=200, height=100의 series 영역을 렌더링합니다.', function() {
             var seriesContainer;
 
             series.hasAxes = true;
-
             boundsMaker.getBound.and.returnValue({
-                dimension: {width: 200, height: 100},
-                position: {top: 50, left: 50}
+                dimension: {width: 220, height: 120},
+                position: {top: 40, left: 40}
             });
 
             seriesContainer = series.render({});

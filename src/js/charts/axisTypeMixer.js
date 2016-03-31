@@ -34,6 +34,7 @@ var axisTypeMixer = {
      * @private
      */
     _addAxisComponents: function(axes, aligned) {
+        var self = this;
         tui.util.forEach(axes, function(axis) {
             var axisParams = {
                 aligned: aligned,
@@ -46,8 +47,8 @@ var axisTypeMixer = {
                 axisParams.index = 1;
             }
 
-            this.componentManager.register(axis.name, Axis, axisParams);
-        }, this);
+            self.componentManager.register(axis.name, Axis, axisParams);
+        });
     },
 
     /**
@@ -58,17 +59,18 @@ var axisTypeMixer = {
      * @private
      */
     _addSeriesComponents: function(serieses, options) {
-        var seriesBaseParams = {
-            libType: options.libType,
-            chartType: options.chartType,
-            userEvent: this.userEvent,
-            componentType: 'series'
-        };
+        var self = this,
+            seriesBaseParams = {
+                libType: options.libType,
+                chartType: options.chartType,
+                userEvent: this.userEvent,
+                componentType: 'series'
+            };
 
         tui.util.forEach(serieses, function(series) {
             var seriesParams = tui.util.extend(seriesBaseParams, series.data);
-            this.componentManager.register(series.name, series.SeriesClass, seriesParams);
-        }, this);
+            self.componentManager.register(series.name, series.SeriesClass, seriesParams);
+        });
     },
 
     /**
@@ -161,18 +163,20 @@ var axisTypeMixer = {
     },
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @param {object} axesData axes data
      * @private
      * @override
      */
-    _updatePercentValues: function(axesData) {
-        var chartTypes = this.chartTypes || [this.chartType],
+    _addDataRatios: function(axesData) {
+        var self = this,
+            chartTypes = this.chartTypes || [this.chartType],
             limitMap = this._getLimitMap(axesData, chartTypes),
             stackedOption = this.options.series && this.options.series.stacked;
+
         tui.util.forEachArray(chartTypes, function(chartType) {
-            this.dataProcessor.registerPercentValues(limitMap[chartType], stackedOption, chartType);
-        }, this);
+            self.dataProcessor.addDataRatios(limitMap[chartType], stackedOption, chartType);
+        });
     },
 
     /**
@@ -254,7 +258,7 @@ var axisTypeMixer = {
             }
             tooltip.on('showGroupAnimation', series.onShowGroupAnimation, series);
             tooltip.on('hideGroupAnimation', series.onHideGroupAnimation, series);
-        }, this);
+        });
     },
 
     /**
@@ -269,11 +273,15 @@ var axisTypeMixer = {
         customEvent.on('hideTooltip', tooltip.onHide, tooltip);
 
         tui.util.forEach(serieses, function(series) {
+            var showAnimationEventName, hideAnimationEventName;
+
             if (series.onShowAnimation) {
-                tooltip.on(renderUtil.makeCustomEventName('show', series.chartType, 'animation'), series.onShowAnimation, series);
-                tooltip.on(renderUtil.makeCustomEventName('hide', series.chartType, 'animation'), series.onHideAnimation, series);
+                showAnimationEventName = renderUtil.makeCustomEventName('show', series.chartType, 'animation');
+                hideAnimationEventName = renderUtil.makeCustomEventName('hide', series.chartType, 'animation');
+                tooltip.on(showAnimationEventName, series.onShowAnimation, series);
+                tooltip.on(hideAnimationEventName, series.onHideAnimation, series);
             }
-        }, this);
+        });
     },
 
     /**
@@ -284,9 +292,12 @@ var axisTypeMixer = {
      */
     _attachCustomEventForSeriesSelection: function(customEvent, serieses) {
         tui.util.forEach(serieses, function(series) {
-            customEvent.on(renderUtil.makeCustomEventName('select', series.chartType, 'series'), series.onSelectSeries, series);
-            customEvent.on(renderUtil.makeCustomEventName('unselect', series.chartType, 'series'), series.onUnselectSeries, series);
-        }, this);
+            var selectSeriesEventName = renderUtil.makeCustomEventName('select', series.chartType, 'series'),
+                unselectSeriesEventName = renderUtil.makeCustomEventName('unselect', series.chartType, 'series');
+
+            customEvent.on(selectSeriesEventName, series.onSelectSeries, series);
+            customEvent.on(unselectSeriesEventName, series.onUnselectSeries, series);
+        });
     },
 
     /**

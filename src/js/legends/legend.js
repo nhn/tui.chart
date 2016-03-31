@@ -172,10 +172,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _makeLabelsWidth: function(legendData) {
+        var self = this;
+
         return tui.util.map(legendData, function(item) {
-            var labelWidth = renderUtil.getRenderedLabelWidth(item.label, this.theme.label);
+            var labelWidth = renderUtil.getRenderedLabelWidth(item.label, self.theme.label);
             return labelWidth + chartConst.LEGEND_AREA_PADDING;
-        }, this);
+        });
     },
 
     /**
@@ -185,7 +187,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _makeLegendHtml: function(legendData) {
-        var template = legendTemplate.tplLegend,
+        var self = this,
+            template = legendTemplate.tplLegend,
             checkBoxTemplate = legendTemplate.tplCheckbox,
             labelsWidth = this._makeLabelsWidth(legendData),
             labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme),
@@ -193,10 +196,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2),
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendData, function(legendDatum, index) {
-                var rectCssText = this._makeLegendRectCssText(legendDatum, baseMarginTop),
-                    checkbox = this.options.hasCheckbox === false ? '' : checkBoxTemplate({
+                var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop),
+                    checkbox = self.options.hasCheckbox === false ? '' : checkBoxTemplate({
                         index: index,
-                        checked: this.legendModel.isCheckedIndex(index) ? ' checked' : ''
+                        checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
                     }),
                     data;
 
@@ -204,7 +207,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                     rectCssText: rectCssText,
                     height: height,
                     labelHeight: labelHeight,
-                    unselected: this.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
+                    unselected: self.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
                     labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
                     iconType: legendDatum.chartType || 'rect',
                     label: legendDatum.label,
@@ -212,7 +215,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
                     index: index
                 };
                 return template(data);
-            }, this).join('');
+            }).join('');
         return html;
     },
 
@@ -248,13 +251,14 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendSelectionEvent: function(data) {
-        var chartTypes = this.chartTypes || [data.chartType],
+        var self = this,
+            chartTypes = this.chartTypes || [data.chartType],
             index = this.legendModel.getSelectedIndex(),
             legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            this.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
-        }, this);
+            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
+        });
     },
 
     /**

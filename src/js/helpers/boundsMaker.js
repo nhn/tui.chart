@@ -38,8 +38,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          * @type {object}
          */
         this.options = params.options || {};
-
         this.options.legend = this.options.legend || {};
+        this.options.yAxis = this.options.yAxis || {};
 
         /**
          * theme
@@ -58,12 +58,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          * @type {string}
          */
         this.chartType = params.chartType;
-
-        /**
-         * chart left padding
-         * @type {number}
-         */
-        this.chartLeftPadding = chartConst.CHART_PADDING;
 
         /**
          * data processor
@@ -99,6 +93,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.axesData = {};
 
         this.xAxisDegree = 0;
+
+        /**
+         * chart left padding
+         * @type {number}
+         */
+        this.chartLeftPadding = chartConst.CHART_PADDING;
 
         if (chartOption) {
             this.options.chart = chartOption;
@@ -148,6 +148,17 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Set bound.
+     * @param {string} name component name
+     * @param {bound} bound component bound
+     * @private
+     */
+    _setBound: function(name, bound) {
+        this.dimensions[name] = bound.dimension;
+        this.positions[name] = bound.position;
+    },
+
+    /**
      * Get dimension.
      * @param {string} name component name
      * @returns {dimension} component dimension
@@ -172,9 +183,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _registerChartDimension: function() {
         var chartOptions = this.options.chart || {},
             dimension = {
-            width: chartOptions.width || chartConst.CHART_DEFAULT_WIDTH,
-            height: chartOptions.height || chartConst.CHART_DEFAULT_HEIGHT
-        };
+                width: chartOptions.width || chartConst.CHART_DEFAULT_WIDTH,
+                height: chartOptions.height || chartConst.CHART_DEFAULT_HEIGHT
+            };
 
         this._registerDimension('chart', dimension);
     },
@@ -185,9 +196,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _registerTitleDimension: function() {
         var chartOptions = this.options.chart || {},
+            titleHeight = renderUtil.getRenderedLabelHeight(chartOptions.title, this.theme.title),
             dimension = {
-            height: renderUtil.getRenderedLabelHeight(chartOptions.title, this.theme.title) + chartConst.TITLE_PADDING
-        };
+                height: titleHeight + chartConst.TITLE_PADDING
+            };
 
         this._registerDimension('title', dimension);
     },
@@ -219,11 +231,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             halfHeight = labelHeight / 2;
 
         tui.util.forEachArray(chartConst.DEGREE_CANDIDATES, function(degree) {
-            var compareWidth = (calculator.calculateAdjacent(degree, halfWidth) + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, halfHeight)) * 2;
+            var compareWidth = (calculator.calculateAdjacent(degree, halfWidth) +
+                calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, halfHeight)) * 2;
+
             foundDegree = degree;
             if (compareWidth <= limitWidth + chartConst.XAXIS_LABEL_COMPARE_MARGIN) {
                 return false;
             }
+
+            return true;
         });
 
         return foundDegree;
@@ -271,7 +287,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, this.theme.xAxis.label),
             newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
                 + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
-            diffLeft = newLabelWidth - this.getDimension('yAxis').width;
+            yAxisWidth = this.options.yAxis.isCenter ? 0 : this.getDimension('yAxis').width,
+            diffLeft = newLabelWidth - yAxisWidth;
         return diffLeft;
     },
 
@@ -285,7 +302,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.chartLeftPadding += overflowLeft;
             this.dimensions.plot.width -= overflowLeft;
             this.dimensions.series.width -= overflowLeft;
+            this.dimensions.customEvent.width -= overflowLeft;
             this.dimensions.xAxis.width -= overflowLeft;
+            this.positions.series.left += overflowLeft;
         }
     },
 
@@ -315,7 +334,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var degree = rotationInfo.degree,
             maxLabelWidth = rotationInfo.maxLabelWidth,
             labelHeight = rotationInfo.labelHeight,
-            axisHeight = (calculator.calculateOpposite(degree, maxLabelWidth / 2) + calculator.calculateOpposite(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
+            axisHeight = (calculator.calculateOpposite(degree, maxLabelWidth / 2) +
+                calculator.calculateOpposite(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
+
         return axisHeight;
     },
 
@@ -356,6 +377,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _updateDimensionsHeight: function(diffHeight) {
         this.dimensions.plot.height -= diffHeight;
         this.dimensions.series.height -= diffHeight;
+        this.dimensions.customEvent.height -= diffHeight;
+        this.dimensions.tooltip.height -= diffHeight;
         this.dimensions.yAxis.height -= diffHeight;
         this.dimensions.rightYAxis.height -= diffHeight;
         this.dimensions.xAxis.height += diffHeight;
@@ -396,8 +419,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _makePlotDimension: function() {
         var seriesDimension = this.getDimension('series');
         return {
-            width: seriesDimension.width + chartConst.HIDDEN_WIDTH,
-            height: seriesDimension.height + chartConst.HIDDEN_WIDTH
+            width: seriesDimension.width,
+            height: seriesDimension.height + chartConst.OVERLAPPING_WIDTH
         };
     },
 
@@ -428,7 +451,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {number} series width
      */
     makeSeriesWidth: function() {
-        var legendWidth, rightAreaWidth;
+        var chartWidth = this.getDimension('chart').width,
+            yAxisWidth = this.getDimension('yAxis').width,
+            legendWidth, rightAreaWidth;
 
         if (predicate.isHorizontalLegend(this.options.legend.align)) {
             legendWidth = 0;
@@ -438,7 +463,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         rightAreaWidth = legendWidth + this.getDimension('rightYAxis').width;
 
-        return this.getDimension('chart').width - (chartConst.CHART_PADDING * 2) - this.getDimension('yAxis').width - rightAreaWidth;
+        return chartWidth - (chartConst.CHART_PADDING * 2) - yAxisWidth - rightAreaWidth;
     },
 
     /**
@@ -446,7 +471,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {number} series height
      */
     makeSeriesHeight: function() {
-        var legendHeight, bottomAreaWidth;
+        var chartHeight = this.getDimension('chart').height,
+            titleHeight = this.getDimension('title').height,
+            legendHeight, bottomAreaWidth;
 
         if (predicate.isHorizontalLegend(this.options.legend.align)) {
             legendHeight = this.getDimension('legend').height;
@@ -456,7 +483,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         bottomAreaWidth = legendHeight + this.dimensions.xAxis.height;
 
-        return this.getDimension('chart').height - (chartConst.CHART_PADDING * 2) - this.getDimension('title').height - bottomAreaWidth;
+        return chartHeight - (chartConst.CHART_PADDING * 2) - titleHeight - bottomAreaWidth;
     },
 
     /**
@@ -485,31 +512,33 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register axes type component positions.
-     * @param {position} seriesPosition series position
      * @param {number} leftLegendWidth legend width
      * @private
      */
-    _registerAxisComponentsPosition: function(seriesPosition, leftLegendWidth) {
-        var seriesDimension = this.getDimension('series');
+    _registerAxisComponentsPosition: function(leftLegendWidth) {
+        var seriesPosition = this.getPosition('series'),
+            seriesDimension = this.getDimension('series'),
+            yAxisWidth = this.getDimension('yAxis').width,
+            leftAreaWidth = yAxisWidth + seriesDimension.width + leftLegendWidth;
 
-        this.positions['plot'] = {
+        this.positions.plot = {
             top: seriesPosition.top,
-            left: seriesPosition.left - chartConst.HIDDEN_WIDTH
+            left: seriesPosition.left
         };
 
-        this.positions['yAxis'] = {
+        this.positions.yAxis = {
             top: seriesPosition.top,
             left: this.chartLeftPadding + leftLegendWidth
         };
 
-        this.positions['xAxis'] = {
+        this.positions.xAxis = {
             top: seriesPosition.top + seriesDimension.height,
-            left: seriesPosition.left - chartConst.HIDDEN_WIDTH
+            left: seriesPosition.left
         };
 
-        this.positions['rightYAxis'] = {
+        this.positions.rightYAxis = {
             top: seriesPosition.top,
-            left: this.chartLeftPadding + this.getDimension('yAxis').width + seriesDimension.width + leftLegendWidth - chartConst.HIDDEN_WIDTH
+            left: this.chartLeftPadding + leftAreaWidth - chartConst.OVERLAPPING_WIDTH
         };
     },
 
@@ -520,21 +549,23 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _makeLegendPosition: function() {
         var dimensions = this.dimensions,
-            sereisDimension = this.getDimension('series'),
+            seriesDimension = this.getDimension('series'),
             legendOption = this.options.legend,
             top = dimensions.title.height,
-            left;
+            yAxisAreaWidth, left;
 
-        if (predicate.isBottomLegendAlign(legendOption.align)) {
-            top += sereisDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
+        if (predicate.isLegendAlignBottom(legendOption.align)) {
+            top += seriesDimension.height + this.getDimension('xAxis').height + chartConst.LEGEND_AREA_PADDING;
         }
 
         if (predicate.isHorizontalLegend(legendOption.align)) {
-            left = (this.getDimension('chart').width - this.getDimension('legend').width) / 2;
-        } else if (predicate.isLeftLegendAlign(legendOption.align)) {
+            left = ((this.getDimension('chart').width - this.getDimension('legend').width) / 2)
+                - chartConst.LEGEND_AREA_PADDING;
+        } else if (predicate.isLegendAlignLeft(legendOption.align)) {
             left = 0;
         } else {
-            left = this.getDimension('yAxis').width + sereisDimension.width + this.getDimension('rightYAxis').width + this.chartLeftPadding;
+            yAxisAreaWidth = this.getDimension('yAxis').width + this.getDimension('rightYAxis').width;
+            left = seriesDimension.width + yAxisAreaWidth + this.chartLeftPadding;
         }
 
         return {
@@ -545,26 +576,25 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register essential components positions.
-     * @param {position} seriesPosition series position
      * @private
      */
-    _registerEssentialComponentsPositions: function(seriesPosition) {
-        var tooltipPosition;
+    _registerEssentialComponentsPositions: function() {
+        var seriesPosition = this.getPosition('series'),
+            tooltipPosition;
 
-        this.positions['series'] = seriesPosition;
-        this.positions['customEvent']= seriesPosition;
-        this.positions['legend'] = this._makeLegendPosition();
+        this.positions.customEvent = tui.util.extend({}, seriesPosition);
+        this.positions.legend = this._makeLegendPosition();
 
         if (this.hasAxes) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
-            }
+            };
         } else {
             tooltipPosition = seriesPosition;
         }
 
-        this.positions['tooltip'] = tooltipPosition;
+        this.positions.tooltip = tooltipPosition;
     },
 
     /**
@@ -574,31 +604,74 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _registerPositions: function() {
         var alignOption = this.options.legend.align,
             legendDimension = this.getDimension('legend'),
-            topLegendHeight = predicate.isTopLegendAlign(alignOption) ? legendDimension.height : 0,
-            leftLegendWidth = predicate.isLeftLegendAlign(alignOption) ? legendDimension.width : 0,
+            topLegendHeight = predicate.isLegendAlignTop(alignOption) ? legendDimension.height : 0,
+            leftLegendWidth = predicate.isLegendAlignLeft(alignOption) ? legendDimension.width : 0,
             seriesPosition = {
                 top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-                left: this.getDimension('yAxis').width + this.chartLeftPadding + leftLegendWidth
+                left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
             };
+
+        this.positions.series = seriesPosition;
 
         if (this.hasAxes) {
             this._updateDimensionsAndDegree();
-            this._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+            this._registerAxisComponentsPosition(leftLegendWidth);
         }
 
-        this._registerEssentialComponentsPositions(seriesPosition);
+        this._registerEssentialComponentsPositions();
+    },
+
+    /**
+     * Register bound of extended series for rendering.
+     * @private
+     */
+    _registerExtendedSeriesBound: function() {
+        var seriesBound = this.getBound('series'),
+            expandedBound = this.hasAxes ? renderUtil.expandBound(seriesBound) : seriesBound;
+
+        this._setBound('extendedSeries', expandedBound);
+    },
+
+    /**
+     * Update bounds(positions, dimensions) of components for center option of yAxis.
+     * @private
+     */
+    _updateBoundsForYAxisCenterOption: function() {
+        var yAxisWidth = this.getDimension('yAxis').width,
+            yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH,
+            xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
+
+        this.dimensions.extendedSeries.width += yAxisWidth;
+        this.dimensions.xAxis.width += chartConst.OVERLAPPING_WIDTH;
+        this.dimensions.plot.width += yAxisWidth + chartConst.OVERLAPPING_WIDTH;
+        this.dimensions.customEvent.width += yAxisWidth;
+        this.dimensions.tooltip.width += yAxisWidth;
+
+        this.positions.series.left -= yAxisWidth;
+        this.positions.extendedSeries.left -= xAxisDecreasingLeft;
+        this.positions.plot.left -= xAxisDecreasingLeft;
+        this.positions.yAxis.left += yAxisExtensibleLeft;
+        this.positions.xAxis.left -= xAxisDecreasingLeft;
+        this.positions.customEvent.left -= xAxisDecreasingLeft;
+        this.positions.tooltip.left -= xAxisDecreasingLeft;
     },
 
     /**
      * Register bounds data.
-     * @param {{xAxis: object, yAxis: object, rightYAxis: ?object}} axesData axes data
      */
     registerBoundsData: function() {
         this._registerCenterComponentsDimension();
+
         if (this.hasAxes) {
             this._registerAxisComponentsDimension();
         }
+
         this._registerPositions();
+        this._registerExtendedSeriesBound();
+
+        if (this.options.yAxis.isCenter) {
+            this._updateBoundsForYAxisCenterOption();
+        }
     }
 });
 

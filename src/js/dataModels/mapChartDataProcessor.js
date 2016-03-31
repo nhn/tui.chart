@@ -7,43 +7,51 @@
 'use strict';
 
 var DataProcessor = require('./dataProcessor'),
-    renderUtil = require('./renderUtil');
+    renderUtil = require('../helpers/renderUtil');
 
 /**
- * Raw data.
- * @typedef {Array.<{name: string, data: Array.<number>}>} rawSeriesData
+ * Raw series data.
+ * @typedef {Array.<{code: string, name: ?string, data: number}>} rawSeriesData
  */
 
 /**
- * @classdesc Data processor for map chart.
- * @class MapChartDataProcessor
+ * Value map.
+ * @typedef {{value: number, formattedValue: string, name: ?string}} valueMap
  */
+
 var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapChartDataProcessor.prototype */{
     /**
-     * Process raw data.
-     * @param {{series: Array.<{code: string, name: ?string, data: number}>}} rawData raw data
-     * @param {{chart: {format: string}}} options options
+     * Data processor for map chart.
+     * @constructs MapChartDataProcessor
+     * @extends DataProcessor
      */
-    process: function(rawData, options) {
-        var seriesData = rawData.series,
-            valueMap = this._makeValueMap(seriesData, options);
+    init: function() {
+        DataProcessor.apply(this, arguments);
+    },
 
-        this.data = {
-            valueMap: valueMap
-        };
+    /**
+     * Update raw data.
+     * @param {{series: rawSeriesData}} rawData raw data
+     */
+    updateRawData: function(rawData) {
+        this.rawData = rawData;
+
+        /**
+         * value map
+         * @type {valueMap}
+         */
+        this.valueMap = null;
     },
 
     /**
      * Make value map.
-     * @param {Array.<{code: string, name: ?string, data: number}>} rawSeriesData raw series data
-     * @param {{chart: {format: string}}} options options
-     * @returns {{value: number, formattedValue: string, name: ?string}} value map
+     * @returns {valueMap} value map
      * @private
      */
-    _makeValueMap: function(rawSeriesData, options) {
-        var valueMap = {},
-            format = options.chart && options.chart.format || '',
-            formatFunctions = this._findFormatFunctions(format);
+    _makeValueMap: function() {
+        var rawSeriesData = this.rawData.series,
+            valueMap = {},
+            formatFunctions = this._findFormatFunctions();
 
         tui.util.forEachArray(rawSeriesData, function(datum) {
             var result = {
@@ -70,7 +78,10 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
      * @returns {number} value
      */
     getValueMap: function() {
-        return this.data.valueMap;
+        if (!this.valueMap) {
+            this.valueMap = this._makeValueMap();
+        }
+        return this.valueMap;
     },
 
     /**
@@ -78,28 +89,29 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
      * @returns {Array.<number>} picked values.
      */
     getValues: function() {
-        return tui.util.pluck(this.data.valueMap, 'value');
+        return tui.util.pluck(this.getValueMap(), 'value');
     },
 
     /**
      * Get valueMap datum.
      * @param {string} code map code
-     * @returns {{code: string, name: string, formattedValue: number, labelCoordinate: {x: number, y: number}}} valueMap datum
+     * @returns {{code: string, name: string, formattedValue: number,
+     *              labelCoordinate: {x: number, y: number}}} valueMap datum
      */
     getValueMapDatum: function(code) {
-        return this.data.valueMap[code];
+        return this.getValueMap()[code];
     },
 
     /**
-     * Make percent value.
+     * Add data ratios of map chart.
      * @param {{min: number, max: number}} limit axis limit
      */
-    registerPercentValues: function(limit) {
+    addDataRatios: function(limit) {
         var min = limit.min,
             max = limit.max - min;
         tui.util.forEach(this.getValueMap(), function(map) {
-            map.percentValue = (map.value - min) / max;
-        }, this);
+            map.ratio = (map.value - min) / max;
+        });
     }
 });
 

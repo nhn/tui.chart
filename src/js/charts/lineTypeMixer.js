@@ -21,7 +21,6 @@ var lineTypeMixer = {
      * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
-     * @param {object} initedData initialized data from combo chart
      * @private
      */
     _lineTypeInit: function(rawData, theme, options) {
@@ -43,6 +42,10 @@ var lineTypeMixer = {
      */
     _makeAxesData: function() {
         var options = this.options,
+            axisScaleMaker = this._createAxisScaleMaker({
+                min: options.yAxis.min,
+                max: options.yAxis.max
+            }),
             aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
@@ -50,15 +53,8 @@ var lineTypeMixer = {
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                values: this.dataProcessor.getGroupValues(),
-                seriesDimension: {
-                    height: this.boundsMaker.makeSeriesHeight()
-                },
-                stackedOption: options.series && options.series.stacked || '',
-                chartType: options.chartType,
-                formatFunctions: this.dataProcessor.getFormatFunctions(),
-                options: options.yAxis,
-                isVertical: true,
+                axisScaleMaker: axisScaleMaker,
+                isVertical: this.isVertical,
                 aligned: aligned
             });
 

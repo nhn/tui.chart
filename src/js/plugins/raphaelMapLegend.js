@@ -6,6 +6,7 @@
 
 'use strict';
 
+/*eslint no-magic-numbers: 0*/
 
 var raphael = window.Raphael;
 

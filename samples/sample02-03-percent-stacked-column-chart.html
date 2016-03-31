@@ -49,7 +49,8 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "Monthly Revenue"
+        "title": "Monthly Revenue",
+        "format": "1,000"
     },
     "yAxis": {
         "title": "Amount"
@@ -67,7 +68,7 @@
 }
         </textarea>
         <div class="btn-area">
-            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-options')">More Options</button>
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
         </div>
     </div>
     <div id="theme-area">
@@ -88,7 +89,7 @@
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
-<script src="dist/chart.min.js"></script>
+<script src="../dist/chart.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
@@ -117,7 +118,8 @@
             chart: {
                 width: 700,
                 height: 400,
-                title: 'Monthly Revenue'
+                title: 'Monthly Revenue',
+                format: '1,000'
             },
             yAxis: {
                 title: 'Amount'

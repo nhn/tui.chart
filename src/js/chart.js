@@ -40,7 +40,7 @@ tui.util.defineNamespace('tui.chart');
  *     min: number
  *   },
  *   xAxis: {
- *     title: strig,
+ *     title: string,
  *     min: number
  *   },
  *   tooltip: {
@@ -55,6 +55,8 @@ tui.util.defineNamespace('tui.chart');
  */
 _createChart = function(container, data, options) {
     var themeName, theme, chart;
+
+    data = JSON.parse(JSON.stringify(data));
     options = options ? JSON.parse(JSON.stringify(options)) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
@@ -81,7 +83,7 @@ _createChart = function(container, data, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.labelInterval label interval of vertical axis
+ *          @param {string} options.yAxis.align align option for diverging option
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of horizontal axis
@@ -594,6 +596,7 @@ tui.chart.pieChart = function(container, data, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
  *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
  *          @param {string} options.tooltip.align tooltip align option
  *          @param {object} options.tooltip.position relative position
@@ -662,7 +665,7 @@ tui.chart.mapChart = function(container, data, options) {
  *              @param {number} theme.yAxis.label.fontSize font size of vertical axis label
  *              @param {string} theme.yAxis.label.fontFamily font family of vertical axis label
  *              @param {string} theme.yAxis.label.color font color of vertical axis label
- *          @param {string} theme.yAxis.tickcolor color of vertical axis tick
+ *          @param {string} theme.yAxis.tickColor color of vertical axis tick
  *      @param {object} theme.xAxis theme of horizontal axis
  *          @param {object} theme.xAxis.title theme of horizontal axis title
  *              @param {number} theme.xAxis.title.fontSize font size of horizontal axis title
@@ -672,7 +675,7 @@ tui.chart.mapChart = function(container, data, options) {
  *              @param {number} theme.xAxis.label.fontSize font size of horizontal axis label
  *              @param {string} theme.xAxis.label.fontFamily font family of horizontal axis label
  *              @param {string} theme.xAxis.label.color font color of horizontal axis label
- *          @param {string} theme.xAxis.tickcolor color of horizontal axis tick
+ *          @param {string} theme.xAxis.tickColor color of horizontal axis tick
  *      @param {object} theme.plot plot theme
  *          @param {string} theme.plot.lineColor plot line color
  *          @param {string} theme.plot.background plot background
@@ -736,7 +739,6 @@ tui.chart.registerTheme = function(themeName, theme) {
 /**
  * Register map.
  * @param {string} mapName map name
- * @param {{width: number, height: number}} dimension map dimension
  * @param {Array.<{code: string, name: string, path: string}>} data map data
  * @api
  * @example

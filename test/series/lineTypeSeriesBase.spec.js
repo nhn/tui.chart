@@ -7,6 +7,8 @@
 'use strict';
 
 var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
+    ItemGroup = require('../../src/js/dataModels/itemGroup'),
+    Items = require('../../src/js/dataModels/items'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
@@ -18,32 +20,42 @@ describe('LineTypeSeriesBase', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
         makeSeriesLabelHtml = jasmine.createSpy('makeSeriesLabelHtml').and.returnValue('<div></div>');
-        _getPercentValues = jasmine.createSpy('_getPercentValues').and.returnValue([]);
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormattedGroupValues', 'getFirstFormattedValue']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
     beforeEach(function() {
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
-        series._getPercentValues = _getPercentValues;
         series.dataProcessor = dataProcessor;
         series.boundsMaker = boundsMaker;
     });
 
     describe('_makeBasicPositions()', function() {
-        it('라인차트의 position 정보를 생성합니다.', function () {
-            var actual;
+        it('라인차트의 position 정보를 생성합니다.', function() {
+            var itemGroup = new ItemGroup(),
+                actual;
 
-            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
-            series.data = {
-                aligned: false
-            };
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.pivotGroups = [
+                new Items([{
+                    ratio: 0.25
+                }, {
+                    ratio: 0.5
+                }, {
+                    ratio: 0.4
+                }])
+            ];
+            spyOn(itemGroup, 'getGroupCount').and.returnValue(3);
             boundsMaker.getDimension.and.returnValue({
                 width: 300,
                 height: 200
             });
+            series.data = {
+                aligned: false
+            };
             actual = series._makeBasicPositions();
+
             expect(actual).toEqual([
                 [
                     {
@@ -62,10 +74,21 @@ describe('LineTypeSeriesBase', function() {
             ]);
         });
 
-        it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function () {
-            var actual;
+        it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function() {
+            var itemGroup = new ItemGroup(),
+                actual;
 
-            series._getPercentValues.and.returnValue([[0.25, 0.5, 0.4]]);
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.pivotGroups = [
+                new Items([{
+                    ratio: 0.25
+                }, {
+                    ratio: 0.5
+                }, {
+                    ratio: 0.4
+                }])
+            ];
+            spyOn(itemGroup, 'getGroupCount').and.returnValue(3);
             series.data = {
                 aligned: true
             };
@@ -142,18 +165,24 @@ describe('LineTypeSeriesBase', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
-            var elLabelArea = dom.create('div');
+            var elLabelArea = dom.create('div'),
+                itemGroup = new ItemGroup();
+
+            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            itemGroup.pivotGroups = [
+                new Items([{
+                    formattedValue: '1.5'
+                }, {
+                    formattedValue: '2.2'
+                }])
+            ];
             series.options = {
                 showLabel: true
             };
             series.theme = {
                 label: {}
             };
-
-            dataProcessor.getFormattedGroupValues.and.returnValue([
-                ['1.5'], ['2.2']
-            ]);
-            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
             series.seriesData = {
                 groupPositions: [
                     [

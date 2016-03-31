@@ -47,24 +47,53 @@ describe('RaphaelBarChart', function() {
 
     describe('_makeTopLinePath()', function() {
         it('top 영역의 line path를 구합니다.', function() {
-            var actual = barChart._makeTopLinePath({
-                    left: 10,
-                    top: 10
-                }, {
-                    left: 50,
-                    top: 10
-                }, 'bar'),
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'bar', {}),
                 expected = 'M 10 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
-        it('top 영역의 line path의 left 정보는 column차트이거나 음수일 경우에는 1만큼 더 빼줍니다.', function() {
-            var actual = barChart._makeTopLinePath({
-                    left: 10,
-                    top: 10
-                }, {
-                    left: 50,
-                    top: 10
-                }, 'column'),
+
+        it('top 영역의 line path의 left 정보는 column차트일 경우에는 1만큼 더 빼줍니다.', function() {
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'column', {
+                    value: 1
+                }),
+                expected = 'M 9 9.5 L 50 9.5';
+            expect(actual).toBe(expected);
+        });
+
+        it('top 영역의 line path의 left 정보는 bar차트이면서 음수인 경우에도 1만큼 더 빼줍니다.', function() {
+            var points = {
+                    leftTop: {
+                        left: 10,
+                        top: 10
+                    },
+                    rightTop: {
+                        left: 50,
+                        top: 10
+                    }
+                },
+                actual = barChart._makeTopLinePath(points, 'bar', {
+                    value: -1
+                }),
                 expected = 'M 9 9.5 L 50 9.5';
             expect(actual).toBe(expected);
         });
@@ -77,12 +106,31 @@ describe('RaphaelBarChart', function() {
                 top: 10,
                 width: 100,
                 height: 50
-            }, 'bar', 10);
+            }, 'bar', {
+                value: 10
+            });
 
             expect(actual.top).toBeDefined();
             expect(actual.right).toBeDefined();
             expect(actual.bottom).toBeDefined();
             expect(actual.left).not.toBeDefined();
+        });
+
+        it('bar 차트이면서 value가 양수인 경우라 하더라도 range item 일 경우에는 left path 정보도 반환합니다.', function() {
+            var actual = barChart._makeBorderLinesPaths({
+                left: 10,
+                top: 10,
+                width: 100,
+                height: 50
+            }, 'bar', {
+                value: 10,
+                isRange: true
+            });
+
+            expect(actual.top).toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).toBeDefined();
         });
 
         it('bar 차트이면서 value가 음수인 경우에는 top, bottom, left의 path 정보를 반환합니다.', function() {
@@ -91,10 +139,29 @@ describe('RaphaelBarChart', function() {
                 top: 10,
                 width: 100,
                 height: 50
-            }, 'bar', -10);
+            }, 'bar', {
+                value: -10
+            });
 
             expect(actual.top).toBeDefined();
             expect(actual.right).not.toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).toBeDefined();
+        });
+
+        it('bar 차트이면서 value가 음수인 경우라 하더라도 range item 일 경우에는 right path 정보도 반환합니다.', function() {
+            var actual = barChart._makeBorderLinesPaths({
+                left: 10,
+                top: 10,
+                width: 100,
+                height: 50
+            }, 'bar', {
+                value: -10,
+                isRange: true
+            });
+
+            expect(actual.top).toBeDefined();
+            expect(actual.right).toBeDefined();
             expect(actual.bottom).toBeDefined();
             expect(actual.left).toBeDefined();
         });
@@ -105,11 +172,30 @@ describe('RaphaelBarChart', function() {
                 top: 10,
                 width: 100,
                 height: 50
-            }, 'column', 10);
+            }, 'column', {
+                value: 10
+            });
 
             expect(actual.top).toBeDefined();
             expect(actual.right).toBeDefined();
             expect(actual.bottom).not.toBeDefined();
+            expect(actual.left).toBeDefined();
+        });
+
+        it('column 차트이면서 value가 양수인 경우라 하더라도 range item 일 경우에는 bottom path 정보도 반환합니다.', function() {
+            var actual = barChart._makeBorderLinesPaths({
+                left: 10,
+                top: 10,
+                width: 100,
+                height: 50
+            }, 'column', {
+                value: 10,
+                isRange: true
+            });
+
+            expect(actual.top).toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).toBeDefined();
             expect(actual.left).toBeDefined();
         });
 
@@ -119,9 +205,28 @@ describe('RaphaelBarChart', function() {
                 top: 10,
                 width: 100,
                 height: 50
-            }, 'column', -10);
+            }, 'column', {
+                value: -10
+            });
 
             expect(actual.top).not.toBeDefined();
+            expect(actual.right).toBeDefined();
+            expect(actual.bottom).toBeDefined();
+            expect(actual.left).toBeDefined();
+        });
+
+        it('column 차트이면서 value가 음수인 경우라 하더라도 range item 일 경우에는 top path 정보도 반환합니다.', function() {
+            var actual = barChart._makeBorderLinesPaths({
+                left: 10,
+                top: 10,
+                width: 100,
+                height: 50
+            }, 'column', {
+                value: -10,
+                isRange: true
+            });
+
+            expect(actual.top).toBeDefined();
             expect(actual.right).toBeDefined();
             expect(actual.bottom).toBeDefined();
             expect(actual.left).toBeDefined();

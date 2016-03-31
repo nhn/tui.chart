@@ -22,13 +22,13 @@ var htmls = {
         '{{ items }}' +
     '</div>',
     HTML_GROUP_ITEM: '<div>' +
-        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>&nbsp;<span>{{ legend }}</span>:' +
-        '&nbsp;<span>{{ value }}</span>' +
+        '<div class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></div>' +
+        '&nbsp;<span>{{ legend }}</span>:&nbsp;<span>{{ value }}</span>' +
         '<span>{{ suffix }}</span>' +
     '</div>',
     GROUP_CSS_TEXT: 'background-color:{{ color }}',
     HTML_MAP_CHART_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div>{{ name }}: {{ value }}</div>' +
+        '<div>{{ name }}: {{ value }}{{ suffix }}</div>' +
     '</div>'
 };
 

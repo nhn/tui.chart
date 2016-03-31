@@ -6,36 +6,15 @@
 
 'use strict';
 
-var predicate = require('../helpers/predicate');
+var chartConst = require('../const'),
+    rawDataHandler = require('../helpers/rawDataHandler'),
+    predicate = require('../helpers/predicate');
 
 /**
  * barTypeMixer is mixer of bar type chart(bar, column).
  * @mixin
  */
 var barTypeMixer = {
-
-    /**
-     * Pick stacks.
-     * @param {Array.<{stack: string}>} rawSeriesData raw series data
-     * @returns {Array.<string>} stacks
-     * @private
-     */
-    _pickStacks: function(rawSeriesData) {
-        var stacks;
-
-        stacks = tui.util.map(rawSeriesData, function(seriesDatum) {
-            return seriesDatum.stack;
-        });
-
-        stacks = tui.util.filter(stacks, function(stack) {
-            return !!stack;
-        });
-
-        stacks = tui.util.unique(stacks).slice(0, 2);
-
-        return stacks;
-    },
-
     /**
      * Make minus values.
      * @param {Array.<number>} data number data
@@ -85,20 +64,24 @@ var barTypeMixer = {
      * @private
      */
     _makeStackedDivergingRawSeriesData: function(rawSeriesData) {
-        var result = [],
-            stacks = this._pickStacks(rawSeriesData),
+        var self = this,
+            stacks = rawDataHandler.pickStacks(rawSeriesData),
+            result = [],
             leftStack = stacks[0],
             rightStack = stacks[1];
 
+        rawSeriesData = rawDataHandler.sortSeriesData(rawSeriesData, stacks);
+
         tui.util.forEachArray(rawSeriesData, function(seriesDatum) {
-            if (seriesDatum.stack === leftStack) {
-                seriesDatum.data = this._makeMinusValues(seriesDatum.data);
+            var stack = seriesDatum.stack || chartConst.DEFAULT_STACK;
+            if (stack === leftStack) {
+                seriesDatum.data = self._makeMinusValues(seriesDatum.data);
                 result.push(seriesDatum);
-            } else if (seriesDatum.stack === rightStack) {
-                seriesDatum.data = this._makePlusValues(seriesDatum.data);
+            } else if (stack === rightStack) {
+                seriesDatum.data = self._makePlusValues(seriesDatum.data);
                 result.push(seriesDatum);
             }
-        }, this);
+        });
         return result;
     },
 
@@ -117,6 +100,18 @@ var barTypeMixer = {
         }
 
         return rawSeriesData;
+    },
+
+    /**
+     * Sort raw series data from stacks.
+     * @param {Array.<{data: Array.<number>, stack: string}>} rawSeriesData raw series data
+     * @returns {Array.<{data: Array.<number>, stack: string}>}
+     * @private
+     */
+    _sortRawSeriesData: function(rawSeriesData) {
+        var stacks = rawDataHandler.pickStacks(rawSeriesData);
+
+        return rawDataHandler.sortSeriesData(rawSeriesData, stacks);
     },
 
     /**

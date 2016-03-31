@@ -228,8 +228,16 @@ describe('boundsMaker', function() {
                 series: {
                     width: 199
                 },
+                customEvent: {
+                    width: 199
+                },
                 xAxis: {
                     width: 200
+                }
+            };
+            boundsMaker.positions = {
+                series: {
+                    left: 0
                 }
             };
 
@@ -239,7 +247,9 @@ describe('boundsMaker', function() {
             expect(boundsMaker.chartLeftPadding).toBe(60);
             expect(boundsMaker.getDimension('plot').width).toBe(150);
             expect(boundsMaker.getDimension('series').width).toBe(149);
+            expect(boundsMaker.getDimension('customEvent').width).toBe(149);
             expect(boundsMaker.getDimension('xAxis').width).toBe(150);
+            expect(boundsMaker.getPosition('series').left).toBe(50);
         });
     });
 
@@ -319,6 +329,12 @@ describe('boundsMaker', function() {
                 series: {
                     height: 200
                 },
+                customEvent: {
+                    height: 200
+                },
+                tooltip: {
+                    height: 200
+                },
                 xAxis: {
                     height: 50
                 },
@@ -333,6 +349,8 @@ describe('boundsMaker', function() {
 
             expect(boundsMaker.getDimension('plot').height).toBe(150);
             expect(boundsMaker.getDimension('series').height).toBe(150);
+            expect(boundsMaker.getDimension('customEvent').height).toBe(150);
+            expect(boundsMaker.getDimension('tooltip').height).toBe(150);
             expect(boundsMaker.getDimension('xAxis').height).toBe(100);
             expect(boundsMaker.getDimension('yAxis').height).toBe(150);
             expect(boundsMaker.getDimension('rightYAxis').height).toBe(150);
@@ -350,8 +368,8 @@ describe('boundsMaker', function() {
 
             actual = boundsMaker._makePlotDimension();
             expected = {
-                width: 200 + chartConst.HIDDEN_WIDTH,
-                height: 100 + chartConst.HIDDEN_WIDTH
+                width: 200,
+                height: 101
             };
 
             expect(actual).toEqual(expected);
@@ -475,7 +493,7 @@ describe('boundsMaker', function() {
     });
 
     describe('_makeSeriesDimension()', function() {
-        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('세로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.dimensions = {
@@ -508,7 +526,7 @@ describe('boundsMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function () {
+        it('가로 범례의 series 영역의 너비, 높이를 계산하여 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.dimensions = {
@@ -567,11 +585,7 @@ describe('boundsMaker', function() {
 
     describe('_registerAxisComponentsPosition()', function() {
         it('시리즈 position과 leftLegendWidth 정보를 이용하여 axis를 구성하는 components들의 position정보를 등록합니다.', function() {
-            var seriesPosition = {
-                    left: 50,
-                    top: 50
-                },
-                leftLegendWidth = 0;
+            var leftLegendWidth = 0;
 
             boundsMaker.dimensions.series = {
                 width: 300,
@@ -580,15 +594,19 @@ describe('boundsMaker', function() {
             boundsMaker.dimensions.yAxis = {
                 width: 30
             };
+            boundsMaker.positions.series = {
+                left: 50,
+                top: 50
+            };
 
-            boundsMaker._registerAxisComponentsPosition(seriesPosition, leftLegendWidth);
+            boundsMaker._registerAxisComponentsPosition(leftLegendWidth);
 
             expect(boundsMaker.getPosition('plot').top).toBe(50);
-            expect(boundsMaker.getPosition('plot').left).toBe(49);
+            expect(boundsMaker.getPosition('plot').left).toBe(50);
             expect(boundsMaker.getPosition('yAxis').top).toBe(50);
             expect(boundsMaker.getPosition('yAxis').left).toBe(10);
             expect(boundsMaker.getPosition('xAxis').top).toBe(250);
-            expect(boundsMaker.getPosition('xAxis').left).toBe(49);
+            expect(boundsMaker.getPosition('xAxis').left).toBe(50);
             expect(boundsMaker.getPosition('rightYAxis').top).toBe(50);
             expect(boundsMaker.getPosition('rightYAxis').left).toBe(339);
         });
@@ -659,27 +677,92 @@ describe('boundsMaker', function() {
 
     describe('_registerEssentialComponentsPositions()', function() {
         it('계산된 series position정보를 이용하여 필수 component들의 position을 등록합니다.', function() {
-            var seriesPosition = {
-                left: 50,
-                top: 50
-            };
-
             spyOn(boundsMaker, '_makeLegendPosition').and.returnValue({
                 top: 30,
                 left: 250
             });
 
             boundsMaker.hasAxes = true;
-            boundsMaker._registerEssentialComponentsPositions(seriesPosition);
+            boundsMaker.positions.series = {
+                left: 50,
+                top: 50
+            };
+            boundsMaker._registerEssentialComponentsPositions();
 
-            expect(boundsMaker.getPosition('series').top).toBe(50);
-            expect(boundsMaker.getPosition('series').left).toBe(50);
             expect(boundsMaker.getPosition('customEvent').top).toBe(50);
             expect(boundsMaker.getPosition('customEvent').left).toBe(50);
             expect(boundsMaker.getPosition('legend').top).toBe(30);
             expect(boundsMaker.getPosition('legend').left).toBe(250);
             expect(boundsMaker.getPosition('tooltip').top).toBe(40);
             expect(boundsMaker.getPosition('tooltip').left).toBe(40);
+        });
+    });
+
+    describe('_updateBoundsForYAxisCenterOption()', function() {
+        it('yAxis 중앙정렬을 위해 각종 컴포넌트들의 bounds를 갱신합니다.', function() {
+            boundsMaker.dimensions = {
+                extendedSeries: {
+                    width: 300
+                },
+                xAxis: {
+                    width: 300
+                },
+                plot: {
+                    width: 300
+                },
+                customEvent: {
+                    width: 300
+                },
+                tooltip: {
+                    width: 300
+                }
+            };
+            boundsMaker.positions = {
+                series: {
+                    left: 50
+                },
+                extendedSeries: {
+                    left: 50
+                },
+                plot: {
+                    left: 50
+                },
+                yAxis: {
+                    left: 50
+                },
+                xAxis: {
+                    left: 50
+                },
+                customEvent: {
+                    left: 50
+                },
+                tooltip: {
+                    left: 50
+                }
+            };
+
+            boundsMaker.dimensions.yAxis = {
+                width: 50
+            };
+            boundsMaker.dimensions.series = {
+                width: 300
+            };
+
+            boundsMaker._updateBoundsForYAxisCenterOption();
+
+            expect(boundsMaker.dimensions.extendedSeries.width).toBe(350);
+            expect(boundsMaker.dimensions.xAxis.width).toBe(301);
+            expect(boundsMaker.dimensions.plot.width).toBe(351);
+            expect(boundsMaker.dimensions.customEvent.width).toBe(350);
+            expect(boundsMaker.dimensions.tooltip.width).toBe(350);
+
+            expect(boundsMaker.positions.series.left).toBe(0);
+            expect(boundsMaker.positions.extendedSeries.left).toBe(1);
+            expect(boundsMaker.positions.plot.left).toBe(1);
+            expect(boundsMaker.positions.yAxis.left).toBe(201);
+            expect(boundsMaker.positions.xAxis.left).toBe(1);
+            expect(boundsMaker.positions.customEvent.left).toBe(1);
+            expect(boundsMaker.positions.tooltip.left).toBe(1);
         });
     });
 });

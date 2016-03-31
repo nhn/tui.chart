@@ -17,17 +17,17 @@ describe('test ComponentManager', function() {
     });
 
     describe('register()', function() {
-        it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function () {
+        it('legend component를 추가 후, 정상 추가 되었는지 확인합니다.', function() {
             var plot;
             componentManager.register('plot', Plot, {});
 
             plot = componentManager.componentMap.plot;
             expect(plot).toBeTruthy();
             expect(plot.constructor).toEqual(Plot);
-            expect(tui.util.inArray('plot', tui.util.pluck(componentManager.components, 'name'))).toBe(0);
+            expect(tui.util.inArray('plot', tui.util.pluck(componentManager.components, 'componentName'))).toBe(0);
         });
 
-        it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function () {
+        it('추가되지 않은 plot의 경우는 componentMap에 존재하지 않습니다', function() {
             expect(componentManager.componentMap.plot).toBeFalsy();
         });
     });

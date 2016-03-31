@@ -82,7 +82,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
             padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
 
         return {
-            width:  chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
+            width: chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
             height: chartConst.MAP_LEGEND_SIZE
         };
     },
@@ -98,7 +98,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
             padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
 
         return {
-            width:  chartConst.MAP_LEGEND_SIZE,
+            width: chartConst.MAP_LEGEND_SIZE,
             height: chartConst.MAP_LEGEND_GRAPH_SIZE + labelHeight + padding
         };
     },
@@ -126,7 +126,8 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
     _makeBaseDataToMakeTickHtml: function() {
         var dimension = this.boundsMaker.getDimension('legend'),
             stepCount = this.axesData.tickCount - 1,
-            baseData = {};
+            baseData = {},
+            firstLabel;
 
         if (this.isHorizontal) {
             baseData.startPositionValue = 5;
@@ -136,7 +137,8 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
             baseData.startPositionValue = 0;
             baseData.step = dimension.height / stepCount;
             baseData.positionType = 'top:';
-            baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(this.axesData.labels[0], this.theme.label) / 2, 10) - 1;
+            firstLabel = this.axesData.labels[0];
+            baseData.labelSize = parseInt(renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label) / 2, 10) - 1;
         }
 
         return baseData;
@@ -147,15 +149,16 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @private
      */
     _makeTickHtml: function() {
-        var baseData = this._makeBaseDataToMakeTickHtml(),
+        var self = this,
+            baseData = this._makeBaseDataToMakeTickHtml(),
             positionValue = baseData.startPositionValue,
             htmls;
 
         htmls = tui.util.map(this.axesData.labels, function(label) {
             var labelSize, html;
 
-            if (this.isHorizontal) {
-                labelSize = parseInt(renderUtil.getRenderedLabelWidth(label, this.theme.label) / 2, 10);
+            if (self.isHorizontal) {
+                labelSize = parseInt(renderUtil.getRenderedLabelWidth(label, self.theme.label) / 2, 10);
             } else {
                 labelSize = baseData.labelSize;
             }
@@ -168,7 +171,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
 
             positionValue += baseData.step;
             return html;
-        }, this);
+        });
 
         return htmls.join('');
     },
@@ -198,7 +201,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
         return {
             width: chartConst.MAP_LEGEND_GRAPH_SIZE,
             height: this.boundsMaker.getDimension('legend').height
-        }
+        };
     },
 
     /**
@@ -210,7 +213,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
         return {
             width: this.boundsMaker.getDimension('legend').width + 10,
             height: chartConst.MAP_LEGEND_GRAPH_SIZE
-        }
+        };
     },
 
     /**

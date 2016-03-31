@@ -6,6 +6,8 @@
 
 'use strict';
 
+/*eslint no-magic-numbers: [1, {ignore: [-1, 0, 1, 2, 7, 8]}]*/
+
 var dom = require('./domHandler'),
     chartConst = require('./../const');
 
@@ -133,7 +135,7 @@ var renderUtil = {
 
         theme = theme || {};
 
-        label += '';
+        label = String(label);
 
         if (!label) {
             return 0;
@@ -196,7 +198,7 @@ var renderUtil = {
     _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
         var sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
-            }, this),
+            }),
             maxSize = tui.util.max(sizes);
         return maxSize;
     },
@@ -374,6 +376,23 @@ var renderUtil = {
     },
 
     /**
+     * Format values.
+     * @param {Array.<number>} values values
+     * @param {Array.<function>} formatFunctions functions for format
+     * @returns {Array.<string>}
+     */
+    formatValues: function(values, formatFunctions) {
+        var formatedValues;
+        if (!formatFunctions || !formatFunctions.length) {
+            return values;
+        }
+        formatedValues = tui.util.map(values, function(label) {
+            return renderUtil.formatValue(label, formatFunctions);
+        });
+        return formatedValues;
+    },
+
+    /**
      * Cancel animation
      * @param {{id: number}} animation animaion object
      */
@@ -387,18 +406,21 @@ var renderUtil = {
     /**
      * Start animation.
      * @param {number} animationTime animation time
-     * @param {function} callback callback function
+     * @param {function} onAnimation animation callback function
      * @returns {{id: number}} requestAnimationFrame id
      */
-    startAnimation: function(animationTime, callback) {
+    startAnimation: function(animationTime, onAnimation) {
         var animation = {},
             startTime;
 
+        /**
+         * Animate.
+         */
         function animate() {
             var diffTime = (new Date()).getTime() - startTime,
                 ratio = Math.min((diffTime / animationTime), 1);
 
-            callback(ratio);
+            onAnimation(ratio);
 
             if (ratio === 1) {
                 delete animation.id;

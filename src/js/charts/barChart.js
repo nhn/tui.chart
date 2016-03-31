@@ -10,6 +10,7 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
     barTypeMixer = require('./barTypeMixer'),
+    predicate = require('../helpers/predicate'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/barChartSeries');
 
@@ -36,12 +37,18 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
          */
         this.hasRightYAxis = false;
 
+        options.yAxis = options.yAxis || {};
+        options.xAxis = options.xAxis || {};
+        options.plot = options.plot || {};
         options.series = options.series || {};
+
+        if (predicate.isValidStackedOption(options.series.stacked)) {
+            rawData.series = this._sortRawSeriesData(rawData.series);
+        }
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
-            options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
-            this.hasRightYAxis = options.yAxis && tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+            this._updateDivergingOption(options);
         }
 
         ChartBase.call(this, {
@@ -55,23 +62,37 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     },
 
     /**
+     * Update options for diverging option.
+     * @param {object} options options
+     * @private
+     */
+    _updateDivergingOption: function(options) {
+        var isCenter;
+
+        options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+        this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
+
+        isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
+
+        options.yAxis.isCenter = isCenter;
+        options.xAxis.divided = isCenter;
+        options.series.divided = isCenter;
+        options.plot.divided = isCenter;
+    },
+
+    /**
      * Make axes data
      * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
     _makeAxesData: function() {
-        var options = this.options,
+        var axisScaleMaker = this._createAxisScaleMaker({
+                min: this.options.xAxis.min,
+                max: this.options.xAxis.max
+            }),
             xAxisData = axisDataMaker.makeValueAxisData({
-                values: this.dataProcessor.getGroupValues(),
-                seriesDimension: {
-                    width: this.boundsMaker.makeSeriesWidth()
-                },
-                stackedOption: options.series.stacked || '',
-                divergingOption: options.series.diverging,
-                chartType: options.chartType,
-                formatFunctions: this.dataProcessor.getFormatFunctions(),
-                options: options.xAxis
+                axisScaleMaker: axisScaleMaker
             }),
             yAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),

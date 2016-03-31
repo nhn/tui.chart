@@ -39,23 +39,24 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
     /**
      * Make sectors information.
-     * @param {Array.<number>} percentValues percent values
      * @param {{cx: number, cy: number, r: number}} circleBound circle bound
      * @returns {Array.<object>} sectors information
      * @private
      */
-    _makeSectorData: function(percentValues, circleBound) {
-        var cx = circleBound.cx,
+    _makeSectorData: function(circleBound) {
+        var self = this,
+            items = this.dataProcessor.getItemGroup().getFirstItems(),
+            cx = circleBound.cx,
             cy = circleBound.cy,
             r = circleBound.r,
             angle = 0,
             delta = 10,
             paths;
 
-        paths = tui.util.map(percentValues, function(percentValue) {
-            var addAngle = chartConst.ANGLE_360 * percentValue,
-                endAngle = angle + addAngle,
-                popupAngle = angle + (addAngle / 2),
+        paths = items.map(function(item) {
+            var additionalAngle = chartConst.ANGLE_360 * item.ratio,
+                endAngle = angle + additionalAngle,
+                popupAngle = angle + (additionalAngle / 2),
                 angles = {
                     start: {
                         startAngle: angle,
@@ -75,21 +76,21 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             angle = endAngle;
 
             return {
-                percentValue: percentValue,
+                percentValue: item.ratio,
                 angles: angles,
-                centerPosition: this._getArcPosition(tui.util.extend({
+                centerPosition: self._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
                 }, positionData)),
                 outerPosition: {
-                    start: this._getArcPosition(tui.util.extend({
+                    start: self._getArcPosition(tui.util.extend({
                         r: r
                     }, positionData)),
-                    middle: this._getArcPosition(tui.util.extend({
+                    middle: self._getArcPosition(tui.util.extend({
                         r: r + delta
                     }, positionData))
                 }
             };
-        }, this);
+        });
 
         return paths;
     },
@@ -109,7 +110,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 showLabel: this.options.showLabel,
                 legendAlign: this.legendAlign
             }),
-            sectorData = this._makeSectorData(this._getPercentValues()[0], circleBound);
+            sectorData = this._makeSectorData(circleBound);
 
         return {
             chartBackground: this.chartBackground,
@@ -128,7 +129,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _makeCircleBound: function(dimension, options) {
         var width = dimension.width,
             height = dimension.height,
-            isSmallPie = predicate.isOuterLegendAlign(options.legendAlign) && options.showLabel,
+            isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
             diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
 
@@ -282,7 +283,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderLegendLabel: function(params, seriesLabelContainer) {
-        var positions = params.positions,
+        var self = this,
+            positions = params.positions,
             htmls;
 
         htmls = tui.util.map(this.dataProcessor.getLegendLabels(), function(legend, index) {
@@ -290,17 +292,17 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 label, position;
 
             if (positions[index]) {
-                label = this._getSeriesLabel({
+                label = self._getSeriesLabel({
                     legend: legend,
-                    label: this.dataProcessor.getFormattedValue(0, index, this.chartType),
+                    label: self.dataProcessor.getFirstFormattedValue(self.chartType),
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);
-                html = this._makeSeriesLabelHtml(position, label, 0, index);
+                html = self._makeSeriesLabelHtml(position, label, index);
             }
 
             return html;
-        }, this);
+        });
         seriesLabelContainer.innerHTML = htmls.join('');
     },
 
@@ -425,7 +427,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderSeriesLabel: function(seriesLabelContainer) {
         var legendAlign = this.legendAlign;
 
-        if (predicate.isOuterLegendAlign(legendAlign)) {
+        if (predicate.isLegendAlignOuter(legendAlign)) {
             this._renderOuterLegend(seriesLabelContainer);
         } else {
             this._renderCenterLegend(seriesLabelContainer);

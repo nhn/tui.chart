@@ -11,7 +11,8 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     del = require('del'),
     header = require('gulp-header'),
-    pkg = require('./package.json');
+    pkg = require('./package.json'),
+    merge = require('merge-stream');
 
 var banner = [
     '/**',
@@ -86,20 +87,15 @@ gulp.task('clean-samples', function(callback) {
 });
 
 gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], function() {
-    gulp.src('maps/*')
-        .pipe(gulp.dest('dist/maps'));
-    gulp.src('maps/*')
-        .pipe(gulp.dest('samples/dist/maps'));
-    gulp.src('dist/chart.min.css')
-        .pipe(gulp.dest('samples/dist'));
-    gulp.src('dist/chart.min.js')
-        .pipe(gulp.dest('samples/dist'));
-    gulp.src('lib/tui-code-snippet/code-snippet.min.js')
-        .pipe(gulp.dest('samples/lib'));
-    gulp.src('lib/tui-component-effects/effects.min.js')
-        .pipe(gulp.dest('samples/lib'));
-    return gulp.src('lib/raphael/raphael-min.js')
-        .pipe(gulp.dest('samples/lib'));
+    return merge(
+        gulp.src('maps/*')
+            .pipe(gulp.dest('dist/maps'))
+            .pipe(gulp.dest('samples/dist/maps')),
+        gulp.src(['dist/chart.min.css', 'dist/chart.min.js'])
+            .pipe(gulp.dest('samples/dist')),
+        gulp.src(['lib/tui-code-snippet/code-snippet.min.js', 'lib/tui-component-effects/effects.min.js', 'lib/raphael/raphael-min.js'])
+            .pipe(gulp.dest('samples/lib'))
+    );
 });
 
 gulp.task('deploy', ['copy-samples'], function() {

@@ -131,14 +131,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _renderSeriesLabel: function() {},
 
     /**
-     * Get percent values.
-     * @returns {Array.<Array.<number>>} percent values.
-     * @private
-     */
-    _getPercentValues: function() {
-        return this.dataProcessor.getPercentValues(this.chartType);
-    },
-    /**
      * Render series label area
      * @param {?HTMLElement} seriesLabelContainer series label area element
      * @returns {HTMLElement} series label area element
@@ -161,19 +153,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
-        var bound = this.boundsMaker.getBound('series'),
-            expandedBound, seriesData, seriesLabelContainer;
+        var expansionBound = this.boundsMaker.getBound('extendedSeries'),
+            seriesData, seriesLabelContainer;
 
         this.data = data;
 
-        expandedBound = this.hasAxes ? renderUtil.expandBound(bound) : bound;
         this.seriesData = seriesData = this._makeSeriesData();
 
-        renderUtil.renderDimension(seriesContainer, expandedBound.dimension);
-        this._renderPosition(seriesContainer, expandedBound.position);
+        renderUtil.renderDimension(seriesContainer, expansionBound.dimension);
+        this._renderPosition(seriesContainer, expansionBound.position);
 
         if (funcRenderGraph) {
-            funcRenderGraph(expandedBound.dimension, seriesData);
+            funcRenderGraph(expansionBound.dimension, seriesData);
         }
 
         seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
@@ -252,20 +243,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {object} data data for rendering
      */
     rerender: function(data) {
-        var groupValues = this.dataProcessor.getGroupValues(this.chartType),
-            that = this;
-
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
         }
+
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (groupValues && groupValues.length) {
+        if (this.dataProcessor.getGroupCount(this.chartType)) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
-            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(that._renderGraph, this));
+            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShower) {
                 clearInterval(this.labelShower.timerId);
             }
@@ -301,7 +290,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.HIDDEN_WIDTH : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.OVERLAPPING_WIDTH : 0;
 
         renderUtil.renderPosition(el, {
             top: position.top - (hiddenWidth * 2),
@@ -415,7 +404,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var funcMakeOpacityCssText;
         if (renderUtil.isOldBrowser()) {
             funcMakeOpacityCssText = function(opacity) {
-                return ';filter: alpha(opacity=' + (opacity * 100) + ')';
+                return ';filter: alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
             };
         } else {
             funcMakeOpacityCssText = function(_opacity) {
@@ -429,22 +418,21 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Make html about series label.
      * @param {{left: number, top: number}} position position
      * @param {string} value value
-     * @param {number} groupIndex group index
      * @param {number} index index
      * @returns {string} html string
      * @private
      */
-    _makeSeriesLabelHtml: function(position, value, groupIndex, index) {
+    _makeSeriesLabelHtml: function(position, value, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
+
         if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
-            cssObj.opacity = this._makeOpacityCssText(0.3);
+            cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
         }
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
             value: value,
-            groupIndex: groupIndex,
             index: index
         });
     },
@@ -453,7 +441,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * Animate showing about series label area.
      */
     animateShowingAboutSeriesLabelArea: function() {
-        var that = this;
+        var self = this;
 
         if ((!this.options.showLabel && !this.legendAlign) || !this.seriesLabelContainer) {
             return;
@@ -472,8 +460,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 start: 0,
                 end: 1,
                 complete: function() {
-                    clearInterval(that.labelShower.timerId);
-                    delete that.labelShower;
+                    clearInterval(self.labelShower.timerId);
+                    delete self.labelShower;
                 }
             });
         }
@@ -552,15 +540,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {?number} legendIndex legend index
      */
     onSelectLegend: function(chartType, legendIndex) {
-        var groupValues = this.dataProcessor.getGroupValues(this.chartType);
-
         if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 
         this.selectedLegendIndex = legendIndex;
 
-        if (groupValues && groupValues.length) {
+        if (this.dataProcessor.getItemGroup().getGroupCount(this.chartType)) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

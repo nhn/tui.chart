@@ -10,6 +10,7 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     axisTypeMixer = require('./axisTypeMixer'),
     barTypeMixer = require('./barTypeMixer'),
+    predicate = require('../helpers/predicate'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/columnChartSeries');
 
@@ -33,6 +34,11 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         this.className = 'tui-column-chart';
 
         options.series = options.series || {};
+        options.yAxis = options.yAxis || {};
+
+        if (predicate.isValidStackedOption(options.series.stacked)) {
+            rawData.series = this._sortRawSeriesData(rawData.series);
+        }
 
         if (options.series.diverging) {
             rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
@@ -57,21 +63,17 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      */
     _makeAxesData: function() {
         var options = this.options,
+            axisScaleMaker = this._createAxisScaleMaker({
+                min: options.yAxis.min,
+                max: options.yAxis.max
+            }),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
                 options: options.xAxis
             }),
             yAxisData = axisDataMaker.makeValueAxisData({
-                values: this.dataProcessor.getGroupValues(),
-                seriesDimension: {
-                    height: this.boundsMaker.makeSeriesHeight()
-                },
-                stackedOption: options.series.stacked || '',
-                divergingOption: options.series.diverging,
-                chartType: options.chartType,
-                formatFunctions: this.dataProcessor.getFormatFunctions(),
-                options: options.yAxis,
-                isVertical: true
+                axisScaleMaker: axisScaleMaker,
+                isVertical: this.isVertical
             });
 
         return {

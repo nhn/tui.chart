@@ -21,10 +21,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeBasicPositions: function() {
         var dimension = this.boundsMaker.getDimension('series'),
-            groupValues = this._getPercentValues(),
+            itemGroup = this.dataProcessor.getItemGroup(),
             width = dimension.width,
             height = dimension.height,
-            len = groupValues[0].length,
+            len = itemGroup.getGroupCount(this.chartType),
             start = chartConst.SERIES_EXPAND_SIZE,
             step;
 
@@ -35,14 +35,14 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             start += (step / 2);
         }
 
-        return tui.util.map(groupValues, function(values) {
-            return tui.util.map(values, function(value, index) {
+        return itemGroup.map(function(items) {
+            return items.map(function(item, index) {
                 return {
                     left: start + (step * index),
-                    top: height - (value * height) + chartConst.SERIES_EXPAND_SIZE
+                    top: height - (item.ratio * height) + chartConst.SERIES_EXPAND_SIZE
                 };
             });
-        });
+        }, this.chartType, true);
     },
 
     /**
@@ -73,31 +73,31 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * @private
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
-        var formattedValues, firstFormattedValue, groupPositions, labelHeight, html;
+        var self = this,
+            groupPositions = this.seriesData.groupPositions,
+            itemGroup = this.dataProcessor.getItemGroup(),
+            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            htmls;
 
-        groupPositions = this.seriesData.groupPositions;
-        formattedValues = tui.util.pivot(this.dataProcessor.getFormattedGroupValues(this.chartType));
-        firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType);
-        labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label);
-
-        html = tui.util.map(formattedValues, function(values, groupIndex) {
-            return tui.util.map(values, function(value, index) {
+        htmls = itemGroup.map(function(items, groupIndex) {
+            return items.map(function(item, index) {
                 var position = groupPositions[groupIndex][index],
                     labelHtml = '',
                     labelWidth;
 
                 if (position.top !== position.startTop) {
-                    labelWidth = renderUtil.getRenderedLabelWidth(value, this.theme.label);
-                    labelHtml = this._makeSeriesLabelHtml({
+                    labelWidth = renderUtil.getRenderedLabelWidth(item.formattedValue, self.theme.label);
+                    labelHtml = self._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: this._makeLabelPositionTop(position, value, labelHeight)
-                    }, value, index, groupIndex);
+                        top: self._makeLabelPositionTop(position, item.formattedValue, labelHeight)
+                    }, item.formattedValue, groupIndex);
                 }
                 return labelHtml;
-            }, this).join('');
-        }, this).join('');
+            }).join('');
+        }, this.chartType, true);
 
-        elSeriesLabelArea.innerHTML = html;
+        elSeriesLabelArea.innerHTML = htmls.join('');
     },
 
     /**

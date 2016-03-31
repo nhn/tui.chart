@@ -8,12 +8,16 @@
 
 var templateMaker = require('../helpers/templateMaker');
 
-var tags = {
+var htmls = {
+    HTML_AXIS_TICK_LINE: '<div class="tui-chart-tick-line" style="left:{{ lineLeft }}px;width:{{ lineWidth }}px">' +
+        '</div>',
     HTML_AXIS_TICK: '<div class="tui-chart-tick" style="{{ cssText }}"></div>',
-    HTML_AXIS_LABEL: '<div class="tui-chart-label{{ addClass }}" style="{{ cssText }}"><span>{{ label }}</span></div>'
+    HTML_AXIS_LABEL: '<div class="tui-chart-label{{ additionalClass }}" style="{{ cssText }}">' +
+        '<span{{ spanCssText }}>{{ label }}</span></div>'
 };
 
 module.exports = {
-    tplAxisTick: templateMaker.template(tags.HTML_AXIS_TICK),
-    tplAxisLabel: templateMaker.template(tags.HTML_AXIS_LABEL)
+    tplTickLine: templateMaker.template(htmls.HTML_AXIS_TICK_LINE),
+    tplAxisTick: templateMaker.template(htmls.HTML_AXIS_TICK),
+    tplAxisLabel: templateMaker.template(htmls.HTML_AXIS_LABEL)
 };

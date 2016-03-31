@@ -17,7 +17,7 @@
   padding: 10px 0;
 }
 .tui-chart .tui-chart-axis-area {
-  z-index: 200;
+  z-index: 300;
   position: absolute;
 }
 .tui-chart .tui-chart-axis-area .tui-chart-title-area {
@@ -32,7 +32,7 @@
 }
 .tui-chart .tui-chart-axis-area .tui-chart-tick-area .tui-chart-tick {
   position: absolute;
-  background-color: #000000;
+  background-color: #000;
 }
 .tui-chart .tui-chart-axis-area .tui-chart-label-area .tui-chart-label {
   position: absolute;
@@ -61,12 +61,15 @@
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area {
   right: 0;
-  border-right: 1px solid #000000;
+  border-right: 1px solid #000;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area .tui-chart-tick {
   right: 0;
   width: 5px;
   height: 1px;
+}
+.tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area .tui-chart-tick-line {
+  display: none;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-label-area {
   right: 10px;
@@ -96,17 +99,36 @@
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-label-area {
   left: 0;
 }
-.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area {
-  border-right: none;
-  border-left: 1px solid #000000;
-}
-.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area .tui-chart-tick {
-  left: 0;
-}
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-label-area .tui-chart-label {
   text-align: left;
   padding-right: 0;
   padding-left: 10px;
+}
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-title-area {
+  width: 100% !important;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  filter: none;
+  top: auto;
+}
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-label-area {
+  left: 0;
+  width: 100% !important;
+}
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-label-area .tui-chart-label {
+  text-align: center;
+}
+.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area,
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-tick-area.opposite-side {
+  border-right: none;
+  border-left: 1px solid #000;
+}
+.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area .tui-chart-tick,
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-tick-area.opposite-side .tui-chart-tick {
+  left: 0;
 }
 .tui-chart .tui-chart-axis-area.horizontal {
   right: 10px;
@@ -116,15 +138,26 @@
   width: 100%;
   text-align: center;
 }
+.tui-chart .tui-chart-axis-area.horizontal.division .tui-chart-title-area {
+  left: 0;
+  width: auto;
+}
+.tui-chart .tui-chart-axis-area.horizontal.division .tui-chart-title-area.right {
+  left: auto;
+  right: 0;
+}
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area,
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area {
   left: 0;
 }
-.tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area {
-  border-top: 1px solid #000000;
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area .tui-chart-tick-line {
+  top: 0;
+  height: 1px;
+  background-color: #000;
+  position: absolute;
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area .tui-chart-tick {
-  top: 0px;
+  top: 1px;
   width: 1px;
   height: 5px;
 }
@@ -151,7 +184,7 @@
   transform: rotate(-25deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation25 span {
-  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation45 {
   -webkit-transform: rotate(-45deg);
@@ -161,7 +194,7 @@
   transform: rotate(-45deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation45 span {
-  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation65 {
   -webkit-transform: rotate(-65deg);
@@ -171,7 +204,7 @@
   transform: rotate(-65deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation65 span {
-  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)";
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation85 {
   -webkit-transform: rotate(-85deg);
@@ -181,7 +214,7 @@
   transform: rotate(-85deg);
 }
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-label-area .tui-chart-label.tui-chart-xaxis-rotation85 span {
-  filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand', M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)";
 }
 .tui-chart .tui-chart-plot-area {
   position: absolute;
@@ -202,7 +235,7 @@
   height: 1px;
 }
 .tui-chart .tui-chart-series-area {
-  z-index: 400;
+  z-index: 200;
   position: absolute;
   user-select: none;
   -webkit-user-select: none;
@@ -226,7 +259,7 @@
   cursor: default;
   text-align: center;
   white-space: nowrap;
-  text-shadow: #ffffff 0px 0px 3px;
+  text-shadow: #fff 0px 0px 3px;
 }
 .tui-chart .tui-chart-series-area .tui-chart-series-label-area.show {
   display: block;
@@ -319,7 +352,7 @@
   opacity: 0.5;
 }
 .tui-chart .tui-chart-legend-area {
-  z-index: 300;
+  z-index: 400;
   position: absolute;
   padding: 10px;
   user-select: none;

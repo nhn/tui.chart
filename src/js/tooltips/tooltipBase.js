@@ -21,6 +21,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
+        var isPieChart = predicate.isPieChart(params.chartType);
+
         tui.util.extend(this, params);
         /**
          * className
@@ -50,7 +52,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * Tooltip animation time.
          * @type {number}
          */
-        this.animationTime = predicate.isPieChart(params.chartType) ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
+        this.animationTime = isPieChart ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
 
         /**
          * TooltipBase base data.

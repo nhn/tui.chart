@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
@@ -21,7 +22,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            groupValues: this._getPercentValues()
+            itemGroup: this.dataProcessor.getItemGroup()
         };
     },
 
@@ -34,11 +35,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBarGutter: function(groupSize, itemCount) {
         var baseSize = groupSize / (itemCount + 1) / 2,
+            standardSize = 6,
             gutter;
 
         if (baseSize <= 2) {
             gutter = 0;
-        } else if (baseSize <= 6) {
+        } else if (baseSize <= standardSize) {
             gutter = 2;
         } else {
             gutter = 4;
@@ -74,152 +76,97 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make addition padding.
+     * Calculate difference between optionSize and barSize.
      * @param {number} barSize bar size
      * @param {number} optionSize option size
      * @param {number} itemCount item count
      * @returns {number} addition padding
      * @private
      */
-    _makeAdditionPadding: function(barSize, optionSize, itemCount) {
-        var padding = 0;
+    _calculateAdditionalPosition: function(barSize, optionSize, itemCount) {
+        var additionalPosition = 0;
 
         if (optionSize && optionSize < barSize) {
-            padding = (barSize - optionSize) * itemCount / 2;
+            additionalPosition = (barSize / 2) + ((barSize - optionSize) * itemCount / 2);
         }
 
-        return (barSize / 2) + padding;
+        return additionalPosition;
     },
 
     /**
-     * Make base info for normal chart bounds.
-     * @param {{width: number, height: number}} dimension series dimension
-     * @param {string} sizeType size type (width or height)
-     * @param {string} anotherSizeType another size type (width or height)
+     * Make base data for making bound.
+     * @param {number} baseGroupSize base group size
+     * @param {number} baseBarSize base bar size
      * @returns {{
-     *      dimension: {width: number, height: number},
-     *      groupValues: Array.<Array.<number>>,
-     *      groupSize: number, barSize: number, step: number,
-     *      distanceToMin: number, isMinus: boolean
-     * }} base info
+     *      baseBarSize: number,
+     *      groupSize: number,
+     *      barSize: number,
+     *      step: number,
+     *      firstAdditionalPosition: number,
+     *      additionalPosition: number,
+     *      basePosition: number
+     * }}
      * @private
      */
-    _makeBaseInfoForNormalChartBounds: function(dimension, sizeType, anotherSizeType) {
-        var groupValues = this._getPercentValues(),
-            groupSize = dimension[anotherSizeType] / groupValues.length,
-            itemCount = groupValues[0] && groupValues[0].length || 0,
-            barGutter = this._makeBarGutter(groupSize, itemCount),
-            barSize = this._makeBarSize(groupSize, barGutter, itemCount),
-            optionSize = this._makeOptionSize(barSize, this.options.barWidth),
-            additionPadding = this._makeAdditionPadding(barSize, optionSize, itemCount),
-            limitDistance = this._getLimitDistanceFromZeroPoint(dimension[sizeType], this.data.limit);
+    _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
+        var isStacked = predicate.isValidStackedOption(this.options.stacked),
+            itemGroup = this.dataProcessor.getItemGroup(),
+            groupSize = baseGroupSize / itemGroup.getGroupCount(this.chartType),
+            firstAdditionalPosition = 0,
+            itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
 
+        if (!isStacked) {
+            itemCount = itemGroup.getFirstItems(this.chartType).getItemCount();
+        } else {
+            itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
+        }
+
+        barGutter = this._makeBarGutter(groupSize, itemCount);
+        barSize = this._makeBarSize(groupSize, barGutter, itemCount);
+        optionSize = this._makeOptionSize(barSize, this.options.barWidth);
+        additionalPosition = this._calculateAdditionalPosition(barSize, optionSize, itemCount);
         barSize = optionSize || barSize;
+        basePosition = this._getLimitDistanceFromZeroPoint(baseBarSize, this.data.limit).toMin;
+
+        if (predicate.isColumnChart(this.chartType)) {
+            basePosition = baseBarSize - basePosition;
+        }
+
+        if (!this.options.barWidth || barSize < this.options.barWidth) {
+            firstAdditionalPosition = (barSize / 2) + additionalPosition;
+        }
 
         return {
-            dimension: dimension,
+            baseBarSize: baseBarSize,
             groupSize: groupSize,
             barSize: barSize,
-            additionPadding: additionPadding,
-            step: barSize + barGutter,
-            distance: limitDistance,
-            isMinus: this.data.limit.min < 0 && this.data.limit.max <= 0
+            step: barGutter + barSize,
+            firstAdditionalPosition: firstAdditionalPosition,
+            additionalPosition: additionalPosition,
+            basePosition: basePosition
         };
     },
 
     /**
-     * Make normal bounds.
-     * @param {{
-     *      dimension: {width: number, height: number},
-     *      groupValues: Array.<Array.<number>>,
-     *      groupSize: number, barSize: number, step: number,
-     *      distanceToMin: number, isMinus: boolean
-     * }} baseInfo base info
-     * @param {function} iteratee iteratee
-     * @returns {Array} bounds
+     * Make html for series labels
+     * @param {number} groupIndex index of groups
+     * @param {number} labelHeight label height
+     * @param {Item} item item
+     * @param {number} index index of items
+     * @returns {string}
      * @private
      */
-    _makeNormalBounds: function(baseInfo, iteratee) {
-        return tui.util.map(this._getPercentValues(), function(values, groupIndex) {
-            var padding = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding;
-            return tui.util.map(values, function (value, index) {
-                return iteratee(baseInfo, value, padding, index);
-            }, this);
-        }, this);
-    },
+    _makeSeriesLabelsHtml: function(groupIndex, labelHeight, item, index) {
+        var bound = this.seriesData.groupBounds[groupIndex][index].end,
+            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedEnd),
+            labelHtml = this._makeSeriesLabelHtml(position, item.formattedEnd, index);
 
-    /**
-     * Make base info for stacked chart bounds.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {string} sizeType size type (width or height)
-     * @returns {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} base info
-     * @private
-     */
-    _makeBaseInfoForStackedChartBounds: function(dimension, sizeType) {
-        var limitDistance = this._getLimitDistanceFromZeroPoint(dimension[sizeType], this.data.limit),
-            baseBound = {},
-            groupSize, barWidth, optionWidth, additionPadding,
-            anotherSizeType, positionTop, baseEndPosition;
-
-        if (sizeType === 'height') {
-            anotherSizeType = 'width';
-            positionTop = 'left';
-            baseEndPosition = -chartConst.SERIES_EXPAND_SIZE;
-        } else {
-            anotherSizeType = 'height';
-            positionTop = 'top';
-            baseEndPosition = chartConst.SERIES_EXPAND_SIZE;
+        if (item.isRange) {
+            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedStart, true);
+            labelHtml += this._makeSeriesLabelHtml(position, item.formattedStart, index);
         }
 
-        groupSize = (dimension[anotherSizeType] / this._getPercentValues().length);
-        barWidth = groupSize / 2;
-        optionWidth = this._makeOptionSize(barWidth, this.options.barWidth);
-        additionPadding = this._makeAdditionPadding(barWidth, optionWidth, 1);
-        baseBound[anotherSizeType] = optionWidth || barWidth;
-
-        return {
-            groupSize: groupSize,
-            baseBound: baseBound,
-            additionPadding: additionPadding + chartConst.SERIES_EXPAND_SIZE,
-            dimensionSize: dimension[sizeType],
-            positionType: positionTop,
-            baseEndPosition: baseEndPosition,
-            distance: limitDistance
-        };
-    },
-
-    /**
-     * Make bounds of stacked column chart.
-     * @param {{width: number, height:number}} dimension column chart dimension
-     * @param {{groupSize: (number), baseBound: object, additionPadding: number, dimensionSize: number, positionType: string, baseEndPosition: number}} baseInfo base info
-     * @param {function} makeBoundFunc make bound function
-     * @returns {Array.<Array.<object>>} bounds
-     * @private
-     */
-    _makeStackedBounds: function(dimension, baseInfo, makeBoundFunc) {
-        var bounds = tui.util.map(this._getPercentValues(), function(values, groupIndex) {
-            var padding = (baseInfo.groupSize * groupIndex) + baseInfo.additionPadding,
-                endPlusPosition = baseInfo.baseEndPosition,
-                endMinusPosition = baseInfo.baseEndPosition;
-
-            return tui.util.map(values, function (value) {
-                var bound = null,
-                    endSize = Math.abs(value * baseInfo.dimensionSize);
-                baseInfo.baseBound[baseInfo.positionType] = padding;
-
-                if (value >= 0) {
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endPlusPosition);
-                    endPlusPosition += endSize;
-                } else {
-                    endMinusPosition -= endSize;
-                    bound = makeBoundFunc(baseInfo.baseBound, endSize, endMinusPosition);
-                }
-
-                return bound;
-            }, this);
-        }, this);
-
-        return bounds;
+        return labelHtml;
     },
 
     /**
@@ -228,25 +175,17 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
-        var groupBounds = this.seriesData.groupBounds,
+        var self = this,
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            itemGroup = this.dataProcessor.getItemGroup(),
             html;
 
-        html = tui.util.map(this.dataProcessor.getGroupValues(this.chartType), function(values, groupIndex) {
-            return tui.util.map(values, function(value, index) {
-                var bound, formattedValue, renderingPosition;
-                bound = groupBounds[groupIndex][index].end;
-                formattedValue = this.dataProcessor.getFormattedValue(groupIndex, index, this.chartType);
-                renderingPosition = this.makeSeriesRenderingPosition({
-                    value: value,
-                    bound: bound,
-                    formattedValue: formattedValue,
-                    labelHeight: labelHeight
-                });
-                return this._makeSeriesLabelHtml(renderingPosition, formattedValue, groupIndex, index);
-            }, this).join('');
-        }, this).join('');
+        html = itemGroup.map(function(items, groupIndex) {
+            var makeSeriesLabelsHtml = tui.util.bind(self._makeSeriesLabelsHtml, self, groupIndex, labelHeight);
+
+            return items.map(makeSeriesLabelsHtml).join('');
+        }, this.chartType).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },
@@ -291,32 +230,33 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeStackedLabelsHtml: function(params) {
-        var values = params.values,
+        var self = this,
+            items = params.items,
             labelHeight = params.labelHeight,
-            htmls, plusBound, minusBound;
+            htmls, plusBound, minusBound, values;
 
-        htmls = tui.util.map(values, function(value, index) {
+        htmls = items.map(function(item, index) {
             var bound = params.bounds[index],
                 labelHtml = '',
-                boundEnd, formattedValue, position;
+                boundEnd, position;
 
-            if (bound && value) {
+            if (bound && item) {
                 boundEnd = bound.end;
-                formattedValue = this.dataProcessor.getFormattedValue(params.groupIndex, index, this.chartType);
-                position = this._makeStackedLabelPosition(boundEnd, formattedValue, params.labelHeight);
-                labelHtml = this._makeSeriesLabelHtml(position, formattedValue, params.groupIndex, index);
+                position = self._makeStackedLabelPosition(boundEnd, item.formattedValue, params.labelHeight);
+                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, index);
             }
 
-            if (value > 0) {
+            if (item.value > 0) {
                 plusBound = boundEnd;
-            } else if (value < 0) {
+            } else if (item.value < 0) {
                 minusBound = boundEnd;
             }
 
             return labelHtml;
-        }, this);
+        });
 
         if (this.options.stacked === 'normal') {
+            values = items.pluck('value');
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
             htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
         }
@@ -330,21 +270,22 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
-        var groupBounds = this.seriesData.groupBounds,
-            groupValues = this.dataProcessor.getGroupValues(this.chartType),
+        var self = this,
+            groupBounds = this.seriesData.groupBounds,
+            itemGroup = this.dataProcessor.getItemGroup(),
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             html;
 
-        html = tui.util.map(groupValues, function(values, index) {
-            var labelsHtml = this._makeStackedLabelsHtml({
+        html = itemGroup.map(function(items, index) {
+            var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
-                values: values,
+                items: items,
                 bounds: groupBounds[index],
                 labelHeight: labelHeight
             });
             return labelsHtml;
-        }, this).join('');
+        }, this.chartType).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },

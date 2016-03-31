@@ -45,7 +45,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
                 return template(tui.util.extend({
                     cssText: cssTextTemplate({color: colors[index]})
                 }, item));
-            }, this).join('');
+            }).join('');
 
         return tooltipTemplate.tplGroup({
             category: category,
@@ -124,12 +124,14 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @override
      */
     _makeTooltipData: function() {
-        return tui.util.map(this.dataProcessor.getWholeFormattedValues(), function(values, index) {
+        var self = this;
+
+        return tui.util.map(this.dataProcessor.getWholeGroups(), function(items, index) {
             return {
-                category: this.dataProcessor.getCategory(index),
-                values: values
+                category: self.dataProcessor.getCategory(index),
+                values: items.pluck('formattedValue')
             };
-        }, this);
+        });
     },
 
     /**
@@ -169,16 +171,19 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _makeItemRenderingData: function(values) {
+        var dataProcessor = this.dataProcessor,
+            suffix = this.suffix;
+
         return tui.util.map(values, function(value, index) {
-            var legendLabel = this.dataProcessor.getLegendData(index);
+            var legendLabel = dataProcessor.getLegendData(index);
 
             return {
                 value: value,
                 legend: legendLabel.label,
                 chartType: legendLabel.chartType,
-                suffix: this.suffix
+                suffix: suffix
             };
-        }, this);
+        });
     },
 
     /**
@@ -251,10 +256,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         return {
             dimension: {
                 width: width,
-                height: range.end - range.start + chartConst.HIDDEN_WIDTH
+                height: range.end - range.start
             },
             position: {
-                left: chartConst.SERIES_EXPAND_SIZE - chartConst.HIDDEN_WIDTH,
+                left: chartConst.SERIES_EXPAND_SIZE,
                 top: range.start + chartConst.SERIES_EXPAND_SIZE
             }
         };

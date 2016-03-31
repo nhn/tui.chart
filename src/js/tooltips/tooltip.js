@@ -100,31 +100,37 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @override
      */
     _makeTooltipData: function() {
-        var categories = this.dataProcessor.getCategories(),
-            orgFormattedValues = this.dataProcessor.getFormattedGroupValues(),
+        var self = this,
+            categories = this.dataProcessor.getCategories(),
+            itemGroup = this.dataProcessor.getItemGroup(),
             orgLegendLabels = this.dataProcessor.getLegendLabels(),
-            formattedValues = {},
             legendLabels = {},
             tooltipData = {};
 
-        if (tui.util.isArray(orgFormattedValues)) {
-            formattedValues[this.chartType] = orgFormattedValues;
+        if (tui.util.isArray(orgLegendLabels)) {
             legendLabels[this.chartType] = orgLegendLabels;
         } else {
-            formattedValues = orgFormattedValues;
             legendLabels = orgLegendLabels;
         }
 
-        tui.util.forEach(formattedValues, function(groupValues, chartType) {
-            tooltipData[chartType] = tui.util.map(groupValues, function(values, groupIndex) {
-                return tui.util.map(values, function(value, index) {
-                    return {
-                        category: categories ? categories[groupIndex] : '',
-                        legend: legendLabels[chartType][index],
-                        value: value
-                    };
-                });
+        itemGroup.each(function(items, groupIndex, chartType) {
+            var datum;
+
+            chartType = chartType || self.chartType;
+
+            if (!tooltipData[chartType]) {
+                tooltipData[chartType] = [];
+            }
+
+            datum = items.map(function(item, index) {
+                return {
+                    category: categories ? categories[groupIndex] : '',
+                    legend: legendLabels[chartType][index],
+                    value: item.formattedValue
+                };
             });
+
+            tooltipData[chartType].push(datum);
         });
 
         return tooltipData;

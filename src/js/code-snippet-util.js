@@ -157,7 +157,7 @@ var pivot = function(arr2d) {
  * @returns {number} result length
  */
 var lengthAfterPoint = function(value) {
-    var valueArr = (value + '').split('.');
+    var valueArr = String(value).split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
 

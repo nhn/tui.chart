@@ -10,7 +10,7 @@ var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     MapChartMapModel = require('./mapChartMapModel'),
     MapChartColorModel = require('./mapChartColorModel'),
-    MapChartDataProcessor = require('../helpers/mapChartDataProcessor'),
+    MapChartDataProcessor = require('../dataModels/mapChartDataProcessor'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/mapChartSeries'),
     Zoom = require('../series/zoom'),
@@ -84,26 +84,24 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      * @private
      */
     _makeAxesData: function() {
+        var axisScaleMaker = this._createAxisScaleMaker({}, {
+            valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
+        });
+
         return axisDataMaker.makeValueAxisData({
-            values: [this.dataProcessor.getValues()],
-            seriesDimension: {
-                height: this.boundsMaker.getDimension('legend').height
-            },
-            chartType: this.options.chartType,
-            formatFunctions: this.dataProcessor.getFormatFunctions(),
-            tickCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT,
+            axisScaleMaker: axisScaleMaker,
             isVertical: true
         });
     },
 
     /**
-     * Update percent values.
+     * Add data ratios.
      * @param {object} axesData axes data
      * @private
      * @override
      */
-    _updatePercentValues: function(axesData) {
-        this.dataProcessor.registerPercentValues(axesData.limit);
+    _addDataRatios: function(axesData) {
+        this.dataProcessor.addDataRatios(axesData.limit);
     },
 
     /**
@@ -150,7 +148,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             moveMapSeries: mapSeries.onMoveSeries,
             dragStartMapSeries: mapSeries.onDragStartSeries,
             dragMapSeries: mapSeries.onDragSeries,
-            dragEndMapSeries: mapSeries.onDragEndSeries
+            dragEndMapSeries: mapSeries.onDragEndSeries,
+            wheel: tui.util.bind(zoom.onWheel, zoom)
         }, mapSeries);
 
         mapSeries.on({
