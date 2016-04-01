@@ -387,12 +387,13 @@ describe('Axis', function() {
             elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toBe(5);
-            expect(childNodes[0].style.bottom).toBe('0px');
-            expect(childNodes[1].style.bottom).toBe('75px');
-            expect(childNodes[2].style.bottom).toBe('150px');
-            expect(childNodes[3].style.bottom).toBe('224px');
-            expect(childNodes[4].style.bottom).toBe('299px');
+            expect(childNodes.length).toBe(6);
+            expect(childNodes[0].className).toBe('tui-chart-tick-line');
+            expect(childNodes[1].style.bottom).toBe('0px');
+            expect(childNodes[2].style.bottom).toBe('75px');
+            expect(childNodes[3].style.bottom).toBe('150px');
+            expect(childNodes[4].style.bottom).toBe('224px');
+            expect(childNodes[5].style.bottom).toBe('299px');
         });
 
 
@@ -641,12 +642,13 @@ describe('Axis', function() {
         });
     });
 
-    describe('_calculateRotationMovingPositionForIE8()', function() {
-        it('IE8은 회전 방식이 다르기 때문에 계산결과가 다릅니다.', function() {
+    describe('_calculateRotationMovingPositionForOldBrowser()', function() {
+        it('IE7이 아닌 경우의 25도 회전된 position정보를 계산하여 반환합니다.', function() {
             var actual, expected;
 
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
             axis.boundsMaker.xAxisDegree = 25;
-            actual = axis._calculateRotationMovingPositionForIE8({
+            actual = axis._calculateRotationMovingPositionForOldBrowser({
                 labelWidth: 40,
                 labelHeight: 20,
                 left: 40,
@@ -663,8 +665,9 @@ describe('Axis', function() {
         it('85도 각도에서는 레이블이 가운데 위치하도록 left를 조절합니다.', function() {
             var actual, expected;
 
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
             axis.boundsMaker.xAxisDegree = 85;
-            actual = axis._calculateRotationMovingPositionForIE8({
+            actual = axis._calculateRotationMovingPositionForOldBrowser({
                 degree: 85,
                 labelWidth: 20,
                 labelHeight: 20,
@@ -675,6 +678,25 @@ describe('Axis', function() {
             expected = {
                 top: 10,
                 left: 65.68026588169964
+            };
+            expect(actual).toEqual(expected);
+        });
+
+        it('IE7인 경우에는 changedWidth 값을 더하지 않습니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'isIE7').and.returnValue(true);
+            axis.boundsMaker.xAxisDegree = 25;
+            actual = axis._calculateRotationMovingPositionForOldBrowser({
+                labelWidth: 40,
+                labelHeight: 20,
+                left: 40,
+                label: 'label1',
+                theme: {}
+            });
+            expected = {
+                top: 10,
+                left: 28.45236523481399
             };
             expect(actual).toEqual(expected);
         });
@@ -690,10 +712,10 @@ describe('Axis', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('IE8의 경우는 _calculateRotationMovingPositionForIE8() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
+        it('old browser의 경우는 _calculateRotationMovingPositionForOldBrowser() 결과로 얻은 position 정보로 cssText를 생성합니다.', function() {
             var actual, expected;
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
-            spyOn(axis, '_calculateRotationMovingPositionForIE8').and.returnValue({left: 10, top: 10});
+            spyOn(axis, '_calculateRotationMovingPositionForOldBrowser').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
             expected = 'left:10px;top:10px';
             expect(actual).toEqual(expected);

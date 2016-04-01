@@ -54,7 +54,7 @@ gulp.task('compile-less', function() {
 
 gulp.task('minify-css', ['compile-less'], function() {
     return gulp.src('dist/chart.css')
-        .pipe(minifiyCss())
+        .pipe(minifiyCss({compatibility: 'ie7'}))
         .pipe(rename({
             extname: '.min.css'
         }))

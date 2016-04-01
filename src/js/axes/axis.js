@@ -392,20 +392,26 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             tickColor = this.theme.tickColor,
             positions = calculator.makeTickPixelPositions(size, tickCount),
             elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
-            posType = data.isVertical ? 'bottom' : 'left',
             template = axisTemplate.tplAxisTick,
-            lineHtml = '',
-            tickLineExtend, ticksHtml;
+            tickLineExtend = isSingleXAxis ? 1 : 0,
+            posType, lineSizeType, lineHtml, ticksHtml;
 
         additionalSize = additionalSize || 0;
 
-        if (!data.isVertical) {
-            tickLineExtend = isSingleXAxis ? 1 : 0;
-            lineHtml = axisTemplate.tplTickLine({
-                lineLeft: additionalSize - tickLineExtend,
-                lineWidth: size + tickLineExtend
-            });
+        if (data.isVertical) {
+            posType = 'bottom';
+            lineSizeType = 'height';
+        } else {
+            posType = 'left';
+            lineSizeType = 'width';
         }
+
+        lineHtml = axisTemplate.tplTickLine({
+            positionType: posType,
+            positionValue: additionalSize - tickLineExtend,
+            sizeType: lineSizeType,
+            size: size + tickLineExtend
+        });
 
         ticksHtml = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
@@ -542,7 +548,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Calculate rotation moving position for ie8.
+     * Calculate rotation moving position for old browser(IE7, IE8).
      * @param {object} params parameters
      *      @param {number} params.labelWidth label width
      *      @param {number} params.labelHeight label height
@@ -552,12 +558,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @returns {{top:number, left: number}} position
      * @private
      */
-    _calculateRotationMovingPositionForIE8: function(params) {
+    _calculateRotationMovingPositionForOldBrowser: function(params) {
         var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme),
             degree = this.boundsMaker.xAxisDegree,
             smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2),
             newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2,
-            collectLeft = labelWidth - newLabelWidth,
+            changedWidth = renderUtil.isIE7() ? 0 : (labelWidth - newLabelWidth),
             moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
 
         if (degree === chartConst.ANGLE_85) {
@@ -566,7 +572,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         return {
             top: chartConst.XAXIS_LABEL_TOP_MARGIN,
-            left: params.left + collectLeft - moveLeft
+            left: params.left + changedWidth - moveLeft
         };
     },
 
@@ -587,7 +593,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var position;
 
         if (renderUtil.isOldBrowser()) {
-            position = this._calculateRotationMovingPositionForIE8(params);
+            position = this._calculateRotationMovingPositionForOldBrowser(params);
         } else {
             position = this._calculateRotationMovingPosition(params);
         }

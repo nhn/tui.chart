@@ -61,15 +61,18 @@
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area {
   right: 0;
-  border-right: 1px solid #000;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area .tui-chart-tick {
-  right: 0;
+  right: 1px;
   width: 5px;
   height: 1px;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area .tui-chart-tick-line {
-  display: none;
+  left: auto;
+  right: 0;
+  width: 1px;
+  background-color: #000;
+  position: absolute;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-label-area {
   right: 10px;
@@ -124,10 +127,14 @@
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area,
 .tui-chart .tui-chart-axis-area.vertical.center .tui-chart-tick-area.opposite-side {
   border-right: none;
-  border-left: 1px solid #000;
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area .tui-chart-tick,
 .tui-chart .tui-chart-axis-area.vertical.center .tui-chart-tick-area.opposite-side .tui-chart-tick {
+  left: 1px;
+}
+.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area .tui-chart-tick-line,
+.tui-chart .tui-chart-axis-area.vertical.center .tui-chart-tick-area.opposite-side .tui-chart-tick-line {
+  right: auto;
   left: 0;
 }
 .tui-chart .tui-chart-axis-area.horizontal {

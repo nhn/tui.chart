@@ -105,7 +105,6 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         }
 
         iterationData.prevStack = item.stack;
-
         bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
 
         return bound;

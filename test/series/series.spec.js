@@ -73,18 +73,12 @@ describe('Series', function() {
         it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
             var seriesContainer = dom.create('DIV');
             series._renderPosition(seriesContainer, {
-                    top: 20,
-                    left: 20
-                }
-            );
+                top: 20,
+                left: 20
+            });
 
-            if (renderUtil.isOldBrowser()) {
-                expect(seriesContainer.style.top).toBe('18px');
-                expect(seriesContainer.style.left).toBe('19px');
-            } else {
-                expect(seriesContainer.style.top).toBe('20px');
-                expect(seriesContainer.style.left).toBe('20px');
-            }
+            expect(seriesContainer.style.top).toBe('20px');
+            expect(seriesContainer.style.left).toBe('20px');
         });
     });
 
@@ -114,14 +108,8 @@ describe('Series', function() {
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
             expect(seriesContainer.style.width).toBe('220px');
             expect(seriesContainer.style.height).toBe('120px');
-
-            if (renderUtil.isOldBrowser()) {
-                expect(seriesContainer.style.top).toBe('38px');
-                expect(seriesContainer.style.left).toBe('39px');
-            } else {
-                expect(seriesContainer.style.top).toBe('40px');
-                expect(seriesContainer.style.left).toBe('40px');
-            }
+            expect(seriesContainer.style.top).toBe('40px');
+            expect(seriesContainer.style.left).toBe('40px');
         });
     });
 

@@ -632,11 +632,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _updateItemStart: function(limit, chartType) {
-        var isOneSign = limit.min >= 0 || predicate.isMinusLimit(limit),
-            start = 0;
+        var start = 0;
 
-        if (isOneSign) {
+        if (limit.min >= 0) {
             start = limit.min;
+        } else if (limit.max <= 0) {
+            start = limit.max;
         }
 
         this.getItemGroup().updateItemStart(start, chartType);

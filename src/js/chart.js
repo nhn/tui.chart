@@ -19,6 +19,24 @@ require('./registerCharts');
 require('./registerThemes');
 
 /**
+ * Raw series datum.
+ * @typedef {{name: ?string, data: Array.<number>, stack: ?string}} rawSeriesDatum
+ */
+
+/**
+ * Raw series data.
+ * @typedef {Array.<rawSeriesDatum>} rawSeriesData
+ */
+
+/**
+ * Raw data.
+ * @typedef {{
+ *      categories: ?Array.<string>,
+ *      series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})
+ * }} rawData
+ */
+
+/**
  * NHN Entertainment Toast UI Chart.
  * @namespace tui.chart
  */
@@ -27,7 +45,7 @@ tui.util.defineNamespace('tui.chart');
 /**
  * Create chart.
  * @param {HTMLElement} container container
- * @param {Array.<Array>} data chart data
+ * @param {rawData} rawData raw data
  * @param {{
  *   chart: {
  *     width: number,
@@ -53,15 +71,15 @@ tui.util.defineNamespace('tui.chart');
  * @private
  * @ignore
  */
-_createChart = function(container, data, options) {
+_createChart = function(container, rawData, options) {
     var themeName, theme, chart;
 
-    data = JSON.parse(JSON.stringify(data));
+    rawData = JSON.parse(JSON.stringify(rawData));
     options = options ? JSON.parse(JSON.stringify(options)) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
 
-    chart = chartFactory.get(options.chartType, data, theme, options);
+    chart = chartFactory.get(options.chartType, rawData, theme, options);
     container.appendChild(chart.render());
     chart.animateChart();
 
@@ -72,9 +90,9 @@ _createChart = function(container, data, options) {
  * Bar chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<string>} data.categories categories
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -112,7 +130,7 @@ _createChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -144,21 +162,21 @@ _createChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.barChart(container, data, options);
+ * tui.chart.barChart(container, rawData, options);
  */
-tui.chart.barChart = function(container, data, options) {
+tui.chart.barChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Column chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<string>} data.categories categories
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -197,7 +215,7 @@ tui.chart.barChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -229,21 +247,21 @@ tui.chart.barChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.columnChart(container, data, options);
+ * tui.chart.columnChart(container, rawData, options);
  */
-tui.chart.columnChart = function(container, data, options) {
+tui.chart.columnChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COLUMN;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Line chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<string>} data.categories categories
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -281,7 +299,7 @@ tui.chart.columnChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -316,21 +334,21 @@ tui.chart.columnChart = function(container, data, options) {
  *         hasDot: true
  *       }
  *     };
- * tui.chart.lineChart(container, data, options);
+ * tui.chart.lineChart(container, rawData, options);
  */
-tui.chart.lineChart = function(container, data, options) {
+tui.chart.lineChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Area chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<string>} data.categories categories
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -368,7 +386,7 @@ tui.chart.lineChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -400,21 +418,21 @@ tui.chart.lineChart = function(container, data, options) {
  *         title: 'X Axis'
  *       }
  *     };
- * tui.chart.areaChart(container, data, options);
+ * tui.chart.areaChart(container, rawData, options);
  */
-tui.chart.areaChart = function(container, data, options) {
+tui.chart.areaChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_AREA;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Combo chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<string>} data.categories categories
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -459,7 +477,7 @@ tui.chart.areaChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: {
  *         column: [
@@ -508,20 +526,20 @@ tui.chart.areaChart = function(container, data, options) {
  *         hasDot: true
  *       }
  *     };
- * tui.chart.comboChart(container, data, options);
+ * tui.chart.comboChart(container, rawData, options);
  */
-tui.chart.comboChart = function(container, data, options) {
+tui.chart.comboChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COMBO;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Pie chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData raw data
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -548,7 +566,7 @@ tui.chart.comboChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       series: [
  *         {
  *           name: 'Legend1',
@@ -573,20 +591,20 @@ tui.chart.comboChart = function(container, data, options) {
  *         title: 'Pie Chart'
  *       }
  *     };
- * tui.chart.pieChart(container, data, options);
+ * tui.chart.pieChart(container, rawData, options);
  */
-tui.chart.pieChart = function(container, data, options) {
+tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**
  * Map chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container chart container
- * @param {object} data chart data
- *      @param {Array.<Array>} data.series series data
+ * @param {rawData} rawData chart data
+ *      @param {Array.<Array>} rawData.series series data
  * @param {object} options chart options
  *      @param {object} options.chart chart options
  *          @param {number} options.chart.width chart width
@@ -611,7 +629,7 @@ tui.chart.pieChart = function(container, data, options) {
  * @api
  * @example
  * var container = document.getElementById('container-id'),
- *     data = {
+ *     rawData = {
  *       series: [
  *         {
  *           code: 'KR',
@@ -633,14 +651,14 @@ tui.chart.pieChart = function(container, data, options) {
  *       },
  *       map: 'world'
  *     };
- * tui.chart.mapChart(container, data, options);
+ * tui.chart.mapChart(container, rawData, options);
  */
-tui.chart.mapChart = function(container, data, options) {
+tui.chart.mapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_MAP;
     options.map = mapFactory.get(options.map);
 
-    return _createChart(container, data, options);
+    return _createChart(container, rawData, options);
 };
 
 /**

@@ -182,13 +182,14 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     _makeDividedPlotPositions: function(width) {
         var tickCount = parseInt(this.data.hTickCount / 2, 10) + 1,
             yAxisWidth = this.boundsMaker.getDimension('yAxis').width,
-            leftPositions, rightPositions;
+            leftWidth, rightWidth, leftPositions, rightPositions;
 
-        width = (width - yAxisWidth) / 2;
-        leftPositions = calculator.makeTickPixelPositions(width, tickCount);
-        rightPositions = tui.util.map(leftPositions, function(position) {
-            return position + width + yAxisWidth;
-        });
+        width -= yAxisWidth;
+        leftWidth = Math.round((width) / 2);
+        rightWidth = width - leftWidth;
+
+        leftPositions = calculator.makeTickPixelPositions(leftWidth, tickCount);
+        rightPositions = calculator.makeTickPixelPositions(rightWidth, tickCount, leftWidth + yAxisWidth);
 
         leftPositions.pop();
         rightPositions.shift();
