@@ -702,20 +702,42 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * Get values for sum.
+     * @returns {Array.<number>}
+     * @private
+     */
+    _getValuesForSum: function() {
+        var values;
+
+        if (this.isSingleYAxis) {
+            values = this.dataProcessor.getWholeValues();
+        } else {
+            values = this.dataProcessor.getValues(this.chartType);
+        }
+
+        return values;
+    },
+
+    /**
      * Calculate minus sum about group values.
      * @returns {number}
      * @private
      */
     _calculateMinusSum: function() {
-        var groupValues;
+        var values = this._getValuesForSum();
 
-        if (this.isSingleYAxis) {
-            groupValues = this.dataProcessor.getWholeValues();
-        } else {
-            groupValues = this.dataProcessor.getValues(this.chartType);
-        }
+        return calculator.sumMinusValues(values);
+    },
 
-        return calculator.sumMinusValues(groupValues);
+    /**
+     * Calculate plus sum about group values.
+     * @returns {number}
+     * @private
+     */
+    _calculatePlusSum: function() {
+        var values = this._getValuesForSum();
+
+        return calculator.sumPlusValues(values);
     },
 
     /**
@@ -724,15 +746,16 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _getPercentStackedScale: function() {
-        var minusSum = this._calculateMinusSum(),
-            scale;
+        var scale;
 
-        if (minusSum === 0) {
+        if (this._calculateMinusSum() === 0) {
             scale = chartConst.PERCENT_STACKED_AXIS_SCALE;
+        } else if (this._calculatePlusSum() === 0) {
+            scale = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
         } else if (this._isDivergingChart()) {
             scale = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;
         } else {
-            scale = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_SCALE;
+            scale = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
         }
 
         return scale;

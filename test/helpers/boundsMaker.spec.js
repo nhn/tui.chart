@@ -700,6 +700,7 @@ describe('boundsMaker', function() {
 
     describe('_updateBoundsForYAxisCenterOption()', function() {
         it('yAxis 중앙정렬을 위해 각종 컴포넌트들의 bounds를 갱신합니다.', function() {
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             boundsMaker.dimensions = {
                 extendedSeries: {
                     width: 300
@@ -763,6 +764,62 @@ describe('boundsMaker', function() {
             expect(boundsMaker.positions.xAxis.left).toBe(1);
             expect(boundsMaker.positions.customEvent.left).toBe(1);
             expect(boundsMaker.positions.tooltip.left).toBe(1);
+        });
+
+        it('구형 브라우저(IE7, IE8)의 경우 series와 extendedSeries의 left값이 1만큼 더 많아야 합니다.', function() {
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
+            boundsMaker.dimensions = {
+                extendedSeries: {
+                    width: 300
+                },
+                xAxis: {
+                    width: 300
+                },
+                plot: {
+                    width: 300
+                },
+                customEvent: {
+                    width: 300
+                },
+                tooltip: {
+                    width: 300
+                }
+            };
+            boundsMaker.positions = {
+                series: {
+                    left: 50
+                },
+                extendedSeries: {
+                    left: 50
+                },
+                plot: {
+                    left: 50
+                },
+                yAxis: {
+                    left: 50
+                },
+                xAxis: {
+                    left: 50
+                },
+                customEvent: {
+                    left: 50
+                },
+                tooltip: {
+                    left: 50
+                }
+            };
+
+            boundsMaker.dimensions.yAxis = {
+                width: 50
+            };
+            boundsMaker.dimensions.series = {
+                width: 300
+            };
+
+            boundsMaker._updateBoundsForYAxisCenterOption();
+
+            expect(boundsMaker.positions.series.left).toBe(1);
+            expect(boundsMaker.positions.extendedSeries.left).toBe(2);
         });
     });
 });

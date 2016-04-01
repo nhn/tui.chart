@@ -793,8 +793,40 @@ describe('AxisScaleMaker', function() {
         });
     });
 
+    describe('_getValuesForSum()', function() {
+        it('axis가 하나 있을 경우에는 getWholeValues()의 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.wholeValues = [70, 10, -80, -20, 30];
+
+            axisScaleMaker.isSingleYAxis = true;
+            actual = axisScaleMaker._getValuesForSum();
+            expected = axisScaleMaker.dataProcessor.getWholeValues();
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('axis가 두개 있을 경우에는 getValues() 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
+            axisScaleMaker.dataProcessor.itemGroup.values = {
+                column: [10, -80, 50, 40]
+            };
+
+            axisScaleMaker.chartType = 'column';
+            actual = axisScaleMaker._getValuesForSum();
+            expected = axisScaleMaker.dataProcessor.getValues('column');
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_calculateMinusSum()', function() {
-        it('axis가 하나 있을 경우의 음수값의 합을 계산합니다.', function() {
+        it('values의 음수값의 합을 계산하여 반환합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
@@ -807,19 +839,19 @@ describe('AxisScaleMaker', function() {
 
             expect(actual).toEqual(expected);
         });
+    });
 
-        it('axis가 두개 있을 경우에는 음수값의 합을 계산합니다.', function() {
+    describe('_calculatePlusSum()', function() {
+        it('values의 양수값의 합을 계산합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
             axisScaleMaker.dataProcessor.itemGroup = new ItemGroup();
-            axisScaleMaker.dataProcessor.itemGroup.values = {
-                column: [10, -80, 50, 40]
-            };
+            axisScaleMaker.dataProcessor.itemGroup.wholeValues = [70, 10, -80, -20, 30];
 
-            axisScaleMaker.chartType = 'column';
-            actual = axisScaleMaker._calculateMinusSum();
-            expected = -80;
+            axisScaleMaker.isSingleYAxis = true;
+            actual = axisScaleMaker._calculatePlusSum();
+            expected = 110;
 
             expect(actual).toEqual(expected);
         });
@@ -837,10 +869,23 @@ describe('AxisScaleMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합이 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('양수의 합이 0일 경우에는 chartConst.MINUS_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
             var actual, expected;
 
             spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(0);
+
+            actual = axisScaleMaker._getPercentStackedScale();
+            expected = chartConst.MINUS_PERCENT_STACKED_AXIS_SCALE;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 있을 경우에는 chartConst.DIVERGING_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
             axisScaleMaker.chartType = 'bar';
             axisScaleMaker.options.diverging = true;
 
@@ -850,13 +895,14 @@ describe('AxisScaleMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('음수의 합이 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.NEGATIVE_PERCENT_STACKED_AXIS_RANGE를 반환합니다.', function() {
+        it('음수의 합과 양수의 합 모두 0이 아니면서 diverging 옵션이 없을 경우에는 chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE 반환합니다.', function() {
             var actual, expected;
 
             spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
+            spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
 
             actual = axisScaleMaker._getPercentStackedScale();
-            expected = chartConst.NEGATIVE_PERCENT_STACKED_AXIS_SCALE;
+            expected = chartConst.DUAL_PERCENT_STACKED_AXIS_SCALE;
 
             expect(actual).toBe(expected);
         });

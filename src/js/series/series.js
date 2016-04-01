@@ -290,7 +290,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? chartConst.OVERLAPPING_WIDTH : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? 0 : 0;
 
         renderUtil.renderPosition(el, {
             top: position.top - (hiddenWidth * 2),

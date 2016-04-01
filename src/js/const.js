@@ -160,10 +160,21 @@ var chartConst = {
         step: 25,
         labels: [0, 25, 50, 75, 100]
     },
-    /** axis scale of negative percent stacked option
+    /** axis scale of minus percent stacked option
      * @type {object}
      */
-    NEGATIVE_PERCENT_STACKED_AXIS_SCALE: {
+    MINUS_PERCENT_STACKED_AXIS_SCALE: {
+        limit: {
+            min: -100,
+            max: 0
+        },
+        step: 25,
+        labels: [0, -25, -50, -75, -100]
+    },
+    /** axis scale of dual percent stacked option
+     * @type {object}
+     */
+    DUAL_PERCENT_STACKED_AXIS_SCALE: {
         limit: {
             min: -100,
             max: 100

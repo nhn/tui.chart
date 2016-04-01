@@ -95,20 +95,24 @@ var calculator = {
      * @memberOf module:calculator
      * @param {number} size area width or height
      * @param {number} count tick count
+     * @param {?number} additionalPosition additional position
      * @returns {Array.<number>} positions
      */
-    makeTickPixelPositions: function(size, count) {
+    makeTickPixelPositions: function(size, count, additionalPosition) {
         var positions = [],
             pxLimit, pxStep;
+
+        additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
             pxLimit = {min: 0, max: size - 1};
             pxStep = this.calculateStepFromLimit(pxLimit, count);
             positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
-                return Math.round(position);
+                return Math.round(position + additionalPosition);
             });
-            positions[positions.length - 1] = size - 1;
+            positions[positions.length - 1] = Math.round(size - 1 + additionalPosition);
         }
+
         return positions;
     },
 

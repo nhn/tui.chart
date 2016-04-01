@@ -639,7 +639,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _updateBoundsForYAxisCenterOption: function() {
         var yAxisWidth = this.getDimension('yAxis').width,
             yAxisExtensibleLeft = Math.floor((this.getDimension('series').width / 2)) + chartConst.OVERLAPPING_WIDTH,
-            xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH;
+            xAxisDecreasingLeft = yAxisWidth - chartConst.OVERLAPPING_WIDTH,
+            additionalLeft = renderUtil.isOldBrowser() ? 1 : 0;
 
         this.dimensions.extendedSeries.width += yAxisWidth;
         this.dimensions.xAxis.width += chartConst.OVERLAPPING_WIDTH;
@@ -647,8 +648,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.dimensions.customEvent.width += yAxisWidth;
         this.dimensions.tooltip.width += yAxisWidth;
 
-        this.positions.series.left -= yAxisWidth;
-        this.positions.extendedSeries.left -= xAxisDecreasingLeft;
+        this.positions.series.left -= (yAxisWidth - additionalLeft);
+        this.positions.extendedSeries.left -= (xAxisDecreasingLeft - additionalLeft);
         this.positions.plot.left -= xAxisDecreasingLeft;
         this.positions.yAxis.left += yAxisExtensibleLeft;
         this.positions.xAxis.left -= xAxisDecreasingLeft;

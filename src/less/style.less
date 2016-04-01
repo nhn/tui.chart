@@ -71,15 +71,18 @@
 
       .tui-chart-tick-area {
         right: 0;
-        border-right: 1px solid @axis-color;
         .tui-chart-tick {
-          right: 0;
+          right: 1px;
           width: 5px;
           height: 1px;
         }
 
         .tui-chart-tick-line {
-          display:none;
+          left: auto;
+          right: 0;
+          width: 1px;
+          background-color: @axis-color;
+          position: absolute;
         }
       }
 
@@ -134,8 +137,12 @@
 
       &.right .tui-chart-tick-area, &.center .tui-chart-tick-area.opposite-side{
         border-right: none;
-        border-left: 1px solid @axis-color;
         .tui-chart-tick {
+          left: 1px;
+        }
+
+        .tui-chart-tick-line {
+          right: auto;
           left: 0;
         }
       }
