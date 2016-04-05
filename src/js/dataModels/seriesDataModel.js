@@ -35,14 +35,21 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @constructs SeriesDataModel
      * @param {rawSeriesData} rawSeriesData raw series data
      * @param {object} options options
+     * @param {Array.<string>} seriesChartTypes chart types
      * @param {Array.<function>} formatFunctions format functions
      */
-    init: function(rawSeriesData, options, formatFunctions) {
+    init: function(rawSeriesData, options, seriesChartTypes, formatFunctions) {
         /**
          * chart options
          * @type {Object}
          */
         this.options = options || {};
+
+        /**
+         * series chart types
+         * @type {Array.<string>}
+         */
+        this.seriesChartTypes = seriesChartTypes;
 
         /**
          * functions for formatting
@@ -106,13 +113,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             return;
         }
 
-        //if (tui.util.isArray(rawSeriesData)) {
+        if (tui.util.isArray(rawSeriesData)) {
             this._removeRangeValue(rawSeriesData);
-        //} else {
-        //    tui.util.forEach(rawSeriesData, function(groupData) {
-        //        self._removeRangeValue(groupData);
-        //    });
-        //}
+        } else {
+            tui.util.forEach(rawSeriesData, function(groupData) {
+                self._removeRangeValue(groupData);
+            });
+        }
     },
 
     /**
