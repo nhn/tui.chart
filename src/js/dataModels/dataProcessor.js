@@ -6,7 +6,7 @@
 
 'use strict';
 
-var ItemGroup = require('../dataModels/itemGroup'),
+var SeriesDataModel = require('../dataModels/seriesDataModel'),
     predicate = require('../helpers/predicate'),
     rawDataHandler = require('../helpers/rawDataHandler'),
     renderUtil = require('../helpers/renderUtil');
@@ -102,9 +102,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         /**
          * Item group
-         * @type {ItemGroup}
+         * @type {SeriesDataModel}
          */
-        this.itemGroup = null;
+        this.seriesDataModel = null;
 
         /**
          * legend labels
@@ -193,16 +193,16 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
 
     /**
-     * Get ItemGroup.
-     * @returns {ItemGroup}
+     * Get SeriesDataModel.
+     * @returns {SeriesDataModel}
      */
-    getItemGroup: function() {
-        if (!this.itemGroup) {
-            this.itemGroup = new ItemGroup(this.rawData.series, this.options,
+    getSeriesDataModel: function() {
+        if (!this.seriesDataModel) {
+            this.seriesDataModel = new SeriesDataModel(this.rawData.series, this.options,
                 this.seriesChartTypes, this.getFormatFunctions());
         }
 
-        return this.itemGroup;
+        return this.seriesDataModel;
     },
 
     /**
@@ -211,7 +211,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {number}
      */
     getGroupCount: function(chartType) {
-        return this.getItemGroup().getGroupCount(chartType);
+        return this.getSeriesDataModel().getGroupCount(chartType);
     },
 
     /**
@@ -219,15 +219,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {boolean}
      */
     isValidAllGroup: function() {
-        return this.getItemGroup().isValidAllGroup();
+        return this.getSeriesDataModel().isValidAllGroup();
     },
 
     /**
-     * Get whole group items.
+     * Get whole SeriesGroups.
      * @returns {Array.<Items>}
      */
-    getWholeGroups: function() {
-        return this.getItemGroup().getWholeGroups();
+    getWholeSeriesGroups: function() {
+        return this.getSeriesDataModel().getWholeSeriesGroups();
     },
 
     /**
@@ -238,7 +238,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {number} value
      */
     getValue: function(groupIndex, index, chartType) {
-        return this.getItemGroup().getValue(groupIndex, index, chartType);
+        return this.getSeriesDataModel().getValue(groupIndex, index, chartType);
     },
 
     /**
@@ -246,7 +246,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {Array.<number>} values
      */
     getWholeValues: function() {
-        return this.getItemGroup().getWholeValues();
+        return this.getSeriesDataModel().getWholeValues();
     },
 
     /**
@@ -255,7 +255,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {Array.<number>}
      */
     getValues: function(chartType) {
-        return this.getItemGroup().getValues(chartType);
+        return this.getSeriesDataModel().getValues(chartType);
     },
 
     /**
@@ -316,7 +316,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string} formatted value
      */
     getFirstFormattedValue: function(chartType) {
-        return this.getItemGroup().getFirstItem(chartType).formattedValue;
+        return this.getSeriesDataModel().getFirstSeriesGroup(chartType).formattedValue;
     },
 
     /**
@@ -600,38 +600,19 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make sum map per stack.
-     * @param {items} items items
-     * @returns {object} sum map
-     * @private
-     */
-    _makeSumMapPerStack: function(items) {
-        var sumMap = {};
-        tui.util.forEachArray(items, function(item) {
-            if (!sumMap[item.stack]) {
-                sumMap[item.stack] = 0;
-            }
-
-            sumMap[item.stack] += Math.abs(item.value);
-        });
-
-        return sumMap;
-    },
-
-    /**
      * Add data ratios of pie chart.
      */
     addDataRatiosOfPieChart: function() {
-        this.getItemGroup().addDataRatiosOfPieChart();
+        this.getSeriesDataModel().addDataRatiosOfPieChart();
     },
 
     /**
-     * Update start value of item.
+     * Add start value to all series item.
      * @param {{min: number, max: number}} limit - limit
      * @param {string} chartType - chart type
      * @private
      */
-    _updateItemStart: function(limit, chartType) {
+    _addStartValueToAllSeriesItem: function(limit, chartType) {
         var start = 0;
 
         if (limit.min >= 0) {
@@ -640,7 +621,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             start = limit.max;
         }
 
-        this.getItemGroup().updateItemStart(start, chartType);
+        this.getSeriesDataModel().addStartValueToAllSeriesItem(start, chartType);
     },
 
     /**
@@ -651,10 +632,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     addDataRatios: function(limit, stacked, chartType) {
-        var itemGroup = this.getItemGroup();
+        var seriesDataModel = this.getSeriesDataModel();
 
-        this._updateItemStart(limit, chartType);
-        itemGroup.addDataRatios(limit, stacked, chartType);
+        this._addStartValueToAllSeriesItem(limit, chartType);
+        seriesDataModel.addDataRatios(limit, stacked, chartType);
     }
 });
 

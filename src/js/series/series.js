@@ -546,7 +546,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.selectedLegendIndex = legendIndex;
 
-        if (this.dataProcessor.getItemGroup().getGroupCount(this.chartType)) {
+        if (this.dataProcessor.getSeriesDataModel().getGroupCount(this.chartType)) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

@@ -21,10 +21,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeBasicPositions: function() {
         var dimension = this.boundsMaker.getDimension('series'),
-            itemGroup = this.dataProcessor.getItemGroup(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
             width = dimension.width,
             height = dimension.height,
-            len = itemGroup.getGroupCount(this.chartType),
+            len = seriesDataModel.getGroupCount(this.chartType),
             start = chartConst.SERIES_EXPAND_SIZE,
             step;
 
@@ -35,11 +35,11 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             start += (step / 2);
         }
 
-        return itemGroup.map(function(items) {
-            return items.map(function(item, index) {
+        return seriesDataModel.map(function(seriesGroup) {
+            return seriesGroup.map(function(seriesItem, index) {
                 return {
                     left: start + (step * index),
-                    top: height - (item.ratio * height) + chartConst.SERIES_EXPAND_SIZE
+                    top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
                 };
             });
         }, this.chartType, true);
@@ -75,23 +75,23 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             groupPositions = this.seriesData.groupPositions,
-            itemGroup = this.dataProcessor.getItemGroup(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
             firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             htmls;
 
-        htmls = itemGroup.map(function(items, groupIndex) {
-            return items.map(function(item, index) {
+        htmls = seriesDataModel.map(function(seriesGroup, groupIndex) {
+            return seriesGroup.map(function(seriesItem, index) {
                 var position = groupPositions[groupIndex][index],
                     labelHtml = '',
                     labelWidth;
 
                 if (position.top !== position.startTop) {
-                    labelWidth = renderUtil.getRenderedLabelWidth(item.formattedValue, self.theme.label);
+                    labelWidth = renderUtil.getRenderedLabelWidth(seriesItem.formattedValue, self.theme.label);
                     labelHtml = self._makeSeriesLabelHtml({
                         left: position.left - (labelWidth / 2),
-                        top: self._makeLabelPositionTop(position, item.formattedValue, labelHeight)
-                    }, item.formattedValue, groupIndex);
+                        top: self._makeLabelPositionTop(position, seriesItem.formattedValue, labelHeight)
+                    }, seriesItem.formattedValue, groupIndex);
                 }
                 return labelHtml;
             }).join('');

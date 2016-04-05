@@ -6,18 +6,18 @@
 
 'use strict';
 
-var Items = tui.util.defineClass(/** @lends Items.prototype */{
+var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
-     * Items.
-     * @constructs Items
-     * @param {Items} items - items
+     * SeriesGroup.
+     * @constructs SeriesGroup
+     * @param {Array.<SeriesItem>} seriesItems - series items
      */
-    init: function(items) {
+    init: function(seriesItems) {
         /**
          * items
-         * @type {Array.<Item>}
+         * @type {Array.<SeriesItem>}
          */
-        this.items = items;
+        this.items = seriesItems;
 
         /**
          * item vlaues.
@@ -27,19 +27,19 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Get item count.
+     * Get series item count.
      * @returns {number}
      */
-    getItemCount: function() {
+    getSeriesItemCount: function() {
         return this.items.length;
     },
 
     /**
-     * Get item.
+     * Get series item.
      * @param {number} index - index of items
      * @returns {Item}
      */
-    getItem: function(index) {
+    getSeriesItem: function(index) {
         return this.items[index];
     },
 
@@ -122,10 +122,10 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Add start to all item.
+     * Add start value to all series item.
      * @param {number} start start value
      */
-    addStartToAllItem: function(start) {
+    addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
             item.addStart(start);
         });
@@ -196,4 +196,4 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     }
 });
 
-module.exports = Items;
+module.exports = SeriesGroup;

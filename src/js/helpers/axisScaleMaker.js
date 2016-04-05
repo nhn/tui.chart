@@ -189,11 +189,11 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var itemGroup = this.dataProcessor.getItemGroup(),
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(),
             baseValues = [];
 
-        itemGroup.each(function(items) {
-            var valuesMap = items._makeValuesMapPerStack();
+        seriesDataModel.each(function(seriesGroup) {
+            var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
                 var plusSum = calculator.sumPlusValues(values),

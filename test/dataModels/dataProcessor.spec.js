@@ -249,63 +249,35 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeSumMapPerStack()', function() {
-        it('items에서 stack 기준으로 합산하여 sum map을 생성한 후 반환합니다.', function() {
-            var items = [{
-                    value: 20,
-                    stack: 'st1'
-                },
-                {
-                    value: 40,
-                    stack: 'st1'
-                },
-                {
-                    value: 10,
-                    stack: 'st2'
-                },
-                {
-                    value: 30,
-                    stack: 'st2'
-                }],
-                actual = dataProcessor._makeSumMapPerStack(items),
-                expected = {
-                    st1: 60,
-                    st2: 40
-                };
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_updateItemStart()', function() {
-        it('limit의 값들이 모두 양수이면 start값을 limit.min으로 설정하여 itemGroup.updateItemStart에 전달합니다.', function() {
-            dataProcessor.itemGroup = jasmine.createSpyObj('itemGroup', ['updateItemStart']);
-            dataProcessor._updateItemStart({
+    describe('_addStartValueToAllSeriesItem()', function() {
+        it('limit의 값들이 모두 양수이면 start값을 limit.min으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor._addStartValueToAllSeriesItem({
                 min: 10,
                 max: 80
             }, 'bar');
 
-            expect(dataProcessor.itemGroup.updateItemStart).toHaveBeenCalledWith(10, 'bar');
+            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(10, 'bar');
         });
 
-        it('limit의 값들이 모두 음수이면 start값을 limit.max으로 설정하여 itemGroup.updateItemStart에 전달합니다.', function() {
-            dataProcessor.itemGroup = jasmine.createSpyObj('itemGroup', ['updateItemStart']);
-            dataProcessor._updateItemStart({
+        it('limit의 값들이 모두 음수이면 start값을 limit.max으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor._addStartValueToAllSeriesItem({
                 min: -80,
                 max: -10
             }, 'bar');
 
-            expect(dataProcessor.itemGroup.updateItemStart).toHaveBeenCalledWith(-10, 'bar');
+            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(-10, 'bar');
         });
 
-        it('limit의 min은 음수이고 max는 양수이면 start값을 0으로 설정하여 itemGroup.updateItemStart에 전달합니다.', function() {
-            dataProcessor.itemGroup = jasmine.createSpyObj('itemGroup', ['updateItemStart']);
-            dataProcessor._updateItemStart({
+        it('limit의 min은 음수이고 max는 양수이면 start값을 0으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
+            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor._addStartValueToAllSeriesItem({
                 min: -40,
                 max: 80
             }, 'bar');
 
-            expect(dataProcessor.itemGroup.updateItemStart).toHaveBeenCalledWith(0, 'bar');
+            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(0, 'bar');
         });
     });
 });
