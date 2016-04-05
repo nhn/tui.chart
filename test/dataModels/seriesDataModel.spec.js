@@ -20,24 +20,23 @@ describe('test SeriesDataModel', function() {
 
     describe('_removeRangeValue()', function() {
         it('range형의 seriesItem에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
-            var rawSeriesData = [
+            seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
                 }, {
                     data: [[-20, 10], [30, 40]]
                 }
             ];
+            seriesDataModel._removeRangeValue();
 
-            seriesDataModel._removeRangeValue(rawSeriesData);
-
-            expect(rawSeriesData[0].data).toEqual([10, 20]);
-            expect(rawSeriesData[1].data).toEqual([-20, 30]);
+            expect(seriesDataModel.rawSeriesData[0].data).toEqual([10, 20]);
+            expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
         });
     });
 
     describe('_removeRangeValue()', function() {
         it('range형의 seriesItem에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
-            var rawSeriesData = [
+            seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
                 }, {
@@ -45,23 +44,25 @@ describe('test SeriesDataModel', function() {
                 }
             ];
 
-            seriesDataModel._removeRangeValue(rawSeriesData);
+            seriesDataModel._removeRangeValue();
 
-            expect(rawSeriesData[0].data).toEqual([10, 20]);
-            expect(rawSeriesData[1].data).toEqual([-20, 30]);
+            expect(seriesDataModel.rawSeriesData[0].data).toEqual([10, 20]);
+            expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
         });
     });
 
     describe('_createBaseGroups()', function() {
         it('rawData.series를 이용하여 SeriesItem을 2차원 배열로 들고있는 baseGroups를 생성합니다.', function() {
-            var rawSeriesData = [{
-                    data: [10, 20, 30],
-                    stack: 'st1'
-                }, {
-                    data: [40, 50, 60],
-                    stack: 'st2'
-                }],
-                actual = seriesDataModel._createBaseGroups(rawSeriesData);
+            var actual;
+
+            seriesDataModel.rawSeriesData = [{
+                data: [10, 20, 30],
+                stack: 'st1'
+            }, {
+                data: [40, 50, 60],
+                stack: 'st2'
+            }];
+            actual = seriesDataModel._createBaseGroups();
 
             expect(actual.length).toBe(2);
             expect(actual[0].length).toBe(3);
@@ -72,12 +73,14 @@ describe('test SeriesDataModel', function() {
         });
 
         it('data가 숫자인 파이차트형의 경우의 baseGroups를 생성합니다.', function() {
-            var rawSeriesData = [{
-                    data: 10
-                }, {
-                    data: 20
-                }],
-                actual = seriesDataModel._createBaseGroups(rawSeriesData);
+            var actual;
+
+            seriesDataModel.rawSeriesData = [{
+                data: 10
+            }, {
+                data: 20
+            }];
+            actual = seriesDataModel._createBaseGroups();
 
             expect(actual.length).toBe(2);
             expect(actual[0][0].value).toBe(10);
@@ -85,127 +88,39 @@ describe('test SeriesDataModel', function() {
         });
     });
 
-    describe('createArrayTypeGroupsFromRawData()', function() {
-        it('seriesGroup를 요소로 갖는 배열 타입의 groups를 생성합니다.', function() {
-            var rawSeriesData = [{
-                    data: [10, 20, 30],
-                    stack: 'st1'
-                }, {
-                    data: [40, 50, 60],
-                    stack: 'st2'
-                }],
-                chartType = 'line',
-                actual = seriesDataModel.createArrayTypeGroupsFromRawData(rawSeriesData, chartType);
+    describe('_createGroupsFromRawData()', function() {
+        it('seriesGroup을 요소로 갖는 groups를 생성합니다.', function() {
+            var actual;
+
+            seriesDataModel.rawSeriesData = [{
+                data: [10, 20, 30],
+                stack: 'st1'
+            }, {
+                data: [40, 50, 60],
+                stack: 'st2'
+            }];
+            actual = seriesDataModel._createGroupsFromRawData();
 
             expect(actual.length).toBe(2);
             expect(actual[0].getSeriesItemCount()).toBe(3);
             expect(actual[0] instanceof seriesGroup).toBe(true);
         });
 
-        it('isPivot이 true이변 회전된 결과로 groups를 생성합니다.', function() {
-            var rawSeriesData = [{
-                    data: [10, 20, 30],
-                    stack: 'st1'
-                }, {
-                    data: [40, 50, 60],
-                    stack: 'st2'
-                }],
-                chartType = 'bar',
-                isPivot = true,
-                actual = seriesDataModel.createArrayTypeGroupsFromRawData(rawSeriesData, chartType, isPivot);
+        it('isPivot이 true이면 회전된 결과로 groups를 생성합니다.', function() {
+            var actual;
+
+            seriesDataModel.rawSeriesData = [{
+                data: [10, 20, 30],
+                stack: 'st1'
+            }, {
+                data: [40, 50, 60],
+                stack: 'st2'
+            }];
+            actual = seriesDataModel._createGroupsFromRawData(true);
 
             expect(actual.length).toBe(3);
             expect(actual[0].getSeriesItemCount()).toBe(2);
             expect(actual[0] instanceof seriesGroup);
-        });
-    });
-
-    describe('_createGroupsFromRawData()', function() {
-        it('rawSeriesData가 배열이면 createArrayTypeGroupsFromRawData()의 결과를 반환합니다.', function() {
-            var rawSeriesData = [{
-                    data: [10, 20, 30],
-                    stack: 'st1'
-                }, {
-                    data: [40, 50, 60],
-                    stack: 'st2'
-                }],
-                actual, expected;
-
-            seriesDataModel.rawSeriesData = rawSeriesData;
-            actual = seriesDataModel._createGroupsFromRawData();
-            expected = seriesDataModel.createArrayTypeGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY);
-
-            expect(actual).toEqual(expected);
-        });
-
-        it('rawSeriesData가 객체면 createArrayTypeGroupsFromRawData()의 결과를 각 key에 담아 반환합니다.', function() {
-            var rawSeriesData = {
-                    column: [{
-                        data: [10, 20, 30]
-                    }],
-                    line: [{
-                        data: [40, 50, 60]
-                    }]
-                },
-                actual;
-
-            seriesDataModel.rawSeriesData = rawSeriesData;
-            actual = seriesDataModel._createGroupsFromRawData();
-
-            expect(actual.column.length).toBe(1);
-            expect(actual.column[0].getSeriesItemCount()).toBe(3);
-            expect(actual.column[0] instanceof seriesGroup);
-            expect(actual.line.length).toBe(1);
-            expect(actual.line[0].getSeriesItemCount()).toBe(3);
-            expect(actual.line[0] instanceof seriesGroup);
-        });
-    });
-
-    describe('isValidAllGroup()', function() {
-        it('모든 그룹이 유효한 seriesGroup를 갖고 있으면 true를 반환합니다.', function() {
-            var actual, expected;
-
-            seriesDataModel.groups = {
-                column: [
-                    new seriesGroup([{
-                        value: 10
-                    }, {
-                        value: 20
-                    }])
-                ],
-                line: [
-                    new seriesGroup([{
-                        value: 30
-                    }, {
-                        value: 40
-                    }])
-                ]
-            };
-
-            actual = seriesDataModel.isValidAllGroup();
-            expected = true;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('하나의 그룹이라도 유효한 seriesGroup를 갖고 있지 않으면 false를 반환합니다.', function() {
-            var actual, expected;
-
-            seriesDataModel.groups = {
-                column: [
-                    new seriesGroup([{
-                        value: 10
-                    }, {
-                        value: 20
-                    }])
-                ],
-                line: []
-            };
-
-            actual = seriesDataModel.isValidAllGroup();
-            expected = false;
-
-            expect(actual).toBe(expected);
         });
     });
 
@@ -231,78 +146,12 @@ describe('test SeriesDataModel', function() {
         });
     });
 
-    describe('_makeWholeSeriesGroups()', function() {
-        it('객체로 구성된(colum, line) groups의 seriesItem들을 같은 seriesItem index끼리 모아 seriesGroup를 새로 구성하여 반환합니다.', function() {
-            var actual;
-
-            seriesDataModel.groups = {
-                column: [
-                    new seriesGroup([{
-                        value: 10
-                    }, {
-                        value: 20
-                    }])
-                ],
-                line: [
-                    new seriesGroup([{
-                        value: 30
-                    }, {
-                        value: 40
-                    }])
-                ]
-            };
-
-            actual = seriesDataModel._makeWholeSeriesGroups();
-
-            expect(actual.length).toBe(1);
-            expect(actual[0].items).toEqual([
-                {
-                    value: 10
-                }, {
-                    value: 20
-                }, {
-                    value: 30
-                }, {
-                    value: 40
-                }
-            ]);
-        });
-    });
-
-    describe('_makeWholeValues()', function() {
-        it('모든 sereis item의 value를 추출 하여 반환합니다.', function() {
-            var actual, expected;
-
-            seriesDataModel.groups = {
-                column: [
-                    new seriesGroup([{
-                        value: 10
-                    }, {
-                        value: 20
-                    }])
-                ],
-                line: [
-                    new seriesGroup([{
-                        value: 30
-                    }, {
-                        value: 40
-                    }])
-                ]
-            };
-
-            actual = seriesDataModel._makeWholeValues();
-            expected = [10, 20, 30, 40];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_addRatiosWhenNormalStacked()', function() {
         it('normal stacked 옵션인 경우에는 limit.min, limit.max의 간격을 구하여 seriesGroup.addRatios에 전달합니다.', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
-            seriesDataModel._addRatiosWhenNormalStacked('bar', {min: 0, max: 80});
+            seriesDataModel._addRatiosWhenNormalStacked({min: 0, max: 80});
 
             expect(seriesGroup.addRatios).toHaveBeenCalledWith(80);
         });
@@ -312,11 +161,9 @@ describe('test SeriesDataModel', function() {
         it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
             var actual, expected;
 
-            seriesDataModel.values = {
-                bar: [-20, 40]
-            };
+            seriesDataModel.values = [-20, 40];
 
-            actual = seriesDataModel._calculateBaseRatio('bar');
+            actual = seriesDataModel._calculateBaseRatio();
             expected = 0.5;
 
             expect(actual).toEqual(expected);
@@ -325,11 +172,9 @@ describe('test SeriesDataModel', function() {
         it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
             var actual, expected;
 
-            seriesDataModel.values = {
-                bar: [20, 40]
-            };
+            seriesDataModel.values = [20, 40];
 
-            actual = seriesDataModel._calculateBaseRatio('bar');
+            actual = seriesDataModel._calculateBaseRatio();
             expected = 1;
 
             expect(actual).toEqual(expected);
@@ -341,9 +186,7 @@ describe('test SeriesDataModel', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosWhenPercentStacked']);
 
             seriesDataModel.groups = [seriesGroup];
-            seriesDataModel.values = {
-                bar: [20, 40]
-            };
+            seriesDataModel.values = [20, 40];
 
             seriesDataModel._addRatiosWhenPercentStacked('bar');
 
@@ -366,41 +209,53 @@ describe('test SeriesDataModel', function() {
 
     describe('_makeSubtractionValue()', function() {
         it('라인타입 차트가 아니면서 limit의 값이 모두 음수인 경우에는 limit.max를 반환합니다.', function() {
-            var actual = seriesDataModel._makeSubtractionValue('bar', {
-                    min: -90,
-                    max: -20
-                }),
-                expected = -20;
+            var actual, expected;
+
+            seriesDataModel.chartType = 'bar';
+            actual = seriesDataModel._makeSubtractionValue({
+                min: -90,
+                max: -20
+            });
+            expected = -20;
 
             expect(actual).toEqual(expected);
         });
 
         it('라인타입 차트인 경우에는 limit.min을 반환합니다.', function() {
-            var actual = seriesDataModel._makeSubtractionValue('line', {
-                    min: -90,
-                    max: -20
-                }),
-                expected = -90;
+            var actual, expected;
+
+            seriesDataModel.chartType = 'line';
+            actual = seriesDataModel._makeSubtractionValue({
+                min: -90,
+                max: -20
+            });
+            expected = -90;
 
             expect(actual).toEqual(expected);
         });
 
         it('라인차트가 아니면서 모두 양수인 경우에도 limit.min을 반환합니다.', function() {
-            var actual = seriesDataModel._makeSubtractionValue('bar', {
-                    min: 20,
-                    max: 90
-                }),
-                expected = 20;
+            var actual, expected;
+
+            seriesDataModel.chartType = 'bar';
+            actual = seriesDataModel._makeSubtractionValue({
+                min: 20,
+                max: 90
+            });
+            expected = 20;
 
             expect(actual).toEqual(expected);
         });
 
         it('그 외의 경우에는 0을 반환합니다.', function() {
-            var actual = seriesDataModel._makeSubtractionValue('bar', {
-                    min: -90,
-                    max: 90
-                }),
-                expected = 0;
+            var actual, expected;
+
+            seriesDataModel.chartType = 'bar';
+            actual = seriesDataModel._makeSubtractionValue({
+                min: -90,
+                max: 90
+            });
+            expected = 0;
 
             expect(actual).toEqual(expected);
         });
@@ -411,7 +266,7 @@ describe('test SeriesDataModel', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
-            seriesDataModel._addRatios('bar', {min: 0, max: 80});
+            seriesDataModel._addRatios({min: 0, max: 80});
 
             expect(seriesGroup.addRatios).toHaveBeenCalledWith(80, 0);
         });
@@ -420,7 +275,6 @@ describe('test SeriesDataModel', function() {
     describe('addDataRatios()', function() {
         it('옵션이 없는 경우에는 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatios');
-
             seriesDataModel.addDataRatios({min: 0, max: 160}, null, 'column');
 
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
@@ -428,41 +282,41 @@ describe('test SeriesDataModel', function() {
 
         it('stacked option이 유효한 차트의 옵션이 normal stacked인 경우에는 _addRatiosWhenNormalStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenNormalStacked');
-
-            seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal', 'bar');
+            seriesDataModel.chartType = 'bar';
+            seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
 
             expect(seriesDataModel._addRatiosWhenNormalStacked).toHaveBeenCalled();
         });
 
         it('stacked option이 유효하지 않는 라인 차트에는 normal stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatios');
-
-            seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal', 'line');
+            seriesDataModel.chartType = 'line';
+            seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
 
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });
 
         it('stacked option이 유효한 차트의 옵션이 diverging percent stacked인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenDivergingStacked');
-
             seriesDataModel.divergingOption = true;
-            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent', 'bar');
+            seriesDataModel.chartType = 'bar';
+            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
 
             expect(seriesDataModel._addRatiosWhenDivergingStacked).toHaveBeenCalled();
         });
 
         it('stacked option이 유효한 차트의 옵션이 percent stacked인 경우에는 _addRatiosWhenPercentStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenPercentStacked');
-
-            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent', 'bar');
+            seriesDataModel.chartType = 'bar';
+            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
 
             expect(seriesDataModel._addRatiosWhenPercentStacked).toHaveBeenCalled();
         });
 
         it('stacked option이 유효하지 않는 라인 차트에는 percent stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatios');
-
-            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent', 'line');
+            seriesDataModel.chartType = 'line';
+            seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
 
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });

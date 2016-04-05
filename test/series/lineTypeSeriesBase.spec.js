@@ -168,8 +168,8 @@ describe('LineTypeSeriesBase', function() {
             var elLabelArea = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            spyOn(seriesDataModel, 'getFirstFormattedValue').and.returnValue('1.5');
             seriesDataModel.pivotGroups = [
                 new seriesGroup([{
                     formattedValue: '1.5'

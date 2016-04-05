@@ -121,7 +121,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var isValid = true;
 
         if (this.componentName === 'rightYAxis') {
-            isValid = this.dataProcessor.isValidAllGroup();
+            isValid = this.dataProcessor.isValidAllSeriesDataModel();
         }
 
         return isValid;

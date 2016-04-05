@@ -135,7 +135,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeBounds: function() {
         var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
@@ -153,7 +153,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
             return seriesGroup.map(iteratee);
-        }, this.chartType);
+        });
     },
 
     /**

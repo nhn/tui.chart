@@ -117,7 +117,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _makeBounds: function() {
         var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
@@ -135,7 +135,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
             return seriesGroup.map(iteratee);
-        }, this.chartType);
+        });
     },
 
     /**

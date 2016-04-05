@@ -7,6 +7,7 @@
 'use strict';
 
 var Tooltip = require('../../src/js/tooltips/tooltip'),
+    DataProcessor = require('../../src/js/dataModels/dataProcessor'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
     seriesGroup = require('../../src/js/dataModels/seriesGroup');
 
@@ -14,7 +15,7 @@ describe('Tooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'getSeriesDataModel', 'getLegendLabels', 'getValue']);
+        dataProcessor = new DataProcessor({}, '', {});
     });
 
     beforeEach(function() {
@@ -29,7 +30,8 @@ describe('Tooltip', function() {
             var seriesDataModel = new SeriesDataModel(),
                 actual, expected;
 
-            dataProcessor.getCategories.and.returnValue(['Silver', 'Gold']);
+            spyOn(dataProcessor, 'getCategories').and.returnValue(['Silver', 'Gold']);
+            spyOn(dataProcessor, 'getLegendLabels').and.returnValue(['Density1', 'Density2']);
             seriesDataModel.groups = [
                 new seriesGroup([
                     {
@@ -39,10 +41,12 @@ describe('Tooltip', function() {
                     }
                 ])
             ];
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
-
-            dataProcessor.getLegendLabels.and.returnValue(['Density1', 'Density2']);
+            dataProcessor.chartType = 'column';
+            dataProcessor.seriesDataModelMap = {
+                column: seriesDataModel
+            };
             tooltip.chartType = 'column';
+
             actual = tooltip._makeTooltipData();
             expected = {
                 column: [[

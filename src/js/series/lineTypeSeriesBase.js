@@ -21,10 +21,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeBasicPositions: function() {
         var dimension = this.boundsMaker.getDimension('series'),
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             width = dimension.width,
             height = dimension.height,
-            len = seriesDataModel.getGroupCount(this.chartType),
+            len = seriesDataModel.getGroupCount(),
             start = chartConst.SERIES_EXPAND_SIZE,
             step;
 
@@ -42,7 +42,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                     top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
                 };
             });
-        }, this.chartType, true);
+        }, true);
     },
 
     /**
@@ -75,8 +75,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             groupPositions = this.seriesData.groupPositions,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(),
-            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            firstFormattedValue = seriesDataModel.getFirstFormattedValue(),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
             htmls;
 
@@ -95,7 +95,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                 }
                 return labelHtml;
             }).join('');
-        }, this.chartType, true);
+        }, true);
 
         elSeriesLabelArea.innerHTML = htmls.join('');
     },

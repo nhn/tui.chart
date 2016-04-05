@@ -45,7 +45,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _makeSectorData: function(circleBound) {
         var self = this,
-            seriesGroup = this.dataProcessor.getSeriesDataModel().getFirstSeriesGroup(),
+            seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup(),
             cx = circleBound.cx,
             cy = circleBound.cy,
             r = circleBound.r,

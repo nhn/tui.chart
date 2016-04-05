@@ -131,7 +131,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData, params.options, params.seriesChartTypes);
+        var dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
 
         return dataProcessor;
     },

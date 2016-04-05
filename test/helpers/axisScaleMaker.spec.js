@@ -17,7 +17,7 @@ describe('AxisScaleMaker', function() {
     beforeEach(function() {
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['makeSeriesHeight', 'makeSeriesWidth']);
         axisScaleMaker = new AxisScaleMaker({
-            dataProcessor: new DataProcessor([], {}),
+            dataProcessor: new DataProcessor([], '', {}),
             boundsMaker: boundsMaker
         });
     });
@@ -87,16 +87,18 @@ describe('AxisScaleMaker', function() {
         it('normal stacked 차트의 baes values를 생성합니다.', function() {
             var seriesGroup, actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                bar: new SeriesDataModel()
+            };
             seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
             seriesGroup._makeValuesMapPerStack.and.returnValue({
                 st1: [-10, 30, -50],
                 st2: [-20, 40, 60]
             });
-            axisScaleMaker.dataProcessor.seriesDataModel.groups = [
+            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.groups = [
                 seriesGroup
             ];
+            axisScaleMaker.chartType = 'bar';
 
             actual = axisScaleMaker._makeBaseValuesForNormalStackedChart();
             expected = [30, -60, 100, -20];
@@ -109,10 +111,10 @@ describe('AxisScaleMaker', function() {
         it('baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.values = {
-                bar: [70, 10, 20, 20, 80, 30]
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                bar: new SeriesDataModel()
             };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.values = [70, 10, 20, 20, 80, 30];
             axisScaleMaker.chartType = 'bar';
 
             actual = axisScaleMaker._makeBaseValues();
@@ -124,12 +126,20 @@ describe('AxisScaleMaker', function() {
         it('comboChart에서 yAxis가 하나 있을 경우의 baseValues를 생성합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.wholeValues = [70, 10, 1, 2, 3, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+
+            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
 
             axisScaleMaker.isSingleYAxis = true;
+            axisScaleMaker.chartType = 'bar';
+
             actual = axisScaleMaker._makeBaseValues();
-            expected = [70, 10, 1, 2, 3, 20, 20, 80, 30];
+            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
 
             expect(actual).toEqual(expected);
         });
@@ -798,10 +808,15 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.wholeValues = [70, 10, -80, -20, 30];
-
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
             axisScaleMaker.isSingleYAxis = true;
+            axisScaleMaker.chartType = 'column';
+
             actual = axisScaleMaker._getValuesForSum();
             expected = axisScaleMaker.dataProcessor.getWholeValues();
 
@@ -812,10 +827,12 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.values = {
-                column: [10, -80, 50, 40]
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
             };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
 
             axisScaleMaker.chartType = 'column';
             actual = axisScaleMaker._getValuesForSum();
@@ -830,12 +847,16 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.wholeValues = [70, 10, -80, -20, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [-70, 10, -20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, -3];
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculateMinusSum();
-            expected = -100;
+            expected = -93;
 
             expect(actual).toEqual(expected);
         });
@@ -846,12 +867,16 @@ describe('AxisScaleMaker', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModel = new SeriesDataModel();
-            axisScaleMaker.dataProcessor.seriesDataModel.wholeValues = [70, 10, -80, -20, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [-70, 10, -20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, -3];
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculatePlusSum();
-            expected = 110;
+            expected = 143;
 
             expect(actual).toEqual(expected);
         });

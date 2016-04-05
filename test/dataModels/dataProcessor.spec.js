@@ -7,13 +7,14 @@
 'use strict';
 
 var DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
-    chartConst = require('../../src/js/const');
+    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
+    SeriesGroup = require('../../src/js/dataModels/seriesGroup');
 
 describe('test DataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {
-        dataProcessor = new DataProcessor({}, {});
+        dataProcessor = new DataProcessor({}, '', {});
     });
 
     describe('_processCategories()', function() {
@@ -22,6 +23,144 @@ describe('test DataProcessor', function() {
                     '<div>ABC</div>', 'EFG'
                 ]),
                 expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('isValidAllSeriesDataModel()', function() {
+        it('모든 SeriesDataModel이 유효한 seriesGroup을 갖고 있으면 true를 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
+            dataProcessor.seriesDataModelMap.line.groups = ['seriesGroup3'];
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+
+            actual = dataProcessor.isValidAllSeriesDataModel();
+            expected = true;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('하나의 그룹이라도 유효한 seriesGroup을 갖고 있지 않으면 false를 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
+            dataProcessor.seriesDataModelMap.line.groups = [];
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+
+            actual = dataProcessor.isValidAllSeriesDataModel();
+            expected = false;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeWholeSeriesGroups()', function() {
+        it('객체로 구성된(colum, line) groups의 seriesItem들을 같은 seriesItem index끼리 모아 seriesGroup을 새로 구성하여 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = [
+                new SeriesGroup(['seriesItem1', 'seriesItem2']),
+                new SeriesGroup(['seriesItem3'])
+            ];
+            dataProcessor.seriesDataModelMap.line.groups = [
+                new SeriesGroup(['seriesItem4']),
+                new SeriesGroup(['seriesItem5', 'seriesItem6'])
+            ];
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+
+            actual = dataProcessor._makeWholeSeriesGroups();
+
+            expect(actual.length).toBe(2);
+            expect(actual[0].items).toEqual([
+                'seriesItem1',
+                'seriesItem2',
+                'seriesItem4'
+            ]);
+            expect(actual[1].items).toEqual([
+                'seriesItem3',
+                'seriesItem5',
+                'seriesItem6'
+            ]);
+        });
+    });
+
+    describe('_makeWholeValues()', function() {
+        it('모든 sereis item의 value를 추출 하여 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = [
+                new SeriesGroup([{
+                    value: 10,
+                    start: null
+                }, {
+                    value: 20,
+                    start: null
+                }])
+            ];
+            dataProcessor.seriesDataModelMap.line.groups = [
+                new SeriesGroup([{
+                    value: 30,
+                    start: null
+                }, {
+                    value: 40,
+                    start: null
+                }])
+            ];
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+
+            actual = dataProcessor._makeWholeValues();
+            expected = [10, 20, 30, 40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('start값이 null이 아닐경우 포함하여 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = [
+                new SeriesGroup([{
+                    value: 10,
+                    start: 5
+                }, {
+                    value: 20,
+                    start: 15
+                }])
+            ];
+            dataProcessor.seriesDataModelMap.line.groups = [
+                new SeriesGroup([{
+                    value: 30,
+                    start: 10
+                }, {
+                    value: 40,
+                    start: 30
+                }])
+            ];
+            dataProcessor.seriesChartTypes = ['column', 'line'];
+
+            actual = dataProcessor._makeWholeValues();
+            expected = [10, 5, 20, 15, 30, 10, 40, 30];
 
             expect(actual).toEqual(expected);
         });
@@ -251,33 +390,39 @@ describe('test DataProcessor', function() {
 
     describe('_addStartValueToAllSeriesItem()', function() {
         it('limit의 값들이 모두 양수이면 start값을 limit.min으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
-            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor.seriesDataModelMap = {
+                bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
+            };
             dataProcessor._addStartValueToAllSeriesItem({
                 min: 10,
                 max: 80
             }, 'bar');
 
-            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(10, 'bar');
+            expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(10);
         });
 
         it('limit의 값들이 모두 음수이면 start값을 limit.max으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
-            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor.seriesDataModelMap = {
+                bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
+            };
             dataProcessor._addStartValueToAllSeriesItem({
                 min: -80,
                 max: -10
             }, 'bar');
 
-            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(-10, 'bar');
+            expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(-10);
         });
 
         it('limit의 min은 음수이고 max는 양수이면 start값을 0으로 설정하여 seriesDataModel.addStartValueToAllSeriesItem에 전달합니다.', function() {
-            dataProcessor.seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem']);
+            dataProcessor.seriesDataModelMap = {
+                bar: jasmine.createSpyObj('seriesDataModel', ['addStartValueToAllSeriesItem'])
+            };
             dataProcessor._addStartValueToAllSeriesItem({
                 min: -40,
                 max: 80
             }, 'bar');
 
-            expect(dataProcessor.seriesDataModel.addStartValueToAllSeriesItem).toHaveBeenCalledWith(0, 'bar');
+            expect(dataProcessor.seriesDataModelMap.bar.addStartValueToAllSeriesItem).toHaveBeenCalledWith(0);
         });
     });
 });

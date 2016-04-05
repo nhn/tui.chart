@@ -21,7 +21,7 @@ describe('Axis', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllGroup', 'getCategories', 'getMultilineCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllSeriesDataModel', 'getCategories', 'getMultilineCategories']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
         axis = new Axis({
             theme: {
@@ -91,7 +91,7 @@ describe('Axis', function() {
 
             axis.componentName = 'rightYAxis';
 
-            dataProcessor.isValidAllGroup.and.returnValue(false);
+            dataProcessor.isValidAllSeriesDataModel.and.returnValue(false);
 
             actual = axis._isValidAxis();
             expected = false;

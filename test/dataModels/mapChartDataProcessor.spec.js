@@ -12,7 +12,7 @@ describe('test MapChartDataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {
-        dataProcessor = new MapChartDataProcessor({}, {});
+        dataProcessor = new MapChartDataProcessor({}, '', {});
     });
 
     describe('_makeValueMap()', function() {

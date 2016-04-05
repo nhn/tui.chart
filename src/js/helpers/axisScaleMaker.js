@@ -189,7 +189,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(),
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             baseValues = [];
 
         seriesDataModel.each(function(seriesGroup) {
@@ -200,7 +200,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                     minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
-        }, this.chartType);
+        });
 
         return baseValues;
     },

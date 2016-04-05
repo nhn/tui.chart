@@ -23,7 +23,6 @@
 
 var SeriesGroup = require('./seriesGroup'),
     SeriesItem = require('./seriesItem'),
-    chartConst = require('../const'),
     predicate = require('../helpers/predicate'),
     calculator = require('../helpers/calculator');
 
@@ -34,22 +33,22 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * Item group.
      * @constructs SeriesDataModel
      * @param {rawSeriesData} rawSeriesData raw series data
+     * @param {string} chartType chart type
      * @param {object} options options
-     * @param {Array.<string>} seriesChartTypes chart types
      * @param {Array.<function>} formatFunctions format functions
      */
-    init: function(rawSeriesData, options, seriesChartTypes, formatFunctions) {
+    init: function(rawSeriesData, chartType, options, formatFunctions) {
+        /**
+         * chart type
+         * @type {string}
+         */
+        this.chartType = chartType;
+
         /**
          * chart options
          * @type {Object}
          */
         this.options = options || {};
-
-        /**
-         * series chart types
-         * @type {Array.<string>}
-         */
-        this.seriesChartTypes = seriesChartTypes;
 
         /**
          * functions for formatting
@@ -65,9 +64,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         /**
          * base groups
-         * @type {object}
+         * @type {Array.Array<SeriesItem>}
          */
-        this.baseGroups = {};
+        this.baseGroups = null;
 
         /**
          * groups
@@ -77,9 +76,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         /**
          * all values of groups
-         * @type {object}
+         * @type {Array}
          */
-        this.values = {};
+        this.values = null;
 
         this._removeRangeValueIfStackedOption();
     },
@@ -89,8 +88,8 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @param {rawSeriesData} rawSeriesData - rawData.series
      * @private
      */
-    _removeRangeValue: function(rawSeriesData) {
-        tui.util.forEachArray(rawSeriesData, function(legendData) {
+    _removeRangeValue: function() {
+        tui.util.forEachArray(this.rawSeriesData, function(legendData) {
             if (!tui.util.isArray(legendData.data)) {
                 return;
             }
@@ -105,33 +104,24 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _removeRangeValueIfStackedOption: function() {
-        var self = this,
-            stackedOption = tui.util.pick(this.options, 'series', 'stacked'),
-            rawSeriesData = this.rawSeriesData;
+        var stackedOption = tui.util.pick(this.options, 'series', 'stacked');
 
         if (!predicate.isValidStackedOption(stackedOption)) {
             return;
         }
 
-        if (tui.util.isArray(rawSeriesData)) {
-            this._removeRangeValue(rawSeriesData);
-        } else {
-            tui.util.forEach(rawSeriesData, function(groupData) {
-                self._removeRangeValue(groupData);
-            });
-        }
+        this._removeRangeValue();
     },
 
     /**
      * Create base groups.
-     * @param {rawSeriesData} rawSeriesData - rawData.series
      * @returns {Array.<Array.<SeriesItem>>}
      * @private
      */
-    _createBaseGroups: function(rawSeriesData) {
+    _createBaseGroups: function() {
         var self = this;
 
-        return tui.util.map(rawSeriesData, function(rawDatum) {
+        return tui.util.map(this.rawSeriesData, function(rawDatum) {
             return tui.util.map(concat.apply(rawDatum.data), function(value) {
                 return new SeriesItem(value, rawDatum.stack, self.formatFunctions);
             });
@@ -140,36 +130,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Get base groups.
-     * @param {rawSeriesData} rawSeriesData - rawData.series
-     * @param {string} chartType - chartType
-     * @returns {Array.<Array.<SeriesItem>>}
+     * @returns {Array.Array.<SeriesItem>}
      */
-    getBaseGroups: function(rawSeriesData, chartType) {
-        if (!this.baseGroups[chartType]) {
-            this.baseGroups[chartType] = this._createBaseGroups(rawSeriesData);
+    getBaseGroups: function() {
+        if (!this.baseGroups) {
+            this.baseGroups = this._createBaseGroups();
         }
 
-        return this.baseGroups[chartType];
-    },
-
-    /**
-     * Create array type groups from rawData.series.
-     * @param {rawSeriesData} rawSeriesData - rawData.series
-     * @param {string} chartType - chart type
-     * @param {boolean} isPivot - whether pivot or not
-     * @returns {Array.<SeriesGroup>}
-     * @private
-     */
-    createArrayTypeGroupsFromRawData: function(rawSeriesData, chartType, isPivot) {
-        var groups = this.getBaseGroups(rawSeriesData, chartType);
-
-        if (isPivot) {
-            groups = tui.util.pivot(groups);
-        }
-
-        return tui.util.map(groups, function(items) {
-            return new SeriesGroup(items);
-        });
+        return this.baseGroups;
     },
 
     /**
@@ -179,236 +147,144 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createGroupsFromRawData: function(isPivot) {
-        var self = this,
-            rawSeriesData = this.rawSeriesData,
-            groups;
+        var baseGroups = this.getBaseGroups();
 
-        if (tui.util.isArray(rawSeriesData)) {
-            groups = this.createArrayTypeGroupsFromRawData(rawSeriesData, chartConst.DUMMY_KEY, isPivot);
-        } else {
-            groups = {};
-            tui.util.forEach(rawSeriesData, function(groupData, type) {
-                groups[type] = self.createArrayTypeGroupsFromRawData(groupData, type, isPivot);
-            });
+        if (isPivot) {
+            baseGroups = tui.util.pivot(baseGroups);
         }
 
-        return groups;
+        return tui.util.map(baseGroups, function(items) {
+            return new SeriesGroup(items);
+        });
     },
 
     /**
      * Get SeriesGroups.
-     * @param {?string} chartType - chart type
      * @returns {(Array.<SeriesGroup>|object)}
      * @private
      */
-    _getSeriesGroups: function(chartType) {
+    _getSeriesGroups: function() {
         if (!this.groups) {
             this.groups = this._createGroupsFromRawData(true);
         }
 
-        return this.groups[chartType] || this.groups;
+        return this.groups;
     },
 
     /**
      * Get group count.
-     * @param {string} chartType - chart type
      * @returns {Number}
      */
-    getGroupCount: function(chartType) {
-        return this._getSeriesGroups(chartType).length;
-    },
-
-    /**
-     * Whether valid all group or not.
-     * @returns {boolean}
-     */
-    isValidAllGroup: function() {
-        var groupMap = this._getSeriesGroups(),
-            isValid = true;
-
-        if (!tui.util.isArray(groupMap)) {
-            tui.util.forEach(groupMap, function(groups) {
-                isValid = !!groups.length;
-                return isValid;
-            });
-        }
-
-        return isValid;
+    getGroupCount: function() {
+        return this._getSeriesGroups().length;
     },
 
     /**
      * Get pivot groups.
-     * @param {string} chartType - chart type
      * @returns {(Array.<SeriesGroup>|object)}
      */
-    getPivotGroups: function(chartType) {
+    _getPivotGroups: function() {
         if (!this.pivotGroups) {
             this.pivotGroups = this._createGroupsFromRawData();
         }
 
-        return this.pivotGroups[chartType] || this.pivotGroups;
+        return this.pivotGroups;
     },
 
     /**
      * Get SeriesGroup.
      * @param {number} index - index
-     * @param {string} chartType - chart type
      * @returns {SeriesGroup}
      */
-    getSeriesGroup: function(index, chartType) {
-        return this._getSeriesGroups(chartType)[index];
+    getSeriesGroup: function(index) {
+        return this._getSeriesGroups()[index];
     },
 
     /**
      * Get first SeriesGroup.
-     * @param {string} chartType - chart type
      * @returns {SeriesGroup}
      */
-    getFirstSeriesGroup: function(chartType) {
-        return this.getSeriesGroup(0, chartType);
+    getFirstSeriesGroup: function() {
+        return this.getSeriesGroup(0);
+    },
+
+    getFirstFormattedValue: function() {
+        return this.getFirstSeriesGroup().formattedValue;
     },
 
     /**
      * Get series item.
      * @param {number} groupIndex - index of series groups
      * @param {number} index - index of series items
-     * @param {string} chartType - chart type
      * @returns {SeriesItem}
      */
-    getSeriesItem: function(groupIndex, index, chartType) {
-        return this.getSeriesGroup(groupIndex, chartType).getSeriesItem(index);
+    getSeriesItem: function(groupIndex, index) {
+        return this.getSeriesGroup(groupIndex).getSeriesItem(index);
     },
 
     /**
      * Get first series item.
-     * @param {string} chartType - chart type
      * @returns {SeriesItem}
      */
-    getFirstSeriesItem: function(chartType) {
-        return this.getSeriesItem(0, 0, chartType);
+    getFirstSeriesItem: function() {
+        return this.getSeriesItem(0, 0);
     },
 
     /**
      * Get value.
      * @param {number} groupIndex - index of series groups
      * @param {number} index - index of series items
-     * @param {?string} chartType - chart type
      * @returns {number} value
      */
-    getValue: function(groupIndex, index, chartType) {
-        return this.getSeriesItem(groupIndex, index, chartType).value;
+    getValue: function(groupIndex, index) {
+        return this.getSeriesItem(groupIndex, index).value;
     },
 
     /**
      * Make flattening values.
-     * @param {?string} chartType - chart type
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(chartType) {
+    _makeValues: function() {
         var values = this.map(function(seriesGroup) {
             return seriesGroup.getValues();
-        }, chartType);
+        });
 
         return concat.apply([], values);
     },
 
     /**
      * Get flattening values.
-     * @param {?string} chartType - chart type
      * @returns {Array.<number>}
      */
-    getValues: function(chartType) {
-        if (!this.values[chartType]) {
-            this.values[chartType] = this._makeValues(chartType);
+    getValues: function() {
+        if (!this.values) {
+            this.values = this._makeValues();
         }
 
-        return this.values[chartType];
-    },
-
-    /**
-     * Make whole series groups.
-     * @returns {groups}
-     * @private
-     */
-    _makeWholeSeriesGroups: function() {
-        var wholeSeriesGroups = [];
-
-        this.each(function(seriesGroup, index) {
-            if (!wholeSeriesGroups[index]) {
-                wholeSeriesGroups[index] = [];
-            }
-            wholeSeriesGroups[index] = wholeSeriesGroups[index].concat(seriesGroup.items);
-        });
-
-        wholeSeriesGroups = tui.util.map(wholeSeriesGroups, function(items) {
-            return new SeriesGroup(items);
-        });
-
-        return wholeSeriesGroups;
-    },
-
-    /**
-     * Get whole groups.
-     * @returns {groups}
-     */
-    getWholeSeriesGroups: function() {
-        if (!this.wholeSeriesGroups) {
-            this.wholeSeriesGroups = this._makeWholeSeriesGroups();
-        }
-
-        return this.wholeSeriesGroups;
-    },
-
-    /**
-     * Make whole values.
-     * @returns {Array.<number>}
-     * @private
-     */
-    _makeWholeValues: function() {
-        var wholeValues = [];
-
-        this.each(function(seriesGroup) {
-            wholeValues = wholeValues.concat(seriesGroup.pluck('value'));
-        });
-
-        return wholeValues;
-    },
-
-    /**
-     * Get whole values.
-     * @returns {Array.<number>}
-     */
-    getWholeValues: function() {
-        if (!this.wholeValues) {
-            this.wholeValues = this._makeWholeValues();
-        }
-
-        return this.wholeValues;
+        return this.values;
     },
 
     /**
      * Add ratios, when has normal stacked option.
-     * @param {string} chartType - chart type
      * @param {{min: number, max: number}} limit - axis limit
      * @private
      */
-    _addRatiosWhenNormalStacked: function(chartType, limit) {
+    _addRatiosWhenNormalStacked: function(limit) {
         var distance = Math.abs(limit.max - limit.min);
 
         this.each(function(seriesGroup) {
             seriesGroup.addRatios(distance);
-        }, chartType);
+        });
     },
 
     /**
      * Calculate base ratio for calculating ratio of item.
-     * @param {string} chartType - chart type
      * @returns {number}
      * @private
      */
-    _calculateBaseRatio: function(chartType) {
-        var values = this.getValues(chartType),
+    _calculateBaseRatio: function() {
+        var values = this.getValues(),
             plusSum = calculator.sumPlusValues(values),
             minusSum = Math.abs(calculator.sumMinusValues(values)),
             ratio = (plusSum > 0 && minusSum > 0) ? 0.5 : 1;
@@ -418,41 +294,38 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Add ratios, when has percent stacked option.
-     * @param {string} chartType - chart type
      * @private
      */
-    _addRatiosWhenPercentStacked: function(chartType) {
-        var baseRatio = this._calculateBaseRatio(chartType);
+    _addRatiosWhenPercentStacked: function() {
+        var baseRatio = this._calculateBaseRatio();
 
         this.each(function(seriesGroup) {
             seriesGroup.addRatiosWhenPercentStacked(baseRatio);
-        }, chartType);
+        });
     },
 
     /**
      * Add ratios, when has diverging stacked option.
-     * @param {string} chartType - chart type
      * @private
      */
-    _addRatiosWhenDivergingStacked: function(chartType) {
+    _addRatiosWhenDivergingStacked: function() {
         this.each(function(seriesGroup) {
             var values = seriesGroup.pluck('value'),
                 plusSum = calculator.sumPlusValues(values),
                 minusSum = Math.abs(calculator.sumMinusValues(values));
 
             seriesGroup.addRatiosWhenDivergingStacked(plusSum, minusSum);
-        }, chartType);
+        });
     },
 
     /**
      * Make subtraction value for making ratio of no option chart.
-     * @param {string} chartType - chartType
      * @param {{min: number, max: number}} limit - limit
      * @returns {number}
      * @private
      */
-    _makeSubtractionValue: function(chartType, limit) {
-        var isLineTypeChart = predicate.isLineTypeChart(chartType),
+    _makeSubtractionValue: function(limit) {
+        var isLineTypeChart = predicate.isLineTypeChart(this.chartType),
             subValue = 0;
 
         if (!isLineTypeChart && predicate.isMinusLimit(limit)) {
@@ -466,39 +339,37 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Add ratios, when has not option.
-     * @param {string} chartType - chart type
      * @param {{min: number, max: number}} limit - axis limit
      * @private
      */
-    _addRatios: function(chartType, limit) {
+    _addRatios: function(limit) {
         var distance = Math.abs(limit.max - limit.min),
-            subValue = this._makeSubtractionValue(chartType, limit);
+            subValue = this._makeSubtractionValue(limit);
 
         this.each(function(seriesGroup) {
             seriesGroup.addRatios(distance, subValue);
-        }, chartType);
+        });
     },
 
     /**
      * Add data ratios.
      * @param {{min: number, max: number}} limit - axis limit
      * @param {string} stacked - stacked option
-     * @param {string} chartType - chart type
      * @private
      */
-    addDataRatios: function(limit, stacked, chartType) {
-        var isAllowedStackedOption = predicate.isAllowedStackedOption(chartType);
+    addDataRatios: function(limit, stacked) {
+        var isAllowedStackedOption = predicate.isAllowedStackedOption(this.chartType);
 
         if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
-            this._addRatiosWhenNormalStacked(chartType, limit);
+            this._addRatiosWhenNormalStacked(limit);
         } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
             if (this.divergingOption) {
-                this._addRatiosWhenDivergingStacked(chartType);
+                this._addRatiosWhenDivergingStacked();
             } else {
-                this._addRatiosWhenPercentStacked(chartType);
+                this._addRatiosWhenPercentStacked();
             }
         } else {
-            this._addRatios(chartType, limit);
+            this._addRatios(limit);
         }
     },
 
@@ -506,63 +377,48 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * Add data ratios of pie chart.
      */
     addDataRatiosOfPieChart: function() {
-        var chartType = chartConst.CHART_TYPE_PIE;
-
         this.each(function(seriesGroup) {
             var sum = tui.util.sum(seriesGroup.pluck('value'));
 
             seriesGroup.addRatios(sum);
-        }, chartType);
+        });
     },
 
     /**
      * Add start to all series item.
      * @param {number} start - start value
-     * @param {string} chartType - chart type
      */
-    addStartValueToAllSeriesItem: function(start, chartType) {
+    addStartValueToAllSeriesItem: function(start) {
         this.each(function(seriesGroup) {
             seriesGroup.addStartValueToAllSeriesItem(start);
-        }, chartType);
+        });
     },
 
     /**
      * Traverse groups and executes iteratee function.
      * @param {function} iteratee - iteratee function
-     * @param {string} chartType - chart type
      * @param {boolean} isPivot - whether pivot or not
      */
-    each: function(iteratee, chartType, isPivot) {
-        var groups = isPivot ? this.getPivotGroups(chartType) : this._getSeriesGroups(chartType),
-            groupMap = {};
+    each: function(iteratee, isPivot) {
+        var groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
 
-        if (tui.util.isArray(groups)) {
-            groupMap[chartConst.DUMMY_KEY] = groups;
-        } else {
-            groupMap = groups;
-        }
-
-        tui.util.forEach(groupMap, function(_groups, key) {
-            key = (key === chartConst.DUMMY_KEY) ? null : key;
-
-            tui.util.forEachArray(_groups, function(items, index) {
-                iteratee(items, index, key);
-            });
+        tui.util.forEachArray(groups, function(seriesGroup, index) {
+            iteratee(seriesGroup, index);
         });
     },
 
     /**
      * Traverse groups and returns to result of execution about iteratee function.
      * @param {function} iteratee - iteratee function
-     * @param {string} chartType - chart type
      * @param {boolean} isPivot - whether pivot or not
      * @returns {Array}
      */
-    map: function(iteratee, chartType, isPivot) {
+    map: function(iteratee, isPivot) {
         var results = [];
-        this.each(function(items, index, key) {
-            results.push(iteratee(items, index, key));
-        }, chartType, isPivot);
+
+        this.each(function(seriesGroup, index) {
+            results.push(iteratee(seriesGroup, index));
+        }, isPivot);
 
         return results;
     }
