@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     renderUtil = require('../helpers/renderUtil');
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
@@ -37,34 +38,87 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem, index) {
-                return {
+                var position = {
                     left: start + (step * index),
                     top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
                 };
+
+                if (seriesItem.isRange) {
+                    position.startTop = height - (seriesItem.startRatio * height) + chartConst.SERIES_EXPAND_SIZE;
+                }
+
+                return position;
             });
         }, true);
     },
 
     /**
-     * Make label position top.
-     * @param {{top: number, startTop: number}} position position
-     * @param {number} value value
-     * @param {number} labelHeight label height
+     * Calculate label position top.
+     * @param {{top: number, startTop: number}} basePosition - base position
+     * @param {number} value - value of seriesItem
+     * @param {number} labelHeight - label height
+     * @param {boolean} isStart - whether start value of seriesItem or not
      * @returns {number} position top
      * @private
      */
-    _makeLabelPositionTop: function(position, value, labelHeight) {
-        var positionTop;
+    _calculateLabelPositionTop: function(basePosition, value, labelHeight, isStart) {
+        var baseTop = basePosition.top,
+            top;
 
-        if (this.options.stacked && position.startTop) {
-            positionTop = (position.startTop + position.top - labelHeight) / 2 + 1;
-        } else if (value < 0 && !tui.util.isUndefined(position.startTop)) {
-            positionTop = position.top + chartConst.SERIES_LABEL_PADDING;
+        if (predicate.isValidStackedOption(this.options.stacked)) {
+            top = (basePosition.startTop + baseTop - labelHeight) / 2 + 1;
+        } else if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
+            top = baseTop - labelHeight - chartConst.SERIES_LABEL_PADDING;
         } else {
-            positionTop = position.top - labelHeight - chartConst.SERIES_LABEL_PADDING;
+            top = baseTop + chartConst.SERIES_LABEL_PADDING;
         }
 
-        return positionTop;
+        return top;
+    },
+
+    /**
+     * Make label position for rendering label of series area.
+     * @param {{left: number, top: number, startTop: ?number}} basePosition - base position for calculating
+     * @param {number} labelHeight - label height
+     * @param {(string | number)} formattedValue - formatted value of seriesItem
+     * @param {number} value - value of seriesItem
+     * @param {boolean} isStart - whether start label position or not
+     * @returns {{left: number, top: number}}
+     * @private
+     */
+    _makeLabelPosition: function(basePosition, labelHeight, formattedValue, value, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
+
+        return {
+            left: basePosition.left - (labelWidth / 2),
+            top: this._calculateLabelPositionTop(basePosition, value, labelHeight, isStart)
+        };
+    },
+
+    /**
+     * Make html for series label for line type chart.
+     * @param {number} groupIndex - index of seriesDataModel.groups
+     * @param {number} index - index of seriesGroup.items
+     * @param {SeriesItem} seriesItem - series item
+     * @param {number} labelHeight - label height
+     * @param {boolean} isStart - whether start label position or not
+     * @returns {string}
+     * @private
+     */
+    _makeSeriesLabelHtmlForLineType: function(groupIndex, index, seriesItem, labelHeight, isStart) {
+        var basePosition = tui.util.extend({}, this.seriesData.groupPositions[groupIndex][index]),
+            formattedValue, position;
+
+        if (isStart) {
+            formattedValue = seriesItem.formattedStart;
+            basePosition.top = basePosition.startTop;
+        } else {
+            formattedValue = seriesItem.formattedEnd;
+        }
+
+        position = this._makeLabelPosition(basePosition, labelHeight, formattedValue, seriesItem.value, isStart);
+
+        return this._makeSeriesLabelHtml(position, formattedValue, groupIndex);
     },
 
     /**
@@ -74,7 +128,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
-            groupPositions = this.seriesData.groupPositions,
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             firstFormattedValue = seriesDataModel.getFirstFormattedValue(),
             labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
@@ -82,17 +135,12 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         htmls = seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
-                var position = groupPositions[groupIndex][index],
-                    labelHtml = '',
-                    labelWidth;
+                var labelHtml = self._makeSeriesLabelHtmlForLineType(groupIndex, index, seriesItem, labelHeight);
 
-                if (position.top !== position.startTop) {
-                    labelWidth = renderUtil.getRenderedLabelWidth(seriesItem.formattedValue, self.theme.label);
-                    labelHtml = self._makeSeriesLabelHtml({
-                        left: position.left - (labelWidth / 2),
-                        top: self._makeLabelPositionTop(position, seriesItem.formattedValue, labelHeight)
-                    }, seriesItem.formattedValue, groupIndex);
+                if (seriesItem.isRange) {
+                    labelHtml += self._makeSeriesLabelHtmlForLineType(groupIndex, index, seriesItem, labelHeight, true);
                 }
+
                 return labelHtml;
             }).join('');
         }, true);

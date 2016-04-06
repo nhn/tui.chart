@@ -33,6 +33,41 @@ describe('test SeriesDataModel', function() {
             expect(seriesDataModel.rawSeriesData[0].data).toEqual([10, 20]);
             expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
         });
+
+        it('range형의 차트(bar, column, area)의 경우 range value를 삭제하지 않습니다.', function() {
+            seriesDataModel.rawSeriesData = [
+                {
+                    data: [[10, 20], [20, 30]]
+                }, {
+                    data: [[-20, 10], [30, 40]]
+                }
+            ];
+
+            seriesDataModel.chartType = 'area';
+            seriesDataModel._removeRangeValue();
+
+            expect(seriesDataModel.rawSeriesData[0].data).toEqual([[10, 20], [20, 30]]);
+            expect(seriesDataModel.rawSeriesData[1].data).toEqual([[-20, 10], [30, 40]]);
+        });
+
+        it('range형의 차트(bar, column, area)가 아니더라도 stacked옵션이 있다면 range value를 삭제하지 않습니다.', function() {
+            seriesDataModel.rawSeriesData = [
+                {
+                    data: [[10, 20], [20, 30]]
+                }, {
+                    data: [[-20, 10], [30, 40]]
+                }
+            ];
+
+            seriesDataModel.chartType = 'pie';
+            seriesDataModel.options = {
+                stacked: 'normal'
+            };
+            seriesDataModel._removeRangeValue();
+
+            expect(seriesDataModel.rawSeriesData[0].data).toEqual([10, 20]);
+            expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
+        });
     });
 
     describe('_createBaseGroups()', function() {
