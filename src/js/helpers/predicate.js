@@ -228,6 +228,15 @@ var predicate = {
     },
 
     /**
+     * Whether allow range data or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isAllowRangeData: function(chartType) {
+        return this.isBarTypeChart(chartType) || this.isAreaChart(chartType);
+    },
+
+    /**
      * Whether align of yAxis is center or not.
      * @memberOf module:predicate
      * @param {boolean} hasRightYAxis whether has right yAxis.
