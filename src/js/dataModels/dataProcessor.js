@@ -239,11 +239,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Traverse seriesChartTypes and executes iteratee function.
+     * Traverse all SeriesDataModel by seriesChartTypes, and executes iteratee function.
      * @param {function} iteratee iteratee function
      * @private
      */
-    _eachSeriesDataModel: function(iteratee) {
+    _eachByAllSeriesDataModel: function(iteratee) {
         var self = this,
             seriesChartTypes = this.seriesChartTypes || [this.chartType];
 
@@ -259,7 +259,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     isValidAllSeriesDataModel: function() {
         var isValid = true;
 
-        this._eachSeriesDataModel(function(seriesDataModel) {
+        this._eachByAllSeriesDataModel(function(seriesDataModel) {
             isValid = !!seriesDataModel.getGroupCount();
 
             return isValid;
@@ -277,7 +277,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var joinedGroups = [],
             wholeSeriesGroups;
 
-        this._eachSeriesDataModel(function(seriesDataModel) {
+        this._eachByAllSeriesDataModel(function(seriesDataModel) {
             seriesDataModel.each(function(seriesGroup, index) {
                 if (!joinedGroups[index]) {
                     joinedGroups[index] = [];
@@ -323,7 +323,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _makeWholeValues: function() {
         var wholeValues = [];
 
-        this._eachSeriesDataModel(function(seriesDataModel) {
+        this._eachByAllSeriesDataModel(function(seriesDataModel) {
             wholeValues = wholeValues.concat(seriesDataModel.getValues());
         });
 
@@ -352,11 +352,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Traverse seriesDataModel and executes iteratee function.
+     * Traverse whole SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
      */
-    eachWholeSeriesGroup: function(iteratee) {
-        this._eachSeriesDataModel(function(seriesDataModel, chartType) {
+    eachByWholeSeriesGroup: function(iteratee) {
+        this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
             seriesDataModel.each(function(seriesGroup, groupIndex) {
                 iteratee(seriesGroup, groupIndex, chartType);
             });

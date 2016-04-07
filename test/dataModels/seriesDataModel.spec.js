@@ -27,22 +27,6 @@ describe('test SeriesDataModel', function() {
                     data: [[-20, 10], [30, 40]]
                 }
             ];
-            seriesDataModel._removeRangeValue();
-
-            expect(seriesDataModel.rawSeriesData[0].data).toEqual([10, 20]);
-            expect(seriesDataModel.rawSeriesData[1].data).toEqual([-20, 30]);
-        });
-    });
-
-    describe('_removeRangeValue()', function() {
-        it('range형의 seriesItem에서 data의 첫번째 인자만 남기고 나머지는 지웁니다.', function() {
-            seriesDataModel.rawSeriesData = [
-                {
-                    data: [[10, 20], [20, 30]]
-                }, {
-                    data: [[-20, 10], [30, 40]]
-                }
-            ];
 
             seriesDataModel._removeRangeValue();
 

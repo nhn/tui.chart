@@ -112,7 +112,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             legendLabels = orgLegendLabels;
         }
 
-        this.dataProcessor.eachWholeSeriesGroup(function(seriesGroup, groupIndex, chartType) {
+        this.dataProcessor.eachByWholeSeriesGroup(function(seriesGroup, groupIndex, chartType) {
             var datum;
 
             chartType = chartType || self.chartType;

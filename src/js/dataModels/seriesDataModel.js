@@ -395,7 +395,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Traverse groups and executes iteratee function.
+     * Traverse groups, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      * @param {boolean} isPivot - whether pivot or not
      */
@@ -408,7 +408,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Traverse groups and returns to result of execution about iteratee function.
+     * Traverse groups, and returns to result of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @param {boolean} isPivot - whether pivot or not
      * @returns {Array}

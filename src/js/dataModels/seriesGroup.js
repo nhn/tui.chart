@@ -170,7 +170,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Traverse items and executes iteratee function.
+     * Traverse items, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      */
     each: function(iteratee) {
@@ -178,7 +178,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Traverse items and returns to result of execution about iteratee function.
+     * Traverse items, and returns to result of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @returns {Array}
      */
