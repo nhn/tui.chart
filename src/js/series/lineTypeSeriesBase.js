@@ -43,7 +43,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                     top: height - (seriesItem.ratio * height) + chartConst.SERIES_EXPAND_SIZE
                 };
 
-                if (seriesItem.isRange) {
+                if (tui.util.isExisty(seriesItem.startRatio)) {
                     position.startTop = height - (seriesItem.startRatio * height) + chartConst.SERIES_EXPAND_SIZE;
                 }
 

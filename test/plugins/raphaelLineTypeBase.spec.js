@@ -30,6 +30,23 @@ describe('RaphaelLineTypeBase', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('posTopType이 startTop이면 position 정보에서 startTop을 추출하여 path를 생성합니다.', function() {
+            var actual = lineTypeBase._makeLinesPath([
+                    {
+                        left: 10,
+                        top: 10,
+                        startTop: 0
+                    }, {
+                        left: 100,
+                        top: 100,
+                        startTop: 50
+                    }
+                ], 'startTop'),
+                expected = ['M', 10, 0, 'L', 100, 50];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_makeSplineLinesPath()', function() {

@@ -24,12 +24,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @param {?string} posTopType position top type
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeLinesPath: function(positions) {
-        var path = tui.util.map(positions, function(position) {
-            return ['L', position.left, position.top];
+    _makeLinesPath: function(positions, posTopType) {
+        var path;
+
+        posTopType = posTopType || 'top';
+        path = tui.util.map(positions, function(position) {
+            return ['L', position.left, position[posTopType]];
         });
 
         path = concat.apply([], path);
