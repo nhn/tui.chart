@@ -170,6 +170,21 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
+     * Whether has range data or not.
+     * @returns {boolean}
+     */
+    hasRangeData: function() {
+        var hasRangeData = false;
+
+        this.each(function(seriesItem) {
+            hasRangeData = seriesItem.isRange;
+            return !hasRangeData;
+        });
+
+        return hasRangeData;
+    },
+
+    /**
      * Traverse items and executes iteratee function.
      * @param {function} iteratee - iteratee function
      */

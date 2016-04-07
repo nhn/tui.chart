@@ -56,6 +56,27 @@ describe('RaphaelAreaChart', function() {
                 }];
             expect(actual).toEqual(expected);
         });
+
+        it('range data를 갖고 있다면 startLine path도 생성합니다.', function() {
+            var actual, expected;
+
+            areaChart.hasRangeData = true;
+            actual = areaChart._getAreasPath([[{
+                left: 10,
+                top: 30,
+                startTop: 40
+            }, {
+                left: 30,
+                top: 40,
+                startTop: 50
+            }]]);
+            expected = [{
+                area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 50, 'L', 9, 40],
+                line: ['M', 9, 30, 'L', 30, 40],
+                startLine: ['M', 9, 40, 'L', 30, 50]
+            }];
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_makeSplineAreaBottomPath()', function() {
