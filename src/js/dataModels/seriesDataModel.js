@@ -103,9 +103,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _removeRangeValue: function() {
-        var stackedOption = tui.util.pick(this.options, 'series', 'stacked');
+        var seriesOption = tui.util.pick(this.options, 'series') || {};
 
-        if (predicate.isAllowRangeData(this.chartType) && !predicate.isValidStackedOption(stackedOption)) {
+        if (predicate.isAllowRangeData(this.chartType) &&
+            !predicate.isValidStackedOption(seriesOption.stacked) && !seriesOption.spline) {
             return;
         }
 
@@ -398,6 +399,21 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.each(function(seriesGroup) {
             seriesGroup.addStartValueToAllSeriesItem(start);
         });
+    },
+
+    /**
+     * Whether has range data or not.
+     * @returns {boolean}
+     */
+    hasRangeData: function() {
+        var hasRangeData = false;
+
+        this.each(function(seriesGroup) {
+            hasRangeData = seriesGroup.hasRangeData();
+            return !hasRangeData;
+        });
+
+        return hasRangeData;
     },
 
     /**
