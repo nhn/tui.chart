@@ -116,7 +116,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).not.toBeDefined();
         });
 
-        it('bar 차트이면서 value가 양수인 경우라 하더라도 range item 일 경우에는 left path 정보도 반환합니다.', function() {
+        it('bar 차트이면서 value가 양수인 경우라 하더라도 range seriesItem 일 경우에는 left path 정보도 반환합니다.', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -149,7 +149,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('bar 차트이면서 value가 음수인 경우라 하더라도 range item 일 경우에는 right path 정보도 반환합니다.', function() {
+        it('bar 차트이면서 value가 음수인 경우라 하더라도 range seriesItem 일 경우에는 right path 정보도 반환합니다.', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -182,7 +182,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 양수인 경우라 하더라도 range item 일 경우에는 bottom path 정보도 반환합니다.', function() {
+        it('column 차트이면서 value가 양수인 경우라 하더라도 range seriesItem 일 경우에는 bottom path 정보도 반환합니다.', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,
@@ -215,7 +215,7 @@ describe('RaphaelBarChart', function() {
             expect(actual.left).toBeDefined();
         });
 
-        it('column 차트이면서 value가 음수인 경우라 하더라도 range item 일 경우에는 top path 정보도 반환합니다.', function() {
+        it('column 차트이면서 value가 음수인 경우라 하더라도 range seriesItem 일 경우에는 top path 정보도 반환합니다.', function() {
             var actual = barChart._makeBorderLinesPaths({
                 left: 10,
                 top: 10,

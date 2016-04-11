@@ -81,7 +81,6 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             bound = this.boundsMaker.getBound('tooltip');
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
-        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
 
         return el;
     },
@@ -106,7 +105,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _updateLegendTheme: function(checkedLegends) {
         var colors = [];
 
-        tui.util.forEachArray(this.orgWholeLegendData, function(item) {
+        tui.util.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
             var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
             if (_checkedLegends[item.index]) {
                 colors.push(item.theme.color);
@@ -126,10 +125,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeTooltipData: function() {
         var self = this;
 
-        return tui.util.map(this.dataProcessor.getWholeGroups(), function(items, index) {
+        return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
             return {
                 category: self.dataProcessor.getCategory(index),
-                values: items.pluck('formattedValue')
+                values: seriesGroup.pluck('formattedValue')
             };
         });
     },
@@ -142,7 +141,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeColors: function(theme) {
         var colorIndex = 0,
-            legendLabels = this.dataProcessor.getWholeLegendData(),
+            legendLabels = this.dataProcessor.getLegendData(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {
@@ -175,7 +174,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             suffix = this.suffix;
 
         return tui.util.map(values, function(value, index) {
-            var legendLabel = dataProcessor.getLegendData(index);
+            var legendLabel = dataProcessor.getLegendItem(index);
 
             return {
                 value: value,

@@ -189,18 +189,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var itemGroup = this.dataProcessor.getItemGroup(),
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             baseValues = [];
 
-        itemGroup.each(function(items) {
-            var valuesMap = items._makeValuesMapPerStack();
+        seriesDataModel.each(function(seriesGroup) {
+            var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
                 var plusSum = calculator.sumPlusValues(values),
                     minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
-        }, this.chartType);
+        });
 
         return baseValues;
     },
@@ -216,7 +216,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this.isSingleYAxis) {
-            baseValues = this.dataProcessor.getWholeValues();
+            baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackedChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
@@ -710,7 +710,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         var values;
 
         if (this.isSingleYAxis) {
-            values = this.dataProcessor.getWholeValues();
+            values = this.dataProcessor.getValues();
         } else {
             values = this.dataProcessor.getValues(this.chartType);
         }

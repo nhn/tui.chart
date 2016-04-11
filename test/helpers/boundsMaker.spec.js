@@ -18,7 +18,7 @@ describe('boundsMaker', function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getWholeLegendData', 'getCategories',
+            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
     });

@@ -82,7 +82,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index,
-            legendData = this.dataProcessor.getLegendData(legendIndex),
+            legendData = this.dataProcessor.getLegendItem(legendIndex),
             params;
 
         params = tui.util.extend({
@@ -102,7 +102,6 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     _makeTooltipData: function() {
         var self = this,
             categories = this.dataProcessor.getCategories(),
-            itemGroup = this.dataProcessor.getItemGroup(),
             orgLegendLabels = this.dataProcessor.getLegendLabels(),
             legendLabels = {},
             tooltipData = {};
@@ -113,7 +112,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             legendLabels = orgLegendLabels;
         }
 
-        itemGroup.each(function(items, groupIndex, chartType) {
+        this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
             var datum;
 
             chartType = chartType || self.chartType;
@@ -122,11 +121,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
                 tooltipData[chartType] = [];
             }
 
-            datum = items.map(function(item, index) {
+            datum = seriesGroup.map(function(seriesItem, index) {
                 return {
                     category: categories ? categories[groupIndex] : '',
                     legend: legendLabels[chartType][index],
-                    value: item.formattedValue
+                    value: seriesItem.formattedValue
                 };
             });
 

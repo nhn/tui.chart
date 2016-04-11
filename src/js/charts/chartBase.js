@@ -12,7 +12,6 @@ var ComponentManager = require('./componentManager'),
     AxisScaleMaker = require('../helpers/axisScaleMaker'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil'),
-    predicate = require('../helpers/predicate'),
     UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
@@ -107,16 +106,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.userEvent = new UserEventListener();
 
-        /**
-         * original whole legend data
-         * @type {Array.<object>}
-         */
-        this.orgWholeLegendData = null;
-
-        if (!predicate.isMapChart(this.chartType)) {
-            this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
-        }
-
         this._addCustomEventComponent();
     },
 
@@ -131,7 +120,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData, params.options, params.seriesChartTypes);
+        var dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
 
         return dataProcessor;
     },
@@ -343,25 +332,16 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
-     * @param {?object} boundsParams addition params for calculating bounds
      * @private
      */
     _rerender: function(checkedLegends, rawData) {
-        var self = this,
-            newWholeLegendData;
+        var self = this;
 
-        rawData = rawData || this._filterRawData(this.dataProcessor.getRawData(), checkedLegends);
-
-        this.dataProcessor.updateRawData(rawData);
-
-        newWholeLegendData = this.dataProcessor.getWholeLegendData();
-        // 범례 영역은 변경되지 않으므로, bounds 계산에는 변경되지 않은 레이블 데이터를 포함해야 함
-        this.dataProcessor.setWholeLegendData(this.orgWholeLegendData);
-
+        rawData = rawData || this._filterRawData(this.dataProcessor.getOriginalRawData(), checkedLegends);
+        this.dataProcessor.initData(rawData);
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
             renderingData = self._makeRerenderingData(renderingData, checkedLegends);
-            self.dataProcessor.setWholeLegendData(newWholeLegendData);
             self._renderComponents(renderingData, 'rerender');
         });
     },

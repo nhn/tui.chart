@@ -37,7 +37,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.paper = paper = raphael(container, dimension.width, dimension.height);
 
         this.theme = data.theme;
-        this.itemGroup = data.itemGroup;
+        this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
 
         this.groupBars = this._renderBars(groupBounds);
@@ -121,7 +121,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
+                item = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
 
                 color = singleColor || colors[index];
                 rect = self._renderBar(bound.start, color);
@@ -317,15 +317,15 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
 
         groupBorders = tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(bound, index) {
-                var item;
+                var seriesItem;
 
                 if (!bound) {
                     return null;
                 }
 
-                item = self.itemGroup.getItem(groupIndex, index, self.chartType);
+                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
 
-                return self._renderBorderLines(bound.start, borderColor, self.chartType, item);
+                return self._renderBorderLines(bound.start, borderColor, self.chartType, seriesItem);
             });
         });
 

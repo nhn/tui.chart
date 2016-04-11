@@ -15,12 +15,12 @@ describe('test Legend', function() {
     var legend, dataProcessor, boundsMaker;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getWholeLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getLegendData']);
         dataProcessor.getLegendLabels.and.returnValue([
             'legend1',
             'legend2'
         ]);
-        dataProcessor.getWholeLegendData.and.returnValue([
+        dataProcessor.getLegendData.and.returnValue([
             {
                 label: 'legend1'
             },

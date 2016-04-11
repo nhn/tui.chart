@@ -7,8 +7,8 @@
 'use strict';
 
 var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
-    ItemGroup = require('../../src/js/dataModels/itemGroup'),
-    Items = require('../../src/js/dataModels/items'),
+    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
+    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
@@ -24,7 +24,7 @@ describe('ColumnChartSeries', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue', 'getFormatFunctions']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstFormattedValue', 'getFormatFunctions']);
         dataProcessor.getFirstFormattedValue.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -83,13 +83,13 @@ describe('ColumnChartSeries', function() {
                     plusTop: 0
                 },
                 isStacked = false,
-                item = {
+                seriesItem = {
                     value: 10,
                     startRatio: 0,
                     ratioDistance: 0.4
                 },
                 index = 0,
-                actual = series._makeColumnChartBound(baseData, iterationData, isStacked, item, index),
+                actual = series._makeColumnChartBound(baseData, iterationData, isStacked, seriesItem, index),
                 expected = {
                     start: {
                         top: 50,
@@ -112,11 +112,11 @@ describe('ColumnChartSeries', function() {
     describe('_makeBounds()', function() {
         it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
             var actual, expected,
-                itemGroup = new ItemGroup();
+                seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
-            itemGroup.groups = [
-                new Items([{
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.groups = [
+                new seriesGroup([{
                     value: 40,
                     startRatio: 0,
                     ratioDistance: 0.4
@@ -185,7 +185,7 @@ describe('ColumnChartSeries', function() {
                 labelHeight = 20,
                 value = 10,
                 formattedValue = '10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 5
@@ -203,7 +203,7 @@ describe('ColumnChartSeries', function() {
                 labelHeight = 20,
                 value = -10,
                 formattedValue = '-10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 55

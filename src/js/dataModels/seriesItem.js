@@ -1,5 +1,6 @@
 /**
- * @fileoverview Item has value, formattedValue, ratio, ... .
+ * @fileoverview SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,10 +10,11 @@
 var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil');
 
-var Item = tui.util.defineClass(/** @lends Item.prototype */{
+var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**
-     * Item.
-     * @constructs Item
+     * SeriesItem is a element of SeriesGroup.items.
+     * SeriesItem has processed terminal data like value, ratio, etc.
+     * @constructs SeriesItem
      * @param {number} value - value
      * @param {?string} stack - stack
      * @param {?Array.<function>} formatFunctions - format functions
@@ -102,7 +104,6 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     /**
      * Initialize values of item.
      * @param {number} value - value
-     * @param {?Array.<function>} formatFunctions - format functions
      * @private
      */
     _initValues: function(value) {
@@ -194,4 +195,4 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     }
 });
 
-module.exports = Item;
+module.exports = SeriesItem;

@@ -7,8 +7,8 @@
 'use strict';
 
 var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
-    ItemGroup = require('../../src/js/dataModels/itemGroup'),
-    Items = require('../../src/js/dataModels/items'),
+    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
+    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
@@ -23,7 +23,7 @@ describe('LineTypeSeriesBase', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstFormattedValue']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
@@ -33,12 +33,12 @@ describe('LineTypeSeriesBase', function() {
 
     describe('_makeBasicPositions()', function() {
         it('라인차트의 position 정보를 생성합니다.', function() {
-            var itemGroup = new ItemGroup(),
+            var seriesDataModel = new SeriesDataModel(),
                 actual;
 
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
-            itemGroup.pivotGroups = [
-                new Items([{
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new seriesGroup([{
                     ratio: 0.25
                 }, {
                     ratio: 0.5
@@ -46,7 +46,7 @@ describe('LineTypeSeriesBase', function() {
                     ratio: 0.4
                 }])
             ];
-            spyOn(itemGroup, 'getGroupCount').and.returnValue(3);
+            spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
             boundsMaker.getDimension.and.returnValue({
                 width: 300,
                 height: 200
@@ -75,12 +75,12 @@ describe('LineTypeSeriesBase', function() {
         });
 
         it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function() {
-            var itemGroup = new ItemGroup(),
+            var seriesDataModel = new SeriesDataModel(),
                 actual;
 
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
-            itemGroup.pivotGroups = [
-                new Items([{
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new seriesGroup([{
                     ratio: 0.25
                 }, {
                     ratio: 0.5
@@ -88,7 +88,7 @@ describe('LineTypeSeriesBase', function() {
                     ratio: 0.4
                 }])
             ];
-            spyOn(itemGroup, 'getGroupCount').and.returnValue(3);
+            spyOn(seriesDataModel, 'getGroupCount').and.returnValue(3);
             series.data = {
                 aligned: true
             };
@@ -166,12 +166,12 @@ describe('LineTypeSeriesBase', function() {
     describe('_renderSeriesLabel()', function() {
         it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
             var elLabelArea = dom.create('div'),
-                itemGroup = new ItemGroup();
+                seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
-            itemGroup.pivotGroups = [
-                new Items([{
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            spyOn(seriesDataModel, 'getFirstFormattedValue').and.returnValue('1.5');
+            seriesDataModel.pivotGroups = [
+                new seriesGroup([{
                     formattedValue: '1.5'
                 }, {
                     formattedValue: '2.2'

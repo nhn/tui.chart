@@ -7,7 +7,7 @@
 'use strict';
 
 var GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
-    Items = require('../../src/js/dataModels/items'),
+    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
     defaultTheme = require('../../src/js/themes/defaultTheme'),
     dom = require('../../src/js/helpers/domHandler');
 
@@ -15,7 +15,7 @@ describe('GroupTooltip', function() {
     var tooltip, dataProcessor;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getWholeGroups', 'getCategory', 'getWholeLegendData', 'getLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesGroups', 'getCategory', 'getLegendData', 'getLegendItem']);
     });
 
     beforeEach(function() {
@@ -29,14 +29,13 @@ describe('GroupTooltip', function() {
         it('그룹 툴팁 렌더링에 사용될 기본 data를 생성합니다.', function() {
             var actual, expected;
 
-
-            dataProcessor.getWholeGroups.and.returnValue([
-                new Items([{
+            dataProcessor.getSeriesGroups.and.returnValue([
+                new seriesGroup([{
                     formattedValue: '10'
                 }, {
                     formattedValue: '20'
                 }]),
-                new Items([{
+                new seriesGroup([{
                     formattedValue: '30'
                 }, {
                     formattedValue: '40'
@@ -64,7 +63,7 @@ describe('GroupTooltip', function() {
         it('툴팁 테마에 colors가 설정되어있으면 그대로 반환합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getWholeLegendData.and.returnValue([{
+            dataProcessor.getLegendData.and.returnValue([{
                 chartType: 'column',
                 label: 'legend1'
             }, {
@@ -95,10 +94,10 @@ describe('GroupTooltip', function() {
     });
 
     describe('_makeItemRenderingData()', function() {
-        it('렌더링에 사용할 item data를 생성합니다.', function() {
+        it('렌더링에 사용할 seriesItem data를 생성합니다.', function() {
             var actual, expected;
 
-            dataProcessor.getLegendData.and.callFake(function(index) {
+            dataProcessor.getLegendItem.and.callFake(function(index) {
                 var legendData = [
                     {
                         chartType: 'column',

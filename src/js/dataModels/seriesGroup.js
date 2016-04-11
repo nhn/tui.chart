@@ -1,45 +1,52 @@
 /**
- * @fileoverview Items has items(Item instance).
+ * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Items = tui.util.defineClass(/** @lends Items.prototype */{
+/**
+ * SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
+ */
+
+var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
-     * Items.
-     * @constructs Items
-     * @param {Items} items - items
+     * SeriesGroup is a element of SeriesDataModel.groups.
+     * SeriesGroup.items has SeriesItem.
+     * @constructs SeriesGroup
+     * @param {Array.<SeriesItem>} seriesItems - series items
      */
-    init: function(items) {
+    init: function(seriesItems) {
         /**
-         * items
-         * @type {Array.<Item>}
+         * items has SeriesItem
+         * @type {Array.<SeriesItem>}
          */
-        this.items = items;
+        this.items = seriesItems;
 
         /**
-         * item vlaues.
+         * vlaues of items.
          * @type {Array.<number>}
          */
         this.values = null;
     },
 
     /**
-     * Get item count.
+     * Get series item count.
      * @returns {number}
      */
-    getItemCount: function() {
+    getSeriesItemCount: function() {
         return this.items.length;
     },
 
     /**
-     * Get item.
+     * Get series item.
      * @param {number} index - index of items
      * @returns {Item}
      */
-    getItem: function(index) {
+    getSeriesItem: function(index) {
         return this.items[index];
     },
 
@@ -122,10 +129,10 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Add start to all item.
+     * Add start value to all series item.
      * @param {number} start start value
      */
-    addStartToAllItem: function(start) {
+    addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
             item.addStart(start);
         });
@@ -170,7 +177,7 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Traverse items and executes iteratee function.
+     * Traverse items, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      */
     each: function(iteratee) {
@@ -178,7 +185,7 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Traverse items and returns to result of execution about iteratee function.
+     * Traverse items, and returns to result of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @returns {Array}
      */
@@ -196,4 +203,4 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     }
 });
 
-module.exports = Items;
+module.exports = SeriesGroup;
