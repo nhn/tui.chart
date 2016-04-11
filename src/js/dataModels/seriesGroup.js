@@ -1,26 +1,33 @@
 /**
- * @fileoverview Items has items(Item instance).
+ * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
+/**
+ * SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
+ */
+
 var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
-     * SeriesGroup.
+     * SeriesGroup is a element of SeriesDataModel.groups.
+     * SeriesGroup.items has SeriesItem.
      * @constructs SeriesGroup
      * @param {Array.<SeriesItem>} seriesItems - series items
      */
     init: function(seriesItems) {
         /**
-         * items
+         * items has SeriesItem
          * @type {Array.<SeriesItem>}
          */
         this.items = seriesItems;
 
         /**
-         * item vlaues.
+         * vlaues of items.
          * @type {Array.<number>}
          */
         this.values = null;

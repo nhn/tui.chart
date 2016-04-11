@@ -1,5 +1,6 @@
 /**
- * @fileoverview Item has value, formattedValue, ratio, ... .
+ * @fileoverview SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +12,8 @@ var chartConst = require('../const'),
 
 var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**
-     * SeriesItem.
+     * SeriesItem is a element of SeriesGroup.items.
+     * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
      * @param {number} value - value
      * @param {?string} stack - stack

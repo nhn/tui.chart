@@ -1,5 +1,7 @@
 /**
- * @fileoverview SeriesDataModel has SeriesGroups.
+ * @fileoverview SeriesDataModel is base model for drawing graph of chart series area,
+ *                  and create from rawSeriesData by user,
+ * SeriesDataModel.groups has SeriesGroups.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -21,6 +23,16 @@
  * @typedef {Array.<SeriesGroup>} groups
  */
 
+/**
+ * SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
+ */
+
+/**
+ * SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
+ */
+
 var SeriesGroup = require('./seriesGroup'),
     SeriesItem = require('./seriesItem'),
     predicate = require('../helpers/predicate'),
@@ -30,7 +42,9 @@ var concat = Array.prototype.concat;
 
 var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype */{
     /**
-     * Item group.
+     * SeriesDataModel is base model for drawing graph of chart series area,
+     *      and create from rawSeriesData by user.
+     * SeriesDataModel.groups has SeriesGroups.
      * @constructs SeriesDataModel
      * @param {rawSeriesData} rawSeriesData raw series data
      * @param {string} chartType chart type
@@ -63,14 +77,15 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.rawSeriesData = rawSeriesData;
 
         /**
-         * base groups
+         * baseGroups is base data for making SeriesGroups.
+         * SeriesGroups is made by pivoted baseGroups, lf line type chart.
          * @type {Array.Array<SeriesItem>}
          */
         this.baseGroups = null;
 
         /**
-         * groups
-         * @type {groups}
+         * groups has SeriesGroups.
+         * @type {Array.<SeriesGroup>}
          */
         this.groups = null;
 
@@ -94,7 +109,8 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 return;
             }
             tui.util.forEachArray(legendData.data, function(value, index) {
-                legendData.data[index] = concat.apply(value)[0];
+                var firstValue = tui.util.isArray(value) ? value[0] : value;
+                legendData.data[index] = firstValue;
             });
         });
     },

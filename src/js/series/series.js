@@ -475,7 +475,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index,
-            legendData = this.dataProcessor.getLegendData(legendIndex);
+            legendData = this.dataProcessor.getLegendItem(legendIndex);
 
         return {
             chartType: legendData.chartType,

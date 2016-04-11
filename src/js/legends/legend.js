@@ -73,7 +73,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.boundsMaker = params.boundsMaker;
 
-        legendData = params.dataProcessor.getWholeLegendData();
+        legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
          */

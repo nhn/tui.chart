@@ -216,7 +216,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this.isSingleYAxis) {
-            baseValues = this.dataProcessor.getWholeValues();
+            baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackedChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
@@ -710,7 +710,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         var values;
 
         if (this.isSingleYAxis) {
-            values = this.dataProcessor.getWholeValues();
+            values = this.dataProcessor.getValues();
         } else {
             values = this.dataProcessor.getValues(this.chartType);
         }

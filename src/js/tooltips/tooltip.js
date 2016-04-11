@@ -82,7 +82,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeShowTooltipParams: function(indexes, additionParams) {
         var legendIndex = indexes.index,
-            legendData = this.dataProcessor.getLegendData(legendIndex),
+            legendData = this.dataProcessor.getLegendItem(legendIndex),
             params;
 
         params = tui.util.extend({
@@ -112,7 +112,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             legendLabels = orgLegendLabels;
         }
 
-        this.dataProcessor.eachByWholeSeriesGroup(function(seriesGroup, groupIndex, chartType) {
+        this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
             var datum;
 
             chartType = chartType || self.chartType;

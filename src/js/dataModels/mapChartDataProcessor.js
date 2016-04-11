@@ -33,7 +33,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
      * Update raw data.
      * @param {{series: rawSeriesData}} rawData raw data
      */
-    updateRawData: function(rawData) {
+    initData: function(rawData) {
         this.rawData = rawData;
 
         /**

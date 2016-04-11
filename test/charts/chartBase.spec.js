@@ -55,7 +55,7 @@ describe('ChartBase', function() {
     });
 
     describe('_makeProcessedData()', function() {
-        it('전달되 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
+        it('전달된 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
             actual = chartBase._createDataProcessor(DataProcessor, {
                 rawData: {
@@ -64,7 +64,7 @@ describe('ChartBase', function() {
                 options: {}
             });
             expect(actual instanceof DataProcessor).toBe(true);
-            expect(actual.orgRawData).toEqual({
+            expect(actual.originalRawData).toEqual({
                 categories: ['a', 'b', 'c']
             });
         });

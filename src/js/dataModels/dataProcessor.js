@@ -1,5 +1,7 @@
 /**
- * @fileoverview Data processor.
+ * @fileoverview DataProcessor process rawData.
+ * rawData.categories --> categories
+ * rawData.series --> SeriesDataModel, legendLabels, legendData
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -26,11 +28,22 @@ var concat = Array.prototype.concat;
  */
 
 /**
- * Raw data.
+ * Raw data by user.
  * @typedef {{
  *      categories: ?Array.<string>,
  *      series: (rawSeriesData|{line: ?rawSeriesData, column: ?rawSeriesData})
  * }} rawData
+ */
+
+/**
+ * SeriesDataModel is base model for drawing graph of chart series area,
+ *      and create from rawSeriesData by user,
+ * SeriesDataModel.groups has SeriesGroups.
+ */
+
+/**
+ * SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
  */
 
 var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
@@ -49,7 +62,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.orgRawData = rawData;
+        this.originalRawData = rawData;
 
         /**
          * chart type
@@ -64,7 +77,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.options = options;
 
         /**
-         * series chart types
+         * seriesChartTypes is sorted chart types for rendering series area of combo chart.
          * @type {Array.<string>}
          */
         this.seriesChartTypes = seriesChartTypes;
@@ -75,22 +88,28 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          */
         this.divergingOption = predicate.isBarTypeChart(options.chartType) && seriesOption.diverging;
 
-        this.updateRawData(rawData);
+        /**
+         * legend data for rendering legend of group tooltip
+         * @type {Array.<{chartType: string, label: string}>}
+         */
+        this.originalLegendData = null;
+
+        this.initData(rawData);
     },
 
     /**
-     * Get raw data.
+     * Get original raw data.
      * @returns {rawData} raw data
      */
-    getRawData: function() {
-        return this.orgRawData;
+    getOriginalRawData: function() {
+        return this.originalRawData;
     },
 
     /**
-     * Update raw data.
+     * Initialize data.
      * @param {rawData} rawData raw data
      */
-    updateRawData: function(rawData) {
+    initData: function(rawData) {
         /**
          * raw data
          * @type {rawData}
@@ -116,28 +135,28 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.seriesDataModelMap = {};
 
         /**
-         * whole SeriesGroups
+         * SeriesGroups
          * @type {Array.<SeriesGroup>}
          */
-        this.wholeSeriesGroups = null;
+        this.seriesGroups = null;
 
         /**
-         * whole values of SeriesItems
-         * @type {Array.<number>}
+         * map of values of SeriesItems
+         * @type {Object.<string, Array.<number>>}
          */
-        this.wholeValues = null;
+        this.valuesMap = {};
 
         /**
-         * legend labels
+         * legend labels for rendering legend area
          * @type {{column: Array.<string>, line: Array.<string> | Array.<string>}}
          */
         this.legendLabels = null;
 
         /**
-         * whole legend data
-         * @type {Array.<object>}
+         * legend data for rendering legend
+         * @type {Array.<{chartType: string, label: string}>}
          */
-        this.wholeLegendData = null;
+        this.legendData = null;
 
         /**
          * functions for formatting
@@ -154,12 +173,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Process categories
-     * @param {Array.<string>} categories categories
      * @returns {Array.<string>} processed categories
      * @private
      */
-    _processCategories: function(categories) {
-        return tui.util.map(categories, tui.util.encodeHTMLEntity);
+    _processCategories: function() {
+        return tui.util.map(this.rawData.categories, tui.util.encodeHTMLEntity);
     },
 
     /**
@@ -168,7 +186,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getCategories: function() {
         if (!this.categories) {
-            this.categories = this._processCategories(this.rawData.categories);
+            this.categories = this._processCategories();
         }
 
         return this.categories;
@@ -269,13 +287,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make whole SeriesGroups.
+     * Make SeriesGroups.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _makeWholeSeriesGroups: function() {
+    _makeSeriesGroups: function() {
         var joinedGroups = [],
-            wholeSeriesGroups;
+            seriesGroups;
 
         this._eachByAllSeriesDataModel(function(seriesDataModel) {
             seriesDataModel.each(function(seriesGroup, index) {
@@ -286,22 +304,22 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             });
         });
 
-        wholeSeriesGroups = tui.util.map(joinedGroups, function(items) {
+        seriesGroups = tui.util.map(joinedGroups, function(items) {
             return new SeriesGroup(items);
         });
 
-        return wholeSeriesGroups;
+        return seriesGroups;
     },
 
     /**
-     * Get whole SeriesGroups.
+     * Get SeriesGroups.
      * @returns {Array.<SeriesGroup>}
      */
-    getWholeSeriesGroups: function() {
-        if (!this.wholeSeriesGroups) {
-            this.wholeSeriesGroups = this._makeWholeSeriesGroups();
+    getSeriesGroups: function() {
+        if (!this.seriesGroups) {
+            this.seriesGroups = this._makeSeriesGroups();
         }
-        return this.wholeSeriesGroups;
+        return this.seriesGroups;
     },
 
     /**
@@ -316,30 +334,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make whole values from whole SeriesItem.
-     * @returns {Array}
+     * Make values of seriesItems.
+     * @param {string} chartType - chart type
+     * @returns {Array.<number>}
      * @private
      */
-    _makeWholeValues: function() {
-        var wholeValues = [];
+    _makeValues: function(chartType) {
+        var values;
 
-        this._eachByAllSeriesDataModel(function(seriesDataModel) {
-            wholeValues = wholeValues.concat(seriesDataModel.getValues());
-        });
-
-        return wholeValues;
-    },
-
-    /**
-     * Get values of whole SeriesItem.
-     * @returns {Array.<number>} values
-     */
-    getWholeValues: function() {
-        if (!this.wholeValues) {
-            this.wholeValues = this._makeWholeValues();
+        if (chartType === chartConst.DUMMY_KEY) {
+            values = [];
+            this._eachByAllSeriesDataModel(function(seriesDataModel) {
+                values = values.concat(seriesDataModel.getValues());
+            });
+        } else {
+            values = this.getSeriesDataModel(chartType).getValues();
         }
-
-        return this.wholeValues;
+        return values;
     },
 
     /**
@@ -348,80 +359,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {Array.<number>}
      */
     getValues: function(chartType) {
-        return this.getSeriesDataModel(chartType).getValues();
+        chartType = chartType || chartConst.DUMMY_KEY;
+        if (!this.valuesMap[chartType]) {
+            this.valuesMap[chartType] = this._makeValues(chartType);
+        }
+
+        return this.valuesMap[chartType];
     },
 
     /**
-     * Traverse whole SeriesGroup of all SeriesDataModel, and executes iteratee function.
+     * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
      */
-    eachByWholeSeriesGroup: function(iteratee) {
+    eachBySeriesGroup: function(iteratee) {
         this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
             seriesDataModel.each(function(seriesGroup, groupIndex) {
                 iteratee(seriesGroup, groupIndex, chartType);
             });
         });
-    },
-
-    /**
-     * Get legend labels.
-     * @param {?string} chartType chart type
-     * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
-     */
-    getLegendLabels: function(chartType) {
-        if (!this.legendLabels) {
-            this.legendLabels = this._pickLegendLabels();
-        }
-        return this.legendLabels[chartType] || this.legendLabels;
-    },
-
-    /**
-     * Get whole legend data.
-     * @returns {Array.<string>} legend data
-     */
-    getWholeLegendData: function() {
-        if (!this.wholeLegendData) {
-            this.wholeLegendData = this._makeWholeLegendData();
-        }
-        return this.wholeLegendData;
-    },
-
-    /**
-     * Set whole legend data.
-     * @param {Array.<{chartType: string, label: string}>} wholeLegendData legend data
-     */
-    setWholeLegendData: function(wholeLegendData) {
-        this.wholeLegendData = wholeLegendData;
-    },
-
-    /**
-     * Get legend data.
-     * @param {number} index index
-     * @returns {{chartType: string, label: string}} legend data
-     */
-    getLegendData: function(index) {
-        return this.getWholeLegendData()[index];
-    },
-
-    /**
-     * Get format functions.
-     * @returns {Array.<function>} functions
-     */
-    getFormatFunctions: function() {
-        if (!this.formatFunctions) {
-            this.formatFunctions = this._findFormatFunctions();
-        }
-
-        return this.formatFunctions;
-    },
-
-    /**
-     * Get first formatted value.
-     * @param {?string} chartType chartType
-     * @returns {string} formatted value
-     */
-    getFirstFormattedValue: function(chartType) {
-        return this.getSeriesDataModel(chartType).getFirstFormattedValue();
     },
 
     /**
@@ -455,37 +410,99 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make whole legend data.
+     * Get legend labels.
+     * @param {?string} chartType chart type
+     * @returns {Array.<string> | {column: ?Array.<string>, line: ?Array.<string>}} legend labels
+     */
+    getLegendLabels: function(chartType) {
+        if (!this.legendLabels) {
+            this.legendLabels = this._pickLegendLabels();
+        }
+        return this.legendLabels[chartType] || this.legendLabels;
+    },
+
+    /**
+     * Make legend data.
      * @returns {Array} labels
      * @private
      */
-    _makeWholeLegendData: function() {
-        var self = this,
-            legendLabels = this.getLegendLabels(),
-            seriesChartTypes = this.seriesChartTypes,
-            wholeLabels;
+    _makeLegendData: function() {
+        var legendLabels = this.getLegendLabels(),
+            seriesChartTypes = this.seriesChartTypes || [this.chartType],
+            legendLabelsMap, legendData;
 
-        if (!seriesChartTypes || !seriesChartTypes.length) {
-            wholeLabels = tui.util.map(legendLabels, function(label) {
+        if (tui.util.isArray(legendLabels)) {
+            legendLabelsMap = [this.chartType];
+            legendLabelsMap[this.chartType] = legendLabels;
+        } else {
+            seriesChartTypes = this.seriesChartTypes;
+            legendLabelsMap = legendLabels;
+        }
+
+        legendData = tui.util.map(seriesChartTypes, function(chartType) {
+            return tui.util.map(legendLabelsMap[chartType], function(label) {
                 return {
-                    chartType: self.options.chartType,
+                    chartType: chartType,
                     label: label
                 };
             });
-        } else {
-            wholeLabels = [];
-            tui.util.forEachArray(seriesChartTypes, function(chartType) {
-                var labels = tui.util.map(legendLabels[chartType], function(label) {
-                    return {
-                        chartType: chartType,
-                        label: label
-                    };
-                });
-                wholeLabels = wholeLabels.concat(labels);
-            });
+        });
+
+        return concat.apply([], legendData);
+    },
+
+    /**
+     * Get legend data.
+     * @returns {Array.<{chartType: string, label: string}>} legend data
+     */
+    getLegendData: function() {
+        if (!this.legendData) {
+            this.legendData = this._makeLegendData();
         }
 
-        return wholeLabels;
+        if (!this.originalLegendData) {
+            this.originalLegendData = this.legendData;
+        }
+
+        return this.legendData;
+    },
+
+    /**
+     * get original legend data.
+     * @returns {Array.<{chartType: string, label: string}>}
+     */
+    getOriginalLegendData: function() {
+        return this.originalLegendData;
+    },
+
+    /**
+     * Get legend item.
+     * @param {number} index index
+     * @returns {{chartType: string, label: string}} legend data
+     */
+    getLegendItem: function(index) {
+        return this.getLegendData()[index];
+    },
+
+    /**
+     * Get format functions.
+     * @returns {Array.<function>} functions
+     */
+    getFormatFunctions: function() {
+        if (!this.formatFunctions) {
+            this.formatFunctions = this._findFormatFunctions();
+        }
+
+        return this.formatFunctions;
+    },
+
+    /**
+     * Get first formatted value.
+     * @param {?string} chartType chartType
+     * @returns {string} formatted value
+     */
+    getFirstFormattedValue: function(chartType) {
+        return this.getSeriesDataModel(chartType).getFirstFormattedValue();
     },
 
     /**

@@ -804,7 +804,7 @@ describe('AxisScaleMaker', function() {
     });
 
     describe('_getValuesForSum()', function() {
-        it('axis가 하나 있을 경우에는 getWholeValues()의 결과를 반환합니다.', function() {
+        it('axis가 하나 있을 경우에는 chartType을 전달하지 않은 getValues()의 결과를 반환합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
@@ -818,12 +818,12 @@ describe('AxisScaleMaker', function() {
             axisScaleMaker.chartType = 'column';
 
             actual = axisScaleMaker._getValuesForSum();
-            expected = axisScaleMaker.dataProcessor.getWholeValues();
+            expected = axisScaleMaker.dataProcessor.getValues();
 
             expect(actual).toEqual(expected);
         });
 
-        it('axis가 두개 있을 경우에는 getValues() 결과를 반환합니다.', function() {
+        it('axis가 두개 있을 경우에는 chartType을 전달한 getValues() 결과를 반환합니다.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];

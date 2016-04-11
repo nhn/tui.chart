@@ -7,6 +7,7 @@
 'use strict';
 
 var DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
+    chartConst = require('../../src/js/const'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
     SeriesGroup = require('../../src/js/dataModels/seriesGroup');
 
@@ -19,10 +20,14 @@ describe('test DataProcessor', function() {
 
     describe('_processCategories()', function() {
         it('카테고리에 대해 escaping 처리를 합니다.', function() {
-            var actual = dataProcessor._processCategories([
-                    '<div>ABC</div>', 'EFG'
-                ]),
-                expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
+            var actual, expected;
+
+            dataProcessor.rawData = {
+                categories: ['<div>ABC</div>', 'EFG']
+            };
+
+            actual = dataProcessor._processCategories();
+            expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
 
             expect(actual).toEqual(expected);
         });
@@ -64,7 +69,7 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeWholeSeriesGroups()', function() {
+    describe('_makeSeriesGroups()', function() {
         it('객체로 구성된(colum, line) groups의 seriesItem들을 같은 seriesItem index끼리 모아 seriesGroup을 새로 구성하여 반환합니다.', function() {
             var actual;
 
@@ -82,7 +87,7 @@ describe('test DataProcessor', function() {
             ];
             dataProcessor.seriesChartTypes = ['column', 'line'];
 
-            actual = dataProcessor._makeWholeSeriesGroups();
+            actual = dataProcessor._makeSeriesGroups();
 
             expect(actual.length).toBe(2);
             expect(actual[0].items).toEqual([
@@ -98,10 +103,11 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeWholeValues()', function() {
-        it('모든 sereis item의 value를 추출 하여 반환합니다.', function() {
+    describe('_makeValues()', function() {
+        it('chartType이 chartConst.DUMMY_KEY일 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
             var actual, expected;
 
+            dataProcessor.seriesChartTypes = ['column', 'line'];
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -124,10 +130,33 @@ describe('test DataProcessor', function() {
                     start: null
                 }])
             ];
-            dataProcessor.seriesChartTypes = ['column', 'line'];
 
-            actual = dataProcessor._makeWholeValues();
+            actual = dataProcessor._makeValues(chartConst.DUMMY_KEY);
             expected = [10, 20, 30, 40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('chartType이 정상적인 chart type일 경우에는 해당하는 chartType에 속하는 sereisItem의 value를 추출 하여 반환합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.chartType = 'column';
+            dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+            dataProcessor.seriesDataModelMap.column.groups = [
+                new SeriesGroup([{
+                    value: 10,
+                    start: null
+                }, {
+                    value: 30,
+                    start: null
+                }])
+            ];
+
+            actual = dataProcessor._makeValues('column');
+            expected = [10, 30];
 
             expect(actual).toEqual(expected);
         });
@@ -135,6 +164,7 @@ describe('test DataProcessor', function() {
         it('start값이 null이 아닐경우 포함하여 반환합니다.', function() {
             var actual, expected;
 
+            dataProcessor.chartType = 'column';
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -144,23 +174,13 @@ describe('test DataProcessor', function() {
                     value: 10,
                     start: 5
                 }, {
-                    value: 20,
-                    start: 15
-                }])
-            ];
-            dataProcessor.seriesDataModelMap.line.groups = [
-                new SeriesGroup([{
                     value: 30,
-                    start: 10
-                }, {
-                    value: 40,
-                    start: 30
+                    start: 20
                 }])
             ];
-            dataProcessor.seriesChartTypes = ['column', 'line'];
 
-            actual = dataProcessor._makeWholeValues();
-            expected = [10, 5, 20, 15, 30, 10, 40, 30];
+            actual = dataProcessor._makeValues('column');
+            expected = [10, 5, 30, 20];
 
             expect(actual).toEqual(expected);
         });
