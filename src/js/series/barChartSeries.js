@@ -164,8 +164,9 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @param {string} formattedValue - formatted value
      * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} - rendering position
+     * @private
      */
-    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
+    _makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
             left = bound.left,
             top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;

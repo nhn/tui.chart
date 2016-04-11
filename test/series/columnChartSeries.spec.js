@@ -185,7 +185,7 @@ describe('ColumnChartSeries', function() {
                 labelHeight = 20,
                 value = 10,
                 formattedValue = '10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 5
@@ -203,7 +203,7 @@ describe('ColumnChartSeries', function() {
                 labelHeight = 20,
                 value = -10,
                 formattedValue = '-10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 10,
                     top: 55

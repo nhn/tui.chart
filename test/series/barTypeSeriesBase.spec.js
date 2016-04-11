@@ -36,7 +36,7 @@ describe('BarTypeSeriesBase', function() {
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         series.dataProcessor = dataProcessor;
-        series.makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
+        series._makeSeriesRenderingPosition = jasmine.createSpy('_makeSeriesRenderingPosition').and.returnValue({
             left: 0,
             top: 0
         });

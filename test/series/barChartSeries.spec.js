@@ -223,7 +223,7 @@ describe('BarChartSeries', function() {
                 labelHeight = 20,
                 value = 10,
                 formattedValue = '10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 95,
                     top: 11
@@ -242,7 +242,7 @@ describe('BarChartSeries', function() {
                 value = 10,
                 formattedValue = '10',
                 isStart = true,
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
                 expected = {
                     left: 5,
                     top: 11
@@ -260,7 +260,7 @@ describe('BarChartSeries', function() {
                 labelHeight = 20,
                 value = -10,
                 formattedValue = '-10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
                 expected = {
                     left: 5,
                     top: 11
@@ -279,7 +279,7 @@ describe('BarChartSeries', function() {
                 value = -10,
                 formattedValue = '-10',
                 isStart = true,
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
                 expected = {
                     left: 95,
                     top: 11

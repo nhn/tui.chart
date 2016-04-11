@@ -425,15 +425,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _makeSeriesLabelHtml: function(position, value, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
 
-        if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
+        if (!tui.util.isNull(this.selectedLegendIndex) && (this.selectedLegendIndex !== index)) {
             cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
         }
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
-            value: value,
-            index: index
+            value: value
         });
     },
 

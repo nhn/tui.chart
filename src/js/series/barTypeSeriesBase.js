@@ -158,11 +158,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeSeriesLabelsHtml: function(groupIndex, labelHeight, seriesItem, index) {
         var bound = this.seriesData.groupBounds[groupIndex][index].end,
-            position = this.makeSeriesRenderingPosition(bound, labelHeight, seriesItem.value, seriesItem.formattedEnd),
+            value = seriesItem.value,
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.formattedEnd),
             labelHtml = this._makeSeriesLabelHtml(position, seriesItem.formattedEnd, index);
 
         if (seriesItem.isRange) {
-            position = this.makeSeriesRenderingPosition(bound, labelHeight, seriesItem.value, seriesItem.formattedStart, true);
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.formattedStart, true);
             labelHtml += this._makeSeriesLabelHtml(position, seriesItem.formattedStart, index);
         }
 
