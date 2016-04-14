@@ -8,7 +8,8 @@
 
 var Series = require('./series'),
     LineTypeSeriesBase = require('./lineTypeSeriesBase'),
-    chartConst = require('../const');
+    chartConst = require('../const'),
+    predicate = require('../helpers/predicate');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
@@ -71,23 +72,6 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * Make normal positions.
-     * @param {Array.<Array.<{left: number, top: number}>>} groupPositions group positions
-     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
-     * @private
-     */
-    _makeNormalPositions: function(groupPositions) {
-        var startTop = this._makePositionTopOfZeroPoint();
-
-        return tui.util.map(groupPositions, function(positions) {
-            return tui.util.map(positions, function(position) {
-                position.startTop = startTop;
-                return position;
-            });
-        });
-    },
-
-    /**
      * Make positions.
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
      * @private
@@ -95,10 +79,8 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     _makePositions: function() {
         var groupPositions = this._makeBasicPositions();
 
-        if (this.options.stacked) {
+        if (predicate.isValidStackedOption(this.options.stacked)) {
             groupPositions = this._makeStackedPositions(groupPositions);
-        } else {
-            groupPositions = this._makeNormalPositions(groupPositions);
         }
 
         return groupPositions;
@@ -116,6 +98,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
         return {
             groupPositions: this._makePositions(),
+            hasRangeData: this.dataProcessor.getSeriesDataModel(this.chartType).hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }

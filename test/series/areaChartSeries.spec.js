@@ -110,25 +110,8 @@ describe('AreaChartSeries', function() {
         });
     });
 
-    describe('_makeNormalPositions()', function() {
-        it('일반 영역 차트의 경우 기본 position값에 0점의 position top을 startTop으로 설정합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.getDimension.and.returnValue({
-                height: 190
-            });
-
-            spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
-
-            actual = series._makeNormalPositions([[{top: 150}], [{top: 100}], [{top: 180}]]);
-            expected = [[{top: 150, startTop: 200}], [{top: 100, startTop: 200}], [{top: 180, startTop: 200}]];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_makeNormalPositions()', function() {
-        it('영역 차트의 position은 stacked의 경우 기본 position을 구해 _makeStackedPositions를 실행한 결과를 반환합니다.', function() {
+    describe('_makePositions()', function() {
+        it('영역 차트의 position은 stacked의 경우 _makeBasicPositions 실행 결과를 전달하여 _makeStackedPositions를 실행한 결과를 반환합니다.', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
@@ -145,19 +128,18 @@ describe('AreaChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('영역 차트의 position은 stacked가 아닌경우 경우 기본 position을 구해 _makeNormalPositions 실행한 결과를 반환합니다.', function() {
-            var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
-                actual, expected;
+        it('영역 차트의 position은 stacked가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
+            var actual, expected;
 
             boundsMaker.getDimension.and.returnValue({
                 height: 190
             });
 
-            spyOn(series, '_makeBasicPositions').and.returnValue(basicPositions);
+            spyOn(series, '_makeBasicPositions').and.returnValue([[{top: 150}], [{top: 100}], [{top: 180}]]);
             spyOn(series, '_makePositionTopOfZeroPoint').and.returnValue(200);
 
             actual = series._makePositions();
-            expected = series._makeNormalPositions(basicPositions);
+            expected = series._makeBasicPositions();
 
             expect(actual).toEqual(expected);
         });

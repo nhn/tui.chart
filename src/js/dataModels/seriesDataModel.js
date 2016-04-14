@@ -74,7 +74,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          * rawData.series
          * @type {rawSeriesData}
          */
-        this.rawSeriesData = rawSeriesData;
+        this.rawSeriesData = rawSeriesData || [];
 
         /**
          * baseGroups is base data for making SeriesGroups.
@@ -95,38 +95,29 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          */
         this.values = null;
 
-        this._removeRangeValueIfStackedOption();
-    },
-
-    /**
-     * Remove range value of item.
-     * @param {rawSeriesData} rawSeriesData - rawData.series
-     * @private
-     */
-    _removeRangeValue: function() {
-        tui.util.forEachArray(this.rawSeriesData, function(legendData) {
-            if (!tui.util.isArray(legendData.data)) {
-                return;
-            }
-            tui.util.forEachArray(legendData.data, function(value, index) {
-                var firstValue = tui.util.isArray(value) ? value[0] : value;
-                legendData.data[index] = firstValue;
-            });
-        });
+        this._removeRangeValue();
     },
 
     /**
      * Remove range value of item, if has stacked option.
      * @private
      */
-    _removeRangeValueIfStackedOption: function() {
-        var stackedOption = tui.util.pick(this.options, 'series', 'stacked');
+    _removeRangeValue: function() {
+        var seriesOption = tui.util.pick(this.options, 'series') || {};
 
-        if (!predicate.isValidStackedOption(stackedOption)) {
+        if (predicate.isAllowRangeData(this.chartType) &&
+            !predicate.isValidStackedOption(seriesOption.stacked) && !seriesOption.spline) {
             return;
         }
 
-        this._removeRangeValue();
+        tui.util.forEachArray(this.rawSeriesData, function(rawItem) {
+            if (!tui.util.isArray(rawItem.data)) {
+                return;
+            }
+            tui.util.forEachArray(rawItem.data, function(value, index) {
+                rawItem.data[index] = concat.apply(value)[0];
+            });
+        });
     },
 
     /**
@@ -408,6 +399,21 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.each(function(seriesGroup) {
             seriesGroup.addStartValueToAllSeriesItem(start);
         });
+    },
+
+    /**
+     * Whether has range data or not.
+     * @returns {boolean}
+     */
+    hasRangeData: function() {
+        var hasRangeData = false;
+
+        this.each(function(seriesGroup) {
+            hasRangeData = seriesGroup.hasRangeData();
+            return !hasRangeData;
+        });
+
+        return hasRangeData;
     },
 
     /**
