@@ -40,10 +40,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _renderCustomEventArea: function(customEventContainer, data) {
-        var expandedBound;
+        var expandedBound, tbcm;
 
         this.dimension = this.boundsMaker.getDimension('customEvent');
-        this.tickBaseCoordinateModel = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        tbcm = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        this.tickBaseCoordinateModel = tbcm;
         expandedBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
         renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
         renderUtil.renderPosition(customEventContainer, expandedBound.position);
