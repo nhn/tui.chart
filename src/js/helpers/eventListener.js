@@ -41,8 +41,8 @@ var eventListener = {
     /**
      * Bind event function.
      * @memberOf module:eventListener
-     * @param {HTMLElement} target target element
      * @param {string} eventName event name
+     * @param {HTMLElement} target target element
      * @param {function} callback callback function
      * @param {object} context context for callback
      */
