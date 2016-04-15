@@ -9,12 +9,6 @@
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
     dom = require('../../src/js/helpers/domHandler.js');
 
-var isMac = navigator.userAgent.indexOf('Mac') > -1,
-    browser = tui.util.browser,
-    isOldBrowser = browser.msie && browser.version <= 8,
-    isFirefox = browser.firefox,
-    isChrome = browser.chrome;
-
 describe('renderUtil', function() {
     describe('concatStr()', function() {
         it('문자들을 인자로 전달하면 붙여진 결과를 반환합니다. ex) concatStr("a", "b", "c") ---> "abc"', function() {
@@ -47,93 +41,12 @@ describe('renderUtil', function() {
         });
     });
 
-    describe('_getRenderedLabelSize()', function() {
-        it('전달받은 레이블을 테마 속성을 포함하여 렌더링하여 사이즈 계산 후 결과를 반환합니다.', function() {
-            var atual = renderUtil._getRenderedLabelSize('Label1', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            }, 'offsetWidth');
-
-            if (isOldBrowser || isFirefox) {
-                expect(atual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(atual).toBe(40);
-            } else {
-                expect(atual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelWidth()', function() {
-        it('렌더링된 레이블의 너비값을 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelWidth('Label1', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser || isFirefox) {
-                expect(actual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(actual).toBe(40);
-            } else {
-                expect(actual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelHeight()', function() {
-        it('렌더링된 레이블의 높이값을 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelHeight('Label2', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser) {
-                expect(actual).toBe(14);
-            } else {
-                expect(actual).toBe(15);
-            }
-        });
-    });
-
     describe('_getRenderedLabelsMaxSize()', function() {
         it('인자로 전달하는 레이블들을 전달한 함수로 실행하여 가장 큰 값을 반환합니다.', function() {
             var actual = renderUtil._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function(label) {
                 return label.length;
             });
             expect(actual).toBe(7);
-        });
-    });
-
-    describe('getRenderedLabelsMaxWidth()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label'], {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser || isFirefox) {
-                expect(actual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(actual).toBe(40);
-            } else {
-                expect(actual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelsMaxHeight()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label'], {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser) {
-                expect(actual).toBe(14);
-            } else {
-                expect(actual).toBe(15);
-            }
         });
     });
 
