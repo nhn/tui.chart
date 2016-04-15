@@ -257,7 +257,7 @@ describe('LineTypeSeriesBase', function() {
                 seriesItem = {
                     value: 'value',
                     formattedEnd: 'formattedEnd',
-                    formattedStart: 'formattedStart',
+                    formattedStart: 'formattedStart'
                 },
                 labelHeight = 'labelHeight',
                 isStart = true;
