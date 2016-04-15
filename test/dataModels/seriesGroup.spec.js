@@ -26,7 +26,7 @@ describe('test seriesGroup', function() {
                 new SeriesItem(40)
             ];
 
-            actual = seriesGroup._makeValues();
+            actual = seriesGroup._makeValues('value');
             expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
@@ -41,7 +41,7 @@ describe('test seriesGroup', function() {
                 new SeriesItem([40, 50])
             ];
 
-            actual = seriesGroup._makeValues();
+            actual = seriesGroup._makeValues('value');
             expected = [20, 10, 30, 20, 40, 30, 50, 40];
 
             expect(actual).toEqual(expected);

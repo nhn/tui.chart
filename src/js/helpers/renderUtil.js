@@ -205,7 +205,7 @@ var renderUtil = {
             });
             maxSize = tui.util.max(sizes);
         }
-        
+
         return maxSize;
     },
 

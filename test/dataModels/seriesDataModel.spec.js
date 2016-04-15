@@ -105,6 +105,27 @@ describe('test SeriesDataModel', function() {
             expect(actual[0][0].value).toBe(10);
             expect(actual[1][0].value).toBe(20);
         });
+
+        it('bubble차트의 경우 SeriesItemForCoordinateType으로 seriesItem을 생성합니다.', function() {
+            var actual;
+
+            seriesDataModel.rawSeriesData = [{
+                data: [{
+                    x: 10,
+                    y: 20,
+                    r: 30,
+                    label: 'Label'
+                }]
+            }];
+            seriesDataModel.chartType = 'bubble';
+
+            actual = seriesDataModel._createBaseGroups();
+            expect(actual[0][0].x).toBe(10);
+            expect(actual[0][0].y).toBe(20);
+            expect(actual[0][0].r).toBe(30);
+            expect(actual[0][0].label).toBe('Label');
+
+        });
     });
 
     describe('_createGroupsFromRawData()', function() {
@@ -158,8 +179,68 @@ describe('test SeriesDataModel', function() {
                 ])
             ];
 
-            actual = seriesDataModel._makeValues('bar');
+            actual = seriesDataModel._makeValues('value');
             expected = [10, 20, 30, 40];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('coordinate type의 차트의 경우 x 정보를 반환할 수 있습니다.', function() {
+            var actual, expected;
+
+            seriesDataModel.groups = [
+                new SeriesGroup([
+                    new SeriesItemForCoordinateType({
+                        x: 10
+                    }),
+                    new SeriesItemForCoordinateType({
+                        x: 20
+                    })
+                ])
+            ];
+
+            actual = seriesDataModel._makeValues('x');
+            expected = [10, 20];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('coordinate type의 차트의 경우 y 정보를 반환할 수 있습니다.', function() {
+            var actual, expected;
+
+            seriesDataModel.groups = [
+                new SeriesGroup([
+                    new SeriesItemForCoordinateType({
+                        y: 10
+                    }),
+                    new SeriesItemForCoordinateType({
+                        y: 20
+                    })
+                ])
+            ];
+
+            actual = seriesDataModel._makeValues('y');
+            expected = [10, 20];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('coordinate type의 차트의 경우 r(radius) 정보를 반환할 수 있습니다.', function() {
+            var actual, expected;
+
+            seriesDataModel.groups = [
+                new SeriesGroup([
+                    new SeriesItemForCoordinateType({
+                        r: 10
+                    }),
+                    new SeriesItemForCoordinateType({
+                        r: 20
+                    })
+                ])
+            ];
+
+            actual = seriesDataModel._makeValues('r');
+            expected = [10, 20];
 
             expect(actual).toEqual(expected);
         });
@@ -180,7 +261,9 @@ describe('test SeriesDataModel', function() {
         it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 모두 포함되어있으면 0.5를 반환합니다.', function() {
             var actual, expected;
 
-            seriesDataModel.values = [-20, 40];
+            seriesDataModel.valuesMap = {
+                value: [-20, 40]
+            };
 
             actual = seriesDataModel._calculateBaseRatio();
             expected = 0.5;
@@ -191,7 +274,9 @@ describe('test SeriesDataModel', function() {
         it('groupseriesGroup에서 values 추출한 후 values에 음수와 양수 중 하나만 존재하면 1을 반환합니다.', function() {
             var actual, expected;
 
-            seriesDataModel.values = [20, 40];
+            seriesDataModel.valuesMap = {
+                value: [20, 40]
+            };
 
             actual = seriesDataModel._calculateBaseRatio();
             expected = 1;
@@ -205,7 +290,9 @@ describe('test SeriesDataModel', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosWhenPercentStacked']);
 
             seriesDataModel.groups = [seriesGroup];
-            seriesDataModel.values = [20, 40];
+            seriesDataModel.valuesMap = {
+                value: [20, 40]
+            };
 
             seriesDataModel._addRatiosWhenPercentStacked('bar');
 
@@ -350,6 +437,36 @@ describe('test SeriesDataModel', function() {
             seriesDataModel.addDataRatiosOfPieChart();
 
             expect(seriesGroup.addRatios).toHaveBeenCalledWith(100);
+        });
+    });
+
+    describe('addDataRatiosForCoordinateType()', function() {
+        it('좌표 타입(bubble chart)의 경우 maxX, maxY, maxRidus를 구해 seriesGroup.addRatiosForCoordinateType에 전달합니다.', function() {
+            var limitMap = {
+                x: {
+                    max: 20
+                },
+                y: {
+                    max: 30
+                }
+            };
+            var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosForCoordinateType']);
+
+            seriesDataModel.groups = [seriesGroup];
+            spyOn(seriesDataModel, 'getValues').and.returnValue([5, 10]);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+
+            expect(seriesGroup.addRatiosForCoordinateType).toHaveBeenCalledWith(20, 30, 10);
+        });
+        it('limitMap.x, limitMap.y가 모두 없고 r vlaue가 0만 존재할 경우 maxX, maxY, maxRidus의 값 모두 1을 전달합니다.', function() {
+            var limitMap = {};
+            var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosForCoordinateType']);
+
+            seriesDataModel.groups = [seriesGroup];
+            spyOn(seriesDataModel, 'getValues').and.returnValue([0]);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+
+            expect(seriesGroup.addRatiosForCoordinateType).toHaveBeenCalledWith(1, 1, 1);
         });
     });
 

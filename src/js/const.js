@@ -39,6 +39,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
     /** @type {string} */
+    CHART_TYPE_BUBBLE: 'bubble',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,

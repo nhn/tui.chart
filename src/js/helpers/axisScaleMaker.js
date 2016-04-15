@@ -45,6 +45,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.chartType = params.chartType;
 
         /**
+         * value type like 'value', 'x', 'y', 'r'
+         * @type {string}
+         */
+        this.valueType = params.valueType;
+
+        /**
          * Whether vertical type or not.
          * @type {boolean}
          */
@@ -220,7 +226,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         } else if (this._isNormalStackedChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
-            baseValues = this.dataProcessor.getValues(this.chartType);
+            baseValues = this.dataProcessor.getValues(this.chartType, this.valueType);
         }
 
         return baseValues;

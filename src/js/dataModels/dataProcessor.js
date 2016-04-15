@@ -335,36 +335,43 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Make values of seriesItems.
-     * @param {string} chartType - chart type
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(chartType) {
+    _makeValues: function(chartType, valueType) {
         var values;
 
         if (chartType === chartConst.DUMMY_KEY) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
-                values = values.concat(seriesDataModel.getValues());
+                values = values.concat(seriesDataModel.getValues(valueType));
             });
         } else {
-            values = this.getSeriesDataModel(chartType).getValues();
+            values = this.getSeriesDataModel(chartType).getValues(valueType);
         }
         return values;
     },
 
     /**
      * Get values of specific SeriesDataModel.
-     * @param {string} chartType chart type
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      */
-    getValues: function(chartType) {
+    getValues: function(chartType, valueType) {
+        var mapKey;
+
         chartType = chartType || chartConst.DUMMY_KEY;
-        if (!this.valuesMap[chartType]) {
-            this.valuesMap[chartType] = this._makeValues(chartType);
+
+        mapKey = chartType + valueType;
+
+        if (!this.valuesMap[mapKey]) {
+            this.valuesMap[mapKey] = this._makeValues(chartType, valueType);
         }
 
-        return this.valuesMap[chartType];
+        return this.valuesMap[mapKey];
     },
 
     /**
@@ -726,6 +733,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     addDataRatiosOfPieChart: function() {
         this.getSeriesDataModel(chartConst.CHART_TYPE_PIE).addDataRatiosOfPieChart();
+    },
+
+    /**
+     * Add data ratios for chart of coordinate type.
+     * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     */
+    addDataRatiosForCoordinateType: function(limitMap) {
+        this.getSeriesDataModel(chartConst.CHART_TYPE_BUBBLE).addDataRatiosForCoordinateType(limitMap);
     },
 
     /**

@@ -35,6 +35,7 @@
 
 var SeriesGroup = require('./seriesGroup'),
     SeriesItem = require('./seriesItem'),
+    SeriesItemForCoordinateType = require('./seriesItemForCoordinateType'),
     predicate = require('../helpers/predicate'),
     calculator = require('../helpers/calculator');
 
@@ -90,10 +91,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.groups = null;
 
         /**
-         * all values of groups
+         * valuesMap of all values of groups
          * @type {Array}
          */
-        this.values = null;
+        this.valuesMap = {};
 
         this._removeRangeValue();
     },
@@ -126,11 +127,18 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createBaseGroups: function() {
-        var self = this;
+        var self = this,
+            SeriesItemClass;
+
+        if (this.chartType === 'bubble') {
+            SeriesItemClass = SeriesItemForCoordinateType;
+        } else {
+            SeriesItemClass = SeriesItem;
+        }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
             return tui.util.map(concat.apply(rawDatum.data), function(value) {
-                return new SeriesItem(value, rawDatum.stack, self.formatFunctions);
+                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions);
             });
         });
     },
@@ -249,12 +257,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Make flattening values.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function() {
+    _makeValues: function(valueType) {
         var values = this.map(function(seriesGroup) {
-            return seriesGroup.getValues();
+            return seriesGroup.getValues(valueType);
         });
 
         return concat.apply([], values);
@@ -262,14 +271,17 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Get flattening values.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      */
-    getValues: function() {
-        if (!this.values) {
-            this.values = this._makeValues();
+    getValues: function(valueType) {
+        valueType = valueType || 'value';
+
+        if (!this.valuesMap[valueType]) {
+            this.valuesMap[valueType] = this._makeValues(valueType);
         }
 
-        return this.values;
+        return this.valuesMap[valueType];
     },
 
     /**
@@ -388,6 +400,20 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             var sum = tui.util.sum(seriesGroup.pluck('value'));
 
             seriesGroup.addRatios(sum);
+        });
+    },
+
+    /**
+     * Add data ratios for chart of coordinate type.
+     * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     */
+    addDataRatiosForCoordinateType: function(limitMap) {
+        var maxX = limitMap.x ? limitMap.x.max : 1,
+            maxY = limitMap.y ? limitMap.y.max : 1,
+            maxRadius = tui.util.max(this.getValues('r')) || 1;
+
+        this.each(function(seriesGroup) {
+            seriesGroup.addRatiosForCoordinateType(maxX, maxY, maxRadius);
         });
     },
 

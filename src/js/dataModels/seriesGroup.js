@@ -30,7 +30,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
          * vlaues of items.
          * @type {Array.<number>}
          */
-        this.values = null;
+        this.valuesMap = {};
+
+        this.valuesMapPerStack = null;
     },
 
     /**
@@ -52,15 +54,16 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
 
     /**
      * Make values of item.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function() {
+    _makeValues: function(valueType) {
         var values = [];
 
         this.each(function(item) {
-            values.push(item.value);
-            if (!tui.util.isNull(item.start)) {
+            values.push(item[valueType]);
+            if (tui.util.isExisty(item.start)) {
                 values.push(item.start);
             }
         });
@@ -69,15 +72,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Get
+     * Get values.
+     * @param {?string} valueType - type of value
      * @returns {Array}
      */
-    getValues: function() {
-        if (!this.values) {
-            this.values = this._makeValues();
+    getValues: function(valueType) {
+        valueType = valueType || 'value';
+
+        if (!this.valuesMap[valueType]) {
+            this.valuesMap[valueType] = this._makeValues(valueType);
         }
 
-        return this.values;
+        return this.valuesMap[valueType];
     },
 
     /**
@@ -99,6 +105,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
+     * Get values map per stack.
+     * @returns {*|Object}
+     */
+    getValuesMapPerStack: function() {
+        if (!this.valuesMapPerStack) {
+            this.valuesMapPerStack = this._makeValuesMapPerStack();
+        }
+
+        return this.valuesMapPerStack;
+    },
+
+    /**
      * Make sum map per stack.
      * @returns {object} sum map
      * @private
@@ -114,18 +132,6 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return sumMap;
-    },
-
-    /**
-     * Get values map per stack.
-     * @returns {*|Object}
-     */
-    getValuesMapPerStack: function() {
-        if (!this.valuesMap) {
-            this.valuesMap = this._makeValuesMapPerStack();
-        }
-
-        return this.valuesMap;
     },
 
     /**
@@ -173,6 +179,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     addRatios: function(divNumber, subValue) {
         this.each(function(item) {
             item.addRatio(divNumber, subValue);
+        });
+    },
+
+    /**
+     * Add ratios for chart of coordinate type.
+     * @param {?number} maxX - maximum x value
+     * @param {?number} maxY - maximum y value
+     * @param {?number} maxRadius - maximum radius value
+     */
+    addRatiosForCoordinateType: function(maxX, maxY, maxRadius) {
+        this.each(function(item) {
+            item.addRatio(maxX, maxY, maxRadius);
         });
     },
 
