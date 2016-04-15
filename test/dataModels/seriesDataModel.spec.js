@@ -7,9 +7,9 @@
 'use strict';
 
 var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
+    SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
     SeriesItem = require('../../src/js/dataModels/seriesItem'),
-    chartConst = require('../../src/js/const');
+    SeriesItemForCoordinateType = require('../../src/js/dataModels/seriesItemForCoordinateType');
 
 describe('test SeriesDataModel', function() {
     var seriesDataModel;
@@ -122,7 +122,7 @@ describe('test SeriesDataModel', function() {
 
             expect(actual.length).toBe(2);
             expect(actual[0].getSeriesItemCount()).toBe(3);
-            expect(actual[0] instanceof seriesGroup).toBe(true);
+            expect(actual[0] instanceof SeriesGroup).toBe(true);
         });
 
         it('isPivot이 true이면 회전된 결과로 groups를 생성합니다.', function() {
@@ -139,7 +139,7 @@ describe('test SeriesDataModel', function() {
 
             expect(actual.length).toBe(3);
             expect(actual[0].getSeriesItemCount()).toBe(2);
-            expect(actual[0] instanceof seriesGroup);
+            expect(actual[0] instanceof SeriesGroup);
         });
     });
 
@@ -148,11 +148,11 @@ describe('test SeriesDataModel', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
-                new seriesGroup([
+                new SeriesGroup([
                     new SeriesItem(10),
                     new SeriesItem(20)
                 ]),
-                new seriesGroup([
+                new SeriesGroup([
                     new SeriesItem(30),
                     new SeriesItem(40)
                 ])
@@ -358,12 +358,12 @@ describe('test SeriesDataModel', function() {
             var spy = jasmine.createSpyObj('spy', ['iteratee']);
 
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 10
                 }, {
                     value: 20
                 }]),
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 30
                 }, {
                     value: 40
@@ -381,12 +381,12 @@ describe('test SeriesDataModel', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 10
                 }, {
                     value: 20
                 }]),
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 30
                 }, {
                     value: 40
