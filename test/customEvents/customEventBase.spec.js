@@ -15,9 +15,9 @@ describe('CustomEventBase', function() {
         customEventBase = new CustomEventBase({});
     });
 
-    describe('_isChanged()', function() {
+    describe('_isChangedSelectData()', function() {
         it('찾아낸 data가 없으면 true를 반환합니다..', function() {
-            var actual = customEventBase._isChanged({
+            var actual = customEventBase._isChangedSelectData({
                     chartType: 'column'
                 }, null),
                 expected = true;
@@ -25,7 +25,7 @@ describe('CustomEventBase', function() {
         });
 
         it('이전 data가 없으면 true를 반환합니다..', function() {
-            var actual = customEventBase._isChanged(null, {
+            var actual = customEventBase._isChangedSelectData(null, {
                     chartType: 'line'
                 }),
                 expected = true;
@@ -33,7 +33,7 @@ describe('CustomEventBase', function() {
         });
 
         it('찾아낸 data가 이전 data와 chartType이 다르면 true를 반환합니다..', function() {
-            var actual = customEventBase._isChanged({
+            var actual = customEventBase._isChangedSelectData({
                     chartType: 'column'
                 }, {
                     chartType: 'line'
@@ -43,7 +43,7 @@ describe('CustomEventBase', function() {
         });
 
         it('찾아낸 data가 이전 data와 groupIndex가 다르면 true를 반환합니다..', function() {
-            var actual = customEventBase._isChanged({
+            var actual = customEventBase._isChangedSelectData({
                     indexes: {
                         groupIndex: 0
                     }
@@ -57,7 +57,7 @@ describe('CustomEventBase', function() {
         });
 
         it('찾아낸 data가 이전 data와 index 다르면 true를 반환합니다..', function() {
-            var actual = customEventBase._isChanged({
+            var actual = customEventBase._isChangedSelectData({
                     indexes: {
                         index: 0
                     }

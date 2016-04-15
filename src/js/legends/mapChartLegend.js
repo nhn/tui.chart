@@ -75,7 +75,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @private
      */
     _makeVerticalDimension: function() {
-        var maxValue = Math.max.apply(null, this.dataProcessor.getValues()),
+        var maxValue = tui.util.max(this.dataProcessor.getValues()),
             formatFunctions = this.dataProcessor.getFormatFunctions(),
             valueStr = renderUtil.formatValue(maxValue, formatFunctions),
             labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label),
@@ -93,7 +93,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
      * @private
      */
     _makeHorizontalDimension: function() {
-        var maxValue = Math.max.apply(null, this.dataProcessor.getValues()),
+        var maxValue = tui.util.max(this.dataProcessor.getValues()),
             labelHeight = renderUtil.getRenderedLabelHeight(maxValue, this.theme.label),
             padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
 

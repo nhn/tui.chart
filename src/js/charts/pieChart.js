@@ -12,11 +12,11 @@ var ChartBase = require('./chartBase'),
     Legend = require('../legends/legend'),
     Tooltip = require('../tooltips/tooltip'),
     Series = require('../series/pieChartSeries'),
-    PieChartCustomEvent = require('../customEvents/pieChartCustomEvent');
+    SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
-     * Column chart.
+     * Pie chart.
      * @constructs PieChart
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
@@ -49,6 +49,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      */
     _addComponents: function(chartBackground, options) {
         var legendAlign, isPieLegendType;
+
         options.legend = options.legend || {};
         legendAlign = options.legend && options.legend.align;
         isPieLegendType = predicate.isPieLegendAlign(legendAlign);
@@ -77,7 +78,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @private
      */
     _addCustomEventComponent: function() {
-        this.componentManager.register('customEvent', PieChartCustomEvent, {
+        this.componentManager.register('customEvent', SimpleCustomEvent, {
             chartType: this.chartType
         });
     },

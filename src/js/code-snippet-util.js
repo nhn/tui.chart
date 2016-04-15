@@ -9,21 +9,22 @@
  */
 var min = function(arr, condition, context) {
     var result, minValue, rest;
+
     if (!condition) {
-        condition = function(item) {
-            return item;
-        };
+        result =  Math.min.apply(null, arr);
+    } else {
+        result = arr[0];
+        minValue = condition.call(context, result);
+        rest = arr.slice(1);
+        tui.util.forEachArray(rest, function(item) {
+            var compareValue = condition.call(context, item);
+            if (compareValue < minValue) {
+                minValue = compareValue;
+                result = item;
+            }
+        });
     }
-    result = arr[0];
-    minValue = condition.call(context, result);
-    rest = arr.slice(1);
-    tui.util.forEachArray(rest, function(item) {
-        var compareValue = condition.call(context, item);
-        if (compareValue < minValue) {
-            minValue = compareValue;
-            result = item;
-        }
-    });
+
     return result;
 };
 
@@ -36,21 +37,22 @@ var min = function(arr, condition, context) {
  */
 var max = function(arr, condition, context) {
     var result, maxValue, rest;
+
     if (!condition) {
-        condition = function(item) {
-            return item;
-        };
+        result = Math.max.apply(null, arr);
+    } else {
+        result = arr[0];
+        maxValue = condition.call(context, result);
+        rest = arr.slice(1);
+        tui.util.forEachArray(rest, function(item) {
+            var compareValue = condition.call(context, item);
+            if (compareValue > maxValue) {
+                maxValue = compareValue;
+                result = item;
+            }
+        });
     }
-    result = arr[0];
-    maxValue = condition.call(context, result);
-    rest = arr.slice(1);
-    tui.util.forEachArray(rest, function(item) {
-        var compareValue = condition.call(context, item);
-        if (compareValue > maxValue) {
-            maxValue = compareValue;
-            result = item;
-        }
-    });
+
     return result;
 };
 

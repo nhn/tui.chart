@@ -10,7 +10,7 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     Tooltip = require('../../src/js/tooltips/tooltip'),
     GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
     GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
-    PointTypeCustomEvent = require('../../src/js/customEvents/pointTypeCustomEvent');
+    BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
 
 describe('ComboChart', function() {
     var componentMap = {},
@@ -283,9 +283,9 @@ describe('ComboChart', function() {
     });
 
     describe('_addCustomEventComponentForNormalTooltip()', function() {
-        it('일반 툴팁을 위한 custom event 컴포넌트는 PointTypeCustomEvent 클래스로 생성합니다.', function() {
+        it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeCustomEvent 클래스로 생성합니다.', function() {
             axisTypeMixer._addCustomEventComponentForNormalTooltip();
-            expect(componentMap.customEvent).toBe(PointTypeCustomEvent);
+            expect(componentMap.customEvent).toBe(BoundsTypeCustomEvent);
         });
     });
 });

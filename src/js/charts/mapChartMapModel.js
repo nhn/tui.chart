@@ -245,10 +245,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             ys = tui.util.filter(tui.util.pluck(coordinates, 'y'), function(y) {
                 return !tui.util.isUndefined(y);
             }),
-            maxLeft = Math.max.apply(null, xs),
-            minLeft = Math.min.apply(null, xs),
-            maxTop = Math.max.apply(null, ys),
-            minTop = Math.min.apply(null, ys);
+            maxLeft = tui.util.max(xs),
+            minLeft = tui.util.min(xs),
+            maxTop = tui.util.max(ys),
+            minTop = tui.util.min(ys);
 
         return {
             dimension: {
@@ -370,8 +370,8 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 return datum.bound.position.top + datum.bound.dimension.height;
             });
         return {
-            width: Math.max.apply(null, rights) - Math.min.apply(null, lefts),
-            height: Math.max.apply(null, bottoms) - Math.min.apply(null, tops)
+            width: tui.util.max(rights) - tui.util.min(lefts),
+            height: tui.util.max(bottoms) - tui.util.min(tops)
         };
     },
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview PointTypeDataModel is data mode for point type custom event.
+ * @fileoverview BoundsBaseCoordinateModel is data mode for custom event of point type.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -44,10 +44,10 @@
 var chartConst = require('../const'),
     predicate = require('../helpers/predicate');
 
-var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prototype */ {
+var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordinateModel.prototype */ {
     /**
-     * PointTypeDataModel is data mode for point type custom event.
-     * @constructs PointTypeDataModel
+     * BoundsBaseCoordinateModel is data mode for custom event of point type.
+     * @constructs BoundsBaseCoordinateModel
      * @param {Array.<seriesInfo>} seriesInfos series infos
      */
     init: function(seriesInfos) {
@@ -223,4 +223,4 @@ var PointTypeDataModel = tui.util.defineClass(/** @lends PointTypeDataModel.prot
     }
 });
 
-module.exports = PointTypeDataModel;
+module.exports = BoundsBaseCoordinateModel;

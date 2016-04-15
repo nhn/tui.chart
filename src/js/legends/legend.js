@@ -366,11 +366,11 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Attach browser event.
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} target target element
      * @private
      */
-    _attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+    _attachEvent: function(target) {
+        eventListener.bindEvent('click', target, this._onClick, this);
     }
 });
 

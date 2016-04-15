@@ -41,19 +41,25 @@ var eventListener = {
     /**
      * Bind event function.
      * @memberOf module:eventListener
+     * @param {HTMLElement} target target element
      * @param {string} eventName event name
-     * @param {HTMLElement} el target element
      * @param {function} callback callback function
+     * @param {object} context context for callback
      */
-    bindEvent: function(eventName, el, callback) {
+    bindEvent: function(eventName, target, callback, context) {
         var bindEvent;
-        if ('addEventListener' in el) {
+        if ('addEventListener' in target) {
             bindEvent = this._addEventListener;
-        } else if ('attachEvent' in el) {
+        } else if ('attachEvent' in target) {
             bindEvent = this._attachEvent;
         }
         this.bindEvent = bindEvent;
-        bindEvent(eventName, el, callback);
+
+        if (context) {
+            callback = tui.util.bind(callback, context);
+        }
+
+        bindEvent(eventName, target, callback);
     }
 };
 

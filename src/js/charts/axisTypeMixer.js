@@ -12,7 +12,7 @@ var renderUtil = require('../helpers/renderUtil'),
     Plot = require('../plots/plot'),
     Legend = require('../legends/legend'),
     GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent'),
-    PointTypeCustomEvent = require('../customEvents/pointTypeCustomEvent'),
+    BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent'),
     Tooltip = require('../tooltips/tooltip'),
     GroupTooltip = require('../tooltips/groupTooltip');
 
@@ -204,9 +204,6 @@ var axisTypeMixer = {
 
     /**
      * Add grouped event handler layer.
-     * @param {{yAxis: obejct, xAxis: object}} axesData axes data
-     * @param {string} chartType chart type
-     * @param {boolean} isVertical whether vertical or not
      * @private
      * @override
      */
@@ -222,7 +219,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
-        this.componentManager.register('customEvent', PointTypeCustomEvent, {
+        this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical
         });
