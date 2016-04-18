@@ -469,7 +469,6 @@ tui.chart.areaChart = function(container, rawData, options) {
  * @example
  * var container = document.getElementById('container-id'),
  *     rawData = {
- *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
  *           name: 'Legend1',

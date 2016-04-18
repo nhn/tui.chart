@@ -19,7 +19,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     },
 
     /**
-     * Make bounds of bar chart.
+     * Make bounds of bubble chart.
      * @returns {Array.<Array.<object>>} bounds
      * @private
      */

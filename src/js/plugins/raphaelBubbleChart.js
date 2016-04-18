@@ -9,7 +9,7 @@
 var raphael = window.Raphael;
 
 /**
- * @classdesc RaphaelBubbleChart is graph renderer for bar, column chart.
+ * @classdesc RaphaelBubbleChart is graph renderer for bubble chart.
  * @class RaphaelBubbleChart
  */
 var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prototype */ {
