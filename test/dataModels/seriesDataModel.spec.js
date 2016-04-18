@@ -441,32 +441,47 @@ describe('test SeriesDataModel', function() {
     });
 
     describe('addDataRatiosForCoordinateType()', function() {
-        it('좌표 타입(bubble chart)의 경우 maxX, maxY, maxRidus를 구해 seriesGroup.addRatiosForCoordinateType에 전달합니다.', function() {
+        it('limitMap.x로 xDistance와 xSubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 x ratio를 등록합니다.', function() {
             var limitMap = {
                 x: {
+                    min: 0,
                     max: 20
-                },
-                y: {
-                    max: 30
                 }
             };
-            var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosForCoordinateType']);
+            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
-            seriesDataModel.groups = [seriesGroup];
+            seriesDataModel.groups = [new SeriesGroup([seriesItem])];
+            spyOn(seriesDataModel, 'getValues').and.returnValue([]);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+
+            expect(seriesItem.addRatio).toHaveBeenCalledWith('x', 20, 0);
+        });
+
+        it('limitMap.y로 yDistance와 ySubValue를 계산하여 각각의 seriesItem의 addRatio를 호출하여 y ratio를 등록합니다.', function() {
+            var limitMap = {
+                y: {
+                    min: 10,
+                    max: 50
+                }
+            };
+            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
+
+            seriesDataModel.groups = [new SeriesGroup([seriesItem])];
+            spyOn(seriesDataModel, 'getValues').and.returnValue([]);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+
+            expect(seriesItem.addRatio).toHaveBeenCalledWith('y', 40, 10);
+        });
+
+        it('maxRadious를 구하여 각각의 seriesItem의 addRatio를 호출하여 r ratio를 등록합니다.', function() {
+            var limitMap = {};
+            var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
+
+            seriesDataModel.groups = [new SeriesGroup([seriesItem])];
             spyOn(seriesDataModel, 'getValues').and.returnValue([5, 10]);
             seriesDataModel.addDataRatiosForCoordinateType(limitMap);
 
-            expect(seriesGroup.addRatiosForCoordinateType).toHaveBeenCalledWith(20, 30, 10);
-        });
-        it('limitMap.x, limitMap.y가 모두 없고 r vlaue가 0만 존재할 경우 maxX, maxY, maxRidus의 값 모두 1을 전달합니다.', function() {
-            var limitMap = {};
-            var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosForCoordinateType']);
-
-            seriesDataModel.groups = [seriesGroup];
-            spyOn(seriesDataModel, 'getValues').and.returnValue([0]);
-            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
-
-            expect(seriesGroup.addRatiosForCoordinateType).toHaveBeenCalledWith(1, 1, 1);
+            expect(seriesItem.addRatio).toHaveBeenCalledWith('r', 10, 0);
         });
     });
 

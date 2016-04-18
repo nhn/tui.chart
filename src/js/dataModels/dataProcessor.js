@@ -193,6 +193,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether has categories or not.
+     * @returns {boolean}
+     */
+    hasCategories: function() {
+        return !!this.getCategories().length;
+    },
+
+    /**
      * Get category.
      * @param {number} index index
      * @returns {string} category

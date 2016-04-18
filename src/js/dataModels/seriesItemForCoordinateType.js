@@ -24,10 +24,12 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @private
      */
     _initData: function(rawSeriesDatum) {
-        this.x = rawSeriesDatum.x || 0;
-        this.y = rawSeriesDatum.y || 0;
-        this.r = rawSeriesDatum.r || 0;
+        this.x = rawSeriesDatum.x;
+        this.y = rawSeriesDatum.y;
+        this.r = rawSeriesDatum.r;
         this.label = rawSeriesDatum.label || '';
+
+        this.ratioMap = {};
     },
 
     /**
@@ -36,10 +38,10 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @param {?number} maxY - maximum y value
      * @param {?number} maxRadius - maximum radius value
      */
-    addRatio: function(maxX, maxY, maxRadius) {
-        this.xRatio = this.x / maxX;
-        this.yRatio = this.y / maxY;
-        this.rRatio = this.r / maxRadius;
+    addRatio: function(valueType, distance, subValue) {
+        if (!tui.util.isExisty(this.ratioMap[valueType]) && distance) {
+            this.ratioMap[valueType] = (this[valueType] - subValue) / distance;
+        }
     }
 });
 

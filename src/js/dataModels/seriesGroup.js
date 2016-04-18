@@ -62,7 +62,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var values = [];
 
         this.each(function(item) {
-            values.push(item[valueType]);
+            if (tui.util.isExisty(item[valueType])) {
+                values.push(item[valueType]);
+            }
             if (tui.util.isExisty(item.start)) {
                 values.push(item.start);
             }
@@ -179,18 +181,6 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     addRatios: function(divNumber, subValue) {
         this.each(function(item) {
             item.addRatio(divNumber, subValue);
-        });
-    },
-
-    /**
-     * Add ratios for chart of coordinate type.
-     * @param {?number} maxX - maximum x value
-     * @param {?number} maxY - maximum y value
-     * @param {?number} maxRadius - maximum radius value
-     */
-    addRatiosForCoordinateType: function(maxX, maxY, maxRadius) {
-        this.each(function(item) {
-            item.addRatio(maxX, maxY, maxRadius);
         });
     },
 

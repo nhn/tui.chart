@@ -39,43 +39,17 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Make map for whether existy AxisScaleMaker of axes or not.
-     * @returns {{xAxis: boolean, yAxis: boolean}}
-     * @private
-     */
-    _makeExistyMapForScaleMakerOfAxes: function() {
-        var dataProcessor = this.dataProcessor,
-            hasCategories = !!dataProcessor.getCategories().length,
-            existyMap = {
-                xAxis: true,
-                yAxis: true
-            },
-            xDataCount, yDataCount;
-
-        if (hasCategories) {
-            xDataCount = dataProcessor.getValues(this.chartType, 'x').length;
-            yDataCount = dataProcessor.getValues(this.chartType, 'y').length;
-
-            if (xDataCount > yDataCount) {
-                existyMap.yAxis = false;
-            } else {
-                existyMap.xAxis = false;
-            }
-        }
-
-        return existyMap;
-    },
-
-    /**
      * Make map for AxisScaleMaker of axes(xAxis, yAxis).
      * @returns {Object.<string, AxisScaleMaker>}
      * @private
      */
     _makeAxisScaleMakerMap: function() {
-        var existyMap = this._makeExistyMapForScaleMakerOfAxes(),
-            scaleMakerMap = {};
+        var hasCategories = this.dataProcessor.hasCategories();
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var isGreaterXCountThanYCount = seriesDataModel.isGreaterXCountThanYCount();
+        var scaleMakerMap = {};
 
-        if (existyMap.xAxis) {
+        if (!hasCategories || isGreaterXCountThanYCount) {
             scaleMakerMap.xAxis = this._createAxisScaleMaker({
                 min: this.options.xAxis.min,
                 max: this.options.xAxis.max
@@ -84,7 +58,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             });
         }
 
-        if (existyMap.yAxis) {
+        if (!hasCategories || !isGreaterXCountThanYCount) {
             scaleMakerMap.yAxis = this._createAxisScaleMaker({
                 min: this.options.yAxis.min,
                 max: this.options.yAxis.max
@@ -116,9 +90,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _makeAxesData: function() {
-        var scaleMakerMap = this._getAxisScaleMakerMap(),
-            categories = this.dataProcessor.getCategories(),
-            labelAxisData, xAxisData, yAxisData;
+        var scaleMakerMap = this._getAxisScaleMakerMap();
+        var categories = this.dataProcessor.getCategories();
+        var labelAxisData, xAxisData, yAxisData;
 
         if (categories.length) {
             labelAxisData = axisDataMaker.makeLabelAxisData({

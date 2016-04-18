@@ -201,7 +201,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _getPivotGroups: function() {
         if (!this.pivotGroups) {
-            this.pivotGroups = this._createGroupsFromRawData();
+            this.pivotGroups = this._createSeriesGroupsFromRawData();
         }
 
         return this.pivotGroups;
@@ -283,6 +283,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         }
 
         return this.valuesMap[valueType];
+    },
+
+    /**
+     * Whether grater count of x values than count of y values.
+     * @returns {boolean}
+     */
+    isGreaterXCountThanYCount: function() {
+        return this.getValues('x').length > this.getValues('y').length;
     },
 
     /**
@@ -409,12 +417,27 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
      */
     addDataRatiosForCoordinateType: function(limitMap) {
-        var maxX = limitMap.x ? limitMap.x.max : 1,
-            maxY = limitMap.y ? limitMap.y.max : 1,
-            maxRadius = tui.util.max(this.getValues('r')) || 1;
+        var xLimit = limitMap.x;
+        var yLimit = limitMap.y;
+        var maxRadius = tui.util.max(this.getValues('r'));
+        var xDistance, xSubValue, yDistance, ySubValue;
+
+        if (xLimit) {
+            xDistance = Math.abs(xLimit.max - xLimit.min);
+            xSubValue = this._makeSubtractionValue(xLimit);
+        }
+
+        if (yLimit) {
+            yDistance = Math.abs(yLimit.max - yLimit.min);
+            ySubValue = this._makeSubtractionValue(yLimit);
+        }
 
         this.each(function(seriesGroup) {
-            seriesGroup.addRatiosForCoordinateType(maxX, maxY, maxRadius);
+            seriesGroup.each(function(item) {
+                item.addRatio('x', xDistance, xSubValue);
+                item.addRatio('y', yDistance, ySubValue);
+                item.addRatio('r', maxRadius, 0);
+            });
         });
     },
 

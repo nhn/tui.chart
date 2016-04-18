@@ -17,9 +17,13 @@ var eventListener = {
      * @param {string} eventName event name
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
+     * @param {?object} context context for callback
      * @private
      */
-    _attachEvent: function(eventName, el, callback) {
+    _attachEvent: function(eventName, el, callback, context) {
+        if (context) {
+            callback = tui.util.bind(callback, context);
+        }
         el.attachEvent('on' + eventName, callback);
     },
 
@@ -29,10 +33,15 @@ var eventListener = {
      * @param {string} eventName event name
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
+     * @param {?object} context context for callback
      * @private
      */
-    _addEventListener: function(eventName, el, callback) {
+    _addEventListener: function(eventName, el, callback, context) {
         try {
+            if (context) {
+                callback = tui.util.bind(callback, context);
+            }
+
             el.addEventListener(eventName, callback);
         } catch (e) {
             throw e;
@@ -44,7 +53,7 @@ var eventListener = {
      * @param {string} eventName event name
      * @param {HTMLElement} target target element
      * @param {function} callback callback function
-     * @param {object} context context for callback
+     * @param {?object} context context for callback
      */
     bindEvent: function(eventName, target, callback, context) {
         var bindEvent;
@@ -55,11 +64,7 @@ var eventListener = {
         }
         this.bindEvent = bindEvent;
 
-        if (context) {
-            callback = tui.util.bind(callback, context);
-        }
-
-        bindEvent(eventName, target, callback);
+        bindEvent(eventName, target, callback, context);
     }
 };
 
