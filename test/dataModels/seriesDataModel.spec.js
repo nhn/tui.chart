@@ -128,7 +128,7 @@ describe('test SeriesDataModel', function() {
         });
     });
 
-    describe('_createGroupsFromRawData()', function() {
+    describe('_createSeriesGroupsFromRawData()', function() {
         it('seriesGroup을 요소로 갖는 groups를 생성합니다.', function() {
             var actual;
 
@@ -139,7 +139,7 @@ describe('test SeriesDataModel', function() {
                 data: [40, 50, 60],
                 stack: 'st2'
             }];
-            actual = seriesDataModel._createGroupsFromRawData();
+            actual = seriesDataModel._createSeriesGroupsFromRawData();
 
             expect(actual.length).toBe(2);
             expect(actual[0].getSeriesItemCount()).toBe(3);
@@ -156,7 +156,7 @@ describe('test SeriesDataModel', function() {
                 data: [40, 50, 60],
                 stack: 'st2'
             }];
-            actual = seriesDataModel._createGroupsFromRawData(true);
+            actual = seriesDataModel._createSeriesGroupsFromRawData(true);
 
             expect(actual.length).toBe(3);
             expect(actual[0].getSeriesItemCount()).toBe(2);
@@ -164,7 +164,7 @@ describe('test SeriesDataModel', function() {
         });
     });
 
-    describe('_makeValues()', function() {
+    describe('_createValues()', function() {
         it('groups에 포함된 seriesItem들의 value들을 1차원 배열로 추출하여 반환합니다.', function() {
             var actual, expected;
 
@@ -179,7 +179,7 @@ describe('test SeriesDataModel', function() {
                 ])
             ];
 
-            actual = seriesDataModel._makeValues('value');
+            actual = seriesDataModel._createValues('value');
             expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
@@ -199,7 +199,7 @@ describe('test SeriesDataModel', function() {
                 ])
             ];
 
-            actual = seriesDataModel._makeValues('x');
+            actual = seriesDataModel._createValues('x');
             expected = [10, 20];
 
             expect(actual).toEqual(expected);
@@ -219,7 +219,7 @@ describe('test SeriesDataModel', function() {
                 ])
             ];
 
-            actual = seriesDataModel._makeValues('y');
+            actual = seriesDataModel._createValues('y');
             expected = [10, 20];
 
             expect(actual).toEqual(expected);
@@ -239,7 +239,7 @@ describe('test SeriesDataModel', function() {
                 ])
             ];
 
-            actual = seriesDataModel._makeValues('r');
+            actual = seriesDataModel._createValues('r');
             expected = [10, 20];
 
             expect(actual).toEqual(expected);

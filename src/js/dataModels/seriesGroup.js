@@ -27,7 +27,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         this.items = seriesItems;
 
         /**
-         * vlaues of items.
+         * map of values by value type like value, x, y, r.
          * @type {Array.<number>}
          */
         this.valuesMap = {};
@@ -53,12 +53,12 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Make values of item.
+     * Create values that picked value from SeriesItems.
      * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(valueType) {
+    _createValues: function(valueType) {
         var values = [];
 
         this.each(function(item) {
@@ -72,7 +72,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Get values.
+     * Get values from valuesMap.
      * @param {?string} valueType - type of value
      * @returns {Array}
      */
@@ -80,7 +80,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         valueType = valueType || 'value';
 
         if (!this.valuesMap[valueType]) {
-            this.valuesMap[valueType] = this._makeValues(valueType);
+            this.valuesMap[valueType] = this._createValues(valueType);
         }
 
         return this.valuesMap[valueType];

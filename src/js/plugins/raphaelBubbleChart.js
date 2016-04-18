@@ -5,10 +5,8 @@
  */
 
 'use strict';
-var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
-
 
 /**
  * @classdesc RaphaelBubbleChart is graph renderer for bar, column chart.
@@ -32,28 +30,18 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Animate.
-     * @param {function} onFinish finish callback function
      */
-    animate: function(onFinish) {
-    },
+    animate: function() {},
 
     /**
-     * Resize graph of bar type chart.
-     * @param {object} params parameters
-     *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {Array.<Array.<{
-     *                  left:number, top:number, width: number, height: number
-     *              }>>} params.groupBounds group bounds
+     * Resize graph of bubble type chart.
      */
-    resize: function(params) {
-    },
+    resize: function() {},
 
     /**
      * Select legend.
-     * @param {?number} legendIndex legend index
      */
-    selectLegend: function(legendIndex) {
-    }
+    selectLegend: function() {}
 });
 
 module.exports = RaphaelBubbleChart;

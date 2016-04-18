@@ -84,6 +84,16 @@ var predicate = {
     },
 
     /**
+     * Whether bubble chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isBubbleChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_BUBBLE;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type

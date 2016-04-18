@@ -10,13 +10,9 @@ var Series = require('./series');
 
 var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
     /**
-     * Bar chart series component.
+     * Bubble chart series component.
      * @constructs BubbleChartSeries
      * @extends Series
-     * @param {object} params parameters
-     *      @param {object} params.model series model
-     *      @param {object} params.options series options
-     *      @param {object} params.theme series theme
      */
     init: function() {
         Series.apply(this, arguments);

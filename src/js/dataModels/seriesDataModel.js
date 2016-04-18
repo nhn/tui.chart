@@ -91,7 +91,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.groups = null;
 
         /**
-         * valuesMap of all values of groups
+         * map of values by value type like value, x, y, r.
          * @type {Array}
          */
         this.valuesMap = {};
@@ -123,6 +123,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Create base groups.
+     * Base groups is a two-dimensional array of seriesItems.
      * @returns {Array.<Array.<SeriesItem>>}
      * @private
      */
@@ -130,7 +131,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var self = this,
             SeriesItemClass;
 
-        if (this.chartType === 'bubble') {
+        if (predicate.isBubbleChart(this.chartType)) {
             SeriesItemClass = SeriesItemForCoordinateType;
         } else {
             SeriesItemClass = SeriesItem;
@@ -156,12 +157,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Create groups from rawData.series.
+     * Create SeriesGroups from rawData.series.
      * @param {boolean} isPivot - whether pivot or not.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _createGroupsFromRawData: function(isPivot) {
+    _createSeriesGroupsFromRawData: function(isPivot) {
         var baseGroups = this.getBaseGroups();
 
         if (isPivot) {
@@ -180,7 +181,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _getSeriesGroups: function() {
         if (!this.groups) {
-            this.groups = this._createGroupsFromRawData(true);
+            this.groups = this._createSeriesGroupsFromRawData(true);
         }
 
         return this.groups;
@@ -256,12 +257,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Make flattening values.
+     * Create values that picked value from SeriesItems of SeriesGroups.
      * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(valueType) {
+    _createValues: function(valueType) {
         var values = this.map(function(seriesGroup) {
             return seriesGroup.getValues(valueType);
         });
@@ -270,7 +271,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Get flattening values.
+     * Get values form valuesMap.
      * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      */
@@ -278,7 +279,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         valueType = valueType || 'value';
 
         if (!this.valuesMap[valueType]) {
-            this.valuesMap[valueType] = this._makeValues(valueType);
+            this.valuesMap[valueType] = this._createValues(valueType);
         }
 
         return this.valuesMap[valueType];
@@ -404,7 +405,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Add data ratios for chart of coordinate type.
+     * Add ratios of data for chart of coordinate type.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
      */
     addDataRatiosForCoordinateType: function(limitMap) {

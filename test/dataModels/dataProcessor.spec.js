@@ -103,7 +103,7 @@ describe('test DataProcessor', function() {
         });
     });
 
-    describe('_makeValues()', function() {
+    describe('_createValues()', function() {
         it('chartType이 chartConst.DUMMY_KEY일 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
             var actual, expected;
 
@@ -131,7 +131,7 @@ describe('test DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._makeValues(chartConst.DUMMY_KEY);
+            actual = dataProcessor._createValues(chartConst.DUMMY_KEY);
             expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
@@ -155,7 +155,7 @@ describe('test DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._makeValues('column');
+            actual = dataProcessor._createValues('column');
             expected = [10, 30];
 
             expect(actual).toEqual(expected);
@@ -179,7 +179,7 @@ describe('test DataProcessor', function() {
                 }])
             ];
 
-            actual = dataProcessor._makeValues('column');
+            actual = dataProcessor._createValues('column');
             expected = [10, 5, 30, 20];
 
             expect(actual).toEqual(expected);

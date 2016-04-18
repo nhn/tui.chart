@@ -334,13 +334,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make values of seriesItems.
+     * Create values that picked value from SeriesItems of specific SeriesDataModel.
      * @param {?string} chartType - type of chart
-     * @param {?string} valueType - type of value
+     * @param {?string} valueType - type of value like value, x, y, r.
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(chartType, valueType) {
+    _createValues: function(chartType, valueType) {
         var values;
 
         if (chartType === chartConst.DUMMY_KEY) {
@@ -355,9 +355,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get values of specific SeriesDataModel.
+     * Get values from valuesMap.
      * @param {?string} chartType - type of chart
-     * @param {?string} valueType - type of value
+     * @param {?string} valueType - type of value like value, x, y, r.
      * @returns {Array.<number>}
      */
     getValues: function(chartType, valueType) {
@@ -368,7 +368,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         mapKey = chartType + valueType;
 
         if (!this.valuesMap[mapKey]) {
-            this.valuesMap[mapKey] = this._makeValues(chartType, valueType);
+            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
         }
 
         return this.valuesMap[mapKey];
