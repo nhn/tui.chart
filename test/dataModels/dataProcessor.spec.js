@@ -382,12 +382,10 @@ describe('test DataProcessor', function() {
         it('category들 중에서 limitWidth를 기준으로 개행처리를 합니다.', function() {
             var actual, expected;
 
-            dataProcessor.categories = ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
-
             actual = dataProcessor.getMultilineCategories(50, {
                 fontSize: 12,
                 fontFamily: 'Verdana'
-            });
+            }, ['ABCDEF GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
             expected = ['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB'];
 
             expect(actual).toEqual(expected);

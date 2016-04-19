@@ -696,7 +696,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makeMultilineCategory: function(category, limitWidth, theme) {
-        var words = category.split(/\s+/),
+        var words = String(category).split(/\s+/),
             lineWords = words[0],
             lines = [];
 
@@ -722,13 +722,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Get multiline categories.
      * @param {number} limitWidth limit width
      * @param {object} theme label theme
+     * @param {Array.<(number | string)>} xAxisLabels labels of xAxis
      * @returns {Array} multiline categories
      */
-    getMultilineCategories: function(limitWidth, theme) {
+    getMultilineCategories: function(limitWidth, theme, xAxisLabels) {
         var self = this;
 
         if (!this.multilineCategories) {
-            this.multilineCategories = tui.util.map(this.getCategories(), function(category) {
+            this.multilineCategories = tui.util.map(xAxisLabels, function(category) {
                 return self._makeMultilineCategory(category, limitWidth, theme);
             });
         }

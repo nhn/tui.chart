@@ -196,7 +196,7 @@ var chartConst = {
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
     /** title add padding */
-    TITLE_PADDING: 20,
+    TITLE_PADDING: 10,
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */

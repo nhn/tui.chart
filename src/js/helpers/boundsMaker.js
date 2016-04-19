@@ -360,7 +360,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _calculateDiffWithMultilineHeight: function(labels, limitWidth) {
         var theme = this.theme.xAxis.label,
-            multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme),
+            multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme, this.axesData.xAxis.labels),
             normalHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
             multilineHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
                 cssText: 'line-height:1.2;width:' + limitWidth + 'px'

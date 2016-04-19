@@ -83,10 +83,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeXAxisHeight: function() {
-        var title = this.options.title,
-            titleAreaHeight = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING,
-            height = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label) + titleAreaHeight;
-        return height;
+        var title = this.options.title;
+        var titleHeight = renderUtil.getRenderedLabelHeight(title, this.theme.title);
+        var titleAreaHeight = titleHeight ? (titleHeight + chartConst.TITLE_PADDING) : 0;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
+
+        return titleAreaHeight + labelHeight + chartConst.CHART_PADDING;
     },
 
     /**

@@ -55,8 +55,8 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     _makePosition: function(positionByStep, seriesItem) {
         var dimension = this.boundsMaker.getDimension('series');
         var ratioMap = seriesItem.ratioMap;
-        var left = tui.util.isExisty(ratioMap.x) ? ratioMap.x * dimension.width : positionByStep;
-        var top = tui.util.isExisty(ratioMap.y) ? ratioMap.y * dimension.height : positionByStep;
+        var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
+        var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
         var padding = chartConst.SERIES_EXPAND_SIZE;
 
         return {

@@ -135,7 +135,7 @@ var renderUtil = {
 
         theme = theme || {};
 
-        label = String(label);
+        label = tui.util.isExisty(label) ? String(label) : '';
 
         if (!label) {
             return 0;
