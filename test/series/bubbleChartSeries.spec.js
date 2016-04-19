@@ -38,7 +38,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_calculateStep()', function() {
-        it('카테고리가 있고 x값 개수가 y값 개수보다 많을 경우에는 시리즈 넓이를 카테고리 수로 나누어 반환합니다.', function() {
+        it('카테고리가 있고 x값 개수가 y값 개수보다 많을 경우에는 시리즈 높이를 카테고리 수로 나누어 반환합니다.', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
@@ -55,7 +55,7 @@ describe('BarChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('카테고리가 있고 x값 개수가 y값 개수보다 작거나 같을 경우에는 시리즈 높이를 카테고리 수로 나누어 반환합니다.', function() {
+        it('카테고리가 있고 x값 개수가 y값 개수보다 작거나 같을 경우에는 시리즈 너비를 카테고리 수로 나누어 반환합니다.', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
