@@ -49,7 +49,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
             bound = target.getBoundingClientRect(),
             layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
             layerY = e.clientY - bound.top,
-            groupIndex = this.tickBaseDataModel.findIndex(layerX),
+            groupIndex = this.tickBaseCoordinateModel.findIndex(layerX),
             foundData = this.dataModel.findData(groupIndex, layerY);
 
         if (!this._isChanged(this.prevFoundData, foundData)) {
