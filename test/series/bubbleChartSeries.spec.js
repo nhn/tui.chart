@@ -46,7 +46,7 @@ describe('BarChartSeries', function() {
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             boundsMaker.getDimension.and.returnValue({
-                width: 270
+                height: 270
             });
 
             actual = series._calculateStep();
@@ -63,7 +63,7 @@ describe('BarChartSeries', function() {
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             boundsMaker.getDimension.and.returnValue({
-                height: 210
+                width: 210
             });
 
             actual = series._calculateStep();
@@ -73,7 +73,7 @@ describe('BarChartSeries', function() {
         });
     });
 
-    fdescribe('_makePosition()', function() {
+    describe('_makePosition()', function() {
         it('x ratio(ratioMap.x)값이 있는 경우에는 x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
             var actual, expected;
 
