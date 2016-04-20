@@ -20,7 +20,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
 
     /**
      * Initialize data of item.
-     * @param {{x: ?number, y: ?number, r: ?number}} rawSeriesDatum - rawSeriesDatum for bubble chart
+     * @param {{x: ?number, y: ?number, r: ?number, label: ?string}} rawSeriesDatum - rawSeriesDatum for bubble chart
      * @private
      */
     _initData: function(rawSeriesDatum) {
@@ -34,13 +34,13 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
 
     /**
      * Add ratio.
-     * @param {?number} maxX - maximum x value
-     * @param {?number} maxY - maximum y value
-     * @param {?number} maxRadius - maximum radius value
+     * @param {string} valueType - type of value like x, y, r
+     * @param {?number} divNumber - number for division
+     * @param {?number} subNumber - number for subtraction
      */
-    addRatio: function(valueType, distance, subValue) {
-        if (!tui.util.isExisty(this.ratioMap[valueType]) && distance) {
-            this.ratioMap[valueType] = (this[valueType] - subValue) / distance;
+    addRatio: function(valueType, divNumber, subNumber) {
+        if (!tui.util.isExisty(this.ratioMap[valueType]) && divNumber) {
+            this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
         }
     }
 });

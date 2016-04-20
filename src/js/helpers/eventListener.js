@@ -37,15 +37,11 @@ var eventListener = {
      * @private
      */
     _addEventListener: function(eventName, el, callback, context) {
-        try {
-            if (context) {
-                callback = tui.util.bind(callback, context);
-            }
-
-            el.addEventListener(eventName, callback);
-        } catch (e) {
-            throw e;
+        if (context) {
+            callback = tui.util.bind(callback, context);
         }
+
+        el.addEventListener(eventName, callback);
     },
     /**
      * Bind event function.

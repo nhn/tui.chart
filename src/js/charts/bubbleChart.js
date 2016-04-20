@@ -14,16 +14,20 @@ var ChartBase = require('./chartBase'),
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
+     * className
+     * @type {string}
+     */
+    className: 'tui-bubble-chart',
+    /**
      * Bubble chart.
      * @constructs BubbleChart
      * @extends ChartBase
+     * @mixes axisTypeMixer
      * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        this.className = 'tui-bubble-chart';
-
         options.tooltip = options.tooltip || {};
 
         this.axisScaleMakerMap = null;
@@ -39,6 +43,38 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
+     * Pick limit from options
+     * @param {{min: number, max: number, title: string}} options - axis options
+     * @returns {{min: number, max: number}}
+     * @private
+     */
+    _pickLimitFromOptions: function(options) {
+        options = options || {};
+
+        return {
+            min: options.min,
+            max: options.max
+        };
+    },
+
+    /**
+     * Create AxisScaleMaker for bubble chart.
+     * @param {{min: number, max: number, title: string}} options - axis options
+     * @param {string} valueType - type of value like x, y, r
+     * @returns {AxisScaleMaker}
+     * @override
+     * @private
+     */
+    _createAxisScaleMaker: function(options, valueType) {
+        var limit = this._pickLimitFromOptions(options);
+        var additionalParams = {
+            valueType: valueType
+        };
+
+        return ChartBase.prototype._createAxisScaleMaker.call(this, limit, additionalParams, this.chartType);
+    },
+
+    /**
      * Make map for AxisScaleMaker of axes(xAxis, yAxis).
      * @returns {Object.<string, AxisScaleMaker>}
      * @private
@@ -46,28 +82,19 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     _makeAxisScaleMakerMap: function() {
         var hasCategories = this.dataProcessor.hasCategories();
         var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var isGreaterXCountThanYCount = seriesDataModel.isGreaterXCountThanYCount();
+        var isXCountGreaterThanYCount = seriesDataModel.isXCountGreaterThanYCount();
+        var options = this.options;
         var scaleMakerMap = {};
-        var xAxisOption, yAxisOption;
 
-        if (!hasCategories || isGreaterXCountThanYCount) {
-            xAxisOption = this.options.xAxis || {};
-            scaleMakerMap.xAxis = this._createAxisScaleMaker({
-                min: xAxisOption.min,
-                max: xAxisOption.max
-            }, {
-                valueType: 'x'
-            });
-        }
-
-        if (!hasCategories || !isGreaterXCountThanYCount) {
-            yAxisOption = this.options.yAxis || {};
-            scaleMakerMap.yAxis = this._createAxisScaleMaker({
-                min: yAxisOption.min,
-                max: yAxisOption.max
-            }, {
-                valueType: 'y'
-            });
+        if (hasCategories) {
+            if (isXCountGreaterThanYCount) {
+                scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'x');
+            } else {
+                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'y');
+            }
+        } else {
+            scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'x');
+            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'y');
         }
 
         return scaleMakerMap;

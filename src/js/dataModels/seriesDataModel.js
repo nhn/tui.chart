@@ -92,7 +92,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         /**
          * map of values by value type like value, x, y, r.
-         * @type {Array}
+         * @type {object.<string, Array.<number>>}}
          */
         this.valuesMap = {};
 
@@ -124,12 +124,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     /**
      * Create base groups.
      * Base groups is two-dimensional array by seriesItems.
-     * @returns {Array.<Array.<SeriesItem>>}
+     * @returns {Array.<Array.<(SeriesItem | SeriesItemForCoordinateType)>>}
      * @private
      */
     _createBaseGroups: function() {
-        var self = this,
-            SeriesItemClass;
+        var self = this;
+        var SeriesItemClass;
 
         if (predicate.isBubbleChart(this.chartType)) {
             SeriesItemClass = SeriesItemForCoordinateType;
@@ -286,10 +286,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Whether grater count of x values than count of y values.
+     * Whether count of x values greater than count of y values.
      * @returns {boolean}
      */
-    isGreaterXCountThanYCount: function() {
+    isXCountGreaterThanYCount: function() {
         return this.getValues('x').length > this.getValues('y').length;
     },
 

@@ -18,7 +18,7 @@ describe('BubbleChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getCategories', 'getSeriesDataModel']);
-        seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isGreaterXCountThanYCount'])
+        seriesDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount'])
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
     });
 
@@ -42,7 +42,7 @@ describe('BubbleChartSeries', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
-            seriesDataModel.isGreaterXCountThanYCount.and.returnValue(true);
+            seriesDataModel.isXCountGreaterThanYCount.and.returnValue(true);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             boundsMaker.getDimension.and.returnValue({
@@ -59,7 +59,7 @@ describe('BubbleChartSeries', function() {
             var actual, expected;
 
             dataProcessor.hasCategories.and.returnValue(true);
-            seriesDataModel.isGreaterXCountThanYCount.and.returnValue(false);
+            seriesDataModel.isXCountGreaterThanYCount.and.returnValue(false);
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             boundsMaker.getDimension.and.returnValue({

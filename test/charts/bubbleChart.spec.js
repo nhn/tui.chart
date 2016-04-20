@@ -16,11 +16,38 @@ describe('BubbleChart', function() {
         bubbleChart = BubbleChart.prototype;
         bubbleChart.dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['getCategories', 'hasCategories', 'getSeriesDataModel', 'getValues', 'addDataRatiosForCoordinateType']);
-        sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isGreaterXCountThanYCount']);
+        sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
     });
 
     describe('_makeAxisScaleMakerMap()', function() {
-        it('카테고리가 없다면 _createAxisScaleMaker()의 반환값을 scaleMakerMap의 xAxis와 yAxis에 설정합니다.', function() {
+        it('_createAxisScaleMaker()의 반환값으로 scaleMakerMap의 xAxis와 yAxis에 설정합니다.', function() {
+            bubbleChart.dataProcessor.hasCategories.and.returnValue(false);
+            bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
+            spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
+            bubbleChart.options = {
+                xAxis: {
+                    min: 0,
+                    max: 80
+                },
+                yAxis: {
+                    min: 20,
+                    max: 90
+                }
+            };
+
+            bubbleChart._makeAxisScaleMakerMap();
+
+            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
+                min: 0,
+                max: 80
+            }, 'x');
+            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
+                min: 20,
+                max: 90
+            }, 'y');
+        });
+
+        it('카테고리가 없다면 xAxis와 yAxis 모두에 설정하여 반환합니다.', function() {
             var actual, expected;
 
             bubbleChart.dataProcessor.hasCategories.and.returnValue(false);
@@ -44,25 +71,13 @@ describe('BubbleChart', function() {
             };
 
             expect(actual).toEqual(expected);
-            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
-                min: 0,
-                max: 80
-            }, {
-                valueType: 'x'
-            });
-            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
-                min: 20,
-                max: 90
-            }, {
-                valueType: 'y'
-            });
         });
 
-        it('카테고리가 있고 x값의 개수가 y값의 개수보다 많다면 _createAxisScaleMaker()의 반환값을 scaleMakerMap.xAxis에 설정합니다.', function() {
+        it('카테고리가 있고 x값의 개수가 y값의 개수보다 많다면 xAxis만 설정하여 반환합니다.', function() {
             var actual, expected;
 
             bubbleChart.dataProcessor.hasCategories.and.returnValue(true);
-            sereisDataModel.isGreaterXCountThanYCount.and.returnValue(true);
+            sereisDataModel.isXCountGreaterThanYCount.and.returnValue(true);
             bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
@@ -82,25 +97,13 @@ describe('BubbleChart', function() {
             };
 
             expect(actual).toEqual(expected);
-            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
-                min: 0,
-                max: 80
-            }, {
-                valueType: 'x'
-            });
-            expect(bubbleChart._createAxisScaleMaker).not.toHaveBeenCalledWith({
-                min: 20,
-                max: 90
-            }, {
-                valueType: 'y'
-            });
         });
 
-        it('카테고리가 있고 x값의 개수가 y값의 개수보다 작거나 같다면 _createAxisScaleMaker()의 반환값을 scaleMakerMap.yAxis에 설정합니다.', function() {
+        it('카테고리가 있고 x값의 개수가 y값의 개수보다 작거나 같다면 yAxis만 설정하여 반환합니다.', function() {
             var actual, expected;
 
             bubbleChart.dataProcessor.hasCategories.and.returnValue(true);
-            sereisDataModel.isGreaterXCountThanYCount.and.returnValue(false);
+            sereisDataModel.isXCountGreaterThanYCount.and.returnValue(false);
             bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
@@ -120,18 +123,6 @@ describe('BubbleChart', function() {
             };
 
             expect(actual).toEqual(expected);
-            expect(bubbleChart._createAxisScaleMaker).not.toHaveBeenCalledWith({
-                min: 0,
-                max: 80
-            }, {
-                valueType: 'x'
-            });
-            expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
-                min: 20,
-                max: 90
-            }, {
-                valueType: 'y'
-            });
         });
     });
 
