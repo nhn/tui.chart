@@ -22,11 +22,11 @@ describe('PieChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-        dataProcessor.getFirstFormattedValue.and.returnValue('2.2');
+        dataProcessor.getFirstItemLabel.and.returnValue('2.2');
     });
 
     beforeEach(function() {

@@ -80,14 +80,14 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      * Make label position for rendering label of series area.
      * @param {{left: number, top: number, startTop: ?number}} basePosition - base position for calculating
      * @param {number} labelHeight - label height
-     * @param {(string | number)} formattedValue - formatted value of seriesItem
+     * @param {(string | number)} label - label of seriesItem
      * @param {number} value - value of seriesItem
      * @param {boolean} isStart - whether start label position or not
      * @returns {{left: number, top: number}}
      * @private
      */
-    _makeLabelPosition: function(basePosition, labelHeight, formattedValue, value, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label);
+    _makeLabelPosition: function(basePosition, labelHeight, label, value, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label);
 
         return {
             left: basePosition.left - (labelWidth / 2),
@@ -107,18 +107,18 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeSeriesLabelHtmlForLineType: function(groupIndex, index, seriesItem, labelHeight, isStart) {
         var basePosition = tui.util.extend({}, this.seriesData.groupPositions[groupIndex][index]),
-            formattedValue, position;
+            label, position;
 
         if (isStart) {
-            formattedValue = seriesItem.formattedStart;
+            label = seriesItem.startLabel;
             basePosition.top = basePosition.startTop;
         } else {
-            formattedValue = seriesItem.formattedEnd;
+            label = seriesItem.endLabel;
         }
 
-        position = this._makeLabelPosition(basePosition, labelHeight, formattedValue, seriesItem.value, isStart);
+        position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value, isStart);
 
-        return this._makeSeriesLabelHtml(position, formattedValue, groupIndex);
+        return this._makeSeriesLabelHtml(position, label, groupIndex);
     },
 
     /**
@@ -129,8 +129,8 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            firstFormattedValue = seriesDataModel.getFirstFormattedValue(),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            firstLabel = seriesDataModel.getFirstItemLabel(),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             htmls;
 
         htmls = seriesDataModel.map(function(seriesGroup, groupIndex) {

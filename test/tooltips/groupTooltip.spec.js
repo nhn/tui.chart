@@ -31,14 +31,14 @@ describe('GroupTooltip', function() {
 
             dataProcessor.getSeriesGroups.and.returnValue([
                 new seriesGroup([{
-                    formattedValue: '10'
+                    label: '10'
                 }, {
-                    formattedValue: '20'
+                    label: '20'
                 }]),
                 new seriesGroup([{
-                    formattedValue: '30'
+                    label: '30'
                 }, {
-                    formattedValue: '40'
+                    label: '40'
                 }])
             ]);
 

@@ -159,12 +159,12 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeSeriesLabelsHtml: function(groupIndex, labelHeight, seriesItem, index) {
         var bound = this.seriesData.groupBounds[groupIndex][index].end,
             value = seriesItem.value,
-            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.formattedEnd),
-            labelHtml = this._makeSeriesLabelHtml(position, seriesItem.formattedEnd, index);
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.label),
+            labelHtml = this._makeSeriesLabelHtml(position, seriesItem.endLabel, index);
 
         if (seriesItem.isRange) {
-            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.formattedStart, true);
-            labelHtml += this._makeSeriesLabelHtml(position, seriesItem.formattedStart, index);
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.startLabel, true);
+            labelHtml += this._makeSeriesLabelHtml(position, seriesItem.startLabel, index);
         }
 
         return labelHtml;
@@ -178,8 +178,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            firstFormattedValue = seriesDataModel.getFirstFormattedValue(),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            firstLabel = seriesDataModel.getFirstItemLabel(),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;
 
         html = seriesDataModel.map(function(seriesGroup, groupIndex) {
@@ -205,13 +205,13 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     /**
      * Make stacked label position.
      * @param {{width: number, height: number, left: number, top: number}} bound element bound
-     * @param {string} formattedValue formatted value
+     * @param {string} label label
      * @param {number} labelHeight label height
      * @returns {{left: number, top: number}} position
      * @private
      */
-    _makeStackedLabelPosition: function(bound, formattedValue, labelHeight) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
+    _makeStackedLabelPosition: function(bound, label, labelHeight) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
             top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
 
@@ -243,8 +243,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
             if (bound && seriesItem) {
                 boundEnd = bound.end;
-                position = self._makeStackedLabelPosition(boundEnd, seriesItem.formattedValue, params.labelHeight);
-                labelHtml = self._makeSeriesLabelHtml(position, seriesItem.formattedValue, index);
+                position = self._makeStackedLabelPosition(boundEnd, seriesItem.label, params.labelHeight);
+                labelHtml = self._makeSeriesLabelHtml(position, seriesItem.label, index);
             }
 
             if (seriesItem.value > 0) {
@@ -274,8 +274,8 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         var self = this,
             groupBounds = this.seriesData.groupBounds,
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            firstFormattedValue = seriesDataModel.getFirstFormattedValue(this.chartType),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            firstLabel = seriesDataModel.getFirstItemLabel(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;
 
         html = seriesDataModel.map(function(seriesGroup, index) {

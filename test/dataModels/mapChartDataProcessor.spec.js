@@ -33,11 +33,11 @@ describe('test MapChartDataProcessor', function() {
             expected = {
                 KR: {
                     value: 100,
-                    formattedValue: 100
+                    label: 100
                 },
                 JP: {
                     value: 50,
-                    formattedValue: 50
+                    label: 50
                 }
             };
 
@@ -66,11 +66,11 @@ describe('test MapChartDataProcessor', function() {
             expected = {
                 KR: {
                     value: 100,
-                    formattedValue: '0100'
+                    label: '0100'
                 },
                 JP: {
                     value: 50,
-                    formattedValue: '0050'
+                    label: '0050'
                 }
             };
 
@@ -102,12 +102,12 @@ describe('test MapChartDataProcessor', function() {
                 KR: {
                     name: 'South Korea',
                     value: 100,
-                    formattedValue: '0100'
+                    label: '0100'
                 },
                 JP: {
                     name: 'Japan',
                     value: 50,
-                    formattedValue: '0050'
+                    label: '0050'
                 }
             };
 

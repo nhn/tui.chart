@@ -24,12 +24,12 @@ describe('test SeriesItem', function() {
 
             expect(seriesItem.value).toBe(10);
             expect(seriesItem.end).toBe(10);
-            expect(seriesItem.formattedValue).toBe('0010');
-            expect(seriesItem.formattedEnd).toBe('0010');
+            expect(seriesItem.label).toBe('0010');
+            expect(seriesItem.endLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(false);
         });
 
-        it('value가 배열값이면 start도 초기화하고 formattedValue도 변경 합니다.', function() {
+        it('value가 배열값이면 start도 초기화하고 label도 변경 합니다.', function() {
             seriesItem.formatFunctions = [function(value) {
                 return '00' + value;
             }];
@@ -38,9 +38,9 @@ describe('test SeriesItem', function() {
             expect(seriesItem.value).toBe(40);
             expect(seriesItem.end).toBe(40);
             expect(seriesItem.start).toBe(10);
-            expect(seriesItem.formattedValue).toBe('0010 ~ 0040');
-            expect(seriesItem.formattedEnd).toBe('0040');
-            expect(seriesItem.formattedStart).toBe('0010');
+            expect(seriesItem.label).toBe('0010 ~ 0040');
+            expect(seriesItem.endLabel).toBe('0040');
+            expect(seriesItem.startLabel).toBe('0010');
             expect(seriesItem.isRange).toBe(true);
         });
     });

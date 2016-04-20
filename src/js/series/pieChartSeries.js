@@ -294,7 +294,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             if (positions[index]) {
                 label = self._getSeriesLabel({
                     legend: legend,
-                    label: self.dataProcessor.getFirstFormattedValue(self.chartType),
+                    label: self.dataProcessor.getFirstItemLabel(self.chartType),
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);

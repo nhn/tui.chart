@@ -31,7 +31,7 @@ describe('BarTypeSeriesBase', function() {
         };
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getFirstFormattedValue', 'getSeriesDataModel', 'getFormattedValue']);
+            ['getFormatFunctions', 'getFirstItemLabel', 'getSeriesDataModel', 'getFormattedValue']);
 
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -150,7 +150,7 @@ describe('BarTypeSeriesBase', function() {
                 labelHeight = 20,
                 seriesItem = {
                     value: 40,
-                    formattedEnd: '40'
+                    endLabel: '40'
                 },
                 index = 0;
 
@@ -176,8 +176,8 @@ describe('BarTypeSeriesBase', function() {
                 labelHeight = 20,
                 seriesItem = {
                     value: 40,
-                    formattedEnd: '40',
-                    formattedStart: '10',
+                    endLabel: '40',
+                    startLabel: '10',
                     isRange: true
                 },
                 index = 0;
@@ -209,15 +209,15 @@ describe('BarTypeSeriesBase', function() {
             var labelContainer = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getFirstItemLabel.and.returnValue('1.5');
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
                 new seriesGroup([{
                     value: 1.5,
-                    formattedEnd: '1.5'
+                    endLabel: '1.5'
                 }, {
                     value: 2.2,
-                    formattedEnd: '2.2'
+                    endLabel: '2.2'
                 }])
             ];
 
@@ -266,10 +266,10 @@ describe('BarTypeSeriesBase', function() {
             html = series._makeStackedLabelsHtml({
                 seriesGroup: new seriesGroup([{
                     value: 1.5,
-                    formattedValue: '1.5'
+                    label: '1.5'
                 }, {
                     value: 2.2,
-                    formattedValue: '2.2'
+                    label: '2.2'
                 }]),
                 bounds: [
                     {
@@ -296,10 +296,10 @@ describe('BarTypeSeriesBase', function() {
             html = series._makeStackedLabelsHtml({
                 seriesGroup: new seriesGroup([{
                     value: 1.5,
-                    formattedValue: '1.5'
+                    label: '1.5'
                 }, {
                     value: 2.2,
-                    formattedValue: '2.2'
+                    label: '2.2'
                 }]),
                 bounds: [
                     {
@@ -321,7 +321,7 @@ describe('BarTypeSeriesBase', function() {
             var elLabelArea = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getFirstFormattedValue.and.returnValue('1.5');
+            dataProcessor.getFirstItemLabel.and.returnValue('1.5');
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
                 new seriesGroup([{
@@ -362,10 +362,10 @@ describe('BarTypeSeriesBase', function() {
             seriesDataModel.groups = [
                 new seriesGroup([{
                     value: -1.5,
-                    formattedValue: '-1.5'
+                    label: '-1.5'
                 }, {
                     value: -2.2,
-                    formattedValue: '-2.2'
+                    label: '-2.2'
                 }])
             ];
 
@@ -399,10 +399,10 @@ describe('BarTypeSeriesBase', function() {
             seriesDataModel.groups = [
                 new seriesGroup([{
                     value: -1.5,
-                    formattedValue: '-1.5'
+                    label: '-1.5'
                 }, {
                     value: -2.2,
-                    formattedValue: '-2.2'
+                    label: '-2.2'
                 }])
             ];
 

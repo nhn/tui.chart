@@ -456,6 +456,29 @@ var renderUtil = {
      */
     isOldBrowser: function() {
         return isOldBrowser;
+    },
+
+    /**
+     * Format zero fill.
+     * @param {string} value target value
+     * @param {number} len length of result
+     * @returns {string} formatted value
+     * @private
+     */
+    formatZeroFill: function(value, len) {
+        var zero = '0';
+
+        value = String(value);
+
+        if (value.length >= len) {
+            return value;
+        }
+
+        while (value.length < len) {
+            value = zero + value;
+        }
+
+        return value;
     }
 };
 

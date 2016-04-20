@@ -46,10 +46,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
      * Get series item.
      * @param {number} index - index of items
-     * @returns {Item}
+     * @returns {SeriesItem}
      */
     getSeriesItem: function(index) {
         return this.items[index];
+    },
+
+    /**
+     * Get first SeriesItem.
+     * @returns {SeriesItem}
+     */
+    getFirstSeriesItem: function() {
+        return this.getSeriesItem(0);
     },
 
     /**

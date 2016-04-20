@@ -512,12 +512,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Get first formatted value.
+     * Get first label of SeriesItem.
      * @param {?string} chartType chartType
      * @returns {string} formatted value
      */
-    getFirstFormattedValue: function(chartType) {
-        return this.getSeriesDataModel(chartType).getFirstFormattedValue();
+    getFirstItemLabel: function(chartType) {
+        return this.getSeriesDataModel(chartType).getFirstItemLabel();
     },
 
     /**
@@ -579,18 +579,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _formatZeroFill: function(len, value) {
-        var zero = '0',
-            isMinus = value < 0;
+        var isMinus = value < 0;
 
-        value = String(Math.abs(value));
-
-        if (value.length >= len) {
-            return value;
-        }
-
-        while (value.length < len) {
-            value = zero + value;
-        }
+        value = renderUtil.formatZeroFill(Math.abs(value), len);
 
         return (isMinus ? '-' : '') + value;
     },

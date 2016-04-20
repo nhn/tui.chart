@@ -52,7 +52,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
             groupIndex = this.tickBaseCoordinateModel.findIndex(layerX),
             foundData = this.dataModel.findData(groupIndex, layerY);
 
-        if (!this._isChanged(this.prevFoundData, foundData)) {
+        if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 

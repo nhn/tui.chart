@@ -125,7 +125,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
                 return {
                     category: categories ? categories[groupIndex] : '',
                     legend: legendLabels[chartType][index],
-                    value: seriesItem.formattedValue
+                    value: seriesItem.label
                 };
             });
 

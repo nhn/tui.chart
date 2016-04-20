@@ -36,7 +36,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
             foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
 
-        if (!this._isChanged(this.prevFoundData, foundData)) {
+        if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 

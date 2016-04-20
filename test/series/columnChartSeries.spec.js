@@ -24,8 +24,8 @@ describe('ColumnChartSeries', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstFormattedValue', 'getFormatFunctions']);
-        dataProcessor.getFirstFormattedValue.and.returnValue('1');
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstItemLabel', 'getFormatFunctions']);
+        dataProcessor.getFirstItemLabel.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         series = new ColumnChartSeries({
@@ -184,8 +184,8 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = 10,
-                formattedValue = '10',
-                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                label = '10',
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
                 expected = {
                     left: 10,
                     top: 5
@@ -202,8 +202,8 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = -10,
-                formattedValue = '-10',
-                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                label = '-10',
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
                 expected = {
                     left: 10,
                     top: 55

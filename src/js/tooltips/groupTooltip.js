@@ -128,7 +128,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
             return {
                 category: self.dataProcessor.getCategory(index),
-                values: seriesGroup.pluck('formattedValue')
+                values: seriesGroup.pluck('label')
             };
         });
     },

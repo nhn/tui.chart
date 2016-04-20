@@ -35,9 +35,9 @@ describe('Tooltip', function() {
             seriesDataModel.groups = [
                 new seriesGroup([
                     {
-                        formattedValue: '10'
+                        label: '10'
                     }, {
-                        formattedValue: '20'
+                        label: '20'
                     }
                 ])
             ];

@@ -143,13 +143,13 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
      * @param {number} labelHeight - label height
      * @param {number} value - value
-     * @param {string} formattedValue - formatted value
+     * @param {string} label - label of seriesItem
      * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} rendering position
      * @private
      */
-    _makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
+    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
             top = bound.top,
             left = bound.left + (bound.width - labelWidth) / 2;
 

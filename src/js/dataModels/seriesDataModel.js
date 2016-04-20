@@ -224,8 +224,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         return this.getSeriesGroup(0);
     },
 
-    getFirstFormattedValue: function() {
-        return this.getFirstSeriesGroup().formattedValue;
+    /**
+     * Get first label of SeriesItem.
+     * @returns {string} formatted value
+     */
+    getFirstItemLabel: function() {
+        return this.getFirstSeriesGroup().getFirstSeriesItem().label;
     },
 
     /**

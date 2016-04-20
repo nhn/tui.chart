@@ -290,10 +290,10 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             var coordinate = self._makeCoordinatesFromPath(datum.path),
                 bound = self._findBoundFromCoordinates(coordinate),
                 userData = self.dataProcessor.getValueMapDatum(datum.code),
-                name, labelCoordinate, formattedValue, ratio, resultData;
+                name, labelCoordinate, label, ratio, resultData;
 
             if (userData) {
-                formattedValue = userData.formattedValue;
+                label = userData.label;
                 ratio = userData.ratio;
                 name = userData.name || datum.name;
                 labelCoordinate = userData.labelCoordinate || datum.labelCoordinate;
@@ -307,8 +307,8 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
                 labelPosition: self._makeLabelPosition(bound, labelCoordinate)
             };
 
-            if (formattedValue) {
-                resultData.formattedValue = formattedValue;
+            if (label) {
+                resultData.label = label;
             }
 
             if (ratio) {

@@ -8,7 +8,7 @@
 
 var LineTypeSeriesBase = require('../../src/js/series/lineTypeSeriesBase'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
+    SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
@@ -22,7 +22,7 @@ describe('LineTypeSeriesBase', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstItemLabel']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
@@ -37,7 +37,7 @@ describe('LineTypeSeriesBase', function() {
 
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     ratio: 0.25
                 }, {
                     ratio: 0.5
@@ -79,7 +79,7 @@ describe('LineTypeSeriesBase', function() {
 
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     ratio: 0.25
                 }, {
                     ratio: 0.5
@@ -223,12 +223,12 @@ describe('LineTypeSeriesBase', function() {
     });
 
     describe('_makeSeriesLabelHtmlForLineType()', function() {
-        it('seriesData.gropuPositions에서 groupIndex와 index에 해당하는 position값을 basePosition으로 설정하고 formattedValue는 seriesItem.formattedEnd로 설정합니다.', function() {
+        it('seriesData.gropuPositions에서 groupIndex와 index에 해당하는 position값을 basePosition으로 설정하고 label은 seriesItem.endLabel로 설정합니다.', function() {
             var groupIndex = 0,
                 index = 0,
                 seriesItem = {
                     value: 'value',
-                    formattedEnd: 'formattedEnd'
+                    endLabel: 'endLabel'
                 },
                 labelHeight = 'labelHeight',
                 isStart = false;
@@ -248,16 +248,16 @@ describe('LineTypeSeriesBase', function() {
             expect(series._makeLabelPosition).toHaveBeenCalledWith({
                 left: 10,
                 top: 20
-            }, 'labelHeight', 'formattedEnd', 'value', false);
+            }, 'labelHeight', 'endLabel', 'value', false);
         });
 
-        it('시작값일 경우(isStart=true)에는 startTop을 top으로 변경하여 basePosition을 설정하고 formattedValue는 seriesItem.formattedStart로 설정합니다.', function() {
+        it('시작값일 경우(isStart=true)에는 startTop을 top으로 변경하여 basePosition을 설정하고 label은 seriesItem.startLabel로 설정합니다.', function() {
             var groupIndex = 0,
                 index = 0,
                 seriesItem = {
                     value: 'value',
-                    formattedEnd: 'formattedEnd',
-                    formattedStart: 'formattedStart'
+                    endLabel: 'endLabel',
+                    startLabel: 'startLabel'
                 },
                 labelHeight = 'labelHeight',
                 isStart = true;
@@ -279,22 +279,22 @@ describe('LineTypeSeriesBase', function() {
                 left: 10,
                 top: 5,
                 startTop: 5
-            }, 'labelHeight', 'formattedStart', 'value', true);
+            }, 'labelHeight', 'startLabel', 'value', true);
         });
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('라인차트에서 series label은 전달하는 formattedValues의 value숫자 만큼 렌더링 됩니다.', function() {
+        it('라인차트에서 series label은 seriesItem 숫자 만큼 렌더링 됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
 
             dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
-            spyOn(seriesDataModel, 'getFirstFormattedValue').and.returnValue('1.5');
+            spyOn(seriesDataModel, 'getFirstItemLabel').and.returnValue('1.5');
             seriesDataModel.pivotGroups = [
-                new seriesGroup([{
-                    formattedValue: '1.5'
+                new SeriesGroup([{
+                    label: '1.5'
                 }, {
-                    formattedValue: '2.2'
+                    label: '2.2'
                 }])
             ];
             series.options = {

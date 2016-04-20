@@ -45,10 +45,10 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.value = null;
 
         /**
-         * formatted value
+         * label
          * @type {string}
          */
-        this.formattedValue = null;
+        this.label = null;
 
         /**
          * ratio of value about distance of limit
@@ -63,10 +63,10 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.end = null;
 
         /**
-         * formatted end value
+         * end label
          * @type {number}
          */
-        this.formattedEnd = null;
+        this.endLabel = null;
 
         /**
          * ratio of end value
@@ -81,10 +81,10 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         this.start = null;
 
         /**
-         * formatted end value
+         * start label
          * @type {number}
          */
-        this.formattedStart = null;
+        this.startLabel = null;
 
         /**
          * ratio of start value
@@ -111,7 +111,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             hasStart = values.length > 1;
 
         this.value = this.end = values[0];
-        this.formattedValue = this.formattedEnd = renderUtil.formatValue(this.value, this.formatFunctions);
+        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions);
 
         if (hasStart) {
             this.addStart(values[1], true);
@@ -151,7 +151,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         }
 
         this.start = value;
-        this.formattedStart = renderUtil.formatValue(value, this.formatFunctions);
+        this.startLabel = renderUtil.formatValue(value, this.formatFunctions);
     },
 
     /**
@@ -159,7 +159,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _updateFormattedValueforRange: function() {
-        this.formattedValue = this.formattedStart + ' ~ ' + this.formattedEnd;
+        this.label = this.startLabel + ' ~ ' + this.endLabel;
     },
 
     /**
