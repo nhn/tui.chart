@@ -9,7 +9,7 @@
 var BubbleChartSeries = require('../../src/js/series/bubbleChartSeries'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('BarChartSeries', function() {
+describe('BubbleChartSeries', function() {
     var series, dataProcessor, seriesDataModel, boundsMaker;
 
     beforeAll(function() {
