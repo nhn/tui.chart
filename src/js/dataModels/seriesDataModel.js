@@ -123,7 +123,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Create base groups.
-     * Base groups is a two-dimensional array of seriesItems.
+     * Base groups is two-dimensional array by seriesItems.
      * @returns {Array.<Array.<SeriesItem>>}
      * @private
      */
