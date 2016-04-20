@@ -48,20 +48,23 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
         var isGreaterXCountThanYCount = seriesDataModel.isGreaterXCountThanYCount();
         var scaleMakerMap = {};
+        var xAxisOption, yAxisOption;
 
         if (!hasCategories || isGreaterXCountThanYCount) {
+            xAxisOption = this.options.xAxis || {};
             scaleMakerMap.xAxis = this._createAxisScaleMaker({
-                min: this.options.xAxis.min,
-                max: this.options.xAxis.max
+                min: xAxisOption.min,
+                max: xAxisOption.max
             }, {
                 valueType: 'x'
             });
         }
 
         if (!hasCategories || !isGreaterXCountThanYCount) {
+            yAxisOption = this.options.yAxis || {};
             scaleMakerMap.yAxis = this._createAxisScaleMaker({
-                min: this.options.yAxis.min,
-                max: this.options.yAxis.max
+                min: yAxisOption.min,
+                max: yAxisOption.max
             }, {
                 valueType: 'y'
             });
