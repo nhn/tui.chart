@@ -16,7 +16,7 @@ describe('test seriesGroup', function() {
         seriesGroup = new SeriesGroup();
     });
 
-    describe('_makeValues()', function() {
+    describe('_createValues()', function() {
         it('seriesItem들에서 values를 추출합니다.', function() {
             var actual, expected;
             seriesGroup.items = [
@@ -26,7 +26,7 @@ describe('test seriesGroup', function() {
                 new SeriesItem(40)
             ];
 
-            actual = seriesGroup._makeValues();
+            actual = seriesGroup._createValues('value');
             expected = [10, 20, 30, 40];
 
             expect(actual).toEqual(expected);
@@ -41,7 +41,7 @@ describe('test seriesGroup', function() {
                 new SeriesItem([40, 50])
             ];
 
-            actual = seriesGroup._makeValues();
+            actual = seriesGroup._createValues('value');
             expected = [20, 10, 30, 20, 40, 30, 50, 40];
 
             expect(actual).toEqual(expected);

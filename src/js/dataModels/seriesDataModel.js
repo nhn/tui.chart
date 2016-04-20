@@ -35,6 +35,7 @@
 
 var SeriesGroup = require('./seriesGroup'),
     SeriesItem = require('./seriesItem'),
+    SeriesItemForCoordinateType = require('./seriesItemForCoordinateType'),
     predicate = require('../helpers/predicate'),
     calculator = require('../helpers/calculator');
 
@@ -90,10 +91,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         this.groups = null;
 
         /**
-         * all values of groups
-         * @type {Array}
+         * map of values by value type like value, x, y, r.
+         * @type {object.<string, Array.<number>>}}
          */
-        this.values = null;
+        this.valuesMap = {};
 
         this._removeRangeValue();
     },
@@ -122,15 +123,23 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Create base groups.
-     * @returns {Array.<Array.<SeriesItem>>}
+     * Base groups is two-dimensional array by seriesItems.
+     * @returns {Array.<Array.<(SeriesItem | SeriesItemForCoordinateType)>>}
      * @private
      */
     _createBaseGroups: function() {
         var self = this;
+        var SeriesItemClass;
+
+        if (predicate.isBubbleChart(this.chartType)) {
+            SeriesItemClass = SeriesItemForCoordinateType;
+        } else {
+            SeriesItemClass = SeriesItem;
+        }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
             return tui.util.map(concat.apply(rawDatum.data), function(value) {
-                return new SeriesItem(value, rawDatum.stack, self.formatFunctions);
+                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions);
             });
         });
     },
@@ -148,12 +157,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Create groups from rawData.series.
+     * Create SeriesGroups from rawData.series.
      * @param {boolean} isPivot - whether pivot or not.
      * @returns {Array.<SeriesGroup>}
      * @private
      */
-    _createGroupsFromRawData: function(isPivot) {
+    _createSeriesGroupsFromRawData: function(isPivot) {
         var baseGroups = this.getBaseGroups();
 
         if (isPivot) {
@@ -172,7 +181,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _getSeriesGroups: function() {
         if (!this.groups) {
-            this.groups = this._createGroupsFromRawData(true);
+            this.groups = this._createSeriesGroupsFromRawData(true);
         }
 
         return this.groups;
@@ -192,7 +201,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _getPivotGroups: function() {
         if (!this.pivotGroups) {
-            this.pivotGroups = this._createGroupsFromRawData();
+            this.pivotGroups = this._createSeriesGroupsFromRawData();
         }
 
         return this.pivotGroups;
@@ -248,28 +257,40 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Make flattening values.
+     * Create values that picked value from SeriesItems of SeriesGroups.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function() {
+    _createValues: function(valueType) {
         var values = this.map(function(seriesGroup) {
-            return seriesGroup.getValues();
+            return seriesGroup.getValues(valueType);
         });
 
         return concat.apply([], values);
     },
 
     /**
-     * Get flattening values.
+     * Get values form valuesMap.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      */
-    getValues: function() {
-        if (!this.values) {
-            this.values = this._makeValues();
+    getValues: function(valueType) {
+        valueType = valueType || 'value';
+
+        if (!this.valuesMap[valueType]) {
+            this.valuesMap[valueType] = this._createValues(valueType);
         }
 
-        return this.values;
+        return this.valuesMap[valueType];
+    },
+
+    /**
+     * Whether count of x values greater than count of y values.
+     * @returns {boolean}
+     */
+    isXCountGreaterThanYCount: function() {
+        return this.getValues('x').length > this.getValues('y').length;
     },
 
     /**
@@ -388,6 +409,35 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             var sum = tui.util.sum(seriesGroup.pluck('value'));
 
             seriesGroup.addRatios(sum);
+        });
+    },
+
+    /**
+     * Add ratios of data for chart of coordinate type.
+     * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     */
+    addDataRatiosForCoordinateType: function(limitMap) {
+        var xLimit = limitMap.x;
+        var yLimit = limitMap.y;
+        var maxRadius = tui.util.max(this.getValues('r'));
+        var xDistance, xSubValue, yDistance, ySubValue;
+
+        if (xLimit) {
+            xDistance = Math.abs(xLimit.max - xLimit.min);
+            xSubValue = this._makeSubtractionValue(xLimit);
+        }
+
+        if (yLimit) {
+            yDistance = Math.abs(yLimit.max - yLimit.min);
+            ySubValue = this._makeSubtractionValue(yLimit);
+        }
+
+        this.each(function(seriesGroup) {
+            seriesGroup.each(function(item) {
+                item.addRatio('x', xDistance, xSubValue);
+                item.addRatio('y', yDistance, ySubValue);
+                item.addRatio('r', maxRadius, 0);
+            });
         });
     },
 

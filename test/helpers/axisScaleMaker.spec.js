@@ -114,7 +114,9 @@ describe('AxisScaleMaker', function() {
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
                 bar: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.values = [70, 10, 20, 20, 80, 30];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.bar.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
             axisScaleMaker.chartType = 'bar';
 
             actual = axisScaleMaker._makeBaseValues();
@@ -132,8 +134,12 @@ describe('AxisScaleMaker', function() {
             };
 
             axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
 
             axisScaleMaker.isSingleYAxis = true;
             axisScaleMaker.chartType = 'bar';
@@ -812,8 +818,12 @@ describe('AxisScaleMaker', function() {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
             axisScaleMaker.isSingleYAxis = true;
             axisScaleMaker.chartType = 'column';
 
@@ -831,8 +841,12 @@ describe('AxisScaleMaker', function() {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [70, 10, 20, 20, 80, 30];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, 3];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
 
             axisScaleMaker.chartType = 'column';
             actual = axisScaleMaker._getValuesForSum();
@@ -851,8 +865,12 @@ describe('AxisScaleMaker', function() {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [-70, 10, -20, 20, 80, 30];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, -3];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [-70, 10, -20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, -3]
+            };
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculateMinusSum();
@@ -871,8 +889,12 @@ describe('AxisScaleMaker', function() {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
             };
-            axisScaleMaker.dataProcessor.seriesDataModelMap.column.values = [-70, 10, -20, 20, 80, 30];
-            axisScaleMaker.dataProcessor.seriesDataModelMap.line.values = [1, 2, -3];
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [-70, 10, -20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, -3]
+            };
 
             axisScaleMaker.isSingleYAxis = true;
             actual = axisScaleMaker._calculatePlusSum();

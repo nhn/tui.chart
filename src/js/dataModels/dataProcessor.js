@@ -193,6 +193,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether has categories or not.
+     * @returns {boolean}
+     */
+    hasCategories: function() {
+        return !!this.getCategories().length;
+    },
+
+    /**
      * Get category.
      * @param {number} index index
      * @returns {string} category
@@ -334,37 +342,44 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Make values of seriesItems.
-     * @param {string} chartType - chart type
+     * Create values that picked value from SeriesItems of specific SeriesDataModel.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function(chartType) {
+    _createValues: function(chartType, valueType) {
         var values;
 
         if (chartType === chartConst.DUMMY_KEY) {
             values = [];
             this._eachByAllSeriesDataModel(function(seriesDataModel) {
-                values = values.concat(seriesDataModel.getValues());
+                values = values.concat(seriesDataModel.getValues(valueType));
             });
         } else {
-            values = this.getSeriesDataModel(chartType).getValues();
+            values = this.getSeriesDataModel(chartType).getValues(valueType);
         }
         return values;
     },
 
     /**
-     * Get values of specific SeriesDataModel.
-     * @param {string} chartType chart type
+     * Get values from valuesMap.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
      * @returns {Array.<number>}
      */
-    getValues: function(chartType) {
+    getValues: function(chartType, valueType) {
+        var mapKey;
+
         chartType = chartType || chartConst.DUMMY_KEY;
-        if (!this.valuesMap[chartType]) {
-            this.valuesMap[chartType] = this._makeValues(chartType);
+
+        mapKey = chartType + valueType;
+
+        if (!this.valuesMap[mapKey]) {
+            this.valuesMap[mapKey] = this._createValues(chartType, valueType);
         }
 
-        return this.valuesMap[chartType];
+        return this.valuesMap[mapKey];
     },
 
     /**
@@ -681,7 +696,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _makeMultilineCategory: function(category, limitWidth, theme) {
-        var words = category.split(/\s+/),
+        var words = String(category).split(/\s+/),
             lineWords = words[0],
             lines = [];
 
@@ -707,13 +722,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * Get multiline categories.
      * @param {number} limitWidth limit width
      * @param {object} theme label theme
+     * @param {Array.<(number | string)>} xAxisLabels labels of xAxis
      * @returns {Array} multiline categories
      */
-    getMultilineCategories: function(limitWidth, theme) {
+    getMultilineCategories: function(limitWidth, theme, xAxisLabels) {
         var self = this;
 
         if (!this.multilineCategories) {
-            this.multilineCategories = tui.util.map(this.getCategories(), function(category) {
+            this.multilineCategories = tui.util.map(xAxisLabels, function(category) {
                 return self._makeMultilineCategory(category, limitWidth, theme);
             });
         }
@@ -726,6 +742,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     addDataRatiosOfPieChart: function() {
         this.getSeriesDataModel(chartConst.CHART_TYPE_PIE).addDataRatiosOfPieChart();
+    },
+
+    /**
+     * Add data ratios for chart of coordinate type.
+     * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     */
+    addDataRatiosForCoordinateType: function(limitMap) {
+        this.getSeriesDataModel(chartConst.CHART_TYPE_BUBBLE).addDataRatiosForCoordinateType(limitMap);
     },
 
     /**

@@ -10,6 +10,7 @@ var BarChart = require('./raphaelBarChart'),
     LineChart = require('./raphaelLineChart'),
     AreaChart = require('./raphaelAreaChart'),
     PieChart = require('./raphaelPieChart'),
+    BubbleChart = require('./raphaelBubbleChart'),
     MapChart = require('./raphaelMapChart'),
     MapLegend = require('./raphaelMapLegend');
 
@@ -22,6 +23,7 @@ pluginRaphael = {
     line: LineChart,
     area: AreaChart,
     pie: PieChart,
+    bubble: BubbleChart,
     map: MapChart,
     mapLegend: MapLegend
 };

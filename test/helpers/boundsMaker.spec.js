@@ -70,7 +70,7 @@ describe('boundsMaker', function() {
             boundsMaker._registerTitleDimension();
             actual = boundsMaker.getDimension('title');
             expected = {
-                height: 40
+                height: 30
             };
 
             expect(actual).toEqual(expected);
@@ -310,6 +310,9 @@ describe('boundsMaker', function() {
                 'AAAA</br>BBBB'
             ]);
             boundsMaker.theme = {
+                xAxis: {}
+            };
+            boundsMaker.axesData = {
                 xAxis: {}
             };
 

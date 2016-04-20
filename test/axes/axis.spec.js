@@ -59,7 +59,7 @@ describe('Axis', function() {
 
             axis.options.title = 'Axis Title';
             actual = axis._makeYAxisWidth(['label1', 'label12']);
-            expected = 97;
+            expected = 87;
 
             expect(actual).toBe(expected);
         });
@@ -112,8 +112,8 @@ describe('Axis', function() {
 
         it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    height: 60
-                };
+                height: 60
+            };
 
             axis.componentName = 'xAxis';
             axis.componentType = 'xAxis';
@@ -125,8 +125,8 @@ describe('Axis', function() {
 
         it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    width: 97
-                };
+                width: 87
+            };
 
             axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
@@ -163,8 +163,8 @@ describe('Axis', function() {
 
         it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    width: 97
-                };
+                width: 87
+            };
 
             axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';

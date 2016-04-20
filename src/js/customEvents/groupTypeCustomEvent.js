@@ -54,7 +54,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         }
 
         if (!this._isOutPosition(layerX, layerY)) {
-            index = this.tickBaseDataModel.findIndex(pointValue);
+            index = this.tickBaseCoordinateModel.findIndex(pointValue);
         }
 
         if (index === -1) {
@@ -63,7 +63,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             this.prevIndex = index;
             this.fire('showGroupTooltip', {
                 index: index,
-                range: this.tickBaseDataModel.makeRange(index, this.chartType),
+                range: this.tickBaseCoordinateModel.makeRange(index, this.chartType),
                 size: this.dimension[sizeType],
                 isVertical: this.isVertical
             });

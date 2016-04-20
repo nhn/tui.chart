@@ -27,10 +27,12 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         this.items = seriesItems;
 
         /**
-         * vlaues of items.
+         * map of values by value type like value, x, y, r.
          * @type {Array.<number>}
          */
-        this.values = null;
+        this.valuesMap = {};
+
+        this.valuesMapPerStack = null;
     },
 
     /**
@@ -51,16 +53,19 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Make values of item.
+     * Create values that picked value from SeriesItems.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function() {
+    _createValues: function(valueType) {
         var values = [];
 
         this.each(function(item) {
-            values.push(item.value);
-            if (!tui.util.isNull(item.start)) {
+            if (tui.util.isExisty(item[valueType])) {
+                values.push(item[valueType]);
+            }
+            if (tui.util.isExisty(item.start)) {
                 values.push(item.start);
             }
         });
@@ -69,15 +74,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Get
+     * Get values from valuesMap.
+     * @param {?string} valueType - type of value
      * @returns {Array}
      */
-    getValues: function() {
-        if (!this.values) {
-            this.values = this._makeValues();
+    getValues: function(valueType) {
+        valueType = valueType || 'value';
+
+        if (!this.valuesMap[valueType]) {
+            this.valuesMap[valueType] = this._createValues(valueType);
         }
 
-        return this.values;
+        return this.valuesMap[valueType];
     },
 
     /**
@@ -99,6 +107,18 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
+     * Get values map per stack.
+     * @returns {*|Object}
+     */
+    getValuesMapPerStack: function() {
+        if (!this.valuesMapPerStack) {
+            this.valuesMapPerStack = this._makeValuesMapPerStack();
+        }
+
+        return this.valuesMapPerStack;
+    },
+
+    /**
      * Make sum map per stack.
      * @returns {object} sum map
      * @private
@@ -114,18 +134,6 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return sumMap;
-    },
-
-    /**
-     * Get values map per stack.
-     * @returns {*|Object}
-     */
-    getValuesMapPerStack: function() {
-        if (!this.valuesMap) {
-            this.valuesMap = this._makeValuesMapPerStack();
-        }
-
-        return this.valuesMap;
     },
 
     /**
