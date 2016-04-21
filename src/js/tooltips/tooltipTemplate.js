@@ -12,10 +12,17 @@ var htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
         '<div>{{ category }}</div>' +
         '<div>' +
-            '<span>{{ legend }}</span>:' +
-            '&nbsp;<span>{{ value }}</span>' +
+            '<span>{{ legend }}</span>' +
+            '<span>{{ label }}</span>' +
             '<span>{{ suffix }}</span>' +
         '</div>' +
+    '</div>',
+    HTML_BUBBLE_CHART_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
+        '<div>{{ category }}</div>' +
+        '<div>' +
+            '<span>{{ legend }}</span>' +
+            '<span>{{ label }}</span>' +
+        '</div>{{ valueTypes }}' +
     '</div>',
     HTML_GROUP: '<div class="tui-chart-default-tooltip tui-chart-group-tooltip">' +
         '<div>{{ category }}</div>' +
@@ -34,6 +41,7 @@ var htmls = {
 
 module.exports = {
     tplDefault: templateMaker.template(htmls.HTML_DEFAULT_TEMPLATE),
+    tplBubbleChart: templateMaker.template(htmls.HTML_BUBBLE_CHART_TEMPLATE),
     tplGroup: templateMaker.template(htmls.HTML_GROUP),
     tplGroupItem: templateMaker.template(htmls.HTML_GROUP_ITEM),
     tplGroupCssText: templateMaker.template(htmls.GROUP_CSS_TEXT),

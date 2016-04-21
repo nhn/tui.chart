@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase'),
+    chartConst = require('../const'),
     Series = require('../series/bubbleChartSeries'),
     axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
@@ -31,6 +32,10 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         options.tooltip = options.tooltip || {};
 
         this.axisScaleMakerMap = null;
+
+        if (!options.tooltip.align) {
+            options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
+        }
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -215,7 +220,31 @@ BubbleChart.prototype._addDataRatios = function() {
  * Add custom event component for normal tooltip.
  * @private
  */
-BubbleChart.prototype._addCustomEventComponentForNormalTooltip = function() {
+BubbleChart.prototype._attachCustomEvent = function() {
+    var customEvent = this.componentManager.get('customEvent');
+    var bubbleSeries = this.componentManager.get('bubbleSeries');
+    var tooltip = this.componentManager.get('tooltip');
+
+    axisTypeMixer._attachCustomEvent.call(this);
+
+    customEvent.on({
+        clickBubbleSeries: bubbleSeries.onClickSeries,
+        moveBubbleSeries: bubbleSeries.onMoveSeries
+    }, bubbleSeries);
+
+    bubbleSeries.on({
+        showTooltip: tooltip.onShow,
+        hideTooltip: tooltip.onHide,
+        showTooltipContainer: tooltip.onShowTooltipContainer,
+        hideTooltipContainer: tooltip.onHideTooltipContainer
+    }, tooltip);
+};
+
+/**
+ * Add custom event component.
+ * @private
+ */
+BubbleChart.prototype._addCustomEventComponent = function() {
     this.componentManager.register('customEvent', SimpleCustomEvent, {
         chartType: this.chartType
     });

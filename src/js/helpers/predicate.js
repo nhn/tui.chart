@@ -114,13 +114,23 @@ var predicate = {
     },
 
     /**
+     * Whether allow rendering for minus point in area of series.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isAllowRenderingForMinusPoint: function(chartType) {
+        return this.isLineTypeChart(chartType) || this.isBubbleChart(chartType);
+    },
+
+    /**
      * Whether mouse position chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
     isMousePositionChart: function(chartType) {
-        return this.isPieChart(chartType) || this.isMapChart(chartType);
+        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isBubbleChart(chartType);
     },
 
     /**

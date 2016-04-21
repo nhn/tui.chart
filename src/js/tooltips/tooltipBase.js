@@ -54,6 +54,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.animationTime = isPieChart ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
 
+        this.chartType = params.chartType;
+
         /**
          * TooltipBase base data.
          * @type {Array.<Array.<object>>}

@@ -7,7 +7,8 @@
 'use strict';
 
 var Series = require('./series'),
-    chartConst = require('../const');
+    chartConst = require('../const'),
+    renderUtil = require('../helpers/renderUtil');
 
 var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSeries.prototype */ {
     /**
@@ -46,48 +47,50 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     },
 
     /**
-     * Make position for bubble chart.
+     * Make bound for bubble chart.
+     * @param {{x: number, y: number, r: number}} ratioMap - ratio map
      * @param {number} positionByStep - position value by step
-     * @param {SeriesItemForCoordinateType} seriesItem - SeriesItemForCoordinateType
-     * @returns {{left: number, top: number}}
+     * @param {number} maxPxRadius - max pixel radius
+     * @returns {{left: number, top: number, raius: number}}
      * @private
      */
-    _makePosition: function(positionByStep, seriesItem) {
+    _makeBound: function(ratioMap, positionByStep, maxPxRadius) {
         var dimension = this.boundsMaker.getDimension('series');
-        var ratioMap = seriesItem.ratioMap;
         var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
         var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
-        var padding = chartConst.SERIES_EXPAND_SIZE;
 
         return {
-            left: padding + left,
-            top: padding + dimension.height - top
+            left: left,
+            top: dimension.height - top,
+            radius: tui.util.max([maxPxRadius * ratioMap.r, 2])
         };
     },
 
     /**
-     * Make positions for bubble chart.
-     * @returns {Array.<Array.<{left: number, top: number}>>} positions
+     * Make bounds for bubble chart.
+     * @returns {Array.<Array.<{left: number, top: number, radius: number}>>} positions
      * @private
      */
-    _makePositions: function() {
+    _makeBounds: function() {
         var self = this;
         var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var maxPxRadius = this.boundsMaker.getMinAxisPixelStep();
         var step = this._calculateStep();
         var start = step ? step / 2 : 0;
 
         return seriesDataModel.map(function(seriesGroup, index) {
             var positionByStep = start + (step * index);
-            var makePosition = tui.util.bind(self._makePosition, self, positionByStep);
 
-            return seriesGroup.map(makePosition);
+            return seriesGroup.map(function(seriesItem) {
+                return self._makeBound(seriesItem.ratioMap, positionByStep, maxPxRadius);
+            });
         });
     },
 
     /**
      * Make series data.
      * @returns {{
-     *      groupPositions: Array.<Array.<{left: number, top: number}>>,
+     *      groupBounds: Array.<Array.<{left: number, top: number, radius: number}>>,
      *      seriesDataModel: SeriesDataModel
      * }} series data
      * @private
@@ -95,10 +98,140 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      */
     _makeSeriesData: function() {
         return {
-            groupPositions: this._makePositions(),
+            groupBounds: this._makeBounds(),
             seriesDataModel: this.dataProcessor.getSeriesDataModel(this.chartType)
         };
+    },
+
+    /**
+     * Make series rendering position
+     * @param {{left: number, top: number, width:number, height: number}} bound - bound
+     * @param {number} labelHeight - label height
+     * @param {number} value - value
+     * @param {string} label - label
+     * @param {?boolean} isStart - whether start or not
+     * @returns {{left: number, top: number}} - rendering position
+     * @private
+     */
+    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
+            left = bound.left,
+            top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
+
+        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
+            left += bound.width + chartConst.SERIES_LABEL_PADDING;
+        } else {
+            left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
+        }
+
+        return {
+            left: left,
+            top: top
+        };
+    },
+
+    /**
+     * showTooltip is mouseover event callback on series graph.
+     * @param {object} params parameters
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
+     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {{left: number, top: number}} mousePosition mouse position
+     */
+    showTooltip: function(params, bound, groupIndex, index, mousePosition) {
+        this.fire('showTooltip', tui.util.extend({
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
+            mousePosition: mousePosition
+        }, params));
+    },
+
+    /**
+     * hideTooltip is mouseout event callback on series graph.
+     * @param {string} id tooltip id
+     */
+    hideTooltip: function() {
+        this.fire('hideTooltip');
+    },
+
+    /**
+     * Render raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     * @override
+     */
+    _renderGraph: function(dimension, seriesData) {
+        var showTooltip = tui.util.bind(this.showTooltip, this, {
+            chartType: this.chartType
+        });
+        var callbacks = {
+            showTooltip: showTooltip,
+            hideTooltip: tui.util.bind(this.hideTooltip, this)
+        };
+        var params = this._makeParamsForGraphRendering(dimension, seriesData);
+
+        this.graphRenderer.render(this.seriesContainer, params, callbacks);
+    },
+
+    /**
+     * Make html for label of series area.
+     * @param {{left: number, top: number}} basePosition - position
+     * @param {string} label - label of SeriesItem
+     * @param {number} index - index
+     * @returns {string}
+     * @private
+     */
+    _makeSeriesLabelsHtml: function(basePosition, label, index) {
+        var labelHeight = renderUtil.getRenderedLabelHeight(label, this.theme.label);
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label);
+        var position = {
+            left: basePosition.left - (labelWidth / 2),
+            top: basePosition.top - (labelHeight / 2)
+        };
+
+        return this._makeSeriesLabelHtml(position, label, index);
+    },
+
+    /**
+     * Render series label.
+     * @param {HTMLElement} labelContainer - container for label area
+     * @private
+     */
+    _renderSeriesLabel: function(labelContainer) {
+        var self = this;
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var html = seriesDataModel.map(function(seriesGroup, groupIndex) {
+            return seriesGroup.map(function(seriesItem, index) {
+                var bound = self.seriesData.groupBounds[groupIndex][index];
+
+                return self._makeSeriesLabelsHtml(bound, seriesItem.label, index);
+            }).join('');
+        }).join('');
+
+        labelContainer.innerHTML = html;
+    },
+
+    /**
+     * On click series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onClickSeries: function(position) {
+        this._executeGraphRenderer(position, 'clickSeries');
+    },
+
+    /**
+     * On move series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onMoveSeries: function(position) {
+        this._executeGraphRenderer(position, 'moveMouseOnSeries');
     }
 });
+
+tui.util.CustomEvents.mixin(BubbleChartSeries);
 
 module.exports = BubbleChartSeries;

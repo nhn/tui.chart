@@ -42,6 +42,18 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         if (!tui.util.isExisty(this.ratioMap[valueType]) && divNumber) {
             this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
         }
+    },
+
+    /**
+     * Pick value map.
+     * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
+     */
+    pickValueMap: function() {
+        return {
+            x: this.ratioMap.x ? this.x : null,
+            y: this.ratioMap.y ? this.y : null,
+            r: this.ratioMap.r ? this.r : null
+        };
     }
 });
 

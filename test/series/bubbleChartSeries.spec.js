@@ -73,19 +73,17 @@ describe('BubbleChartSeries', function() {
         });
     });
 
-    describe('_makePosition()', function() {
+    describe('_makeBound()', function() {
         it('x ratio(ratioMap.x)값이 있는 경우에는 x ratio와 시리즈 너비 값으로 left를 계산합니다.', function() {
             var actual, expected;
 
             boundsMaker.getDimension.and.returnValue({
                 width: 200
             });
-            actual = series._makePosition(0, {
-                ratioMap: {
-                    x: 0.4
-                }
+            actual = series._makeBound({
+                x: 0.4
             });
-            expected = 90;
+            expected = 80;
 
             expect(actual.left).toBe(expected);
         });
@@ -95,10 +93,8 @@ describe('BubbleChartSeries', function() {
                 actual, expected;
 
             boundsMaker.getDimension.and.returnValue({});
-            actual = series._makePosition(positionByStep, {
-                ratioMap: {}
-            });
-            expected = 50;
+            actual = series._makeBound({}, positionByStep);
+            expected = 40;
 
             expect(actual.left).toBe(expected);
         });
@@ -109,12 +105,10 @@ describe('BubbleChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 height: 150
             });
-            actual = series._makePosition(0, {
-                ratioMap: {
-                    y: 0.5
-                }
+            actual = series._makeBound({
+                y: 0.5
             });
-            expected = 85;
+            expected = 75;
 
             expect(actual.top).toBe(expected);
         });
@@ -126,10 +120,8 @@ describe('BubbleChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 height: 150
             });
-            actual = series._makePosition(positionByStep, {
-                ratioMap: {}
-            });
-            expected = 120;
+            actual = series._makeBound({}, positionByStep);
+            expected = 110;
 
             expect(actual.top).toBe(expected);
         });

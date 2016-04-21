@@ -135,6 +135,27 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.axesData = axesData;
     },
 
+    _calculatePixelStep: function(axisData, size) {
+        var tickCount = axisData.tickCount;
+        var pixelStep;
+
+        if (axisData.isLabel) {
+            pixelStep = size / tickCount / 2;
+        } else {
+            pixelStep = size / (tickCount - 1);
+        }
+
+        return parseInt(pixelStep, 10);
+    },
+
+    getMinAxisPixelStep: function() {
+        var dimension = this.getDimension('series');
+        var yPixelStep = this._calculatePixelStep(this.axesData.yAxis, dimension.height);
+        var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);
+
+        return tui.util.min([yPixelStep, xPixelStep]);
+    },
+
     /**
      * Get bound.
      * @param {string} name component name
@@ -626,10 +647,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerExtendedSeriesBound: function() {
-        var seriesBound = this.getBound('series'),
-            expandedBound = this.hasAxes ? renderUtil.expandBound(seriesBound) : seriesBound;
+        var seriesBound = this.getBound('series');
+        if (!predicate.isMousePositionChart(this.chartType)) {
+            seriesBound = renderUtil.expandBound(seriesBound);
+        }
 
-        this._setBound('extendedSeries', expandedBound);
+        this._setBound('extendedSeries', seriesBound);
     },
 
     /**
