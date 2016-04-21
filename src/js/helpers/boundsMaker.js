@@ -135,6 +135,13 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.axesData = axesData;
     },
 
+    /**
+     * Calculate step of pixel unit.
+     * @param {{tickCount: number, isLabel: boolean}} axisData - data for rendering axis
+     * @param {number} size - width or height of serise area
+     * @returns {number}
+     * @private
+     */
     _calculatePixelStep: function(axisData, size) {
         var tickCount = axisData.tickCount;
         var pixelStep;
@@ -148,7 +155,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         return parseInt(pixelStep, 10);
     },
 
-    getMinAxisPixelStep: function() {
+    /**
+     * Get minimum step of pixel unit for axis.
+     * @returns {number}
+     */
+    getMinimumPixelStepForAxis: function() {
         var dimension = this.getDimension('series');
         var yPixelStep = this._calculatePixelStep(this.axesData.yAxis, dimension.height);
         var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);

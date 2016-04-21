@@ -119,7 +119,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
-     * Make tooltip datum
+     * Make tooltip datum.
      * @param {Array.<string>} legendLabels - legend labels
      * @param {string} category - category
      * @param {string} chartType - chart type

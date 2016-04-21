@@ -41,7 +41,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      *      theme: object
      * }} data - data for rendering
      * @param {{showTooltip: function, hideTooltip: function}} callbacks - callbacks for toggle of tooltip.
-     * @returns {object} paper raphael paper
+     * @returns {object}
      */
     render: function(container, data, callbacks) {
         var dimension = data.dimension,
@@ -91,7 +91,16 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
          */
         this.groupCircleInfos = this._renderCircles();
 
+        /**
+         * previous selected circle
+         * @type {?object}
+         */
         this.prevSelectedCircle = null;
+
+        /**
+         * previous over circle
+         * @type {?object}
+         */
         this.prevOverCircle = null;
 
         return paper;
@@ -99,7 +108,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Render overlay.
-     * @returns {object} raphael object
+     * @returns {object}
      * @private
      */
     _renderOverlay: function() {
@@ -186,7 +195,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Animate.
-     * @param {function} onFinish finish callback function
+     * @param {function} onFinish - finish callback function
      */
     animate: function(onFinish) {
         var self = this;
@@ -225,8 +234,8 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     /**
      * Resize graph of bubble type chart.
      * @param {object} params parameters
-     *      @param {{width: number, height:number}} params.dimension dimension
-     *      @param {Array.<Array.<bound>>} params.groupBounds group bounds
+     *      @param {{width: number, height:number}} params.dimension - dimension
+     *      @param {Array.<Array.<bound>>} params.groupBounds - group bounds
      */
     resize: function(params) {
         var self = this;
@@ -266,7 +275,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Get series container bound.
-     * @returns {{left: number, top: number, width: number, height: number}} container bound
+     * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
     _getContainerBound: function() {
@@ -278,8 +287,8 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Whether changed or not.
-     * @param {{left: number, top: number}} prevPosition previous position
-     * @param {{left: number, top: number}} position position
+     * @param {{left: number, top: number}} prevPosition - previous position
+     * @param {{left: number, top: number}} position - position
      * @returns {boolean} result boolean
      * @private
      */
@@ -357,7 +366,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Move mouse on series.
-     * @param {{left: number, top: number}} position mouse position
+     * @param {{left: number, top: number}} position - mouse position
      */
     moveMouseOnSeries: function(position) {
         var circle = this._findCircle(position);
@@ -420,7 +429,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Select legend.
-     * @param {?number} legendIndex legend index
+     * @param {?number} legendIndex - index of legend
      */
     selectLegend: function(legendIndex) {
         var noneSelected = tui.util.isNull(legendIndex);
