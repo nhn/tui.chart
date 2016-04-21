@@ -33,9 +33,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      *      dimension: object, theme: object, options: object
      * }} data render data
      * @param {object} callbacks callbacks
-     *      @param {function} callbacks.funcShowTooltip show tooltip function
-     *      @param {function} callbacks.funcHideTooltip hide tooltip function
-     *      @param {function} callbacks.funcSelectSeries select series function
+     *      @param {function} callbacks.showTooltip show tooltip function
+     *      @param {function} callbacks.hideTooltip hide tooltip function
      * @returns {object} paper raphael paper
      */
     render: function(container, data, callbacks) {
@@ -383,12 +382,12 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             }
 
             if (this._isChangedPosition(this.prevPosition, position)) {
-                this.callbacks.funcShowTooltip.apply(null, args);
+                this.callbacks.showTooltip.apply(null, args);
                 this.prevMovedSector = sector;
             }
         } else if (this.prevMovedSector) {
             this._animateRestoring(this.prevMovedSector.data('index'));
-            this.callbacks.funcHideTooltip();
+            this.callbacks.hideTooltip();
             this.prevMovedSector = null;
         }
         this.prevPosition = position;

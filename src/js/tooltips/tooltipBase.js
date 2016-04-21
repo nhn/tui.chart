@@ -184,8 +184,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} position position
      * @param {{left: number, top: number}} prevPosition prev position
+     * @private
      */
-    moveToPosition: function(tooltipElement, position, prevPosition) {
+    _moveToPosition: function(tooltipElement, position, prevPosition) {
         if (prevPosition) {
             this._slideTooltip(tooltipElement, prevPosition, position);
         } else {

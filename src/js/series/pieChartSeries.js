@@ -165,14 +165,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _renderGraph: function(dimension, seriesData) {
-        var funcShowTooltip = tui.util.bind(this.showTooltip, this, {
+        var showTootltip = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
             callbacks = {
-                funcShowTooltip: funcShowTooltip,
-                funcHideTooltip: tui.util.bind(this.hideTooltip, this),
-                funcSelectSeries: tui.util.bind(this.selectSeries, this)
+                howTooltip: showTootltip,
+                funcHideTooltip: tui.util.bind(this.hideTooltip, this)
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
@@ -228,24 +227,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 groupIndex: index
             }
         };
-    },
-
-    /**
-     * selectSeries is click event callback on series graph.
-     * @param {number} index index
-     */
-    selectSeries: function(index) {
-        var seriesData = this._makeSeriesDataBySelection(index);
-        if (this.selectedIndex === index) {
-            this.onUnselectSeries(seriesData);
-            delete this.selectedIndex;
-        } else {
-            if (!tui.util.isUndefined(this.selectedIndex)) {
-                this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
-            }
-            this.onSelectSeries(seriesData);
-            this.selectedIndex = index;
-        }
     },
 
     /**

@@ -388,7 +388,7 @@ var singleTooltipMixer = {
             alignOption: this.options.align || ''
         }, params));
 
-        this.moveToPosition(elTooltip, position, prevPosition);
+        this._moveToPosition(elTooltip, position, prevPosition);
         this._fireShowAnimation(indexes, params.chartType);
         this._fireAfterShowTooltip(indexes, {
             element: elTooltip,

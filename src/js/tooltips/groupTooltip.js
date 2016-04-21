@@ -348,7 +348,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         dimension = this.getTooltipDimension(elTooltip);
         position = this.positionModel.calculatePosition(dimension, params.range);
 
-        this.moveToPosition(elTooltip, position, prevPosition);
+        this._moveToPosition(elTooltip, position, prevPosition);
 
         this._fireAfterShowTooltip(params.index, params.range, {
             element: elTooltip,
