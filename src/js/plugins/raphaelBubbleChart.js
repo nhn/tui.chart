@@ -15,6 +15,7 @@ var STROKE_OPACITY = 0.3;
 var EMPHASIS_OPACITY = 0.5;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
+var OVERLAY_BORDER_WIDTH = 2;
 
 /**
  * bound for circle
@@ -95,13 +96,19 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
          * previous selected circle
          * @type {?object}
          */
-        this.prevSelectedCircle = null;
+        this.prevCircle = null;
 
         /**
          * previous over circle
          * @type {?object}
          */
         this.prevOverCircle = null;
+
+        /**
+         * animation timeout id
+         * @type {?number}
+         */
+        this.animationTimeoutId = null;
 
         return paper;
     },
@@ -112,16 +119,15 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      * @private
      */
     _renderOverlay: function() {
-        var circle = this._renderCircle({
+        var position = {
             left: 0,
             top: 0
-        }, 'none', 0, '#fff');
-
-        circle.attr({
-            opacity: 0,
+        };
+        var additionalAttr = {
             'stroke-opacity': STROKE_OPACITY,
             'stroke-width': 2
-        });
+        };
+        var circle = this._renderCircle(position, 'none', 0, '#fff', additionalAttr);
 
         return circle;
     },
@@ -132,17 +138,18 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      * @param {string} fill - fill
      * @param {number} radius - radius
      * @param {?string} stroke - stroke
+     * @param {?object} additionalAttr - additional attribute
      * @returns {object}
      * @private
      */
-    _renderCircle: function(position, fill, radius, stroke) {
+    _renderCircle: function(position, fill, radius, stroke, additionalAttr) {
         var circle = this.paper.circle(position.left, position.top, radius);
 
-        circle.attr({
+        circle.attr(tui.util.extend({
             fill: fill,
             opacity: 0,
             stroke: stroke || 'none'
-        });
+        }, additionalAttr));
 
         return circle;
     },
@@ -200,9 +207,9 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     animate: function(onFinish) {
         var self = this;
 
-        if (this.callbackTimeout) {
-            clearTimeout(this.callbackTimeout);
-            delete this.callbackTimeout;
+        if (this.animationTimeoutId) {
+            clearTimeout(this.animationTimeoutId);
+            this.animationTimeoutId = null;
         }
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
@@ -210,10 +217,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         });
 
         if (onFinish) {
-            this.callbackTimeout = setTimeout(function() {
+            this.animationTimeoutId = setTimeout(function() {
                 onFinish();
-                delete self.callbackTimeout;
+                this.animationTimeoutId = null;
             }, ANIMATION_TIME);
+            console.log(this.animationTimeoutId);
         }
     },
 
@@ -259,17 +267,17 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      */
     clickSeries: function(position) {
         var circle = this.paper.getElementByPoint(position.left, position.top);
+        var prevCircle = this.prevCircle;
 
-        if (circle && this.prevSelectedCircle) {
-            this._unselectSeries(this.prevSelectedCircle.data('groupIndex'), this.prevSelectedCircle.data('index'));
+        if (circle && prevCircle) {
+            this._unselectSeries(prevCircle.data('groupIndex'), prevCircle.data('index'));
         }
 
-        if (this.prevSelectedCircle === circle) {
-            circle = null;
-            delete this.prevSelectedCircle;
+        if (prevCircle === circle) {
+            this.prevCircle = null;
         } else if (circle) {
             this._selectSeries(circle.data('groupIndex'), circle.data('index'));
-            this.prevSelectedCircle = circle;
+            this.prevCircle = circle;
         }
     },
 
@@ -297,7 +305,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Show overlay.
+     * Show overlay when mouse over a circle.
      * @param {number} groupIndex - index of circles group
      * @param {number} index - index of circles
      * @private
@@ -309,7 +317,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         this.overlay.attr({
             cx: bound.left,
             cy: bound.top,
-            r: bound.radius + 2,
+            r: bound.radius + OVERLAY_BORDER_WIDTH,
             stroke: circleInfo.color,
             opacity: 1
         });
@@ -336,10 +344,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
      */
     _findCircle: function(position) {
         var circles = [];
+        var paper = this.paper;
         var foundCircle, circle;
 
         while (tui.util.isUndefined(foundCircle)) {
-            circle = this.paper.getElementByPoint(position.left, position.top);
+            circle = paper.getElementByPoint(position.left, position.top);
 
             if (circle) {
                 if (circle.attrs.opacity > DE_EMPHASIS_OPACITY) {

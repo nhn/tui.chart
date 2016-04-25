@@ -58,7 +58,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
         return tui.util.map(valueTypes, function(type) {
-            return data[type] ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
         }).join('');
     },
 

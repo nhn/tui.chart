@@ -221,9 +221,10 @@ BubbleChart.prototype._addDataRatios = function() {
  * @private
  */
 BubbleChart.prototype._attachCustomEvent = function() {
-    var customEvent = this.componentManager.get('customEvent');
-    var bubbleSeries = this.componentManager.get('bubbleSeries');
-    var tooltip = this.componentManager.get('tooltip');
+    var componentManager = this.componentManager;
+    var customEvent = componentManager.get('customEvent');
+    var bubbleSeries = componentManager.get('bubbleSeries');
+    var tooltip = componentManager.get('tooltip');
 
     axisTypeMixer._attachCustomEvent.call(this);
 

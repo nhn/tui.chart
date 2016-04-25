@@ -357,12 +357,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _makeSubtractionValue: function(limit) {
-        var isAllowRenderingForMinusPoint = predicate.isAllowRenderingForMinusPoint(this.chartType),
+        var allowMinusPointRender = predicate.allowMinusPointRender(this.chartType),
             subValue = 0;
 
-        if (!isAllowRenderingForMinusPoint && predicate.isMinusLimit(limit)) {
+        if (!allowMinusPointRender && predicate.isMinusLimit(limit)) {
             subValue = limit.max;
-        } else if (isAllowRenderingForMinusPoint || limit.min >= 0) {
+        } else if (allowMinusPointRender || limit.min >= 0) {
             subValue = limit.min;
         }
 

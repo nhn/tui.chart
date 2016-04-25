@@ -166,7 +166,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
             };
         }
 
-        this.showTooltip(tooltipElement, params, prevPosition);
+        this._showTooltip(tooltipElement, params, prevPosition);
     },
 
     /**
@@ -224,7 +224,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     onHide: function(index) {
         var tooltipElement = this._getTooltipElement();
 
-        this.hideTooltip(tooltipElement, index);
+        this._hideTooltip(tooltipElement, index);
     },
 
     /**

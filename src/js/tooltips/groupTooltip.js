@@ -329,8 +329,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      *          size: number, direction: string, isVertical: boolean
      *        }} params coordinate event parameters
      * @param {{left: number, top: number}} prevPosition prev position
+     * @private
      */
-    showTooltip: function(elTooltip, params, prevPosition) {
+    _showTooltip: function(elTooltip, params, prevPosition) {
         var dimension, position;
 
         if (!tui.util.isUndefined(this.prevIndex)) {
@@ -389,8 +390,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * Hide tooltip.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {number} index index
+     * @private
      */
-    hideTooltip: function(elTooltip, index) {
+    _hideTooltip: function(elTooltip, index) {
         delete this.prevIndex;
         this._hideTooltipSector(index);
         dom.removeClass(elTooltip, 'show');

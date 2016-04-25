@@ -119,7 +119,7 @@ var predicate = {
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
-    isAllowRenderingForMinusPoint: function(chartType) {
+    allowMinusPointRender: function(chartType) {
         return this.isLineTypeChart(chartType) || this.isBubbleChart(chartType);
     },
 

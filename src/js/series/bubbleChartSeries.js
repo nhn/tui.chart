@@ -50,11 +50,11 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      * Make bound for bubble chart.
      * @param {{x: number, y: number, r: number}} ratioMap - ratio map
      * @param {number} positionByStep - position value by step
-     * @param {number} maxPxRadius - max pixel radius
+     * @param {number} maxRadius - max radius
      * @returns {{left: number, top: number, raius: number}}
      * @private
      */
-    _makeBound: function(ratioMap, positionByStep, maxPxRadius) {
+    _makeBound: function(ratioMap, positionByStep, maxRadius) {
         var dimension = this.boundsMaker.getDimension('series');
         var left = tui.util.isExisty(ratioMap.x) ? (ratioMap.x * dimension.width) : positionByStep;
         var top = tui.util.isExisty(ratioMap.y) ? (ratioMap.y * dimension.height) : positionByStep;
@@ -62,7 +62,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         return {
             left: left,
             top: dimension.height - top,
-            radius: tui.util.max([maxPxRadius * ratioMap.r, 2])
+            radius: tui.util.max([maxRadius * ratioMap.r, 2])
         };
     },
 
@@ -74,7 +74,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     _makeBounds: function() {
         var self = this;
         var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var maxPxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
+        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
         var step = this._calculateStep();
         var start = step ? step / 2 : 0;
 
@@ -82,7 +82,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
             var positionByStep = start + (step * index);
 
             return seriesGroup.map(function(seriesItem) {
-                return self._makeBound(seriesItem.ratioMap, positionByStep, maxPxRadius);
+                return self._makeBound(seriesItem.ratioMap, positionByStep, maxRadius);
             });
         });
     },
