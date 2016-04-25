@@ -170,8 +170,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 chartType: this.chartType
             }),
             callbacks = {
-                howTooltip: showTootltip,
-                funcHideTooltip: tui.util.bind(this.hideTooltip, this)
+                showTooltip: showTootltip,
+                hideTooltip: tui.util.bind(this.hideTooltip, this)
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 

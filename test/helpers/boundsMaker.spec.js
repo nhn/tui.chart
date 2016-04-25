@@ -30,6 +30,51 @@ describe('boundsMaker', function() {
         });
     });
 
+    describe('_calculatePixelStep()', function() {
+        it('axis가 라벨타입일 경우의 pixel단위 step을 반환합니다', function() {
+            var actual = boundsMaker._calculatePixelStep({
+                tickCount: 4,
+                isLabel: true
+            }, 240);
+            var expected = 30;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis가 라벨타입이 아닐 경우의 pixel단위 step을 반환합니다', function() {
+            var actual = boundsMaker._calculatePixelStep({
+                tickCount: 4
+            }, 240);
+            var expected = 80;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('getMinimumPixelStepForAxis()', function() {
+        it('yAxis와 xAxis의 pixcel단위 step중 작은 값을 찾아 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(boundsMaker, 'getDimension').and.returnValue({
+                width: 400,
+                height: 240
+            });
+            boundsMaker.axesData = {
+                xAxis: {
+                    tickCount: 5
+                },
+                yAxis: {
+                    tickCount: 4
+                }
+            };
+
+            actual = boundsMaker.getMinimumPixelStepForAxis();
+            expected = 80;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
     describe('_registerChartDimension()', function() {
         it('chart option(width, height) 정보를 받아 chart dimension을 등록합니다.', function() {
             var actual, expected;

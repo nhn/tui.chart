@@ -192,6 +192,18 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
+    },
+
+    /**
+     * Pick value map.
+     * @returns {{value: number, start: ?number, end: ?number}}
+     */
+    pickValueMap: function() {
+        return {
+            value: this.value,
+            start: this.start,
+            end: this.end
+        };
     }
 });
 

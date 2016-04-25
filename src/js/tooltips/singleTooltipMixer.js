@@ -358,8 +358,9 @@ var singleTooltipMixer = {
      * @param {HTMLElement} elTooltip tooltip element
      * @param {{indexes: {groupIndex: number, index: number}, bound: object}} params tooltip data
      * @param {{left: number, top: number}} prevPosition prev position
+     * @private
      */
-    showTooltip: function(elTooltip, params, prevPosition) {
+    _showTooltip: function(elTooltip, params, prevPosition) {
         var indexes = params.indexes,
             prevIndexes = this._getIndexesCustomAttribute(elTooltip),
             prevChartType, position;
@@ -421,16 +422,18 @@ var singleTooltipMixer = {
 
     /**
      * Hide tooltip.
-     * @param {HTMLElement} elTooltip tooltip element
-     * @param {function} callback callback
+     * @param {HTMLElement} tooltipElement tooltip element
+     * @private
      */
-    hideTooltip: function(elTooltip) {
+    _hideTooltip: function(tooltipElement) {
         var self = this,
-            indexes = this._getIndexesCustomAttribute(elTooltip),
-            chartType = elTooltip.getAttribute('data-chart-type');
+            indexes = this._getIndexesCustomAttribute(tooltipElement),
+            chartType = tooltipElement.getAttribute('data-chart-type');
 
-        if (chartType) {
-            this._setShowedCustomAttribute(elTooltip, false);
+        if (predicate.isMousePositionChart(chartType)) {
+            dom.removeClass(tooltipElement, 'show');
+        } else if (chartType) {
+            this._setShowedCustomAttribute(tooltipElement, false);
             this._fireHideAnimation(indexes, chartType);
 
             if (this._isChangedIndexes(this.prevIndexes, indexes)) {
@@ -438,12 +441,12 @@ var singleTooltipMixer = {
             }
 
             setTimeout(function() {
-                if (self._isShowedTooltip(elTooltip)) {
+                if (self._isShowedTooltip(tooltipElement)) {
                     return;
                 }
 
-                dom.removeClass(elTooltip, 'show');
-                elTooltip.style.cssText = '';
+                dom.removeClass(tooltipElement, 'show');
+                tooltipElement.style.cssText = '';
 
                 indexes = null;
             }, chartConst.HIDE_DELAY);

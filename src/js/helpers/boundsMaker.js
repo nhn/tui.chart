@@ -136,6 +136,38 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Calculate step of pixel unit.
+     * @param {{tickCount: number, isLabel: boolean}} axisData - data for rendering axis
+     * @param {number} size - width or height of serise area
+     * @returns {number}
+     * @private
+     */
+    _calculatePixelStep: function(axisData, size) {
+        var tickCount = axisData.tickCount;
+        var pixelStep;
+
+        if (axisData.isLabel) {
+            pixelStep = size / tickCount / 2;
+        } else {
+            pixelStep = size / (tickCount - 1);
+        }
+
+        return parseInt(pixelStep, 10);
+    },
+
+    /**
+     * Get minimum step of pixel unit for axis.
+     * @returns {number}
+     */
+    getMinimumPixelStepForAxis: function() {
+        var dimension = this.getDimension('series');
+        var yPixelStep = this._calculatePixelStep(this.axesData.yAxis, dimension.height);
+        var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);
+
+        return tui.util.min([yPixelStep, xPixelStep]);
+    },
+
+    /**
      * Get bound.
      * @param {string} name component name
      * @returns {bound} component bound
@@ -585,7 +617,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
 
-        if (this.hasAxes) {
+        if (!predicate.isMousePositionChart(this.chartType)) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
@@ -626,10 +658,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerExtendedSeriesBound: function() {
-        var seriesBound = this.getBound('series'),
-            expandedBound = this.hasAxes ? renderUtil.expandBound(seriesBound) : seriesBound;
+        var seriesBound = this.getBound('series');
+        if (!predicate.isMousePositionChart(this.chartType)) {
+            seriesBound = renderUtil.expandBound(seriesBound);
+        }
 
-        this._setBound('extendedSeries', expandedBound);
+        this._setBound('extendedSeries', seriesBound);
     },
 
     /**

@@ -58,6 +58,16 @@ var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleC
      */
     _onMousemove: function(e) {
         this._onMouseEvent('move', e);
+    },
+
+    /**
+     * On mouse out.
+     * @param {MouseEvent} e - mouse event
+     * @private
+     * @override
+     */
+    _onMouseout: function(e) {
+        this._onMouseEvent('move', e);
     }
 });
 

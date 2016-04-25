@@ -9,6 +9,7 @@
 var TooltipBase = require('./tooltipBase'),
     singleTooltipMixer = require('./singleTooltipMixer'),
     chartConst = require('../const'),
+    predicate = require('../helpers/predicate'),
     tooltipTemplate = require('./tooltipTemplate');
 
 /**
@@ -35,9 +36,30 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipHtml: function(category, item) {
-        return tooltipTemplate.tplDefault(tui.util.extend({
+        var template;
+
+        if (predicate.isBubbleChart(this.chartType)) {
+            template = tooltipTemplate.tplBubbleChart;
+        } else {
+            template = tooltipTemplate.tplDefault;
+        }
+
+        return template(tui.util.extend({
             category: category || ''
         }, item));
+    },
+
+    /**
+     * Make html for value types like x, y, r
+     * @param {{x: ?number, y: ?number, r: ?number}} data - data
+     * @param {Array.<string>} valueTypes - types of value
+     * @returns {string}
+     * @private
+     */
+    _makeHtmlForValueTypes: function(data, valueTypes) {
+        return tui.util.map(valueTypes, function(type) {
+            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+        }).join('');
     },
 
     /**
@@ -49,11 +71,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeSingleTooltipHtml: function(chartType, indexes) {
         var data = tui.util.pick(this.data, chartType, indexes.groupIndex, indexes.index);
-        return this.templateFunc(data.category, {
-            value: data.value,
-            legend: data.legend,
+
+        data = tui.util.extend({
             suffix: this.suffix
-        });
+        }, data);
+        data.valueTypes = this._makeHtmlForValueTypes(data, ['x', 'y', 'r']);
+
+        return this.templateFunc(data.category, data);
     },
 
     /**
@@ -95,6 +119,28 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     },
 
     /**
+     * Make tooltip datum.
+     * @param {Array.<string>} legendLabels - legend labels
+     * @param {string} category - category
+     * @param {string} chartType - chart type
+     * @param {SeriesItem} seriesItem - SeriesItem
+     * @param {number} index - index
+     * @returns {Object}
+     * @private
+     */
+    _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
+        var legend = legendLabels[chartType][index];
+        var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
+        var label = seriesItem.label ? labelPrefix + seriesItem.label : '';
+
+        return tui.util.extend({
+            category: category,
+            legend: legend,
+            label: label
+        }, seriesItem.pickValueMap());
+    },
+
+    /**
      * Make tooltip data.
      * @returns {Array.<object>} tooltip data
      * @override
@@ -113,23 +159,20 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }
 
         this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-            var datum;
+            var category = categories[groupIndex] || '';
+            var data;
 
             chartType = chartType || self.chartType;
+
+            data = seriesGroup.map(function(seriesItem, index) {
+                return self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index);
+            });
 
             if (!tooltipData[chartType]) {
                 tooltipData[chartType] = [];
             }
 
-            datum = seriesGroup.map(function(seriesItem, index) {
-                return {
-                    category: categories ? categories[groupIndex] : '',
-                    legend: legendLabels[chartType][index],
-                    value: seriesItem.label
-                };
-            });
-
-            tooltipData[chartType].push(datum);
+            tooltipData[chartType].push(data);
         });
 
         return tooltipData;
