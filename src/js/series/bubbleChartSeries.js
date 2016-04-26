@@ -62,7 +62,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         return {
             left: left,
             top: dimension.height - top,
-            radius: tui.util.max([maxRadius * ratioMap.r, 2])
+            radius: Math.max(maxRadius * ratioMap.r, 2)
         };
     },
 

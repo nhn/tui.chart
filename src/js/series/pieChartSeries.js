@@ -131,7 +131,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             height = dimension.height,
             isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
-            diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
+            diameter = tui.util.multiplication(Math.min(width, height), radiusRate);
 
         return {
             cx: tui.util.division(width, 2),

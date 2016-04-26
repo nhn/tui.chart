@@ -70,7 +70,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeOptionSize: function(barSize, optionBarWidth) {
         var optionsSize = 0;
         if (optionBarWidth) {
-            optionsSize = tui.util.min([barSize, optionBarWidth]);
+            optionsSize = Math.min(barSize, optionBarWidth);
         }
         return optionsSize;
     },

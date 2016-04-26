@@ -164,7 +164,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var yPixelStep = this._calculatePixelStep(this.axesData.yAxis, dimension.height);
         var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);
 
-        return tui.util.min([yPixelStep, xPixelStep]);
+        return Math.min(yPixelStep, xPixelStep);
     },
 
     /**
