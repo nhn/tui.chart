@@ -123,33 +123,13 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
             left: 0,
             top: 0
         };
-        var additionalAttr = {
+        var attribute = {
+            fill: 'none',
+            stroke: '#fff',
             'stroke-opacity': STROKE_OPACITY,
             'stroke-width': 2
         };
-        var circle = this._renderCircle(position, 'none', 0, '#fff', additionalAttr);
-
-        return circle;
-    },
-
-    /**
-     * Render circle.
-     * @param {{left: number, top: number}} position - position
-     * @param {string} fill - fill
-     * @param {number} radius - radius
-     * @param {?string} stroke - stroke
-     * @param {?object} additionalAttr - additional attribute
-     * @returns {object}
-     * @private
-     */
-    _renderCircle: function(position, fill, radius, stroke, additionalAttr) {
-        var circle = this.paper.circle(position.left, position.top, radius);
-
-        circle.attr(tui.util.extend({
-            fill: fill,
-            opacity: 0,
-            stroke: stroke || 'none'
-        }, additionalAttr));
+        var circle = raphaelRenderUtil.renderCircle(this.paper, position, 0, attribute);
 
         return circle;
     },
@@ -173,7 +153,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
             return tui.util.map(bounds, function(bound, index) {
                 var color = singleColor || colors[index];
-                var circle = self._renderCircle(bound, color, 0);
+                var circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
+                    fill: color,
+                    opacity: 0,
+                    stroke: 'none'
+                });
 
                 circle.data('groupIndex', groupIndex);
                 circle.data('index', index);
@@ -221,7 +205,6 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
                 onFinish();
                 this.animationTimeoutId = null;
             }, ANIMATION_TIME);
-            console.log(this.animationTimeoutId);
         }
     },
 

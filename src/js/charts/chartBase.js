@@ -208,6 +208,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     _makeAxesData: function() {},
 
     /**
+     * Update dimensions.
+     * @abstract
+     * @private
+     */
+    _updateDimensions: function() {},
+
+    /**
      * Add data ratios.
      * @private
      * @abstract
@@ -240,8 +247,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         this.boundsMaker.registerAxesData(axesData);
         this._executeComponentFunc('registerAdditionalDimension');
-        this.boundsMaker.registerBoundsData();
+        this.boundsMaker.registerSeriesDimension();
 
+        this._updateDimensions(axesData);
+        this.boundsMaker.registerBoundsData();
         this._addDataRatios(axesData);
 
         renderingData = this._makeRenderingData(axesData);
@@ -450,12 +459,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Update dimension.
+     * Update dimension of chart.
      * @param {{width: number, height: number}} dimension dimension
      * @returns {boolean} whether updated or not
      * @private
      */
-    _updateDimension: function(dimension) {
+    _updateChartDimension: function(dimension) {
         var updated = false;
 
         if (dimension.width) {
@@ -486,7 +495,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        updated = this._updateDimension(dimension);
+        updated = this._updateChartDimension(dimension);
 
         if (!updated) {
             return;

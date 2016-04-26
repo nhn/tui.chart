@@ -9,8 +9,11 @@
 var ChartBase = require('./chartBase'),
     chartConst = require('../const'),
     Series = require('../series/bubbleChartSeries'),
+    CircleLegend = require('../legends/circleLegend'),
     axisTypeMixer = require('./axisTypeMixer'),
     axisDataMaker = require('../helpers/axisDataMaker'),
+    predicate = require('../helpers/predicate'),
+    renderUtil = require('../helpers/renderUtil'),
     SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
@@ -119,43 +122,41 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
+     * Make axis data.
+     * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {object}
+     * @private
+     */
+    _makeAxisData: function(axisScaleMaker, isVertical) {
+        var axisData;
+
+        if (axisScaleMaker) {
+            axisData = axisDataMaker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker,
+                isVertical: !!isVertical
+            });
+        } else {
+            axisData = axisDataMaker.makeLabelAxisData({
+                labels: this.dataProcessor.getCategories(),
+                isVertical: !!isVertical
+            });
+        }
+
+        return axisData;
+    },
+
+    /**
      * Make axes data
-     * @param {object} bounds chart bounds
      * @returns {object} axes data
      * @private
      */
     _makeAxesData: function() {
-        var scaleMakerMap = this._getAxisScaleMakerMap();
-        var categories = this.dataProcessor.getCategories();
-        var labelAxisData, xAxisData, yAxisData;
-
-        if (categories.length) {
-            labelAxisData = axisDataMaker.makeLabelAxisData({
-                labels: categories
-            });
-        }
-
-        if (scaleMakerMap.xAxis) {
-            xAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: scaleMakerMap.xAxis
-            });
-        } else {
-            xAxisData = labelAxisData;
-        }
-
-        if (scaleMakerMap.yAxis) {
-            yAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: scaleMakerMap.yAxis,
-                isVertical: true
-            });
-        } else {
-            yAxisData = labelAxisData;
-            yAxisData.isVertical = true;
-        }
+        var axisScaleMakerMap = this._getAxisScaleMakerMap();
 
         return {
-            xAxis: xAxisData,
-            yAxis: yAxisData
+            xAxis: this._makeAxisData(axisScaleMakerMap.xAxis),
+            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, true)
         };
     },
 
@@ -181,6 +182,137 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
                     SeriesClass: Series
                 }
             ]
+        });
+
+        if (this.options.circleLegend.hidden !== true) {
+            this.componentManager.register('circleLegend', CircleLegend, {
+                chartType: chartType,
+                baseFontFamily: this.theme.chart.fontFamily
+            });
+        }
+    },
+
+    /**
+     * Get max CircleLegend label width.
+     * @returns {*|number}
+     * @private
+     */
+    _getMaxCircleLegendLabelWidth: function() {
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'r');
+        var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
+            fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
+            fontFamily: this.theme.chart.fontFamily
+        });
+
+        return maxLabelWidth;
+    },
+
+    /**
+     *
+     * @returns {number}
+     * @private
+     */
+    _getCircleLegendWidth: function() {
+        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
+        var circleWidth = (maxRadius * 2) + chartConst.CIRCLE_LEGEND_PADDING;
+        var maxLabelWidth = this._getMaxCircleLegendLabelWidth();
+
+        return Math.max(circleWidth, maxLabelWidth);
+    },
+
+    /**
+     * Update legend and series width of boundsMaker.
+     * @param {number} seriesWidth - width of series area
+     * @param {number} legendWidth - width of legend area
+     * @private
+     */
+    _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
+        var circleLegendWidth = this._getCircleLegendWidth();
+        this.boundsMaker.registerBaseDimension('legend', {
+            width: circleLegendWidth
+        });
+
+        this.boundsMaker.registerBaseDimension('series', {
+            width: seriesWidth - (circleLegendWidth - legendWidth)
+        });
+    },
+
+    /**
+     * Update axesData of boundsMaker.
+     * @param {boolean} isXAxisLabel - whether xAxis is label type or not.
+     * @private
+     */
+    _updateAxesDataOfBoundsMaker: function(isXAxisLabel) {
+        var newAxesData;
+
+        if (isXAxisLabel) {
+            return;
+        }
+
+        this.axisScaleMakerMap = null;
+        newAxesData = this._makeAxesData();
+        this.boundsMaker.registerAxesData(newAxesData);
+    },
+
+    /**
+     * Whether changed max radius or not.
+     * @param {boolean} beforeMaxRadius - before max radius
+     * @returns {boolean}
+     */
+    isChangedMaxRadius: function(beforeMaxRadius) {
+        var afterMaxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
+
+        return (beforeMaxRadius !== afterMaxRadius);
+    },
+
+    /**
+     * Update width of legend ara by width of circle legend area.
+     * @param {number} circleLegendWidth - width of circle legend area
+     * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
+     * @private
+     */
+    _updateLegendWidthByCircleLegendWidth: function(circleLegendWidth, axesData) {
+        var boundsMaker = this.boundsMaker;
+        var legendWidth = boundsMaker.getDimension('calculationLegend').width;
+        var isXAxisLabel = axesData.xAxis.isLabel;
+        var beforeMaxRadius, seriesWidth;
+
+        if (legendWidth >= circleLegendWidth) {
+            return;
+        }
+
+        seriesWidth = boundsMaker.getDimension('series').width;
+        beforeMaxRadius = boundsMaker.getMinimumPixelStepForAxis();
+
+        this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
+        this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+
+        if (this.isChangedMaxRadius(beforeMaxRadius)) {
+            this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
+            this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+        }
+    },
+
+    /**
+     * Update dimensions.
+     * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
+     * @private
+     * @override
+     */
+    _updateDimensions: function(axesData) {
+        var circleLegendWidth;
+
+        if (predicate.isHidden(this.options.circleLegend)) {
+            return;
+        }
+
+        circleLegendWidth = this._getCircleLegendWidth();
+
+        this._updateLegendWidthByCircleLegendWidth(circleLegendWidth, axesData);
+
+        this.boundsMaker.registerBaseDimension('circleLegend', {
+            width: circleLegendWidth,
+            height: circleLegendWidth
         });
     },
 

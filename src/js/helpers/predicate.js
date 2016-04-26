@@ -274,6 +274,15 @@ var predicate = {
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
+    },
+
+    /**
+     * Whether options.hidden is true or not.
+     * @param {object} options - options
+     * @returns {boolean}
+     */
+    isHidden: function(options) {
+        return tui.util.pick(options, 'hidden');
     }
 };
 

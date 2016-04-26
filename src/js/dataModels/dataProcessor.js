@@ -383,6 +383,29 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Get max value.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
+     * @returns {number}
+     */
+    getMaxValue: function(chartType, valueType) {
+        return tui.util.max(this.getValues(chartType, valueType));
+    },
+
+    /**
+     * Get formatted max value.
+     * @param {?string} chartType - type of chart
+     * @param {?string} valueType - type of value like value, x, y, r.
+     * @returns {string | number}
+     */
+    getFormattedMaxValue: function(chartType, valueType) {
+        var maxValue = this.getMaxValue(chartType, valueType);
+        var formatFunctions = this.getFormatFunctions();
+
+        return renderUtil.formatValue(maxValue, formatFunctions);
+    },
+
+    /**
      * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
      */
@@ -594,17 +617,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _formatDecimal: function(len, value) {
-        var pow;
-
-        if (len === 0) {
-            return Math.round(value);
-        }
-
-        pow = Math.pow(10, len);
-        value = Math.round(value * pow) / pow;
-        value = parseFloat(value).toFixed(len);
-
-        return value;
+        return renderUtil.formatDecimal(value, len);
     },
 
     /**

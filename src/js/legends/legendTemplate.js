@@ -16,11 +16,14 @@ var htmls = {
         '<div class="tui-chart-legend-label" style="height:{{ labelHeight }}px{{ labelWidth }}"' +
             ' data-index="{{ index }}">{{ label }}</div></div>',
     HTML_TICK: '<div class="tui-chart-map-legend-tick" style="{{ position }}"></div>' +
-        '<div class="tui-chart-map-legend-tick-label" style="{{ labelPosition }}">{{ label }}</div>'
+        '<div class="tui-chart-map-legend-tick-label" style="{{ labelPosition }}">{{ label }}</div>',
+    HTML_CIRCLE_LEGEND_LABEL: '<div class="tui-chart-circle-legend-label"' +
+            ' style="left: {{ left }}px;top: {{ top }}px">{{ label }}</div>'
 };
 
 module.exports = {
     tplCheckbox: templateMaker.template(htmls.HTML_CHECKBOX),
     tplLegend: templateMaker.template(htmls.HTML_LEGEND),
-    tplTick: templateMaker.template(htmls.HTML_TICK)
+    tplTick: templateMaker.template(htmls.HTML_TICK),
+    tplCircleLegendLabel: templateMaker.template(htmls.HTML_CIRCLE_LEGEND_LABEL)
 };

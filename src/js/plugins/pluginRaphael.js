@@ -6,13 +6,14 @@
 
 'use strict';
 
-var BarChart = require('./raphaelBarChart'),
-    LineChart = require('./raphaelLineChart'),
-    AreaChart = require('./raphaelAreaChart'),
-    PieChart = require('./raphaelPieChart'),
-    BubbleChart = require('./raphaelBubbleChart'),
-    MapChart = require('./raphaelMapChart'),
-    MapLegend = require('./raphaelMapLegend');
+var BarChart = require('./raphaelBarChart');
+var LineChart = require('./raphaelLineChart');
+var AreaChart = require('./raphaelAreaChart');
+var PieChart = require('./raphaelPieChart');
+var BubbleChart = require('./raphaelBubbleChart');
+var MapChart = require('./raphaelMapChart');
+var MapLegend = require('./raphaelMapLegend');
+var CircleLegend = require('./raphaelCircleLegend');
 
 var pluginName = 'raphael',
     pluginRaphael;
@@ -25,7 +26,8 @@ pluginRaphael = {
     pie: PieChart,
     bubble: BubbleChart,
     map: MapChart,
-    mapLegend: MapLegend
+    mapLegend: MapLegend,
+    circleLegend: CircleLegend
 };
 
 tui.chart.registerPlugin(pluginName, pluginRaphael);
