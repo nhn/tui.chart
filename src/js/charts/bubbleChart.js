@@ -184,7 +184,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             ]
         });
 
-        if (this.options.circleLegend.hidden !== true) {
+        if (!tui.util.pick(this.options, 'circleLegend', 'hidden')) {
             this.componentManager.register('circleLegend', CircleLegend, {
                 chartType: chartType,
                 baseFontFamily: this.theme.chart.fontFamily
