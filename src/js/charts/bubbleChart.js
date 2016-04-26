@@ -6,15 +6,15 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    Series = require('../series/bubbleChartSeries'),
-    CircleLegend = require('../legends/circleLegend'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil'),
-    SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
+var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var Series = require('../series/bubbleChartSeries');
+var CircleLegend = require('../legends/circleLegend');
+var axisTypeMixer = require('./axisTypeMixer');
+var axisDataMaker = require('../helpers/axisDataMaker');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
     /**
