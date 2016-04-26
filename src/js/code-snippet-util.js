@@ -14,10 +14,10 @@ var min = function(arr, condition, context) {
         result =  Math.min.apply(null, arr);
     } else {
         result = arr[0];
-        minValue = condition.call(context, result);
+        minValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item) {
-            var compareValue = condition.call(context, item);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
             if (compareValue < minValue) {
                 minValue = compareValue;
                 result = item;
@@ -42,10 +42,10 @@ var max = function(arr, condition, context) {
         result = Math.max.apply(null, arr);
     } else {
         result = arr[0];
-        maxValue = condition.call(context, result);
+        maxValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item) {
-            var compareValue = condition.call(context, item);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
             if (compareValue > maxValue) {
                 maxValue = compareValue;
                 result = item;

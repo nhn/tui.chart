@@ -228,6 +228,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      */
     _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
         var circleLegendWidth = this._getCircleLegendWidth();
+
         this.boundsMaker.registerBaseDimension('legend', {
             width: circleLegendWidth
         });
@@ -267,20 +268,20 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Update width of legend area by width of circle legend area.
-     * @param {number} circleLegendWidth - width of circle legend area
      * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
      * @private
      */
-    _updateLegendWidthByCircleLegendWidth: function(circleLegendWidth, axesData) {
+    _updateLegendWidthByCircleLegendWidth: function(axesData) {
         var boundsMaker = this.boundsMaker;
+        var circleLegendWidth = this._getCircleLegendWidth();
         var legendWidth = boundsMaker.getDimension('calculationLegend').width;
-        var isXAxisLabel = axesData.xAxis.isLabel;
-        var beforeMaxRadius, seriesWidth;
+        var isXAxisLabel, beforeMaxRadius, seriesWidth;
 
         if (legendWidth >= circleLegendWidth) {
             return;
         }
 
+        isXAxisLabel = axesData.xAxis.isLabel;
         seriesWidth = boundsMaker.getDimension('series').width;
         beforeMaxRadius = boundsMaker.getMinimumPixelStepForAxis();
 
@@ -294,26 +295,31 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
+     * Register dimension of circle legend.
+     * @private
+     */
+    _registerCircleLegendDimension: function() {
+        var circleLegendWidth = this._getCircleLegendWidth();
+
+        this.boundsMaker.registerBaseDimension('circleLegend', {
+            width: circleLegendWidth,
+            height: circleLegendWidth
+        });
+    },
+
+    /**
      * Update dimensions.
      * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
      * @private
      * @override
      */
     _updateDimensions: function(axesData) {
-        var circleLegendWidth;
-
         if (predicate.isHidden(this.options.circleLegend)) {
             return;
         }
 
-        circleLegendWidth = this._getCircleLegendWidth();
-
-        this._updateLegendWidthByCircleLegendWidth(circleLegendWidth, axesData);
-
-        this.boundsMaker.registerBaseDimension('circleLegend', {
-            width: circleLegendWidth,
-            height: circleLegendWidth
-        });
+        this._updateLegendWidthByCircleLegendWidth(axesData);
+        this._registerCircleLegendDimension();
     },
 
     /**

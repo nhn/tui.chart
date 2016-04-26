@@ -88,6 +88,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             },
             circleLegend: {
                 width: 0
+            },
+            calculationLegend: {
+                width: 0
             }
         };
 

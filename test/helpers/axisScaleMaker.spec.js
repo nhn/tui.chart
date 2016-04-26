@@ -203,13 +203,13 @@ describe('Test for AxisScaleMaker', function() {
         });
     });
 
-    describe('_getCandidateValueCounts()', function() {
+    describe('_getCandidateCountsOfValue()', function() {
         it('너비가 320일 경우에는 320을 40과 60으로 나눈 값인 5와 8 사이의 후보 value count 정보를 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.makeSeriesWidth.and.returnValue(320);
 
-            actual = axisScaleMaker._getCandidateValueCounts();
+            actual = axisScaleMaker._getCandidateCountsOfValue();
             expected = [5, 6, 7, 8];
 
             expect(actual).toEqual(expected);
@@ -220,7 +220,7 @@ describe('Test for AxisScaleMaker', function() {
 
             boundsMaker.makeSeriesWidth.and.returnValue(450);
 
-            actual = axisScaleMaker._getCandidateValueCounts();
+            actual = axisScaleMaker._getCandidateCountsOfValue();
             expected = [7, 8, 9, 10, 11];
 
             expect(actual).toEqual(expected);
@@ -685,7 +685,8 @@ describe('Test for AxisScaleMaker', function() {
                     min: 0,
                     max: 100
                 },
-                step: 25
+                step: 25,
+                valueCount: 4
             });
         });
     });
@@ -702,11 +703,13 @@ describe('Test for AxisScaleMaker', function() {
                 expected = [
                     {
                         limit: {min: 0, max: 200},
-                        step: 100
+                        step: 100,
+                        valueCount: 2
                     },
                     {
                         limit: {min: 0, max: 150},
-                        step: 50
+                        step: 50,
+                        valueCount: 3
                     }
                 ];
 
@@ -719,13 +722,14 @@ describe('Test for AxisScaleMaker', function() {
             var actual = axisScaleMaker._getComparingValue({
                     min: 10,
                     max: 90
-                }, {
+                }, [4], {
                     limit: {
                         min: 0,
                         max: 80
                     },
-                    step: 20
-                }),
+                    step: 20,
+                    valueCount: 4
+                }, 0),
                 expected = 20;
 
             expect(actual).toEqual(expected);
@@ -740,16 +744,19 @@ describe('Test for AxisScaleMaker', function() {
                 }, [
                     {
                         limit: {min: 0, max: 105},
-                        step: 35
+                        step: 35,
+                        valueCount: 4
                     },
                     {
                         limit: {min: 0, max: 100},
-                        step: 25
+                        step: 25,
+                        valueCount: 4
                     }
-                ]),
+                ], [3, 4]),
                 expected = {
                     limit: {min: 0, max: 100},
-                    step: 25
+                    step: 25,
+                    valueCount: 4
                 };
 
             expect(actual).toEqual(expected);
@@ -802,7 +809,8 @@ describe('Test for AxisScaleMaker', function() {
             actual = axisScaleMaker._calculateScale();
             expected = {
                 limit: {min: 0, max: 100},
-                step: 20
+                step: 20,
+                valueCount: 5
             };
 
             expect(actual).toEqual(expected);
