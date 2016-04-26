@@ -10,19 +10,22 @@ var BubbleChart = require('../../src/js/charts/bubbleChart'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
 describe('Test for BubbleChart', function() {
-    var bubbleChart, sereisDataModel;
+    var bubbleChart, dataProcessor, sereisDataModel;
 
     beforeEach(function() {
         bubbleChart = BubbleChart.prototype;
-        bubbleChart.dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getCategories', 'hasCategories', 'getSeriesDataModel', 'getValues', 'addDataRatiosForCoordinateType']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['getCategories', 'hasCategories', 'getCategories', 'getSeriesDataModel', 'getValues',
+                'getFormattedMaxValue', 'addDataRatiosForCoordinateType']);
         sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
+
+        bubbleChart.dataProcessor = dataProcessor;
     });
 
     describe('_makeAxisScaleMakerMap()', function() {
         it('_createAxisScaleMaker()의 반환값으로 scaleMakerMap의 xAxis와 yAxis에 설정합니다.', function() {
-            bubbleChart.dataProcessor.hasCategories.and.returnValue(false);
-            bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
                 xAxis: {
@@ -50,8 +53,8 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 없다면 xAxis와 yAxis 모두에 설정하여 반환합니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.hasCategories.and.returnValue(false);
-            bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
                 xAxis: {
@@ -76,9 +79,9 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 있고 x값의 개수가 y값의 개수보다 많다면 xAxis만 설정하여 반환합니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.hasCategories.and.returnValue(true);
+            dataProcessor.hasCategories.and.returnValue(true);
             sereisDataModel.isXCountGreaterThanYCount.and.returnValue(true);
-            bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
                 xAxis: {
@@ -102,9 +105,9 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 있고 x값의 개수가 y값의 개수보다 작거나 같다면 yAxis만 설정하여 반환합니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.hasCategories.and.returnValue(true);
+            dataProcessor.hasCategories.and.returnValue(true);
             sereisDataModel.isXCountGreaterThanYCount.and.returnValue(false);
-            bubbleChart.dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
+            dataProcessor.getSeriesDataModel.and.returnValue(sereisDataModel);
             spyOn(bubbleChart, '_createAxisScaleMaker').and.returnValue('instance of axisScaleMaker');
             bubbleChart.options = {
                 xAxis: {
@@ -130,7 +133,7 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 없고 axisScaleMap의 xAxis, yAxis모두 axisScaleMaker를 갖고 있다면 반환하는 xAxis와 yAxis의 axisData는 모두 값 타입 입니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.getCategories.and.returnValue([]);
+            dataProcessor.getCategories.and.returnValue([]);
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(bubbleChart, '_getAxisScaleMakerMap').and.returnValue({
                 xAxis: 'instance of axisScaleMaker',
@@ -148,7 +151,7 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 있고 axisScaleMap의 xAxis만 axisScaleMaker를 갖고 있다면 반환하는 xAxis는 값 타입이고 yAxis는 라벨 타입 입니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({
                 isLabel: true
@@ -171,7 +174,7 @@ describe('Test for BubbleChart', function() {
         it('카테고리가 있고 yAxis만 axisScaleMaker를 갖고 있다면 반환하는 xAxis는 라벨 타입이고 yAxis는 값 타입 입니다.', function() {
             var actual, expected;
 
-            bubbleChart.dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3']);
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
             spyOn(bubbleChart, '_getAxisScaleMakerMap').and.returnValue({
@@ -197,7 +200,7 @@ describe('Test for BubbleChart', function() {
             });
             bubbleChart._addDataRatios();
 
-            expect(bubbleChart.dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith({
+            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith({
                 x: 'calculated limit by x values'
             });
         });
@@ -211,7 +214,7 @@ describe('Test for BubbleChart', function() {
             });
             bubbleChart._addDataRatios();
 
-            expect(bubbleChart.dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith({
+            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith({
                 y: 'calculated limit by y values'
             });
         });
