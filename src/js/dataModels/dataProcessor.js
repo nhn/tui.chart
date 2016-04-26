@@ -553,7 +553,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var max = 0;
 
         tui.util.forEachArray(values, function(value) {
-            var len = tui.util.lengthAfterPoint(value);
+            var len = tui.util.getDecimalLength(value);
             if (len > max) {
                 max = len;
             }

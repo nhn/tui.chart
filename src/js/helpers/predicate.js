@@ -278,11 +278,11 @@ var predicate = {
 
     /**
      * Whether options.hidden is true or not.
-     * @param {object} options - options
+     * @param {object} [options] - options
      * @returns {boolean}
      */
     isHidden: function(options) {
-        return tui.util.pick(options, 'hidden');
+        return !!tui.util.pick(options, 'hidden');
     }
 };
 

@@ -634,7 +634,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         // 예상 label count와 차이가 많을 수록 후보 제외 가능성이 높음
         var diffCount = Math.max(abs(valueCounts[index] - candidateScale.valueCount), 1);
         // 소수점 이하 길이가 길 수록 후보에서 제외될 가능성이 높음
-        var weight = Math.pow(10, tui.util.lengthAfterPoint(candidateScale.step));
+        var weight = Math.pow(10, tui.util.getDecimalLength(candidateScale.step));
 
         return (diffMax + diffMin) * diffCount * weight;
     },

@@ -73,18 +73,18 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     /**
      * Format label
      * @param {number} label - label
-     * @param {number} lengthAfterPoint - length after point
+     * @param {number} decimalLength - decimal length
      * @returns {string}
      * @private
      */
-    _formatLabel: function(label, lengthAfterPoint) {
+    _formatLabel: function(label, decimalLength) {
         var formatFunctions = this.dataProcessor.getFormatFunctions();
 
-        if (lengthAfterPoint === 0) {
+        if (decimalLength === 0) {
             label = String(parseInt(label, 10));
         } else {
             label = String(label);
-            label = renderUtil.formatDecimal(label, lengthAfterPoint);
+            label = renderUtil.formatDecimal(label, decimalLength);
         }
 
         return renderUtil.formatValue(label, formatFunctions);
@@ -102,12 +102,12 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var halfWidth = dimension.width / 2;
         var maxPixelRadius = boundsMaker.getMinimumPixelStepForAxis();
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
-        var lengthAfterPoint = tui.util.lengthAfterPoint(maxValueRadius);
+        var decimalLength = tui.util.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
 
         return tui.util.map(this.circleRatios, function(ratio) {
             var diameter = maxPixelRadius * ratio * 2;
-            var label = self._formatLabel(maxValueRadius * ratio, lengthAfterPoint);
+            var label = self._formatLabel(maxValueRadius * ratio, decimalLength);
             var labelWidth = renderUtil.getRenderedLabelWidth(label, self.labelTheme);
             return legendTemplate.tplCircleLegendLabel({
                 left: halfWidth - (labelWidth / 2),

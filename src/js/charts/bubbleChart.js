@@ -124,7 +124,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     /**
      * Make axis data.
      * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
-     * @param {boolean} isVertical - whether vertical or not
+     * @param {boolean} [isVertical] - whether vertical or not
      * @returns {object}
      * @private
      */
@@ -194,7 +194,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Get width of max label of CircleLegend.
-     * @returns {*|number}
+     * @returns {number}
      * @private
      */
     _getMaxCircleLegendLabelWidth: function() {

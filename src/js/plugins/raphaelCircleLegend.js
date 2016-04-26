@@ -26,7 +26,6 @@ var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.pr
     render: function(container, dimension, maxRadius, radiusRatios) {
         var paper = raphael(container, dimension.width, dimension.height);
 
-
         this.paper = paper;
 
         this._renderCircles(dimension, maxRadius, radiusRatios);

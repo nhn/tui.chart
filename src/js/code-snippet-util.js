@@ -154,11 +154,11 @@ var pivot = function(arr2d) {
 };
 
 /**
- * Get after point length.
+ * Get length after decimal point.
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var lengthAfterPoint = function(value) {
+var getDecimalLength = function(value) {
     var valueArr = String(value).split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -171,7 +171,7 @@ var lengthAfterPoint = function(value) {
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
         underPointLens = tui.util.map(args, function(value) {
-            return tui.util.lengthAfterPoint(value);
+            return tui.util.getDecimalLength(value);
         }),
         underPointLen = tui.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
@@ -257,7 +257,7 @@ tui.util.any = any;
 tui.util.all = all;
 tui.util.unique = unique;
 tui.util.pivot = pivot;
-tui.util.lengthAfterPoint = lengthAfterPoint;
+tui.util.getDecimalLength = getDecimalLength;
 tui.util.mod = mod;
 tui.util.findMultipleNum = findMultipleNum;
 tui.util.addition = addition;
