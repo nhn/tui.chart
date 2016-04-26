@@ -193,7 +193,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Get max CircleLegend label width.
+     * Get width of max label of CircleLegend.
      * @returns {*|number}
      * @private
      */
@@ -208,7 +208,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     *
+     * Get width of circle legend area.
      * @returns {number}
      * @private
      */
@@ -221,7 +221,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Update legend and series width of boundsMaker.
+     * Update width of legend and series of boundsMaker.
      * @param {number} seriesWidth - width of series area
      * @param {number} legendWidth - width of legend area
      * @private
@@ -266,7 +266,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Update width of legend ara by width of circle legend area.
+     * Update width of legend area by width of circle legend area.
      * @param {number} circleLegendWidth - width of circle legend area
      * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
      * @private
