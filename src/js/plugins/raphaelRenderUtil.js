@@ -81,6 +81,23 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Render circle.
+     * @param {object} paper - raphael object
+     * @param {{left: number, top: number}} position - position
+     * @param {number} radius - radius
+     * @param {object} attributes - attributes
+     * @returns {object}
+     * @private
+     */
+    renderCircle: function(paper, position, radius, attributes) {
+        var circle = paper.circle(position.left, position.top, radius);
+
+        circle.attr(attributes);
+
+        return circle;
+    },
+
+    /**
      * Render items of line type chart.
      * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function

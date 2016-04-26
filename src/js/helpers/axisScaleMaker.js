@@ -250,12 +250,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Get candidate value counts.
+     * Get candidate counts of value.
      * @memberOf module:axisDataMaker
      * @returns {Array.<number>} value counts
      * @private
      */
-    _getCandidateValueCounts: function() {
+    _getCandidateCountsOfValue: function() {
         var minStart = 3,
             valueCounts, baseSize, start, end;
 
@@ -592,7 +592,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         return {
             limit: limit,
-            step: step
+            step: step,
+            valueCount: abs(limit.max - limit.min) / step
         };
     },
 
@@ -602,9 +603,9 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
      *      divideNum: number
-     * }} integerTypeScale integer type axis scale
-     * @param {Array.<number>} valueCounts value counts
-     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} candidates scale
+     * }} integerTypeScale - integer type axis scale
+     * @param {Array.<number>} valueCounts - candidate counts of value
+     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
      * @private
      */
     _makeCandidateScales: function(integerTypeScale, valueCounts) {
@@ -620,30 +621,35 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
     /**
      * Get comparing value for selecting axis scale.
-     * @param {{min: number, max: number}} baseLimit limit
-     * @param {{limit: {min: number, max: number}, step: number}} candidateScale scale
+     * @param {{min: number, max: number}} baseLimit - limit
+     * @param {Array.<number>} valueCounts - candidate counts of value
+     * @param {{limit: {min: number, max: number}, step: number}} candidateScale - scale
+     * @param {number} index - index
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(baseLimit, candidateScale) {
-        var diffMax = abs(candidateScale.limit.max - baseLimit.max),
-            diffMin = abs(baseLimit.min - candidateScale.limit.min),
-            // 소수점 이하 길이가 길 수록 가중치가 증가됨 (가중치가 크면 후보에서 제외될 가능성이 높음)
-            weight = Math.pow(10, tui.util.lengthAfterPoint(candidateScale.step));
+    _getComparingValue: function(baseLimit, valueCounts, candidateScale, index) {
+        var diffMax = abs(candidateScale.limit.max - baseLimit.max);
+        var diffMin = abs(baseLimit.min - candidateScale.limit.min);
+        // 예상 label count와 차이가 많을 수록 후보 제외 가능성이 높음
+        var diffCount = Math.max(abs(valueCounts[index] - candidateScale.valueCount), 1);
+        // 소수점 이하 길이가 길 수록 후보에서 제외될 가능성이 높음
+        var weight = Math.pow(10, tui.util.getDecimalLength(candidateScale.step));
 
-        return (diffMax + diffMin) * weight;
+        return (diffMax + diffMin) * diffCount * weight;
     },
 
     /**
      * Select axis scale.
      * @param {{min: number, max: number}} baseLimit limit
      * @param {Array.<{limit: {min: number, max: number}, step: number}>} candidates scale candidates
+     * @param {Array.<number>} valueCounts - label counts
      * @returns {{limit: {min: number, max: number}, step: number}} selected scale
      * @private
      */
-    _selectAxisScale: function(baseLimit, candidates) {
-        var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit),
-            axisScale = tui.util.min(candidates, getComparingValue);
+    _selectAxisScale: function(baseLimit, candidates, valueCounts) {
+        var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit, valueCounts);
+        var axisScale = tui.util.min(candidates, getComparingValue);
 
         return axisScale;
     },
@@ -674,12 +680,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _calculateScale: function() {
-        var baseValues = this._makeBaseValues(),
-            dataLimit = {
-                min: tui.util.min(baseValues),
-                max: tui.util.max(baseValues)
-            },
-            integerTypeScale, valueCounts, candidates, scale;
+        var baseValues = this._makeBaseValues();
+        var dataLimit = {
+            min: tui.util.min(baseValues),
+            max: tui.util.max(baseValues)
+        };
+        var integerTypeScale, valueCounts, candidates, scale;
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -693,13 +699,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         integerTypeScale = this._makeIntegerTypeScale(dataLimit);
 
         // 02. value count 후보군 얻기
-        valueCounts = this.valueCounts || this._getCandidateValueCounts();
+        valueCounts = this.valueCounts || this._getCandidateCountsOfValue();
 
         // 03. axis scale 후보군 얻기
         candidates = this._makeCandidateScales(integerTypeScale, valueCounts);
 
         // 04. axis scale 후보군 중 하나 선택
-        scale = this._selectAxisScale(integerTypeScale.limit, candidates);
+        scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divideNum);

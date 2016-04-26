@@ -85,6 +85,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             },
             xAxis: {
                 height: 0
+            },
+            circleLegend: {
+                width: 0
+            },
+            calculationLegend: {
+                width: 0
             }
         };
 
@@ -483,14 +489,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {number} series width
      */
     makeSeriesWidth: function() {
-        var chartWidth = this.getDimension('chart').width,
-            yAxisWidth = this.getDimension('yAxis').width,
-            legendWidth, rightAreaWidth;
+        var chartWidth = this.getDimension('chart').width;
+        var yAxisWidth = this.getDimension('yAxis').width;
+        var legendDimension = this.getDimension('calculationLegend');
+        var legendWidth, rightAreaWidth;
 
         if (predicate.isHorizontalLegend(this.options.legend.align)) {
             legendWidth = 0;
         } else {
-            legendWidth = this.getDimension('legend').width;
+            legendWidth = legendDimension ? legendDimension.width : 0;
         }
 
         rightAreaWidth = legendWidth + this.getDimension('rightYAxis').width;
@@ -535,9 +542,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerCenterComponentsDimension: function() {
-        var seriesDimension = this._makeSeriesDimension();
+        var seriesDimension = this.getDimension('series');
 
-        this._registerDimension('series', seriesDimension);
         this._registerDimension('tooltip', seriesDimension);
         this._registerDimension('customEvent', seriesDimension);
     },
@@ -607,6 +613,29 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Make CircleLegend position.
+     * @returns {{top: number, left: number}}
+     * @private
+     */
+    _makeCircleLegendPosition: function() {
+        var seriesPosition = this.getPosition('series');
+        var seriesDimension = this.getDimension('series');
+        var circleDimension = this.getDimension('circleLegend');
+        var left;
+
+        if (predicate.isLegendAlignLeft(this.options.legend.align)) {
+            left = 0;
+        } else {
+            left = seriesPosition.left + seriesDimension.width;
+        }
+
+        return {
+            top: seriesPosition.top + seriesDimension.height - circleDimension.height,
+            left: left
+        };
+    },
+
+    /**
      * Register essential components positions.
      * @private
      */
@@ -616,6 +645,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
+
+        if (this.getDimension('circleLegend').width) {
+            this.positions.circleLegend = this._makeCircleLegendPosition();
+        }
 
         if (!predicate.isMousePositionChart(this.chartType)) {
             tooltipPosition = {
@@ -689,6 +722,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.positions.xAxis.left -= xAxisDecreasingLeft;
         this.positions.customEvent.left -= xAxisDecreasingLeft;
         this.positions.tooltip.left -= xAxisDecreasingLeft;
+    },
+
+    /**
+     * Register series dimension.
+     */
+    registerSeriesDimension: function() {
+        var seriesDimension = this._makeSeriesDimension();
+
+        this._registerDimension('series', seriesDimension);
     },
 
     /**

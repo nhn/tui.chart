@@ -126,12 +126,12 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_updateDimension()', function() {
+    describe('_updateChartDimension()', function() {
         it('전달받은 디멘션 정보로 차트 너비, 높이 정보를 갱신합니다.', function() {
             chartBase.options = {
                 chart: {}
             };
-            chartBase._updateDimension({
+            chartBase._updateChartDimension({
                 width: 200,
                 height: 100
             });

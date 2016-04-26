@@ -479,6 +479,26 @@ var renderUtil = {
         }
 
         return value;
+    },
+
+    /**
+     * Format Decimal.
+     * @param {string} value target value
+     * @param {number} len length of under decimal point
+     * @returns {string} formatted value
+     */
+    formatDecimal: function(value, len) {
+        var pow;
+
+        if (len === 0) {
+            return Math.round(value);
+        }
+
+        pow = Math.pow(10, len);
+        value = Math.round(value * pow) / pow;
+        value = parseFloat(value).toFixed(len);
+
+        return value;
     }
 };
 

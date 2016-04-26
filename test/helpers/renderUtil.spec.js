@@ -122,4 +122,16 @@ describe('Test for renderUtil', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('formatDecimal()', function() {
+        it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function() {
+            var result = renderUtil.formatDecimal(1.1111, 2);
+            expect(result).toBe('1.11');
+        });
+
+        it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function() {
+            var result = renderUtil.formatDecimal(1, 1);
+            expect(result).toBe('1.0');
+        });
+    });
 });

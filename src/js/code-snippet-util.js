@@ -14,10 +14,10 @@ var min = function(arr, condition, context) {
         result =  Math.min.apply(null, arr);
     } else {
         result = arr[0];
-        minValue = condition.call(context, result);
+        minValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item) {
-            var compareValue = condition.call(context, item);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
             if (compareValue < minValue) {
                 minValue = compareValue;
                 result = item;
@@ -42,10 +42,10 @@ var max = function(arr, condition, context) {
         result = Math.max.apply(null, arr);
     } else {
         result = arr[0];
-        maxValue = condition.call(context, result);
+        maxValue = condition.call(context, result, 0);
         rest = arr.slice(1);
-        tui.util.forEachArray(rest, function(item) {
-            var compareValue = condition.call(context, item);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
             if (compareValue > maxValue) {
                 maxValue = compareValue;
                 result = item;
@@ -154,11 +154,11 @@ var pivot = function(arr2d) {
 };
 
 /**
- * Get after point length.
+ * Get length after decimal point.
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var lengthAfterPoint = function(value) {
+var getDecimalLength = function(value) {
     var valueArr = String(value).split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -171,7 +171,7 @@ var lengthAfterPoint = function(value) {
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
         underPointLens = tui.util.map(args, function(value) {
-            return tui.util.lengthAfterPoint(value);
+            return tui.util.getDecimalLength(value);
         }),
         underPointLen = tui.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
@@ -257,7 +257,7 @@ tui.util.any = any;
 tui.util.all = all;
 tui.util.unique = unique;
 tui.util.pivot = pivot;
-tui.util.lengthAfterPoint = lengthAfterPoint;
+tui.util.getDecimalLength = getDecimalLength;
 tui.util.mod = mod;
 tui.util.findMultipleNum = findMultipleNum;
 tui.util.addition = addition;

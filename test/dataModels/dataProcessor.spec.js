@@ -229,18 +229,6 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_formatDecimal()', function() {
-        it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function() {
-            var result = dataProcessor._formatDecimal(2, 1.1111);
-            expect(result).toBe('1.11');
-        });
-
-        it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function() {
-            var result = dataProcessor._formatDecimal(1, 1);
-            expect(result).toBe('1.0');
-        });
-    });
-
     describe('_formatComma()', function() {
         it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function() {
             var result = dataProcessor._formatComma(1000);

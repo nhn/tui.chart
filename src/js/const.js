@@ -211,6 +211,8 @@ var chartConst = {
     MAP_LEGEND_GRAPH_SIZE: 25,
     /** map legend label padding */
     MAP_LEGEND_LABEL_PADDING: 5,
+    CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
+    CIRCLE_LEGEND_PADDING: 20,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */

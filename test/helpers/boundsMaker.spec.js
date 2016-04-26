@@ -6,10 +6,9 @@
 
 'use strict';
 
-var BoundsMaker = require('../../src/js/helpers/boundsMaker'),
-    chartConst = require('../../src/js/const'),
-    defaultTheme = require('../../src/js/themes/defaultTheme'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var BoundsMaker = require('../../src/js/helpers/boundsMaker');
+var chartConst = require('../../src/js/const');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for BoundsMaker', function() {
     var boundsMaker, dataProcessor;
@@ -448,7 +447,7 @@ describe('Test for BoundsMaker', function() {
                 chart: {
                     width: 500
                 },
-                legend: {
+                calculationLegend: {
                     width: 50
                 },
                 yAxis: {
@@ -552,7 +551,7 @@ describe('Test for BoundsMaker', function() {
                 title: {
                     height: 50
                 },
-                legend: {
+                calculationLegend: {
                     width: 50
                 },
                 xAxis: {
@@ -615,15 +614,14 @@ describe('Test for BoundsMaker', function() {
 
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
-            spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
-                width: 300,
-                height: 200
-            });
-
+            boundsMaker.dimensions = {
+                series:{
+                    width: 300,
+                    height: 200
+                }
+            };
             boundsMaker._registerCenterComponentsDimension();
 
-            expect(boundsMaker.getDimension('series').width).toBe(300);
-            expect(boundsMaker.getDimension('series').height).toBe(200);
             expect(boundsMaker.getDimension('tooltip').width).toBe(300);
             expect(boundsMaker.getDimension('tooltip').height).toBe(200);
             expect(boundsMaker.getDimension('customEvent').width).toBe(300);
@@ -720,6 +718,74 @@ describe('Test for BoundsMaker', function() {
             };
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeCircleLegendPosition()', function() {
+        it('series의 position.left와 series의 너비값을 더해 circleLegend의 left를 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.positions = {
+                series: {
+                    left: 40
+                }
+            };
+            boundsMaker.dimensions = {
+                series: {
+                    width: 400
+                },
+                circleLegend: {}
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 440;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('왼쪽 정렬인 경우에 left는 0 입니다.', function() {
+            var actual, expected;
+
+            boundsMaker.options = {
+                legend: {
+                    align: 'left'
+                }
+            };
+            boundsMaker.positions = {
+                series: {}
+            };
+            boundsMaker.dimensions = {
+                series: {},
+                circleLegend: {}
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 0;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('series의 position.top과 series의 높이 값을 더한 값에 circleLegend의 높이를 빼 circleLegend의 top을 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.positions = {
+                series: {
+                    top: 60
+                }
+            };
+            boundsMaker.dimensions = {
+                series: {
+                    height: 300
+                },
+                circleLegend: {
+                    height: 80
+                }
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().top;
+            expected = 280;
+
+            expect(actual).toBe(expected);
         });
     });
 
