@@ -8,7 +8,7 @@
 
 var MapChartDataProcessor = require('../../src/js/dataModels/mapChartDataProcessor.js');
 
-describe('test MapChartDataProcessor', function() {
+describe('Test for MapChartDataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {

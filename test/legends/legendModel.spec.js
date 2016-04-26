@@ -1,5 +1,5 @@
 /**
- * @fileoverview test LegendModel
+ * @fileoverview Test for LegendModel.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var LegendModel = require('../../src/js/legends/legendModel'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('test Legend', function() {
+describe('Test for LegendModel', function() {
     var legendModel;
 
     beforeAll(function() {

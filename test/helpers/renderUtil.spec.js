@@ -1,5 +1,5 @@
 /**
- * @fileoverview test render util
+ * @fileoverview Test for renderUtil.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
     dom = require('../../src/js/helpers/domHandler.js');
 
-describe('renderUtil', function() {
+describe('Test for renderUtil', function() {
     describe('concatStr()', function() {
         it('문자들을 인자로 전달하면 붙여진 결과를 반환합니다. ex) concatStr("a", "b", "c") ---> "abc"', function() {
             var result = renderUtil.concatStr();

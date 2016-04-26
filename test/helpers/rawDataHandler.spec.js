@@ -1,5 +1,5 @@
 /**
- * @fileoverview test DOMHandler
+ * @fileoverview Test for rawDataHandler.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var rawDataHandler = require('../../src/js/helpers/rawDataHandler.js'),
     chartConst = require('../../src/js/const');
 
-describe('domHandler', function() {
+describe('Test for rawDataHandler', function() {
     describe('_pickStacks', function() {
         it('rawSeriesData에서 stack을 추출합니다.', function() {
             var rawSeriesData = [{

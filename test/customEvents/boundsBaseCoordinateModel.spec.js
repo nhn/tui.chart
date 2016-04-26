@@ -8,7 +8,7 @@
 
 var BoundsBaseCoordinateModel = require('../../src/js/customEvents/boundsBaseCoordinateModel');
 
-describe('BoundsBaseCoordinateModel', function() {
+describe('Test for BoundsBaseCoordinateModel', function() {
     var coordinateModel;
 
     beforeEach(function() {

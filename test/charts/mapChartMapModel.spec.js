@@ -1,5 +1,5 @@
 /**
- * @fileoverview test for MapChartMapModel
+ * @fileoverview Test for MapChartMapModel.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

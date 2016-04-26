@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Test for themeFactory.
+ * @author NHN Ent.
+ *         FE Development Team <dl_javascript@nhnent.com>
+ */
+
 'use strict';
 
 var themeFactory = require('../../src/js/factories/themeFactory.js');
 
-describe('test themeFactory', function() {
+describe('Test for themeFactory', function() {
     themeFactory.register('newTheme', {
         plot: {
             lineColor: '#e5dbc4',

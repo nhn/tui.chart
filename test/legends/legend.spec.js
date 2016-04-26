@@ -1,5 +1,5 @@
 /**
- * @fileoverview test legend
+ * @fileoverview Test for Legend.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var Legend = require('../../src/js/legends/legend'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('test Legend', function() {
+describe('Test for Legend', function() {
     var legend, dataProcessor, boundsMaker;
 
     beforeAll(function() {

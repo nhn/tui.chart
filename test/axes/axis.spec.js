@@ -1,5 +1,5 @@
 /**
- * @fileoverview test axis
+ * @fileoverview Test for Axis.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var Axis = require('../../src/js/axes/axis'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('Axis', function() {
+describe('Test for Axis', function() {
     var dataProcessor, boundsMaker, axis;
 
     beforeAll(function() {

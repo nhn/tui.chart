@@ -9,7 +9,7 @@
 var Plot = require('../../src/js/plots/plot.js'),
     dom = require('../../src/js/helpers/domHandler.js');
 
-describe('test Plot', function() {
+describe('Test for Plot', function() {
     var plot, boundsMaker;
 
     beforeAll(function() {

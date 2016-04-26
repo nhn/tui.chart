@@ -1,5 +1,5 @@
 /**
- * @fileoverview test axisTypeMixer.js
+ * @fileoverview Test for axisTypeMixer.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,7 +12,7 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
     BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
 
-describe('ComboChart', function() {
+describe('Test for ComboChart', function() {
     var componentMap = {},
         spyObjs = {},
         componentManager

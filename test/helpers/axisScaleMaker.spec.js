@@ -1,5 +1,5 @@
 /**
- * @fileoverview test AxisScaleMaker
+ * @fileoverview Test for AxisScaleMaker.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js'),
     DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
 
-describe('AxisScaleMaker', function() {
+describe('Test for AxisScaleMaker', function() {
     var axisScaleMaker, boundsMaker;
 
     beforeEach(function() {

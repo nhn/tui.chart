@@ -1,5 +1,5 @@
 /**
- * @fileoverview test ChartBase
+ * @fileoverview Test for ChartBase.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,7 +10,7 @@ var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
     DataProcessor = require('../../src/js/dataModels/dataProcessor');
 
-describe('ChartBase', function() {
+describe('Test for ChartBase', function() {
     var chartBase, componentManager;
 
     beforeAll(function() {

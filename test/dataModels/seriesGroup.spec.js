@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test seriesGroup.
+ * @fileoverview Test for seriesGroup.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
     SeriesItem = require('../../src/js/dataModels/seriesItem');
 
-describe('test seriesGroup', function() {
+describe('Test for seriesGroup', function() {
     var seriesGroup;
 
     beforeEach(function() {

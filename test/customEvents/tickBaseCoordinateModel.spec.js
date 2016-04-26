@@ -8,7 +8,7 @@
 
 var TickBaseCoordinateModel = require('../../src/js/customEvents/tickBaseCoordinateModel');
 
-describe('TickBaseCoordinateModel', function() {
+describe('Test for TickBaseCoordinateModel', function() {
     var coordinateModel;
 
     beforeEach(function() {

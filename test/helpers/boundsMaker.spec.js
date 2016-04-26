@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test boundsMaker.
+ * @fileoverview Test for BoundsMaker.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var BoundsMaker = require('../../src/js/helpers/boundsMaker'),
     defaultTheme = require('../../src/js/themes/defaultTheme'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('boundsMaker', function() {
+describe('Test for BoundsMaker', function() {
     var boundsMaker, dataProcessor;
 
     beforeAll(function() {

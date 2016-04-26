@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test SeriesDataModel.
+ * @fileoverview Test for SeriesDataModel.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
     SeriesItem = require('../../src/js/dataModels/seriesItem'),
     SeriesItemForCoordinateType = require('../../src/js/dataModels/seriesItemForCoordinateType');
 
-describe('test SeriesDataModel', function() {
+describe('Test for SeriesDataModel', function() {
     var seriesDataModel;
 
     beforeEach(function() {

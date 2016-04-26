@@ -1,5 +1,5 @@
 /**
- * @fileoverview Test DataProcessor.
+ * @fileoverview Test for DataProcessor.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
     SeriesGroup = require('../../src/js/dataModels/seriesGroup');
 
-describe('test DataProcessor', function() {
+describe('Test for DataProcessor', function() {
     var dataProcessor;
 
     beforeEach(function() {

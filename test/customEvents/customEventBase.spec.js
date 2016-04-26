@@ -8,7 +8,7 @@
 
 var CustomEventBase = require('../../src/js/customEvents/customEventBase');
 
-describe('CustomEventBase', function() {
+describe('Test for CustomEventBase', function() {
     var customEventBase;
 
     beforeEach(function() {

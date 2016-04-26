@@ -1,5 +1,5 @@
 /**
- * @fileoverview test bubbleChart.js
+ * @fileoverview Test for BubbleChart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var BubbleChart = require('../../src/js/charts/bubbleChart'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
-describe('BubbleChart', function() {
+describe('Test for BubbleChart', function() {
     var bubbleChart, sereisDataModel;
 
     beforeEach(function() {

@@ -9,7 +9,7 @@
 var MapChartCustomEvent = require('../../src/js/customEvents/mapChartCustomEvent'),
     dom = require('../../src/js/helpers/domHandler');
 
-describe('MapChartCustomEvent', function() {
+describe('Test for MapChartCustomEvent', function() {
     var customEvent;
 
     beforeEach(function() {

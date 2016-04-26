@@ -1,8 +1,14 @@
+/**
+ * @fileoverview Test for chartFactory.
+ * @author NHN Ent.
+ *         FE Development Team <dl_javascript@nhnent.com>
+ */
+
 'use strict';
 
 var chartFactory = require('../../src/js/factories/chartFactory.js');
 
-describe('chartFactory', function() {
+describe('Test for chartFactory', function() {
     var TempClass = function() {};
 
     chartFactory.register('barChart', TempClass);

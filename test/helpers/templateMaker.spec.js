@@ -1,5 +1,5 @@
 /**
- * @fileoverview template maker
+ * @fileoverview Test for templateMaker
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var templateMaker = require('../../src/js/helpers/templateMaker.js');
 
-describe('templateMaker', function() {
+describe('Test for templateMaker', function() {
     describe('template()', function() {
         it('템플릿팅 결과입니다.', function() {
             var tag = '<a>{{ key1 }}<span>{{ key2 }}</span></a>{{ key1 }}',

@@ -8,7 +8,7 @@
 
 var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
 
-describe('GroupTypeCustomEvent', function() {
+describe('Test for GroupTypeCustomEvent', function() {
     var groupTypeCustomEvent;
 
     beforeEach(function() {

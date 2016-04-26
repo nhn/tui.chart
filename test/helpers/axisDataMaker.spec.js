@@ -1,5 +1,5 @@
 /**
- * @fileoverview test axis model
+ * @fileoverview Test for axisDataMaker
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var maker = require('../../src/js/helpers/axisDataMaker'),
     chartConst = require('../../src/js/const');
 
-describe('axisDataMaker', function() {
+describe('Test for axisDataMaker', function() {
     describe('_makeLabels()', function() {
         it('전달받은 labelInterval 옵션 정보가 없으면, labels를 그대로 반환합니다.', function() {
             var actual = maker._makeLabels(['label1', 'label2', 'label3']),
