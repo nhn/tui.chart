@@ -142,6 +142,14 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Axes data.
+     * @returns {{xAxis: object, yAxis: object, rightYAxis: [object]}}
+     */
+    getAxesData: function() {
+        return this.axesData;
+    },
+
+    /**
      * Calculate step of pixel unit.
      * @param {{tickCount: number, isLabel: boolean}} axisData - data for rendering axis
      * @param {number} size - width or height of serise area

@@ -13,9 +13,9 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
 
 describe('Test for ComboChart', function() {
-    var componentMap = {},
-        spyObjs = {},
-        componentManager
+    var componentMap = {};
+    var spyObjs = {};
+    var componentManager, boundsMaker;
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -28,6 +28,9 @@ describe('Test for ComboChart', function() {
         componentManager.register.and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
+
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
+        axisTypeMixer.boundsMaker = boundsMaker;
     });
 
     describe('_addAxesComponents', function() {
@@ -249,23 +252,23 @@ describe('Test for ComboChart', function() {
 
     describe('_makeRenderingData()', function() {
         it('axis type chart의 renderingData를 생성합니다.', function() {
-            var axesData = {
-                    xAxis: {
-                        limit: {},
-                        aligned: true,
-                        validTickCount: 0
-                    },
-                    yAxis: {
-                        tickCount: 3,
-                        validTickCount: 3
-                    }
-                },
-                actual;
+            var actual;
 
+            boundsMaker.getAxesData.and.returnValue({
+                xAxis: {
+                    limit: {},
+                    aligned: true,
+                    validTickCount: 0
+                },
+                yAxis: {
+                    tickCount: 3,
+                    validTickCount: 3
+                }
+            });
             axisTypeMixer.chartType = 'column';
             axisTypeMixer.isVertical = false;
 
-            actual = axisTypeMixer._makeRenderingData(axesData);
+            actual = axisTypeMixer._makeRenderingData();
 
             expect(actual.plot.vTickCount).toBe(3);
             expect(actual.plot.hTickCount).toBe(0);

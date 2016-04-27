@@ -268,11 +268,11 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Update width of legend area by width of circle legend area.
-     * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
      * @private
      */
-    _updateLegendWidthByCircleLegendWidth: function(axesData) {
+    _updateLegendWidthByCircleLegendWidth: function() {
         var boundsMaker = this.boundsMaker;
+        var axesData = boundsMaker.getAxesData();
         var circleLegendWidth = this._getCircleLegendWidth();
         var legendWidth = boundsMaker.getDimension('calculationLegend').width;
         var isXAxisLabel, beforeMaxRadius, seriesWidth;
@@ -313,12 +313,12 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      * @override
      */
-    _updateDimensions: function(axesData) {
+    _updateDimensions: function() {
         if (predicate.isHidden(this.options.circleLegend)) {
             return;
         }
 
-        this._updateLegendWidthByCircleLegendWidth(axesData);
+        this._updateLegendWidthByCircleLegendWidth();
         this._registerCircleLegendDimension();
     },
 

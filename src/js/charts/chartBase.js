@@ -249,11 +249,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 
-        this._updateDimensions(axesData);
-        this.boundsMaker.registerBoundsData();
-        this._addDataRatios(axesData);
+        this._updateDimensions();
 
-        renderingData = this._makeRenderingData(axesData);
+        this.boundsMaker.registerBoundsData();
+        this._addDataRatios();
+
+        renderingData = this._makeRenderingData();
 
         onRender(renderingData);
 

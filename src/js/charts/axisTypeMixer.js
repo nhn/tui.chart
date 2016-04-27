@@ -164,15 +164,15 @@ var axisTypeMixer = {
 
     /**
      * Add data ratios.
-     * @param {object} axesData axes data
      * @private
      * @override
      */
-    _addDataRatios: function(axesData) {
-        var self = this,
-            chartTypes = this.chartTypes || [this.chartType],
-            limitMap = this._getLimitMap(axesData, chartTypes),
-            stackedOption = this.options.series && this.options.series.stacked;
+    _addDataRatios: function() {
+        var self = this;
+        var axesData = this.boundsMaker.getAxesData();
+        var chartTypes = this.chartTypes || [this.chartType];
+        var limitMap = this._getLimitMap(axesData, chartTypes);
+        var stackedOption = this.options.series && this.options.series.stacked;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             self.dataProcessor.addDataRatios(limitMap[chartType], stackedOption, chartType);
@@ -181,15 +181,15 @@ var axisTypeMixer = {
 
     /**
      * Make rendering data for axis type chart.
-     * @param {object} axesData axesData
      * @returns {object} data for rendering
      * @private
      * @override
      */
-    _makeRenderingData: function(axesData) {
-        var optionChartTypes = this.chartTypes || [this.chartType],
-            seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical),
-            yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
+    _makeRenderingData: function() {
+        var axesData = this.boundsMaker.getAxesData();
+        var optionChartTypes = this.chartTypes || [this.chartType];
+        var seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
+        var yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
 
         return tui.util.extend({
             plot: {
