@@ -92,7 +92,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         /**
          * map of values by value type like value, x, y, r.
-         * @type {object.<string, Array.<number>>}}
+         * @type {object.<string, Array.<number>>}
          */
         this.valuesMap = {};
 
