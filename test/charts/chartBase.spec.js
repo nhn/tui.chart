@@ -8,13 +8,15 @@
 
 var ChartBase = require('../../src/js/charts/chartBase'),
     dom = require('../../src/js/helpers/domHandler'),
+    renderUtil = require('../../src/js/helpers/renderUtil'),
     DataProcessor = require('../../src/js/dataModels/dataProcessor');
 
 describe('Test for ChartBase', function() {
-    var chartBase, componentManager;
+    var chartBase, componentManager, boundsMaker;
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData']);
     });
 
     beforeEach(function() {
@@ -52,6 +54,7 @@ describe('Test for ChartBase', function() {
             }
         });
         chartBase.componentManager = componentManager;
+        chartBase.boundsMaker = boundsMaker;
     });
 
     describe('_makeProcessedData()', function() {
@@ -137,6 +140,97 @@ describe('Test for ChartBase', function() {
             });
             expect(chartBase.options.chart.width).toBe(200);
             expect(chartBase.options.chart.height).toBe(100);
+        });
+    });
+
+    describe('resize()', function() {
+        it('전댤된 dimension이 없으면 resize를 위한 _render()를 호출하지 않습니다.', function() {
+            spyOn(chartBase, '_render');
+
+            chartBase.resize();
+
+            expect(chartBase._render).not.toHaveBeenCalled();
+        });
+
+        it('dimension이 있다면 _updateChartDimension()를 호출하여 dimension을 갱신 합니다.', function() {
+            spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
+            spyOn(chartBase, '_render');
+
+            chartBase.resize({
+                width: 400,
+                height: 300
+            });
+
+            expect(chartBase._updateChartDimension).toHaveBeenCalledWith({
+                width: 400,
+                height: 300
+            });
+        });
+
+        it('dimension이 변경된 내용이 없어도 _render()를 호출하지 않습니다.', function() {
+            spyOn(chartBase, '_updateChartDimension').and.returnValue(false);
+            spyOn(chartBase, '_render');
+
+            chartBase.resize({
+                width: 400,
+                height: 300
+            });
+
+            expect(chartBase._render).not.toHaveBeenCalled();
+        });
+
+        it('dimension이 변경되었다면, boundsMaker.initBoundsData()에 chart 옵션 정보를 전달하여 bound data를 초기화 합니다.', function() {
+            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
+            spyOn(renderUtil, 'renderDimension');
+            spyOn(chartBase, '_render');
+            chartBase.options = {
+                chart: 'chart options'
+            };
+
+            chartBase.resize({
+                width: 400,
+                height: 300
+            });
+
+            expect(boundsMaker.initBoundsData).toHaveBeenCalledWith('chart options');
+        });
+
+        it('dimension이 변경되었다면, renderUtil.renderDimension()에 chartContainer와 갱신된 dimension 정보를 전달하여 너비, 높이를 설정합니다.', function() {
+            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
+            spyOn(chartBase, '_render');
+            chartBase.options = {
+                chart: 'chart options'
+            };
+            chartBase.chartContainer = 'chart container';
+            spyOn(renderUtil, 'renderDimension');
+
+
+            chartBase.resize({
+                width: 400,
+                height: 300
+            });
+
+            expect(renderUtil.renderDimension).toHaveBeenCalledWith('chart container', {
+                width: 400,
+                height: 300
+            });
+        });
+
+        it('dimension이 변경되었다면, _render()를 호출하여 렌더링을 수행합니다.', function() {
+            spyOn(chartBase, '_updateChartDimension').and.returnValue(true);
+            spyOn(chartBase, '_render');
+            chartBase.options = {
+                chart: 'chart options'
+            };
+            chartBase.chartContainer = 'chart container';
+            spyOn(renderUtil, 'renderDimension');
+
+            chartBase.resize({
+                width: 400,
+                height: 300
+            });
+
+            expect(chartBase._render).toHaveBeenCalled();
         });
     });
 });

@@ -503,7 +503,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         this.boundsMaker.initBoundsData(this.options.chart);
-        renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
+        renderUtil.renderDimension(this.chartContainer, dimension);
 
         this._render(function(renderingData) {
             self._renderComponents(renderingData, 'resize');

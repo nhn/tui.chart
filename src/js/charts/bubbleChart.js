@@ -228,10 +228,13 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      */
     _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
         var circleLegendWidth = this._getCircleLegendWidth();
+        var legendAlignOption = tui.util.pick(this.options, 'legend', 'align');
 
-        this.boundsMaker.registerBaseDimension('legend', {
-            width: circleLegendWidth
-        });
+        if (!predicate.isHorizontalLegend(legendAlignOption)) {
+            this.boundsMaker.registerBaseDimension('legend', {
+                width: circleLegendWidth
+            });
+        }
 
         this.boundsMaker.registerBaseDimension('series', {
             width: seriesWidth - (circleLegendWidth - legendWidth)
@@ -288,6 +291,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         if (this.isChangedMaxRadius(beforeMaxRadius)) {
             this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
+
             if (!isXAxisLabel) {
                 this._updateAxesDataOfBoundsMaker(isXAxisLabel);
             }

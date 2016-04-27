@@ -6,8 +6,9 @@
 
 'use strict';
 
-var Plot = require('../../src/js/plots/plot.js'),
-    dom = require('../../src/js/helpers/domHandler.js');
+var Plot = require('../../src/js/plots/plot.js');
+var dom = require('../../src/js/helpers/domHandler.js');
+var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('Test for Plot', function() {
     var plot, boundsMaker;
@@ -23,6 +24,69 @@ describe('Test for Plot', function() {
             }
         });
 
+    });
+
+    describe('_renderPlotArea()', function() {
+        it('plotContainer와 dimension정보를 renderDimension()에 전달하여 너비 높이를 렌더링 합니다. ', function() {
+            boundsMaker.getDimension.and.returnValue({
+                width: 400,
+                height: 300
+            });
+            spyOn(renderUtil, 'renderDimension');
+            spyOn(renderUtil, 'renderPosition');
+            spyOn(plot, '_renderLines');
+
+            plot._renderPlotArea('plotContainer');
+
+            expect(renderUtil.renderDimension).toHaveBeenCalledWith('plotContainer', {
+                width: 400,
+                height: 300
+            });
+        });
+
+        it('전달된 데이터는 plot.data에 할당됩니다.', function() {
+            spyOn(renderUtil, 'renderDimension');
+            spyOn(renderUtil, 'renderPosition');
+            spyOn(plot, '_renderLines');
+
+            plot._renderPlotArea('plotContainer', 'data');
+
+            expect(plot.data).toBe('data');
+        });
+
+        it('options.hideLine이 없으면 _renderLines()을 호출하여 line을 렌더링 합니다.', function() {
+            boundsMaker.getDimension.and.returnValue({
+                width: 400,
+                height: 300
+            });
+            spyOn(renderUtil, 'renderDimension');
+            spyOn(renderUtil, 'renderPosition');
+            spyOn(plot, '_renderLines');
+
+            plot._renderPlotArea('plotContainer');
+
+            expect(plot._renderLines).toHaveBeenCalledWith('plotContainer', {
+                width: 400,
+                height: 300
+            });
+        });
+
+        it('options.hideLine이 true이면 _renderLines()을 호출하지 않습니다.', function() {
+            boundsMaker.getDimension.and.returnValue({
+                width: 400,
+                height: 300
+            });
+            spyOn(renderUtil, 'renderDimension');
+            spyOn(renderUtil, 'renderPosition');
+            spyOn(plot, '_renderLines');
+            plot.options = {
+                hideLine: true
+            };
+
+            plot._renderPlotArea('plotContainer');
+
+            expect(plot._renderLines).not.toHaveBeenCalled();
+        });
     });
 
     describe('_renderLines()', function() {

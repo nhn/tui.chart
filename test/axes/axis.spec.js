@@ -802,6 +802,21 @@ describe('Test for Axis', function() {
 
             expect(actual).toBe(expected);
         });
+
+        it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 dataProcessor.getMultilineCategories() 를 호출하여 categories를 덮어씌웁니다.', function() {
+            axis.data = {
+                isVertical: false,
+                isLabelAxis: true
+            };
+            axis.options.rotation = false;
+            dataProcessor.getMultilineCategories.and.returnValue([]);
+            spyOn(axis, '_makeRotationLabelsHtml');
+            spyOn(axis, '_makeNormalLabelsHtml');
+
+            axis._makeLabelsHtml([]);
+
+            expect(dataProcessor.getMultilineCategories).toHaveBeenCalled();
+        });
     });
 
     describe('_changeLabelAreaPosition()', function() {

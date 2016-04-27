@@ -404,6 +404,27 @@ describe('Test for BoundsMaker', function() {
         });
     });
 
+    describe('_updateDimensionsAndDegree()', function() {
+        it('rotation 옵션이 false이면 _makeHorizontalLabelRotationInfo()를 호출하지 않습니다.', function() {
+            spyOn(boundsMaker, '_makeHorizontalLabelRotationInfo');
+            spyOn(boundsMaker, '_calculateXAxisLabelLimitWidth');
+            spyOn(boundsMaker, '_calculateDiffWithMultilineHeight');
+            spyOn(boundsMaker, '_updateDimensionsHeight');
+            boundsMaker.options = {
+                xAxis: {
+                    rotation: false
+                }
+            };
+            boundsMaker.axesData = {
+                xAxis: {}
+            };
+
+            boundsMaker._updateDimensionsAndDegree();
+
+            expect(boundsMaker._makeHorizontalLabelRotationInfo).not.toHaveBeenCalled();
+        });
+    });
+
     describe('_makePlotDimension()', function() {
         it('plot dimension은 전달하는 series dimension에서 hidden width 1을 더한 수치로 생성합니다.', function() {
             var actual, expected;

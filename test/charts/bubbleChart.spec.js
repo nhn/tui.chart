@@ -8,13 +8,15 @@
 
 var BubbleChart = require('../../src/js/charts/bubbleChart');
 var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
+var CircleLegend = require('../../src/js/legends/circleLegend');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for BubbleChart', function() {
-    var bubbleChart, dataProcessor, boundsMaker, sereisDataModel;
+    var bubbleChart, componentManager, dataProcessor, boundsMaker, sereisDataModel;
 
     beforeEach(function() {
         bubbleChart = BubbleChart.prototype;
+        componentManager = jasmine.createSpyObj('componentManager', ['register']);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['getCategories', 'hasCategories', 'getCategories', 'getSeriesDataModel', 'getValues',
                 'getFormattedMaxValue', 'addDataRatiosForCoordinateType']);
@@ -22,6 +24,7 @@ describe('Test for BubbleChart', function() {
                 'registerBaseDimension', 'registerAxesData']);
         sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
 
+        bubbleChart.componentManager = componentManager;
         bubbleChart.dataProcessor = dataProcessor;
         bubbleChart.boundsMaker = boundsMaker;
     });
@@ -231,6 +234,39 @@ describe('Test for BubbleChart', function() {
         });
     });
 
+    describe('_addComponents()', function() {
+        it('circleLegend.hidden 옵션이 없으면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
+            spyOn(bubbleChart, '_addComponentsForAxisType');
+            bubbleChart.options = {
+                circleLegend: {}
+            };
+            bubbleChart.theme = {
+                chart: {
+                    fontFamily: 'Verdana'
+                }
+            };
+
+            bubbleChart._addComponents('bubble');
+
+            expect(componentManager.register).toHaveBeenCalledWith('circleLegend', CircleLegend, {
+                chartType: 'bubble',
+                baseFontFamily: 'Verdana'
+            });
+        });
+
+        it('circleLegend.hidden 옵션이 true이면 componentManager.register를 호출하지 않아, circleLegend 컴포넌트를 생성하지 않습니다.', function() {
+            spyOn(bubbleChart, '_addComponentsForAxisType');
+            bubbleChart.options = {
+                circleLegend: {
+                    hidden: true
+                }
+            };
+            bubbleChart._addComponents();
+
+            expect(componentManager.register).not.toHaveBeenCalled();
+        });
+    });
+
     describe('_getMaxCircleLegendLabelWidth()', function() {
         it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
             dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
@@ -282,10 +318,27 @@ describe('Test for BubbleChart', function() {
     describe('_updateLegendAndSeriesWidth()', function() {
         it('_getCircleLegendWidth()의 수행 결과로 boundsMaker의 legend영역 너비를 갱신 합니다.', function() {
             spyOn(bubbleChart, '_getCircleLegendWidth').and.returnValue(80);
+
             bubbleChart._updateLegendAndSeriesWidth(300, 60);
 
             expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith('legend', {
                 width: 80
+            });
+        });
+
+        it('가로형(top, bottom) 범례의 경우에는 boundsMaker의 legend영역 너비를 갱신하지 않습니다.', function() {
+            spyOn(bubbleChart, '_getCircleLegendWidth').and.returnValue(80);
+            bubbleChart.options = {
+                legend: {
+                    align: 'top'
+                }
+            };
+
+            bubbleChart._updateLegendAndSeriesWidth(300, 60);
+
+            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledTimes(1);
+            expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith('series', {
+                width: 280
             });
         });
 
