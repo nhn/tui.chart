@@ -50,11 +50,11 @@ describe('Test for BubbleChart', function() {
             expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
                 min: 0,
                 max: 80
-            }, 'x');
+            }, 'xAxis', 'x');
             expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
                 min: 20,
                 max: 90
-            }, 'y');
+            }, 'yAxis', 'y');
         });
 
         it('카테고리가 없다면 xAxis와 yAxis 모두에 설정하여 반환합니다.', function() {

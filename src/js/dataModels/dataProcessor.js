@@ -385,7 +385,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get max value.
      * @param {?string} chartType - type of chart
-     * @param {?string} valueType - type of value like value, x, y, r.
+     * @param {?string} valueType - type of value like value, x, y, r
      * @returns {number}
      */
     getMaxValue: function(chartType, valueType) {
@@ -395,14 +395,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Get formatted max value.
      * @param {?string} chartType - type of chart
-     * @param {?string} valueType - type of value like value, x, y, r.
+     * @param {?string} areaType - type of area like circleLegend
+     * @param {?string} valueType - type of value like value, x, y, r
      * @returns {string | number}
      */
-    getFormattedMaxValue: function(chartType, valueType) {
+    getFormattedMaxValue: function(chartType, areaType, valueType) {
         var maxValue = this.getMaxValue(chartType, valueType);
         var formatFunctions = this.getFormatFunctions();
 
-        return renderUtil.formatValue(maxValue, formatFunctions);
+        return renderUtil.formatValue(maxValue, formatFunctions, areaType, valueType);
     },
 
     /**

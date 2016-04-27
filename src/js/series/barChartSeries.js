@@ -208,7 +208,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
         if (bound) {
             sum = calculator.sumPlusValues(values);
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             html = this._makeSeriesLabelHtml({
                 left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
                 top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
@@ -237,7 +237,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 sum = Math.abs(sum);
             }
 
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({
                 left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,

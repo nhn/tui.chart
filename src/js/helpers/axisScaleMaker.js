@@ -45,10 +45,16 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.chartType = params.chartType;
 
         /**
-         * value type like 'value', 'x', 'y', 'r'
+         * type of value like value, x, y, r
          * @type {string}
          */
         this.valueType = params.valueType;
+
+        /**
+         * type of area like yAxis, xAxis
+         * @type {string}
+         */
+        this.areaType = params.areaType;
 
         /**
          * Whether vertical type or not.
@@ -183,7 +189,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (!this.formattedValues) {
             values = this._getScaleValues();
             formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions);
+            this.formattedValues = renderUtil.formatValues(values, formatFunctions, this.areaType, this.valueType);
         }
 
         return this.formattedValues;

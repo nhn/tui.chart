@@ -68,14 +68,16 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     /**
      * Create AxisScaleMaker for bubble chart.
      * @param {{min: number, max: number, title: string}} options - axis options
+     * @param {string} areaType - type of area like xAxis, yAxis
      * @param {string} valueType - type of value like x, y, r
      * @returns {AxisScaleMaker}
      * @override
      * @private
      */
-    _createAxisScaleMaker: function(options, valueType) {
+    _createAxisScaleMaker: function(options, areaType, valueType) {
         var limit = this._pickLimitFromOptions(options);
         var additionalParams = {
+            areaType: areaType,
             valueType: valueType
         };
 
@@ -96,13 +98,13 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         if (hasCategories) {
             if (isXCountGreaterThanYCount) {
-                scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'x');
+                scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
             } else {
-                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'y');
+                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y');
             }
         } else {
-            scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'x');
-            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'y');
+            scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
+            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y');
         }
 
         return scaleMakerMap;
@@ -198,7 +200,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _getMaxCircleLegendLabelWidth: function() {
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'r');
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
         var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
             fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
             fontFamily: this.theme.chart.fontFamily

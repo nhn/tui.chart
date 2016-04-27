@@ -6,11 +6,12 @@
 
 'use strict';
 
-var TooltipBase = require('./tooltipBase'),
-    singleTooltipMixer = require('./singleTooltipMixer'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    tooltipTemplate = require('./tooltipTemplate');
+var TooltipBase = require('./tooltipBase');
+var singleTooltipMixer = require('./singleTooltipMixer');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+var tooltipTemplate = require('./tooltipTemplate');
 
 /**
  * @classdesc Tooltip component.
@@ -57,8 +58,12 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
+        var formatFunctions = this.dataProcessor.getFormatFunctions();
+
         return tui.util.map(valueTypes, function(type) {
-            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
+            var label = renderUtil.formatValue(data[type], formatFunctions, 'tooltip', type);
+
+            return (data[type]) ? '<div>' + type + ': ' + label + '</div>' : '';
         }).join('');
     },
 

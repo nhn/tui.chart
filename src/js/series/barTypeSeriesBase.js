@@ -199,7 +199,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeSumValues: function(values) {
         var sum = tui.util.sum(values);
 
-        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'seires');
     },
 
     /**

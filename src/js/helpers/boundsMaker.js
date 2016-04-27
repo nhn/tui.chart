@@ -143,7 +143,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Axes data.
-     * @returns {{xAxis: object, yAxis: object, ?rightYAxis: object}}
+     * @returns {{xAxis: object, yAxis: object, rightYAxis: object}}
      */
     getAxesData: function() {
         return this.axesData;

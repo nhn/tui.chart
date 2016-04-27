@@ -88,7 +88,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
             label = renderUtil.formatDecimal(label, decimalLength);
         }
 
-        return renderUtil.formatValue(label, formatFunctions);
+        return renderUtil.formatValue(label, formatFunctions, 'circleLegend', 'r');
     },
 
     /**

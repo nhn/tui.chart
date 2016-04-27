@@ -56,7 +56,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
         tui.util.forEachArray(rawSeriesData, function(datum) {
             var result = {
                 value: datum.data,
-                label: renderUtil.formatValue(datum.data, formatFunctions)
+                label: renderUtil.formatValue(datum.data, formatFunctions, 'series')
             };
 
             if (datum.name) {

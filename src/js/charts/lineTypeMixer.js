@@ -45,6 +45,8 @@ var lineTypeMixer = {
             axisScaleMaker = this._createAxisScaleMaker({
                 min: options.yAxis.min,
                 max: options.yAxis.max
+            }, {
+                areaType: 'yAxis'
             }),
             aligned = predicate.isLineTypeChart(options.chartType),
             xAxisData = axisDataMaker.makeLabelAxisData({
