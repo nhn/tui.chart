@@ -274,48 +274,68 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_findFormatFunctions()', function() {
-        it('포맷 정보가 없을 경우에는 빈 배열을 반환합니다.', function() {
-            var result = dataProcessor._findFormatFunctions();
-            expect(result).toEqual([]);
-        });
-
-        it('포맷이 0.000인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)', function() {
-            var actual, expected;
+        it('포맷이 function인 경우에는 해당 function을 배열에 담아 반환합니다.', function() {
+            var format = function() {};
+            var actual;
 
             dataProcessor.options = {
                 chart: {
-                    format: '0.000'
+                    format: format
                 }
             };
-            actual = dataProcessor._findFormatFunctions();
+
+            actual = dataProcessor._findFormatFunctions(format);
+
+            expect(actual).toEqual([format]);
+        });
+
+        it('포맷이 string인 경우에는 _findSimpleTypeFormatFunctions의 수행 결과를 반환합니다.', function() {
+            var format = '1,000';
+
+            dataProcessor.options = {
+                chart: {
+                    format: format
+                }
+            };
+            spyOn(dataProcessor, '_findSimpleTypeFormatFunctions');
+
+            dataProcessor._findFormatFunctions(format);
+
+            expect(dataProcessor._findSimpleTypeFormatFunctions).toHaveBeenCalledWith(format);
+        });
+
+        it('포맷 정보가 없을 경우에는 빈 배열을 반환합니다.', function() {
+            var actual = dataProcessor._findFormatFunctions();
+            expect(actual).toEqual([]);
+        });
+    });
+
+    describe('_findSimpleTypeFormatFunctions()', function() {
+        it('포맷이 0.000인 경우에는 [_formatDecimal] 반환합니다.(currying되어있는 함수이기 때문에 함수 실행 결과로 테스트 했습니다)', function() {
+            var actual, expected;
+            var format = '0.000';
+
+            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
             expected = '1000.000';
 
             expect(actual[0](1000)).toBe(expected);
         });
 
         it('포맷이 1,000인 경우에는 [_formatComma] 반환합니다.', function() {
+            var format = '1,000';
             var actual, expected;
 
-            dataProcessor.options = {
-                chart: {
-                    format: '1,000'
-                }
-            };
-            actual = dataProcessor._findFormatFunctions();
+            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
             expected = '1,000';
 
             expect(actual[0](1000)).toBe(expected);
         });
 
         it('포맷이 1,000.00인 경우에는 [_formatDecimal, _formatComma] 반환합니다.', function() {
+            var format = '1,000.00';
             var actual, expected;
 
-            dataProcessor.options = {
-                chart: {
-                    format: '1,000.00'
-                }
-            };
-            actual = dataProcessor._findFormatFunctions();
+            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
             expected = '1,000.00';
 
             expect(actual.length).toBe(2);
@@ -323,14 +343,10 @@ describe('Test for DataProcessor', function() {
         });
 
         it('포맷이 0001인 경우에는 [_formatZeroFill] 반환합니다.', function() {
+            var format = '0001';
             var actual, expected;
 
-            dataProcessor.options = {
-                chart: {
-                    format: '0001'
-                }
-            };
-            actual = dataProcessor._findFormatFunctions();
+            actual = dataProcessor._findSimpleTypeFormatFunctions(format);
             expected = '0011';
 
             expect(actual[0](11)).toBe(expected);

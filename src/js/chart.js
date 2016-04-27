@@ -75,7 +75,7 @@ _createChart = function(container, rawData, options) {
     var themeName, theme, chart;
 
     rawData = JSON.parse(JSON.stringify(rawData));
-    options = options ? JSON.parse(JSON.stringify(options)) : {};
+    options = options ? tui.util.deepCopy(options) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
 

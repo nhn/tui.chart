@@ -246,9 +246,40 @@ var sum = function(values) {
     });
 };
 
+/**
+ * Proper case.
+ * @param {string} value - string value
+ * @returns {string}
+ */
+var properCase = function(value) {
+    return value.substring(0, 1).toUpperCase() + value.substring(1);
+};
 
-var properCase = function(str) {
-    return str.substring(0, 1).toUpperCase() + str.substring(1);
+/**
+ * Deep copy.
+ * @param {object|Array|*} origin - original data
+ * @returns {*}
+ */
+var deepCopy = function(origin) {
+    var clone;
+
+    if (tui.util.isArray(origin)) {
+        clone = [];
+        tui.util.forEachArray(origin, function (value, index) {
+            clone[index] = deepCopy(value);
+        });
+    } else if (tui.util.isFunction(origin)) {
+        clone = origin;
+    } else if (tui.util.isObject(origin)) {
+        clone = {};
+        tui.util.forEach(origin, function(value, key) {
+            clone[key] = deepCopy(value);
+        });
+    } else {
+        clone = origin;
+    }
+
+    return clone;
 };
 
 tui.util.min = min;
@@ -266,6 +297,7 @@ tui.util.multiplication = multiplication;
 tui.util.division = division;
 tui.util.sum = sum;
 tui.util.properCase = properCase;
+tui.util.deepCopy = deepCopy;
 
 var aps = Array.prototype.slice;
 

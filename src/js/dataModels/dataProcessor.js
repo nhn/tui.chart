@@ -663,17 +663,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Find format functions.
-     * @returns {function[]} functions
+     * Find simple type format functions.
+     * @param {string} format - simple format
+     * @returns {Array.<function>}
      */
-    _findFormatFunctions: function() {
-        var format = tui.util.pick(this.options, 'chart', 'format') || '',
-            funcs = [],
-            len;
-
-        if (!format) {
-            return [];
-        }
+    _findSimpleTypeFormatFunctions: function(format) {
+        var funcs = [];
+        var len;
 
         if (this._isDecimal(format)) {
             len = this._pickMaxLenUnderPoint([format]);
@@ -686,6 +682,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (this._isComma(format)) {
             funcs.push(this._formatComma);
+        }
+
+        return funcs;
+    },
+
+    /**
+     * Find format functions.
+     * @returns {function[]} functions
+     */
+    _findFormatFunctions: function() {
+        var format = tui.util.pick(this.options, 'chart', 'format');
+        var funcs = [];
+
+        if (tui.util.isFunction(format)) {
+            funcs = [format];
+        } else if (tui.util.isString(format)) {
+            funcs = this._findSimpleTypeFormatFunctions(format);
         }
 
         return funcs;
