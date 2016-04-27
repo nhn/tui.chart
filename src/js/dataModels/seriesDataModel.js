@@ -261,6 +261,84 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
+     * Get minimum value.
+     * @param {string} valueType - value type like value, x, y, r.
+     * @returns {number}
+     */
+    getMinValue: function(valueType) {
+        return tui.util.min(this.getValues(valueType));
+    },
+
+    /**
+     * Get maximum value.
+     * @param {string} valueType - value type like value, x, y, r.
+     * @returns {number}
+     */
+    getMaxValue: function(valueType) {
+        return tui.util.max(this.getValues(valueType));
+    },
+
+    /**
+     * Traverse seriesGroups, and returns to found SeriesItem by result of execution seriesGroup.find with condition.
+     * @param {function} condition - condition function
+     * @returns {SeriesItem}
+     * @private
+     */
+    _findSeriesItem: function(condition) {
+        var foundItem;
+
+        this.each(function(seriesGroup) {
+            foundItem = seriesGroup.find(condition);
+
+            return !foundItem;
+        });
+
+        return foundItem;
+    },
+
+    /**
+     * Find SeriesItem by value.
+     * @param {string} valueType - value type like value, x, y, r.
+     * @param {number} value - comparing value
+     * @param {function} condition - condition function
+     * @returns {SeriesItem}
+     * @private
+     */
+    _findSeriesItemByValue: function(valueType, value, condition) {
+        condition = condition || function() {
+            return;
+        };
+
+        return this._findSeriesItem(function(seriesItem) {
+            return (seriesItem[valueType] === value) && condition(seriesItem);
+        });
+    },
+
+    /**
+     * Find minimum SeriesItem.
+     * @param {string} valueType - value type like value, x, y, r.
+     * @param {function} condition - condition function
+     * @returns {SeriesItem}
+     */
+    findMinSeriesItem: function(valueType, condition) {
+        var minValue = this.getMinValue(valueType);
+
+        return this._findSeriesItemByValue(valueType, minValue, condition);
+    },
+
+    /**
+     * Find maximum SeriesItem.
+     * @param {string} valueType - value type like value, x, y, r.
+     * @param {function} condition - condition function
+     * @returns {*|SeriesItem}
+     */
+    findMaxSeriesItem: function(valueType, condition) {
+        var maxValue = this.getMaxValue(valueType);
+
+        return this._findSeriesItemByValue(valueType, maxValue, condition);
+    },
+
+    /**
      * Create values that picked value from SeriesItems of SeriesGroups.
      * @param {?string} valueType - type of value
      * @returns {Array.<number>}
@@ -479,7 +557,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var groups = isPivot ? this._getPivotGroups() : this._getSeriesGroups();
 
         tui.util.forEachArray(groups, function(seriesGroup, index) {
-            iteratee(seriesGroup, index);
+            return iteratee(seriesGroup, index);
         });
     },
 

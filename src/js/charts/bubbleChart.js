@@ -240,15 +240,10 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
     /**
      * Update axesData of boundsMaker.
-     * @param {boolean} isXAxisLabel - whether xAxis is label type or not.
      * @private
      */
-    _updateAxesDataOfBoundsMaker: function(isXAxisLabel) {
+    _updateAxesDataOfBoundsMaker: function() {
         var newAxesData;
-
-        if (isXAxisLabel) {
-            return;
-        }
 
         this.axisScaleMakerMap = null;
         newAxesData = this._makeAxesData();
@@ -286,11 +281,16 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         beforeMaxRadius = boundsMaker.getMinimumPixelStepForAxis();
 
         this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
-        this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+
+        if (!isXAxisLabel) {
+            this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+        }
 
         if (this.isChangedMaxRadius(beforeMaxRadius)) {
             this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
-            this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+            if (!isXAxisLabel) {
+                this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+            }
         }
     },
 

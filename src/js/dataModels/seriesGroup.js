@@ -216,7 +216,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Traverse items, and returns to result of execution about iteratee function.
+     * Traverse items, and returns to results of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @returns {Array}
      */
@@ -231,6 +231,24 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     pluck: function(key) {
         return tui.util.pluck(this.items, key);
+    },
+
+    /**
+     * Traverse items, and returns to found SeriesItem by condition function.
+     * @param {function} condition - condition function
+     * @returns {SeriesItem|null}
+     */
+    find: function(condition) {
+        var foundItem;
+
+        this.each(function(seriesItem) {
+            if (condition(seriesItem)) {
+                foundItem = seriesItem;
+            }
+            return !foundItem;
+        });
+
+        return foundItem || null;
     }
 });
 

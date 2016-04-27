@@ -70,8 +70,8 @@ describe('Test for CircleLegend', function() {
 
             actual = circleLegend._makeLabelHtml();
             expected = '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 8px">300</div>' +
-                '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 32px">180</div>' +
-                '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 50px">90</div>';
+                '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 38px">150</div><' +
+                'div class="tui-chart-circle-legend-label" style="left: 30px;top: 53px">75</div>';
 
             expect(actual).toBe(expected);
         });

@@ -1,5 +1,6 @@
 /**
- * @fileoverview  Circle legend component.
+ * @fileoverview  Circle legend component render a legend in the form of overlapping circles
+ *                  by representative radius values.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -14,7 +15,7 @@ var legendTemplate = require('./../legends/legendTemplate');
 
 var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     /**
-     * css className
+     * css className of circle legend
      * @type {string}
      */
     className: 'tui-chart-circle-legend-area',
@@ -22,9 +23,9 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      * ratios for rendering circle
      * @type {Array.<number>}
      */
-    circleRatios: [1, 0.6, 0.3],
+    circleRatios: [1, 0.5, 0.25],
     /**
-     * CircleLegend component.
+     * Circle legend component render a legend in the form of overlapping circles by representative radius values.
      * @constructs CircleLegend
      * @param {object} params parameters
      *      @param {?string} params.libType - library type for graph rendering

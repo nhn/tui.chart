@@ -554,6 +554,31 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * Adjust limit for bubble chart.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {number} step - step;
+     * @private
+     */
+    _adjustLimitForBubbleChart: function(limit, step) {
+        var valueType = this.valueType;
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var maxRadiusValue = seriesDataModel.getMaxValue('r');
+        var isBiggerRatioThanHalfRatio = function(seriesItem) {
+            return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
+        };
+        var foundMinItem = seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio);
+        var foundMaxItem = seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio);
+
+        if (foundMinItem) {
+            limit.min -= step;
+        }
+
+        if (foundMaxItem) {
+            limit.max += step;
+        }
+    },
+
+    /**
      * Make candidate axis scale.
      * @param {{min: number, max: number}} baseLimit base limit
      * @param {{min: number, max: number}} dataLimit limit of user data
@@ -589,6 +614,10 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         // 06. 조건에 따라 step값을 반으로 나눔
         step = this._divideScaleStep(limit, step, valueCount);
+
+        if (predicate.isBubbleChart(this.chartType)) {
+            this._adjustLimitForBubbleChart(limit, step);
+        }
 
         return {
             limit: limit,

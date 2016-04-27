@@ -1,5 +1,5 @@
 /**
- * @fileoverview RaphaelCircleLegend
+ * @fileoverview RaphaelCircleLegend is graph renderer for circleLegend.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var raphael = window.Raphael;
 
 /**
- * @classdesc RaphaelCircleLegend is graph renderer for map chart legend.
+ * @classdesc RaphaelCircleLegend is graph renderer for circleLegend.
  * @class RaphaelCircleLegend
  */
 var RaphaelCircleLegend = tui.util.defineClass(/** @lends RaphaelCircleLegend.prototype */ {

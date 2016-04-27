@@ -317,14 +317,6 @@ describe('Test for BubbleChart', function() {
 
             expect(boundsMaker.registerAxesData).toHaveBeenCalledWith('axesData');
         });
-
-        it('xAxis가 label 타입이면 초기화나 등록 없이 종료합니다.', function() {
-            bubbleChart.axisScaleMakerMap = 'axisScaleMakerMap';
-            bubbleChart._updateAxesDataOfBoundsMaker(true);
-
-            expect(bubbleChart.axisScaleMakerMap).toBe('axisScaleMakerMap');
-            expect(boundsMaker.registerAxesData).not.toHaveBeenCalled();
-        });
     });
 
     describe('_addDataRatios()', function() {

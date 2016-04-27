@@ -213,6 +213,7 @@ var chartConst = {
     MAP_LEGEND_LABEL_PADDING: 5,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
     CIRCLE_LEGEND_PADDING: 20,
+    HALF_RATIO: 0.5,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
