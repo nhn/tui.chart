@@ -25,6 +25,12 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
          * @type {?number}
          */
         this.selectedLegendIndex = null;
+
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = 'line';
     },
 
     /**

@@ -27,6 +27,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
          * @type {?number}
          */
         this.selectedLegendIndex = null;
+
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = 'area';
     },
 
     /**
@@ -60,6 +66,10 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         if (data.options.hasSelection) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
+
+            if (this.hasRangeData) {
+                this.selectionStartDot = this._makeSelectionDot(paper);
+            }
         }
 
         this.outDotStyle = outDotStyle;
