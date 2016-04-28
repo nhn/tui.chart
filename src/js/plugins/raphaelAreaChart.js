@@ -240,7 +240,15 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             }
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.dot, groupPositions[groupIndex][index]);
+                var position = groupPositions[groupIndex][index];
+                var startPositon;
+
+                self._moveDot(item.dot.dot, position);
+                if (item.startDot) {
+                    startPositon = tui.util.extend({}, position);
+                    startPositon.top = startPositon.startTop;
+                    self._moveDot(item.startDot.dot, startPositon);
+                }
             });
         });
     },
@@ -268,7 +276,10 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
                 if (self.dotOpacity) {
-                    item.dot.attr({'fill-opacity': opacity});
+                    item.dot.dot.attr({'fill-opacity': opacity});
+                    if (item.startDot) {
+                        item.startDot.dot.attr({'fill-opacity': opacity});
+                    }
                 }
             });
         });

@@ -310,7 +310,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             groupDots = this._getPivotGroupDots();
 
         tui.util.forEachArray(groupDots[index], function(item) {
-            self._showDot(item.dot);
+            self._showDot(item.dot.dot);
         });
     },
 
@@ -422,7 +422,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
-            self._hideDot(item.dot, opacity);
+            self._hideDot(item.dot.dot, opacity);
         });
     },
 
