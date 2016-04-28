@@ -82,7 +82,9 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
             var positionByStep = start + (step * index);
 
             return seriesGroup.map(function(seriesItem) {
-                return self._makeBound(seriesItem.ratioMap, positionByStep, maxRadius);
+                var hasRationMap = (seriesItem && seriesItem.ratioMap);
+
+                return hasRationMap ? self._makeBound(seriesItem.ratioMap, positionByStep, maxRadius) : null;
             });
         });
     },
@@ -208,7 +210,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
             return seriesGroup.map(function(seriesItem, index) {
                 var bound = self.seriesData.groupBounds[groupIndex][index];
 
-                return self._makeSeriesLabelsHtml(bound, seriesItem.label, index);
+                return seriesItem ? self._makeSeriesLabelsHtml(bound, seriesItem.label, index) : '';
             }).join('');
         }).join('');
 

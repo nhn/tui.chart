@@ -142,13 +142,18 @@ var unique = function(arr, sorted, iteratee, context) {
  */
 var pivot = function(arr2d) {
     var result = [];
+    var len = tui.util.max(tui.util.map(arr2d, function(arr) {
+        return arr.length;
+    }));
+    var index;
+
     tui.util.forEachArray(arr2d, function(arr) {
-        tui.util.forEachArray(arr, function(value, index) {
+        for(index = 0; index < len; index += 1) {
             if (!result[index]) {
                 result[index] = [];
             }
-            result[index].push(value);
-        });
+            result[index].push(arr[index]);
+        }
     });
     return result;
 };

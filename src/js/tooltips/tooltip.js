@@ -58,12 +58,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeHtmlForValueTypes: function(data, valueTypes) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions();
-
         return tui.util.map(valueTypes, function(type) {
-            var label = renderUtil.formatValue(data[type], formatFunctions, 'tooltip', type);
-
-            return (data[type]) ? '<div>' + type + ': ' + label + '</div>' : '';
+            return (data[type]) ? '<div>' + type + ': ' + data[type] + '</div>' : '';
         }).join('');
     },
 
@@ -114,6 +110,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             legendData = this.dataProcessor.getLegendItem(legendIndex),
             params;
 
+        if (!legendData) {
+            return null;
+        }
         params = tui.util.extend({
             chartType: legendData.chartType,
             legend: legendData.label,
@@ -121,6 +120,23 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             index: indexes.groupIndex
         }, additionParams);
         return params;
+    },
+
+    /**
+     * Format value of valueMap
+     * @param {object} valueMap - map of value like value, x, y, r
+     * @returns {{}}
+     * @private
+     */
+    _formatValueMap: function(valueMap) {
+        var formattedValueMap = {};
+        var formatFunctions = this.dataProcessor.getFormatFunctions();
+
+        tui.util.forEach(valueMap, function(value, valueType) {
+            formattedValueMap[valueType] = renderUtil.formatValue(value, formatFunctions, 'tooltip', valueType);
+        });
+
+        return formattedValueMap;
     },
 
     /**
@@ -135,14 +151,16 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
         var legend = legendLabels[chartType][index];
+
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.label ? labelPrefix + seriesItem.label : '';
+        var valueMap = this._formatValueMap(seriesItem.pickValueMap());
 
         return tui.util.extend({
             category: category,
             legend: legend,
             label: label
-        }, seriesItem.pickValueMap());
+        }, valueMap);
     },
 
     /**
@@ -170,7 +188,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             chartType = chartType || self.chartType;
 
             data = seriesGroup.map(function(seriesItem, index) {
-                return self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index);
+                return seriesItem ? self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index) : null;
             });
 
             if (!tooltipData[chartType]) {

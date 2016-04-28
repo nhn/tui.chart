@@ -70,6 +70,10 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var values = [];
 
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
+
             if (tui.util.isExisty(item[valueType])) {
                 values.push(item[valueType]);
             }

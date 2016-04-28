@@ -11,6 +11,8 @@
 var dom = require('./domHandler'),
     chartConst = require('./../const');
 
+var concat = Array.prototype.concat;
+
 var browser = tui.util.browser,
     isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
@@ -505,6 +507,48 @@ var renderUtil = {
         value = parseFloat(value).toFixed(len);
 
         return value;
+    },
+
+    /**
+     * Format Comma.
+     * @param {string} value target value
+     * @returns {string} formatted value
+     * @private
+     */
+    formatComma: function(value) {
+        var comma = ',',
+            underPointValue = '',
+            betweenLen = 3,
+            orgValue = value,
+            sign, values, lastIndex, formattedValue;
+
+        value = String(value);
+        sign = value.indexOf('-') > -1 ? '-' : '';
+
+        if (value.indexOf('.') > -1) {
+            values = value.split('.');
+            value = String(Math.abs(values[0]));
+            underPointValue = '.' + values[1];
+        } else {
+            value = String(Math.abs(value));
+        }
+
+        if (value.length <= betweenLen) {
+            formattedValue = orgValue;
+        } else {
+            values = (value).split('').reverse();
+            lastIndex = values.length - 1;
+            values = tui.util.map(values, function(char, index) {
+                var result = [char];
+                if (index < lastIndex && (index + 1) % betweenLen === 0) {
+                    result.push(comma);
+                }
+                return result;
+            });
+            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
+        }
+
+        return formattedValue;
     }
 };
 

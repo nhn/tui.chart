@@ -310,7 +310,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         };
 
         return this._findSeriesItem(function(seriesItem) {
-            return (seriesItem[valueType] === value) && condition(seriesItem);
+            return seriesItem && (seriesItem[valueType] === value) && condition(seriesItem);
         });
     },
 
@@ -516,6 +516,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         this.each(function(seriesGroup) {
             seriesGroup.each(function(item) {
+                if (!item) {
+                    return;
+                }
                 item.addRatio('x', xDistance, xSubValue);
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);

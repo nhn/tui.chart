@@ -152,21 +152,28 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
             var singleColor = singleColors[groupIndex];
 
             return tui.util.map(bounds, function(bound, index) {
-                var color = singleColor || colors[index];
-                var circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
-                    fill: color,
-                    opacity: 0,
-                    stroke: 'none'
-                });
+                var circleInfo = null;
+                var color, circle;
 
-                circle.data('groupIndex', groupIndex);
-                circle.data('index', index);
+                if (bound) {
+                    color = singleColor || colors[index];
+                    circle = raphaelRenderUtil.renderCircle(self.paper, bound, 0, {
+                        fill: color,
+                        opacity: 0,
+                        stroke: 'none'
+                    });
 
-                return {
-                    circle: circle,
-                    color: color,
-                    bound: bound
-                };
+                    circle.data('groupIndex', groupIndex);
+                    circle.data('index', index);
+
+                    circleInfo = {
+                        circle: circle,
+                        color: color,
+                        bound: bound
+                    };
+                }
+
+                return circleInfo;
             });
         });
     },
@@ -197,6 +204,9 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         }
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo) {
+            if (!circleInfo) {
+                return;
+            }
             self._animateCircle(circleInfo.circle, circleInfo.bound.radius);
         });
 
@@ -428,6 +438,10 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, function(circleInfo, groupIndex, index) {
             var opacity;
+
+            if (!circleInfo) {
+                return;
+            }
 
             opacity = (noneSelected || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 

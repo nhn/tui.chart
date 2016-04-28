@@ -622,48 +622,6 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Format Comma.
-     * @param {string} value target value
-     * @returns {string} formatted value
-     * @private
-     */
-    _formatComma: function(value) {
-        var comma = ',',
-            underPointValue = '',
-            betweenLen = 3,
-            orgValue = value,
-            sign, values, lastIndex, formattedValue;
-
-        value = String(value);
-        sign = value.indexOf('-') > -1 ? '-' : '';
-
-        if (value.indexOf('.') > -1) {
-            values = value.split('.');
-            value = String(Math.abs(values[0]));
-            underPointValue = '.' + values[1];
-        } else {
-            value = String(Math.abs(value));
-        }
-
-        if (value.length <= betweenLen) {
-            formattedValue = orgValue;
-        } else {
-            values = (value).split('').reverse();
-            lastIndex = values.length - 1;
-            values = tui.util.map(values, function(char, index) {
-                var result = [char];
-                if (index < lastIndex && (index + 1) % betweenLen === 0) {
-                    result.push(comma);
-                }
-                return result;
-            });
-            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
-        }
-
-        return formattedValue;
-    },
-
-    /**
      * Find simple type format functions.
      * @param {string} format - simple format
      * @returns {Array.<function>}
@@ -682,7 +640,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         }
 
         if (this._isComma(format)) {
-            funcs.push(this._formatComma);
+            funcs.push(renderUtil.formatComma);
         }
 
         return funcs;
