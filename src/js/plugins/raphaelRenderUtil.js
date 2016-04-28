@@ -128,7 +128,7 @@ var raphaelRenderUtil = {
             var newHd = hd + (hd * lum);
 
             newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
-            return tui.chart.renderUtil.formatZeroFill(newHd, 2);
+            return tui.chart.renderUtil.formatToZeroFill(newHd, 2);
         }).join('');
 
         return '#' + changedHex;

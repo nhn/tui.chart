@@ -467,13 +467,13 @@ var renderUtil = {
     },
 
     /**
-     * Format zero fill.
+     * Format to zero fill.
      * @param {string} value target value
      * @param {number} len length of result
      * @returns {string} formatted value
      * @private
      */
-    formatZeroFill: function(value, len) {
+    formatToZeroFill: function(value, len) {
         var zero = '0';
 
         value = String(value);
@@ -490,12 +490,12 @@ var renderUtil = {
     },
 
     /**
-     * Format Decimal.
+     * Format to Decimal.
      * @param {string} value target value
      * @param {number} len length of under decimal point
      * @returns {string} formatted value
      */
-    formatDecimal: function(value, len) {
+    formatToDecimal: function(value, len) {
         var pow;
 
         if (len === 0) {
@@ -510,12 +510,12 @@ var renderUtil = {
     },
 
     /**
-     * Format Comma.
+     * Format to Comma.
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
      */
-    formatComma: function(value) {
+    formatToComma: function(value) {
         var comma = ',',
             underPointValue = '',
             betweenLen = 3,

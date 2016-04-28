@@ -123,51 +123,51 @@ describe('Test for renderUtil', function() {
         });
     });
 
-    describe('formatDecimal()', function() {
+    describe('formatToDecimal()', function() {
         it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function() {
-            var result = renderUtil.formatDecimal(1.1111, 2);
+            var result = renderUtil.formatToDecimal(1.1111, 2);
             expect(result).toBe('1.11');
         });
 
         it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function() {
-            var result = renderUtil.formatDecimal(1, 1);
+            var result = renderUtil.formatToDecimal(1, 1);
             expect(result).toBe('1.0');
         });
     });
 
-    describe('formatComma()', function() {
+    describe('formatToComma()', function() {
         it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function() {
-            var result = renderUtil.formatComma(1000);
+            var result = renderUtil.formatToComma(1000);
             expect(result).toBe('1,000');
         });
 
         it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function() {
-            var result = renderUtil.formatComma(100000);
+            var result = renderUtil.formatToComma(100000);
             expect(result).toBe('100,000');
         });
 
         it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function() {
-            var result = renderUtil.formatComma(1000000);
+            var result = renderUtil.formatToComma(1000000);
             expect(result).toBe('1,000,000');
         });
 
         it('-1000000을 comma형으로 포맷팅하면 "-1,000,000"이 반환됩니다.', function() {
-            var result = renderUtil.formatComma(-1000000);
+            var result = renderUtil.formatToComma(-1000000);
             expect(result).toBe('-1,000,000');
         });
 
         it('자리수가 4 미만인 값은 그대로 반환합니다', function() {
-            var result = renderUtil.formatComma(900);
+            var result = renderUtil.formatToComma(900);
             expect(result).toBe(900);
         });
 
         it('자리수가 4 미만인 음수 값도 그대로 반환합니다', function() {
-            var result = renderUtil.formatComma(-900);
+            var result = renderUtil.formatToComma(-900);
             expect(result).toBe(-900);
         });
 
         it('소수점이 포함된 경우 소수점을 고려하여 포맷팅합니다', function() {
-            var result = renderUtil.formatComma(1000.123);
+            var result = renderUtil.formatToComma(1000.123);
             expect(result).toBe('1,000.123');
         });
     });
