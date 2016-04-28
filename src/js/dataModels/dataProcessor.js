@@ -596,29 +596,29 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Format zero fill.
+     * Format to zero fill.
      * @param {number} len length of result
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
      */
-    _formatZeroFill: function(len, value) {
+    _formatToZeroFill: function(len, value) {
         var isMinus = value < 0;
 
-        value = renderUtil.formatZeroFill(Math.abs(value), len);
+        value = renderUtil.formatToZeroFill(Math.abs(value), len);
 
         return (isMinus ? '-' : '') + value;
     },
 
     /**
-     * Format Decimal.
+     * Format to Decimal.
      * @param {number} len length of under decimal point
      * @param {string} value target value
      * @returns {string} formatted value
      * @private
      */
-    _formatDecimal: function(len, value) {
-        return renderUtil.formatDecimal(value, len);
+    _formatToDecimal: function(len, value) {
+        return renderUtil.formatToDecimal(value, len);
     },
 
     /**
@@ -632,15 +632,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (this._isDecimal(format)) {
             len = this._pickMaxLenUnderPoint([format]);
-            funcs = [tui.util.bind(this._formatDecimal, this, len)];
+            funcs = [tui.util.bind(this._formatToDecimal, this, len)];
         } else if (this._isZeroFill(format)) {
             len = format.length;
-            funcs = [tui.util.bind(this._formatZeroFill, this, len)];
+            funcs = [tui.util.bind(this._formatToZeroFill, this, len)];
             return funcs;
         }
 
         if (this._isComma(format)) {
-            funcs.push(renderUtil.formatComma);
+            funcs.push(renderUtil.formatToComma);
         }
 
         return funcs;

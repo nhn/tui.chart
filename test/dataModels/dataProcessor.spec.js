@@ -217,14 +217,14 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_formatZeroFill()', function() {
+    describe('_formatToZeroFill()', function() {
         it('1을 길이 3으로 zero fill하면 "001"이 반환됩니다.', function() {
-            var result = dataProcessor._formatZeroFill(3, 1);
+            var result = dataProcessor._formatToZeroFill(3, 1);
             expect(result).toBe('001');
         });
 
         it('22을 길이 4로 zero fill하면 "0022"가 반환됩니다.', function() {
-            var result = dataProcessor._formatZeroFill(4, 22);
+            var result = dataProcessor._formatToZeroFill(4, 22);
             expect(result).toBe('0022');
         });
     });
@@ -305,7 +305,7 @@ describe('Test for DataProcessor', function() {
             expect(actual[1](actual[0](1000))).toBe(expected);
         });
 
-        it('포맷이 0001인 경우에는 [_formatZeroFill] 반환합니다.', function() {
+        it('포맷이 0001인 경우에는 [_formatToZeroFill] 반환합니다.', function() {
             var format = '0001';
             var actual, expected;
 
