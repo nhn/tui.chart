@@ -38,46 +38,52 @@
   "sample03-02-spline-line-chart": {
     "title": "Spline Line Chart Sample"
   },
-  "sample04-01-combo-chart": {
-    "title": "Combo Chart Sample"
-  },
-  "sample05-01-pie-chart": {
-    "title": "Pie Chart Sample"
-  },
-  "sample05-02-legend-type-center-show-label-pie-chart": {
-    "title": "Center Legend Pie Chart Sample"
-  },
-  "sample05-03-legend-type-outer-show-label-pie-chart": {
-    "title": "Outer Legend Pie Chart Sample"
-  },
-  "sample06-01-area-chart": {
+  "sample04-01-area-chart": {
     "title": "Area Chart Sample"
   },
-  "sample06-02-stacked-area-chart": {
+  "sample04-02-stacked-area-chart": {
     "title": "Stacked Area Chart Sample"
   },
-  "sample07-01-world-map-chart": {
+  "sample04-03-range-area-chart": {
+    "title": "Range Area Chart Sample"
+  },
+  "sample05-01-bubble-chart": {
+    "title": "Bubble Chart Sample"
+  },
+  "sample06-01-combo-chart": {
+    "title": "Combo Chart Sample"
+  },
+  "sample07-01-pie-chart": {
+    "title": "Pie Chart Sample"
+  },
+  "sample07-02-legend-type-center-show-label-pie-chart": {
+    "title": "Center Legend Pie Chart Sample"
+  },
+  "sample07-03-legend-type-outer-show-label-pie-chart": {
+    "title": "Outer Legend Pie Chart Sample"
+  },
+  "sample08-01-world-map-chart": {
     "title": "World Map Chart Sample"
   },
-  "sample07-02-south-korea-map-chart": {
+  "sample08-02-south-korea-map-chart": {
     "title": "South Korea Map Chart Sample"
   },
-  "sample07-03-usa-map-chart": {
+  "sample08-03-usa-map-chart": {
     "title": "USA Map Chart Sample"
   },
-  "sample07-04-china-map-chart": {
+  "sample08-04-china-map-chart": {
     "title": "China Map Chart Sample"
   },
-  "sample07-05-japan-map-chart": {
+  "sample08-05-japan-map-chart": {
     "title": "Japan Map Chart Sample"
   },
-  "sample07-06-singapore-map-chart": {
+  "sample08-06-singapore-map-chart": {
     "title": "Singapore Map Chart Sample"
   },
-  "sample07-07-thailand-map-chart": {
+  "sample08-07-thailand-map-chart": {
     "title": "Thailand Map Chart Sample"
   },
-  "sample07-08-taiwan-map-chart": {
+  "sample08-08-taiwan-map-chart": {
     "title": "Taiwan Map Chart Sample"
   }
 }
