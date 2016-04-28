@@ -5,19 +5,21 @@ This application supports drawing a chart on web browser.<br>
 ## Feature
 
 * Bar Chart<br>
-   * A bar chart displays a series of data in the form of a horizontal bar.
+  * A bar chart displays a series of data in the form of a horizontal bar.
 * Column Chart<br>
-   * A column chart is a type of bar chart. Unlike a bar chart, a column chart, position the vertical bar.
+  * A column chart is a type of bar chart. Unlike a bar chart, a column chart, position the vertical bar.
 * Line Chart<br>
-   * A line chart is a type of chart which displays information as a series of data by line segments.
+  * A line chart is a type of chart which displays information as a series of data by line segments.
 * Area Chart<br>
-   * An area chart displays graphically quantitive data. It is based on the line chart.
+  * An area chart displays graphically quantitive data. It is based on the line chart.
+* Bubble Chart<br>
+  * A bubble chart is a type of chart that displays three dimensions of data.
 * Pie Chart<br>
-   * A type of graph in which a circle is divided into sectors that each represent a proportion of the whole.
+  * A type of graph in which a circle is divided into sectors that each represent a proportion of the whole.
 * Combo Chart (Combination Chart)<br>
-   * A combo chart is a visualization that combines the features of the column chart and the line chart.
+  * A combo chart is a visualization that combines the features of the column chart and the line chart.
 * Map Chart<br>
-   * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
+  * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
 
 ## Sample Images
 
@@ -27,7 +29,9 @@ This application supports drawing a chart on web browser.<br>
 
 ![line chart](https://cloud.githubusercontent.com/assets/2888775/13280685/c7f3eeca-db22-11e5-9d2b-9dd1eb81d247.png)
 
-![area chart](https://cloud.githubusercontent.com/assets/2888775/13280693/d19dfb3c-db22-11e5-9dc3-845ae0552055.png)
+![area chart](https://cloud.githubusercontent.com/assets/2888775/14877608/45a037d0-0d59-11e6-9488-7b3812e17beb.png)
+
+![bubble chart](https://cloud.githubusercontent.com/assets/2888775/14877999/99cbfd7e-0d5b-11e6-8b79-44fa04c540ea.png)
 
 ![pie chart](https://cloud.githubusercontent.com/assets/2888775/13280700/dad6c562-db22-11e5-8d48-9fe247f65b58.png)
 
