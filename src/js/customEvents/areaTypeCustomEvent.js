@@ -40,19 +40,19 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
 
     /**
      * On mousemove.
-     * @param {MouseEvent} e mouse event object
+     * @param {MouseEvent} e - mouse event
      * @private
      * @override
      */
     _onMousemove: function(e) {
-        var elTarget = e.target || e.srcElement,
-            bound = elTarget.getBoundingClientRect(),
+        var target = e.target || e.srcElement,
+            bound = target.getBoundingClientRect(),
             layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
             layerY = e.clientY - bound.top,
-            groupIndex = this.tickBaseDataModel.findIndex(layerX),
+            groupIndex = this.tickBaseCoordinateModel.findIndex(layerX),
             foundData = this.dataModel.findData(groupIndex, layerY);
 
-        if (!this._isChanged(this.prevFoundData, foundData)) {
+        if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 

@@ -45,6 +45,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.chartType = params.chartType;
 
         /**
+         * type of value like value, x, y, r
+         * @type {string}
+         */
+        this.valueType = params.valueType;
+
+        /**
+         * type of area like yAxis, xAxis
+         * @type {string}
+         */
+        this.areaType = params.areaType;
+
+        /**
          * Whether vertical type or not.
          * @type {boolean}
          */
@@ -177,7 +189,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (!this.formattedValues) {
             values = this._getScaleValues();
             formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions);
+            this.formattedValues = renderUtil.formatValues(values, formatFunctions, this.areaType, this.valueType);
         }
 
         return this.formattedValues;
@@ -189,18 +201,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var itemGroup = this.dataProcessor.getItemGroup(),
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             baseValues = [];
 
-        itemGroup.each(function(items) {
-            var valuesMap = items._makeValuesMapPerStack();
+        seriesDataModel.each(function(seriesGroup) {
+            var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
                 var plusSum = calculator.sumPlusValues(values),
                     minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
-        }, this.chartType);
+        });
 
         return baseValues;
     },
@@ -216,11 +228,11 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this.isSingleYAxis) {
-            baseValues = this.dataProcessor.getWholeValues();
+            baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackedChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
-            baseValues = this.dataProcessor.getValues(this.chartType);
+            baseValues = this.dataProcessor.getValues(this.chartType, this.valueType);
         }
 
         return baseValues;
@@ -244,18 +256,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Get candidate value counts.
+     * Get candidate counts of value.
      * @memberOf module:axisDataMaker
      * @returns {Array.<number>} value counts
      * @private
      */
-    _getCandidateValueCounts: function() {
+    _getCandidateCountsOfValue: function() {
         var minStart = 3,
             valueCounts, baseSize, start, end;
 
         baseSize = this._getBaseSize();
-        start = tui.util.max([minStart, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10)]);
-        end = tui.util.max([start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)]) + 1;
+        start = Math.max(minStart, parseInt(baseSize / chartConst.MAX_PIXEL_TYPE_STEP_SIZE, 10));
+        end = Math.max(start, parseInt(baseSize / chartConst.MIN_PIXEL_TYPE_STEP_SIZE, 10)) + 1;
         valueCounts = tui.util.range(start, end);
 
         return valueCounts;
@@ -548,6 +560,31 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * Adjust limit for bubble chart.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {number} step - step;
+     * @private
+     */
+    _adjustLimitForBubbleChart: function(limit, step) {
+        var valueType = this.valueType;
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var maxRadiusValue = seriesDataModel.getMaxValue('r');
+        var isBiggerRatioThanHalfRatio = function(seriesItem) {
+            return (seriesItem.r / maxRadiusValue) > chartConst.HALF_RATIO;
+        };
+        var foundMinItem = seriesDataModel.findMinSeriesItem(valueType, isBiggerRatioThanHalfRatio);
+        var foundMaxItem = seriesDataModel.findMaxSeriesItem(valueType, isBiggerRatioThanHalfRatio);
+
+        if (foundMinItem) {
+            limit.min -= step;
+        }
+
+        if (foundMaxItem) {
+            limit.max += step;
+        }
+    },
+
+    /**
      * Make candidate axis scale.
      * @param {{min: number, max: number}} baseLimit base limit
      * @param {{min: number, max: number}} dataLimit limit of user data
@@ -584,9 +621,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         // 06. 조건에 따라 step값을 반으로 나눔
         step = this._divideScaleStep(limit, step, valueCount);
 
+        if (predicate.isBubbleChart(this.chartType)) {
+            this._adjustLimitForBubbleChart(limit, step);
+        }
+
         return {
             limit: limit,
-            step: step
+            step: step,
+            valueCount: abs(limit.max - limit.min) / step
         };
     },
 
@@ -596,9 +638,9 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
      *      divideNum: number
-     * }} integerTypeScale integer type axis scale
-     * @param {Array.<number>} valueCounts value counts
-     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} candidates scale
+     * }} integerTypeScale - integer type axis scale
+     * @param {Array.<number>} valueCounts - candidate counts of value
+     * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
      * @private
      */
     _makeCandidateScales: function(integerTypeScale, valueCounts) {
@@ -614,30 +656,35 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
     /**
      * Get comparing value for selecting axis scale.
-     * @param {{min: number, max: number}} baseLimit limit
-     * @param {{limit: {min: number, max: number}, step: number}} candidateScale scale
+     * @param {{min: number, max: number}} baseLimit - limit
+     * @param {Array.<number>} valueCounts - candidate counts of value
+     * @param {{limit: {min: number, max: number}, step: number}} candidateScale - scale
+     * @param {number} index - index
      * @returns {number} comparing value
      * @private
      */
-    _getComparingValue: function(baseLimit, candidateScale) {
-        var diffMax = abs(candidateScale.limit.max - baseLimit.max),
-            diffMin = abs(baseLimit.min - candidateScale.limit.min),
-            // 소수점 이하 길이가 길 수록 가중치가 증가됨 (가중치가 크면 후보에서 제외될 가능성이 높음)
-            weight = Math.pow(10, tui.util.lengthAfterPoint(candidateScale.step));
+    _getComparingValue: function(baseLimit, valueCounts, candidateScale, index) {
+        var diffMax = abs(candidateScale.limit.max - baseLimit.max);
+        var diffMin = abs(baseLimit.min - candidateScale.limit.min);
+        // 예상 label count와 차이가 많을 수록 후보 제외 가능성이 높음
+        var diffCount = Math.max(abs(valueCounts[index] - candidateScale.valueCount), 1);
+        // 소수점 이하 길이가 길 수록 후보에서 제외될 가능성이 높음
+        var weight = Math.pow(10, tui.util.getDecimalLength(candidateScale.step));
 
-        return (diffMax + diffMin) * weight;
+        return (diffMax + diffMin) * diffCount * weight;
     },
 
     /**
      * Select axis scale.
      * @param {{min: number, max: number}} baseLimit limit
      * @param {Array.<{limit: {min: number, max: number}, step: number}>} candidates scale candidates
+     * @param {Array.<number>} valueCounts - label counts
      * @returns {{limit: {min: number, max: number}, step: number}} selected scale
      * @private
      */
-    _selectAxisScale: function(baseLimit, candidates) {
-        var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit),
-            axisScale = tui.util.min(candidates, getComparingValue);
+    _selectAxisScale: function(baseLimit, candidates, valueCounts) {
+        var getComparingValue = tui.util.bind(this._getComparingValue, this, baseLimit, valueCounts);
+        var axisScale = tui.util.min(candidates, getComparingValue);
 
         return axisScale;
     },
@@ -668,12 +715,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _calculateScale: function() {
-        var baseValues = this._makeBaseValues(),
-            dataLimit = {
-                min: tui.util.min(baseValues),
-                max: tui.util.max(baseValues)
-            },
-            integerTypeScale, valueCounts, candidates, scale;
+        var baseValues = this._makeBaseValues();
+        var dataLimit = {
+            min: tui.util.min(baseValues),
+            max: tui.util.max(baseValues)
+        };
+        var integerTypeScale, valueCounts, candidates, scale;
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -687,13 +734,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         integerTypeScale = this._makeIntegerTypeScale(dataLimit);
 
         // 02. value count 후보군 얻기
-        valueCounts = this.valueCounts || this._getCandidateValueCounts();
+        valueCounts = this.valueCounts || this._getCandidateCountsOfValue();
 
         // 03. axis scale 후보군 얻기
         candidates = this._makeCandidateScales(integerTypeScale, valueCounts);
 
         // 04. axis scale 후보군 중 하나 선택
-        scale = this._selectAxisScale(integerTypeScale.limit, candidates);
+        scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divideNum);
@@ -710,7 +757,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         var values;
 
         if (this.isSingleYAxis) {
-            values = this.dataProcessor.getWholeValues();
+            values = this.dataProcessor.getValues();
         } else {
             values = this.dataProcessor.getValues(this.chartType);
         }

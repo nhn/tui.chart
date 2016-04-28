@@ -1,5 +1,5 @@
 /**
- * @fileoverview test axisTypeMixer.js
+ * @fileoverview Test for axisTypeMixer.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,12 +10,12 @@ var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
     Tooltip = require('../../src/js/tooltips/tooltip'),
     GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
     GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
-    PointTypeCustomEvent = require('../../src/js/customEvents/pointTypeCustomEvent');
+    BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
 
-describe('ComboChart', function() {
-    var componentMap = {},
-        spyObjs = {},
-        componentManager
+describe('Test for ComboChart', function() {
+    var componentMap = {};
+    var spyObjs = {};
+    var componentManager, boundsMaker;
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -28,6 +28,9 @@ describe('ComboChart', function() {
         componentManager.register.and.callFake(function(name, ComponentClass) {
             componentMap[name] = ComponentClass;
         });
+
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
+        axisTypeMixer.boundsMaker = boundsMaker;
     });
 
     describe('_addAxesComponents', function() {
@@ -249,23 +252,23 @@ describe('ComboChart', function() {
 
     describe('_makeRenderingData()', function() {
         it('axis type chart의 renderingData를 생성합니다.', function() {
-            var axesData = {
-                    xAxis: {
-                        limit: {},
-                        aligned: true,
-                        validTickCount: 0
-                    },
-                    yAxis: {
-                        tickCount: 3,
-                        validTickCount: 3
-                    }
-                },
-                actual;
+            var actual;
 
+            boundsMaker.getAxesData.and.returnValue({
+                xAxis: {
+                    limit: {},
+                    aligned: true,
+                    validTickCount: 0
+                },
+                yAxis: {
+                    tickCount: 3,
+                    validTickCount: 3
+                }
+            });
             axisTypeMixer.chartType = 'column';
             axisTypeMixer.isVertical = false;
 
-            actual = axisTypeMixer._makeRenderingData(axesData);
+            actual = axisTypeMixer._makeRenderingData();
 
             expect(actual.plot.vTickCount).toBe(3);
             expect(actual.plot.hTickCount).toBe(0);
@@ -283,9 +286,9 @@ describe('ComboChart', function() {
     });
 
     describe('_addCustomEventComponentForNormalTooltip()', function() {
-        it('일반 툴팁을 위한 custom event 컴포넌트는 PointTypeCustomEvent 클래스로 생성합니다.', function() {
+        it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeCustomEvent 클래스로 생성합니다.', function() {
             axisTypeMixer._addCustomEventComponentForNormalTooltip();
-            expect(componentMap.customEvent).toBe(PointTypeCustomEvent);
+            expect(componentMap.customEvent).toBe(BoundsTypeCustomEvent);
         });
     });
 });

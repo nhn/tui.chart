@@ -1,5 +1,5 @@
 /**
- * @fileoverview test axis
+ * @fileoverview Test for Axis.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var Axis = require('../../src/js/axes/axis'),
     dom = require('../../src/js/helpers/domHandler'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('Axis', function() {
+describe('Test for Axis', function() {
     var dataProcessor, boundsMaker, axis;
 
     beforeAll(function() {
@@ -21,7 +21,7 @@ describe('Axis', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllGroup', 'getCategories', 'getMultilineCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllSeriesDataModel', 'getCategories', 'getMultilineCategories']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
         axis = new Axis({
             theme: {
@@ -59,7 +59,7 @@ describe('Axis', function() {
 
             axis.options.title = 'Axis Title';
             actual = axis._makeYAxisWidth(['label1', 'label12']);
-            expected = 97;
+            expected = 87;
 
             expect(actual).toBe(expected);
         });
@@ -91,7 +91,7 @@ describe('Axis', function() {
 
             axis.componentName = 'rightYAxis';
 
-            dataProcessor.isValidAllGroup.and.returnValue(false);
+            dataProcessor.isValidAllSeriesDataModel.and.returnValue(false);
 
             actual = axis._isValidAxis();
             expected = false;
@@ -112,8 +112,8 @@ describe('Axis', function() {
 
         it('componentType이 xAxis일 경우에는 dimension height를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    height: 60
-                };
+                height: 60
+            };
 
             axis.componentName = 'xAxis';
             axis.componentType = 'xAxis';
@@ -125,8 +125,8 @@ describe('Axis', function() {
 
         it('componentType이 xAxis가 아니면서 isLabel이 true이면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    width: 97
-                };
+                width: 87
+            };
 
             axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
@@ -163,8 +163,8 @@ describe('Axis', function() {
 
         it('componentType이 yAxis면서 isLabel이 true가 아니면 dimension width를 계산하여 boundsMaker에 등록합니다.', function() {
             var expected = {
-                    width: 97
-                };
+                width: 87
+            };
 
             axis.componentName = 'yAxis';
             axis.componentType = 'yAxis';
@@ -801,6 +801,21 @@ describe('Axis', function() {
             expected = axis._makeRotationLabelsHtml(positions, categories, labelSize);
 
             expect(actual).toBe(expected);
+        });
+
+        it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 dataProcessor.getMultilineCategories() 를 호출하여 categories를 덮어씌웁니다.', function() {
+            axis.data = {
+                isVertical: false,
+                isLabelAxis: true
+            };
+            axis.options.rotation = false;
+            dataProcessor.getMultilineCategories.and.returnValue([]);
+            spyOn(axis, '_makeRotationLabelsHtml');
+            spyOn(axis, '_makeNormalLabelsHtml');
+
+            axis._makeLabelsHtml([]);
+
+            expect(dataProcessor.getMultilineCategories).toHaveBeenCalled();
         });
     });
 

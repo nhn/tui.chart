@@ -85,6 +85,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             },
             xAxis: {
                 height: 0
+            },
+            circleLegend: {
+                width: 0
+            },
+            calculationLegend: {
+                width: 0
             }
         };
 
@@ -133,6 +139,46 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     registerAxesData: function(axesData) {
         this.axesData = axesData;
+    },
+
+    /**
+     * Axes data.
+     * @returns {{xAxis: object, yAxis: object, rightYAxis: object}}
+     */
+    getAxesData: function() {
+        return this.axesData;
+    },
+
+    /**
+     * Calculate step of pixel unit.
+     * @param {{tickCount: number, isLabel: boolean}} axisData - data for rendering axis
+     * @param {number} size - width or height of serise area
+     * @returns {number}
+     * @private
+     */
+    _calculatePixelStep: function(axisData, size) {
+        var tickCount = axisData.tickCount;
+        var pixelStep;
+
+        if (axisData.isLabel) {
+            pixelStep = size / tickCount / 2;
+        } else {
+            pixelStep = size / (tickCount - 1);
+        }
+
+        return parseInt(pixelStep, 10);
+    },
+
+    /**
+     * Get minimum step of pixel unit for axis.
+     * @returns {number}
+     */
+    getMinimumPixelStepForAxis: function() {
+        var dimension = this.getDimension('series');
+        var yPixelStep = this._calculatePixelStep(this.axesData.yAxis, dimension.height);
+        var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);
+
+        return Math.min(yPixelStep, xPixelStep);
     },
 
     /**
@@ -360,7 +406,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _calculateDiffWithMultilineHeight: function(labels, limitWidth) {
         var theme = this.theme.xAxis.label,
-            multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme),
+            multilineLabels = this.dataProcessor.getMultilineCategories(limitWidth, theme, this.axesData.xAxis.labels),
             normalHeight = renderUtil.getRenderedLabelsMaxHeight(labels, theme),
             multilineHeight = renderUtil.getRenderedLabelsMaxHeight(multilineLabels, tui.util.extend({
                 cssText: 'line-height:1.2;width:' + limitWidth + 'px'
@@ -451,14 +497,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {number} series width
      */
     makeSeriesWidth: function() {
-        var chartWidth = this.getDimension('chart').width,
-            yAxisWidth = this.getDimension('yAxis').width,
-            legendWidth, rightAreaWidth;
+        var chartWidth = this.getDimension('chart').width;
+        var yAxisWidth = this.getDimension('yAxis').width;
+        var legendDimension = this.getDimension('calculationLegend');
+        var legendWidth, rightAreaWidth;
 
         if (predicate.isHorizontalLegend(this.options.legend.align)) {
             legendWidth = 0;
         } else {
-            legendWidth = this.getDimension('legend').width;
+            legendWidth = legendDimension ? legendDimension.width : 0;
         }
 
         rightAreaWidth = legendWidth + this.getDimension('rightYAxis').width;
@@ -503,9 +550,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerCenterComponentsDimension: function() {
-        var seriesDimension = this._makeSeriesDimension();
+        var seriesDimension = this.getDimension('series');
 
-        this._registerDimension('series', seriesDimension);
         this._registerDimension('tooltip', seriesDimension);
         this._registerDimension('customEvent', seriesDimension);
     },
@@ -575,6 +621,29 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Make CircleLegend position.
+     * @returns {{top: number, left: number}}
+     * @private
+     */
+    _makeCircleLegendPosition: function() {
+        var seriesPosition = this.getPosition('series');
+        var seriesDimension = this.getDimension('series');
+        var circleDimension = this.getDimension('circleLegend');
+        var left;
+
+        if (predicate.isLegendAlignLeft(this.options.legend.align)) {
+            left = 0;
+        } else {
+            left = seriesPosition.left + seriesDimension.width;
+        }
+
+        return {
+            top: seriesPosition.top + seriesDimension.height - circleDimension.height,
+            left: left
+        };
+    },
+
+    /**
      * Register essential components positions.
      * @private
      */
@@ -585,7 +654,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
 
-        if (this.hasAxes) {
+        if (this.getDimension('circleLegend').width) {
+            this.positions.circleLegend = this._makeCircleLegendPosition();
+        }
+
+        if (!predicate.isMousePositionChart(this.chartType)) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
@@ -626,10 +699,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerExtendedSeriesBound: function() {
-        var seriesBound = this.getBound('series'),
-            expandedBound = this.hasAxes ? renderUtil.expandBound(seriesBound) : seriesBound;
+        var seriesBound = this.getBound('series');
+        if (!predicate.isMousePositionChart(this.chartType)) {
+            seriesBound = renderUtil.expandBound(seriesBound);
+        }
 
-        this._setBound('extendedSeries', expandedBound);
+        this._setBound('extendedSeries', seriesBound);
     },
 
     /**
@@ -655,6 +730,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.positions.xAxis.left -= xAxisDecreasingLeft;
         this.positions.customEvent.left -= xAxisDecreasingLeft;
         this.positions.tooltip.left -= xAxisDecreasingLeft;
+    },
+
+    /**
+     * Register series dimension.
+     */
+    registerSeriesDimension: function() {
+        var seriesDimension = this._makeSeriesDimension();
+
+        this._registerDimension('series', seriesDimension);
     },
 
     /**

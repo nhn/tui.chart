@@ -25,6 +25,12 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
          * @type {?number}
          */
         this.selectedLegendIndex = null;
+
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = 'line';
     },
 
     /**
@@ -131,7 +137,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             self.groupLines[groupIndex].attr({path: path.join(' ')});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.dot, groupPositions[groupIndex][index]);
+                self._moveDot(item.dot.dot, groupPositions[groupIndex][index]);
             });
         });
     },
@@ -155,7 +161,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 item.opacity = opacity;
 
                 if (self.dotOpacity) {
-                    item.dot.attr({'fill-opacity': opacity});
+                    item.dot.dot.attr({'fill-opacity': opacity});
                 }
             });
         });

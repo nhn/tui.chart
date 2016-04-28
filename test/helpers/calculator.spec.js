@@ -1,5 +1,5 @@
 /**
- * @fileoverview test calculator
+ * @fileoverview Test for calculator.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var calculator = require('../../src/js/helpers/calculator.js');
 
-describe('calculator', function() {
+describe('Test for calculator', function() {
     describe('calculateLimit()', function() {
         it('userMin=10, userMax=100의 기본 limit 계산 결과는 min=0, max=104.5입니다.', function() {
             var actual = calculator.calculateLimit(10, 100);

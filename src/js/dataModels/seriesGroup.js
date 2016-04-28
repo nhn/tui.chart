@@ -1,59 +1,83 @@
 /**
- * @fileoverview Items has items(Item instance).
+ * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
+ * SeriesGroup.items has SeriesItem.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Items = tui.util.defineClass(/** @lends Items.prototype */{
+/**
+ * SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
+ */
+
+var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     /**
-     * Items.
-     * @constructs Items
-     * @param {Items} items - items
+     * SeriesGroup is a element of SeriesDataModel.groups.
+     * SeriesGroup.items has SeriesItem.
+     * @constructs SeriesGroup
+     * @param {Array.<SeriesItem>} seriesItems - series items
      */
-    init: function(items) {
+    init: function(seriesItems) {
         /**
-         * items
-         * @type {Array.<Item>}
+         * items has SeriesItem
+         * @type {Array.<SeriesItem>}
          */
-        this.items = items;
+        this.items = seriesItems;
 
         /**
-         * item vlaues.
+         * map of values by value type like value, x, y, r.
          * @type {Array.<number>}
          */
-        this.values = null;
+        this.valuesMap = {};
+
+        this.valuesMapPerStack = null;
     },
 
     /**
-     * Get item count.
+     * Get series item count.
      * @returns {number}
      */
-    getItemCount: function() {
+    getSeriesItemCount: function() {
         return this.items.length;
     },
 
     /**
-     * Get item.
+     * Get series item.
      * @param {number} index - index of items
-     * @returns {Item}
+     * @returns {SeriesItem}
      */
-    getItem: function(index) {
+    getSeriesItem: function(index) {
         return this.items[index];
     },
 
     /**
-     * Make values of item.
+     * Get first SeriesItem.
+     * @returns {SeriesItem}
+     */
+    getFirstSeriesItem: function() {
+        return this.getSeriesItem(0);
+    },
+
+    /**
+     * Create values that picked value from SeriesItems.
+     * @param {?string} valueType - type of value
      * @returns {Array.<number>}
      * @private
      */
-    _makeValues: function() {
+    _createValues: function(valueType) {
         var values = [];
 
         this.each(function(item) {
-            values.push(item.value);
-            if (!tui.util.isNull(item.start)) {
+            if (!item) {
+                return;
+            }
+
+            if (tui.util.isExisty(item[valueType])) {
+                values.push(item[valueType]);
+            }
+            if (tui.util.isExisty(item.start)) {
                 values.push(item.start);
             }
         });
@@ -62,15 +86,18 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Get
+     * Get values from valuesMap.
+     * @param {?string} valueType - type of value
      * @returns {Array}
      */
-    getValues: function() {
-        if (!this.values) {
-            this.values = this._makeValues();
+    getValues: function(valueType) {
+        valueType = valueType || 'value';
+
+        if (!this.valuesMap[valueType]) {
+            this.valuesMap[valueType] = this._createValues(valueType);
         }
 
-        return this.values;
+        return this.valuesMap[valueType];
     },
 
     /**
@@ -92,6 +119,18 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
+     * Get values map per stack.
+     * @returns {*|Object}
+     */
+    getValuesMapPerStack: function() {
+        if (!this.valuesMapPerStack) {
+            this.valuesMapPerStack = this._makeValuesMapPerStack();
+        }
+
+        return this.valuesMapPerStack;
+    },
+
+    /**
      * Make sum map per stack.
      * @returns {object} sum map
      * @private
@@ -110,22 +149,10 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Get values map per stack.
-     * @returns {*|Object}
-     */
-    getValuesMapPerStack: function() {
-        if (!this.valuesMap) {
-            this.valuesMap = this._makeValuesMapPerStack();
-        }
-
-        return this.valuesMap;
-    },
-
-    /**
-     * Add start to all item.
+     * Add start value to all series item.
      * @param {number} start start value
      */
-    addStartToAllItem: function(start) {
+    addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
             item.addStart(start);
         });
@@ -170,7 +197,22 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Traverse items and executes iteratee function.
+     * Whether has range data or not.
+     * @returns {boolean}
+     */
+    hasRangeData: function() {
+        var hasRangeData = false;
+
+        this.each(function(seriesItem) {
+            hasRangeData = seriesItem.isRange;
+            return !hasRangeData;
+        });
+
+        return hasRangeData;
+    },
+
+    /**
+     * Traverse items, and executes iteratee function.
      * @param {function} iteratee - iteratee function
      */
     each: function(iteratee) {
@@ -178,7 +220,7 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
     },
 
     /**
-     * Traverse items and returns to result of execution about iteratee function.
+     * Traverse items, and returns to results of execution about iteratee function.
      * @param {function} iteratee - iteratee function
      * @returns {Array}
      */
@@ -193,7 +235,25 @@ var Items = tui.util.defineClass(/** @lends Items.prototype */{
      */
     pluck: function(key) {
         return tui.util.pluck(this.items, key);
+    },
+
+    /**
+     * Traverse items, and returns to found SeriesItem by condition function.
+     * @param {function} condition - condition function
+     * @returns {SeriesItem|null}
+     */
+    find: function(condition) {
+        var foundItem;
+
+        this.each(function(seriesItem) {
+            if (condition(seriesItem)) {
+                foundItem = seriesItem;
+            }
+            return !foundItem;
+        });
+
+        return foundItem || null;
     }
 });
 
-module.exports = Items;
+module.exports = SeriesGroup;

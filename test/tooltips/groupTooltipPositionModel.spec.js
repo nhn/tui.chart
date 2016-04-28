@@ -407,7 +407,9 @@ describe('GroupTooltipPositionModel', function() {
                 },
                 data = {
                     basePosition: 0,
+                    areaPosition: 0,
                     areaSize: 100,
+                    chartSize: 100,
                     direction: chartConst.TOOLTIP_DIRECTION_FORWARD,
                     sizeType: 'width',
                     positionType: 'left'
@@ -419,7 +421,7 @@ describe('GroupTooltipPositionModel', function() {
             };
 
             actual = positionModel._makeSubPositionValue(tooltipDimension, data);
-            expected = 60;
+            expected = 50;
             expect(actual).toBe(expected);
         });
     });

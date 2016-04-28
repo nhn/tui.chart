@@ -90,7 +90,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      *      prevStack: ?string
      * }} iterationData iteration data
      * @param {?boolean} isStacked whether stacked option or not.
-     * @param {{value: number, ratio: number, stack: string}} item item
+     * @param {SeriesItem} seriesItem series item
      * @param {number} index index
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
@@ -98,22 +98,22 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * }}
      * @private
      */
-    _makeBarChartBound: function(baseData, iterationData, isStacked, item, index) {
-        var barWidth = baseData.baseBarSize * item.ratioDistance,
-            additionalLeft = this._calculateAdditionalLeft(item.value),
-            barStartLeft = baseData.baseBarSize * item.startRatio,
+    _makeBarChartBound: function(baseData, iterationData, isStacked, seriesItem, index) {
+        var barWidth = baseData.baseBarSize * seriesItem.ratioDistance,
+            additionalLeft = this._calculateAdditionalLeft(seriesItem.value),
+            barStartLeft = baseData.baseBarSize * seriesItem.startRatio,
             startLeft = baseData.basePosition + barStartLeft + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
-            changedStack = (item.stack !== iterationData.prevStack),
+            changedStack = (seriesItem.stack !== iterationData.prevStack),
             stepCount, endLeft, bound;
 
         if (!isStacked || (!this.options.diverging && changedStack)) {
-            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
             iterationData.top = (baseData.step * stepCount) + iterationData.baseTop + baseData.additionalPosition;
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
         }
 
-        if (item.value >= 0) {
+        if (seriesItem.value >= 0) {
             endLeft = startLeft + iterationData.plusLeft;
             iterationData.plusLeft += barWidth;
         } else {
@@ -121,7 +121,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             endLeft = startLeft + iterationData.minusLeft;
         }
 
-        iterationData.prevStack = item.stack;
+        iterationData.prevStack = seriesItem.stack;
 
         bound = this._makeBound(barWidth, baseData.barSize, iterationData.top, startLeft, endLeft);
 
@@ -135,13 +135,12 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeBounds: function() {
         var self = this,
-            itemGroup = this.dataProcessor.getItemGroup(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 
-
-        return itemGroup.map(function(items, groupIndex) {
+        return seriesDataModel.map(function(seriesGroup, groupIndex) {
             var baseTop = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
                         + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -153,7 +152,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 },
                 iteratee = tui.util.bind(self._makeBarChartBound, self, baseData, iterationData, isStacked);
 
-            return items.map(iteratee);
+            return seriesGroup.map(iteratee);
         });
     },
 
@@ -162,12 +161,13 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
      * @param {number} labelHeight - label height
      * @param {number} value - value
-     * @param {string} formattedValue - formatted value
+     * @param {string} label - label
      * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} - rendering position
+     * @private
      */
-    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
+    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
             left = bound.left,
             top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
 
@@ -208,7 +208,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
         if (bound) {
             sum = calculator.sumPlusValues(values);
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             html = this._makeSeriesLabelHtml({
                 left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
                 top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
@@ -237,7 +237,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 sum = Math.abs(sum);
             }
 
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({
                 left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,

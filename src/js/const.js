@@ -39,6 +39,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
     /** @type {string} */
+    CHART_TYPE_BUBBLE: 'bubble',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
@@ -194,7 +196,7 @@ var chartConst = {
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
     /** title add padding */
-    TITLE_PADDING: 20,
+    TITLE_PADDING: 10,
     /** legend area padding */
     LEGEND_AREA_PADDING: 10,
     /** legend checkbox width */
@@ -209,6 +211,9 @@ var chartConst = {
     MAP_LEGEND_GRAPH_SIZE: 25,
     /** map legend label padding */
     MAP_LEGEND_LABEL_PADDING: 5,
+    CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
+    CIRCLE_LEGEND_PADDING: 20,
+    HALF_RATIO: 0.5,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */

@@ -1,5 +1,5 @@
 /**
- * @fileoverview AreaTypeDataModel is data model for area type custom event.
+ * @fileoverview AreaTypeDataModel is data model for custom event of area type.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
-     * AreaTypeDataModel is data mode for area type custom event.
+     * AreaTypeDataModel is data mode for custom event of area type.
      * @constructs AreaTypeDataModel
      * @param {object} seriesInfo series info
      */
@@ -18,9 +18,9 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
     /**
      * Make area type data for custom event.
-     * @param {Array.<Array.<object>>} groupPositions group positions
-     * @param {string} chartType cahrt type
-     * @returns {Array} area type data for custom event
+     * @param {Array.<Array.<object>>} groupPositions - group positions
+     * @param {string} chartType - chart type
+     * @returns {Array}
      * @private
      */
     _makeData: function(groupPositions, chartType) {
@@ -41,9 +41,9 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
 
     /**
      * Find Data.
-     * @param {number} groupIndex group index
-     * @param {number} layerY mouse position
-     * @returns {object} index
+     * @param {number} groupIndex - group index
+     * @param {number} layerY - mouse position
+     * @returns {object}
      */
     findData: function(groupIndex, layerY) {
         var result = null,

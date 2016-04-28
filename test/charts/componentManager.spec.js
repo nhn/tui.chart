@@ -1,5 +1,5 @@
 /**
- * @fileoverview test ComponentManager
+ * @fileoverview Test for ComponentManager.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var ComponentManager = require('../../src/js/charts/componentManager'),
     Plot = require('../../src/js/plots/plot');
 
-describe('test ComponentManager', function() {
+describe('Test for ComponentManager', function() {
     var componentManager;
 
     beforeEach(function() {

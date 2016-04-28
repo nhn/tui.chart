@@ -84,6 +84,16 @@ var predicate = {
     },
 
     /**
+     * Whether bubble chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType chart type
+     * @returns {boolean} result boolean
+     */
+    isBubbleChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_BUBBLE;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -104,13 +114,23 @@ var predicate = {
     },
 
     /**
+     * Whether allow rendering for minus point in area of series.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    allowMinusPointRender: function(chartType) {
+        return this.isLineTypeChart(chartType) || this.isBubbleChart(chartType);
+    },
+
+    /**
      * Whether mouse position chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
      * @returns {boolean} result boolean
      */
     isMousePositionChart: function(chartType) {
-        return this.isPieChart(chartType) || this.isMapChart(chartType);
+        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isBubbleChart(chartType);
     },
 
     /**
@@ -228,6 +248,15 @@ var predicate = {
     },
 
     /**
+     * Whether allow range data or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isAllowRangeData: function(chartType) {
+        return this.isBarTypeChart(chartType) || this.isAreaChart(chartType);
+    },
+
+    /**
      * Whether align of yAxis is center or not.
      * @memberOf module:predicate
      * @param {boolean} hasRightYAxis whether has right yAxis.
@@ -245,6 +274,15 @@ var predicate = {
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
+    },
+
+    /**
+     * Whether options.hidden is true or not.
+     * @param {object} [options] - options
+     * @returns {boolean}
+     */
+    isHidden: function(options) {
+        return !!tui.util.pick(options, 'hidden');
     }
 };
 

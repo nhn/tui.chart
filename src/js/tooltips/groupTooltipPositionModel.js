@@ -333,8 +333,8 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
         } else if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
             value = this._adjustForwardPositionValue(value, range, tooltipSize, data);
         } else {
-            value = tui.util.max([value, -data.areaPosition]);
-            value = tui.util.min([value, data.chartSize - data.areaPosition - tooltipSize]);
+            value = Math.max(value, -data.areaPosition);
+            value = Math.min(value, data.chartSize - data.areaPosition - tooltipSize);
         }
 
         return value;
@@ -353,9 +353,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      */
     _adjustSubPositionValue: function(value, tooltipSize, data) {
         if (data.direction === chartConst.TOOLTIP_DIRECTION_FORWARD) {
-            value = tui.util.min([value, data.chartSize - data.areaPosition - tooltipSize]);
+            value = Math.min(value, data.chartSize - data.areaPosition - tooltipSize);
         } else {
-            value = tui.util.max([value, -data.areaPosition]);
+            value = Math.max(value, -data.areaPosition);
         }
 
         return value;

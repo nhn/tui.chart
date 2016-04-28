@@ -24,12 +24,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @param {?string} posTopType position top type
      * @returns {Array.<string | number>} paths
      * @private
      */
-    _makeLinesPath: function(positions) {
-        var path = tui.util.map(positions, function(position) {
-            return ['L', position.left, position.top];
+    _makeLinesPath: function(positions, posTopType) {
+        var path;
+
+        posTopType = posTopType || 'top';
+        path = tui.util.map(positions, function(position) {
+            return ['L', position.left, position[posTopType]];
         });
 
         path = concat.apply([], path);
@@ -193,8 +197,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             dots = tui.util.map(groupPositions, function(positions, groupIndex) {
                 var color = colors[groupIndex];
                 return tui.util.map(positions, function(position) {
-                    var dot = self.renderDot(paper, position, color, opacity);
-                    return dot;
+                    var dotMap = {
+                        dot: self.renderDot(paper, position, color, opacity)
+                    };
+                    var startPositon;
+
+                    if (self.hasRangeData) {
+                        startPositon = tui.util.extend({}, position);
+                        startPositon.top = startPositon.startTop;
+                        dotMap.startDot = self.renderDot(paper, startPositon, color, opacity);
+                    }
+
+                    return dotMap;
                 });
             });
 
@@ -248,12 +262,29 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     showAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
             item = this.groupDots[groupIndex][index],
+            strokeWidth, startLine;
+
+        if (this.chartType === 'area') {
+            strokeWidth = 2;
+            startLine = line.startLine;
+            line = line.line;
+        } else {
             strokeWidth = 3;
+        }
 
         this._updateLineStrokeWidth(line, strokeWidth);
-        this._showDot(item.dot);
+
+        if (startLine) {
+            this._updateLineStrokeWidth(startLine, strokeWidth);
+        }
+
+        this._showDot(item.dot.dot);
+
+        if (item.startDot) {
+            this._showDot(item.startDot.dot);
+        }
     },
 
     /**
@@ -279,7 +310,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             groupDots = this._getPivotGroupDots();
 
         tui.util.forEachArray(groupDots[index], function(item) {
-            self._showDot(item.dot);
+            self._showDot(item.dot.dot);
         });
     },
 
@@ -339,10 +370,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     hideAnimation: function(data) {
         var index = data.groupIndex, // Line chart has pivot values.
             groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex].line,
+            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
             item = this.groupDots[groupIndex][index],
             opacity = this.dotOpacity,
+            strokeWidth, startLine;
+
+        if (this.chartType === 'area') {
+            strokeWidth = 1;
+            startLine = line.startLine;
+            line = line.line;
+        } else {
             strokeWidth = 2;
+        }
 
         if (opacity && !tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
             opacity = DE_EMPHASIS_OPACITY;
@@ -352,8 +391,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             this._updateLineStrokeWidth(line, strokeWidth);
         }
 
+        if (startLine) {
+            this._updateLineStrokeWidth(startLine, strokeWidth);
+        }
+
         if (item) {
-            this._hideDot(item.dot, opacity);
+            this._hideDot(item.dot.dot, opacity);
+
+            if (item.startDot) {
+                this._hideDot(item.startDot.dot, opacity);
+            }
         }
     },
 
@@ -375,7 +422,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
-            self._hideDot(item.dot, opacity);
+            self._hideDot(item.dot.dot, opacity);
         });
     },
 
@@ -463,8 +510,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             cy: position.top,
             'fill-opacity': 0.5,
             'stroke-opacity': 1,
-            stroke: this.selectionColor || item.color
+            stroke: this.selectionColor || item.dot.color
         });
+
+        if (this.selectionStartDot) {
+            this.selectionStartDot.attr({
+                cx: position.left,
+                cy: position.startTop,
+                'fill-opacity': 0.5,
+                'stroke-opacity': 1,
+                stroke: this.selectionColor || item.startDot.color
+            });
+        }
     },
 
     /**
@@ -476,6 +533,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         if (this.selectedItem === item) {
             this.selectionDot.attr({
+                'fill-opacity': 0,
+                'stroke-opacity': 0
+            });
+        }
+
+        if (this.selectionStartDot) {
+            this.selectionStartDot.attr({
                 'fill-opacity': 0,
                 'stroke-opacity': 0
             });

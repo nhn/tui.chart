@@ -9,21 +9,22 @@
  */
 var min = function(arr, condition, context) {
     var result, minValue, rest;
+
     if (!condition) {
-        condition = function(item) {
-            return item;
-        };
+        result =  Math.min.apply(null, arr);
+    } else {
+        result = arr[0];
+        minValue = condition.call(context, result, 0);
+        rest = arr.slice(1);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
+            if (compareValue < minValue) {
+                minValue = compareValue;
+                result = item;
+            }
+        });
     }
-    result = arr[0];
-    minValue = condition.call(context, result);
-    rest = arr.slice(1);
-    tui.util.forEachArray(rest, function(item) {
-        var compareValue = condition.call(context, item);
-        if (compareValue < minValue) {
-            minValue = compareValue;
-            result = item;
-        }
-    });
+
     return result;
 };
 
@@ -36,21 +37,22 @@ var min = function(arr, condition, context) {
  */
 var max = function(arr, condition, context) {
     var result, maxValue, rest;
+
     if (!condition) {
-        condition = function(item) {
-            return item;
-        };
+        result = Math.max.apply(null, arr);
+    } else {
+        result = arr[0];
+        maxValue = condition.call(context, result, 0);
+        rest = arr.slice(1);
+        tui.util.forEachArray(rest, function(item, index) {
+            var compareValue = condition.call(context, item, index + 1);
+            if (compareValue > maxValue) {
+                maxValue = compareValue;
+                result = item;
+            }
+        });
     }
-    result = arr[0];
-    maxValue = condition.call(context, result);
-    rest = arr.slice(1);
-    tui.util.forEachArray(rest, function(item) {
-        var compareValue = condition.call(context, item);
-        if (compareValue > maxValue) {
-            maxValue = compareValue;
-            result = item;
-        }
-    });
+
     return result;
 };
 
@@ -140,23 +142,28 @@ var unique = function(arr, sorted, iteratee, context) {
  */
 var pivot = function(arr2d) {
     var result = [];
+    var len = tui.util.max(tui.util.map(arr2d, function(arr) {
+        return arr.length;
+    }));
+    var index;
+
     tui.util.forEachArray(arr2d, function(arr) {
-        tui.util.forEachArray(arr, function(value, index) {
+        for(index = 0; index < len; index += 1) {
             if (!result[index]) {
                 result[index] = [];
             }
-            result[index].push(value);
-        });
+            result[index].push(arr[index]);
+        }
     });
     return result;
 };
 
 /**
- * Get after point length.
+ * Get length after decimal point.
  * @param {string | number} value target value
  * @returns {number} result length
  */
-var lengthAfterPoint = function(value) {
+var getDecimalLength = function(value) {
     var valueArr = String(value).split('.');
     return valueArr.length === 2 ? valueArr[1].length : 0;
 };
@@ -169,7 +176,7 @@ var lengthAfterPoint = function(value) {
 var findMultipleNum = function() {
     var args = [].slice.call(arguments),
         underPointLens = tui.util.map(args, function(value) {
-            return tui.util.lengthAfterPoint(value);
+            return tui.util.getDecimalLength(value);
         }),
         underPointLen = tui.util.max(underPointLens),
         multipleNum = Math.pow(10, underPointLen);
@@ -244,9 +251,40 @@ var sum = function(values) {
     });
 };
 
+/**
+ * Proper case.
+ * @param {string} value - string value
+ * @returns {string}
+ */
+var properCase = function(value) {
+    return value.substring(0, 1).toUpperCase() + value.substring(1);
+};
 
-var properCase = function(str) {
-    return str.substring(0, 1).toUpperCase() + str.substring(1);
+/**
+ * Deep copy.
+ * @param {object|Array|*} origin - original data
+ * @returns {*}
+ */
+var deepCopy = function(origin) {
+    var clone;
+
+    if (tui.util.isArray(origin)) {
+        clone = [];
+        tui.util.forEachArray(origin, function (value, index) {
+            clone[index] = deepCopy(value);
+        });
+    } else if (tui.util.isFunction(origin)) {
+        clone = origin;
+    } else if (tui.util.isObject(origin)) {
+        clone = {};
+        tui.util.forEach(origin, function(value, key) {
+            clone[key] = deepCopy(value);
+        });
+    } else {
+        clone = origin;
+    }
+
+    return clone;
 };
 
 tui.util.min = min;
@@ -255,7 +293,7 @@ tui.util.any = any;
 tui.util.all = all;
 tui.util.unique = unique;
 tui.util.pivot = pivot;
-tui.util.lengthAfterPoint = lengthAfterPoint;
+tui.util.getDecimalLength = getDecimalLength;
 tui.util.mod = mod;
 tui.util.findMultipleNum = findMultipleNum;
 tui.util.addition = addition;
@@ -264,6 +302,7 @@ tui.util.multiplication = multiplication;
 tui.util.division = division;
 tui.util.sum = sum;
 tui.util.properCase = properCase;
+tui.util.deepCopy = deepCopy;
 
 var aps = Array.prototype.slice;
 

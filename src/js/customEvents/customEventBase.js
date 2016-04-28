@@ -7,8 +7,8 @@
 'use strict';
 
 var eventListener = require('../helpers/eventListener'),
-    TickBaseDataModel = require('./tickBaseDataModel'),
-    PointTypeDataModel = require('./pointTypeDataModel'),
+    TickBaseCoordinateModel = require('./tickBaseCoordinateModel'),
+    BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel'),
     chartConst = require('../const'),
     dom = require('../helpers/domHandler'),
     renderUtil = require('../helpers/renderUtil');
@@ -30,88 +30,90 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.isVertical = params.isVertical;
         this.dataProcessor = params.dataProcessor;
         this.boundsMaker = params.boundsMaker;
+        this.selectedData = null;
     },
 
     /**
-     * Render event handle layer area
-     * @param {HTMLElement} customEventContainer custom event container element
-     * @param {object} data rendering data
+     * Render event handle layer area.
+     * @param {HTMLElement} customEventContainer - container element for custom event
+     * @param {object} data - data for rendering
      * @private
      */
     _renderCustomEventArea: function(customEventContainer, data) {
-        var expandedBound;
+        var expandedBound, tbcm;
 
         this.dimension = this.boundsMaker.getDimension('customEvent');
-        this.tickBaseDataModel = new TickBaseDataModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        tbcm = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        this.tickBaseCoordinateModel = tbcm;
         expandedBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
         renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
         renderUtil.renderPosition(customEventContainer, expandedBound.position);
     },
 
     /**
-     * Render event handle layer component.
-     * @param {object} data rendering data
-     * @returns {HTMLElement} coordinate area
+     * Render for customEvent component.
+     * @param {object} data - data for rendering
+     * @returns {HTMLElement} container for custom event
      */
     render: function(data) {
-        var el = dom.create('DIV', 'tui-chart-series-custom-event-area');
+        var container = dom.create('DIV', 'tui-chart-series-custom-event-area');
 
-        this._renderCustomEventArea(el, data);
-        this.attachEvent(el);
-        this.customEventContainer = el;
-        return el;
+        this._renderCustomEventArea(container, data);
+        this.attachEvent(container);
+        this.customEventContainer = container;
+        return container;
     },
 
     /**
-     * Initialize data of custom event
-     * @param {Array.<object>} seriesInfos series infos
+     * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
+     * @param {Array.<object>} seriesBounds - series bounds
      */
-    initCustomEventData: function(seriesInfos) {
-        this.pointTypeDataModel = new PointTypeDataModel(seriesInfos);
+    initCustomEventData: function(seriesBounds) {
+        this.boundsBaseCoordinateModel = new BoundsBaseCoordinateModel(seriesBounds);
     },
 
     /**
-     * Render.
-     * @param {{tickCount: number}} data data
+     * Rerender for customEvent component.
+     * @param {{tickCount: number}} data - data for rerendering
      */
     rerender: function(data) {
         this._renderCustomEventArea(this.customEventContainer, data);
     },
 
     /**
-     * Resize event handle layer component.
-     * @param {{tickCount: number}} data data
+     * Resize for customEvent component.
+     * @param {{tickCount: number}} data - data for resizing
      */
     resize: function(data) {
         this.rerender(data);
     },
 
     /**
-     * Whether changed or not.
-     * @param {object} prev previous data
-     * @param {object} cur current data
-     * @returns {boolean} whether changed or not
+     * Whether changed select data or not.
+     * @param {object} prev - previous data
+     * @param {object} cur - current data
+     * @returns {boolean}
      * @private
      */
-    _isChanged: function(prev, cur) {
+    _isChangedSelectData: function(prev, cur) {
         return !prev || !cur || prev.chartType !== cur.chartType ||
             prev.indexes.groupIndex !== cur.indexes.groupIndex || prev.indexes.index !== cur.indexes.index;
     },
 
     /**
-     * Find point type data.
-     * @param {HTMLElement} elTarget target element
-     * @param {number} clientX mouse position x
-     * @param {number} clientY mouse position y
-     * @returns {object} found data
+     * Find coordinate data from boundsCoordinateModel.
+     * @param {HTMLElement} target - target element
+     * @param {number} clientX mouse - position x
+     * @param {number} clientY mouse - position y
+     * @returns {object}
      * @private
      */
-    _findPointTypeData: function(elTarget, clientX, clientY) {
-        var bound = elTarget.getBoundingClientRect(),
+    _findDataFromBoundsCoordinateModel: function(target, clientX, clientY) {
+        var bound = target.getBoundingClientRect(),
             layerX = clientX - bound.left,
             layerY = clientY - bound.top,
-            groupIndex = this.tickBaseDataModel.findIndex(this.isVertical ? layerX : layerY);
-        return this.pointTypeDataModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
+            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+        return this.boundsBaseCoordinateModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
     },
 
     /**
@@ -121,13 +123,13 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     _unselectSelectedData: function() {
         var eventName = renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series');
         this.fire(eventName, this.selectedData);
-        delete this.selectedData;
+        this.selectedData = null;
     },
 
     /**
      * On mouse event.
-     * @param {string} eventType custom event type
-     * @param {mouseevent} e mouse event
+     * @param {string} eventType - custom event type
+     * @param {MouseEvent} e - mouse event
      * @private
      */
     _onMouseEvent: function(eventType, e) {
@@ -143,14 +145,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * On click
-     * @param {mouseevent} e mouse event
+     * @param {MouseEvent} e - mouse event
      * @private
      */
     _onClick: function(e) {
-        var elTarget = e.target || e.srcElement,
+        var target = e.target || e.srcElement,
             clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
-            foundData = this._findPointTypeData(elTarget, clientX, e.clientY);
-        if (!this._isChanged(this.selectedData, foundData)) {
+            foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+        if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
         } else if (foundData) {
             if (this.selectedData) {
@@ -191,14 +193,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Attach event
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} target - target element
      */
-    attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
-        eventListener.bindEvent('mousedown', el, tui.util.bind(this._onMousedown, this));
-        eventListener.bindEvent('mouseup', el, tui.util.bind(this._onMouseup, this));
-        eventListener.bindEvent('mousemove', el, tui.util.bind(this._onMousemove, this));
-        eventListener.bindEvent('mouseout', el, tui.util.bind(this._onMouseout, this));
+    attachEvent: function(target) {
+        eventListener.bindEvent('click', target, this._onClick, this);
+        eventListener.bindEvent('mousedown', target, this._onMousedown, this);
+        eventListener.bindEvent('mouseup', target, this._onMouseup, this);
+        eventListener.bindEvent('mousemove', target, this._onMousemove, this);
+        eventListener.bindEvent('mouseout', target, this._onMouseout, this);
     }
 });
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview test ComboChart
+ * @fileoverview Test for ComboChart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -11,7 +11,7 @@ var ComboChart = require('../../src/js/charts/comboChart.js'),
     defaultTheme = require('../../src/js/themes/defaultTheme.js'),
     axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
-describe('ComboChart', function() {
+describe('Test for ComboChart', function() {
     var comboChart;
 
     beforeAll(function() {

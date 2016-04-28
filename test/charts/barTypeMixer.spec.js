@@ -1,5 +1,5 @@
 /**
- * @fileoverview test barTypeMixer.js
+ * @fileoverview Test for barTypeMixer.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var barTypeMixer = require('../../src/js/charts/barTypeMixer.js');
 
-describe('barTypeMixer', function() {
+describe('Test for barTypeMixer', function() {
     describe('_makeNormalDivergingrawSeriesDataData()', function() {
         it('stack값이 없는 경우 두번째 요소 까지를 유효한 데이터로 취급합니다.', function() {
             var rawSeriesData = [

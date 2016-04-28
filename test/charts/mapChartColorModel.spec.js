@@ -1,5 +1,5 @@
 /**
- * @fileoverview test MapChartColorModel
+ * @fileoverview Test for MapChartColorModel.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var MapChartColorModel = require('../../src/js/charts/mapChartColorModel');
 
-describe('test MapChartColorModel', function() {
+describe('Test for MapChartColorModel', function() {
     var colorModel;
 
     beforeEach(function() {

@@ -1,24 +1,23 @@
 /**
- * @fileoverview Test boundsMaker.
+ * @fileoverview Test for BoundsMaker.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var BoundsMaker = require('../../src/js/helpers/boundsMaker'),
-    chartConst = require('../../src/js/const'),
-    defaultTheme = require('../../src/js/themes/defaultTheme'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var BoundsMaker = require('../../src/js/helpers/boundsMaker');
+var chartConst = require('../../src/js/const');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('boundsMaker', function() {
+describe('Test for BoundsMaker', function() {
     var boundsMaker, dataProcessor;
 
     beforeAll(function() {
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(50);
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getWholeLegendData', 'getCategories',
+            ['getFormatFunctions', 'getGroupValues', 'getWholeGroupValues', 'getLegendData', 'getCategories',
                 'getFormattedGroupValues', 'getLegendLabels', 'getMultilineCategories', 'getMultilineCategories']);
         dataProcessor.getFormatFunctions.and.returnValue([]);
     });
@@ -27,6 +26,51 @@ describe('boundsMaker', function() {
         spyOn(renderUtil, 'getRenderedLabelHeight');
         boundsMaker = new BoundsMaker({
             dataProcessor: dataProcessor
+        });
+    });
+
+    describe('_calculatePixelStep()', function() {
+        it('axis가 라벨타입일 경우의 pixel단위 step을 반환합니다', function() {
+            var actual = boundsMaker._calculatePixelStep({
+                tickCount: 4,
+                isLabel: true
+            }, 240);
+            var expected = 30;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis가 라벨타입이 아닐 경우의 pixel단위 step을 반환합니다', function() {
+            var actual = boundsMaker._calculatePixelStep({
+                tickCount: 4
+            }, 240);
+            var expected = 80;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('getMinimumPixelStepForAxis()', function() {
+        it('yAxis와 xAxis의 pixcel단위 step중 작은 값을 찾아 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(boundsMaker, 'getDimension').and.returnValue({
+                width: 400,
+                height: 240
+            });
+            boundsMaker.axesData = {
+                xAxis: {
+                    tickCount: 5
+                },
+                yAxis: {
+                    tickCount: 4
+                }
+            };
+
+            actual = boundsMaker.getMinimumPixelStepForAxis();
+            expected = 80;
+
+            expect(actual).toBe(expected);
         });
     });
 
@@ -70,7 +114,7 @@ describe('boundsMaker', function() {
             boundsMaker._registerTitleDimension();
             actual = boundsMaker.getDimension('title');
             expected = {
-                height: 40
+                height: 30
             };
 
             expect(actual).toEqual(expected);
@@ -312,6 +356,9 @@ describe('boundsMaker', function() {
             boundsMaker.theme = {
                 xAxis: {}
             };
+            boundsMaker.axesData = {
+                xAxis: {}
+            };
 
             actual = boundsMaker._calculateDiffWithMultilineHeight(['AAAA BBBB'], 50);
             expected = 20;
@@ -354,6 +401,27 @@ describe('boundsMaker', function() {
             expect(boundsMaker.getDimension('xAxis').height).toBe(100);
             expect(boundsMaker.getDimension('yAxis').height).toBe(150);
             expect(boundsMaker.getDimension('rightYAxis').height).toBe(150);
+        });
+    });
+
+    describe('_updateDimensionsAndDegree()', function() {
+        it('rotation 옵션이 false이면 _makeHorizontalLabelRotationInfo()를 호출하지 않습니다.', function() {
+            spyOn(boundsMaker, '_makeHorizontalLabelRotationInfo');
+            spyOn(boundsMaker, '_calculateXAxisLabelLimitWidth');
+            spyOn(boundsMaker, '_calculateDiffWithMultilineHeight');
+            spyOn(boundsMaker, '_updateDimensionsHeight');
+            boundsMaker.options = {
+                xAxis: {
+                    rotation: false
+                }
+            };
+            boundsMaker.axesData = {
+                xAxis: {}
+            };
+
+            boundsMaker._updateDimensionsAndDegree();
+
+            expect(boundsMaker._makeHorizontalLabelRotationInfo).not.toHaveBeenCalled();
         });
     });
 
@@ -400,7 +468,7 @@ describe('boundsMaker', function() {
                 chart: {
                     width: 500
                 },
-                legend: {
+                calculationLegend: {
                     width: 50
                 },
                 yAxis: {
@@ -504,7 +572,7 @@ describe('boundsMaker', function() {
                 title: {
                     height: 50
                 },
-                legend: {
+                calculationLegend: {
                     width: 50
                 },
                 xAxis: {
@@ -567,15 +635,14 @@ describe('boundsMaker', function() {
 
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
-            spyOn(boundsMaker, '_makeSeriesDimension').and.returnValue({
-                width: 300,
-                height: 200
-            });
-
+            boundsMaker.dimensions = {
+                series:{
+                    width: 300,
+                    height: 200
+                }
+            };
             boundsMaker._registerCenterComponentsDimension();
 
-            expect(boundsMaker.getDimension('series').width).toBe(300);
-            expect(boundsMaker.getDimension('series').height).toBe(200);
             expect(boundsMaker.getDimension('tooltip').width).toBe(300);
             expect(boundsMaker.getDimension('tooltip').height).toBe(200);
             expect(boundsMaker.getDimension('customEvent').width).toBe(300);
@@ -672,6 +739,74 @@ describe('boundsMaker', function() {
             };
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeCircleLegendPosition()', function() {
+        it('series의 position.left와 series의 너비값을 더해 circleLegend의 left를 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.positions = {
+                series: {
+                    left: 40
+                }
+            };
+            boundsMaker.dimensions = {
+                series: {
+                    width: 400
+                },
+                circleLegend: {}
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 440;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('왼쪽 정렬인 경우에 left는 0 입니다.', function() {
+            var actual, expected;
+
+            boundsMaker.options = {
+                legend: {
+                    align: 'left'
+                }
+            };
+            boundsMaker.positions = {
+                series: {}
+            };
+            boundsMaker.dimensions = {
+                series: {},
+                circleLegend: {}
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 0;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('series의 position.top과 series의 높이 값을 더한 값에 circleLegend의 높이를 빼 circleLegend의 top을 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.positions = {
+                series: {
+                    top: 60
+                }
+            };
+            boundsMaker.dimensions = {
+                series: {
+                    height: 300
+                },
+                circleLegend: {
+                    height: 80
+                }
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().top;
+            expected = 280;
+
+            expect(actual).toBe(expected);
         });
     });
 

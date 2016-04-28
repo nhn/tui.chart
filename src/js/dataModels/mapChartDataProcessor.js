@@ -16,7 +16,7 @@ var DataProcessor = require('./dataProcessor'),
 
 /**
  * Value map.
- * @typedef {{value: number, formattedValue: string, name: ?string}} valueMap
+ * @typedef {{value: number, label: string, name: ?string}} valueMap
  */
 
 var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapChartDataProcessor.prototype */{
@@ -33,7 +33,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
      * Update raw data.
      * @param {{series: rawSeriesData}} rawData raw data
      */
-    updateRawData: function(rawData) {
+    initData: function(rawData) {
         this.rawData = rawData;
 
         /**
@@ -56,7 +56,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
         tui.util.forEachArray(rawSeriesData, function(datum) {
             var result = {
                 value: datum.data,
-                formattedValue: renderUtil.formatValue(datum.data, formatFunctions)
+                label: renderUtil.formatValue(datum.data, formatFunctions, 'series')
             };
 
             if (datum.name) {
@@ -95,7 +95,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
     /**
      * Get valueMap datum.
      * @param {string} code map code
-     * @returns {{code: string, name: string, formattedValue: number,
+     * @returns {{code: string, name: string, label: number,
      *              labelCoordinate: {x: number, y: number}}} valueMap datum
      */
     getValueMapDatum: function(code) {

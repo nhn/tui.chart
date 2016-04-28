@@ -274,7 +274,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
             min: yAxisOptions.min,
             max: yAxisOptions.max
         }, {
-            isSingleYAxis: params.isSingleYAxis
+            isSingleYAxis: params.isSingleYAxis,
+            areaType: 'yAxis'
         }, chartType);
 
         yAxisData = axisDataMaker.makeValueAxisData({
@@ -353,7 +354,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 
         yAxisData.limit.max += yAxisData.step * increaseTickCount;
         labels = calculator.makeLabelsFromLimit(yAxisData.limit, yAxisData.step);
-        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions);
+        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions, 'yAxis');
         yAxisData.tickCount += increaseTickCount;
         yAxisData.validTickCount += increaseTickCount;
     },

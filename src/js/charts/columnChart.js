@@ -66,6 +66,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
             axisScaleMaker = this._createAxisScaleMaker({
                 min: options.yAxis.min,
                 max: options.yAxis.max
+            }, {
+                areaType: 'yAxis'
             }),
             xAxisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),

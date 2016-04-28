@@ -22,7 +22,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            itemGroup: this.dataProcessor.getItemGroup()
+            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.chartType)
         };
     },
 
@@ -70,7 +70,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeOptionSize: function(barSize, optionBarWidth) {
         var optionsSize = 0;
         if (optionBarWidth) {
-            optionsSize = tui.util.min([barSize, optionBarWidth]);
+            optionsSize = Math.min(barSize, optionBarWidth);
         }
         return optionsSize;
     },
@@ -110,13 +110,13 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
         var isStacked = predicate.isValidStackedOption(this.options.stacked),
-            itemGroup = this.dataProcessor.getItemGroup(),
-            groupSize = baseGroupSize / itemGroup.getGroupCount(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            groupSize = baseGroupSize / seriesDataModel.getGroupCount(),
             firstAdditionalPosition = 0,
             itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
 
         if (!isStacked) {
-            itemCount = itemGroup.getFirstItems(this.chartType).getItemCount();
+            itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
         } else {
             itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
         }
@@ -149,21 +149,22 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
     /**
      * Make html for series labels
-     * @param {number} groupIndex index of groups
+     * @param {number} groupIndex index of series groups
      * @param {number} labelHeight label height
-     * @param {Item} item item
-     * @param {number} index index of items
+     * @param {SeriesItem} seriesItem series item
+     * @param {number} index index of series group
      * @returns {string}
      * @private
      */
-    _makeSeriesLabelsHtml: function(groupIndex, labelHeight, item, index) {
+    _makeSeriesLabelsHtml: function(groupIndex, labelHeight, seriesItem, index) {
         var bound = this.seriesData.groupBounds[groupIndex][index].end,
-            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedEnd),
-            labelHtml = this._makeSeriesLabelHtml(position, item.formattedEnd, index);
+            value = seriesItem.value,
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.label),
+            labelHtml = this._makeSeriesLabelHtml(position, seriesItem.endLabel, index);
 
-        if (item.isRange) {
-            position = this.makeSeriesRenderingPosition(bound, labelHeight, item.value, item.formattedStart, true);
-            labelHtml += this._makeSeriesLabelHtml(position, item.formattedStart, index);
+        if (seriesItem.isRange) {
+            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.startLabel, true);
+            labelHtml += this._makeSeriesLabelHtml(position, seriesItem.startLabel, index);
         }
 
         return labelHtml;
@@ -176,16 +177,16 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
-            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
-            itemGroup = this.dataProcessor.getItemGroup(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            firstLabel = seriesDataModel.getFirstItemLabel(),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;
 
-        html = itemGroup.map(function(items, groupIndex) {
+        html = seriesDataModel.map(function(seriesGroup, groupIndex) {
             var makeSeriesLabelsHtml = tui.util.bind(self._makeSeriesLabelsHtml, self, groupIndex, labelHeight);
 
-            return items.map(makeSeriesLabelsHtml).join('');
-        }, this.chartType).join('');
+            return seriesGroup.map(makeSeriesLabelsHtml).join('');
+        }).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },
@@ -198,19 +199,19 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeSumValues: function(values) {
         var sum = tui.util.sum(values);
 
-        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'seires');
     },
 
     /**
      * Make stacked label position.
      * @param {{width: number, height: number, left: number, top: number}} bound element bound
-     * @param {string} formattedValue formatted value
+     * @param {string} label label
      * @param {number} labelHeight label height
      * @returns {{left: number, top: number}} position
      * @private
      */
-    _makeStackedLabelPosition: function(bound, formattedValue, labelHeight) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
+    _makeStackedLabelPosition: function(bound, label, labelHeight) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
             left = bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2),
             top = bound.top + ((bound.height - labelHeight + chartConst.TEXT_PADDING) / 2);
 
@@ -231,24 +232,24 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeStackedLabelsHtml: function(params) {
         var self = this,
-            items = params.items,
+            seriesGroup = params.seriesGroup,
             labelHeight = params.labelHeight,
             htmls, plusBound, minusBound, values;
 
-        htmls = items.map(function(item, index) {
+        htmls = seriesGroup.map(function(seriesItem, index) {
             var bound = params.bounds[index],
                 labelHtml = '',
                 boundEnd, position;
 
-            if (bound && item) {
+            if (bound && seriesItem) {
                 boundEnd = bound.end;
-                position = self._makeStackedLabelPosition(boundEnd, item.formattedValue, params.labelHeight);
-                labelHtml = self._makeSeriesLabelHtml(position, item.formattedValue, index);
+                position = self._makeStackedLabelPosition(boundEnd, seriesItem.label, params.labelHeight);
+                labelHtml = self._makeSeriesLabelHtml(position, seriesItem.label, index);
             }
 
-            if (item.value > 0) {
+            if (seriesItem.value > 0) {
                 plusBound = boundEnd;
-            } else if (item.value < 0) {
+            } else if (seriesItem.value < 0) {
                 minusBound = boundEnd;
             }
 
@@ -256,7 +257,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         });
 
         if (this.options.stacked === 'normal') {
-            values = items.pluck('value');
+            values = seriesGroup.pluck('value');
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
             htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
         }
@@ -272,20 +273,20 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             groupBounds = this.seriesData.groupBounds,
-            itemGroup = this.dataProcessor.getItemGroup(),
-            firstFormattedValue = this.dataProcessor.getFirstFormattedValue(this.chartType),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstFormattedValue, this.theme.label),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            firstLabel = seriesDataModel.getFirstItemLabel(this.chartType),
+            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;
 
-        html = itemGroup.map(function(items, index) {
+        html = seriesDataModel.map(function(seriesGroup, index) {
             var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
-                items: items,
+                seriesGroup: seriesGroup,
                 bounds: groupBounds[index],
                 labelHeight: labelHeight
             });
             return labelsHtml;
-        }, this.chartType).join('');
+        }).join('');
 
         elSeriesLabelArea.innerHTML = html;
     },

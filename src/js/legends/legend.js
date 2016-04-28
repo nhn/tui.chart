@@ -73,7 +73,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.boundsMaker = params.boundsMaker;
 
-        legendData = params.dataProcessor.getWholeLegendData();
+        legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
          */
@@ -98,7 +98,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     registerDimension: function() {
         var chartWidth = this.boundsMaker.getDimension('chart').width;
-        this.boundsMaker.registerBaseDimension('legend', this.dimensionModel.makeDimension(chartWidth));
+        var legendDimension = this.dimensionModel.makeDimension(chartWidth);
+
+        this.boundsMaker.registerBaseDimension('legend', legendDimension);
+
+        if (!predicate.isHorizontalLegend(this.options.align) && this.options.hidden !== true) {
+            this.boundsMaker.registerBaseDimension('calculationLegend', {
+                width: legendDimension.width
+            });
+        }
     },
 
     /**
@@ -130,6 +138,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this._renderLegendArea(el);
         this._attachEvent(el);
         return el;
+    },
+
+    /**
+     * Rerender.
+     */
+    rerender: function() {
+        this._renderLegendArea(this.legendContainer);
     },
 
     /**
@@ -366,11 +381,11 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
     /**
      * Attach browser event.
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} target target element
      * @private
      */
-    _attachEvent: function(el) {
-        eventListener.bindEvent('click', el, tui.util.bind(this._onClick, this));
+    _attachEvent: function(target) {
+        eventListener.bindEvent('click', target, this._onClick, this);
     }
 });
 

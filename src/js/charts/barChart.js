@@ -90,6 +90,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         var axisScaleMaker = this._createAxisScaleMaker({
                 min: this.options.xAxis.min,
                 max: this.options.xAxis.max
+            }, {
+                areaType: 'xAxis'
             }),
             xAxisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker

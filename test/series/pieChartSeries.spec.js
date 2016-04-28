@@ -7,8 +7,8 @@
 'use strict';
 
 var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
-    ItemGroup = require('../../src/js/dataModels/itemGroup'),
-    Items = require('../../src/js/dataModels/items'),
+    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
+    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -16,17 +16,17 @@ describe('PieChartSeries', function() {
     var series, dataProcessor, boundsMaker;
 
     beforeAll(function() {
-        var itemGroup;
+        var seriesDataModel;
 
         // 브라우저마다 렌더된 너비, 높이 계산이 다르기 때문에 일관된 결과가 나오도록 처리함
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getItemGroup', 'getFirstFormattedValue']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getSeriesDataModel', 'getFirstItemLabel']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
 
         dataProcessor.getLegendLabels.and.returnValue(['legend1', 'legend2', 'legend3']);
-        dataProcessor.getFirstFormattedValue.and.returnValue('2.2');
+        dataProcessor.getFirstItemLabel.and.returnValue('2.2');
     });
 
     beforeEach(function() {
@@ -46,11 +46,11 @@ describe('PieChartSeries', function() {
 
     describe('_makeSectorData()', function() {
         it('percentValues를 이용하여 angle 정보와 center position, outer position 정보를 계산하여 반환합니다.', function() {
-            var itemGroup = new ItemGroup(),
+            var seriesDataModel = new SeriesDataModel(),
                 actual;
 
-            itemGroup.groups = [
-                new Items([
+            seriesDataModel.groups = [
+                new seriesGroup([
                     {
                         ratio: 0.25
                     }, {
@@ -64,7 +64,7 @@ describe('PieChartSeries', function() {
                     }
                 ])
             ];
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
 
             actual = series._makeSectorData({
                 cx: 100,

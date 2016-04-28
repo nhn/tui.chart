@@ -21,7 +21,6 @@ module.exports = function(config) {
       'junit'
     ],
     browsers: [
-      'IE7',
       'IE8',
       'IE9',
       'IE10',

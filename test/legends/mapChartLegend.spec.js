@@ -1,5 +1,5 @@
 /**
- * @fileoverview test for MapChartLegend
+ * @fileoverview Test for MapChartLegend.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,7 +9,7 @@
 var MapChartLegend = require('../../src/js/legends/mapChartLegend'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('test MapChartLegend', function() {
+describe('Test for MapChartLegend', function() {
     var legend, boundsMaker;
 
     beforeAll(function() {

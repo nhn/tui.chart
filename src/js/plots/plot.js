@@ -65,7 +65,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         renderUtil.renderDimension(plotContainer, dimension);
         renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
 
-        this._renderLines(plotContainer, dimension);
+        if (!this.options.hideLine) {
+            this._renderLines(plotContainer, dimension);
+        }
     },
 
     /**

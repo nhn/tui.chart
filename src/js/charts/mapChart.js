@@ -96,25 +96,26 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
     /**
      * Add data ratios.
-     * @param {object} axesData axes data
      * @private
      * @override
      */
-    _addDataRatios: function(axesData) {
+    _addDataRatios: function() {
+        var axesData = this.boundsMaker.getAxesData();
+
         this.dataProcessor.addDataRatios(axesData.limit);
     },
 
     /**
      * Make rendering data for map chart.
-     * @param {object} axesData axes data
      * @returns {object} data for rendering
      * @private
      * @override
      */
-    _makeRenderingData: function(axesData) {
-        var seriesTheme = this.theme.series,
-            colorModel = new MapChartColorModel(seriesTheme.startColor, seriesTheme.endColor),
-            mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+    _makeRenderingData: function() {
+        var axesData = this.boundsMaker.getAxesData();
+        var seriesTheme = this.theme.series;
+        var colorModel = new MapChartColorModel(seriesTheme.startColor, seriesTheme.endColor);
+        var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         return {
             legend: {

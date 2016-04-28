@@ -106,7 +106,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
                 color: theme.colors[index]
             };
 
-            if (theme.singleColors) {
+            if (theme.singleColors && theme.singleColors.length) {
                 itemTheme.singleColor = theme.singleColors[index];
             }
 

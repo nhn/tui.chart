@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Test for pluginFactory.
+ * @author NHN Ent.
+ *         FE Development Team <dl_javascript@nhnent.com>
+ */
+
 'use strict';
 
 var pluginFactory = require('../../src/js/factories/pluginFactory.js');

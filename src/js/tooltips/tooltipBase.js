@@ -54,6 +54,8 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          */
         this.animationTime = isPieChart ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
 
+        this.chartType = params.chartType;
+
         /**
          * TooltipBase base data.
          * @type {Array.<Array.<object>>}
@@ -164,7 +166,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
             };
         }
 
-        this.showTooltip(tooltipElement, params, prevPosition);
+        this._showTooltip(tooltipElement, params, prevPosition);
     },
 
     /**
@@ -184,8 +186,9 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      * @param {HTMLElement} tooltipElement tooltip element
      * @param {{left: number, top: number}} position position
      * @param {{left: number, top: number}} prevPosition prev position
+     * @private
      */
-    moveToPosition: function(tooltipElement, position, prevPosition) {
+    _moveToPosition: function(tooltipElement, position, prevPosition) {
         if (prevPosition) {
             this._slideTooltip(tooltipElement, prevPosition, position);
         } else {
@@ -221,7 +224,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     onHide: function(index) {
         var tooltipElement = this._getTooltipElement();
 
-        this.hideTooltip(tooltipElement, index);
+        this._hideTooltip(tooltipElement, index);
     },
 
     /**

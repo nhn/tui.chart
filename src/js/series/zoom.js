@@ -112,11 +112,11 @@ var Zoom = tui.util.defineClass(/** @lends Zoom.prototype */{
 
     /**
      * Attach event.
-     * @param {HTMLElement} container container
+     * @param {HTMLElement} target target element
      * @private
      */
-    _attachEvent: function(container) {
-        eventListener.bindEvent('click', container, tui.util.bind(this._onClick, this));
+    _attachEvent: function(target) {
+        eventListener.bindEvent('click', target, this._onClick, this);
     },
 
     /**

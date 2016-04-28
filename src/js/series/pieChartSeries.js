@@ -45,7 +45,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _makeSectorData: function(circleBound) {
         var self = this,
-            items = this.dataProcessor.getItemGroup().getFirstItems(),
+            seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup(),
             cx = circleBound.cx,
             cy = circleBound.cy,
             r = circleBound.r,
@@ -53,8 +53,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             delta = 10,
             paths;
 
-        paths = items.map(function(item) {
-            var additionalAngle = chartConst.ANGLE_360 * item.ratio,
+        paths = seriesGroup.map(function(seriesItem) {
+            var additionalAngle = chartConst.ANGLE_360 * seriesItem.ratio,
                 endAngle = angle + additionalAngle,
                 popupAngle = angle + (additionalAngle / 2),
                 angles = {
@@ -76,7 +76,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             angle = endAngle;
 
             return {
-                percentValue: item.ratio,
+                percentValue: seriesItem.ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
                     r: (r / 2) + delta
@@ -131,7 +131,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             height = dimension.height,
             isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
             radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
-            diameter = tui.util.multiplication(tui.util.min([width, height]), radiusRate);
+            diameter = tui.util.multiplication(Math.min(width, height), radiusRate);
 
         return {
             cx: tui.util.division(width, 2),
@@ -165,14 +165,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _renderGraph: function(dimension, seriesData) {
-        var funcShowTooltip = tui.util.bind(this.showTooltip, this, {
+        var showTootltip = tui.util.bind(this.showTooltip, this, {
                 allowNegativeTooltip: !!this.allowNegativeTooltip,
                 chartType: this.chartType
             }),
             callbacks = {
-                funcShowTooltip: funcShowTooltip,
-                funcHideTooltip: tui.util.bind(this.hideTooltip, this),
-                funcSelectSeries: tui.util.bind(this.selectSeries, this)
+                showTooltip: showTootltip,
+                hideTooltip: tui.util.bind(this.hideTooltip, this)
             },
             params = this._makeParamsForGraphRendering(dimension, seriesData);
 
@@ -231,24 +230,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * selectSeries is click event callback on series graph.
-     * @param {number} index index
-     */
-    selectSeries: function(index) {
-        var seriesData = this._makeSeriesDataBySelection(index);
-        if (this.selectedIndex === index) {
-            this.onUnselectSeries(seriesData);
-            delete this.selectedIndex;
-        } else {
-            if (!tui.util.isUndefined(this.selectedIndex)) {
-                this.onUnselectSeries(this._makeSeriesDataBySelection(this.selectedIndex));
-            }
-            this.onSelectSeries(seriesData);
-            this.selectedIndex = index;
-        }
-    },
-
-    /**
      * Get series label.
      * @param {object} params parameters
      *      @param {string} params.legend legend
@@ -294,7 +275,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             if (positions[index]) {
                 label = self._getSeriesLabel({
                     legend: legend,
-                    label: self.dataProcessor.getFirstFormattedValue(self.chartType),
+                    label: self.dataProcessor.getFirstItemLabel(self.chartType),
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);

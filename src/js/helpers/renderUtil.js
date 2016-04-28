@@ -11,6 +11,8 @@
 var dom = require('./domHandler'),
     chartConst = require('./../const');
 
+var concat = Array.prototype.concat;
+
 var browser = tui.util.browser,
     isIE7 = browser.msie && browser.version === 7,
     isOldBrowser = browser.msie && browser.version <= 8;
@@ -135,7 +137,7 @@ var renderUtil = {
 
         theme = theme || {};
 
-        label = String(label);
+        label = tui.util.isExisty(label) ? String(label) : '';
 
         if (!label) {
             return 0;
@@ -196,10 +198,16 @@ var renderUtil = {
      * @private
      */
     _getRenderedLabelsMaxSize: function(labels, theme, iteratee) {
-        var sizes = tui.util.map(labels, function(label) {
+        var maxSize = 0,
+            sizes;
+
+        if (labels && labels.length) {
+            sizes = tui.util.map(labels, function(label) {
                 return iteratee(label, theme);
-            }),
+            });
             maxSize = tui.util.max(sizes);
+        }
+
         return maxSize;
     },
 
@@ -364,14 +372,18 @@ var renderUtil = {
     /**
      * Format value.
      * @param {number} value value
-     * @param {Array.<function>} formatFunctions functions for format
+     * @param {Array.<function>} formatFunctions - functions for format
+     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
+     * @param {string} [valueType] - value type
      * @returns {string} formatted value
      */
-    formatValue: function(value, formatFunctions) {
+    formatValue: function(value, formatFunctions, areaType, valueType) {
         var fns = [value].concat(formatFunctions || []);
 
+        valueType = valueType || 'value';
+
         return tui.util.reduce(fns, function(stored, fn) {
-            return fn(stored);
+            return fn(stored, areaType, valueType);
         });
     },
 
@@ -379,15 +391,17 @@ var renderUtil = {
      * Format values.
      * @param {Array.<number>} values values
      * @param {Array.<function>} formatFunctions functions for format
+     * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
+     * @param {string} valueType - value type
      * @returns {Array.<string>}
      */
-    formatValues: function(values, formatFunctions) {
+    formatValues: function(values, formatFunctions, areaType, valueType) {
         var formatedValues;
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
         formatedValues = tui.util.map(values, function(label) {
-            return renderUtil.formatValue(label, formatFunctions);
+            return renderUtil.formatValue(label, formatFunctions, areaType, valueType);
         });
         return formatedValues;
     },
@@ -450,6 +464,91 @@ var renderUtil = {
      */
     isOldBrowser: function() {
         return isOldBrowser;
+    },
+
+    /**
+     * Format zero fill.
+     * @param {string} value target value
+     * @param {number} len length of result
+     * @returns {string} formatted value
+     * @private
+     */
+    formatZeroFill: function(value, len) {
+        var zero = '0';
+
+        value = String(value);
+
+        if (value.length >= len) {
+            return value;
+        }
+
+        while (value.length < len) {
+            value = zero + value;
+        }
+
+        return value;
+    },
+
+    /**
+     * Format Decimal.
+     * @param {string} value target value
+     * @param {number} len length of under decimal point
+     * @returns {string} formatted value
+     */
+    formatDecimal: function(value, len) {
+        var pow;
+
+        if (len === 0) {
+            return Math.round(value);
+        }
+
+        pow = Math.pow(10, len);
+        value = Math.round(value * pow) / pow;
+        value = parseFloat(value).toFixed(len);
+
+        return value;
+    },
+
+    /**
+     * Format Comma.
+     * @param {string} value target value
+     * @returns {string} formatted value
+     * @private
+     */
+    formatComma: function(value) {
+        var comma = ',',
+            underPointValue = '',
+            betweenLen = 3,
+            orgValue = value,
+            sign, values, lastIndex, formattedValue;
+
+        value = String(value);
+        sign = value.indexOf('-') > -1 ? '-' : '';
+
+        if (value.indexOf('.') > -1) {
+            values = value.split('.');
+            value = String(Math.abs(values[0]));
+            underPointValue = '.' + values[1];
+        } else {
+            value = String(Math.abs(value));
+        }
+
+        if (value.length <= betweenLen) {
+            formattedValue = orgValue;
+        } else {
+            values = (value).split('').reverse();
+            lastIndex = values.length - 1;
+            values = tui.util.map(values, function(char, index) {
+                var result = [char];
+                if (index < lastIndex && (index + 1) % betweenLen === 0) {
+                    result.push(comma);
+                }
+                return result;
+            });
+            formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;
+        }
+
+        return formattedValue;
     }
 };
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview test render util
+ * @fileoverview Test for renderUtil.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,13 +9,7 @@
 var renderUtil = require('../../src/js/helpers/renderUtil.js'),
     dom = require('../../src/js/helpers/domHandler.js');
 
-var isMac = navigator.userAgent.indexOf('Mac') > -1,
-    browser = tui.util.browser,
-    isOldBrowser = browser.msie && browser.version <= 8,
-    isFirefox = browser.firefox,
-    isChrome = browser.chrome;
-
-describe('renderUtil', function() {
+describe('Test for renderUtil', function() {
     describe('concatStr()', function() {
         it('문자들을 인자로 전달하면 붙여진 결과를 반환합니다. ex) concatStr("a", "b", "c") ---> "abc"', function() {
             var result = renderUtil.concatStr();
@@ -47,93 +41,12 @@ describe('renderUtil', function() {
         });
     });
 
-    describe('_getRenderedLabelSize()', function() {
-        it('전달받은 레이블을 테마 속성을 포함하여 렌더링하여 사이즈 계산 후 결과를 반환합니다.', function() {
-            var atual = renderUtil._getRenderedLabelSize('Label1', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            }, 'offsetWidth');
-
-            if (isOldBrowser || isFirefox) {
-                expect(atual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(atual).toBe(40);
-            } else {
-                expect(atual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelWidth()', function() {
-        it('렌더링된 레이블의 너비값을 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelWidth('Label1', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser || isFirefox) {
-                expect(actual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(actual).toBe(40);
-            } else {
-                expect(actual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelHeight()', function() {
-        it('렌더링된 레이블의 높이값을 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelHeight('Label2', {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser) {
-                expect(actual).toBe(14);
-            } else {
-                expect(actual).toBe(15);
-            }
-        });
-    });
-
     describe('_getRenderedLabelsMaxSize()', function() {
         it('인자로 전달하는 레이블들을 전달한 함수로 실행하여 가장 큰 값을 반환합니다.', function() {
             var actual = renderUtil._getRenderedLabelsMaxSize(['label1', 'label12'], {}, function(label) {
                 return label.length;
             });
             expect(actual).toBe(7);
-        });
-    });
-
-    describe('getRenderedLabelsMaxWidth()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 너비를 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelsMaxWidth(['Label1', 'Label'], {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser || isFirefox) {
-                expect(actual).toBe(42);
-            } else if (isMac && isChrome) {
-                expect(actual).toBe(40);
-            } else {
-                expect(actual).toBe(39);
-            }
-        });
-    });
-
-    describe('getRenderedLabelsMaxHeight()', function() {
-        it('인자로 전달하는 레이블들의 렌더링된 레이블의 최대 높이를 반환합니다.', function() {
-            var actual = renderUtil.getRenderedLabelsMaxHeight(['Label1', 'Label'], {
-                fontFamily: 'Verdana',
-                fontSize: 12
-            });
-
-            if (isOldBrowser) {
-                expect(actual).toBe(14);
-            } else {
-                expect(actual).toBe(15);
-            }
         });
     });
 
@@ -207,6 +120,55 @@ describe('renderUtil', function() {
                 expected = ['0010%', '0020%', '0030%', '0040%'];
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('formatDecimal()', function() {
+        it('1.1111을 소수점 둘째 자리로 포맷팅하면 "1.11"이 반환됩니다.', function() {
+            var result = renderUtil.formatDecimal(1.1111, 2);
+            expect(result).toBe('1.11');
+        });
+
+        it('1을 소수점 첫째 자리로 포맷팅하면 "1.0"이 반환됩니다.', function() {
+            var result = renderUtil.formatDecimal(1, 1);
+            expect(result).toBe('1.0');
+        });
+    });
+
+    describe('formatComma()', function() {
+        it('1000을 comma형으로 포맷팅하면 "1,000"이 반환됩니다.', function() {
+            var result = renderUtil.formatComma(1000);
+            expect(result).toBe('1,000');
+        });
+
+        it('100000을 comma형으로 포맷팅하면 "100,000"이 반환됩니다.', function() {
+            var result = renderUtil.formatComma(100000);
+            expect(result).toBe('100,000');
+        });
+
+        it('1000000을 comma형으로 포맷팅하면 "1,000,000"이 반환됩니다.', function() {
+            var result = renderUtil.formatComma(1000000);
+            expect(result).toBe('1,000,000');
+        });
+
+        it('-1000000을 comma형으로 포맷팅하면 "-1,000,000"이 반환됩니다.', function() {
+            var result = renderUtil.formatComma(-1000000);
+            expect(result).toBe('-1,000,000');
+        });
+
+        it('자리수가 4 미만인 값은 그대로 반환합니다', function() {
+            var result = renderUtil.formatComma(900);
+            expect(result).toBe(900);
+        });
+
+        it('자리수가 4 미만인 음수 값도 그대로 반환합니다', function() {
+            var result = renderUtil.formatComma(-900);
+            expect(result).toBe(-900);
+        });
+
+        it('소수점이 포함된 경우 소수점을 고려하여 포맷팅합니다', function() {
+            var result = renderUtil.formatComma(1000.123);
+            expect(result).toBe('1,000.123');
         });
     });
 });

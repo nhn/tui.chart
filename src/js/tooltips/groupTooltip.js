@@ -81,7 +81,6 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             bound = this.boundsMaker.getBound('tooltip');
 
         this.positionModel = new GroupTooltipPositionModel(chartDimension, bound, this.isVertical, this.options);
-        this.orgWholeLegendData = this.dataProcessor.getWholeLegendData();
 
         return el;
     },
@@ -106,7 +105,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _updateLegendTheme: function(checkedLegends) {
         var colors = [];
 
-        tui.util.forEachArray(this.orgWholeLegendData, function(item) {
+        tui.util.forEachArray(this.dataProcessor.getOriginalLegendData(), function(item) {
             var _checkedLegends = checkedLegends[item.chartType] || checkedLegends;
             if (_checkedLegends[item.index]) {
                 colors.push(item.theme.color);
@@ -126,10 +125,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _makeTooltipData: function() {
         var self = this;
 
-        return tui.util.map(this.dataProcessor.getWholeGroups(), function(items, index) {
+        return tui.util.map(this.dataProcessor.getSeriesGroups(), function(seriesGroup, index) {
             return {
                 category: self.dataProcessor.getCategory(index),
-                values: items.pluck('formattedValue')
+                values: seriesGroup.pluck('label')
             };
         });
     },
@@ -142,7 +141,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     _makeColors: function(theme) {
         var colorIndex = 0,
-            legendLabels = this.dataProcessor.getWholeLegendData(),
+            legendLabels = this.dataProcessor.getLegendData(),
             defaultColors, colors, prevChartType;
 
         if (theme.colors) {
@@ -175,7 +174,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             suffix = this.suffix;
 
         return tui.util.map(values, function(value, index) {
-            var legendLabel = dataProcessor.getLegendData(index);
+            var legendLabel = dataProcessor.getLegendItem(index);
 
             return {
                 value: value,
@@ -330,8 +329,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      *          size: number, direction: string, isVertical: boolean
      *        }} params coordinate event parameters
      * @param {{left: number, top: number}} prevPosition prev position
+     * @private
      */
-    showTooltip: function(elTooltip, params, prevPosition) {
+    _showTooltip: function(elTooltip, params, prevPosition) {
         var dimension, position;
 
         if (!tui.util.isUndefined(this.prevIndex)) {
@@ -349,7 +349,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
         dimension = this.getTooltipDimension(elTooltip);
         position = this.positionModel.calculatePosition(dimension, params.range);
 
-        this.moveToPosition(elTooltip, position, prevPosition);
+        this._moveToPosition(elTooltip, position, prevPosition);
 
         this._fireAfterShowTooltip(params.index, params.range, {
             element: elTooltip,
@@ -390,8 +390,9 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * Hide tooltip.
      * @param {HTMLElement} elTooltip tooltip element
      * @param {number} index index
+     * @private
      */
-    hideTooltip: function(elTooltip, index) {
+    _hideTooltip: function(elTooltip, index) {
         delete this.prevIndex;
         this._hideTooltipSector(index);
         dom.removeClass(elTooltip, 'show');

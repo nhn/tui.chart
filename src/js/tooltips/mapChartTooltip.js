@@ -56,7 +56,7 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
 
         return this.templateFunc({
             name: datum.name || datum.code,
-            value: datum.formattedValue,
+            value: datum.label,
             suffix: suffix
         });
     },
@@ -76,7 +76,7 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
             chartType: this.chartType,
             code: datum.code,
             name: datum.name,
-            value: datum.formattedValue,
+            value: datum.label,
             index: indexes.index
         }, additionParams);
 

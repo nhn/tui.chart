@@ -17,9 +17,13 @@ var eventListener = {
      * @param {string} eventName event name
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
+     * @param {?object} context context for callback
      * @private
      */
-    _attachEvent: function(eventName, el, callback) {
+    _attachEvent: function(eventName, el, callback, context) {
+        if (context) {
+            callback = tui.util.bind(callback, context);
+        }
         el.attachEvent('on' + eventName, callback);
     },
 
@@ -29,31 +33,34 @@ var eventListener = {
      * @param {string} eventName event name
      * @param {HTMLElement} el target element
      * @param {function} callback callback function
+     * @param {?object} context context for callback
      * @private
      */
-    _addEventListener: function(eventName, el, callback) {
-        try {
-            el.addEventListener(eventName, callback);
-        } catch (e) {
-            throw e;
+    _addEventListener: function(eventName, el, callback, context) {
+        if (context) {
+            callback = tui.util.bind(callback, context);
         }
+
+        el.addEventListener(eventName, callback);
     },
     /**
      * Bind event function.
      * @memberOf module:eventListener
      * @param {string} eventName event name
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} target target element
      * @param {function} callback callback function
+     * @param {?object} context context for callback
      */
-    bindEvent: function(eventName, el, callback) {
+    bindEvent: function(eventName, target, callback, context) {
         var bindEvent;
-        if ('addEventListener' in el) {
+        if ('addEventListener' in target) {
             bindEvent = this._addEventListener;
-        } else if ('attachEvent' in el) {
+        } else if ('attachEvent' in target) {
             bindEvent = this._attachEvent;
         }
         this.bindEvent = bindEvent;
-        bindEvent(eventName, el, callback);
+
+        bindEvent(eventName, target, callback, context);
     }
 };
 

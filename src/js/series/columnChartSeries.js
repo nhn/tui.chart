@@ -74,7 +74,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      *      prevStack: ?string
      * }} iterationData iteration data
      * @param {?boolean} isStacked whether stacked option or not.
-     * @param {{value: number, ratio: number, stack: string}} item item
+     * @param {SeriesItem} seriesItem series item
      * @param {number} index index
      * @returns {{
      *      start: {left: number, top: number, width: number, height: number},
@@ -82,21 +82,21 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * }}
      * @private
      */
-    _makeColumnChartBound: function(baseData, iterationData, isStacked, item, index) {
-        var barHeight = Math.abs(baseData.baseBarSize * item.ratioDistance),
-            barStartTop = baseData.baseBarSize * item.startRatio,
+    _makeColumnChartBound: function(baseData, iterationData, isStacked, seriesItem, index) {
+        var barHeight = Math.abs(baseData.baseBarSize * seriesItem.ratioDistance),
+            barStartTop = baseData.baseBarSize * seriesItem.startRatio,
             startTop = baseData.basePosition - barStartTop + chartConst.SERIES_EXPAND_SIZE,
-            changedStack = (item.stack !== iterationData.prevStack),
+            changedStack = (seriesItem.stack !== iterationData.prevStack),
             stepCount, endTop, bound;
 
         if (!isStacked || (!this.options.diverging && changedStack)) {
-            stepCount = isStacked ? this.dataProcessor.findStackIndex(item.stack) : index;
+            stepCount = isStacked ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
             iterationData.left = (baseData.step * stepCount) + iterationData.baseLeft + baseData.additionalPosition;
             iterationData.plusTop = 0;
             iterationData.minusTop = 0;
         }
 
-        if (item.value >= 0) {
+        if (seriesItem.value >= 0) {
             iterationData.plusTop -= barHeight;
             endTop = startTop + iterationData.plusTop;
         } else {
@@ -104,7 +104,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
             iterationData.minusTop += barHeight;
         }
 
-        iterationData.prevStack = item.stack;
+        iterationData.prevStack = seriesItem.stack;
         bound = this._makeBound(baseData.barSize, barHeight, iterationData.left, startTop, endTop);
 
         return bound;
@@ -117,12 +117,12 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _makeBounds: function() {
         var self = this,
-            itemGroup = this.dataProcessor.getItemGroup(),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
             isStacked = predicate.isValidStackedOption(this.options.stacked),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.width, dimension.height);
 
-        return itemGroup.map(function(items, groupIndex) {
+        return seriesDataModel.map(function(seriesGroup, groupIndex) {
             var baseLeft = (groupIndex * baseData.groupSize) + baseData.firstAdditionalPosition
                         + chartConst.SERIES_EXPAND_SIZE,
                 iterationData = {
@@ -134,8 +134,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 },
                 iteratee = tui.util.bind(self._makeColumnChartBound, self, baseData, iterationData, isStacked);
 
-            return items.map(iteratee);
-        }, this.chartType);
+            return seriesGroup.map(iteratee);
+        });
     },
 
     /**
@@ -143,12 +143,13 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @param {{left: number, top: number, width:number, height: number}} bound - bound
      * @param {number} labelHeight - label height
      * @param {number} value - value
-     * @param {string} formattedValue - formatted value
+     * @param {string} label - label of seriesItem
      * @param {?boolean} isStart - whether start or not
      * @returns {{left: number, top: number}} rendering position
+     * @private
      */
-    makeSeriesRenderingPosition: function(bound, labelHeight, value, formattedValue, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(formattedValue, this.theme.label),
+    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
             top = bound.top,
             left = bound.left + (bound.width - labelWidth) / 2;
 
@@ -190,7 +191,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
         if (bound) {
             sum = calculator.sumPlusValues(values);
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             html = this._makeSeriesLabelHtml({
                 left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
@@ -218,7 +219,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 sum = Math.abs(sum);
             }
 
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions());
+            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
             html = this._makeSeriesLabelHtml({
                 left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING

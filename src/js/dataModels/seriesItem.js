@@ -1,5 +1,6 @@
 /**
- * @fileoverview Item has value, formattedValue, ratio, ... .
+ * @fileoverview SeriesItem is a element of SeriesGroup.items.
+ * SeriesItem has processed terminal data like value, ratio, etc.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,10 +10,11 @@
 var chartConst = require('../const'),
     renderUtil = require('../helpers/renderUtil');
 
-var Item = tui.util.defineClass(/** @lends Item.prototype */{
+var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**
-     * Item.
-     * @constructs Item
+     * SeriesItem is a element of SeriesGroup.items.
+     * SeriesItem has processed terminal data like value, ratio, etc.
+     * @constructs SeriesItem
      * @param {number} value - value
      * @param {?string} stack - stack
      * @param {?Array.<function>} formatFunctions - format functions
@@ -43,10 +45,10 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
         this.value = null;
 
         /**
-         * formatted value
+         * label
          * @type {string}
          */
-        this.formattedValue = null;
+        this.label = null;
 
         /**
          * ratio of value about distance of limit
@@ -61,10 +63,10 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
         this.end = null;
 
         /**
-         * formatted end value
+         * end label
          * @type {number}
          */
-        this.formattedEnd = null;
+        this.endLabel = null;
 
         /**
          * ratio of end value
@@ -79,10 +81,10 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
         this.start = null;
 
         /**
-         * formatted end value
+         * start label
          * @type {number}
          */
-        this.formattedStart = null;
+        this.startLabel = null;
 
         /**
          * ratio of start value
@@ -102,7 +104,6 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
     /**
      * Initialize values of item.
      * @param {number} value - value
-     * @param {?Array.<function>} formatFunctions - format functions
      * @private
      */
     _initValues: function(value) {
@@ -110,7 +111,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
             hasStart = values.length > 1;
 
         this.value = this.end = values[0];
-        this.formattedValue = this.formattedEnd = renderUtil.formatValue(this.value, this.formatFunctions);
+        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions, 'series');
 
         if (hasStart) {
             this.addStart(values[1], true);
@@ -150,7 +151,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
         }
 
         this.start = value;
-        this.formattedStart = renderUtil.formatValue(value, this.formatFunctions);
+        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, 'series');
     },
 
     /**
@@ -158,7 +159,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
      * @private
      */
     _updateFormattedValueforRange: function() {
-        this.formattedValue = this.formattedStart + ' ~ ' + this.formattedEnd;
+        this.label = this.startLabel + ' ~ ' + this.endLabel;
     },
 
     /**
@@ -191,7 +192,19 @@ var Item = tui.util.defineClass(/** @lends Item.prototype */{
             this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
+    },
+
+    /**
+     * Pick value map.
+     * @returns {{value: number, start: ?number, end: ?number}}
+     */
+    pickValueMap: function() {
+        return {
+            value: this.value,
+            start: this.start,
+            end: this.end
+        };
     }
 });
 
-module.exports = Item;
+module.exports = SeriesItem;

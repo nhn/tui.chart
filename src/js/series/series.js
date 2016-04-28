@@ -416,24 +416,23 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Make html about series label.
-     * @param {{left: number, top: number}} position position
-     * @param {string} value value
-     * @param {number} index index
-     * @returns {string} html string
+     * @param {{left: number, top: number}} position - position for rendering
+     * @param {string} label - label of SeriesItem
+     * @param {number} index - index of legend
+     * @returns {string}
      * @private
      */
-    _makeSeriesLabelHtml: function(position, value, index) {
+    _makeSeriesLabelHtml: function(position, label, index) {
         var cssObj = tui.util.extend(position, this.theme.label);
 
-        if (!tui.util.isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== index) {
+        if (!tui.util.isNull(this.selectedLegendIndex) && (this.selectedLegendIndex !== index)) {
             cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
         }
         return seriesTemplate.tplSeriesLabel({
             cssText: seriesTemplate.tplCssText(cssObj),
-            value: value,
-            index: index
+            label: label
         });
     },
 
@@ -475,7 +474,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index,
-            legendData = this.dataProcessor.getLegendData(legendIndex);
+            legendData = this.dataProcessor.getLegendItem(legendIndex);
 
         return {
             chartType: legendData.chartType,
@@ -546,7 +545,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.selectedLegendIndex = legendIndex;
 
-        if (this.dataProcessor.getItemGroup().getGroupCount(this.chartType)) {
+        if (this.dataProcessor.getSeriesDataModel(this.chartType).getGroupCount()) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

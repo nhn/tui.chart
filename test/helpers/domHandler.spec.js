@@ -1,5 +1,5 @@
 /**
- * @fileoverview test DOMHandler
+ * @fileoverview Test for domHandler.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -8,7 +8,7 @@
 
 var dom = require('../../src/js/helpers/domHandler.js');
 
-describe('domHandler', function() {
+describe('Test for domHandler', function() {
     describe('create()', function() {
         it('Element를 생성합니다.', function() {
             var el = dom.create('DIV');

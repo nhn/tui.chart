@@ -8,7 +8,7 @@
 
 var AreaTypeDataModel = require('../../src/js/customEvents/areaTypeDataModel');
 
-describe('AreaTypeDataModel', function() {
+describe('Test for AreaTypeDataModel', function() {
     var dataModel;
 
     beforeEach(function() {

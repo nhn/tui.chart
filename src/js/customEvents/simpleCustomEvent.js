@@ -1,5 +1,5 @@
 /**
- * @fileoverview PieChartCustomEvent is event handle layer for pie chart tooltip.
+ * @fileoverview SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,13 +9,13 @@
 var CustomEventBase = require('./customEventBase'),
     renderUtil = require('../helpers/renderUtil');
 
-var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieChartCustomEvent.prototype */ {
+var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleCustomEvent.prototype */ {
     /**
-     * PieChartCustomEvent is event handle layer for pie chart tooltip.
-     * @constructs PieChartCustomEvent
+     * SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
+     * @constructs SimpleCustomEvent
      * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker instance
-     *      @param {string} parmas.chartType chart type
+     *      @param {BoundsMaker} params.boundsMaker - bounds maker instance
+     *      @param {string} params.chartType - chart type
      * @extends CustomEventBase
      */
     init: function(params) {
@@ -25,9 +25,7 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
 
     /**
      * Render event handle layer area
-     * @param {HTMLElement} customEventContainer custom event container element
-     * @param {{dimension: {width: number, height: number},
-     *          position: {left: number, top: number}}} bound bound of event handler layer
+     * @param {HTMLElement} customEventContainer - container element for custom event
      * @private
      */
     _renderCustomEventArea: function(customEventContainer) {
@@ -44,7 +42,7 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
 
     /**
      * On click.
-     * @param {mouseevent} e mouse event
+     * @param {MouseEvent} e - mouse event
      * @private
      * @override
      */
@@ -54,15 +52,25 @@ var PieChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends PieCh
 
     /**
      * On mouse move.
-     * @param {mouseevent} e mouse event
+     * @param {MouseEvent} e - mouse event
      * @private
      * @override
      */
     _onMousemove: function(e) {
         this._onMouseEvent('move', e);
+    },
+
+    /**
+     * On mouse out.
+     * @param {MouseEvent} e - mouse event
+     * @private
+     * @override
+     */
+    _onMouseout: function(e) {
+        this._onMouseEvent('move', e);
     }
 });
 
-tui.util.CustomEvents.mixin(PieChartCustomEvent);
+tui.util.CustomEvents.mixin(SimpleCustomEvent);
 
-module.exports = PieChartCustomEvent;
+module.exports = SimpleCustomEvent;

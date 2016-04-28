@@ -8,6 +8,7 @@ var chartConst = require('./const'),
     AreaChart = require('./charts/areaChart'),
     ComboChart = require('./charts/comboChart'),
     PieChart = require('./charts/pieChart'),
+    BubbleChart = require('./charts/bubbleChart'),
     MapChart = require('./charts/mapChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
@@ -16,4 +17,5 @@ chartFactory.register(chartConst.CHART_TYPE_LINE, LineChart);
 chartFactory.register(chartConst.CHART_TYPE_AREA, AreaChart);
 chartFactory.register(chartConst.CHART_TYPE_COMBO, ComboChart);
 chartFactory.register(chartConst.CHART_TYPE_PIE, PieChart);
+chartFactory.register(chartConst.CHART_TYPE_BUBBLE, BubbleChart);
 chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);

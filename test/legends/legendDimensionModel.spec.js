@@ -1,5 +1,5 @@
 /**
- * @fileoverview test legend
+ * @fileoverview Test for LegendDimensionModel.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,7 +10,7 @@ var LegendDimensionModel = require('../../src/js/legends/legendDimensionModel'),
     chartConst = require('../../src/js/const'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('test Legend', function() {
+describe('Test for LegendDimensionModel', function() {
     var dimensionModel;
 
     beforeAll(function() {

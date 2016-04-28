@@ -99,7 +99,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
                 return self._calculateLegendsWidthSum(_labels, labelTheme);
             });
 
-        return Math.max.apply(null, lineWidths);
+        return tui.util.max(lineWidths);
     },
 
     /**

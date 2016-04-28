@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>Bubble Chart Sample</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="bubbleChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "series": [
+        {
+            "name": "Africa",
+            "data": [
+                {"x": 1000, "y": 50.49, "r": 1372531, "label": "Nigeria"},
+                {"x": 1100, "y": 44.94, "r": 3202185, "label": "Kenya"},
+                {"x": 1100, "y": 41.36, "r": 3742482, "label": "Central African Republic"},
+                {"x": 1200, "y": 44.2, "r": 1357482, "label": "Burkina Faso"},
+                {"x": 1200, "y": 50.81, "r": 7250033, "label": "Benin"},
+                {"x": 1200, "y": 37.1, "r": 1881173, "label": "Mozambique"},
+                {"x": 1300, "y": 39.18, "r": 7954013, "label": "Rwanda"},
+                {"x": 1500, "y": 42.48, "r": 1732772, "label": "Cote d\"Ivoire"},
+                {"x": 1500, "y": 45.28, "r": 2640454, "label": "Uganda"},
+                {"x": 1600, "y": 53.05, "r": 5556812, "label": "Togo"},
+                {"x": 1600, "y": 48.24, "r": 9538544, "label": "Chad"},
+                {"x": 1700, "y": 56.56, "r": 1085214, "label": "Senegal"},
+                {"x": 1800, "y": 52.32, "r": 2998563, "label": "Mauritania"},
+                {"x": 1800, "y": 54.79, "r": 1546848, "label": "Gambia, The"},
+                {"x": 1900, "y": 37.82, "r": 1267186, "label": "Zimbabwe"},
+                {"x": 1900, "y": 58.13, "r": 3914816, "label": "Sudan"},
+                {"x": 1900, "y": 47.95, "r": 1606367, "label": "Cameroon"},
+                {"x": 2100, "y": 36.79, "r": 1097855, "label": "Angola"},
+                {"x": 2100, "y": 49.7, "r": 924646, "label": "Guinea"},
+                {"x": 2300, "y": 56.27, "r": 2075703, "label": "Ghana"},
+                {"x": 3200, "y": 36.81, "r": 1865040, "label": "Lesotho"},
+                {"x": 4200, "y": 70.35, "r": 32209101, "label": "Morocco"},
+                {"x": 4200, "y": 70.71, "r": 76117421, "label": "Egypt"},
+                {"x": 5100, "y": 37.54, "r": 1169241, "label": "Swaziland"},
+                {"x": 5900, "y": 56.46, "r": 1355246, "label": "Gabon"},
+                {"x": 6600, "y": 72.74, "r": 32129324, "label": "Algeria"},
+                {"x": 6700, "y": 76.28, "r": 5631585, "label": "Libya"},
+                {"x": 7100, "y": 74.66, "r": 9974722, "label": "Tunisia"},
+                {"x": 7300, "y": 40.53, "r": 1954033, "label": "Namibia"},
+                {"x": 9200, "y": 30.76, "r": 1561973, "label": "Botswana"},
+                {"x": 10500, "y": 69.28, "r": 1096585, "label": "Trinidad and Tobago"},
+                {"x": 11100, "y": 44.19, "r": 4271853, "label": "South Africa"},
+                {"x": 12800, "y": 72.09, "r": 1220481, "label": "Mauritius"},
+                {"x": 18200, "y": 78.68, "r": 396851, "label": "Malta"}
+            ]
+        },
+        {
+            "name": "America",
+            "data": [
+                {"x": 1500, "y": 51.78, "r": 765616, "label": "Haiti"},
+                {"x": 2300, "y": 70.02, "r": 535975, "label": "Nicaragua"},
+                {"x": 2600, "y": 65.14, "r": 8724156, "label": "Bolivia"},
+                {"x": 2800, "y": 66.15, "r": 6823568, "label": "Honduras"},
+                {"x": 3000, "y": 77.04, "r": 1130876, "label": "Cuba"},
+                {"x": 3700, "y": 76.01, "r": 1321274, "label": "Ecuador"},
+                {"x": 3800, "y": 62.43, "r": 705803, "label": "Guyana"},
+                {"x": 4100, "y": 76.07, "r": 2713130, "label": "Jamaica"},
+                {"x": 4200, "y": 65.19, "r": 1428059, "label": "Guatemala"},
+                {"x": 4800, "y": 74.64, "r": 6191368, "label": "Paraguay"},
+                {"x": 4900, "y": 70.92, "r": 6587541, "label": "El Salvador"},
+                {"x": 5600, "y": 69.22, "r": 2754430, "label": "Peru"},
+                {"x": 5800, "y": 74.06, "r": 2501738, "label": "Venezuela"},
+                {"x": 6300, "y": 67.63, "r": 8833634, "label": "Dominican Republic"},
+                {"x": 6500, "y": 67.43, "r": 272945, "label": "Belize"},
+                {"x": 6600, "y": 71.43, "r": 4231077, "label": "Colombia"},
+                {"x": 6900, "y": 72.14, "r": 3000463, "label": "Panama"},
+                {"x": 8100, "y": 71.41, "r": 78410118, "label": "Brazil"},
+                {"x": 9600, "y": 76.63, "r": 3956507, "label": "Costa Rica"},
+                {"x": 9600, "y": 74.94, "r": 4495959, "label": "Mexico"},
+                {"x": 12400, "y": 75.7, "r": 6914475, "label": "Argentina"},
+                {"x": 14500, "y": 75.92, "r": 3399237, "label": "Uruguay"},
+                {"x": 16400, "y": 71.64, "r": 278289, "label": "Barbados"},
+                {"x": 17700, "y": 65.63, "r": 299697, "label": "Bahamas, The"},
+                {"x": 17700, "y": 77.49, "r": 3897960, "label": "Puerto Rico"},
+                {"x": 31500, "y": 79.96, "r": 32507874, "label": "Canada"},
+                {"x": 32100, "y": 77.43, "r": 89302754, "label": "United States"}
+            ]
+        },
+        {
+            "name": "Asia",
+            "data": [
+                {"x": 1100, "y": 64.47, "r": 7011000, "label": "Tajikistan"},
+                {"x": 1500, "y": 59.4, "r": 2707000, "label": "Nepal"},
+                {"x": 1700, "y": 56.01, "r": 4272000, "label": "Burma"},
+                {"x": 1700, "y": 67.84, "r": 5081000, "label": "Kyrgyzstan"},
+                {"x": 1700, "y": 71.08, "r": 3269000, "label": "Korea, North"},
+                {"x": 1800, "y": 64.09, "r": 4641000, "label": "Uzbekistan"},
+                {"x": 1900, "y": 64.17, "r": 2751000, "label": "Mongolia"},
+                {"x": 1900, "y": 54.69, "r": 6068000, "label": "Laos"},
+                {"x": 2000, "y": 58.41, "r": 13363000, "label": "Cambodia"},
+                {"x": 2000, "y": 61.71, "r": 34134000, "label": "Bangladesh"},
+                {"x": 2100, "y": 68.26, "r": 25374000, "label": "Iraq"},
+                {"x": 2200, "y": 62.61, "r": 45919000, "label": "Pakistan"},
+                {"x": 2700, "y": 70.35, "r": 12689000, "label": "Vietnam"},
+                {"x": 3100, "y": 63.99, "r": 70650706, "label": "India"},
+                {"x": 3400, "y": 69.71, "r": 18016874, "label": "Syria"},
+                {"x": 3500, "y": 69.26, "r": 63845295, "label": "Indonesia"},
+                {"x": 4000, "y": 72.89, "r": 19905165, "label": "SriLanka"},
+                {"x": 4500, "y": 78.06, "r": 5611202, "label": "Jordan"},
+                {"x": 4600, "y": 71.23, "r": 2991360, "label": "Armenia"},
+                {"x": 5000, "y": 69.6, "r": 16241697, "label": "Philippines"},
+                {"x": 5000, "y": 72.35, "r": 3777218, "label": "Lebanon"},
+                {"x": 5600, "y": 71.96, "r": 92988000, "label": "China"},
+                {"x": 5700, "y": 61.29, "r": 4863169, "label": "Turkmenistan"},
+                {"x": 7700, "y": 69.66, "r": 19018924, "label": "Iran"},
+                {"x": 7800, "y": 66.07, "r": 1514370, "label": "Kazakhstan"},
+                {"x": 8100, "y": 71.41, "r": 14865523, "label": "Thailand"},
+                {"x": 9700, "y": 71.95, "r": 23522482, "label": "Malaysia"},
+                {"x": 12000, "y": 75.23, "r": 25795938, "label": "Saudi Arabia"},
+                {"x": 13100, "y": 72.85, "r": 2903165, "label": "Oman"},
+                {"x": 19200, "y": 75.58, "r": 48598170, "label": "Korea, South"},
+                {"x": 19200, "y": 73.98, "r": 677886, "label": "Bahrain"},
+                {"x": 20800, "y": 79.17, "r": 6199008, "label": "Israel"},
+                {"x": 21300, "y": 76.84, "r": 2257549, "label": "Kuwait"},
+                {"x": 23200, "y": 73.4, "r": 840290, "label": "Qatar"},
+                {"x": 25200, "y": 74.99, "r": 2523915, "label": "United Arab Emirates"},
+                {"x": 25300, "y": 77.06, "r": 22749838, "label": "Taiwan"},
+                {"x": 27800, "y": 81.53, "r": 4353893, "label": "Singapore"},
+                {"x": 29400, "y": 81.04, "r": 52733300, "label": "Japan"},
+                {"x": 34200, "y": 81.39, "r": 6855125, "label": "Hong Kong"}
+            ]                    },
+        {
+            "name": "Europe",
+            "data": [
+                {"x": 1900, "y": 65.03, "r": 1446455, "label": "Moldova"},
+                {"x": 3100, "y": 75.62, "r": 1693892, "label": "Georgia"},
+                {"x": 3800, "y": 63.25, "r": 7868385, "label": "Azerbaijan"},
+                {"x": 4900, "y": 77.06, "r": 3544808, "label": "Albania"},
+                {"x": 6300, "y": 66.68, "r": 4773207, "label": "Ukraine"},
+                {"x": 6500, "y": 72.57, "r": 4007608, "label": "Bosnia and Herzegovina"},
+                {"x": 6800, "y": 68.57, "r": 1031052, "label": "Belarus"},
+                {"x": 7100, "y": 74.73, "r": 2071210, "label": "Macedonia"},
+                {"x": 7400, "y": 72.08, "r": 6889391, "label": "Turkey"},
+                {"x": 7700, "y": 71.12, "r": 2235555, "label": "Romania"},
+                {"x": 8200, "y": 71.75, "r": 7517973, "label": "Bulgaria"},
+                {"x": 9800, "y": 66.39, "r": 54378233, "label": "Russia"},
+                {"x": 10700, "y": 76.38, "r": 1582395, "label": "Chile"},
+                {"x": 11200, "y": 74.14, "r": 4496869, "label": "Croatia"},
+                {"x": 11500, "y": 70.86, "r": 2306306, "label": "Latvia"},
+                {"x": 12000, "y": 74.16, "r": 38626349, "label": "Poland"},
+                {"x": 12500, "y": 73.46, "r": 3607899, "label": "Lithuania"},
+                {"x": 14300, "y": 71.38, "r": 1341664, "label": "Estonia"},
+                {"x": 14500, "y": 74.19, "r": 5423567, "label": "Slovakia"},
+                {"x": 14900, "y": 72.25, "r": 1003237, "label": "Hungary"},
+                {"x": 16800, "y": 75.78, "r": 1024617, "label": "Czech Republic"},
+                {"x": 17900, "y": 77.35, "r": 1052414, "label": "Portugal"},
+                {"x": 19600, "y": 75.93, "r": 2011473, "label": "Slovenia"},
+                {"x": 21300, "y": 78.94, "r": 10647529, "label": "Greece"},
+                {"x": 23300, "y": 79.37, "r": 40280780, "label": "Spain"},
+                {"x": 27700, "y": 79.54, "r": 58057477, "label": "Italy"},
+                {"x": 28400, "y": 80.3, "r": 898640, "label": "Sweden"},
+                {"x": 28700, "y": 78.54, "r": 22424609, "label": "Germany"},
+                {"x": 28700, "y": 79.44, "r": 30424213, "label": "France"},
+                {"x": 29000, "y": 78.24, "r": 5214512, "label": "Finland"},
+                {"x": 29500, "y": 78.68, "r": 16318199, "label": "Netherlands"},
+                {"x": 29600, "y": 78.27, "r": 60270708, "label": "United Kingdom"},
+                {"x": 30600, "y": 78.44, "r": 10348276, "label": "Belgium"},
+                {"x": 31300, "y": 78.87, "r": 8174762, "label": "Austria"},
+                {"x": 31900, "y": 77.36, "r": 3969558, "label": "Ireland"},
+                {"x": 31900, "y": 80.18, "r": 293966, "label": "Iceland"},
+                {"x": 32200, "y": 77.44, "r": 5413392, "label": "Denmark"},
+                {"x": 33800, "y": 80.31, "r": 7450867, "label": "Switzerland"}
+            ]
+        },
+        {
+            "name": "Oceania",
+            "data": [
+                {"x": 2200, "y": 64.56, "r": 5420280, "label": "Papua New Guinea"},
+                {"x": 2700, "y": 61.32, "r": 100798, "label": "Kiribati"},
+                {"x": 5900, "y": 69.2, "r": 880874, "label": "Fiji"},
+                {"x": 14500, "y": 78.75, "r": 108775, "label": "Virgin Islands"},
+                {"x": 23200, "y": 78.49, "r": 1993817, "label": "New Zealand"},
+                {"x": 30700, "y": 80.26, "r": 5991314, "label": "Australia"}
+            ]
+        }
+    ]
+}
+
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Life Expectancy per GDP",
+        "format": function(value, areaType, valueType) {
+            if (valueType === "r" || valueType === "x") {
+                value = tui.chart.renderUtil.formatComma(value);
+                if (valueType === "x") {
+                    value = "$" + value;
+                }
+            }
+            return value;
+        }
+    },
+    "yAxis": {
+        "title": "Life Expectancy (years)"
+    },
+    "xAxis": {
+        "title": "GDP"
+    },
+    "tooltip": {
+        "template": function(category, items) {
+            return "<div class=\"tui-chart-default-tooltip\">" +
+                "<div>" + items.legend + items.label + "</div>" +
+                "<div>GDP: " + items.x + "</div>"+
+                "<div>Life Expectancy: " + items.y + "</div>"+
+                "<div>Population: " + items.r + "</div>"+
+            "</div>";
+        }
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+            data = {
+                series: [
+                    {
+                        name: 'Africa',
+                        data: [
+                            {x: 1000, y: 50.49, r: 1372531, label: 'Nigeria'},
+                            {x: 1100, y: 44.94, r: 3202185, label: 'Kenya'},
+                            {x: 1100, y: 41.36, r: 3742482, label: 'Central African Republic'},
+                            {x: 1200, y: 44.2, r: 1357482, label: 'Burkina Faso'},
+                            {x: 1200, y: 50.81, r: 7250033, label: 'Benin'},
+                            {x: 1200, y: 37.1, r: 1881173, label: 'Mozambique'},
+                            {x: 1300, y: 39.18, r: 7954013, label: 'Rwanda'},
+                            {x: 1500, y: 42.48, r: 1732772, label: 'Cote d\'Ivoire'},
+                            {x: 1500, y: 45.28, r: 2640454, label: 'Uganda'},
+                            {x: 1600, y: 53.05, r: 5556812, label: 'Togo'},
+                            {x: 1600, y: 48.24, r: 9538544, label: 'Chad'},
+                            {x: 1700, y: 56.56, r: 1085214, label: 'Senegal'},
+                            {x: 1800, y: 52.32, r: 2998563, label: 'Mauritania'},
+                            {x: 1800, y: 54.79, r: 1546848, label: 'Gambia, The'},
+                            {x: 1900, y: 37.82, r: 1267186, label: 'Zimbabwe'},
+                            {x: 1900, y: 58.13, r: 3914816, label: 'Sudan'},
+                            {x: 1900, y: 47.95, r: 1606367, label: 'Cameroon'},
+                            {x: 2100, y: 36.79, r: 1097855, label: 'Angola'},
+                            {x: 2100, y: 49.7, r: 924646, label: 'Guinea'},
+                            {x: 2300, y: 56.27, r: 2075703, label: 'Ghana'},
+                            {x: 3200, y: 36.81, r: 1865040, label: 'Lesotho'},
+                            {x: 4200, y: 70.35, r: 32209101, label: 'Morocco'},
+                            {x: 4200, y: 70.71, r: 76117421, label: 'Egypt'},
+                            {x: 5100, y: 37.54, r: 1169241, label: 'Swaziland'},
+                            {x: 5900, y: 56.46, r: 1355246, label: 'Gabon'},
+                            {x: 6600, y: 72.74, r: 32129324, label: 'Algeria'},
+                            {x: 6700, y: 76.28, r: 5631585, label: 'Libya'},
+                            {x: 7100, y: 74.66, r: 9974722, label: 'Tunisia'},
+                            {x: 7300, y: 40.53, r: 1954033, label: 'Namibia'},
+                            {x: 9200, y: 30.76, r: 1561973, label: 'Botswana'},
+                            {x: 10500, y: 69.28, r: 1096585, label: 'Trinidad and Tobago'},
+                            {x: 11100, y: 44.19, r: 4271853, label: 'South Africa'},
+                            {x: 12800, y: 72.09, r: 1220481, label: 'Mauritius'},
+                            {x: 18200, y: 78.68, r: 396851, label: 'Malta'}
+                        ]
+                    },
+                    {
+                        name: 'America',
+                        data: [
+                            {x: 1500, y: 51.78, r: 765616, label: 'Haiti'},
+                            {x: 2300, y: 70.02, r: 535975, label: 'Nicaragua'},
+                            {x: 2600, y: 65.14, r: 8724156, label: 'Bolivia'},
+                            {x: 2800, y: 66.15, r: 6823568, label: 'Honduras'},
+                            {x: 3000, y: 77.04, r: 1130876, label: 'Cuba'},
+                            {x: 3700, y: 76.01, r: 1321274, label: 'Ecuador'},
+                            {x: 3800, y: 62.43, r: 705803, label: 'Guyana'},
+                            {x: 4100, y: 76.07, r: 2713130, label: 'Jamaica'},
+                            {x: 4200, y: 65.19, r: 1428059, label: 'Guatemala'},
+                            {x: 4800, y: 74.64, r: 6191368, label: 'Paraguay'},
+                            {x: 4900, y: 70.92, r: 6587541, label: 'El Salvador'},
+                            {x: 5600, y: 69.22, r: 2754430, label: 'Peru'},
+                            {x: 5800, y: 74.06, r: 2501738, label: 'Venezuela'},
+                            {x: 6300, y: 67.63, r: 8833634, label: 'Dominican Republic'},
+                            {x: 6500, y: 67.43, r: 272945, label: 'Belize'},
+                            {x: 6600, y: 71.43, r: 4231077, label: 'Colombia'},
+                            {x: 6900, y: 72.14, r: 3000463, label: 'Panama'},
+                            {x: 8100, y: 71.41, r: 78410118, label: 'Brazil'},
+                            {x: 9600, y: 76.63, r: 3956507, label: 'Costa Rica'},
+                            {x: 9600, y: 74.94, r: 4495959, label: 'Mexico'},
+                            {x: 12400, y: 75.7, r: 6914475, label: 'Argentina'},
+                            {x: 14500, y: 75.92, r: 3399237, label: 'Uruguay'},
+                            {x: 16400, y: 71.64, r: 278289, label: 'Barbados'},
+                            {x: 17700, y: 65.63, r: 299697, label: 'Bahamas, The'},
+                            {x: 17700, y: 77.49, r: 3897960, label: 'Puerto Rico'},
+                            {x: 31500, y: 79.96, r: 32507874, label: 'Canada'},
+                            {x: 32100, y: 77.43, r: 89302754, label: 'United States'}
+                        ]
+                    },
+                    {
+                        name: 'Asia',
+                        data: [
+                            {x: 1100, y: 64.47, r: 7011000, label: 'Tajikistan'},
+                            {x: 1500, y: 59.4, r: 2707000, label: 'Nepal'},
+                            {x: 1700, y: 56.01, r: 4272000, label: 'Burma'},
+                            {x: 1700, y: 67.84, r: 5081000, label: 'Kyrgyzstan'},
+                            {x: 1700, y: 71.08, r: 3269000, label: 'Korea, North'},
+                            {x: 1800, y: 64.09, r: 4641000, label: 'Uzbekistan'},
+                            {x: 1900, y: 64.17, r: 2751000, label: 'Mongolia'},
+                            {x: 1900, y: 54.69, r: 6068000, label: 'Laos'},
+                            {x: 2000, y: 58.41, r: 13363000, label: 'Cambodia'},
+                            {x: 2000, y: 61.71, r: 34134000, label: 'Bangladesh'},
+                            {x: 2100, y: 68.26, r: 25374000, label: 'Iraq'},
+                            {x: 2200, y: 62.61, r: 45919000, label: 'Pakistan'},
+                            {x: 2700, y: 70.35, r: 12689000, label: 'Vietnam'},
+                            {x: 3100, y: 63.99, r: 70650706, label: 'India'},
+                            {x: 3400, y: 69.71, r: 18016874, label: 'Syria'},
+                            {x: 3500, y: 69.26, r: 63845295, label: 'Indonesia'},
+                            {x: 4000, y: 72.89, r: 19905165, label: 'SriLanka'},
+                            {x: 4500, y: 78.06, r: 5611202, label: 'Jordan'},
+                            {x: 4600, y: 71.23, r: 2991360, label: 'Armenia'},
+                            {x: 5000, y: 69.6, r: 16241697, label: 'Philippines'},
+                            {x: 5000, y: 72.35, r: 3777218, label: 'Lebanon'},
+                            {x: 5600, y: 71.96, r: 92988000, label: 'China'},
+                            {x: 5700, y: 61.29, r: 4863169, label: 'Turkmenistan'},
+                            {x: 7700, y: 69.66, r: 19018924, label: 'Iran'},
+                            {x: 7800, y: 66.07, r: 1514370, label: 'Kazakhstan'},
+                            {x: 8100, y: 71.41, r: 14865523, label: 'Thailand'},
+                            {x: 9700, y: 71.95, r: 23522482, label: 'Malaysia'},
+                            {x: 12000, y: 75.23, r: 25795938, label: 'Saudi Arabia'},
+                            {x: 13100, y: 72.85, r: 2903165, label: 'Oman'},
+                            {x: 19200, y: 75.58, r: 48598170, label: 'Korea, South'},
+                            {x: 19200, y: 73.98, r: 677886, label: 'Bahrain'},
+                            {x: 20800, y: 79.17, r: 6199008, label: 'Israel'},
+                            {x: 21300, y: 76.84, r: 2257549, label: 'Kuwait'},
+                            {x: 23200, y: 73.4, r: 840290, label: 'Qatar'},
+                            {x: 25200, y: 74.99, r: 2523915, label: 'United Arab Emirates'},
+                            {x: 25300, y: 77.06, r: 22749838, label: 'Taiwan'},
+                            {x: 27800, y: 81.53, r: 4353893, label: 'Singapore'},
+                            {x: 29400, y: 81.04, r: 52733300, label: 'Japan'},
+                            {x: 34200, y: 81.39, r: 6855125, label: 'Hong Kong'}
+                        ]                    },
+                    {
+                        name: 'Europe',
+                        data: [
+                            {x: 1900, y: 65.03, r: 1446455, label: 'Moldova'},
+                            {x: 3100, y: 75.62, r: 1693892, label: 'Georgia'},
+                            {x: 3800, y: 63.25, r: 7868385, label: 'Azerbaijan'},
+                            {x: 4900, y: 77.06, r: 3544808, label: 'Albania'},
+                            {x: 6300, y: 66.68, r: 4773207, label: 'Ukraine'},
+                            {x: 6500, y: 72.57, r: 4007608, label: 'Bosnia and Herzegovina'},
+                            {x: 6800, y: 68.57, r: 1031052, label: 'Belarus'},
+                            {x: 7100, y: 74.73, r: 2071210, label: 'Macedonia'},
+                            {x: 7400, y: 72.08, r: 6889391, label: 'Turkey'},
+                            {x: 7700, y: 71.12, r: 2235555, label: 'Romania'},
+                            {x: 8200, y: 71.75, r: 7517973, label: 'Bulgaria'},
+                            {x: 9800, y: 66.39, r: 54378233, label: 'Russia'},
+                            {x: 10700, y: 76.38, r: 1582395, label: 'Chile'},
+                            {x: 11200, y: 74.14, r: 4496869, label: 'Croatia'},
+                            {x: 11500, y: 70.86, r: 2306306, label: 'Latvia'},
+                            {x: 12000, y: 74.16, r: 38626349, label: 'Poland'},
+                            {x: 12500, y: 73.46, r: 3607899, label: 'Lithuania'},
+                            {x: 14300, y: 71.38, r: 1341664, label: 'Estonia'},
+                            {x: 14500, y: 74.19, r: 5423567, label: 'Slovakia'},
+                            {x: 14900, y: 72.25, r: 1003237, label: 'Hungary'},
+                            {x: 16800, y: 75.78, r: 1024617, label: 'Czech Republic'},
+                            {x: 17900, y: 77.35, r: 1052414, label: 'Portugal'},
+                            {x: 19600, y: 75.93, r: 2011473, label: 'Slovenia'},
+                            {x: 21300, y: 78.94, r: 10647529, label: 'Greece'},
+                            {x: 23300, y: 79.37, r: 40280780, label: 'Spain'},
+                            {x: 27700, y: 79.54, r: 58057477, label: 'Italy'},
+                            {x: 28400, y: 80.3, r: 898640, label: 'Sweden'},
+                            {x: 28700, y: 78.54, r: 22424609, label: 'Germany'},
+                            {x: 28700, y: 79.44, r: 30424213, label: 'France'},
+                            {x: 29000, y: 78.24, r: 5214512, label: 'Finland'},
+                            {x: 29500, y: 78.68, r: 16318199, label: 'Netherlands'},
+                            {x: 29600, y: 78.27, r: 60270708, label: 'United Kingdom'},
+                            {x: 30600, y: 78.44, r: 10348276, label: 'Belgium'},
+                            {x: 31300, y: 78.87, r: 8174762, label: 'Austria'},
+                            {x: 31900, y: 77.36, r: 3969558, label: 'Ireland'},
+                            {x: 31900, y: 80.18, r: 293966, label: 'Iceland'},
+                            {x: 32200, y: 77.44, r: 5413392, label: 'Denmark'},
+                            {x: 33800, y: 80.31, r: 7450867, label: 'Switzerland'}
+                        ]
+                    },
+                    {
+                        name: 'Oceania',
+                        data: [
+                            {x: 2200, y: 64.56, r: 5420280, label: 'Papua New Guinea'},
+                            {x: 2700, y: 61.32, r: 100798, label: 'Kiribati'},
+                            {x: 5900, y: 69.2, r: 880874, label: 'Fiji'},
+                            {x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands'},
+                            {x: 23200, y: 78.49, r: 1993817, label: 'New Zealand'},
+                            {x: 30700, y: 80.26, r: 5991314, label: 'Australia'}
+                        ]
+                    }
+                ]
+            },
+            options = {
+                chart: {
+                    width: 700,
+                    height: 400,
+                    title: 'Life Expectancy per GDP',
+                    format: function(value, areaType, valueType) {
+                        if (valueType === 'r' || valueType === 'x') {
+                            value = tui.chart.renderUtil.formatComma(value);
+                            if (valueType === 'x') {
+                                value = '$' + value;
+                            }
+                        }
+                        return value;
+                    }
+                },
+                yAxis: {
+                    title: 'Life Expectancy (years)'
+                },
+                xAxis: {
+                    title: 'GDP'
+                },
+                tooltip: {
+                    template: function(category, items) {
+                        return '<div class="tui-chart-default-tooltip">' +
+                            '<div>' + items.legend + items.label + '</div>' +
+                            '<div>GDP: ' + items.x + '</div>'+
+                            '<div>Life Expectancy: ' + items.y + '</div>'+
+                            '<div>Population: ' + items.r + '</div>'+
+                        '</div>';
+                    }
+                }
+            };
+    tui.chart.bubbleChart(container, data, options);
+</script>
+</body>
+</html>

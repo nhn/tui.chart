@@ -7,8 +7,8 @@
 'use strict';
 
 var BarChartSeries = require('../../src/js/series/barChartSeries'),
-    ItemGroup = require('../../src/js/dataModels/itemGroup'),
-    Items = require('../../src/js/dataModels/items'),
+    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
+    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
     renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BarChartSeries', function() {
@@ -19,8 +19,8 @@ describe('BarChartSeries', function() {
         spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(40);
         spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getItemGroup', 'getFirstFormattedValue', 'getFormatFunctions']);
-        dataProcessor.getFirstFormattedValue.and.returnValue('1');
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstItemLabel', 'getFormatFunctions']);
+        dataProcessor.getFirstItemLabel.and.returnValue('1');
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
@@ -120,13 +120,13 @@ describe('BarChartSeries', function() {
                     plusLeft: 0
                 },
                 isStacked = false,
-                item = {
+                seriesItem = {
                     value: 10,
                     startRatio: 0,
                     ratioDistance: 0.4
                 },
                 index = 0,
-                actual = series._makeBarChartBound(baseData, iterationData, isStacked, item, index),
+                actual = series._makeBarChartBound(baseData, iterationData, isStacked, seriesItem, index),
                 expected = {
                     start: {
                         top: 10,
@@ -148,12 +148,12 @@ describe('BarChartSeries', function() {
 
     describe('_makeBounds()', function() {
         it('옵션 없는 바 차트의 bounds 정보를 생성합니다.', function() {
-            var itemGroup, actual, expected;
+            var seriesDataModel, actual, expected;
 
-            itemGroup = new ItemGroup();
-            dataProcessor.getItemGroup.and.returnValue(itemGroup);
-            itemGroup.groups = [
-                new Items([{
+            seriesDataModel = new SeriesDataModel();
+            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.groups = [
+                new seriesGroup([{
                     value: 40,
                     startRatio: 0,
                     ratioDistance: 0.4
@@ -222,8 +222,8 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = 10,
-                formattedValue = '10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                label = '10',
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
                 expected = {
                     left: 95,
                     top: 11
@@ -240,9 +240,9 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = 10,
-                formattedValue = '10',
+                label = '10',
                 isStart = true,
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label, isStart),
                 expected = {
                     left: 5,
                     top: 11
@@ -259,8 +259,8 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = -10,
-                formattedValue = '-10',
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue),
+                label = '-10',
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
                 expected = {
                     left: 5,
                     top: 11
@@ -277,9 +277,9 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 value = -10,
-                formattedValue = '-10',
+                label = '-10',
                 isStart = true,
-                actual = series.makeSeriesRenderingPosition(bound, labelHeight, value, formattedValue, isStart),
+                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label, isStart),
                 expected = {
                     left: 95,
                     top: 11
