@@ -11,14 +11,14 @@
     var onBtnClick = function() {
         var chart = root.tui.chart,
             data = elData ? JSON.parse(elData.value) : {},
-            options = elOptions ? JSON.parse(elOptions.value) : null,
-            theme = elOptions ? JSON.parse(elTheme.value) : null;
+            options = elOptions ? eval('(' + elOptions.value + ')') : null,
+            theme = elTheme && elOptions ? JSON.parse(elTheme.value) : null;
 
         if (options && options.theme && theme) {
             chart.registerTheme(options.theme, theme);
         }
 
-        if (!elUseTheme.checked) {
+        if (elUseTheme && !elUseTheme.checked) {
             delete options.theme;
         }
 
@@ -27,7 +27,7 @@
     };
 
     var onCheckboxClick = function(elTarget) {
-        var objOptions = JSON.parse(elOptions.value);
+        var objOptions = eval('(' + elOptions.value + ')');
         if (elTarget.checked) {
             elThemeArea.className = 'show';
             objOptions.theme = 'newTheme';

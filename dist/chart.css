@@ -81,6 +81,7 @@
   left: 0;
   width: 100%;
   text-align: right;
+  white-space: nowrap;
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-title-area {
   -webkit-transform-origin: top left;
@@ -353,7 +354,8 @@
 .tui-chart .tui-chart-legend-rect.line {
   height: 2px;
 }
-.tui-chart .tui-chart-legend-rect.area {
+.tui-chart .tui-chart-legend-rect.area,
+.tui-chart .tui-chart-legend-rect.bubble {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: alpha(opacity=50);
   opacity: 0.5;
@@ -454,6 +456,20 @@
   clear: none;
   float: left;
   white-space: nowrap;
+}
+.tui-chart .tui-chart-circle-legend-area {
+  position: absolute;
+}
+.tui-chart .tui-chart-circle-legend-area .tui-chart-circle-legend-label-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.tui-chart .tui-chart-circle-legend-area .tui-chart-circle-legend-label-area .tui-chart-circle-legend-label {
+  position: absolute;
+  font-size: 9px;
+  white-space: nowrap;
+  text-shadow: #fff 0px 0px 3px;
 }
 .tui-chart .tui-chart-tooltip-area {
   position: absolute;
