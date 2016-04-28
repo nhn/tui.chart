@@ -138,7 +138,7 @@
         "title": "Life Expectancy per GDP",
         "format": function(value, areaType, valueType) {
             if (valueType === "r" || valueType === "x") {
-                value = tui.chart.renderUtil.formatComma(value);
+                value = tui.chart.renderUtil.formatToComma(value);
                 if (valueType === "x") {
                     value = "$" + value;
                 }
@@ -291,7 +291,7 @@
                     title: 'Life Expectancy per GDP',
                     format: function(value, areaType, valueType) {
                         if (valueType === 'r' || valueType === 'x') {
-                            value = tui.chart.renderUtil.formatComma(value);
+                            value = tui.chart.renderUtil.formatToComma(value);
                             if (valueType === 'x') {
                                 value = '$' + value;
                             }
