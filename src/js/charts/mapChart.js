@@ -85,7 +85,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _makeAxesData: function() {
         var axisScaleMaker = this._createAxisScaleMaker({}, {
-            valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
+            valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT,
+            areaType: 'legend'
         });
 
         return axisDataMaker.makeValueAxisData({

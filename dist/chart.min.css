@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @version 1.5.2
+ * @version 1.5.3-a
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
  */
