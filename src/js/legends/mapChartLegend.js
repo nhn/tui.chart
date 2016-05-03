@@ -116,6 +116,7 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
         }
 
         this.boundsMaker.registerBaseDimension('legend', dimension);
+        this.boundsMaker.registerBaseDimension('calculationLegend', dimension);
     },
 
     /**
