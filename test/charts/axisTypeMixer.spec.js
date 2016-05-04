@@ -6,16 +6,17 @@
 
 'use strict';
 
-var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js'),
-    Tooltip = require('../../src/js/tooltips/tooltip'),
-    GroupTooltip = require('../../src/js/tooltips/groupTooltip'),
-    GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent'),
-    BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
+var axisTypeMixer = require('../../src/js/charts/axisTypeMixer.js');
+var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
+var Tooltip = require('../../src/js/tooltips/tooltip');
+var GroupTooltip = require('../../src/js/tooltips/groupTooltip');
+var GroupTypeCustomEvent = require('../../src/js/customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../../src/js/customEvents/boundsTypeCustomEvent');
 
 describe('Test for ComboChart', function() {
     var componentMap = {};
     var spyObjs = {};
-    var componentManager, boundsMaker;
+    var componentManager, dataProcessor, boundsMaker;
 
     beforeAll(function() {
         spyObjs = jasmine.createSpyObj('spyObjs', ['_addComponent', '_makeTooltipData', '_makeAxesData']);
@@ -29,8 +30,53 @@ describe('Test for ComboChart', function() {
             componentMap[name] = ComponentClass;
         });
 
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
+
+        axisTypeMixer.dataProcessor = dataProcessor;
         axisTypeMixer.boundsMaker = boundsMaker;
+    });
+
+    describe('_makeAxisData()', function() {
+        it('axisSacleMaker가 있으면 axisDataMaker.makeValueAxisData의 수행 결과를 반환합니다.', function() {
+            var axisScaleMaker = 'instance of axisScaleMaker';
+            var actual, expected;
+
+            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
+            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
+
+            actual = axisTypeMixer._makeAxisData(axisScaleMaker, 'options', true);
+            expected = 'value type';
+
+            expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
+                axisScaleMaker: axisScaleMaker,
+                options: 'options',
+                isVertical: true,
+                isPositionRight: false,
+                aligned: false
+            });
+            expect(actual).toBe(expected);
+        });
+
+        it('axisSacleMaker가 없으면 axisDataMaker.makeLabelAxisData의 수행 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
+            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
+            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+
+            actual = axisTypeMixer._makeAxisData(null, 'options');
+            expected = 'label type';
+
+            expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
+                labels: ['cate1', 'cate2'],
+                options: 'options',
+                isVertical: false,
+                isPositionRight: false,
+                aligned: false
+            });
+            expect(actual).toBe(expected);
+        });
     });
 
     describe('_addAxesComponents', function() {

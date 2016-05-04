@@ -104,81 +104,40 @@ describe('Test for ComboChart', function() {
         });
     });
 
-    describe('_makeYAxisData()', function() {
-        it('y axis data를 생성합니다.', function() {
-            var actual, expected;
+    describe('_makeAxisScaleMakerMap()', function() {
+        it('combo chart의 AxisScaleMakerMap을 만듭니다.', function() {
+            var actual;
 
-            spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
-            spyOn(comboChart, '_createAxisScaleMaker').and.callFake(function() {
-                var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit', 'getStep']);
-                axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
-                axisScaleMaker.getLimit.and.returnValue({
-                    min: 0,
-                    max: 100
-                });
-                axisScaleMaker.getStep.and.returnValue(25);
-                return axisScaleMaker;
+            spyOn(comboChart, '_createYAxisScaleMaker').and.returnValue('instance of AxisScaleMaker');
+            comboChart.optionChartTypes = [];
+
+            actual = comboChart._makeAxisScaleMakerMap();
+
+            expect(actual).toEqual({
+                yAxis: 'instance of AxisScaleMaker'
             });
-
-            comboChart.boundsMaker.dimensions.series = {
-                width: 300,
-                height: 300
-            };
-
-            comboChart.yAxisOptionsMap = {
-                'column': 'yAxisOptions'
-            };
-
-            actual = comboChart._makeYAxisData({
-                index: 0,
-                seriesDimension: {
-                    width: 300,
-                    height: 300
-                },
-                chartTypes: ['column', 'line'],
-                isSingleYAxis: true,
-                options: {
-                    yAxis: {
-                        title: 'Y Axis'
-                    }
-                }
-            });
-            expected = {
-                labels: [0, 25, 50, 75, 100],
-                tickCount: 5,
-                validTickCount: 5,
-                limit: {
-                    min: 0,
-                    max: 100
-                },
-                step: 25,
-                isVertical: true,
-                isPositionRight: false,
-                aligned: false,
-                options: 'yAxisOptions'
-            };
-
-            expect(actual).toEqual(expected);
+            expect(comboChart._createYAxisScaleMaker).toHaveBeenCalledWith(0, true);
         });
 
-        it('chartType이 없을 경우 빈 객체를 반환합니다.', function() {
-            var actual = comboChart._makeYAxisData({
-                    index: 1,
-                    seriesDimension: {
-                        width: 300,
-                        height: 300
-                    },
-                    chartTypes: ['column']
-                }),
-                expected = {};
+        it('optionChartTypes가 두개일 경우에는 axisScaleMakerMap.rightYAxis도 생성합니다.', function() {
+            var actual;
 
-            expect(actual).toEqual(expected);
+            spyOn(comboChart, '_createYAxisScaleMaker').and.returnValue('instance of AxisScaleMaker');
+            comboChart.optionChartTypes = ['column', 'line'];
+
+            actual = comboChart._makeAxisScaleMakerMap();
+
+            expect(actual).toEqual({
+                yAxis: 'instance of AxisScaleMaker',
+                rightYAxis: 'instance of AxisScaleMaker'
+            });
+            expect(comboChart._createYAxisScaleMaker).toHaveBeenCalledWith(0, false);
+            expect(comboChart._createYAxisScaleMaker).toHaveBeenCalledWith(1);
         });
     });
 
     describe('_makeAxesData()', function() {
         beforeEach(function() {
-            spyOn(comboChart, '_makeYAxisData').and.returnValue({});
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue({});
             spyOn(comboChart.dataProcessor, 'getFormatFunctions').and.returnValue([]);
             spyOn(comboChart.dataProcessor, 'getCategories').and.returnValue([]);

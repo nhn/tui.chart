@@ -136,42 +136,6 @@ describe('Test for BubbleChart', function() {
         });
     });
 
-    describe('_makeAxisData()', function() {
-        it('axisSacleMaker가 있으면 axisDataMaker.makeValueAxisData의 수행 결과를 반환합니다.', function() {
-            var axisScaleMaker = 'instance of axisScaleMaker';
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-
-            actual = bubbleChart._makeAxisData(axisScaleMaker, true);
-            expected = 'value type';
-
-            expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
-                axisScaleMaker: axisScaleMaker,
-                isVertical: true
-            });
-            expect(actual).toBe(expected);
-        });
-
-        it('axisSacleMaker가 없으면 axisDataMaker.makeLabelAxisData의 수행 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
-            spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
-
-            actual = bubbleChart._makeAxisData();
-            expected = 'label type';
-
-            expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
-                labels: ['cate1', 'cate2'],
-                isVertical: false
-            });
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_makeAxesData()', function() {
         it('카테고리가 없고 axisScaleMap의 xAxis, yAxis모두 axisScaleMaker를 갖고 있다면 반환하는 xAxis와 yAxis의 axisData는 모두 값 타입 입니다.', function() {
             var actual, expected;

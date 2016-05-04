@@ -11,7 +11,6 @@ var chartConst = require('../const');
 var Series = require('../series/bubbleChartSeries');
 var CircleLegend = require('../legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
-var axisDataMaker = require('../helpers/axisDataMaker');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
@@ -51,40 +50,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Pick limit from options
-     * @param {{min: number, max: number, title: string}} options - axis options
-     * @returns {{min: number, max: number}}
-     * @private
-     */
-    _pickLimitFromOptions: function(options) {
-        options = options || {};
-
-        return {
-            min: options.min,
-            max: options.max
-        };
-    },
-
-    /**
-     * Create AxisScaleMaker for bubble chart.
-     * @param {{min: number, max: number, title: string}} options - axis options
-     * @param {string} areaType - type of area like xAxis, yAxis
-     * @param {string} valueType - type of value like x, y, r
-     * @returns {AxisScaleMaker}
-     * @override
-     * @private
-     */
-    _createAxisScaleMaker: function(options, areaType, valueType) {
-        var limit = this._pickLimitFromOptions(options);
-        var additionalParams = {
-            areaType: areaType,
-            valueType: valueType
-        };
-
-        return ChartBase.prototype._createAxisScaleMaker.call(this, limit, additionalParams, this.chartType);
-    },
-
-    /**
      * Make map for AxisScaleMaker of axes(xAxis, yAxis).
      * @returns {Object.<string, AxisScaleMaker>}
      * @private
@@ -108,58 +73,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
         }
 
         return scaleMakerMap;
-    },
-
-    /**
-     * Get map for AxisScaleMaker of axes(xAxis, yAxis).
-     * @returns {Object.<string, AxisScaleMaker>}
-     * @private
-     */
-    _getAxisScaleMakerMap: function() {
-        if (!this.axisScaleMakerMap) {
-            this.axisScaleMakerMap = this._makeAxisScaleMakerMap();
-        }
-
-        return this.axisScaleMakerMap;
-    },
-
-    /**
-     * Make axis data.
-     * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
-     * @param {boolean} [isVertical] - whether vertical or not
-     * @returns {object}
-     * @private
-     */
-    _makeAxisData: function(axisScaleMaker, isVertical) {
-        var axisData;
-
-        if (axisScaleMaker) {
-            axisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker,
-                isVertical: !!isVertical
-            });
-        } else {
-            axisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories(),
-                isVertical: !!isVertical
-            });
-        }
-
-        return axisData;
-    },
-
-    /**
-     * Make axes data
-     * @returns {object} axes data
-     * @private
-     */
-    _makeAxesData: function() {
-        var axisScaleMakerMap = this._getAxisScaleMakerMap();
-
-        return {
-            xAxis: this._makeAxisData(axisScaleMakerMap.xAxis),
-            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, true)
-        };
     },
 
     /**
@@ -259,8 +172,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * Whether changed max radius or not.
      * @param {boolean} beforeMaxRadius - before max radius
      * @returns {boolean}
+     * @private
      */
-    isChangedMaxRadius: function(beforeMaxRadius) {
+    _isChangedMaxRadius: function(beforeMaxRadius) {
         var afterMaxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
 
         return (beforeMaxRadius !== afterMaxRadius);
@@ -291,7 +205,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             this._updateAxesDataOfBoundsMaker(isXAxisLabel);
         }
 
-        if (this.isChangedMaxRadius(beforeMaxRadius)) {
+        if (this._isChangedMaxRadius(beforeMaxRadius)) {
             this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
 
             if (!isXAxisLabel) {
@@ -326,15 +240,6 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         this._updateLegendWidthByCircleLegendWidth();
         this._registerCircleLegendDimension();
-    },
-
-    /**
-     * Rerender.
-     * @private
-     */
-    _rerender: function() {
-        this.axisScaleMakerMap = null;
-        ChartBase.prototype._rerender.apply(this, arguments);
     }
 });
 
@@ -346,8 +251,8 @@ axisTypeMixer.mixin(BubbleChart);
  * @override
  */
 BubbleChart.prototype._addDataRatios = function() {
-    var scaleMakerMap = this._getAxisScaleMakerMap(),
-        limitMap = {};
+    var scaleMakerMap = this._getAxisScaleMakerMap();
+    var limitMap = {};
 
     if (scaleMakerMap.xAxis) {
         limitMap.x = scaleMakerMap.xAxis.getLimit();

@@ -6,14 +6,13 @@
 
 'use strict';
 
-var calculator = require('../helpers/calculator'),
-    renderUtil = require('../helpers/renderUtil'),
-    ChartBase = require('./chartBase'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    defaultTheme = require('../themes/defaultTheme'),
-    ColumnChartSeries = require('../series/columnChartSeries'),
-    LineChartSeries = require('../series/lineChartSeries');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
+var ChartBase = require('./chartBase');
+var axisTypeMixer = require('./axisTypeMixer');
+var defaultTheme = require('../themes/defaultTheme');
+var ColumnChartSeries = require('../series/columnChartSeries');
+var LineChartSeries = require('../series/lineChartSeries');
 
 var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
     /**
@@ -58,13 +57,13 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _makeYAxisOptionsMap: function(chartTypes, yAxisOptions) {
-        var optionMap = {};
+        var optionsMap = {};
         yAxisOptions = yAxisOptions || {};
         tui.util.forEachArray(chartTypes, function(chartType, index) {
-            optionMap[chartType] = yAxisOptions[index] || yAxisOptions;
+            optionsMap[chartType] = yAxisOptions[index] || yAxisOptions;
         });
 
-        return optionMap;
+        return optionsMap;
     },
 
     /**
@@ -249,97 +248,38 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Make y axis data.
-     * @param {object} params parameters
-     *      @param {number} params.index chart index
-     *      @param {{width: number, height: number}} params.seriesDimension series dimension
-     *      @param {Array.<string>} chartTypes chart type
-     *      @param {boolean} isSingleYAxis whether single yAxis or not
-     *      @param {object} options chart options
-     *      @param {object} addParams add params
-     * @returns {object} y axis data
+     * Create AxisScaleMake for y axis.
+     * @param {number} index - index of this.chartTypes
+     * @param {boolean} isSingleYAxis - whether single y axis or not.
+     * @returns {AxisScaleMaker}
      * @private
      */
-    _makeYAxisData: function(params) {
-        var index = params.index,
-            chartType = params.chartTypes[index],
-            yAxisOptions = this.yAxisOptionsMap[chartType],
-            axisScaleMaker, yAxisData;
+    _createYAxisScaleMaker: function(index, isSingleYAxis) {
+        var chartType = this.chartTypes[index];
+        var yAxisOption = this.yAxisOptionsMap[chartType];
+        var additionalParams = {
+            isSingleYAxis: !!isSingleYAxis
+        };
 
-        if (!chartType) {
-            return {};
-        }
-
-        axisScaleMaker = this._createAxisScaleMaker({
-            min: yAxisOptions.min,
-            max: yAxisOptions.max
-        }, {
-            isSingleYAxis: params.isSingleYAxis,
-            areaType: 'yAxis'
-        }, chartType);
-
-        yAxisData = axisDataMaker.makeValueAxisData({
-            axisScaleMaker: axisScaleMaker,
-            isVertical: true,
-            isSingleYAxis: params.isSingleYAxis
-        });
-
-        yAxisData.options = yAxisOptions;
-
-        return yAxisData;
+        return this._createAxisScaleMaker(yAxisOption, 'yAxis', null, chartType, additionalParams);
     },
 
     /**
-     * Update tick count to make the same tick count of yAxes.
-     * @param {object} yAxisData yAxis data
-     * @param {object} rightYAxisData right yAxis data
+     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
      * @private
      */
-    _updateYAxisTickCount: function(yAxisData, rightYAxisData) {
-        var tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
+    _makeAxisScaleMakerMap: function() {
+        var isSingleYAxis = this.optionChartTypes.length < 2;
+        var axisScaleMakerMap = {
+            yAxis: this._createYAxisScaleMaker(0, isSingleYAxis)
+        };
 
-        if (tickCountDiff > 0) {
-            this._increaseYAxisTickCount(tickCountDiff, yAxisData);
-        } else if (tickCountDiff < 0) {
-            this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
-        }
-    },
-
-    /**
-     * Make axes data
-     * @returns {object} axes data
-     * @private
-     */
-    _makeAxesData: function() {
-        var yAxisParams = {
-                chartTypes: this.chartTypes,
-                isSingleYAxis: !this.optionChartTypes.length
-            },
-            xAxisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories()
-            }),
-            yAxisData = this._makeYAxisData(tui.util.extend({
-                index: 0
-            }, yAxisParams)),
-            axesData = {
-                yAxis: yAxisData,
-                xAxis: xAxisData
-            },
-            rightYAxisData;
-
-        if (!yAxisParams.isSingleYAxis) {
-            rightYAxisData = this._makeYAxisData(tui.util.extend({
-                index: 1
-            }, yAxisParams));
-            rightYAxisData.aligned = xAxisData.aligned;
-            rightYAxisData.isPositionRight = true;
-
-            this._updateYAxisTickCount(yAxisData, rightYAxisData);
-
-            axesData.rightYAxis = rightYAxisData;
+        if (!isSingleYAxis) {
+            axisScaleMakerMap.rightYAxis = this._createYAxisScaleMaker(1);
         }
 
-        return axesData;
+        return axisScaleMakerMap;
     },
 
     /**
@@ -360,6 +300,23 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
+     * Update tick count to make the same tick count of yAxes.
+     * @param {{yAxis: object, rightYAxis: object}} axesData - axesData
+     * @private
+     */
+    _updateYAxisTickCount: function(axesData) {
+        var yAxisData = axesData.yAxis;
+        var rightYAxisData = axesData.rightYAxis;
+        var tickCountDiff = rightYAxisData.tickCount - yAxisData.tickCount;
+
+        if (tickCountDiff > 0) {
+            this._increaseYAxisTickCount(tickCountDiff, yAxisData);
+        } else if (tickCountDiff < 0) {
+            this._increaseYAxisTickCount(-tickCountDiff, rightYAxisData);
+        }
+    },
+
+    /**
      * On change selected legend.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
@@ -374,5 +331,31 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 });
 
 axisTypeMixer.mixin(ComboChart);
+
+/**
+ * Make axes data
+ * @returns {object} axes data
+ * @private
+ * @override
+ */
+ComboChart.prototype._makeAxesData = function() {
+    var axisScaleMakerMap = this._getAxisScaleMakerMap();
+    var yAxisOptionsMap = this.yAxisOptionsMap;
+    var yAxisOptions = yAxisOptionsMap[this.chartTypes[0]];
+    var axesData = {
+        xAxis: this._makeAxisData(null, this.options.xAxis),
+        yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, yAxisOptions, true)
+    };
+
+    if (axisScaleMakerMap.rightYAxis) {
+        yAxisOptions = yAxisOptionsMap[this.chartTypes[1]];
+        axesData.rightYAxis = this._makeAxisData(axisScaleMakerMap.rightYAxis, yAxisOptions, true, true);
+        axesData.rightYAxis.aligned = axesData.xAxis.aligned;
+        this._updateYAxisTickCount(axesData);
+    }
+
+    return axesData;
+};
+
 
 module.exports = ComboChart;

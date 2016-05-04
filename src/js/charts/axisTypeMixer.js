@@ -6,16 +6,17 @@
 
 'use strict';
 
-var renderUtil = require('../helpers/renderUtil'),
-    ChartBase = require('./chartBase'),
-    Axis = require('../axes/axis'),
-    Plot = require('../plots/plot'),
-    Legend = require('../legends/legend'),
-    GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent'),
-    BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent'),
-    Tooltip = require('../tooltips/tooltip'),
-    GroupTooltip = require('../tooltips/groupTooltip');
-
+var ChartBase = require('./chartBase');
+var axisDataMaker = require('../helpers/axisDataMaker');
+var renderUtil = require('../helpers/renderUtil');
+var predicate = require('../helpers/predicate');
+var Axis = require('../axes/axis');
+var Plot = require('../plots/plot');
+var Legend = require('../legends/legend');
+var GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
+var Tooltip = require('../tooltips/tooltip');
+var GroupTooltip = require('../tooltips/groupTooltip');
 
 /**
  * Axis limit value.
@@ -136,6 +137,74 @@ var axisTypeMixer = {
         }
 
         return limitMap;
+    },
+
+    /**
+     * Get map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
+     * @private
+     */
+    _getAxisScaleMakerMap: function() {
+        if (!this.axisScaleMakerMap) {
+            this.axisScaleMakerMap = this._makeAxisScaleMakerMap();
+        }
+
+        return this.axisScaleMakerMap;
+    },
+
+    /**
+     * Make axis data.
+     * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
+     * @param {object} options - options for axis
+     * @param {boolean} [isVertical] - whether vertical or not
+     * @param {boolean} [isPositionRight] - whether right position or not
+     * @returns {object}
+     * @private
+     */
+    _makeAxisData: function(axisScaleMaker, options, isVertical, isPositionRight) {
+        var aligned = predicate.isLineTypeChart(this.chartType);
+        var axisData;
+
+        if (axisScaleMaker) {
+            axisData = axisDataMaker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker,
+                options: options,
+                isVertical: !!isVertical,
+                isPositionRight: !!isPositionRight,
+                aligned: !!aligned
+            });
+        } else {
+            axisData = axisDataMaker.makeLabelAxisData({
+                labels: this.dataProcessor.getCategories(),
+                options: options,
+                isVertical: !!isVertical,
+                isPositionRight: !!isPositionRight,
+                aligned: !!aligned
+            });
+        }
+
+        return axisData;
+    },
+
+    /**
+     * Make axes data
+     * @returns {object} axes data
+     * @private
+     * @override
+     */
+    _makeAxesData: function() {
+        var axisScaleMakerMap = this._getAxisScaleMakerMap();
+        var options = this.options;
+        var axesData = {
+            xAxis: this._makeAxisData(axisScaleMakerMap.xAxis, options.xAxis),
+            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, options.yAxis, true)
+        };
+
+        if (this.hasRightYAxis) {
+            axesData.rightYAxis = this._makeAxisData(null, options.yAxis, true, true);
+        }
+
+        return axesData;
     },
 
     /**
@@ -316,6 +385,16 @@ var axisTypeMixer = {
         }
 
         this._attachCustomEventForSeriesSelection(customEvent, serieses);
+    },
+
+    /**
+     * Rerender.
+     * @private
+     * @override
+     */
+    _rerender: function() {
+        this.axisScaleMakerMap = null;
+        ChartBase.prototype._rerender.apply(this, arguments);
     },
 
     /**
