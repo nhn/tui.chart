@@ -19,7 +19,7 @@ describe('ScatterChartSeries', function() {
 
     beforeEach(function() {
         series = new ScatterChartSeries({
-            chartType: 'bubble',
+            chartType: 'scatter',
             theme: {
                 label: {
                     fontFamily: 'Verdana',
