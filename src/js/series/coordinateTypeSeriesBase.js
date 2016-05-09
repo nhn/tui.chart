@@ -1,0 +1,139 @@
+/**
+ * @fileoverview CoordinateTypeSeriesBase is base class for coordinate type series.
+ * @author NHN Ent.
+ *         FE Development Team <dl_javascript@nhnent.com>
+ */
+
+
+'use strict';
+
+var renderUtil = require('../helpers/renderUtil');
+
+var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
+    /**
+     * Make series data.
+     * @returns {{
+     *      groupBounds: Array.<Array.<{left: number, top: number, radius: number}>>,
+     *      seriesDataModel: SeriesDataModel
+     * }} series data
+     * @private
+     * @override
+     */
+    _makeSeriesData: function() {
+        var bounds = this._makeBounds();
+
+        return {
+            groupBounds: bounds,
+            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.chartType)
+        };
+    },
+
+    /**
+     * showTooltip is mouseover event callback on series graph.
+     * @param {object} params parameters
+     *      @param {boolean} params.allowNegativeTooltip whether allow negative tooltip or not
+     * @param {{top:number, left: number, width: number, height: number}} bound graph bound information
+     * @param {number} groupIndex group index
+     * @param {number} index index
+     * @param {{left: number, top: number}} mousePosition mouse position
+     */
+    showTooltip: function(params, bound, groupIndex, index, mousePosition) {
+        this.fire('showTooltip', tui.util.extend({
+            indexes: {
+                groupIndex: groupIndex,
+                index: index
+            },
+            mousePosition: mousePosition
+        }, params));
+    },
+
+    /**
+     * hideTooltip is mouseout event callback on series graph.
+     * @param {string} id tooltip id
+     */
+    hideTooltip: function() {
+        this.fire('hideTooltip');
+    },
+
+    /**
+     * Render raphael graph.
+     * @param {{width: number, height: number}} dimension dimension
+     * @param {object} seriesData series data
+     * @private
+     * @override
+     */
+    _renderGraph: function(dimension, seriesData) {
+        var showTooltip = tui.util.bind(this.showTooltip, this, {
+            chartType: this.chartType
+        });
+        var callbacks = {
+            showTooltip: showTooltip,
+            hideTooltip: tui.util.bind(this.hideTooltip, this)
+        };
+        var params = this._makeParamsForGraphRendering(dimension, seriesData);
+
+        this.graphRenderer.render(this.seriesContainer, params, callbacks);
+    },
+
+    /**
+     * Make html for label of series area.
+     * @param {{left: number, top: number}} basePosition - position
+     * @param {string} label - label of SeriesItem
+     * @param {number} index - index
+     * @returns {string}
+     * @private
+     */
+    _makeSeriesLabelsHtml: function(basePosition, label, index) {
+        var labelHeight = renderUtil.getRenderedLabelHeight(label, this.theme.label);
+        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label);
+        var position = {
+            left: basePosition.left - (labelWidth / 2),
+            top: basePosition.top - (labelHeight / 2)
+        };
+
+        return this._makeSeriesLabelHtml(position, label, index);
+    },
+
+    /**
+     * Render series label.
+     * @param {HTMLElement} labelContainer - container for label area
+     * @private
+     */
+    _renderSeriesLabel: function(labelContainer) {
+        var self = this;
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var html = seriesDataModel.map(function(seriesGroup, groupIndex) {
+            return seriesGroup.map(function(seriesItem, index) {
+                var bound = self.seriesData.groupBounds[groupIndex][index];
+
+                return seriesItem ? self._makeSeriesLabelsHtml(bound, seriesItem.label, index) : '';
+            }).join('');
+        }).join('');
+
+        labelContainer.innerHTML = html;
+    },
+
+    /**
+     * On click series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onClickSeries: function(position) {
+        this._executeGraphRenderer(position, 'clickSeries');
+    },
+
+    /**
+     * On move series.
+     * @param {{left: number, top: number}} position mouse position
+     */
+    onMoveSeries: function(position) {
+        this._executeGraphRenderer(position, 'moveMouseOnSeries');
+    }
+});
+
+CoordinateTypeSeriesBase.mixin = function(func) {
+    tui.util.extend(func.prototype, CoordinateTypeSeriesBase.prototype);
+};
+
+tui.util.CustomEvents.mixin(CoordinateTypeSeriesBase);
+
+module.exports = CoordinateTypeSeriesBase;

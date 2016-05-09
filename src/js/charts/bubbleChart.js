@@ -262,7 +262,7 @@ BubbleChart.prototype._addDataRatios = function() {
         limitMap.y = scaleMakerMap.yAxis.getLimit();
     }
 
-    this.dataProcessor.addDataRatiosForCoordinateType(limitMap);
+    this.dataProcessor.addDataRatiosForCoordinateType(this.chartType, limitMap, true);
 };
 
 /**

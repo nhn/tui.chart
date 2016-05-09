@@ -447,6 +447,8 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
  *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {number} options.xAxis.min minimal value of vertical axis
+ *          @param {number} options.xAxis.max maximum value of vertical axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.hasSelection whether has selection or not
@@ -516,6 +518,99 @@ tui.chart.areaChart = function(container, rawData, options) {
 tui.chart.bubbleChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BUBBLE;
+    return _createChart(container, rawData, options);
+};
+
+/**
+ * Scatter chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container chart container
+ * @param {rawData} rawData raw data
+ *      @param {Array.<string>} rawData.categories categories
+ *      @param {Array.<Array>} rawData.series series data
+ * @param {object} options chart options
+ *      @param {object} options.chart chart options
+ *          @param {number} options.chart.width chart width
+ *          @param {number} options.chart.height chart height
+ *          @param {string} options.chart.title chart title
+ *          @param {string} options.chart.format value format
+ *      @param {object} options.yAxis options of vertical axis
+ *          @param {string} options.yAxis.title title of vertical axis
+ *          @param {number} options.yAxis.min minimal value of vertical axis
+ *          @param {number} options.yAxis.max maximum value of vertical axis
+ *      @param {object} options.xAxis options of horizontal axis
+ *          @param {string} options.xAxis.title title of horizontal axis
+ *          @param {number} options.xAxis.min minimal value of vertical axis
+ *          @param {number} options.xAxis.max maximum value of vertical axis
+ *      @param {object} options.series options of series
+ *          @param {boolean} options.series.showLabel whether show label or not
+ *          @param {boolean} options.series.hasSelection whether has selection or not
+ *      @param {object} options.tooltip options of tooltip
+ *          @param {string} options.tooltip.suffix suffix of tooltip
+ *          @param {function} [options.tooltip.template] template of tooltip
+ *          @param {string} options.tooltip.align tooltip align option
+ *          @param {object} options.tooltip.position relative position
+ *              @param {number} options.tooltip.position.left position left
+ *              @param {number} options.tooltip.position.top position top
+ *          @param {boolean} options.tooltip.grouped whether group tooltip or not
+ *      @param {object} options.legend options of legend
+ *          @param {string} options.legend.align legend align (top|bottom|left)
+ *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {string} options.theme theme name
+ *      @param {string} options.libType graph library type
+ * @returns {object} scatter chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     rawData = {
+ *       series: [
+ *         {
+ *           name: 'Legend1',
+ *           data: [{
+ *              x: 10,
+ *              y: 20,
+ *              r: 15,
+ *              label: 'Lable1'
+ *           }, {
+ *              x: 20,
+ *              y: 40,
+ *              r: 10,
+ *              label: 'Lable2'
+ *           }]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [{
+ *              x: 40,
+ *              y: 10,
+ *              r: 5,
+ *              label: 'Lable3'
+ *           }, {
+ *              x: 30,
+ *              y: 40,
+ *              r: 8,
+ *              label: 'Lable4'
+ *           }]
+ *         }
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Scatter Chart'
+ *       },
+ *       yAxis: {
+ *         title: 'Y Axis'
+ *       },
+ *       xAxis: {
+ *         title: 'X Axis'
+ *       }
+ *     };
+ * tui.chart.scatterChart(container, rawData, options);
+ */
+tui.chart.scatterChart = function(container, rawData, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_SCATTER;
     return _createChart(container, rawData, options);
 };
 
