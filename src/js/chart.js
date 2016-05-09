@@ -569,28 +569,20 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *           name: 'Legend1',
  *           data: [{
  *              x: 10,
- *              y: 20,
- *              r: 15,
- *              label: 'Lable1'
+ *              y: 20
  *           }, {
  *              x: 20,
- *              y: 40,
- *              r: 10,
- *              label: 'Lable2'
+ *              y: 40
  *           }]
  *         },
  *         {
  *           name: 'Legend2',
  *           data: [{
  *              x: 40,
- *              y: 10,
- *              r: 5,
- *              label: 'Lable3'
+ *              y: 10
  *           }, {
  *              x: 30,
- *              y: 40,
- *              r: 8,
- *              label: 'Lable4'
+ *              y: 40
  *           }]
  *         }
  *       ]
