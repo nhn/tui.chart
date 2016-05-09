@@ -1,5 +1,6 @@
 /**
- * @fileoverview Scatter chart.
+ * @fileoverview Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
+ *                  to display values for typically two variables for a set of data.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -19,7 +20,8 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
      */
     className: 'tui-scatter-chart',
     /**
-     * Scatter chart.
+     * Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
+     *  to display values for typically two variables for a set of data.
      * @constructs ScatterChart
      * @extends ChartBase
      * @mixes axisTypeMixer

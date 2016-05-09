@@ -12,7 +12,7 @@ var chartConst = require('../const');
 
 var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSeries.prototype */ {
     /**
-     * Bubble chart series component.
+     * Scatter chart series component.
      * @constructs ScatterChartSeries
      * @extends Series
      */
@@ -21,7 +21,7 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
     },
 
     /**
-     * Make bound for bubble chart.
+     * Make bound for scatter chart.
      * @param {{x: number, y: number, r: number}} ratioMap - ratio map
      * @returns {{left: number, top: number, raius: number}}
      * @private
@@ -37,7 +37,7 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
     },
 
     /**
-     * Make bounds for bubble chart.
+     * Make bounds for scatter chart.
      * @returns {Array.<Array.<{left: number, top: number, radius: number}>>} positions
      * @private
      */
