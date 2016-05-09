@@ -1,5 +1,5 @@
 /**
- * @fileoverview axisTypeMixer is mixer of axis type chart(bar, column, line, area).
+ * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -24,7 +24,7 @@ var GroupTooltip = require('../tooltips/groupTooltip');
  */
 
 /**
- * axisTypeMixer is base class of axis type chart(bar, column, line, area).
+ * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
  * @mixin
  */
 var axisTypeMixer = {
@@ -153,7 +153,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Make axis data.
+     * Make axis data for rendering area of axis like yAxis, xAxis, rightYAxis.
      * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
      * @param {object} options - options for axis
      * @param {boolean} [isVertical] - whether vertical or not
@@ -187,7 +187,8 @@ var axisTypeMixer = {
     },
 
     /**
-     * Make axes data
+     * Make axes data.
+     * Axes data is map for axis data like yAxis, xAxis, rightYAxis.
      * @returns {object} axes data
      * @private
      * @override
@@ -388,7 +389,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Rerender.
+     * Override for initializing to axisScaleMakerMap.
      * @private
      * @override
      */

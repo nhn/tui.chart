@@ -1,5 +1,5 @@
 /**
- * @fileoverview Column chart series component.
+ * @fileoverview BarTypeSeriesBase is base class for bar type series.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */

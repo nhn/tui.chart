@@ -110,12 +110,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Create dataProcessor.
+     * Create dataProcessor for processing raw data.
      * @param {object} params parameters
-     *      @param {object} params.rawData raw data
-     *      @param {DataProcessor} params.DataProcessor DataProcessor class
-     *      @param {{chart: object, chartType: string}} params.options chart options
-     *      @param {Array} params.seriesChartTypes series chart types
+     *      @param {object} params.rawData - raw data
+     *      @param {DataProcessor} params.DataProcessor - DataProcessor class
+     *      @param {{chart: object, chartType: string}} params.options - chart options
+     *      @param {Array} params.seriesChartTypes series - chart types for rendering series
      * @returns {object} data processor
      * @private
      */
@@ -129,7 +129,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Pick limit from options
+     * Pick limit from options.
      * @param {{min: number, max: number, title: string}} options - axis options
      * @returns {{min: number, max: number}}
      * @private
@@ -145,8 +145,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Create AxisScaleMaker.
+     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {{title: string, min: number, max: number}} axisOptions - options for axis
-     * @param {string} areaType - type of area like series, xAxis, yAxis, cirleLegend, legend
+     * @param {string} areaType - type of area like series, xAxis, yAxis, circleLegend, legend
      * @param {string} valueType - type of value like value, x, y, r
      * @param {string} chartType - type of chart
      * @param {?object} additionalParams additional parameters
@@ -205,7 +206,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Attach custom evnet.
+     * Attach custom event.
      * @param {Array.<object>} serieses serieses
      * @private
      */

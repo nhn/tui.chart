@@ -300,7 +300,7 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Update tick count to make the same tick count of yAxes.
+     * Update tick count to make the same tick count of y Axes(yAxis, rightYAxis).
      * @param {{yAxis: object, rightYAxis: object}} axesData - axesData
      * @private
      */
@@ -333,7 +333,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
 axisTypeMixer.mixin(ComboChart);
 
 /**
- * Make axes data
+ * Make axes data.
+ * Axes data is map for axis data like yAxis, xAxis, rightYAxis.
  * @returns {object} axes data
  * @private
  * @override
