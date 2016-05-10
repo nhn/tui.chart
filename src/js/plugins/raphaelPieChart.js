@@ -54,6 +54,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.circleBound = data.circleBound;
 
         this._renderPie(paper, data);
+        this._renderHole(paper, data);
+
         return paper;
     },
 
@@ -150,6 +152,28 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         });
 
         this.sectors = sectors;
+    },
+
+    /**
+     * Render hole.
+     * @param {object} paper - raphael paper
+     * @param {{
+     *      circleBound: {cx: number, cy: number, r: number},
+     *      options: object
+     * }} data render data
+     * @private
+     */
+    _renderHole: function(paper, data) {
+        var circleBound = data.circleBound;
+        var position = {
+            left: circleBound.cx,
+            top: circleBound.cy
+        };
+        var attribute = {
+            fill: data.chartBackground,
+            stroke: 'none'
+        };
+        raphaelRenderUtil.renderCircle(paper, position, circleBound.r * data.options.holeRatio, attribute);
     },
 
     /**

@@ -428,9 +428,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Send series data to custom event component.
+     * @param {string} chartType - type of chart
      * @private
      */
-    _sendSeriesData: function() {
+    _sendSeriesData: function(chartType) {
         var self = this,
             customEvent = this.componentManager.get('customEvent'),
             seriesInfos, chartTypes;
@@ -439,12 +440,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        chartTypes = this.chartTypes || [this.chartType];
-        seriesInfos = tui.util.map(chartTypes, function(chartType) {
-            var component = self.componentManager.get(chartType + 'Series') || self.componentManager.get('series');
+        chartTypes = this.chartTypes || [chartType || this.chartType];
+        seriesInfos = tui.util.map(chartTypes, function(_chartType) {
+            var component = self.componentManager.get(_chartType + 'Series') || self.componentManager.get('series');
 
             return {
-                chartType: chartType,
+                chartType: _chartType,
                 data: component.getSeriesData()
             };
         });

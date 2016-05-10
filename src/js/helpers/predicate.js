@@ -106,11 +106,30 @@ var predicate = {
     /**
      * Whether pie chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - chart type
+     * @returns {boolean}
      */
     isPieChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_PIE;
+    },
+
+    /**
+     * Whether donut chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType -chart type
+     * @returns {boolean}
+     */
+    isDonutChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_DONUT;
+    },
+
+    /**
+     * Whether pie type chart or not.
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isPieTypeChart: function(chartType) {
+        return this.isPieChart(chartType) || this.isDonutChart(chartType);
     },
 
     /**
@@ -150,7 +169,7 @@ var predicate = {
      * @returns {boolean} result boolean
      */
     isMousePositionChart: function(chartType) {
-        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isCoordinateTypeChart(chartType);
+        return this.isPieTypeChart(chartType) || this.isMapChart(chartType) || this.isCoordinateTypeChart(chartType);
     },
 
     /**

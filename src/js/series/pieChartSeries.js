@@ -44,34 +44,40 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeSectorData: function(circleBound) {
-        var self = this,
-            seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup(),
-            cx = circleBound.cx,
-            cy = circleBound.cy,
-            r = circleBound.r,
-            angle = 0,
-            delta = 10,
-            paths;
+        var self = this;
+        var seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup();
+        var cx = circleBound.cx;
+        var cy = circleBound.cy;
+        var r = circleBound.r;
+        var angle = 0;
+        var delta = 10;
+        var holeRatio = this.options.holeRatio;
+        var centerR = r * 0.5;
+        var paths;
+
+        if (holeRatio) {
+            centerR += (centerR * holeRatio) - 10;
+        }
 
         paths = seriesGroup.map(function(seriesItem) {
-            var additionalAngle = chartConst.ANGLE_360 * seriesItem.ratio,
-                endAngle = angle + additionalAngle,
-                popupAngle = angle + (additionalAngle / 2),
-                angles = {
-                    start: {
-                        startAngle: angle,
-                        endAngle: angle
-                    },
-                    end: {
-                        startAngle: angle,
-                        endAngle: endAngle
-                    }
+            var additionalAngle = chartConst.ANGLE_360 * seriesItem.ratio;
+            var endAngle = angle + additionalAngle;
+            var popupAngle = angle + (additionalAngle / 2);
+            var angles = {
+                start: {
+                    startAngle: angle,
+                    endAngle: angle
                 },
-                positionData = {
-                    cx: cx,
-                    cy: cy,
-                    angle: popupAngle
-                };
+                end: {
+                    startAngle: angle,
+                    endAngle: endAngle
+                }
+            };
+            var positionData = {
+                cx: cx,
+                cy: cy,
+                angle: popupAngle
+            };
 
             angle = endAngle;
 
@@ -79,7 +85,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 percentValue: seriesItem.ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
-                    r: (r / 2) + delta
+                    r: centerR + delta
                 }, positionData)),
                 outerPosition: {
                     start: self._getArcPosition(tui.util.extend({
@@ -130,7 +136,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var width = dimension.width,
             height = dimension.height,
             isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
-            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
+            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO,
             diameter = tui.util.multiplication(Math.min(width, height), radiusRate);
 
         return {

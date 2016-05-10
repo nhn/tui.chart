@@ -715,9 +715,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Add data ratios of pie chart.
+     * @param {string} chartType - type of chart.
      */
-    addDataRatiosOfPieChart: function() {
-        this.getSeriesDataModel(chartConst.CHART_TYPE_PIE).addDataRatiosOfPieChart();
+    addDataRatiosOfPieChart: function(chartType) {
+        this.getSeriesDataModel(chartType).addDataRatiosOfPieChart();
     },
 
     /**
