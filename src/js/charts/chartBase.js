@@ -6,13 +6,13 @@
 
 'use strict';
 
-var ComponentManager = require('./componentManager'),
-    DefaultDataProcessor = require('../dataModels/dataProcessor'),
-    BoundsMaker = require('../helpers/boundsMaker'),
-    AxisScaleMaker = require('../helpers/axisScaleMaker'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    UserEventListener = require('../helpers/userEventListener');
+var ComponentManager = require('./componentManager');
+var DefaultDataProcessor = require('../dataModels/dataProcessor');
+var BoundsMaker = require('../helpers/boundsMaker');
+var AxisScaleMaker = require('../helpers/axisScaleMaker');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
+var UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -73,7 +73,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * data processor
          * @type {DataProcessor}
          */
-        this.dataProcessor = this._createDataProcessor(params.DataProcessor || DefaultDataProcessor, params);
+        this.dataProcessor = this._createDataProcessor(params);
 
         /**
          * bounds maker
@@ -110,30 +110,52 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Create dataProcessor.
-     * @param {DataProcessor} DataProcessor DataProcessor class
+     * Create dataProcessor for processing raw data.
      * @param {object} params parameters
-     *      @params {object} rawData raw data
-     *      @params {{chart: object, chartType: string}} options chart options
-     *      @params {Array} seriesChartTypes series chart types
+     *      @param {object} params.rawData - raw data
+     *      @param {DataProcessor} params.DataProcessor - DataProcessor class
+     *      @param {{chart: object, chartType: string}} params.options - chart options
+     *      @param {Array} params.seriesChartTypes series - chart types for rendering series
      * @returns {object} data processor
      * @private
      */
-    _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
+    _createDataProcessor: function(params) {
+        var DataProcessor, dataProcessor;
+
+        DataProcessor = params.DataProcessor || DefaultDataProcessor;
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
 
         return dataProcessor;
     },
 
     /**
-     * Create axis scale maker.
-     * @param {{min: number, max: number}} limitOption limit
+     * Pick limit from options.
+     * @param {{min: number, max: number, title: string}} options - axis options
+     * @returns {{min: number, max: number}}
+     * @private
+     */
+    _pickLimitFromOptions: function(options) {
+        options = options || {};
+
+        return {
+            min: options.min,
+            max: options.max
+        };
+    },
+
+    /**
+     * Create AxisScaleMaker.
+     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+     * @param {{title: string, min: number, max: number}} axisOptions - options for axis
+     * @param {string} areaType - type of area like series, xAxis, yAxis, circleLegend, legend
+     * @param {string} valueType - type of value like value, x, y, r
+     * @param {string} chartType - type of chart
      * @param {?object} additionalParams additional parameters
-     * @param {string} chartType chart type
      * @returns {AxisScaleMaker}
      * @private
      */
-    _createAxisScaleMaker: function(limitOption, additionalParams, chartType) {
+    _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
+        var limit = this._pickLimitFromOptions(axisOptions);
         var seriesOptions = this.options.series || {};
 
         chartType = chartType || this.chartType;
@@ -145,9 +167,11 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             options: {
                 stacked: seriesOptions.stacked,
                 diverging: seriesOptions.diverging,
-                limit: limitOption
+                limit: limit
             },
             isVertical: this.isVertical,
+            areaType: areaType,
+            valueType: valueType,
             chartType: chartType
         }, additionalParams));
     },
@@ -182,7 +206,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Attach custom evnet.
+     * Attach custom event.
      * @param {Array.<object>} serieses serieses
      * @private
      */

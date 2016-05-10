@@ -64,7 +64,9 @@ var axisDataMaker = {
             tickCount: tickCount,
             validTickCount: 0,
             isLabelAxis: true,
+            options: options,
             isVertical: !!params.isVertical,
+            isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
     },
@@ -95,6 +97,7 @@ var axisDataMaker = {
             validTickCount: tickCount,
             limit: axisScaleMaker.getLimit(),
             step: axisScaleMaker.getStep(),
+            options: params.options,
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned

@@ -6,10 +6,8 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    predicate = require('../helpers/predicate'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
+var ChartBase = require('./chartBase');
+var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
  * lineTypeMixer is mixer of line type chart(line, area).
@@ -36,33 +34,13 @@ var lineTypeMixer = {
     },
 
     /**
-     * Make axes data
-     * @returns {object} axes data
+     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
      * @private
      */
-    _makeAxesData: function() {
-        var options = this.options,
-            axisScaleMaker = this._createAxisScaleMaker({
-                min: options.yAxis.min,
-                max: options.yAxis.max
-            }, {
-                areaType: 'yAxis'
-            }),
-            aligned = predicate.isLineTypeChart(options.chartType),
-            xAxisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories(),
-                aligned: aligned,
-                options: options.xAxis
-            }),
-            yAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker,
-                isVertical: this.isVertical,
-                aligned: aligned
-            });
-
+    _makeAxisScaleMakerMap: function() {
         return {
-            xAxis: xAxisData,
-            yAxis: yAxisData
+            yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
         };
     },
 

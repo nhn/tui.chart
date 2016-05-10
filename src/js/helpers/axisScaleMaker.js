@@ -1,5 +1,5 @@
 /**
- * @fileoverview Axis scale maker.
+ * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Team <dl_javascript@nhnent.com>
  */
@@ -15,7 +15,7 @@ var abs = Math.abs;
 
 var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
     /**
-     * Axis scale.
+     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {object} params parameters
      * @constructs AxisScaleMaker
      */

@@ -6,13 +6,12 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    barTypeMixer = require('./barTypeMixer'),
-    predicate = require('../helpers/predicate'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    Series = require('../series/columnChartSeries');
+var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var axisTypeMixer = require('./axisTypeMixer');
+var barTypeMixer = require('./barTypeMixer');
+var predicate = require('../helpers/predicate');
+var Series = require('../series/columnChartSeries');
 
 var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototype */ {
     /**
@@ -57,30 +56,13 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     },
 
     /**
-     * Make axes data
-     * @returns {object} axes data
+     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
      * @private
      */
-    _makeAxesData: function() {
-        var options = this.options,
-            axisScaleMaker = this._createAxisScaleMaker({
-                min: options.yAxis.min,
-                max: options.yAxis.max
-            }, {
-                areaType: 'yAxis'
-            }),
-            xAxisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories(),
-                options: options.xAxis
-            }),
-            yAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker,
-                isVertical: this.isVertical
-            });
-
+    _makeAxisScaleMakerMap: function() {
         return {
-            xAxis: xAxisData,
-            yAxis: yAxisData
+            yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
         };
     },
 

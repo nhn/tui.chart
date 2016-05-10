@@ -6,13 +6,12 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    barTypeMixer = require('./barTypeMixer'),
-    predicate = require('../helpers/predicate'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    Series = require('../series/barChartSeries');
+var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var axisTypeMixer = require('./axisTypeMixer');
+var barTypeMixer = require('./barTypeMixer');
+var predicate = require('../helpers/predicate');
+var Series = require('../series/barChartSeries');
 
 var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ {
     /**
@@ -81,37 +80,14 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     },
 
     /**
-     * Make axes data
-     * @param {object} bounds chart bounds
-     * @returns {object} axes data
+     * Make map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
      * @private
      */
-    _makeAxesData: function() {
-        var axisScaleMaker = this._createAxisScaleMaker({
-                min: this.options.xAxis.min,
-                max: this.options.xAxis.max
-            }, {
-                areaType: 'xAxis'
-            }),
-            xAxisData = axisDataMaker.makeValueAxisData({
-                axisScaleMaker: axisScaleMaker
-            }),
-            yAxisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories(),
-                isVertical: true
-            }),
-            axesData = {
-                xAxis: xAxisData,
-                yAxis: yAxisData
-            };
-
-        if (this.hasRightYAxis) {
-            axesData.rightYAxis = tui.util.extend({
-                isPositionRight: true
-            }, JSON.parse(JSON.stringify(yAxisData)));
-        }
-
-        return axesData;
+    _makeAxisScaleMakerMap: function() {
+        return {
+            xAxis: this._createAxisScaleMaker(this.options.xAxis, 'xAxis')
+        };
     },
 
     /**
