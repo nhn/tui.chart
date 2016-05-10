@@ -131,7 +131,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
      * Pick limit from options.
      * @param {{min: number, max: number, title: string}} options - axis options
-     * @returns {{min: number, max: number}}
+     * @returns {{min: ?number, max: ?number}}
      * @private
      */
     _pickLimitFromOptions: function(options) {
