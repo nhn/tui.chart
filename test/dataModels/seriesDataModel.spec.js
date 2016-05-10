@@ -475,11 +475,12 @@ describe('Test for SeriesDataModel', function() {
 
         it('maxRadious를 구하여 각각의 seriesItem의 addRatio를 호출하여 r ratio를 등록합니다.', function() {
             var limitMap = {};
+            var hasRadius = true;
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesDataModel.groups = [new SeriesGroup([seriesItem])];
             spyOn(seriesDataModel, 'getValues').and.returnValue([5, 10]);
-            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap, hasRadius);
 
             expect(seriesItem.addRatio).toHaveBeenCalledWith('r', 10, 0);
         });

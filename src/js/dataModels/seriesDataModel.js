@@ -131,7 +131,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         var self = this;
         var SeriesItemClass;
 
-        if (predicate.isBubbleChart(this.chartType)) {
+        if (predicate.isCoordinateTypeChart(this.chartType)) {
             SeriesItemClass = SeriesItemForCoordinateType;
         } else {
             SeriesItemClass = SeriesItem;
@@ -497,11 +497,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     /**
      * Add ratios of data for chart of coordinate type.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     * @param {boolean} [hasRadius] - whether has radius or not
      */
-    addDataRatiosForCoordinateType: function(limitMap) {
+    addDataRatiosForCoordinateType: function(limitMap, hasRadius) {
         var xLimit = limitMap.x;
         var yLimit = limitMap.y;
-        var maxRadius = tui.util.max(this.getValues('r'));
+        var maxRadius = hasRadius ? tui.util.max(this.getValues('r')) : 0;
         var xDistance, xSubValue, yDistance, ySubValue;
 
         if (xLimit) {

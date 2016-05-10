@@ -39,8 +39,8 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     _makeTooltipHtml: function(category, item) {
         var template;
 
-        if (predicate.isBubbleChart(this.chartType)) {
-            template = tooltipTemplate.tplBubbleChart;
+        if (predicate.isCoordinateTypeChart(this.chartType)) {
+            template = tooltipTemplate.tplCoordinatetypeChart;
         } else {
             template = tooltipTemplate.tplDefault;
         }

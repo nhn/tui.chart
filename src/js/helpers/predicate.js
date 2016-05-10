@@ -94,6 +94,16 @@ var predicate = {
     },
 
     /**
+     * Whether scatter chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isScatterChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_SCATTER;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType chart type
@@ -114,13 +124,23 @@ var predicate = {
     },
 
     /**
+     * Whether coordinate type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isCoordinateTypeChart: function(chartType) {
+        return this.isBubbleChart(chartType) || this.isScatterChart(chartType);
+    },
+
+    /**
      * Whether allow rendering for minus point in area of series.
      * @memberOf module:predicate
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
     allowMinusPointRender: function(chartType) {
-        return this.isLineTypeChart(chartType) || this.isBubbleChart(chartType);
+        return this.isLineTypeChart(chartType) || this.isCoordinateTypeChart(chartType);
     },
 
     /**
@@ -130,7 +150,7 @@ var predicate = {
      * @returns {boolean} result boolean
      */
     isMousePositionChart: function(chartType) {
-        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isBubbleChart(chartType);
+        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isCoordinateTypeChart(chartType);
     },
 
     /**
