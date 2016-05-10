@@ -722,10 +722,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Add data ratios for chart of coordinate type.
+     * @param {string} chartType - type of chart.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     * @param {boolean} [hasRadius] - whether has radius or not
      */
-    addDataRatiosForCoordinateType: function(limitMap) {
-        this.getSeriesDataModel(chartConst.CHART_TYPE_BUBBLE).addDataRatiosForCoordinateType(limitMap);
+    addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+        this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
     },
 
     /**

@@ -41,6 +41,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_BUBBLE: 'bubble',
     /** @type {string} */
+    CHART_TYPE_SCATTER: 'scatter',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
@@ -122,6 +124,8 @@ var chartConst = {
     },
     /** dot radius */
     DOT_RADIUS: 4,
+    /** radius for circle of scatter chart*/
+    SCATTER_RADIUS: 5,
     /** yAxis properties
      * @type {Array.<string>}
      */
