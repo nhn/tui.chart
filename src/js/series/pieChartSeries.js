@@ -35,6 +35,24 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.chartBackground = params.chartBackground;
 
         Series.call(this, params);
+
+        this._setDefaultOptions();
+    },
+
+    /**
+     * Set defatul options.
+     * @private
+     */
+    _setDefaultOptions: function() {
+        var options = this.options;
+
+        options.radiusRatio = Math.min(options.radiusRatio || 1, 1);
+
+        if (predicate.isPieChart(this.chartType)) {
+            options.holeRatio = 0;
+        } else {
+            options.holeRatio = options.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
+        }
     },
 
     /**
@@ -114,7 +132,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _makeSeriesData: function() {
         var circleBound = this._makeCircleBound(this.boundsMaker.getDimension('series'), {
                 showLabel: this.options.showLabel,
-                legendAlign: this.legendAlign
+                legendAlign: this.legendAlign,
+                radiusRatio: this.options.radiusRatio
             }),
             sectorData = this._makeSectorData(circleBound);
 
@@ -136,8 +155,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var width = dimension.width,
             height = dimension.height,
             isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
-            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO,
-            diameter = tui.util.multiplication(Math.min(width, height), radiusRate);
+            radiusRatio = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO,
+            diameter = tui.util.multiplication(Math.min(width, height) * options.radiusRatio, radiusRatio);
 
         return {
             cx: tui.util.division(width, 2),

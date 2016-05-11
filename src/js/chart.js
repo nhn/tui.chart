@@ -775,9 +775,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  */
 tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
-    options.series = options.series || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
-    options.series.holeRatio = 0;
     return _createChart(container, rawData, options);
 };
 
@@ -843,9 +841,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  */
 tui.chart.donutChart = function(container, rawData, options) {
     options = options || {};
-    options.series = options.series || {};
     options.chartType = chartConst.CHART_TYPE_DONUT;
-    options.series.holeRatio = options.series.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
     return _createChart(container, rawData, options);
 };
 
