@@ -6,11 +6,11 @@
 
 'use strict';
 
-var PieChartSeries = require('../../src/js/series/pieChartSeries.js'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
-    dom = require('../../src/js/helpers/domHandler.js'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var PieChartSeries = require('../../src/js/series/pieChartSeries.js');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var SeriesGroup = require('../../src/js/dataModels/seriesGroup');
+var dom = require('../../src/js/helpers/domHandler.js');
+var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('PieChartSeries', function() {
     var series, dataProcessor, boundsMaker;
