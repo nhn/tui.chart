@@ -729,6 +729,8 @@ tui.chart.comboChart = function(container, rawData, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.startAngle start angle
+ *          @param {boolean} options.series.endAngle end angle
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
@@ -795,6 +797,8 @@ tui.chart.pieChart = function(container, rawData, options) {
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.hasSelection - whether has selection or not
  *          @param {number} options.series.holeRatio - ratio of hole for donut graph
+ *          @param {boolean} options.series.startAngle start angle
+ *          @param {boolean} options.series.endAngle end angle
  *      @param {object} options.tooltip - options of tooltip
  *          @param {string} options.tooltip.suffix - suffix of tooltip
  *          @param {function} [options.tooltip.template] - template of tooltip
