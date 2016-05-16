@@ -177,7 +177,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _processCategories: function() {
-        return tui.util.map(this.rawData.categories, tui.util.encodeHTMLEntity);
+        return tui.util.map(this.rawData.categories, function(category) {
+            return tui.util.encodeHTMLEntity(String(category));
+        });
     },
 
     /**

@@ -31,6 +31,19 @@ describe('Test for DataProcessor', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('숫자형인 경우, 문자형으로 변환하여 처리 합니다.', function() {
+            var actual, expected;
+
+            dataProcessor.rawData = {
+                categories: [1, 2]
+            };
+
+            actual = dataProcessor._processCategories();
+            expected = ['1', '2'];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('isValidAllSeriesDataModel()', function() {
