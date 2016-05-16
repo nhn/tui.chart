@@ -264,18 +264,20 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderLegendLabel: function(params, seriesLabelContainer) {
-        var self = this,
-            positions = params.positions,
-            htmls;
+        var self = this;
+        var dataProcessor = this.dataProcessor;
+        var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
+        var positions = params.positions;
+        var htmls;
 
-        htmls = tui.util.map(this.dataProcessor.getLegendLabels(), function(legend, index) {
+        htmls = tui.util.map(dataProcessor.getLegendLabels(), function(legend, index) {
             var html = '',
                 label, position;
 
             if (positions[index]) {
                 label = self._getSeriesLabel({
                     legend: legend,
-                    label: self.dataProcessor.getFirstItemLabel(self.chartType),
+                    label: seriesDataModel.getSeriesItem(0, index).label,
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);
