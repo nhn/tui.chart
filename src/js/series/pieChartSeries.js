@@ -227,13 +227,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
-     * Whether equal range for quadrant.
+     * Whether in range for quadrant.
      * @param {number} start - start quadrant
      * @param {number} end - end quadrant
      * @returns {boolean}
      * @private
      */
-    _isEqualRangeForQuadrant: function(start, end) {
+    _isInQuadrantRange: function(start, end) {
         var quadrantRange = this._getRangeForQuadrant();
 
         return quadrantRange.start === start && quadrantRange.end === end;
@@ -252,9 +252,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var width = dimension.width;
         var height = dimension.height;
 
-        if (this._isEqualRangeForQuadrant(2, 3) || this._isEqualRangeForQuadrant(4, 1)) {
+        if (this._isInQuadrantRange(2, 3) || this._isInQuadrantRange(4, 1)) {
             height *= 2;
-        } else if (this._isEqualRangeForQuadrant(1, 2) || this._isEqualRangeForQuadrant(3, 4)) {
+        } else if (this._isInQuadrantRange(1, 2) || this._isInQuadrantRange(3, 4)) {
             width *= 2;
         } else if (quadrantRange.start === quadrantRange.end) {
             width *= 2;
@@ -276,24 +276,24 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var cx = dimension.width / 2;
         var cy = dimension.height / 2;
 
-        if (this._isEqualRangeForQuadrant(1, 1)) {
+        if (this._isInQuadrantRange(1, 1)) {
             cx -= halfRadius;
             cy += halfRadius;
-        } else if (this._isEqualRangeForQuadrant(1, 2)) {
+        } else if (this._isInQuadrantRange(1, 2)) {
             cx -= halfRadius;
-        } else if (this._isEqualRangeForQuadrant(2, 2)) {
+        } else if (this._isInQuadrantRange(2, 2)) {
             cx -= halfRadius;
             cy -= halfRadius;
-        } else if (this._isEqualRangeForQuadrant(2, 3)) {
+        } else if (this._isInQuadrantRange(2, 3)) {
             cy -= halfRadius;
-        } else if (this._isEqualRangeForQuadrant(3, 3)) {
+        } else if (this._isInQuadrantRange(3, 3)) {
             cx += halfRadius;
             cy -= halfRadius;
-        } else if (this._isEqualRangeForQuadrant(3, 4)) {
+        } else if (this._isInQuadrantRange(3, 4)) {
             cx += halfRadius;
-        } else if (this._isEqualRangeForQuadrant(4, 1)) {
+        } else if (this._isInQuadrantRange(4, 1)) {
             cy += halfRadius;
-        } else if (this._isEqualRangeForQuadrant(4, 4)) {
+        } else if (this._isInQuadrantRange(4, 4)) {
             cx += halfRadius;
             cy += halfRadius;
         }
