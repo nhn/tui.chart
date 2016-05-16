@@ -54,6 +54,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.circleBound = data.circleBound;
 
         this._renderPie(paper, data);
+        this._renderHole(paper, data);
+
         return paper;
     },
 
@@ -150,6 +152,28 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         });
 
         this.sectors = sectors;
+    },
+
+    /**
+     * Render hole.
+     * @param {object} paper - raphael paper
+     * @param {{
+     *      circleBound: {cx: number, cy: number, r: number},
+     *      options: object
+     * }} data render data
+     * @private
+     */
+    _renderHole: function(paper, data) {
+        var circleBound = data.circleBound;
+        var position = {
+            left: circleBound.cx,
+            top: circleBound.cy
+        };
+        var attribute = {
+            fill: data.chartBackground,
+            stroke: 'none'
+        };
+        raphaelRenderUtil.renderCircle(paper, position, circleBound.r * data.options.holeRatio, attribute);
     },
 
     /**
@@ -399,9 +423,15 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _selectSeries: function(index) {
-        var item = this.sectors[index],
-            objColor = raphael.color(item.color),
-            color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
+        var item = this.sectors[index];
+        var objColor, color;
+
+        if (!item) {
+            return;
+        }
+
+        objColor = raphael.color(item.color);
+        color = this.selectionColor || raphaelRenderUtil.makeChangedLuminanceColor(objColor.hex, DEFAULT_LUMINANC);
 
         item.sector.attr({
             fill: color
@@ -414,10 +444,14 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _unselectSeries: function(index) {
-        var sector = this.sectors[index];
+        var item = this.sectors[index];
 
-        sector.sector.attr({
-            fill: sector.color
+        if (!item) {
+            return;
+        }
+
+        item.sector.attr({
+            fill: item.color
         });
     },
 

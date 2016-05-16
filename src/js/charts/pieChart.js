@@ -6,13 +6,14 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    Legend = require('../legends/legend'),
-    Tooltip = require('../tooltips/tooltip'),
-    Series = require('../series/pieChartSeries'),
-    SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
+var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+var Legend = require('../legends/legend');
+var Tooltip = require('../tooltips/tooltip');
+var Series = require('../series/pieChartSeries');
+var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
     /**
@@ -89,27 +90,36 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _addDataRatios: function() {
-        this.dataProcessor.addDataRatiosOfPieChart();
+        this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
     },
 
     /**
-     * Attach custom evnet.
+     * Send series data.
+     * @private
+     * @override
+     */
+    _sendSeriesData: function() {
+        ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
+    },
+
+    /**
+     * Attach custom event.
      * @private
      * @override
      */
     _attachCustomEvent: function() {
-        var customEvent, tooltip, pieSeries;
+        var eventMap = {};
+        var clickPieSeriesEventName = renderUtil.makeCustomEventName('click', this.chartType, 'series');
+        var movePieSeriesEventName = renderUtil.makeCustomEventName('move', this.chartType, 'series');
+        var customEvent = this.componentManager.get('customEvent');
+        var tooltip = this.componentManager.get('tooltip');
+        var pieSeries = this.componentManager.get('pieSeries');
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
-        customEvent = this.componentManager.get('customEvent');
-        tooltip = this.componentManager.get('tooltip');
-        pieSeries = this.componentManager.get('pieSeries');
-
-        customEvent.on({
-            clickPieSeries: pieSeries.onClickSeries,
-            movePieSeries: pieSeries.onMoveSeries
-        }, pieSeries);
+        eventMap[clickPieSeriesEventName] = pieSeries.onClickSeries;
+        eventMap[movePieSeriesEventName] = pieSeries.onMoveSeries;
+        customEvent.on(eventMap, pieSeries);
 
         pieSeries.on({
             showTooltip: tooltip.onShow,

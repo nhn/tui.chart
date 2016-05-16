@@ -15,15 +15,14 @@ var MapChart = require('./raphaelMapChart');
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
 
-var pluginName = 'raphael',
-    pluginRaphael;
-
-pluginRaphael = {
+var pluginName = 'raphael';
+var pluginRaphael = {
     bar: BarChart,
     column: BarChart,
     line: LineChart,
     area: AreaChart,
     pie: PieChart,
+    donut: PieChart,
     bubble: CoordinateTypeChart,
     scatter: CoordinateTypeChart,
     map: MapChart,

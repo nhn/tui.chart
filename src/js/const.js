@@ -39,6 +39,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
     /** @type {string} */
+    CHART_TYPE_DONUT: 'donut',
+    /** @type {string} */
     CHART_TYPE_BUBBLE: 'bubble',
     /** @type {string} */
     CHART_TYPE_SCATTER: 'scatter',
@@ -109,10 +111,12 @@ var chartConst = {
     LEGEND_ALIGN_LEFT: 'left',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
-    /** default rate of pie graph */
-    PIE_GRAPH_DEFAULT_RATE: 0.8,
-    /** small rate of pie graph */
-    PIE_GRAPH_SMALL_RATE: 0.65,
+    /** default ratio for pie graph */
+    PIE_GRAPH_DEFAULT_RATIO: 0.8,
+    /** small ratio for pie graph */
+    PIE_GRAPH_SMALL_RATIO: 0.65,
+    /** default inner ratio for donut graph **/
+    DONUT_GRAPH_DEFAULT_HOLE_RATIO: 0.7,
     /** tick count for map chart legend */
     MAP_CHART_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label

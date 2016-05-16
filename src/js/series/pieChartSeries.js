@@ -34,7 +34,73 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.chartBackground = params.chartBackground;
 
+        /**
+         * range for quadrant.
+         * @type {?number}
+         */
+        this.quadrantRange = null;
+
         Series.call(this, params);
+
+        this._setDefaultOptions();
+    },
+
+    /**
+     * Make valid angle.
+     * @param {number} angle - angle
+     * @param {number} defaultAngle - default angle
+     * @returns {number}
+     * @private
+     */
+    _makeValidAngle: function(angle, defaultAngle) {
+        if (tui.util.isUndefined(angle)) {
+            angle = defaultAngle;
+        } else if (angle < 0) {
+            angle = chartConst.ANGLE_360 - (Math.abs(angle) % chartConst.ANGLE_360);
+        } else if (angle > 0) {
+            angle = angle % chartConst.ANGLE_360;
+        }
+
+        return angle;
+    },
+
+    /**
+     * Set default options for series of pie type chart.
+     * @private
+     */
+    _setDefaultOptions: function() {
+        var options = this.options;
+
+        options.startAngle = this._makeValidAngle(options.startAngle, 0);
+        options.endAngle = this._makeValidAngle(options.endAngle, options.startAngle);
+        options.radiusRatio = Math.min(options.radiusRatio || 1, 1);
+
+        if (predicate.isPieChart(this.chartType)) {
+            options.holeRatio = 0;
+        } else {
+            options.holeRatio = options.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
+        }
+    },
+
+    /**
+     * Calculate angle for rendering.
+     * @returns {number}
+     * @private
+     */
+    _calculateAngleForRendering: function() {
+        var startAngle = this.options.startAngle;
+        var endAngle = this.options.endAngle;
+        var renderingAngle;
+
+        if (startAngle < endAngle) {
+            renderingAngle = endAngle - startAngle;
+        } else if (startAngle > endAngle) {
+            renderingAngle = chartConst.ANGLE_360 - (startAngle - endAngle);
+        } else {
+            renderingAngle = chartConst.ANGLE_360;
+        }
+
+        return renderingAngle;
     },
 
     /**
@@ -44,34 +110,41 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeSectorData: function(circleBound) {
-        var self = this,
-            seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup(),
-            cx = circleBound.cx,
-            cy = circleBound.cy,
-            r = circleBound.r,
-            angle = 0,
-            delta = 10,
-            paths;
+        var self = this;
+        var seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup();
+        var cx = circleBound.cx;
+        var cy = circleBound.cy;
+        var r = circleBound.r;
+        var angle = this.options.startAngle;
+        var angleForRendering = this._calculateAngleForRendering();
+        var delta = 10;
+        var holeRatio = this.options.holeRatio;
+        var centerR = r * 0.5;
+        var paths;
+
+        if (holeRatio) {
+            centerR += (centerR * holeRatio) - 10;
+        }
 
         paths = seriesGroup.map(function(seriesItem) {
-            var additionalAngle = chartConst.ANGLE_360 * seriesItem.ratio,
-                endAngle = angle + additionalAngle,
-                popupAngle = angle + (additionalAngle / 2),
-                angles = {
-                    start: {
-                        startAngle: angle,
-                        endAngle: angle
-                    },
-                    end: {
-                        startAngle: angle,
-                        endAngle: endAngle
-                    }
+            var currentAngle = angleForRendering * seriesItem.ratio;
+            var endAngle = angle + currentAngle;
+            var popupAngle = angle + (currentAngle / 2);
+            var angles = {
+                start: {
+                    startAngle: angle,
+                    endAngle: angle
                 },
-                positionData = {
-                    cx: cx,
-                    cy: cy,
-                    angle: popupAngle
-                };
+                end: {
+                    startAngle: angle,
+                    endAngle: endAngle
+                }
+            };
+            var positionData = {
+                cx: cx,
+                cy: cy,
+                angle: popupAngle
+            };
 
             angle = endAngle;
 
@@ -79,7 +152,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
                 percentValue: seriesItem.ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
-                    r: (r / 2) + delta
+                    r: centerR + delta
                 }, positionData)),
                 outerPosition: {
                     start: self._getArcPosition(tui.util.extend({
@@ -106,9 +179,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _makeSeriesData: function() {
-        var circleBound = this._makeCircleBound(this.boundsMaker.getDimension('series'), {
+        var circleBound = this._makeCircleBound({
                 showLabel: this.options.showLabel,
-                legendAlign: this.legendAlign
+                legendAlign: this.legendAlign,
+                radiusRatio: this.options.radiusRatio
             }),
             sectorData = this._makeSectorData(circleBound);
 
@@ -120,23 +194,114 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Get quadrant from angle.
+     * @param {number} angle - angle
+     * @param {boolean} isEnd whether end quadrant
+     * @returns {number}
+     * @private
+     */
+    _getQuadrantFromAngle: function(angle, isEnd) {
+        var quadrant = parseInt(angle / chartConst.ANGLE_90, 10) + 1;
+
+        if (isEnd && (angle % chartConst.ANGLE_90 === 0)) {
+            quadrant += (quadrant === 1) ? 3 : -1;
+        }
+
+        return quadrant;
+    },
+
+    /**
+     * Get range for quadrant.
+     * @returns {{start: number, end: number}}
+     * @private
+     */
+    _getRangeForQuadrant: function() {
+        if (!this.quadrantRange) {
+            this.quadrantRange = {
+                start: this._getQuadrantFromAngle(this.options.startAngle),
+                end: this._getQuadrantFromAngle(this.options.endAngle, true)
+            };
+        }
+
+        return this.quadrantRange;
+    },
+
+    /**
+     * Whether in range for quadrant.
+     * @param {number} start - start quadrant
+     * @param {number} end - end quadrant
+     * @returns {boolean}
+     * @private
+     */
+    _isInQuadrantRange: function(start, end) {
+        var quadrantRange = this._getRangeForQuadrant();
+
+        return quadrantRange.start === start && quadrantRange.end === end;
+    },
+
+    /**
+     * Calculate radius.
+     * @returns {number}
+     * @private
+     */
+    _calculateRadius: function() {
+        var isOuterAlign = predicate.isLegendAlignOuter(this.legendAlign);
+        var radiusRatio = isOuterAlign ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
+        var dimension = this.boundsMaker.getDimension('series');
+        var quadrantRange = this._getRangeForQuadrant();
+        var width = dimension.width;
+        var height = dimension.height;
+
+        if (this._isInQuadrantRange(2, 3) || this._isInQuadrantRange(4, 1)) {
+            height *= 2;
+        } else if (this._isInQuadrantRange(1, 2) || this._isInQuadrantRange(3, 4)) {
+            width *= 2;
+        } else if (quadrantRange.start === quadrantRange.end) {
+            width *= 2;
+            height *= 2;
+        }
+
+        return Math.min(width, height) * radiusRatio * this.options.radiusRatio / 2;
+    },
+
+    /**
      * Make circle bound
-     * @param {{width: number, height:number}} dimension chart dimension
-     * @param {{showLabel: boolean, legendAlign: string}} options options
      * @returns {{cx: number, cy: number, r: number}} circle bounds
      * @private
      */
-    _makeCircleBound: function(dimension, options) {
-        var width = dimension.width,
-            height = dimension.height,
-            isSmallPie = predicate.isLegendAlignOuter(options.legendAlign) && options.showLabel,
-            radiusRate = isSmallPie ? chartConst.PIE_GRAPH_SMALL_RATE : chartConst.PIE_GRAPH_DEFAULT_RATE,
-            diameter = tui.util.multiplication(Math.min(width, height), radiusRate);
+    _makeCircleBound: function() {
+        var dimension = this.boundsMaker.getDimension('series');
+        var radius = this._calculateRadius();
+        var halfRadius = radius / 2;
+        var cx = dimension.width / 2;
+        var cy = dimension.height / 2;
+
+        if (this._isInQuadrantRange(1, 1)) {
+            cx -= halfRadius;
+            cy += halfRadius;
+        } else if (this._isInQuadrantRange(1, 2)) {
+            cx -= halfRadius;
+        } else if (this._isInQuadrantRange(2, 2)) {
+            cx -= halfRadius;
+            cy -= halfRadius;
+        } else if (this._isInQuadrantRange(2, 3)) {
+            cy -= halfRadius;
+        } else if (this._isInQuadrantRange(3, 3)) {
+            cx += halfRadius;
+            cy -= halfRadius;
+        } else if (this._isInQuadrantRange(3, 4)) {
+            cx += halfRadius;
+        } else if (this._isInQuadrantRange(4, 1)) {
+            cy += halfRadius;
+        } else if (this._isInQuadrantRange(4, 4)) {
+            cx += halfRadius;
+            cy += halfRadius;
+        }
 
         return {
-            cx: tui.util.division(width, 2),
-            cy: tui.util.division(height, 2),
-            r: tui.util.division(diameter, 2)
+            cx: cx,
+            cy: cy,
+            r: radius
         };
     },
 
@@ -263,18 +428,20 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderLegendLabel: function(params, seriesLabelContainer) {
-        var self = this,
-            positions = params.positions,
-            htmls;
+        var self = this;
+        var dataProcessor = this.dataProcessor;
+        var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
+        var positions = params.positions;
+        var htmls;
 
-        htmls = tui.util.map(this.dataProcessor.getLegendLabels(), function(legend, index) {
+        htmls = tui.util.map(dataProcessor.getLegendLabels(), function(legend, index) {
             var html = '',
                 label, position;
 
             if (positions[index]) {
                 label = self._getSeriesLabel({
                     legend: legend,
-                    label: self.dataProcessor.getFirstItemLabel(self.chartType),
+                    label: seriesDataModel.getSeriesItem(0, index).label,
                     separator: params.separator
                 });
                 position = params.funcMoveToPosition(positions[index], label);
@@ -383,11 +550,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderOuterLegend: function(seriesLabelContainer) {
-        var centerLeft = this.boundsMaker.getDimension('chart').width / 2,
-            outerPositions = this._pickPositionsFromSectorData('outerPosition'),
-            filteredPositions = tui.util.filter(outerPositions, function(position) {
-                return position;
-            });
+        var centerLeft = this.getSeriesData().circleBound.cx;
+        var outerPositions = this._pickPositionsFromSectorData('outerPosition');
+        var filteredPositions = tui.util.filter(outerPositions, function(position) {
+            return position;
+        });
 
         this._addEndPosition(centerLeft, filteredPositions);
         this._renderLegendLabel({
