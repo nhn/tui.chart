@@ -395,27 +395,6 @@ describe('Test for Axis', function() {
             expect(childNodes[4].style.bottom).toBe('224px');
             expect(childNodes[5].style.bottom).toBe('299px');
         });
-
-
-        it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
-            var size = 300,
-                tickCount = 5,
-                categories = ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
-                elTickArea, childNodes;
-
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = false;
-            axis.data.aligned = true;
-
-            elTickArea = axis._renderTickArea(size, tickCount, categories);
-            childNodes = elTickArea.childNodes;
-
-            expect(childNodes.length).toBe(4);
-            expect(childNodes[0].className).toBe('tui-chart-tick-line');
-            expect(childNodes[1].style.left).toBe('-1px');
-            expect(childNodes[2].style.left).toBe('75px');
-            expect(childNodes[3].style.left).toBe('299px');
-        });
     });
 
     describe('_makeVerticalLabelCssText()', function() {

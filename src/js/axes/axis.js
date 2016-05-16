@@ -418,16 +418,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         ticksHtml = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
-            if (data.aligned && (categories[index] === chartConst.EMPTY_AXIS_LABEL)) {
-                tickHtml = '';
-            } else {
-                position -= (index === 0 && isSingleXAxis) ? 1 : 0;
-                cssTexts = [
-                    renderUtil.concatStr('background-color:', tickColor),
-                    renderUtil.concatStr(posType, ': ', additionalSize + position, 'px')
-                ].join(';');
-                tickHtml = template({cssText: cssTexts});
-            }
+            position -= (index === 0 && isSingleXAxis) ? 1 : 0;
+            cssTexts = [
+                renderUtil.concatStr('background-color:', tickColor),
+                renderUtil.concatStr(posType, ': ', additionalSize + position, 'px')
+            ].join(';');
+            tickHtml = template({cssText: cssTexts});
 
             return tickHtml;
         }).join('');
