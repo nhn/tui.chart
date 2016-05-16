@@ -44,9 +44,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         //Raphael._oid = 0;
         this.paper = paper = raphael(container, dimension.width, dimension.height);
 
-        if (!paper.customAttributes.sector) {
-            paper.customAttributes.sector = tui.util.bind(this._makeSectorPath, this);
-        }
+        this.holeRatio = data.options.holeRatio;
+        this._setSectorAttr(data.options.holeRatio);
 
         this.container = container;
         this.callbacks = callbacks;
@@ -54,7 +53,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         this.circleBound = data.circleBound;
 
         this._renderPie(paper, data);
-        this._renderHole(paper, data);
 
         return paper;
     },
@@ -76,20 +74,76 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @private
      */
     _makeSectorPath: function(cx, cy, r, startAngle, endAngle) {
-        var x1 = cx + r * Math.sin(startAngle * RAD), // 원 호의 시작 x 좌표
-            y1 = cy - r * Math.cos(startAngle * RAD), // 원 호의 시작 y 좌표
-            x2 = cx + r * Math.sin(endAngle * RAD), // 원 호의 종료 x 좌표
-            y2 = cy - r * Math.cos(endAngle * RAD), // 원 호의 종료 y 좌표
-            largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0,
-            path = ['M', cx, cy,
-                'L', x1, y1,
-                'A', r, r, 0, largeArcFlag, 1, x2, y2,
-                'Z'
-            ];
+        var startRadian = startAngle * RAD;
+        var endRadian = endAngle * RAD;
+        var x1 = cx + r * Math.sin(startRadian); // 원 호의 시작 x 좌표
+        var y1 = cy - r * Math.cos(startRadian); // 원 호의 시작 y 좌표
+        var x2 = cx + r * Math.sin(endRadian); // 원 호의 종료 x 좌표
+        var y2 = cy - r * Math.cos(endRadian); // 원 호의 종료 y 좌표
+        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
+        var path = ['M', cx, cy,
+            'L', x1, y1,
+            'A', r, r, 0, largeArcFlag, 1, x2, y2,
+            'Z'
+        ];
         // path에 대한 자세한 설명은 아래 링크를 참고
         // http://www.w3schools.com/svg/svg_path.asp
         // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
         return {path: path};
+    },
+
+    /**
+     * Make sector path for donut chart.
+     * @param {number} cx center x
+     * @param {number} cy center y
+     * @param {number} r radius
+     * @param {number} startAngle start angle
+     * @param {number} endAngle end angel
+     * @returns {{path: Array}} sector path
+     * @private
+     */
+    _makeDonutSectorPath: function(cx, cy, r, startAngle, endAngle) {
+        var startRadian = startAngle * RAD;
+        var endRadian = endAngle * RAD;
+        var r2 = r * this.holeRatio; // 구멍 반지름
+        var x1 = cx + r * Math.sin(startRadian);
+        var y1 = cy - r * Math.cos(startRadian);
+        var x2 = cx + r2 * Math.sin(startRadian);
+        var y2 = cy - r2 * Math.cos(startRadian);
+        var x3 = cx + r * Math.sin(endRadian);
+        var y3 = cy - r * Math.cos(endRadian);
+        var x4 = cx + r2 * Math.sin(endRadian);
+        var y4 = cy - r2 * Math.cos(endRadian);
+        var largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
+        var path = [
+            'M', x1, y1,
+            'A', r, r, 0, largeArcFlag, 1, x3, y3,
+            'L', x4, y4,
+            'A', r2, r2, 0, largeArcFlag, 0, x2, y2,
+            'Z'
+        ];
+
+        return {path: path};
+    },
+
+    /**
+     * Set sector attribute for raphael paper.
+     * @private
+     */
+    _setSectorAttr: function() {
+        var makeSectorPath;
+
+        if (this.paper.customAttributes.sector) {
+            return;
+        }
+
+        if (this.holeRatio) {
+            makeSectorPath = this._makeDonutSectorPath;
+        } else {
+            makeSectorPath = this._makeSectorPath;
+        }
+
+        this.paper.customAttributes.sector = tui.util.bind(makeSectorPath, this);
     },
 
     /**
@@ -152,28 +206,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         });
 
         this.sectors = sectors;
-    },
-
-    /**
-     * Render hole.
-     * @param {object} paper - raphael paper
-     * @param {{
-     *      circleBound: {cx: number, cy: number, r: number},
-     *      options: object
-     * }} data render data
-     * @private
-     */
-    _renderHole: function(paper, data) {
-        var circleBound = data.circleBound;
-        var position = {
-            left: circleBound.cx,
-            top: circleBound.cy
-        };
-        var attribute = {
-            fill: data.chartBackground,
-            stroke: 'none'
-        };
-        raphaelRenderUtil.renderCircle(paper, position, circleBound.r * data.options.holeRatio, attribute);
     },
 
     /**
