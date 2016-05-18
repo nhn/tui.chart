@@ -40,16 +40,16 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.options = params.options || {};
 
         /**
-         * chart types
-         * @type {?Array.<string>}
-         */
-        this.chartTypes = params.chartTypes;
-
-        /**
          * chart type
          * @type {string}
          */
         this.chartType = params.chartType;
+
+        /**
+         * chart types
+         * @type {?Array.<string>}
+         */
+        this.chartTypes = params.chartTypes || [this.chartType];
 
         /**
          * user event object
@@ -266,10 +266,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendSelectionEvent: function(data) {
-        var self = this,
-            chartTypes = this.chartTypes || [data.chartType],
-            index = this.legendModel.getSelectedIndex(),
-            legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
+        var self = this;
+        var chartTypes = this.chartTypes || [data.chartType];
+        var index = this.legendModel.getSelectedIndex();
+        var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);

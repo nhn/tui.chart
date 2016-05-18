@@ -8,16 +8,16 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael,
-    DEGREE_180 = 180,
-    DEGREE_360 = 360,
-    MIN_DEGREE = 0.01,
-    RAD = Math.PI / DEGREE_180,
-    ANIMATION_TIME = 500,
-    LOADING_ANIMATION_TIME = 700,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3,
-    DEFAULT_LUMINANC = 0.2;
+var raphael = window.Raphael;
+
+var DEGREE_180 = 180;
+var DEGREE_360 = 360;
+var MIN_DEGREE = 0.01;
+var RAD = Math.PI / DEGREE_180;
+var LOADING_ANIMATION_TIME = 700;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
+var DEFAULT_LUMINANC = 0.2;
 
 /**
  * @classdesc RaphaelPieCharts is graph renderer for pie chart.

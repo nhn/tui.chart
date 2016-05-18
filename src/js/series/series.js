@@ -199,6 +199,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _renderGraph: function(dimension, seriesData) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
+
         this.graphRenderer.render(this.seriesContainer, params);
     },
 

@@ -23,6 +23,8 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
     init: function(params) {
         this.chartType = params.chartType;
 
+        this.chartTypes = params.chartTypes || [this.chartType];
+
         this.options = params.options;
 
         this.theme = params.theme;
@@ -189,10 +191,10 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @private
      */
     _isSkipLegend: function() {
-        var isPieChart = predicate.isPieChart(this.chartType),
-            isPieLegendAlign = predicate.isPieChart(this.chartType) && predicate.isPieLegendAlign(this.options.align);
+        var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
+        var isPieLegendAlign = predicate.isPieLegendAlign(this.options.align);
 
-        return (isPieChart && isPieLegendAlign) || this.options.hidden;
+        return (isPieTypeCharts && isPieLegendAlign) || this.options.hidden;
     },
 
     /**

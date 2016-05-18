@@ -392,14 +392,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render title.
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} container - container
      * @private
      */
-    _renderTitle: function(el) {
-        var chartOptions = this.options.chart || {},
-            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
+    _renderTitle: function(container) {
+        var chartOptions = this.options.chart || {};
+        var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
 
-        dom.append(el, elTitle);
+        dom.append(container, titleElement);
     },
 
     /**

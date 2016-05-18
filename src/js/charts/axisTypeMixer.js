@@ -116,7 +116,7 @@ var axisTypeMixer = {
         this._addAxisComponents(params.axes, aligned);
         this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
         this._addSeriesComponents(params.serieses, options);
-        this._addTooltipComponent(options.chartType);
+        this._addTooltipComponent();
     },
 
     /**
