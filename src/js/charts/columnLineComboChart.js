@@ -1,5 +1,5 @@
 /**
- * @fileoverview Combo chart.
+ * @fileoverview Column and Line Combo chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -10,14 +10,14 @@ var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
 var ChartBase = require('./chartBase');
 var axisTypeMixer = require('./axisTypeMixer');
-var defaultTheme = require('../themes/defaultTheme');
+var comboTypeMixer = require('./comboTypeMixer');
 var ColumnChartSeries = require('../series/columnChartSeries');
 var LineChartSeries = require('../series/lineChartSeries');
 
-var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype */ {
+var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLineComboChart.prototype */ {
     /**
-     * Combo chart.
-     * @constructs ComboChart
+     * Column and Line Combo chart.
+     * @constructs ColumnLineComboChart
      * @extends ChartBase
      * @param {Array.<Array>} rawData raw data
      * @param {object} theme chart theme
@@ -100,55 +100,6 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     },
 
     /**
-     * Make options map
-     * @param {object} chartTypes chart types
-     * @returns {object} options map
-     * @private
-     */
-    _makeOptionsMap: function(chartTypes) {
-        var self = this,
-            optionsMap = {};
-
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = self.options.series[chartType] || self.options.series;
-        });
-
-        return optionsMap;
-    },
-
-    /**
-     * Make theme map
-     * @param {object} chartTypes chart types
-     * @returns {object} theme map
-     * @private
-     */
-    _makeThemeMap: function(chartTypes) {
-        var self = this,
-            theme = this.theme,
-            themeMap = {},
-            colorCount = 0;
-
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            var chartTheme = JSON.parse(JSON.stringify(theme)),
-                removedColors;
-
-            if (chartTheme.series[chartType]) {
-                themeMap[chartType] = chartTheme.series[chartType];
-            } else if (!chartTheme.series.colors) {
-                themeMap[chartType] = JSON.parse(JSON.stringify(defaultTheme.series));
-                themeMap[chartType].label.fontFamily = chartTheme.chart.fontFamily;
-            } else {
-                removedColors = chartTheme.series.colors.splice(0, colorCount);
-                chartTheme.series.colors = chartTheme.series.colors.concat(removedColors);
-                themeMap[chartType] = chartTheme.series;
-                colorCount += self.dataProcessor.getLegendLabels(chartType).length;
-            }
-        });
-
-        return themeMap;
-    },
-
-    /**
      * Make serieses
      * @param {Array.<string>} chartTypes chart types
      * @returns {Array.<object>} serieses
@@ -156,17 +107,14 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      */
     _makeSerieses: function(chartTypes) {
         var seriesClasses = {
-                column: ColumnChartSeries,
-                line: LineChartSeries
-            },
-            optionsMap = this._makeOptionsMap(chartTypes),
-            themeMap = this._makeThemeMap(chartTypes),
-            serieses;
-
-        serieses = tui.util.map(chartTypes, function(chartType) {
+            column: ColumnChartSeries,
+            line: LineChartSeries
+        };
+        var optionsMap = this._makeOptionsMap(chartTypes);
+        var themeMap = this._makeThemeMap(chartTypes);
+        var serieses = tui.util.map(chartTypes, function(chartType) {
             var data = {
                 allowNegativeTooltip: true,
-                componentType: 'series',
                 chartType: chartType,
                 options: optionsMap[chartType],
                 theme: themeMap[chartType]
@@ -188,15 +136,17 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
      * @private
      */
     _addComponents: function(chartTypesMap) {
-        var axes = [{
+        var axes = [
+            {
                 name: 'yAxis',
                 isLabel: true,
                 chartType: chartTypesMap.chartTypes[0]
             },
             {
                 name: 'xAxis'
-            }],
-            serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
+            }
+        ];
+        var serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
 
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
@@ -330,7 +280,8 @@ var ComboChart = tui.util.defineClass(ChartBase, /** @lends ComboChart.prototype
     }
 });
 
-axisTypeMixer.mixin(ComboChart);
+axisTypeMixer.mixin(ColumnLineComboChart);
+comboTypeMixer.mixin(ColumnLineComboChart);
 
 /**
  * Make axes data.
@@ -339,7 +290,7 @@ axisTypeMixer.mixin(ComboChart);
  * @private
  * @override
  */
-ComboChart.prototype._makeAxesData = function() {
+ColumnLineComboChart.prototype._makeAxesData = function() {
     var axisScaleMakerMap = this._getAxisScaleMakerMap();
     var yAxisOptionsMap = this.yAxisOptionsMap;
     var yAxisOptions = yAxisOptionsMap[this.chartTypes[0]];
@@ -359,4 +310,4 @@ ComboChart.prototype._makeAxesData = function() {
 };
 
 
-module.exports = ComboChart;
+module.exports = ColumnLineComboChart;

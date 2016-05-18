@@ -410,12 +410,22 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(renderingData, funcName, container) {
+        var paper;
         var elements = this.componentManager.map(function(component) {
-            var data = renderingData[component.componentName],
-                element = null;
+            var element = null;
+            var data, result;
 
             if (component[funcName]) {
-                element = component[funcName](data);
+                data = renderingData[component.componentName] || {};
+                data.paper = paper;
+                result = component[funcName](data);
+
+                if (result && result.container) {
+                    element = result.container;
+                    paper = result.paper;
+                } else {
+                    element = result;
+                }
             }
 
             return element;

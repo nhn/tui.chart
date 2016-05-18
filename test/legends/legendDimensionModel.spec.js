@@ -132,7 +132,7 @@ describe('Test for LegendDimensionModel', function() {
         it('파이 차트이면서 align 옵션이 pie전용 align인 "center"나 "outer"이면 true를 반환합니다.', function() {
             var actual, expected;
 
-            dimensionModel.chartType = chartConst.CHART_TYPE_PIE;
+            dimensionModel.chartTypes = [chartConst.CHART_TYPE_PIE];
             dimensionModel.options.align = chartConst.LEGEND_ALIGN_CENTER;
 
             actual = dimensionModel._isSkipLegend();

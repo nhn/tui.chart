@@ -28,6 +28,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.legendAlign = params.legendAlign;
 
+        this.isInner = !!params.isInner;
+
+        this.isCombo = !!params.isCombo;
+
         /**
          * chart background.
          * @type {string}
@@ -123,7 +127,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var paths;
 
         if (holeRatio) {
-            centerR += (centerR * holeRatio) - 10;
+            centerR += centerR * holeRatio;
         }
 
         paths = seriesGroup.map(function(seriesItem) {
@@ -149,10 +153,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
             angle = endAngle;
 
             return {
-                percentValue: seriesItem.ratio,
+                ratio: seriesItem.ratio,
                 angles: angles,
                 centerPosition: self._getArcPosition(tui.util.extend({
-                    r: centerR + delta
+                    r: centerR
                 }, positionData)),
                 outerPosition: {
                     start: self._getArcPosition(tui.util.extend({
@@ -189,7 +193,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
-            sectorData: sectorData
+            sectorData: sectorData,
+            isInner: this.isInner
         };
     },
 
@@ -240,6 +245,32 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Calculate base size.
+     * @returns {number}
+     * @private
+     */
+    _calculateBaseSize: function() {
+        var dimension = this.boundsMaker.getDimension('series');
+        var width = dimension.width;
+        var height = dimension.height;
+        var quadrantRange;
+
+        if (!this.isCombo) {
+            quadrantRange = this._getRangeForQuadrant();
+            if (this._isInQuadrantRange(2, 3) || this._isInQuadrantRange(4, 1)) {
+                height *= 2;
+            } else if (this._isInQuadrantRange(1, 2) || this._isInQuadrantRange(3, 4)) {
+                width *= 2;
+            } else if (quadrantRange.start === quadrantRange.end) {
+                width *= 2;
+                height *= 2;
+            }
+        }
+
+        return Math.min(width, height);
+    },
+
+    /**
      * Calculate radius.
      * @returns {number}
      * @private
@@ -247,21 +278,51 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _calculateRadius: function() {
         var isOuterAlign = predicate.isLegendAlignOuter(this.legendAlign);
         var radiusRatio = isOuterAlign ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
-        var dimension = this.boundsMaker.getDimension('series');
-        var quadrantRange = this._getRangeForQuadrant();
-        var width = dimension.width;
-        var height = dimension.height;
+        var baseSize = this._calculateBaseSize();
 
-        if (this._isInQuadrantRange(2, 3) || this._isInQuadrantRange(4, 1)) {
-            height *= 2;
-        } else if (this._isInQuadrantRange(1, 2) || this._isInQuadrantRange(3, 4)) {
-            width *= 2;
-        } else if (quadrantRange.start === quadrantRange.end) {
-            width *= 2;
-            height *= 2;
+        return baseSize * radiusRatio * this.options.radiusRatio / 2;
+    },
+
+    /**
+     * Calculate center x, y.
+     * @param {number} radius - radius
+     * @returns {{cx: number, cy: number}}
+     * @private
+     */
+    _calculateCenterXY: function(radius) {
+        var dimension = this.boundsMaker.getDimension('series');
+        var halfRadius = radius / 2;
+        var cx = dimension.width / 2;
+        var cy = dimension.height / 2;
+
+        if (!this.isCombo) {
+            if (this._isInQuadrantRange(1, 1)) {
+                cx -= halfRadius;
+                cy += halfRadius;
+            } else if (this._isInQuadrantRange(1, 2)) {
+                cx -= halfRadius;
+            } else if (this._isInQuadrantRange(2, 2)) {
+                cx -= halfRadius;
+                cy -= halfRadius;
+            } else if (this._isInQuadrantRange(2, 3)) {
+                cy -= halfRadius;
+            } else if (this._isInQuadrantRange(3, 3)) {
+                cx += halfRadius;
+                cy -= halfRadius;
+            } else if (this._isInQuadrantRange(3, 4)) {
+                cx += halfRadius;
+            } else if (this._isInQuadrantRange(4, 1)) {
+                cy += halfRadius;
+            } else if (this._isInQuadrantRange(4, 4)) {
+                cx += halfRadius;
+                cy += halfRadius;
+            }
         }
 
-        return Math.min(width, height) * radiusRatio * this.options.radiusRatio / 2;
+        return {
+            cx: cx,
+            cy: cy
+        };
     },
 
     /**
@@ -270,39 +331,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _makeCircleBound: function() {
-        var dimension = this.boundsMaker.getDimension('series');
         var radius = this._calculateRadius();
-        var halfRadius = radius / 2;
-        var cx = dimension.width / 2;
-        var cy = dimension.height / 2;
+        var centerXY = this._calculateCenterXY(radius);
 
-        if (this._isInQuadrantRange(1, 1)) {
-            cx -= halfRadius;
-            cy += halfRadius;
-        } else if (this._isInQuadrantRange(1, 2)) {
-            cx -= halfRadius;
-        } else if (this._isInQuadrantRange(2, 2)) {
-            cx -= halfRadius;
-            cy -= halfRadius;
-        } else if (this._isInQuadrantRange(2, 3)) {
-            cy -= halfRadius;
-        } else if (this._isInQuadrantRange(3, 3)) {
-            cx += halfRadius;
-            cy -= halfRadius;
-        } else if (this._isInQuadrantRange(3, 4)) {
-            cx += halfRadius;
-        } else if (this._isInQuadrantRange(4, 1)) {
-            cy += halfRadius;
-        } else if (this._isInQuadrantRange(4, 4)) {
-            cx += halfRadius;
-            cy += halfRadius;
-        }
-
-        return {
-            cx: cx,
-            cy: cy,
+        return tui.util.extend({
             r: radius
-        };
+        }, centerXY);
     },
 
     /**
@@ -329,18 +363,20 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      * @override
      */
-    _renderGraph: function(dimension, seriesData) {
+    _renderGraph: function(dimension, seriesData, paper) {
         var showTootltip = tui.util.bind(this.showTooltip, this, {
-                allowNegativeTooltip: !!this.allowNegativeTooltip,
-                chartType: this.chartType
-            }),
-            callbacks = {
-                showTooltip: showTootltip,
-                hideTooltip: tui.util.bind(this.hideTooltip, this)
-            },
-            params = this._makeParamsForGraphRendering(dimension, seriesData);
+            allowNegativeTooltip: !!this.allowNegativeTooltip,
+            chartType: this.chartType
+        });
+        var callbacks = {
+            showTooltip: showTootltip,
+            hideTooltip: tui.util.bind(this.hideTooltip, this)
+        };
+        var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.graphRenderer.render(this.seriesContainer, params, callbacks);
+        params.paper = paper;
+
+        return this.graphRenderer.render(this.seriesContainer, params, callbacks);
     },
 
     /**
@@ -432,9 +468,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var dataProcessor = this.dataProcessor;
         var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
         var positions = params.positions;
-        var htmls;
-
-        htmls = tui.util.map(dataProcessor.getLegendLabels(), function(legend, index) {
+        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.chartType), function(legend, index) {
             var html = '',
                 label, position;
 
@@ -478,7 +512,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _pickPositionsFromSectorData: function(positionType) {
         return tui.util.map(this.seriesData.sectorData, function(datum) {
-            return datum.percentValue ? datum[positionType] : null;
+            return datum.ratio ? datum[positionType] : null;
         });
     },
 
@@ -574,7 +608,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderSeriesLabel: function(seriesLabelContainer) {
         var legendAlign = this.legendAlign;
 
-        if (predicate.isLegendAlignOuter(legendAlign)) {
+        if (predicate.isLegendAlignOuter(legendAlign) && !this.isInner) {
             this._renderOuterLegend(seriesLabelContainer);
         } else {
             this._renderCenterLegend(seriesLabelContainer);

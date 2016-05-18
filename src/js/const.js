@@ -37,6 +37,10 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_COMBO: 'combo',
     /** @type {string} */
+    CHART_TYPE_COLUMN_LINE_COMBO: 'columnLineCombo',
+    /** @type {string} */
+    CHART_TYPE_PIE_DONUT_COMBO: 'pieDonutCombo',
+    /** @type {string} */
     CHART_TYPE_PIE: 'pie',
     /** @type {string} */
     CHART_TYPE_DONUT: 'donut',
