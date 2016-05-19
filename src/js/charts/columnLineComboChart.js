@@ -139,11 +139,11 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         var axes = [
             {
                 name: 'yAxis',
-                isLabel: true,
                 chartType: chartTypesMap.chartTypes[0]
             },
             {
-                name: 'xAxis'
+                name: 'xAxis',
+                isLabel: true
             }
         ];
         var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesChartTypes);
@@ -151,7 +151,6 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                isLabel: true,
                 chartType: chartTypesMap.chartTypes[1]
             });
         }

@@ -485,7 +485,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                 end: 1,
                 complete: function() {
                     if (self.labelShowEffector) {
-                        clearInterval(self.labelShower.timerId);
+                        clearInterval(self.labelShowEffector.timerId);
                     }
                     self.labelShowEffector = null;
                 }
