@@ -60,6 +60,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.chartType = params.chartType;
 
         /**
+         * chart types for combo.
+         */
+        this.chartTypes = params.chartTypes || [];
+
+        /**
          * data processor
          * @type {DataProcessor}
          */
@@ -644,12 +649,25 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Whether expansion or not.
+     * @returns {boolean}
+     * @private
+     */
+    _isExpansionChart: function() {
+        var chartType = this.chartType;
+
+        return !predicate.isMousePositionChart(chartType)
+            && !predicate.isPieDonutComboChart(chartType, this.chartTypes);
+    },
+
+    /**
      * Register essential components positions.
      * @private
      */
     _registerEssentialComponentsPositions: function() {
-        var seriesPosition = this.getPosition('series'),
-            tooltipPosition;
+        var seriesPosition = this.getPosition('series')
+        var chartType = this.chartType;
+        var tooltipPosition;
 
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
@@ -658,7 +676,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.positions.circleLegend = this._makeCircleLegendPosition();
         }
 
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (this._isExpansionChart()) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
@@ -700,7 +718,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _registerExtendedSeriesBound: function() {
         var seriesBound = this.getBound('series');
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (this._isExpansionChart()) {
             seriesBound = renderUtil.expandBound(seriesBound);
         }
 

@@ -82,7 +82,6 @@ var pieTypeMixer = {
     /**
      * Add custom event.
      * @private
-     * @override
      */
     _attachCustomEventForPieTypeChart: function(seriesComponents) {
         var clickEventName = renderUtil.makeCustomEventName('click', this.chartType, 'series');

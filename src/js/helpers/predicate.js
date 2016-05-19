@@ -54,6 +54,20 @@ var predicate = {
     },
 
     /**
+     * Whether pie and donut combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isPieDonutComboChart: function(chartType, subChartTypes) {
+        var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
+            return predicate.isPieTypeChart(subChartType);
+        });
+        return predicate.isComboChart(chartType) && isAllPieType;
+    },
+
+    /**
      * Whether line chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart

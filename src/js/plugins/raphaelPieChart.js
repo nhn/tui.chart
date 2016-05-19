@@ -39,8 +39,8 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * @returns {object} paper raphael paper
      */
     render: function(container, data, callbacks) {
-        var dimension = data.dimension,
-            paper;
+        var dimension = data.dimension;
+        var paper;
 
         /**
          * raphael object
@@ -395,7 +395,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
-     * Hide overlay
+     * Hide overlay.
      * @private
      */
     _hideOverlay: function() {

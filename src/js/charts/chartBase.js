@@ -85,7 +85,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
             isVertical: this.isVertical,
-            chartType: this.chartType
+            chartType: this.chartType,
+            chartTypes: params.seriesChartTypes
         });
 
         /**

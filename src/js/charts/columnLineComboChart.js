@@ -100,12 +100,12 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
     },
 
     /**
-     * Make serieses
+     * Make data for adding series component.
      * @param {Array.<string>} chartTypes chart types
-     * @returns {Array.<object>} serieses
+     * @returns {Array.<object>}
      * @private
      */
-    _makeSerieses: function(chartTypes) {
+    _makeDataForAddingSeriesComponent: function(chartTypes) {
         var seriesClasses = {
             column: ColumnChartSeries,
             line: LineChartSeries
@@ -146,7 +146,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
                 name: 'xAxis'
             }
         ];
-        var serieses = this._makeSerieses(chartTypesMap.seriesChartTypes);
+        var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesChartTypes);
 
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
