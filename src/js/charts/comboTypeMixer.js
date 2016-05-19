@@ -20,7 +20,7 @@ var comboTypeMixer = {
      * @private
      */
     _makeOptionsMap: function(chartTypes) {
-        var seriesOptions = this.options.series;
+        var seriesOptions = this.options.series || {};
         var optionsMap = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
