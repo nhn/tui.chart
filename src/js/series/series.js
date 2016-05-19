@@ -106,6 +106,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {?number}
          */
         this.selectedLegendIndex = null;
+
+        /**
+         * effector for show layer
+         * @type {obejct}
+         */
+        this.labelShowEffector = null;
     },
 
     /**
@@ -470,18 +476,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (renderUtil.isIE7()) {
             this.seriesLabelContainer.style.filter = '';
         } else {
-            this.labelShower = new tui.component.Effects.Fade({
+            this.labelShowEffector = new tui.component.Effects.Fade({
                 element: this.seriesLabelContainer,
                 duration: 300
             });
-            this.labelShower.action({
+            this.labelShowEffector.action({
                 start: 0,
                 end: 1,
                 complete: function() {
-                    if (self.labelShower) {
+                    if (self.labelShowEffector) {
                         clearInterval(self.labelShower.timerId);
                     }
-                    delete self.labelShower;
+                    self.labelShowEffector = null;
                 }
             });
         }

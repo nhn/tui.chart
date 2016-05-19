@@ -649,11 +649,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
-     * Whether expansion or not.
+     * Whether need expansion series or not.
      * @returns {boolean}
      * @private
      */
-    _isExpansionChart: function() {
+    _isNeedExpansionSeries: function() {
         var chartType = this.chartType;
 
         return !predicate.isMousePositionChart(chartType)
@@ -662,11 +662,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Register essential components positions.
+     * Essential components is all components except components for axis.
      * @private
      */
     _registerEssentialComponentsPositions: function() {
         var seriesPosition = this.getPosition('series')
-        var chartType = this.chartType;
         var tooltipPosition;
 
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
@@ -676,7 +676,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.positions.circleLegend = this._makeCircleLegendPosition();
         }
 
-        if (this._isExpansionChart()) {
+        if (this._isNeedExpansionSeries()) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
@@ -718,7 +718,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _registerExtendedSeriesBound: function() {
         var seriesBound = this.getBound('series');
-        if (this._isExpansionChart()) {
+        if (this._isNeedExpansionSeries()) {
             seriesBound = renderUtil.expandBound(seriesBound);
         }
 

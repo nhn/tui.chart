@@ -63,6 +63,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      */
     _makeOptionsMapForPieDonutCombo: function() {
         var optionsMap = this._makeOptionsMap(this.chartTypes);
+        var donutRadiusRatio;
 
         optionsMap.pie = tui.util.extend({
             radiusRatio: 0.7
@@ -70,10 +71,12 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         optionsMap.donut = tui.util.extend({
             holeRatio: 0.7
         }, optionsMap.donut);
+
+        donutRadiusRatio = optionsMap.donut.radiusRatio;
         optionsMap.pie.radiusRatio = Math.min(optionsMap.pie.radiusRatio, optionsMap.donut.holeRatio);
 
-        if (!tui.util.isUndefined(optionsMap.donut.radiusRatio) && optionsMap.donut.radiusRatio) {
-            optionsMap.pie.radiusRatio *= optionsMap.donut.radiusRatio;
+        if (optionsMap.pie.radiusRatio && donutRadiusRatio) {
+            optionsMap.pie.radiusRatio *= donutRadiusRatio;
         }
 
         return optionsMap;
