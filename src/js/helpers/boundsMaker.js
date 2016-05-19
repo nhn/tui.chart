@@ -666,7 +666,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerEssentialComponentsPositions: function() {
-        var seriesPosition = this.getPosition('series')
+        var seriesPosition = this.getPosition('series');
         var tooltipPosition;
 
         this.positions.customEvent = tui.util.extend({}, seriesPosition);

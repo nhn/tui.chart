@@ -81,6 +81,7 @@ var pieTypeMixer = {
 
     /**
      * Add custom event.
+     * @param {Array.<object>} seriesComponents - series components
      * @private
      */
     _attachCustomEventForPieTypeChart: function(seriesComponents) {

@@ -109,7 +109,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         /**
          * effector for show layer
-         * @type {obejct}
+         * @type {object}
          */
         this.labelShowEffector = null;
     },
