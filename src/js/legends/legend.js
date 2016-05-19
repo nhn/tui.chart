@@ -87,6 +87,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.dimensionModel = new LegendDimensionModel({
             legendLabels: tui.util.pluck(legendData, 'label'),
+            chartTypes: this.chartTypes,
             chartType: this.chartType,
             options: this.options,
             theme: this.theme
@@ -330,11 +331,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _checkLegend: function() {
-        var checkedIndexes = this._getCheckedIndexes(),
-            checkedCount = checkedIndexes.length,
-            data;
+        var checkedIndexes = this._getCheckedIndexes();
+        var checkedCount = checkedIndexes.length;
+        var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
+        var data;
 
-        if ((predicate.isPieChart(this.chartType) && checkedCount === 1) || checkedCount === 0) {
+        if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {
             this._renderLegendArea(this.legendContainer);
         } else {
             this.legendModel.updateCheckedData(checkedIndexes);

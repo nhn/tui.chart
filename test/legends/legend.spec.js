@@ -41,7 +41,8 @@ describe('Test for Legend', function() {
                     fontSize: 12
                 },
                 colors: ['red', 'orange']
-            }
+            },
+            chartType: 'column'
         });
     });
 
@@ -220,11 +221,11 @@ describe('Test for Legend', function() {
     describe('_fireLegendSelectionEvent()', function() {
         it('시리즈에 전달할 legend custom event를 발생시킵니다.', function() {
             var data = {
-                        chartType: 'column',
-                        seriesIndex: 0
-                },
-                called = false,
-                args;
+                chartType: 'column',
+                seriesIndex: 0
+            };
+            var called = false;
+            var args;
 
             spyOn(legend, 'fire').and.callFake(function() {
                 called = true;

@@ -106,6 +106,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
          * @type {?number}
          */
         this.selectedLegendIndex = null;
+
+        /**
+         * effector for show layer
+         * @type {object}
+         */
+        this.labelShowEffector = null;
     },
 
     /**
@@ -150,21 +156,24 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {HTMLElement} seriesContainer series area element
      * @param {object} data data for rendering
      * @param {function} funcRenderGraph function for graph rendering
+     * @returns {object}
      * @private
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
-        var expansionBound = this.boundsMaker.getBound('extendedSeries'),
-            seriesData, seriesLabelContainer;
+        var expansionBound = this.boundsMaker.getBound('extendedSeries');
+        var seriesData, seriesLabelContainer, paper;
 
         this.data = data;
 
         this.seriesData = seriesData = this._makeSeriesData();
 
-        renderUtil.renderDimension(seriesContainer, expansionBound.dimension);
+        if (!data.paper) {
+            renderUtil.renderDimension(seriesContainer, expansionBound.dimension);
+        }
         this._renderPosition(seriesContainer, expansionBound.position);
 
         if (funcRenderGraph) {
-            funcRenderGraph(expansionBound.dimension, seriesData);
+            paper = funcRenderGraph(expansionBound.dimension, seriesData, data.paper);
         }
 
         seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
@@ -173,6 +182,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             this.seriesLabelContainer = seriesLabelContainer;
             dom.append(seriesContainer, seriesLabelContainer);
         }
+
+        return paper;
     },
 
     /**
@@ -209,12 +220,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {HTMLElement} series element
      */
     render: function(data) {
-        var el = dom.create('DIV', this.className);
+        var container = dom.create('DIV', this.className);
+        var paper;
 
-        this.seriesContainer = el;
-        this._renderSeriesArea(el, data, tui.util.bind(this._renderGraph, this));
+        this.seriesContainer = container;
 
-        return el;
+        paper = this._renderSeriesArea(container, data, tui.util.bind(this._renderGraph, this));
+
+        return {
+            container: container,
+            paper: paper
+        };
     },
 
     /**
@@ -240,10 +256,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Rerender
+     * Rerender.
      * @param {object} data data for rendering
+     * @returns {{container: HTMLElement, paper: object}}
      */
     rerender: function(data) {
+        var paper;
+
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
         }
@@ -255,12 +274,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (this.dataProcessor.getGroupCount(this.chartType)) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
-            this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+            paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShower) {
                 clearInterval(this.labelShower.timerId);
             }
             this.animateComponent();
         }
+
+        return {
+            container: this.seriesContainer,
+            paper: paper
+        };
     },
 
     /**
@@ -452,16 +476,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (renderUtil.isIE7()) {
             this.seriesLabelContainer.style.filter = '';
         } else {
-            this.labelShower = new tui.component.Effects.Fade({
+            this.labelShowEffector = new tui.component.Effects.Fade({
                 element: this.seriesLabelContainer,
                 duration: 300
             });
-            this.labelShower.action({
+            this.labelShowEffector.action({
                 start: 0,
                 end: 1,
                 complete: function() {
-                    clearInterval(self.labelShower.timerId);
-                    delete self.labelShower;
+                    if (self.labelShowEffector) {
+                        clearInterval(self.labelShower.timerId);
+                    }
+                    self.labelShowEffector = null;
                 }
             });
         }
@@ -493,17 +519,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _executeGraphRenderer: function(position, funcName) {
+        var isShowLabel = false;
         var result;
 
         this.fire('hideTooltipContainer');
 
-        if (this.options.showLabel) {
+        if (this.seriesLabelContainer && dom.hasClass(this.seriesLabelContainer, 'show')) {
             dom.removeClass(this.seriesLabelContainer, 'show');
+            isShowLabel = true;
         }
 
         result = this.graphRenderer[funcName](position);
 
-        if (this.options.showLabel) {
+        if (isShowLabel) {
             dom.addClass(this.seriesLabelContainer, 'show');
         }
 
