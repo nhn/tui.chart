@@ -100,18 +100,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makeYAxisWidth: function(labels, options) {
         var title = options.title || '';
+        var theme = this.theme;
         var titleAreaWidth = 0;
         var width = 0;
 
         if (options.isCenter) {
             width += chartConst.AXIS_LABEL_PADDING;
         } else if (options.titleRotation === false) {
-            titleAreaWidth = renderUtil.getRenderedLabelWidth(title, this.theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
         } else {
-            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, this.theme.title) + chartConst.TITLE_PADDING;
+            titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
         }
 
-        width += renderUtil.getRenderedLabelsMaxWidth(labels, this.theme.label) + titleAreaWidth +
+        width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
             chartConst.AXIS_LABEL_PADDING;
 
         return width;
