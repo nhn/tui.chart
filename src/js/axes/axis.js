@@ -335,7 +335,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Make cssText from positionMap for css.
+     * Make cssText from position map for css.
      * @param {object.<string, number>} positionMap - position map for css
      * @returns {string}
      * @private
@@ -347,7 +347,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Make cssPo
+     * Make position map for center align option of y axis.
      * @returns {{left: number, bottom: number}}
      * @private
      */
@@ -368,7 +368,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @returns {number}
      * @private
      */
-    _makeRightPositionForRightYAxis: function(size) {
+    _makeRightPosition: function(size) {
         var rightPosition;
 
         if (renderUtil.isIE7() || this.options.titleRotation === false) {
@@ -383,11 +383,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make top position.
      * @param {number} size - width or height
-     * @returns {number}
+     * @returns {?number}
      * @private
      */
     _makeTopPosition: function(size) {
-        var titleHeight, topPosition;
+        var topPosition = null;
+        var titleHeight;
 
         if (this.options.titleRotation === false) {
             titleHeight = renderUtil.getRenderedLabelHeight(this.options.title, this.theme.title);
@@ -405,20 +406,21 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * Make positionMap for not center align.
      * @param {number} size - width or height
      * @returns {object.<string, number>}
+     * @private
      */
-    makePositionMapForNotCenterAlign: function(size) {
+    _makePositionMapForNotCenterAlign: function(size) {
         var positionMap = {};
         var topPosition;
 
         if (this.data.isPositionRight) {
-            positionMap.right = this._makeRightPositionForRightYAxis(size);
+            positionMap.right = this._makeRightPosition(size);
         } else {
             positionMap.left = 0;
         }
 
         topPosition = this._makeTopPosition(size);
 
-        if (!tui.util.isUndefined(topPosition)) {
+        if (!tui.util.isNull(topPosition)) {
             positionMap.top = topPosition;
         }
 
@@ -438,7 +440,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         if (this.options.isCenter) {
             cssPositionMap = this._makePositionMapForCenterAlign();
         } else {
-            cssPositionMap = this.makePositionMapForNotCenterAlign(size);
+            cssPositionMap = this._makePositionMapForNotCenterAlign(size);
         }
 
         if (this.options.titleRotation !== false) {

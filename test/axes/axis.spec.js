@@ -6,10 +6,9 @@
 
 'use strict';
 
-var Axis = require('../../src/js/axes/axis'),
-    chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var Axis = require('../../src/js/axes/axis');
+var dom = require('../../src/js/helpers/domHandler');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for Axis', function() {
     var dataProcessor, boundsMaker, axis;
@@ -288,6 +287,139 @@ describe('Test for Axis', function() {
             expected = 'center';
 
             expect(actual).not.toMatch(expected);
+        });
+    });
+
+    describe('_makePositionMapForCenterAlign()', function() {
+        it('y축이 중앙 정렬을 위해 제목 높이와 y축 너비 x축 높이를 이용하여 postion(left, bottom)정보를 생성합니다.', function() {
+            var actual;
+
+            boundsMaker.getDimension.and.callFake(function(componentType) {
+                return {
+                    xAxis: {
+                        height: 50
+                    },
+                    yAxis: {
+                        width: 100
+                    }
+                }[componentType];
+            });
+
+            actual = axis._makePositionMapForCenterAlign();
+
+            expect(actual.left).toBe(25);
+            expect(actual.bottom).toBe(-50);
+        });
+    });
+
+    describe('_makeRightPosition', function() {
+        it('IE7에서는 0을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isIE7').and.returnValue(true);
+
+            actual = axis._makeRightPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('titleRotation옵션이 false인 경우에도 0을 반환합니다.', function() {
+            var actual;
+
+            axis.options.titleRotation = false;
+
+            actual = axis._makeRightPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('나머지 경우에는 전달하는 size를 음수로 변경하여 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
+
+            actual = axis._makeRightPosition(100);
+
+            expect(actual).toBe(-100);
+        });
+    });
+
+    describe('_makeTopPosition()', function() {
+        it('titleRotation옵션이 false인 경우에는 전달하는 size에서 제목 높이값을 뺀 값의 반을 반환합니다.', function() {
+            var actual;
+
+            axis.options.titleRotation = false;
+
+            actual = axis._makeTopPosition(100);
+
+            expect(actual).toBe(40);
+        });
+
+        it('titleRotation옵션 없이 오른쪽 y축(isPositionRight=true)인 경우에는 0을 반환합니다.', function() {
+            var actual;
+
+            axis.data.isPositionRight = true;
+            actual = axis._makeTopPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('titleRotation옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)도 아닌 경우에는 전달한 size 그대로 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
+
+            actual = axis._makeTopPosition(100);
+
+            expect(actual).toBe(100);
+        });
+
+        it('titleRotation옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)인 경우에는 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
+
+            actual = axis._makeTopPosition();
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_makePositionMapForNotCenterAlign()', function() {
+        it('y축이 중앙 정렬이 아닌 경우의 position(top, left) map을 구합니다.', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(50);
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.left).toBe(0);
+            expect(actual.top).toBe(50);
+        });
+
+        it('오른쪽 y축인 경우에는 left가 아닌 right값을 반환합니다.', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(50);
+            spyOn(axis, '_makeRightPosition').and.returnValue(30);
+            axis.data.isPositionRight = true;
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.right).toBe(30);
+            expect(actual.left).toBeUndefined();
+            expect(actual.top).toBe(50);
+        });
+
+        it('top position값이 null인 경우에는 top을 반환하지 않습니다. ', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(null);
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.left).toBe(0);
+            expect(actual.top).toBeUndefined();
         });
     });
 
