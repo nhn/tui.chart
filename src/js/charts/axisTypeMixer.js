@@ -196,13 +196,14 @@ var axisTypeMixer = {
     _makeAxesData: function() {
         var axisScaleMakerMap = this._getAxisScaleMakerMap();
         var options = this.options;
+        var yAxisOptions = tui.util.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
         var axesData = {
             xAxis: this._makeAxisData(axisScaleMakerMap.xAxis, options.xAxis),
-            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, options.yAxis, true)
+            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, yAxisOptions[0], true)
         };
 
         if (this.hasRightYAxis) {
-            axesData.rightYAxis = this._makeAxisData(null, options.yAxis, true, true);
+            axesData.rightYAxis = this._makeAxisData(null, yAxisOptions[1], true, true);
         }
 
         return axesData;
