@@ -333,7 +333,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('나머지 경우에는 전달하는 size를 음수로 변경하여 반환합니다.', function() {
+        it('IE7도 아니고 titleRotation옵션도 없다면 전달하는 size를 음수로 변경하여 반환합니다.', function() {
             var actual;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
