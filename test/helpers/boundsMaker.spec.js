@@ -743,7 +743,60 @@ describe('Test for BoundsMaker', function() {
     });
 
     describe('_makeCircleLegendPosition()', function() {
-        it('series의 position.left와 series의 너비값을 더해 circleLegend의 left를 구합니다.', function() {
+        it('series의 left와 너비값 그리고 circleLegend와 legend의 너비 차를 이용하여 left를 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.positions = {
+                series: {
+                    left: 40
+                }
+            };
+            boundsMaker.dimensions = {
+                series: {
+                    width: 400
+                },
+                circleLegend: {
+                    width: 100
+                },
+                legend: {
+                    width: 120
+                }
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 455;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('왼쪽 정렬인 경우에는 circleLegend와 legend의 너비 차만 이용하여 left를 구합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.options = {
+                legend: {
+                    align: 'left'
+                }
+            };
+            boundsMaker.positions = {
+                series: {}
+            };
+            boundsMaker.dimensions = {
+                series: {},
+                circleLegend: {
+                    width: 100
+                },
+                legend: {
+                    width: 120
+                }
+            };
+
+            actual = boundsMaker._makeCircleLegendPosition().left;
+            expected = 0;
+
+            expect(actual).toBe(15);
+        });
+
+        it('가로타입의 범례인 경우에는 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
             boundsMaker.positions = {
@@ -757,6 +810,11 @@ describe('Test for BoundsMaker', function() {
                 },
                 circleLegend: {}
             };
+            boundsMaker.options = {
+                legend: {
+                    align: 'top'
+                }
+            };
 
             actual = boundsMaker._makeCircleLegendPosition().left;
             expected = 440;
@@ -764,24 +822,28 @@ describe('Test for BoundsMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('왼쪽 정렬인 경우에 left는 0 입니다.', function() {
+        it('범례가 숨겨진 경우에도 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.options = {
-                legend: {
-                    align: 'left'
+            boundsMaker.positions = {
+                series: {
+                    left: 40
                 }
             };
-            boundsMaker.positions = {
-                series: {}
-            };
             boundsMaker.dimensions = {
-                series: {},
+                series: {
+                    width: 400
+                },
                 circleLegend: {}
+            };
+            boundsMaker.options = {
+                legend: {
+                    hidden: true
+                }
             };
 
             actual = boundsMaker._makeCircleLegendPosition().left;
-            expected = 0;
+            expected = 440;
 
             expect(actual).toBe(expected);
         });
@@ -800,7 +862,8 @@ describe('Test for BoundsMaker', function() {
                 },
                 circleLegend: {
                     height: 80
-                }
+                },
+                legend: {}
             };
 
             actual = boundsMaker._makeCircleLegendPosition().top;

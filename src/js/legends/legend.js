@@ -103,7 +103,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.boundsMaker.registerBaseDimension('legend', legendDimension);
 
-        if (!predicate.isHorizontalLegend(this.options.align) && this.options.hidden !== true) {
+        if (predicate.hasVerticalLegendWidth(this.options)) {
             this.boundsMaker.registerBaseDimension('calculationLegend', {
                 width: legendDimension.width
             });
@@ -113,8 +113,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Render legend area.
      * @param {HTMLElement} legendContainer legend container
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
-     * @param {Array.<boolean>} checkedIndexes checked indexes
      * @private
      */
     _renderLegendArea: function(legendContainer) {

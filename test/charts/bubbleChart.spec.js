@@ -20,7 +20,7 @@ describe('Test for BubbleChart', function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor',
             ['getCategories', 'hasCategories', 'getCategories', 'getSeriesDataModel', 'getValues',
                 'getFormattedMaxValue', 'addDataRatiosForCoordinateType']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getMinimumPixelStepForAxis',
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMinimumPixelStepForAxis',
                 'registerBaseDimension', 'registerAxesData']);
         sereisDataModel = jasmine.createSpyObj('seriesDataModel', ['isXCountGreaterThanYCount']);
 
@@ -205,7 +205,8 @@ describe('Test for BubbleChart', function() {
         it('circleLegend.hidden 옵션이 없으면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
-                circleLegend: {}
+                circleLegend: {},
+                legend: {}
             };
             bubbleChart.theme = {
                 chart: {
@@ -234,58 +235,11 @@ describe('Test for BubbleChart', function() {
         });
     });
 
-    describe('_getMaxCircleLegendLabelWidth()', function() {
-        it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
-            dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
-            spyOn(renderUtil, 'getRenderedLabelWidth');
-            bubbleChart.theme = {
-                chart: {
-                    fontFamily: 'Verdana'
-                }
-            };
-            bubbleChart._getMaxCircleLegendLabelWidth();
-
-            expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
-                fontSize: 9,
-                fontFamily: 'Verdana'
-            });
-        });
-
-        it('renderUtil.getRenderedLabelWidth의 결과를 반환합니다.', function() {
-            var actual, expected;
-
-            spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(20);
-            bubbleChart.theme = {
-                chart: {
-                    fontFamily: 'Verdana'
-                }
-            };
-
-            actual = bubbleChart._getMaxCircleLegendLabelWidth();
-            expected = 20;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
-    describe('_getCircleLegendWidth()', function() {
-        it('CircleLegend의 circle너비와 label너비중 큰 값을 반환합니다.', function() {
-            var actual, expected;
-
-            boundsMaker.getMinimumPixelStepForAxis.and.returnValue(20);
-            spyOn(bubbleChart, '_getMaxCircleLegendLabelWidth').and.returnValue(65);
-
-            actual = bubbleChart._getCircleLegendWidth();
-            expected = 65;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_updateLegendAndSeriesWidth()', function() {
         it('_getCircleLegendWidth()의 수행 결과로 boundsMaker의 legend영역 너비를 갱신 합니다.', function() {
-            spyOn(bubbleChart, '_getCircleLegendWidth').and.returnValue(80);
-
+            boundsMaker.getDimension.and.returnValue({
+                width: 80
+            });
             bubbleChart._updateLegendAndSeriesWidth(300, 60);
 
             expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith('legend', {
@@ -294,7 +248,9 @@ describe('Test for BubbleChart', function() {
         });
 
         it('가로형(top, bottom) 범례의 경우에는 boundsMaker의 legend영역 너비를 갱신하지 않습니다.', function() {
-            spyOn(bubbleChart, '_getCircleLegendWidth').and.returnValue(80);
+            boundsMaker.getDimension.and.returnValue({
+                width: 80
+            });
             bubbleChart.options = {
                 legend: {
                     align: 'top'
@@ -310,32 +266,14 @@ describe('Test for BubbleChart', function() {
         });
 
         it('기존 series의 너비에서 CircleLegend와 Legned의 너비차를 빼  boundsMaker의 series영역 너비를 갱신 합니다.', function() {
-            spyOn(bubbleChart, '_getCircleLegendWidth').and.returnValue(80);
+            boundsMaker.getDimension.and.returnValue({
+                width: 80
+            });
             bubbleChart._updateLegendAndSeriesWidth(300, 60);
 
             expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith('series', {
                 width: 280
             });
-        });
-    });
-
-    describe('_updateAxesDataOfBoundsMaker()', function() {
-        it('axisScaleMakerMap을 초기화 합니다.', function() {
-            bubbleChart.axisScaleMakerMap = 'axisScaleMakerMap';
-            spyOn(bubbleChart, '_makeAxesData');
-
-            bubbleChart._updateAxesDataOfBoundsMaker();
-
-            expect(bubbleChart.axisScaleMakerMap).toBeNull();
-        });
-
-        it('_makeAxesData의 결과로 boundsMaker.registerAxesData에 전달하여 등록합니다.', function() {
-            bubbleChart.axisScaleMakerMap = 'axisScaleMakerMap';
-            spyOn(bubbleChart, '_makeAxesData').and.returnValue('axesData');
-
-            bubbleChart._updateAxesDataOfBoundsMaker();
-
-            expect(boundsMaker.registerAxesData).toHaveBeenCalledWith('axesData');
         });
     });
 

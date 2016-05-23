@@ -260,17 +260,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Register axes data, used in a axis component like yAxis, xAxis.
+     * @private
+     */
+    _registerAxesData: function() {
+        var axesData = this._makeAxesData();
+        this.boundsMaker.registerAxesData(axesData);
+    },
+
+    /**
      * Render.
      * @param {function} onRender render callback function
      * @private
      */
     _render: function(onRender) {
-        var axesData, renderingData;
+        var renderingData;
 
         this._executeComponentFunc('registerDimension');
-        axesData = this._makeAxesData();
-
-        this.boundsMaker.registerAxesData(axesData);
+        this._registerAxesData();
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 

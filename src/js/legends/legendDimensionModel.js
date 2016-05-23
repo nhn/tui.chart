@@ -165,7 +165,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
             legendHeight = horizontalLegendHeight + (chartConst.LEGEND_AREA_PADDING * 2);
 
         return {
-            width: labelsAndMaxWidth.maxLineWidth,
+            width: Math.max(labelsAndMaxWidth.maxLineWidth, chartConst.MAX_LEGEND_WIDTH),
             height: legendHeight
         };
     },
