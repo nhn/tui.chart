@@ -160,9 +160,9 @@ var chartConst = {
     /** tooltip animation time for pie chart */
     TOOLTIP_PIE_ANIMATION_TIME: 50,
     /** minimum pixel type step size */
-    MIN_PIXEL_TYPE_STEP_SIZE: 40,
+    MIN_PIXEL_TYPE_STEP_SIZE: 45,
     /** maximum pixel type step size */
-    MAX_PIXEL_TYPE_STEP_SIZE: 60,
+    MAX_PIXEL_TYPE_STEP_SIZE: 65,
     /** axis scale of percent stacked option
      * @type {object}
      */

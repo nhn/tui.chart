@@ -210,7 +210,7 @@ describe('Test for AxisScaleMaker', function() {
             boundsMaker.makeSeriesWidth.and.returnValue(320);
 
             actual = axisScaleMaker._getCandidateCountsOfValue();
-            expected = [5, 6, 7, 8];
+            expected = [4, 5, 6, 7];
 
             expect(actual).toEqual(expected);
         });
@@ -221,7 +221,7 @@ describe('Test for AxisScaleMaker', function() {
             boundsMaker.makeSeriesWidth.and.returnValue(450);
 
             actual = axisScaleMaker._getCandidateCountsOfValue();
-            expected = [7, 8, 9, 10, 11];
+            expected = [6, 7, 8, 9, 10];
 
             expect(actual).toEqual(expected);
         });
