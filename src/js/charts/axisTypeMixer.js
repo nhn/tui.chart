@@ -187,8 +187,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Make axes data.
-     * Axes data is map for axis data like yAxis, xAxis, rightYAxis.
+     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
      * @returns {object} axes data
      * @private
      * @override

@@ -226,7 +226,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make axes data.
+     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
      * @abstract
      * @private
      */
