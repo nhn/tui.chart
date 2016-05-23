@@ -175,11 +175,11 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
     },
 
     /**
-     * Get width of max label of CircleLegend.
+     * Get max width of label for CircleLegend.
      * @returns {number}
      * @private
      */
-    _getMaxCircleLegendLabelWidth: function() {
+    _getCircleLegendLabelMaxWidth: function() {
         var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
         var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
             fontSize: this.labelTheme.fontSize,
@@ -196,7 +196,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     _getCircleLegendWidth: function() {
         var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
-        var maxLabelWidth = this._getMaxCircleLegendLabelWidth();
+        var maxLabelWidth = this._getCircleLegendLabelMaxWidth();
 
         return Math.max((maxRadius * 2), maxLabelWidth) + chartConst.CIRCLE_LEGEND_PADDING;
     },

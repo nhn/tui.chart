@@ -77,12 +77,12 @@ describe('Test for CircleLegend', function() {
         });
     });
 
-    describe('_getMaxCircleLegendLabelWidth()', function() {
+    describe('_getCircleLegendLabelMaxWidth()', function() {
         it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
             dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
             spyOn(renderUtil, 'getRenderedLabelWidth');
             circleLegend.labelTheme.fontFamily = 'Verdana';
-            circleLegend._getMaxCircleLegendLabelWidth();
+            circleLegend._getCircleLegendLabelMaxWidth();
 
             expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
                 fontSize: 9,
@@ -100,7 +100,7 @@ describe('Test for CircleLegend', function() {
                 }
             };
 
-            actual = circleLegend._getMaxCircleLegendLabelWidth();
+            actual = circleLegend._getCircleLegendLabelMaxWidth();
             expected = 20;
 
             expect(actual).toBe(expected);
@@ -112,7 +112,7 @@ describe('Test for CircleLegend', function() {
             var actual, expected;
 
             boundsMaker.getMinimumPixelStepForAxis.and.returnValue(20);
-            spyOn(circleLegend, '_getMaxCircleLegendLabelWidth').and.returnValue(65);
+            spyOn(circleLegend, '_getCircleLegendLabelMaxWidth').and.returnValue(65);
             circleLegend.legendOption = {};
 
             actual = circleLegend._getCircleLegendWidth();

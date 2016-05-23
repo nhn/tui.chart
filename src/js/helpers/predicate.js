@@ -249,7 +249,7 @@ var predicate = {
     },
 
     /**
-     * Whether has with for vertical type legend or not.
+     * Whether has width for vertical type legend or not.
      * @param {{align: string, hidden: ?boolean}} legendOption - option for legend component
      * @returns {boolean}
      */
