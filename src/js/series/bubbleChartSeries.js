@@ -73,7 +73,7 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
     _makeBounds: function() {
         var self = this;
         var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
-        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
+        var maxRadius = this.boundsMaker.getMaxRadiusForBubbleChart();
         var step = this._calculateStep();
         var start = step ? step / 2 : 0;
 

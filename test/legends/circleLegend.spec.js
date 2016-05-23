@@ -13,8 +13,8 @@ describe('Test for CircleLegend', function() {
     var circleLegend, dataProcessor, boundsMaker;
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormatFunctions', 'getMaxValue']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMinimumPixelStepForAxis']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFormatFunctions', 'getMaxValue', 'getFormattedMaxValue']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getMaxRadiusForBubbleChart', 'getMinimumPixelStepForAxis']);
         circleLegend = new CircleLegend({
             dataProcessor: dataProcessor,
             boundsMaker: boundsMaker
@@ -63,7 +63,7 @@ describe('Test for CircleLegend', function() {
                 width: 80,
                 height: 80
             });
-            boundsMaker.getMinimumPixelStepForAxis.and.returnValue(30);
+            boundsMaker.getMaxRadiusForBubbleChart.and.returnValue(30);
             dataProcessor.getMaxValue.and.returnValue(300);
             spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(12);
             spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(20);
@@ -72,6 +72,51 @@ describe('Test for CircleLegend', function() {
             expected = '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 8px">300</div>' +
                 '<div class="tui-chart-circle-legend-label" style="left: 30px;top: 38px">150</div><' +
                 'div class="tui-chart-circle-legend-label" style="left: 30px;top: 53px">75</div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_getMaxCircleLegendLabelWidth()', function() {
+        it('가장 큰 반지름 값과 CirleLegend label의 테마 정보를 renderUtil.getRenderedLabelWidth에 전달하여 레이블 너비를 구합니다.', function() {
+            dataProcessor.getFormattedMaxValue.and.returnValue('1,000');
+            spyOn(renderUtil, 'getRenderedLabelWidth');
+            circleLegend.labelTheme.fontFamily = 'Verdana';
+            circleLegend._getMaxCircleLegendLabelWidth();
+
+            expect(renderUtil.getRenderedLabelWidth).toHaveBeenCalledWith('1,000', {
+                fontSize: 9,
+                fontFamily: 'Verdana'
+            });
+        });
+
+        it('renderUtil.getRenderedLabelWidth의 결과를 반환합니다.', function() {
+            var actual, expected;
+
+            spyOn(renderUtil, 'getRenderedLabelWidth').and.returnValue(20);
+            circleLegend.theme = {
+                chart: {
+                    fontFamily: 'Verdana'
+                }
+            };
+
+            actual = circleLegend._getMaxCircleLegendLabelWidth();
+            expected = 20;
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_getCircleLegendWidth()', function() {
+        it('CircleLegend의 circle너비와 label너비 중 큰 값에 여백값을 더하여 반환합니다.', function() {
+            var actual, expected;
+
+            boundsMaker.getMinimumPixelStepForAxis.and.returnValue(20);
+            spyOn(circleLegend, '_getMaxCircleLegendLabelWidth').and.returnValue(65);
+            circleLegend.legendOption = {};
+
+            actual = circleLegend._getCircleLegendWidth();
+            expected = 75;
 
             expect(actual).toBe(expected);
         });

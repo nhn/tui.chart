@@ -249,6 +249,17 @@ var predicate = {
     },
 
     /**
+     * Whether has with for vertical type legend or not.
+     * @param {{align: string, hidden: ?boolean}} legendOption - option for legend component
+     * @returns {boolean}
+     */
+    hasVerticalLegendWidth: function(legendOption) {
+        legendOption = legendOption || {};
+
+        return !predicate.isHorizontalLegend(legendOption.align) && !predicate.isHidden(legendOption);
+    },
+
+    /**
      * Whether legend align of pie chart or not.
      * @memberOf module:predicate
      * @param {?string} align - align of legend

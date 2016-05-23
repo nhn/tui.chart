@@ -12,7 +12,6 @@ var Series = require('../series/bubbleChartSeries');
 var CircleLegend = require('../legends/circleLegend');
 var axisTypeMixer = require('./axisTypeMixer');
 var predicate = require('../helpers/predicate');
-var renderUtil = require('../helpers/renderUtil');
 var SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
 
 var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototype */ {
@@ -103,40 +102,12 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             ]
         });
 
-        if (!tui.util.pick(this.options, 'circleLegend', 'hidden')) {
+        if (!predicate.isHidden(this.options.circleLegend)) {
             this.componentManager.register('circleLegend', CircleLegend, {
                 chartType: chartType,
                 baseFontFamily: this.theme.chart.fontFamily
             });
         }
-    },
-
-    /**
-     * Get width of max label of CircleLegend.
-     * @returns {number}
-     * @private
-     */
-    _getMaxCircleLegendLabelWidth: function() {
-        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
-        var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
-            fontSize: chartConst.CIRCLE_LEGEND_LABEL_FONT_SIZE,
-            fontFamily: this.theme.chart.fontFamily
-        });
-
-        return maxLabelWidth;
-    },
-
-    /**
-     * Get width of circle legend area.
-     * @returns {number}
-     * @private
-     */
-    _getCircleLegendWidth: function() {
-        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
-        var circleWidth = (maxRadius * 2) + chartConst.CIRCLE_LEGEND_PADDING;
-        var maxLabelWidth = this._getMaxCircleLegendLabelWidth();
-
-        return Math.max(circleWidth, maxLabelWidth);
     },
 
     /**
@@ -146,10 +117,9 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @private
      */
     _updateLegendAndSeriesWidth: function(seriesWidth, legendWidth) {
-        var circleLegendWidth = this._getCircleLegendWidth();
-        var legendAlignOption = tui.util.pick(this.options, 'legend', 'align');
+        var circleLegendWidth = this.boundsMaker.getDimension('circleLegend').width;
 
-        if (!predicate.isHorizontalLegend(legendAlignOption)) {
+        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
             this.boundsMaker.registerBaseDimension('legend', {
                 width: circleLegendWidth
             });
@@ -161,39 +131,15 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
-     * Update axesData of boundsMaker.
-     * @private
-     */
-    _updateAxesDataOfBoundsMaker: function() {
-        var newAxesData;
-
-        this.axisScaleMakerMap = null;
-        newAxesData = this._makeAxesData();
-        this.boundsMaker.registerAxesData(newAxesData);
-    },
-
-    /**
-     * Whether changed max radius or not.
-     * @param {boolean} beforeMaxRadius - before max radius
-     * @returns {boolean}
-     * @private
-     */
-    _isChangedMaxRadius: function(beforeMaxRadius) {
-        var afterMaxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
-
-        return (beforeMaxRadius !== afterMaxRadius);
-    },
-
-    /**
      * Update width of legend area by width of circle legend area.
      * @private
      */
     _updateLegendWidthByCircleLegendWidth: function() {
         var boundsMaker = this.boundsMaker;
         var axesData = boundsMaker.getAxesData();
-        var circleLegendWidth = this._getCircleLegendWidth();
+        var circleLegendWidth = boundsMaker.getDimension('circleLegend').width;
         var legendWidth = boundsMaker.getDimension('calculationLegend').width;
-        var isXAxisLabel, beforeMaxRadius, seriesWidth;
+        var isXAxisLabel, seriesWidth;
 
         if (legendWidth >= circleLegendWidth) {
             return;
@@ -201,39 +147,17 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
 
         isXAxisLabel = axesData.xAxis.isLabel;
         seriesWidth = boundsMaker.getDimension('series').width;
-        beforeMaxRadius = boundsMaker.getMinimumPixelStepForAxis();
 
         this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
 
         if (!isXAxisLabel) {
-            this._updateAxesDataOfBoundsMaker(isXAxisLabel);
+            this.axisScaleMakerMap = null;
+            this._registerAxesData();
         }
-
-        if (this._isChangedMaxRadius(beforeMaxRadius)) {
-            this._updateLegendAndSeriesWidth(seriesWidth, legendWidth);
-
-            if (!isXAxisLabel) {
-                this._updateAxesDataOfBoundsMaker(isXAxisLabel);
-            }
-        }
-    },
-
-    /**
-     * Register dimension of circle legend.
-     * @private
-     */
-    _registerCircleLegendDimension: function() {
-        var circleLegendWidth = this._getCircleLegendWidth();
-
-        this.boundsMaker.registerBaseDimension('circleLegend', {
-            width: circleLegendWidth,
-            height: circleLegendWidth
-        });
     },
 
     /**
      * Update dimensions.
-     * @param {{xAxis: object, yAxis: object}} axesData - data for rendering of axis area(x axis and y axis).
      * @private
      * @override
      */
@@ -242,8 +166,8 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             return;
         }
 
+        this.componentManager.get('circleLegend').registerCircleLegendDimension();
         this._updateLegendWidthByCircleLegendWidth();
-        this._registerCircleLegendDimension();
     }
 });
 

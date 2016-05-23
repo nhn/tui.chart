@@ -101,7 +101,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var boundsMaker = this.boundsMaker;
         var dimension = boundsMaker.getDimension('circleLegend');
         var halfWidth = dimension.width / 2;
-        var maxRadius = boundsMaker.getRadiusForBubble();
+        var maxRadius = boundsMaker.getMaxRadiusForBubbleChart();
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
         var decimalLength = tui.util.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
@@ -135,16 +135,16 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     _render: function() {
         var circleContainer = dom.create('DIV', 'tui-chart-circle-area');
-        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
-        var dimension = this.boundsMaker.getDimension('circleLegend');
-        var position = this.boundsMaker.getPosition('circleLegend');
+        var boundsMaker = this.boundsMaker;
+        var bound = boundsMaker.getBound('circleLegend');
+        var maxRadius = boundsMaker.getMaxRadiusForBubbleChart();
 
         this.container.appendChild(circleContainer);
 
-        this.graphRenderer.render(circleContainer, dimension, maxRadius, this.circleRatios);
+        this.graphRenderer.render(circleContainer, bound.dimension, maxRadius, this.circleRatios);
 
         this._renderLabelArea();
-        renderUtil.renderPosition(this.container, position);
+        renderUtil.renderPosition(this.container, bound.position);
     },
 
     /**
@@ -172,6 +172,49 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     resize: function() {
         this.rerender();
+    },
+
+    /**
+     * Get width of max label of CircleLegend.
+     * @returns {number}
+     * @private
+     */
+    _getMaxCircleLegendLabelWidth: function() {
+        var maxLabel = this.dataProcessor.getFormattedMaxValue(this.chartType, 'circleLegend', 'r');
+        var maxLabelWidth = renderUtil.getRenderedLabelWidth(maxLabel, {
+            fontSize: this.labelTheme.fontSize,
+            fontFamily: this.labelTheme.fontFamily
+        });
+
+        return maxLabelWidth;
+    },
+
+    /**
+     * Get circle legend width.
+     * @returns {number}
+     * @private
+     */
+    _getCircleLegendWidth: function() {
+        var maxRadius = this.boundsMaker.getMinimumPixelStepForAxis();
+        var maxLabelWidth = this._getMaxCircleLegendLabelWidth();
+
+        return Math.max((maxRadius * 2), maxLabelWidth) + chartConst.CIRCLE_LEGEND_PADDING;
+    },
+
+    /**
+     * Register dimension of circle legend.
+     * @private
+     */
+    registerCircleLegendDimension: function() {
+        var circleLegendWidth = this._getCircleLegendWidth();
+        var legendWidth = this.boundsMaker.getDimension('calculationLegend').width || chartConst.MAX_LEGEND_WIDTH;
+
+        circleLegendWidth = Math.min(circleLegendWidth, legendWidth);
+
+        this.boundsMaker.registerBaseDimension('circleLegend', {
+            width: circleLegendWidth,
+            height: circleLegendWidth
+        });
     }
 });
 
