@@ -101,13 +101,13 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
         var boundsMaker = this.boundsMaker;
         var dimension = boundsMaker.getDimension('circleLegend');
         var halfWidth = dimension.width / 2;
-        var maxPixelRadius = boundsMaker.getMinimumPixelStepForAxis();
+        var maxRadius = boundsMaker.getRadiusForBubble();
         var maxValueRadius = this.dataProcessor.getMaxValue(this.chartType, 'r');
         var decimalLength = tui.util.getDecimalLength(maxValueRadius);
         var labelHeight = renderUtil.getRenderedLabelHeight(maxValueRadius, this.labelTheme);
 
         return tui.util.map(this.circleRatios, function(ratio) {
-            var diameter = maxPixelRadius * ratio * 2;
+            var diameter = maxRadius * ratio * 2;
             var label = self._formatLabel(maxValueRadius * ratio, decimalLength);
             var labelWidth = renderUtil.getRenderedLabelWidth(label, self.labelTheme);
             return legendTemplate.tplCircleLegendLabel({

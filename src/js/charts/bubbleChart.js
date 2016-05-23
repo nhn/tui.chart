@@ -65,11 +65,15 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             if (isXCountGreaterThanYCount) {
                 scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
             } else {
-                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y');
+                scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y', null, {
+                    isVertical: true
+                });
             }
         } else {
             scaleMakerMap.xAxis = this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x');
-            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y');
+            scaleMakerMap.yAxis = this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y', null, {
+                isVertical: true
+            });
         }
 
         return scaleMakerMap;

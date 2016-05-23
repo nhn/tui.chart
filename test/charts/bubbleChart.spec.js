@@ -55,7 +55,9 @@ describe('Test for BubbleChart', function() {
             expect(bubbleChart._createAxisScaleMaker).toHaveBeenCalledWith({
                 min: 20,
                 max: 90
-            }, 'yAxis', 'y');
+            }, 'yAxis', 'y', null, {
+                isVertical: true
+            });
         });
 
         it('카테고리가 없다면 xAxis와 yAxis 모두에 설정하여 반환합니다.', function() {
