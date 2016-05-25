@@ -38,6 +38,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
          * @type {object}
          */
         this.options = params.options || {};
+        this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
 
         /**
          * Theme
@@ -65,7 +66,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         renderUtil.renderDimension(plotContainer, dimension);
         renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
 
-        if (!this.options.hideLine) {
+        if (this.options.showLine) {
             this._renderLines(plotContainer, dimension);
         }
     },

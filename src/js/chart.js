@@ -125,6 +125,8 @@ _createChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -211,6 +213,8 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} column chart
@@ -296,6 +300,8 @@ tui.chart.columnChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -384,6 +390,8 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -469,6 +477,8 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bubble chart
@@ -563,6 +573,8 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} scatter chart
@@ -658,6 +670,8 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
