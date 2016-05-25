@@ -32,7 +32,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
 
         this.legendLabels = params.legendLabels;
 
-        this.legendCheckboxWidth = this.options.hasCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
+        this.legendCheckboxWidth = this.options.showCheckbox === false ? 0 : chartConst.LEGEND_CHECKBOX_WIDTH;
     },
 
     /**

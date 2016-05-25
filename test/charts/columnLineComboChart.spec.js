@@ -43,7 +43,7 @@ describe('Test for ColumnLineComboChart', function() {
                 ],
                 series: {
                     line: {
-                        hasDot: true
+                        showDot: true
                     }
                 },
                 xAxis: {

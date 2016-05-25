@@ -19,7 +19,7 @@ describe('Test for comboTypeMixer', function() {
                         stackType: 'normal'
                     },
                     line: {
-                        hasDot: true
+                        showDot: true
                     }
                 },
                 tooltip: {
@@ -39,7 +39,7 @@ describe('Test for comboTypeMixer', function() {
                 stackType: 'normal'
             });
             expect(actual.line).toEqual({
-                hasDot: true
+                showDot: true
             });
         });
     });

@@ -46,7 +46,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             groupPositions = data.groupPositions,
             theme = data.theme,
             colors = theme.colors,
-            opacity = data.options.hasDot ? 1 : 0,
+            opacity = data.options.showDot ? 1 : 0,
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper;

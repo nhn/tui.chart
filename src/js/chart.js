@@ -123,7 +123,7 @@ _createChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -209,7 +209,7 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -280,7 +280,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
- *          @param {boolean} options.series.hasDot whether has dot or not
+ *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline whether spline or not
@@ -294,7 +294,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -334,7 +334,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       },
  *       series: {
- *         hasDot: true
+ *         showDot: true
  *       }
  *     };
  * tui.chart.lineChart(container, rawData, options);
@@ -368,7 +368,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
- *          @param {boolean} options.series.hasDot whether has dot or not
+ *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline whether spline or not
@@ -382,7 +382,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -467,7 +467,7 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -561,7 +561,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -641,7 +641,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *              @param {number} options.series.column.barWidth bar width
  *              @param {boolean} options.series.column.allowSelect - whether allow select or not
  *          @param {object} options.series.line options of line series
- *              @param {boolean} options.series.line.hasDot whether has dot or not
+ *              @param {boolean} options.series.line.showDot - whether show dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
  *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline whether spline or not
@@ -656,7 +656,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *          @param {boolean} options.tooltip.grouped whether group tooltip or not
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -710,7 +710,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       },
  *       series: {
- *         hasDot: true
+ *         showDot: true
  *       }
  *     };
  * tui.chart.comboChart(container, rawData, options);
@@ -747,7 +747,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  *              @param {number} options.tooltip.position.top position top
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden whether hidden or not
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
@@ -815,7 +815,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options of legend
  *          @param {string} options.legend.align - legend align (top|bottom|left|center|outer)
- *          @param {boolean} options.legend.hasCheckbox - whether has checkbox or not (default: true)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
  *          @param {boolean} options.legend.hidden - whether hidden or not
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - graph library type

@@ -211,7 +211,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendData, function(legendDatum, index) {
                 var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop),
-                    checkbox = self.options.hasCheckbox === false ? '' : checkBoxTemplate({
+                    checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
                         index: index,
                         checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
                     }),
