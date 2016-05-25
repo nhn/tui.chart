@@ -11,6 +11,8 @@
 <div id="chart-area"></div>
 <div class="custom-area">
     <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" checked disabled><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
         <input type="hidden" id="type" value="bubbleChart" />
     </div>
@@ -161,11 +163,25 @@
                 "<div>Population: " + items.r + "</div>"+
             "</div>";
         }
-    }
+    },
+    "theme": "newTheme"
 }
         </textarea>
         <div class="btn-area">
             <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area" style="display:block">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": ["#37474F", "#BA68C8", "#00C853", "#039BE5",  "#FFC400"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
         </div>
     </div>
 </div>

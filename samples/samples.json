@@ -50,8 +50,8 @@
   "sample05-01-bubble-chart": {
     "title": "Bubble Chart Sample"
   },
-  "sample06-01-combo-chart": {
-    "title": "Combo Chart Sample"
+  "sample06-01-scatter-chart": {
+    "title": "Scatter Chart Sample"
   },
   "sample07-01-pie-chart": {
     "title": "Pie Chart Sample"
@@ -62,28 +62,40 @@
   "sample07-03-legend-type-outer-show-label-pie-chart": {
     "title": "Outer Legend Pie Chart Sample"
   },
-  "sample08-01-world-map-chart": {
+  "sample08-01-donut-chart": {
+    "title": "Donut Chart Sample"
+  },
+  "sample08-02-semi-circle-donut-chart": {
+    "title": "Semi Circle Donut Chart Sample"
+  },
+  "sample09-01-column-line-combo-chart": {
+    "title": "Column and Line Combo Chart Sample"
+  },
+  "sample09-02-pie-donut-combo-chart": {
+    "title": "Pie and Donut Combo Chart Sample"
+  },
+  "sample10-01-world-map-chart": {
     "title": "World Map Chart Sample"
   },
-  "sample08-02-south-korea-map-chart": {
+  "sample10-02-south-korea-map-chart": {
     "title": "South Korea Map Chart Sample"
   },
-  "sample08-03-usa-map-chart": {
+  "sample10-03-usa-map-chart": {
     "title": "USA Map Chart Sample"
   },
-  "sample08-04-china-map-chart": {
+  "sample10-04-china-map-chart": {
     "title": "China Map Chart Sample"
   },
-  "sample08-05-japan-map-chart": {
+  "sample10-05-japan-map-chart": {
     "title": "Japan Map Chart Sample"
   },
-  "sample08-06-singapore-map-chart": {
+  "sample10-06-singapore-map-chart": {
     "title": "Singapore Map Chart Sample"
   },
-  "sample08-07-thailand-map-chart": {
+  "sample10-07-thailand-map-chart": {
     "title": "Thailand Map Chart Sample"
   },
-  "sample08-08-taiwan-map-chart": {
+  "sample10-08-taiwan-map-chart": {
     "title": "Taiwan Map Chart Sample"
   }
 }
