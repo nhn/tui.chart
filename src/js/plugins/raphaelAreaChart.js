@@ -62,7 +62,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-        if (data.options.hasSelection) {
+        if (data.options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
 

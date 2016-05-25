@@ -111,7 +111,7 @@ _createChart = function(container, rawData, options) {
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.diverging whether diverging or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
@@ -197,7 +197,7 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.diverging whether diverging or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
@@ -282,7 +282,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
@@ -370,7 +370,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
@@ -456,7 +456,7 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.max maximum value of vertical axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
@@ -550,7 +550,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.max maximum value of vertical axis
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {string} options.tooltip.suffix suffix of tooltip
  *          @param {function} [options.tooltip.template] template of tooltip
@@ -639,11 +639,11 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *              @param {string} options.series.column.stackType - type of stack
  *              @param {boolean} options.series.column.showLabel whether show label or not
  *              @param {number} options.series.column.barWidth bar width
- *              @param {boolean} options.series.column.hasSelection whether has selection or not
+ *              @param {boolean} options.series.column.allowSelect - whether allow select or not
  *          @param {object} options.series.line options of line series
  *              @param {boolean} options.series.line.hasDot whether has dot or not
  *              @param {boolean} options.series.line.showLabel whether show label or not
- *              @param {boolean} options.series.line.hasSelection whether has selection or not
+ *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline whether spline or not
  *      @param {object} options.tooltip options of tooltip
  *          @param {object} options.tooltip.column options of column tooltip
@@ -735,7 +735,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  *          @param {string} options.chart.format value format
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.startAngle start angle
  *          @param {boolean} options.series.endAngle end angle
  *      @param {object} options.tooltip options of tooltip
@@ -802,7 +802,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  *          @param {string | function} options.chart.format - value format
  *      @param {object} options.series - options of series
  *          @param {boolean} options.series.showLabel - whether show label or not
- *          @param {boolean} options.series.hasSelection - whether has selection or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {number} options.series.holeRatio - ratio of hole for donut graph
  *          @param {boolean} options.series.startAngle start angle
  *          @param {boolean} options.series.endAngle end angle

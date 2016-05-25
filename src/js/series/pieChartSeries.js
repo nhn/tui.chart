@@ -645,7 +645,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @param {{left: number, top: number}} position mouse position
      */
     onClickSeries: function(position) {
-        if (this.options.hasSelection) {
+        if (this.options.allowSelect) {
             this._executeGraphRenderer(position, 'clickSeries');
         }
     },
