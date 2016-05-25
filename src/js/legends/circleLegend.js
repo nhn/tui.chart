@@ -207,7 +207,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      */
     registerCircleLegendDimension: function() {
         var circleLegendWidth = this._getCircleLegendWidth();
-        var legendWidth = this.boundsMaker.getDimension('calculationLegend').width || chartConst.MAX_LEGEND_WIDTH;
+        var legendWidth = this.boundsMaker.getDimension('calculationLegend').width || chartConst.MIN_LEGEND_WIDTH;
 
         circleLegendWidth = Math.min(circleLegendWidth, legendWidth);
 
