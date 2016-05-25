@@ -71,7 +71,7 @@ describe('Test for barTypeMixer', function() {
         });
     });
 
-    describe('_makeStackedDivergingRawSeriesData()', function() {
+    describe('_makeRawSeriesDataForStackedDiverging()', function() {
         it('stacks중 0번 stack값을 갖고있는 요소의 data들의 양수는 음수로 음수는 0으로 변경합니다.', function() {
             var rawSeriesData = [
                     {
@@ -79,7 +79,7 @@ describe('Test for barTypeMixer', function() {
                         stack: 'stack1'
                     }
                 ],
-                actual = barTypeMixer._makeStackedDivergingRawSeriesData(rawSeriesData),
+                actual = barTypeMixer._makeRawSeriesDataForStackedDiverging(rawSeriesData),
                 expected = [
                     {
                         data: [-1, 0, -3],
@@ -100,7 +100,7 @@ describe('Test for barTypeMixer', function() {
                         stack: 'stack2'
                     }
                 ],
-                actual = barTypeMixer._makeStackedDivergingRawSeriesData(rawSeriesData),
+                actual = barTypeMixer._makeRawSeriesDataForStackedDiverging(rawSeriesData),
                 expected = [
                     {
                         data: [-1, 0, -3],
@@ -124,7 +124,7 @@ describe('Test for barTypeMixer', function() {
                         data: [-4, 5, 6]
                     }
                 ],
-                actual = barTypeMixer._makeStackedDivergingRawSeriesData(rawSeriesData),
+                actual = barTypeMixer._makeRawSeriesDataForStackedDiverging(rawSeriesData),
                 expected = [
                     {
                         data: [-1, 0, -3],
@@ -139,7 +139,7 @@ describe('Test for barTypeMixer', function() {
     });
 
     describe('_makeRawSeriesDataForDiverging()', function() {
-        it('stacked옵션이 없을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+        it('stackType옵션이 없을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
             var rawSeriesData = [
                     {
                         data: [1, -2, 3],
@@ -160,7 +160,7 @@ describe('Test for barTypeMixer', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('유효한 stacked옵션이 있을 경우에는 _makeStackedDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+        it('유효한 stackType옵션이 있을 경우에는 _makeRawSeriesDataForStackedDiverging()의 실행 결과를 반환합니다.', function() {
             var rawSeriesData = [
                     {
                         data: [1, -2, 3],
@@ -176,12 +176,12 @@ describe('Test for barTypeMixer', function() {
                     }
                 ],
                 actual = barTypeMixer._makeRawSeriesDataForDiverging(rawSeriesData, 'normal'),
-                expected = barTypeMixer._makeStackedDivergingRawSeriesData(rawSeriesData);
+                expected = barTypeMixer._makeRawSeriesDataForStackedDiverging(rawSeriesData);
 
             expect(actual).toEqual(expected);
         });
 
-        it('유효하지 않은 stacked옵션이 있을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
+        it('유효하지 않은 stackType옵션이 있을 경우에는 _makeNormalDivergingRawSeriesData()의 실행 결과를 반환합니다.', function() {
             var rawSeriesData = [
                     {
                         data: [1, -2, 3],

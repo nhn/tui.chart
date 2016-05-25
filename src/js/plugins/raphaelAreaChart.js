@@ -6,13 +6,13 @@
 
 'use strict';
 
-var RaphaelLineBase = require('./raphaelLineTypeBase'),
-    raphaelRenderUtil = require('./raphaelRenderUtil');
+var RaphaelLineBase = require('./raphaelLineTypeBase');
+var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
 
+var raphael = window.Raphael;
 var concat = Array.prototype.concat;
 
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
@@ -52,7 +52,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             paper;
 
         this.paper = paper = raphael(container, 1, dimension.height);
-        this.stackedOption = data.options.stacked;
         this.isSpline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;

@@ -35,13 +35,13 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
         options.series = options.series || {};
         options.yAxis = options.yAxis || {};
 
-        if (predicate.isValidStackedOption(options.series.stacked)) {
+        if (predicate.isValidStackOption(options.series.stackType)) {
             rawData.series = this._sortRawSeriesData(rawData.series);
         }
 
         if (options.series.diverging) {
-            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
-            options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stackType);
+            options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
         }
 
         ChartBase.call(this, {

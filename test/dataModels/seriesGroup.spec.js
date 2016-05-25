@@ -91,7 +91,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('addRatiosWhenPercentStacked()', function() {
-        it('percent stacked옵션일 경우에는 dividingNumber를 구하여 baseRatio와 함께 seriesItem.addRatio에 전달 합니다.', function() {
+        it('percent stackType옵션일 경우에는 dividingNumber를 구하여 baseRatio와 함께 seriesItem.addRatio에 전달 합니다.', function() {
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;
@@ -104,7 +104,7 @@ describe('Test for seriesGroup', function() {
     });
 
     describe('addRatiosWhenDivergingStacked()', function() {
-        it('diverging stacked옵션일 경우에는 plusSum, minusSum 중 하나를 선택하여 dividingNumber로 선택한 후 baseRatio 0.5와 함께 seriesItem.addRatio에 전달 합니다.', function() {
+        it('diverging stackType옵션일 경우에는 plusSum, minusSum 중 하나를 선택하여 dividingNumber로 선택한 후 baseRatio 0.5와 함께 seriesItem.addRatio에 전달 합니다.', function() {
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesItem.value = 20;

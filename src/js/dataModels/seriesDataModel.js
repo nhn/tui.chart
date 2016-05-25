@@ -33,11 +33,11 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
-var SeriesGroup = require('./seriesGroup'),
-    SeriesItem = require('./seriesItem'),
-    SeriesItemForCoordinateType = require('./seriesItemForCoordinateType'),
-    predicate = require('../helpers/predicate'),
-    calculator = require('../helpers/calculator');
+var SeriesGroup = require('./seriesGroup');
+var SeriesItem = require('./seriesItem');
+var SeriesItemForCoordinateType = require('./seriesItemForCoordinateType');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
 
 var concat = Array.prototype.concat;
 
@@ -100,14 +100,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Remove range value of item, if has stacked option.
+     * Remove range value of item, if has stackType option.
      * @private
      */
     _removeRangeValue: function() {
         var seriesOption = tui.util.pick(this.options, 'series') || {};
 
         if (predicate.isAllowRangeData(this.chartType) &&
-            !predicate.isValidStackedOption(seriesOption.stacked) && !seriesOption.spline) {
+            !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline) {
             return;
         }
 
@@ -376,7 +376,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Add ratios, when has normal stacked option.
+     * Add ratios, when has normal stackType option.
      * @param {{min: number, max: number}} limit - axis limit
      * @private
      */
@@ -403,7 +403,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Add ratios, when has percent stacked option.
+     * Add ratios, when has percent stackType option.
      * @private
      */
     _addRatiosWhenPercentStacked: function() {
@@ -415,7 +415,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     },
 
     /**
-     * Add ratios, when has diverging stacked option.
+     * Add ratios, when has diverging stackType option.
      * @private
      */
     _addRatiosWhenDivergingStacked: function() {
@@ -464,15 +464,15 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     /**
      * Add data ratios.
      * @param {{min: number, max: number}} limit - axis limit
-     * @param {string} stacked - stacked option
+     * @param {string} stackType - stackType option
      * @private
      */
-    addDataRatios: function(limit, stacked) {
-        var isAllowedStackedOption = predicate.isAllowedStackedOption(this.chartType);
+    addDataRatios: function(limit, stackType) {
+        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType);
 
-        if (isAllowedStackedOption && predicate.isNormalStacked(stacked)) {
+        if (isAllowedStackOption && predicate.isNormalStack(stackType)) {
             this._addRatiosWhenNormalStacked(limit);
-        } else if (isAllowedStackedOption && predicate.isPercentStacked(stacked)) {
+        } else if (isAllowedStackOption && predicate.isPercentStack(stackType)) {
             if (this.divergingOption) {
                 this._addRatiosWhenDivergingStacked();
             } else {

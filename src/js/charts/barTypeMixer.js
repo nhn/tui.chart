@@ -58,12 +58,12 @@ var barTypeMixer = {
     },
 
     /**
-     * Make stacked diverging raw series data.
+     * Make raw series data for stacked diverging option.
      * @param {{data: Array.<number>, stack: string}} rawSeriesData raw series data
      * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
-    _makeStackedDivergingRawSeriesData: function(rawSeriesData) {
+    _makeRawSeriesDataForStackedDiverging: function(rawSeriesData) {
         var self = this,
             stacks = rawDataHandler.pickStacks(rawSeriesData),
             result = [],
@@ -88,13 +88,13 @@ var barTypeMixer = {
     /**
      * Make raw series data for diverging.
      * @param {{data: Array.<number>, stack: string}} rawSeriesData raw series data
-     * @param {?string} stackedOption stacked option
+     * @param {?string} stackTypeOption stackType option
      * @returns {{data: Array.<number>}} changed raw series data
      * @private
      */
-    _makeRawSeriesDataForDiverging: function(rawSeriesData, stackedOption) {
-        if (predicate.isValidStackedOption(stackedOption)) {
-            rawSeriesData = this._makeStackedDivergingRawSeriesData(rawSeriesData);
+    _makeRawSeriesDataForDiverging: function(rawSeriesData, stackTypeOption) {
+        if (predicate.isValidStackOption(stackTypeOption)) {
+            rawSeriesData = this._makeRawSeriesDataForStackedDiverging(rawSeriesData);
         } else {
             rawSeriesData = this._makeNormalDivergingRawSeriesData(rawSeriesData);
         }

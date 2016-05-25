@@ -16,7 +16,7 @@ describe('Test for comboTypeMixer', function() {
             comboTypeMixer.options = {
                 series: {
                     column: {
-                        stacked: 'normal'
+                        stackType: 'normal'
                     },
                     line: {
                         hasDot: true
@@ -36,7 +36,7 @@ describe('Test for comboTypeMixer', function() {
             actual = comboTypeMixer._makeOptionsMap(['column', 'line']);
 
             expect(actual.column).toEqual({
-                stacked: 'normal'
+                stackType: 'normal'
             });
             expect(actual.line).toEqual({
                 hasDot: true

@@ -41,12 +41,12 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         options.plot = options.plot || {};
         options.series = options.series || {};
 
-        if (predicate.isValidStackedOption(options.series.stacked)) {
+        if (predicate.isValidStackOption(options.series.stackType)) {
             rawData.series = this._sortRawSeriesData(rawData.series);
         }
 
         if (options.series.diverging) {
-            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stacked);
+            rawData.series = this._makeRawSeriesDataForDiverging(rawData.series, options.series.stackType);
             this._updateDivergingOption(options);
         }
 
@@ -68,7 +68,7 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     _updateDivergingOption: function(options) {
         var isCenter;
 
-        options.series.stacked = options.series.stacked || chartConst.STACKED_NORMAL_TYPE;
+        options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
         this.hasRightYAxis = tui.util.isArray(options.yAxis) && options.yAxis.length > 1;
 
         isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);

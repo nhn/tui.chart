@@ -754,15 +754,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Register percent values.
      * @param {{min: number, max: number}} limit axis limit
-     * @param {string} stacked stacked option
+     * @param {string} stackType stackType option
      * @param {string} chartType chart type
      * @private
      */
-    addDataRatios: function(limit, stacked, chartType) {
+    addDataRatios: function(limit, stackType, chartType) {
         var seriesDataModel = this.getSeriesDataModel(chartType);
 
         this._addStartValueToAllSeriesItem(limit, chartType);
-        seriesDataModel.addDataRatios(limit, stacked);
+        seriesDataModel.addDataRatios(limit, stackType);
     }
 });
 

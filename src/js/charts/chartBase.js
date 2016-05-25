@@ -166,7 +166,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
             options: {
-                stacked: seriesOptions.stacked,
+                stackType: seriesOptions.stackType,
                 diverging: seriesOptions.diverging,
                 limit: limit
             },

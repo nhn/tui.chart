@@ -85,12 +85,12 @@ var chartConst = {
      */
     DEFAULT_THEME_NAME: 'default',
     MAX_HEIGHT_WORLD: 'A',
-    /** stacked option types
+    /** stack type
      * @type {string}
      */
-    STACKED_NORMAL_TYPE: 'normal',
+    NORMAL_STACK_TYPE: 'normal',
     /** @type {string} */
-    STACKED_PERCENT_TYPE: 'percent',
+    PERCENT_STACK_TYPE: 'percent',
     DEFAULT_STACK: '___DEFAULT___STACK___',
     DUMMY_KEY: '___DUMMY___KEY___',
     /** empty axis label */
@@ -163,7 +163,7 @@ var chartConst = {
     MIN_PIXEL_TYPE_STEP_SIZE: 45,
     /** maximum pixel type step size */
     MAX_PIXEL_TYPE_STEP_SIZE: 65,
-    /** axis scale of percent stacked option
+    /** axis scale for percent stack option
      * @type {object}
      */
     PERCENT_STACKED_AXIS_SCALE: {
@@ -174,7 +174,7 @@ var chartConst = {
         step: 25,
         labels: [0, 25, 50, 75, 100]
     },
-    /** axis scale of minus percent stacked option
+    /** axis scale for minus percent stack option
      * @type {object}
      */
     MINUS_PERCENT_STACKED_AXIS_SCALE: {
@@ -185,7 +185,7 @@ var chartConst = {
         step: 25,
         labels: [0, -25, -50, -75, -100]
     },
-    /** axis scale of dual percent stacked option
+    /** axis scale of dual percent stack option
      * @type {object}
      */
     DUAL_PERCENT_STACKED_AXIS_SCALE: {
@@ -196,7 +196,7 @@ var chartConst = {
         step: 25,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** axis scale of diverging percent stacked option
+    /** axis scale of diverging percent stack option
      * @type {object}
      */
     DIVERGING_PERCENT_STACKED_AXIS_SCALE: {

@@ -23,10 +23,10 @@ describe('Test for AxisScaleMaker', function() {
     });
 
     describe('_getFormatFunctions()', function() {
-        it('유효한 percent stacked 차트의 경우 %로 formatting 가능한 함수를 반환합니다.', function() {
+        it('유효한 percent stack 차트의 경우 %로 formatting 가능한 함수를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(true);
+            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(true);
 
             actual = axisScaleMaker._getFormatFunctions();
             expected = '10%';
@@ -34,10 +34,10 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual[0](10)).toBe(expected);
         });
 
-        it('유효한 percent stacked 차트가 아닌경우 dataProcessor에서 getFormatFunctions를 호출하여 formatting 가능한 함수를 얻어 반환합니다.', function() {
+        it('유효한 percent stack 차트가 아닌경우 dataProcessor에서 getFormatFunctions를 호출하여 formatting 가능한 함수를 얻어 반환합니다.', function() {
             var actual;
 
-            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
+            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(false);
             spyOn(axisScaleMaker.dataProcessor, 'getFormatFunctions').and.returnValue('formatFunctions');
 
             actual = axisScaleMaker._getFormatFunctions();
@@ -84,7 +84,7 @@ describe('Test for AxisScaleMaker', function() {
     });
 
     describe('_makeBaseValuesForNormalStackedChart()', function() {
-        it('normal stacked 차트의 baes values를 생성합니다.', function() {
+        it('normal stack 차트의 baes values를 생성합니다.', function() {
             var seriesGroup, actual, expected;
 
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
@@ -150,7 +150,7 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stacked 옵션이 normal인 경우에는 _makeBaseValuesOfNormalStackedChart()를 수행하여 baseValues를 생성합니다.', function() {
+        it('stackType 옵션이 normal인 경우에는 _makeBaseValuesOfNormalStackedChart()를 수행하여 baseValues를 생성합니다.', function() {
             var actual, expected;
 
             spyOn(axisScaleMaker, '_makeBaseValuesForNormalStackedChart').and.returnValue([
@@ -158,7 +158,7 @@ describe('Test for AxisScaleMaker', function() {
             ]);
 
             axisScaleMaker.chartType = 'column';
-            axisScaleMaker.options.stacked = 'normal';
+            axisScaleMaker.options.stackType = 'normal';
             actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
 
@@ -964,10 +964,10 @@ describe('Test for AxisScaleMaker', function() {
     });
 
     describe('_makeScale()', function() {
-        it('유효한 percent stacked 차트일 경우에는 _getPercentStackedScale()의 수행결과를 반환합니다.', function() {
+        it('유효한 percent stack 차트일 경우에는 _getPercentStackedScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(true);
+            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(true);
             spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(0);
 
             actual = axisScaleMaker._makeScale();
@@ -976,10 +976,10 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual).toBe(expected);
         });
 
-        it('유효한 percent stacked 차트가 아닌 경우에는 _calculateScale()의 수행결과를 반환합니다.', function() {
+        it('유효한 percent stack 차트가 아닌 경우에는 _calculateScale()의 수행결과를 반환합니다.', function() {
             var actual, expected;
 
-            spyOn(axisScaleMaker, '_isPercentStackedChart').and.returnValue(false);
+            spyOn(axisScaleMaker, '_isPercentStackChart').and.returnValue(false);
             boundsMaker.makeSeriesWidth.and.returnValue(400);
             spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([10, 20, 40, 90]);
 

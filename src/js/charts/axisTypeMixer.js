@@ -242,10 +242,10 @@ var axisTypeMixer = {
         var axesData = this.boundsMaker.getAxesData();
         var chartTypes = this.chartTypes || [this.chartType];
         var limitMap = this._getLimitMap(axesData, chartTypes);
-        var stackedOption = this.options.series && this.options.series.stacked;
+        var stackType = tui.util.pick(this.options.series, 'stackType');
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackedOption, chartType);
+            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
         });
     },
 

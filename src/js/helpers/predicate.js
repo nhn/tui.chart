@@ -274,44 +274,44 @@ var predicate = {
     },
 
     /**
-     * Whether allowed stacked option or not.
+     * Whether allowed stackType option or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
      * @returns {boolean}
      */
-    isAllowedStackedOption: function(chartType) {
+    isAllowedStackOption: function(chartType) {
         return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
             || predicate.isAreaChart(chartType);
     },
 
     /**
-     * Whether normal stacked or not.
+     * Whether normal stack type or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked - stacked option
+     * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isNormalStacked: function(stacked) {
-        return stacked === chartConst.STACKED_NORMAL_TYPE;
+    isNormalStack: function(stackType) {
+        return stackType === chartConst.NORMAL_STACK_TYPE;
     },
 
     /**
-     * Whether percent stacked or not.
+     * Whether percent stack type or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked - stacked option
+     * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isPercentStacked: function(stacked) {
-        return stacked === chartConst.STACKED_PERCENT_TYPE;
+    isPercentStack: function(stackType) {
+        return stackType === chartConst.PERCENT_STACK_TYPE;
     },
 
     /**
-     * Whether valid stacked option or not.
+     * Whether valid stackType option or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked - stacked option
+     * @param {boolean} stackType - stackType option
      * @returns {boolean}
      */
-    isValidStackedOption: function(stacked) {
-        return stacked && (predicate.isNormalStacked(stacked) || predicate.isPercentStacked(stacked));
+    isValidStackOption: function(stackType) {
+        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
     },
 
     /**

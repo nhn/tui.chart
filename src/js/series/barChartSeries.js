@@ -6,12 +6,12 @@
 
 'use strict';
 
-var Series = require('./series'),
-    BarTypeSeriesBase = require('./barTypeSeriesBase'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil'),
-    calculator = require('../helpers/calculator');
+var Series = require('./series');
+var BarTypeSeriesBase = require('./barTypeSeriesBase');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+var calculator = require('../helpers/calculator');
 
 var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prototype */ {
     /**
@@ -89,7 +89,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      *      minusLeft: number,
      *      prevStack: ?string
      * }} iterationData iteration data
-     * @param {?boolean} isStacked whether stacked option or not.
+     * @param {?boolean} isStackType whether stackType option or not.
      * @param {SeriesItem} seriesItem series item
      * @param {number} index index
      * @returns {{
@@ -98,7 +98,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * }}
      * @private
      */
-    _makeBarChartBound: function(baseData, iterationData, isStacked, seriesItem, index) {
+    _makeBarChartBound: function(baseData, iterationData, isStackType, seriesItem, index) {
         var barWidth = baseData.baseBarSize * seriesItem.ratioDistance,
             additionalLeft = this._calculateAdditionalLeft(seriesItem.value),
             barStartLeft = baseData.baseBarSize * seriesItem.startRatio,
@@ -106,8 +106,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
             changedStack = (seriesItem.stack !== iterationData.prevStack),
             stepCount, endLeft, bound;
 
-        if (!isStacked || (!this.options.diverging && changedStack)) {
-            stepCount = isStacked ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
+        if (!isStackType || (!this.options.diverging && changedStack)) {
+            stepCount = isStackType ? this.dataProcessor.findStackIndex(seriesItem.stack) : index;
             iterationData.top = (baseData.step * stepCount) + iterationData.baseTop + baseData.additionalPosition;
             iterationData.plusLeft = 0;
             iterationData.minusLeft = 0;
@@ -136,7 +136,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
     _makeBounds: function() {
         var self = this,
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            isStacked = predicate.isValidStackedOption(this.options.stacked),
+            isStacked = predicate.isValidStackOption(this.options.stackType),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
 

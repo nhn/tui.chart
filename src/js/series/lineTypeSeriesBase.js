@@ -6,9 +6,10 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase
@@ -65,7 +66,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var baseTop = basePosition.top,
             top;
 
-        if (predicate.isValidStackedOption(this.options.stacked)) {
+        if (predicate.isValidStackOption(this.options.stackType)) {
             top = (basePosition.startTop + baseTop - labelHeight) / 2 + 1;
         } else if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
             top = baseTop - labelHeight - chartConst.SERIES_LABEL_PADDING;

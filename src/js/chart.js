@@ -107,7 +107,7 @@ _createChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.min minimal value of horizontal axis
  *          @param {number} options.xAxis.max maximum value of horizontal axis
  *      @param {object} options.series options of series
- *          @param {string} options.series.stacked stacked type
+ *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
  *          @param {boolean} options.series.hasSelection whether has selection or not
@@ -192,7 +192,7 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
  *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
- *          @param {string} options.series.stacked stacked type
+ *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel whether show label or not
  *          @param {number} options.series.barWidth bar width
  *          @param {boolean} options.series.hasSelection whether has selection or not
@@ -629,7 +629,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
  *      @param {object} options.series options of series
  *          @param {object} options.series.column options of column series
- *              @param {string} options.series.column.stacked stacked type
+ *              @param {string} options.series.column.stackType - type of stack
  *              @param {boolean} options.series.column.showLabel whether show label or not
  *              @param {number} options.series.column.barWidth bar width
  *              @param {boolean} options.series.column.hasSelection whether has selection or not

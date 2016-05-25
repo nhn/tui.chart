@@ -159,7 +159,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Add ratios when percent stacked.
+     * Add ratios when percent stackType.
      * @param {number} baseRatio - base ratio
      */
     addRatiosWhenPercentStacked: function(baseRatio) {

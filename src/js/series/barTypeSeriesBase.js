@@ -6,9 +6,9 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.prototype */ {
     /**
@@ -109,13 +109,13 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
-        var isStacked = predicate.isValidStackedOption(this.options.stacked),
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            groupSize = baseGroupSize / seriesDataModel.getGroupCount(),
-            firstAdditionalPosition = 0,
-            itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
+        var isStackType = predicate.isValidStackOption(this.options.stackType);
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
+        var firstAdditionalPosition = 0;
+        var itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
 
-        if (!isStacked) {
+        if (!isStackType) {
             itemCount = seriesDataModel.getFirstSeriesGroup().getSeriesItemCount();
         } else {
             itemCount = this.options.diverging ? 1 : this.dataProcessor.getStackCount();
@@ -203,7 +203,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make stacked label position.
+     * Make stackType label position.
      * @param {{width: number, height: number, left: number, top: number}} bound element bound
      * @param {string} label label
      * @param {number} labelHeight label height
@@ -222,7 +222,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make stacked labels html.
+     * Make stackType labels html.
      * @param {object} params parameters
      *      @param {number} params.groupIndex group index
      *      @param {Array.<object>} params.bounds bounds,
@@ -256,7 +256,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return labelHtml;
         });
 
-        if (this.options.stacked === 'normal') {
+        if (this.options.stackType === 'normal') {
             values = seriesGroup.pluck('value');
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
             htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
@@ -266,7 +266,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Render stacked series label.
+     * Render stackType series label.
      * @param {HTMLElement} elSeriesLabelArea series label area element
      * @private
      */
@@ -297,7 +297,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
-        if (this.options.stacked) {
+        if (this.options.stackType) {
             this._renderStackedSeriesLabel(elSeriesLabelArea);
         } else {
             this._renderNormalSeriesLabel(elSeriesLabelArea);
