@@ -64,12 +64,12 @@ describe('Test for Axis', function() {
             expect(actual).toBe(expected);
         });
 
-        it('titleRotation옵션이 false인 경우에는 제목 높이로 계산합니다.', function() {
+        it('rotateTitle옵션이 false인 경우에는 제목 높이로 계산합니다.', function() {
             var actual, expected;
 
             actual = axis._makeYAxisWidth(['label1', 'label12'], {
                 title: 'Axis Title',
-                titleRotation: false
+                rotateTitle: false
             });
             expected = 117;
 
@@ -323,17 +323,17 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('titleRotation옵션이 false인 경우에도 0을 반환합니다.', function() {
+        it('rotateTitle옵션이 false인 경우에도 0을 반환합니다.', function() {
             var actual;
 
-            axis.options.titleRotation = false;
+            axis.options.rotateTitle = false;
 
             actual = axis._makeRightPosition();
 
             expect(actual).toBe(0);
         });
 
-        it('IE7도 아니고 titleRotation옵션도 없다면 전달하는 size를 음수로 변경하여 반환합니다.', function() {
+        it('IE7도 아니고 rotateTitle옵션도 없다면 전달하는 size를 음수로 변경하여 반환합니다.', function() {
             var actual;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
@@ -345,17 +345,17 @@ describe('Test for Axis', function() {
     });
 
     describe('_makeTopPosition()', function() {
-        it('titleRotation옵션이 false인 경우에는 전달하는 size에서 제목 높이값을 뺀 값의 반을 반환합니다.', function() {
+        it('rotateTitle옵션이 false인 경우에는 전달하는 size에서 제목 높이값을 뺀 값의 반을 반환합니다.', function() {
             var actual;
 
-            axis.options.titleRotation = false;
+            axis.options.rotateTitle = false;
 
             actual = axis._makeTopPosition(100);
 
             expect(actual).toBe(40);
         });
 
-        it('titleRotation옵션 없이 오른쪽 y축(isPositionRight=true)인 경우에는 0을 반환합니다.', function() {
+        it('rotateTitle옵션 없이 오른쪽 y축(isPositionRight=true)인 경우에는 0을 반환합니다.', function() {
             var actual;
 
             axis.data.isPositionRight = true;
@@ -364,7 +364,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('titleRotation옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)도 아닌 경우에는 전달한 size 그대로 반환합니다.', function() {
+        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)도 아닌 경우에는 전달한 size 그대로 반환합니다.', function() {
             var actual;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
@@ -374,7 +374,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(100);
         });
 
-        it('titleRotation옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)인 경우에는 null을 반환합니다.', function() {
+        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)인 경우에는 null을 반환합니다.', function() {
             var actual;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
@@ -448,10 +448,10 @@ describe('Test for Axis', function() {
             expect(elTitle.style.top).toBe('');
         });
 
-        it('titleRotation옵션이 false인 경우에는 top값을 제목 높이와 yAxis높이로 계산합니다. ', function() {
+        it('rotateTitle옵션이 false인 경우에는 top값을 제목 높이와 yAxis높이로 계산합니다. ', function() {
             var elTitle = dom.create('DIV');
 
-            axis.options.titleRotation = false;
+            axis.options.rotateTitle = false;
 
             axis._renderTitleAreaStyle(elTitle, 200);
 
@@ -480,12 +480,12 @@ describe('Test for Axis', function() {
             expect(elTitle.style.right).toBe('0px');
         });
 
-        it('우측 y axis 타이틀 이면서 titleRotation옵션이 false인 경우도 right를 0으로 설정합니다.', function() {
+        it('우측 y axis 타이틀 이면서 rotateTitle옵션이 false인 경우도 right를 0으로 설정합니다.', function() {
             var elTitle = dom.create('DIV');
 
             axis.data.isPositionRight = true;
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
-            axis.options.titleRotation = false;
+            axis.options.rotateTitle = false;
             axis._renderTitleAreaStyle(elTitle, 50);
 
             expect(elTitle.style.right).toBe('0px');
@@ -972,7 +972,7 @@ describe('Test for Axis', function() {
                 isVertical: false,
                 isLabelAxis: true
             };
-            axis.options.rotation = false;
+            axis.options.rotateLabel = false;
             dataProcessor.getMultilineCategories.and.returnValue([]);
             spyOn(axis, '_makeRotationLabelsHtml');
             spyOn(axis, '_makeNormalLabelsHtml');

@@ -94,7 +94,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Make width of y axis area.
      * @param {Array.<string | number>} labels labels
-     * @param {{title: ?string, isCenter: ?boolean, titleRotation: ?boolean}} options - options
+     * @param {{title: ?string, isCenter: ?boolean, rotateTitle: ?boolean}} options - options
      * @returns {number}
      * @private
      */
@@ -106,7 +106,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         if (options.isCenter) {
             width += chartConst.AXIS_LABEL_PADDING;
-        } else if (options.titleRotation === false) {
+        } else if (options.rotateTitle === false) {
             titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
         } else {
             titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
@@ -372,7 +372,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     _makeRightPosition: function(size) {
         var rightPosition;
 
-        if (renderUtil.isIE7() || this.options.titleRotation === false) {
+        if (renderUtil.isIE7() || this.options.rotateTitle === false) {
             rightPosition = 0;
         } else {
             rightPosition = -size;
@@ -391,7 +391,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var topPosition = null;
         var titleHeight;
 
-        if (this.options.titleRotation === false) {
+        if (this.options.rotateTitle === false) {
             titleHeight = renderUtil.getRenderedLabelHeight(this.options.title, this.theme.title);
             topPosition = (size - titleHeight) / 2;
         } else if (this.data.isPositionRight) {
@@ -444,7 +444,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             cssPositionMap = this._makePositionMapForNotCenterAlign(size);
         }
 
-        if (this.options.titleRotation !== false) {
+        if (this.options.rotateTitle !== false) {
             cssPositionMap.width = size;
         }
 
@@ -465,7 +465,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             this._renderTitleAreaStyle(titleContainer, size);
         }
 
-        if (this.options.titleRotation !== false) {
+        if (this.options.rotateTitle !== false) {
             dom.addClass(titleContainer, 'rotation');
         }
 
@@ -784,7 +784,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeLabelsHtml: function(positions, categories, labelSize, additionalSize) {
-        var isRotationlessXAxis = !this.data.isVertical && this.data.isLabelAxis && this.options.rotation === false,
+        var isRotationlessXAxis = !this.data.isVertical && this.data.isLabelAxis && this.options.rotateLabel === false,
             hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree,
             labelsHtml;
 

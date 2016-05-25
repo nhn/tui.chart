@@ -102,6 +102,7 @@ _createChart = function(container, rawData, options) {
  *      @param {object} options.yAxis options of vertical axis
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {string} options.yAxis.align align option for diverging option
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of horizontal axis
@@ -187,10 +188,11 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel whether show label or not
@@ -272,10 +274,11 @@ tui.chart.columnChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
@@ -359,10 +362,11 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
  *          @param {boolean} options.series.hasDot whether has dot or not
  *          @param {boolean} options.series.showLabel whether show label or not
@@ -443,10 +447,11 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {number} options.xAxis.min minimal value of vertical axis
  *          @param {number} options.xAxis.max maximum value of vertical axis
  *      @param {object} options.series options of series
@@ -538,6 +543,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.min minimal value of vertical axis
@@ -623,10 +629,11 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *          @param {string} options.yAxis.title title of vertical axis
  *          @param {number} options.yAxis.min minimal value of vertical axis
  *          @param {number} options.yAxis.max maximum value of vertical axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis options of horizontal axis
  *          @param {string} options.xAxis.title title of horizontal axis
  *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series options of series
  *          @param {object} options.series.column options of column series
  *              @param {string} options.series.column.stackType - type of stack

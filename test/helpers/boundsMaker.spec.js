@@ -412,7 +412,7 @@ describe('Test for BoundsMaker', function() {
             spyOn(boundsMaker, '_updateDimensionsHeight');
             boundsMaker.options = {
                 xAxis: {
-                    rotation: false
+                    rotateLabel: false
                 }
             };
             boundsMaker.axesData = {

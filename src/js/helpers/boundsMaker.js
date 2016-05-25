@@ -456,7 +456,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             labels = this.axesData.xAxis.labels,
             rotationInfo, overflowLeft, diffHeight;
 
-        if (xAxisOptions.rotation !== false) {
+        if (xAxisOptions.rotateLabel !== false) {
             rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);
         }
 
