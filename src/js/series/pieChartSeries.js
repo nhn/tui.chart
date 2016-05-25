@@ -74,6 +74,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _setDefaultOptions: function() {
         var options = this.options;
+        var holeRatio;
 
         options.startAngle = this._makeValidAngle(options.startAngle, 0);
         options.endAngle = this._makeValidAngle(options.endAngle, options.startAngle);
@@ -82,7 +83,8 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         if (predicate.isPieChart(this.chartType)) {
             options.holeRatio = 0;
         } else {
-            options.holeRatio = options.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
+            holeRatio = options.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
+            options.holeRatio = Math.min(chartConst.DONUT_GRAPH_MAX_HOLE_RATIO, holeRatio);
         }
     },
 

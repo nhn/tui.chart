@@ -119,8 +119,10 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATIO: 0.8,
     /** small ratio for pie graph */
     PIE_GRAPH_SMALL_RATIO: 0.65,
-    /** default inner ratio for donut graph **/
+    /** default hole ratio for donut graph **/
     DONUT_GRAPH_DEFAULT_HOLE_RATIO: 0.7,
+    /** max hole ratio for donut graph **/
+    DONUT_GRAPH_MAX_HOLE_RATIO: 0.9,
     /** tick count for map chart legend */
     MAP_CHART_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
