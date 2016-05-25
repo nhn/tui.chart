@@ -27,7 +27,7 @@ var pieTypeMixer = {
         var legendOption = this.options.legend || {};
         var isPieLegendAlign = predicate.isPieLegendAlign(legendOption.align);
 
-        if (!isPieLegendAlign && !legendOption.hidden) {
+        if (!isPieLegendAlign && legendOption.visible) {
             this.componentManager.register('legend', Legend, {
                 chartTypes: chartTypes,
                 chartType: this.chartType,
@@ -58,7 +58,7 @@ var pieTypeMixer = {
             componentType: 'series',
             chartBackground: this.theme.chart.background,
             userEvent: this.userEvent,
-            legendAlign: isPieLegendAlign && !legendOption.hidden ? legendOption.align : null
+            legendAlign: isPieLegendAlign && legendOption.visible ? legendOption.align : null
         };
 
         tui.util.forEach(seriesData, function(seriesDatum) {

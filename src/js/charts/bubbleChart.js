@@ -49,6 +49,21 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     },
 
     /**
+     * Set default options.
+     * @param {object} options - options for bubble chart
+     * @private
+     * @override
+     */
+    _setDefaultOptions: function(options) {
+        ChartBase.prototype._setDefaultOptions.call(this, options);
+        this.options.circleLegend = this.options.circleLegend || {};
+
+        if (tui.util.isUndefined(this.options.circleLegend.visible)) {
+            this.options.circleLegend.visible = true;
+        }
+    },
+
+    /**
      * Make map for AxisScaleMaker of axes(xAxis, yAxis).
      * @returns {Object.<string, AxisScaleMaker>}
      * @private
@@ -102,7 +117,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
             ]
         });
 
-        if (!predicate.isHidden(this.options.circleLegend)) {
+        if (this.options.circleLegend.visible) {
             this.componentManager.register('circleLegend', CircleLegend, {
                 chartType: chartType,
                 baseFontFamily: this.theme.chart.fontFamily
@@ -162,7 +177,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      * @override
      */
     _updateDimensions: function() {
-        if (predicate.isHidden(this.options.circleLegend)) {
+        if (!this.options.circleLegend.visible) {
             return;
         }
 

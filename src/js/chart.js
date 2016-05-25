@@ -124,7 +124,7 @@ _createChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -212,7 +212,7 @@ tui.chart.barChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -299,7 +299,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -389,7 +389,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -476,7 +476,9 @@ tui.chart.areaChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.circleLegend - options for circleLegend
+ *          @param {boolean} options.circleLegend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -572,7 +574,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -669,7 +671,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *      @param {string} options.theme theme name
@@ -762,7 +764,7 @@ tui.chart.comboChart = function(container, rawData, options) {
  *      @param {object} options.legend options of legend
  *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {string} options.theme theme name
  *      @param {string} options.libType graph library type
  * @returns {object} bar chart
@@ -830,7 +832,7 @@ tui.chart.pieChart = function(container, rawData, options) {
  *      @param {object} options.legend - options of legend
  *          @param {string} options.legend.align - legend align (top|bottom|left|center|outer)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden - whether hidden or not
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - graph library type
  * @returns {object} bar chart

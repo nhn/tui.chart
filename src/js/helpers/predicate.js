@@ -250,13 +250,13 @@ var predicate = {
 
     /**
      * Whether has width for vertical type legend or not.
-     * @param {{align: string, hidden: ?boolean}} legendOption - option for legend component
+     * @param {{align: string, visible: boolean}} legendOption - option for legend component
      * @returns {boolean}
      */
     hasVerticalLegendWidth: function(legendOption) {
         legendOption = legendOption || {};
 
-        return !predicate.isHorizontalLegend(legendOption.align) && !predicate.isHidden(legendOption);
+        return !predicate.isHorizontalLegend(legendOption.align) && legendOption.visible;
     },
 
     /**
@@ -343,16 +343,6 @@ var predicate = {
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
-    },
-
-    /**
-     * Whether options.hidden is true or not.
-     * @memberOf module:predicate
-     * @param {object} [options] - options
-     * @returns {boolean}
-     */
-    isHidden: function(options) {
-        return !!tui.util.pick(options, 'hidden');
     }
 };
 

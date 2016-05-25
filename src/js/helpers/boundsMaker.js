@@ -192,7 +192,8 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     getMaxRadiusForBubbleChart: function() {
         var maxRadius = this.getMinimumPixelStepForAxis();
-        var circleLegendWidth = this.getDimension('circleLegend').width;
+        var legendWidth = this.getDimension('calculationLegend').width || chartConst.MIN_LEGEND_WIDTH;
+        var circleLegendWidth = this.getDimension('circleLegend').width || legendWidth;
 
         return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
     },
@@ -539,7 +540,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var legendOption = this.options.legend;
         var legendHeight, bottomAreaWidth;
 
-        if (predicate.isHorizontalLegend(legendOption.align) && !predicate.isHidden(legendOption)) {
+        if (predicate.isHorizontalLegend(legendOption.align) && legendOption.visible) {
             legendHeight = this.getDimension('legend').height;
         } else {
             legendHeight = 0;
@@ -712,10 +713,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _registerPositions: function() {
         var alignOption = this.options.legend.align;
-        var hiddenOption = this.options.legend.hidden;
+        var isVisibleLegend = this.options.legend.visible;
         var legendDimension = this.getDimension('legend');
-        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && !hiddenOption) ? legendDimension.height : 0;
-        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && !hiddenOption) ? legendDimension.width : 0;
+        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
+        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
         var seriesPosition = {
             top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
             left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width

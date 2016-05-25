@@ -43,7 +43,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * options
          * @type {object}
          */
-        this.options = params.options;
+        this.options = null;
+        this._setDefaultOptions(params.options);
 
         /**
          * chart type
@@ -108,6 +109,21 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.userEvent = new UserEventListener();
 
         this._addCustomEventComponent();
+    },
+
+    /**
+     * Set default options.
+     * @param {object} options - options for chart
+     * @private
+     */
+    _setDefaultOptions: function(options) {
+        options.legend = options.legend || {};
+
+        if (tui.util.isUndefined(options.legend.visible)) {
+            options.legend.visible = true;
+        }
+
+        this.options = options;
     },
 
     /**

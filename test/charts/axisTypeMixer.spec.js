@@ -153,7 +153,12 @@ describe('Test for ComboChart', function() {
 
     describe('addComponentsForAxisType()', function() {
         it('axis type chart의 컴포넌트들을 추가합니다..', function() {
-            axisTypeMixer.options = {};
+            axisTypeMixer.options = {
+                legend: {
+                    visible: true
+                }
+            };
+
             axisTypeMixer._addComponentsForAxisType({
                 axes: ['xAxis', 'yAxis'],
                 processedData: {},

@@ -202,10 +202,12 @@ describe('Test for BubbleChart', function() {
     });
 
     describe('_addComponents()', function() {
-        it('circleLegend.hidden 옵션이 없으면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
+        it('circleLegend.visible 옵션이 true이면 componentManager.register를 호출하여 circleLegend 컴포넌트를 생성합니다.', function() {
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
-                circleLegend: {},
+                circleLegend: {
+                    visible: true
+                },
                 legend: {}
             };
             bubbleChart.theme = {
@@ -222,11 +224,11 @@ describe('Test for BubbleChart', function() {
             });
         });
 
-        it('circleLegend.hidden 옵션이 true이면 componentManager.register를 호출하지 않아, circleLegend 컴포넌트를 생성하지 않습니다.', function() {
+        it('circleLegend.visible 옵션이 false이면 componentManager.register를 호출하지 않아, circleLegend 컴포넌트를 생성하지 않습니다.', function() {
             spyOn(bubbleChart, '_addComponentsForAxisType');
             bubbleChart.options = {
                 circleLegend: {
-                    hidden: true
+                    visible: false
                 }
             };
             bubbleChart._addComponents();
@@ -240,6 +242,10 @@ describe('Test for BubbleChart', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 80
             });
+            bubbleChart.options.legend = {
+                visible: true
+            };
+
             bubbleChart._updateLegendAndSeriesWidth(300, 60);
 
             expect(boundsMaker.registerBaseDimension).toHaveBeenCalledWith('legend', {

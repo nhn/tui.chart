@@ -193,7 +193,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
         var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
         var isPieLegendAlign = predicate.isPieLegendAlign(this.options.align);
 
-        return (isPieTypeCharts && isPieLegendAlign) || this.options.hidden;
+        return (isPieTypeCharts && isPieLegendAlign) || !this.options.visible;
     },
 
     /**

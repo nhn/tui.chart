@@ -87,17 +87,14 @@ var axisTypeMixer = {
      * Add legend component.
      * @param {Array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
-     * @param {object} legendOptions legend options
      * @private
      */
-    _addLegendComponent: function(chartTypes, chartType, legendOptions) {
-        if (!legendOptions || !legendOptions.hidden) {
-            this.componentManager.register('legend', Legend, {
-                chartTypes: chartTypes,
-                chartType: chartType,
-                userEvent: this.userEvent
-            });
-        }
+    _addLegendComponent: function(chartTypes, chartType) {
+        this.componentManager.register('legend', Legend, {
+            chartTypes: chartTypes,
+            chartType: chartType,
+            userEvent: this.userEvent
+        });
     },
 
     /**
@@ -109,12 +106,14 @@ var axisTypeMixer = {
      * @private
      */
     _addComponentsForAxisType: function(params) {
-        var options = this.options,
-            aligned = !!params.aligned;
+        var options = this.options;
+        var aligned = !!params.aligned;
 
         this.componentManager.register('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
-        this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
+        if (options.legend.visible) {
+            this._addLegendComponent(params.seriesChartTypes, params.chartType);
+        }
         this._addSeriesComponents(params.serieses, options);
         this._addTooltipComponent();
     },

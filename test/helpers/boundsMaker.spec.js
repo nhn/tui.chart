@@ -25,7 +25,12 @@ describe('Test for BoundsMaker', function() {
     beforeEach(function() {
         spyOn(renderUtil, 'getRenderedLabelHeight');
         boundsMaker = new BoundsMaker({
-            dataProcessor: dataProcessor
+            dataProcessor: dataProcessor,
+            options: {
+                legend: {
+                    visible: true
+                }
+            }
         });
     });
 
@@ -534,11 +539,7 @@ describe('Test for BoundsMaker', function() {
         it('legend align옵션이 가로(top, bottom) 옵션이면 legend 높이를 추가적으로 빼줍니다.', function() {
             var actual, expected;
 
-            boundsMaker.options = {
-                legend: {
-                    align: chartConst.LEGEND_ALIGN_TOP
-                }
-            };
+            boundsMaker.options.legend.align = chartConst.LEGEND_ALIGN_TOP;
             boundsMaker.dimensions = {
                 chart: {
                     height: 400
@@ -618,11 +619,8 @@ describe('Test for BoundsMaker', function() {
                     width: 0
                 }
             };
-            boundsMaker.options = {
-                legend: {
-                    align: chartConst.LEGEND_ALIGN_TOP
-                }
-            };
+            boundsMaker.options.legend.align = chartConst.LEGEND_ALIGN_TOP;
+
             actual = boundsMaker._makeSeriesDimension();
             expected = {
                 width: 430,
@@ -636,7 +634,7 @@ describe('Test for BoundsMaker', function() {
     describe('_registerCenterComponentsDimension()', function() {
         it('시리즈 dimension을 생성하여 중앙에 위치하는 component들의 dimension을 등록합니다.', function() {
             boundsMaker.dimensions = {
-                series:{
+                series: {
                     width: 300,
                     height: 200
                 }
@@ -772,11 +770,8 @@ describe('Test for BoundsMaker', function() {
         it('왼쪽 정렬인 경우에는 circleLegend와 legend의 너비 차만 이용하여 left를 구합니다.', function() {
             var actual, expected;
 
-            boundsMaker.options = {
-                legend: {
-                    align: 'left'
-                }
-            };
+            boundsMaker.options.legend.align = chartConst.LEGEND_ALIGN_LEFT;
+
             boundsMaker.positions = {
                 series: {}
             };
@@ -791,9 +786,9 @@ describe('Test for BoundsMaker', function() {
             };
 
             actual = boundsMaker._makeCircleLegendPosition().left;
-            expected = 0;
+            expected = 15;
 
-            expect(actual).toBe(15);
+            expect(actual).toBe(expected);
         });
 
         it('가로타입의 범례인 경우에는 series의 left와 너비 값 만을 이용하여 left를 구합니다.', function() {
@@ -838,7 +833,7 @@ describe('Test for BoundsMaker', function() {
             };
             boundsMaker.options = {
                 legend: {
-                    hidden: true
+                    visible: false
                 }
             };
 

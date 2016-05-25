@@ -20,7 +20,9 @@ describe('Test for LegendDimensionModel', function() {
 
     beforeEach(function() {
         dimensionModel = new LegendDimensionModel({
-            options: {},
+            options: {
+                visible: true
+            },
             theme: {}
         });
     });
@@ -141,10 +143,10 @@ describe('Test for LegendDimensionModel', function() {
             expect(actual).toBe(expected);
         });
 
-        it('align이 hidden이면 true를 반환합니다.', function() {
+        it('visible옵션이 false이면 true를 반환합니다.', function() {
             var actual, expected;
 
-            dimensionModel.options.hidden = true;
+            dimensionModel.options.visible = false;
 
             actual = dimensionModel._isSkipLegend();
             expected = true;
