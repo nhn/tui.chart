@@ -117,7 +117,9 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      * @param {{left: number, top: number}} position mouse position
      */
     onClickSeries: function(position) {
-        this._executeGraphRenderer(position, 'clickSeries');
+        if (this.options.allowSelect) {
+            this._executeGraphRenderer(position, 'clickSeries');
+        }
     },
 
     /**
