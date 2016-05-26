@@ -22,7 +22,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.chartType)
+            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.seriesName)
         };
     },
 
@@ -110,7 +110,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
         var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
         var firstAdditionalPosition = 0;
         var itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
@@ -177,7 +177,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _renderNormalSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
             firstLabel = seriesDataModel.getFirstItemLabel(),
             labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;
@@ -273,7 +273,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
             groupBounds = this.seriesData.groupBounds,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
             firstLabel = seriesDataModel.getFirstItemLabel(this.chartType),
             labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             html;

@@ -24,7 +24,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
 
         return {
             groupBounds: bounds,
-            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.chartType)
+            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.seriesName)
         };
     },
 
@@ -100,7 +100,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
      */
     _renderSeriesLabel: function(labelContainer) {
         var self = this;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
         var html = seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var bound = self.seriesData.groupBounds[groupIndex][index];

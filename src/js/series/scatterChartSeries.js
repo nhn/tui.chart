@@ -43,7 +43,7 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
      */
     _makeBounds: function() {
         var self = this;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem) {

@@ -112,7 +112,7 @@ var axisTypeMixer = {
         this.componentManager.register('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
         if (options.legend.visible) {
-            this._addLegendComponent(params.seriesChartTypes, params.chartType);
+            this._addLegendComponent(params.seriesNames, params.chartType);
         }
         this._addSeriesComponents(params.serieses, options);
         this._addTooltipComponent();
@@ -216,9 +216,9 @@ var axisTypeMixer = {
      * @private
      */
     _makeSeriesDataForRendering: function(axesData, chartTypes) {
-        var limitMap = this._getLimitMap(axesData, chartTypes),
-            aligned = axesData.xAxis.aligned,
-            seriesData = {};
+        var limitMap = this._getLimitMap(axesData, chartTypes);
+        var aligned = axesData.xAxis.aligned;
+        var seriesData = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             seriesData[chartType + 'Series'] = {

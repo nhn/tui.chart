@@ -325,11 +325,12 @@ var singleTooltipMixer = {
      * @private
      */
     _moveToSymmetry: function(position, params) {
-        var bound = params.bound,
-            sizeType = params.sizeType,
-            positionType = params.positionType,
-            value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, params.chartType),
-            tooltipSizeHalf, barPosition, barSizeHalf, movedPositionValue;
+        var bound = params.bound;
+        var sizeType = params.sizeType;
+        var positionType = params.positionType;
+        var seriesName = params.seriesName || params.chartType;
+        var value = this.dataProcessor.getValue(params.indexes.groupIndex, params.indexes.index, seriesName);
+        var tooltipSizeHalf, barPosition, barSizeHalf, movedPositionValue;
 
         if (value < 0) {
             tooltipSizeHalf = params.dimension[sizeType] / 2;
@@ -370,7 +371,7 @@ var singleTooltipMixer = {
             this._fireHideAnimation(prevIndexes, prevChartType);
         }
 
-        elTooltip.innerHTML = this._makeSingleTooltipHtml(params.chartType, indexes);
+        elTooltip.innerHTML = this._makeSingleTooltipHtml(params.seriesName || params.chartType, indexes);
 
         elTooltip.setAttribute('data-chart-type', params.chartType);
         this._setIndexesCustomAttribute(elTooltip, indexes);

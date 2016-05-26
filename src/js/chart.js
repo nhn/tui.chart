@@ -665,13 +665,6 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
  *              @param {boolean} options.series.pie.startAngle - start angle
  *              @param {boolean} options.series.pie.endAngle - end angle
- *          @param {?object} options.series.donut - options for donut series component
- *              @param {boolean} options.series.donut.showLabel - whether show label or not
- *              @param {number} options.series.donut.radiusRatio - ratio of radius for pie graph
- *              @param {number} options.series.donut.holeRatio - ratio of hole for donut graph
- *              @param {boolean} options.series.donut.allowSelect - whether allow select or not
- *              @param {boolean} options.series.donut.startAngle - start angle
- *              @param {boolean} options.series.donut.endAngle - end angle
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {object} options.tooltip.column - options for column tooltip
  *              @param {string} options.tooltip.column.suffix - suffix for tooltip
@@ -815,75 +808,6 @@ tui.chart.comboChart = function(container, rawData, options) {
 tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
-    return _createChart(container, rawData, options);
-};
-
-/**
- * Donut chart creator.
- * @memberOf tui.chart
- * @param {HTMLElement} container - chart container
- * @param {rawData} rawData - raw data
- *      @param {Array.<Array>} rawData.series - series data
- * @param {object} options - chart options
- *      @param {object} options.chart - base options for chart
- *          @param {number} options.chart.width - chart width
- *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
- *          @param {string | function} options.chart.format - value format
- *      @param {object} options.series - options of series
- *          @param {boolean} options.series.showLabel - whether show label or not
- *          @param {boolean} options.series.allowSelect - whether allow select or not
- *          @param {number} options.series.radiusRatio - ratio of radius for donut graph
- *          @param {number} options.series.holeRatio - ratio of hole for donut graph
- *          @param {boolean} options.series.startAngle - start angle
- *          @param {boolean} options.series.endAngle - end angle
- *      @param {object} options.tooltip - options of tooltip
- *          @param {string} options.tooltip.suffix - suffix of tooltip
- *          @param {function} [options.tooltip.template] - template of tooltip
- *          @param {string} options.tooltip.align - tooltip align option
- *          @param {object} options.tooltip.position - relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
- *      @param {object} options.legend - options of legend
- *          @param {string} options.legend.align - legend align (top|bottom|left|center|outer)
- *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.visible - whether visible or not (default: true)
- *      @param {string} options.theme - theme name
- *      @param {string} options.libType - graph library type
- * @returns {object} bar chart
- * @api
- * @example
- * var container = document.getElementById('container-id'),
- *     rawData = {
- *       series: [
- *         {
- *           name: 'Legend1',
- *           data: 20
- *         },
- *         {
- *           name: 'Legend2',
- *           data: 40
- *         },
- *         {
- *           name: 'Legend3',
- *           data: 60
- *         },
- *         {
- *           name: 'Legend4',
- *           data: 80
- *         }
- *       ]
- *     },
- *     options = {
- *       chart: {
- *         title: 'Donut Chart'
- *       }
- *     };
- * tui.chart.donutChart(container, rawData, options);
- */
-tui.chart.donutChart = function(container, rawData, options) {
-    options = options || {};
-    options.chartType = chartConst.CHART_TYPE_DONUT;
     return _createChart(container, rawData, options);
 };
 

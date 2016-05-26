@@ -7,6 +7,7 @@
 
 'use strict';
 var chartConst = require('../const');
+var rawDataHandler = require('../helpers/rawDataHandler');
 var predicate = require('../helpers/predicate');
 
 var charts = {};
@@ -14,17 +15,20 @@ var factory = {
     /**
      * Find key for getting chart.
      * @param {string} chartType - type of chart
-     * @param {object.<string, Array>} rawSeriesData - raw series data
+     * @param {{seriesAlias: ?object, series: object.<string, Array>}} rawData - raw data
      * @returns {string}
      * @private
      */
-    _findKey: function(chartType, rawSeriesData) {
+    _findKey: function(chartType, rawData) {
         var key = null;
+        var chartTypeMap;
 
         if (predicate.isComboChart(chartType)) {
-            if (rawSeriesData[chartConst.CHART_TYPE_COLUMN] && rawSeriesData[chartConst.CHART_TYPE_LINE]) {
+            chartTypeMap = rawDataHandler.getChartTypeMap(rawData);
+
+            if (chartTypeMap[chartConst.CHART_TYPE_COLUMN] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
                 key = chartConst.CHART_TYPE_COLUMN_LINE_COMBO;
-            } else if (rawSeriesData[chartConst.CHART_TYPE_PIE] && rawSeriesData[chartConst.CHART_TYPE_DONUT]) {
+            } else if (chartTypeMap[chartConst.CHART_TYPE_PIE]) {
                 key = chartConst.CHART_TYPE_PIE_DONUT_COMBO;
             }
         } else {
@@ -43,7 +47,7 @@ var factory = {
      * @returns {object} chart instance;
      */
     get: function(chartType, rawData, theme, options) {
-        var key = this._findKey(chartType, rawData.series);
+        var key = this._findKey(chartType, rawData);
         var Chart = charts[key];
         var chart;
 

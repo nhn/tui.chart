@@ -62,7 +62,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
          * ratio for hole
          * @type {number}
          */
-        this.holeRatio = data.options.holeRatio;
+        this.holeRatio = data.options.radiusRange[0];
 
         /**
          * base background
@@ -93,11 +93,6 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
          * @type {{cx: number, cy: number, r: number}}
          */
         this.circleBound = data.circleBound;
-
-        /**
-         * whether inner or not.
-         */
-        this.isInner = data.isInner;
 
         /**
          * sector attr's name for draw graph
@@ -254,18 +249,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             }
         };
         var inner = this._renderSector(params);
-        var outer;
 
         inner.data('id', OVERLAY_ID);
         inner.data('chartType', this.chartType);
 
-        if (!this.isInner) {
-            outer = this._renderSector(params);
-        }
-
         return {
             inner: inner,
-            outer: outer
+            outer: this._renderSector(params)
         };
     },
 
@@ -384,14 +374,11 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         innerAttrs[this.sectorName] = [cb.cx, cb.cy, cb.r, sa, ea, cb.r * this.holeRatio];
         overlay.inner.attr(innerAttrs);
         overlay.inner.data('index', index);
-
-        if (!this.isInner) {
-            overlay.outer.attr({
-                path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
-                fill: sectorInfo.color,
-                opacity: 0.3
-            });
-        }
+        overlay.outer.attr({
+            path: this._makeDonutSectorPath(cb.cx, cb.cy, cb.r + 10, sa, ea, cb.r).path,
+            fill: sectorInfo.color,
+            opacity: 0.3
+        });
     },
 
     /**
@@ -400,18 +387,13 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     _hideOverlay: function() {
         var overlay = this.overlay;
-
-        overlay.inner.attr({
+        var attrs = {
             fill: 'none',
             opacity: 0
-        });
+        };
 
-        if (!this.isInner) {
-            overlay.outer.attr({
-                fill: 'none',
-                opacity: 0
-            });
-        }
+        overlay.inner.attr(attrs);
+        overlay.outer.attr(attrs);
     },
 
     /**

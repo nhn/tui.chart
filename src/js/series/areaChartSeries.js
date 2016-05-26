@@ -98,7 +98,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
         return {
             groupPositions: this._makePositions(),
-            hasRangeData: this.dataProcessor.getSeriesDataModel(this.chartType).hasRangeData(),
+            hasRangeData: this.dataProcessor.getSeriesDataModel(this.seriesName).hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }

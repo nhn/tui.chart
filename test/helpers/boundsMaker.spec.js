@@ -875,6 +875,7 @@ describe('Test for BoundsMaker', function() {
                 left: 250
             });
 
+            boundsMaker.chartType = 'bar';
             boundsMaker.hasAxes = true;
             boundsMaker.positions.series = {
                 left: 50,

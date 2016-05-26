@@ -56,7 +56,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
             dataProcessor.seriesDataModelMap.line.groups = ['seriesGroup3'];
-            dataProcessor.seriesChartTypes = ['column', 'line'];
+            dataProcessor.seriesNames = ['column', 'line'];
 
             actual = dataProcessor.isValidAllSeriesDataModel();
             expected = true;
@@ -73,7 +73,7 @@ describe('Test for DataProcessor', function() {
             };
             dataProcessor.seriesDataModelMap.column.groups = ['seriesGroup1', 'seriesGroup2'];
             dataProcessor.seriesDataModelMap.line.groups = [];
-            dataProcessor.seriesChartTypes = ['column', 'line'];
+            dataProcessor.seriesNames = ['column', 'line'];
 
             actual = dataProcessor.isValidAllSeriesDataModel();
             expected = false;
@@ -98,7 +98,7 @@ describe('Test for DataProcessor', function() {
                 new SeriesGroup(['seriesItem4']),
                 new SeriesGroup(['seriesItem5', 'seriesItem6'])
             ];
-            dataProcessor.seriesChartTypes = ['column', 'line'];
+            dataProcessor.seriesNames = ['column', 'line'];
 
             actual = dataProcessor._makeSeriesGroups();
 
@@ -120,7 +120,7 @@ describe('Test for DataProcessor', function() {
         it('chartType이 chartConst.DUMMY_KEY일 경우에는 모든 chartType에 속한 sereisItem의 value를 추출 하여 반환합니다.', function() {
             var actual, expected;
 
-            dataProcessor.seriesChartTypes = ['column', 'line'];
+            dataProcessor.seriesNames = ['column', 'line'];
             dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()

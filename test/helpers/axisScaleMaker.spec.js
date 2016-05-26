@@ -133,7 +133,7 @@ describe('Test for AxisScaleMaker', function() {
                 line: new SeriesDataModel()
             };
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
@@ -821,7 +821,7 @@ describe('Test for AxisScaleMaker', function() {
         it('axis가 하나 있을 경우에는 chartType을 전달하지 않은 getValues()의 결과를 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -844,7 +844,7 @@ describe('Test for AxisScaleMaker', function() {
         it('axis가 두개 있을 경우에는 chartType을 전달한 getValues() 결과를 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -868,7 +868,7 @@ describe('Test for AxisScaleMaker', function() {
         it('values의 음수값의 합을 계산하여 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()
@@ -892,7 +892,7 @@ describe('Test for AxisScaleMaker', function() {
         it('values의 양수값의 합을 계산합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.dataProcessor.seriesChartTypes = ['column', 'line'];
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
                 column: new SeriesDataModel(),
                 line: new SeriesDataModel()

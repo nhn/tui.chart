@@ -22,7 +22,6 @@ var pluginRaphael = {
     line: LineChart,
     area: AreaChart,
     pie: PieChart,
-    donut: PieChart,
     bubble: CoordinateTypeChart,
     scatter: CoordinateTypeChart,
     map: MapChart,
