@@ -20,7 +20,6 @@ chartFactory.register(chartConst.CHART_TYPE_AREA, AreaChart);
 chartFactory.register(chartConst.CHART_TYPE_COLUMN_LINE_COMBO, ColumnLineComboChart);
 chartFactory.register(chartConst.CHART_TYPE_PIE_DONUT_COMBO, PieDonutComboChart);
 chartFactory.register(chartConst.CHART_TYPE_PIE, PieChart);
-chartFactory.register(chartConst.CHART_TYPE_DONUT, PieChart);
 chartFactory.register(chartConst.CHART_TYPE_BUBBLE, BubbleChart);
 chartFactory.register(chartConst.CHART_TYPE_SCATTER, ScatterChart);
 chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);

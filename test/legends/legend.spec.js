@@ -15,7 +15,7 @@ describe('Test for Legend', function() {
     var legend, dataProcessor, boundsMaker;
 
     beforeAll(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getLegendData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getLegendLabels', 'getLegendData', 'findChartType']);
         dataProcessor.getLegendLabels.and.returnValue([
             'legend1',
             'legend2'
@@ -224,20 +224,16 @@ describe('Test for Legend', function() {
                 chartType: 'column',
                 seriesIndex: 0
             };
-            var called = false;
-            var args;
 
-            spyOn(legend, 'fire').and.callFake(function() {
-                called = true;
-                args = arguments;
-            });
+            spyOn(legend, 'fire');
             spyOn(legend.legendModel, 'getSelectedIndex').and.returnValue(0);
+            dataProcessor.findChartType.and.callFake(function(chartType) {
+                return chartType;
+            });
 
             legend._fireLegendSelectionEvent(data, true);
-            expect(called).toBe(true);
-            expect(args[0]).toBe('selectColumnLegend');
-            expect(args[1]).toBe('column');
-            expect(args[2]).toBe(0);
+
+            expect(legend.fire).toHaveBeenCalledWith('selectColumnLegend', 'column', 0)
         });
     });
 

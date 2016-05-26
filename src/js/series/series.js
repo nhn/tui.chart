@@ -30,6 +30,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.chartType = params.chartType;
 
         /**
+         * Series name
+         * @tpye {string}
+         */
+        this.seriesName = params.seriesName || params.chartType;
+
+        /**
          * Component type
          * @type {string}
          */
@@ -196,7 +202,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     _makeParamsForGraphRendering: function(dimension, seriesData) {
         return tui.util.extend({
             dimension: dimension,
-            chartType: this.chartType,
+            chartType: this.seriesName,
             theme: this.theme,
             options: this.options
         }, seriesData);
@@ -272,11 +278,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.selectedLegendIndex = null;
         this.seriesData = [];
 
-        if (this.dataProcessor.getGroupCount(this.chartType)) {
+        if (this.dataProcessor.getGroupCount(this.seriesName)) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
-            if (this.labelShower) {
-                clearInterval(this.labelShower.timerId);
+            if (this.labelShowEffector) {
+                clearInterval(this.labelShowEffector.timerId);
             }
             this.animateComponent();
         }
@@ -574,7 +580,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.selectedLegendIndex = legendIndex;
 
-        if (this.dataProcessor.getSeriesDataModel(this.chartType).getGroupCount()) {
+        if (this.dataProcessor.getSeriesDataModel(this.seriesName).getGroupCount()) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

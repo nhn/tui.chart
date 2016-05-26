@@ -6,7 +6,6 @@
 
 'use strict';
 
-var predicate = require('../helpers/predicate');
 var ChartBase = require('./chartBase');
 var pieTypeMixer = require('./pieTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
@@ -31,14 +30,14 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          * chart types.
          * @type {Array.<string>}
          */
-        this.chartTypes = this._pickChartTypes(rawData.series);
+        this.chartTypes = this._pickSeriesNames(rawData.series);
 
         ChartBase.call(this, {
             rawData: rawData,
             theme: theme,
             options: options,
             isVertical: true,
-            seriesChartTypes: this.chartTypes
+            seriesNames: this.chartTypes
         });
 
         this._addComponents();
@@ -50,36 +49,10 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @returns {object} chart types map
      * @private
      */
-    _pickChartTypes: function(rawSeriesData) {
+    _pickSeriesNames: function(rawSeriesData) {
         return tui.util.keys(rawSeriesData).sort(function(a, b) {
             return b - a;
         });
-    },
-
-    /**
-     * Make options map for pie donut combo chart.
-     * @returns {object}
-     * @private
-     */
-    _makeOptionsMapForPieDonutCombo: function() {
-        var optionsMap = this._makeOptionsMap(this.chartTypes);
-        var donutRadiusRatio;
-
-        optionsMap.pie = tui.util.extend({
-            radiusRatio: 0.7
-        }, optionsMap.pie);
-        optionsMap.donut = tui.util.extend({
-            holeRatio: 0.7
-        }, optionsMap.donut);
-
-        donutRadiusRatio = optionsMap.donut.radiusRatio;
-        optionsMap.pie.radiusRatio = Math.min(optionsMap.pie.radiusRatio, optionsMap.donut.holeRatio);
-
-        if (optionsMap.pie.radiusRatio && donutRadiusRatio) {
-            optionsMap.pie.radiusRatio *= donutRadiusRatio;
-        }
-
-        return optionsMap;
     },
 
     /**
@@ -88,20 +61,22 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @private
      */
     _makeDataForAddingSeriesComponent: function() {
-        var chartTypes = this.chartTypes;
-        var optionsMap = this._makeOptionsMapForPieDonutCombo();
-        var themeMap = this._makeThemeMap(chartTypes);
-        var seriesData = tui.util.map(chartTypes, function(chartType) {
+        var seriesNames = this.chartTypes;
+        var optionsMap = this._makeOptionsMap(this.chartTypes);
+        var themeMap = this._makeThemeMap(seriesNames);
+        var dataProcessor = this.dataProcessor;
+        var seriesData = tui.util.map(seriesNames, function(seriesName) {
+            var chartType = dataProcessor.findChartType(seriesName);
             var additionalParams = {
                 chartType: chartType,
-                options: optionsMap[chartType],
-                isInner: predicate.isPieChart(chartType),
+                seriesName: seriesName,
+                options: optionsMap[seriesName],
                 isCombo: true,
-                theme: themeMap[chartType]
+                theme: themeMap[seriesName]
             };
 
             return {
-                name: chartType + 'Series',
+                name: seriesName + 'Series',
                 additionalParams: additionalParams
             };
         });
@@ -139,11 +114,15 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @override
      */
     _attachCustomEvent: function() {
-        var pieSeries = this.componentManager.get('pieSeries');
-        var donutSeries = this.componentManager.get('donutSeries');
+        var componentManager = this.componentManager;
+        var serieses;
 
         ChartBase.prototype._attachCustomEvent.call(this);
-        this._attachCustomEventForPieTypeChart([pieSeries, donutSeries]);
+
+        serieses = tui.util.map(this.chartTypes, function(seriesName) {
+            return componentManager.get(seriesName + 'Series');
+        });
+        this._attachCustomEventForPieTypeChart(serieses);
     },
 
     /**
@@ -157,7 +136,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         this.chartTypes = this._pickChartTypes(rawData.series);
 
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
-            seriesChartTypes: this.chartTypes
+            seriesNames: this.chartTypes
         });
     }
 });

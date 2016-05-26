@@ -65,6 +65,40 @@ var rawDataHandler = {
         tui.util.forEachArray(seriesData, function(datum) {
             delete datum.stack;
         });
+    },
+
+    /**
+     * Find char type from chart name.
+     * @param {object.<string, string>} seriesAlias - alias map
+     * @param {string} seriesName - series name
+     * @returns {*}
+     */
+    findChartType: function(seriesAlias, seriesName) {
+        var chartType;
+
+        if (seriesAlias) {
+            chartType = seriesAlias[seriesName];
+        }
+
+        return chartType || seriesName;
+    },
+
+    /**
+     * Get chart type map.
+     * @param {{series: (Array | object)}} rawData - raw data
+     * @returns {object.<string, string>}
+     */
+    getChartTypeMap: function(rawData) {
+        var self = this;
+        var chartTypeMap = {};
+
+        if (tui.util.isObject(rawData.series)) {
+            tui.util.forEach(rawData.series, function(data, seriesName) {
+                chartTypeMap[self.findChartType(rawData.seriesAlias, seriesName)] = true;
+            });
+        }
+
+        return chartTypeMap;
     }
 };
 

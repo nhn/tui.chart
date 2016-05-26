@@ -38,7 +38,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
             options: options,
             hasAxes: true,
             isVertical: true,
-            seriesChartTypes: chartTypesMap.seriesChartTypes
+            seriesNames: chartTypesMap.seriesNames
         });
 
         /**
@@ -74,9 +74,9 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
      * @private
      */
     _makeChartTypesMap: function(rawSeriesData, yAxisOption) {
-        var seriesChartTypes = tui.util.keys(rawSeriesData).sort(),
-            optionChartTypes = this._getYAxisOptionChartTypes(seriesChartTypes, yAxisOption),
-            chartTypes = optionChartTypes.length ? optionChartTypes : seriesChartTypes,
+        var seriesNames = tui.util.keys(rawSeriesData).sort(),
+            optionChartTypes = this._getYAxisOptionChartTypes(seriesNames, yAxisOption),
+            chartTypes = optionChartTypes.length ? optionChartTypes : seriesNames,
             validChartTypes = tui.util.filter(optionChartTypes, function(chartType) {
                 return rawSeriesData[chartType].length;
             }),
@@ -85,13 +85,13 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         if (validChartTypes.length === 1) {
             chartTypesMap = {
                 chartTypes: validChartTypes,
-                seriesChartTypes: validChartTypes,
+                seriesNames: validChartTypes,
                 optionChartTypes: !optionChartTypes.length ? optionChartTypes : validChartTypes
             };
         } else {
             chartTypesMap = {
                 chartTypes: chartTypes,
-                seriesChartTypes: seriesChartTypes,
+                seriesNames: seriesNames,
                 optionChartTypes: optionChartTypes
             };
         }
@@ -101,27 +101,30 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
 
     /**
      * Make data for adding series component.
-     * @param {Array.<string>} chartTypes chart types
+     * @param {Array.<string>} seriesNames - series names
      * @returns {Array.<object>}
      * @private
      */
-    _makeDataForAddingSeriesComponent: function(chartTypes) {
+    _makeDataForAddingSeriesComponent: function(seriesNames) {
         var seriesClasses = {
             column: ColumnChartSeries,
             line: LineChartSeries
         };
-        var optionsMap = this._makeOptionsMap(chartTypes);
-        var themeMap = this._makeThemeMap(chartTypes);
-        var serieses = tui.util.map(chartTypes, function(chartType) {
+        var optionsMap = this._makeOptionsMap(seriesNames);
+        var themeMap = this._makeThemeMap(seriesNames);
+        var dataProcessor = this.dataProcessor;
+        var serieses = tui.util.map(seriesNames, function(seriesName) {
+            var chartType = dataProcessor.findChartType(seriesName);
             var data = {
                 allowNegativeTooltip: true,
                 chartType: chartType,
-                options: optionsMap[chartType],
-                theme: themeMap[chartType]
+                seriesName: seriesName,
+                options: optionsMap[seriesName],
+                theme: themeMap[seriesName]
             };
 
             return {
-                name: chartType + 'Series',
+                name: seriesName + 'Series',
                 SeriesClass: seriesClasses[chartType],
                 data: data
             };
@@ -146,7 +149,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
                 isLabel: true
             }
         ];
-        var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesChartTypes);
+        var serieses = this._makeDataForAddingSeriesComponent(chartTypesMap.seriesNames);
 
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
@@ -157,7 +160,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
 
         this._addComponentsForAxisType({
             axes: axes,
-            seriesChartTypes: chartTypesMap.seriesChartTypes,
+            seriesNames: chartTypesMap.seriesNames,
             chartType: this.options.chartType,
             serieses: serieses
         });

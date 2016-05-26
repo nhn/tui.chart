@@ -278,13 +278,13 @@ module.exports = {
      */
     _copyColorInfo: function(theme) {
         var self = this,
-            seriesChartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+            seriesNames = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
 
-        if (!tui.util.keys(seriesChartTypes).length) {
+        if (!tui.util.keys(seriesNames).length) {
             this._copyColorInfoToOther(theme.series, theme.legend);
             this._copyColorInfoToOther(theme.series, theme.tooltip);
         } else {
-            tui.util.forEach(seriesChartTypes, function(item, chartType) {
+            tui.util.forEach(seriesNames, function(item, chartType) {
                 theme.legend[chartType] = {};
                 theme.tooltip[chartType] = {};
                 self._copyColorInfoToOther(item, theme.legend[chartType], item.colors || theme.legend.colors);

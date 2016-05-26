@@ -22,8 +22,10 @@ describe('Test for chartFactory', function() {
 
         it('combo type 차트의 경우, rawData.series에 column, line이 모두 존재하면 columnLineCombo를 반환합니다.', function() {
             var actual = chartFactory._findKey('combo', {
-                column: {},
-                line: {}
+                series: {
+                    line: {},
+                    column: {}
+                }
             });
 
             expect(actual).toBe('columnLineCombo');
@@ -31,8 +33,13 @@ describe('Test for chartFactory', function() {
 
         it('combo type 차트의 경우, rawData.series에 pie, donut이 모두 존재하면 pieDonutCombo를 반환합니다.', function() {
             var actual = chartFactory._findKey('combo', {
-                pie: {},
-                donut: {}
+                seriesAlias: {
+                    donut: 'pie'
+                },
+                series: {
+                    pie: {},
+                    donut: {}
+                }
             });
 
             expect(actual).toBe('pieDonutCombo');

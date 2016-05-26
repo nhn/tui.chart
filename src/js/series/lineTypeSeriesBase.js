@@ -23,7 +23,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _makeBasicPositions: function() {
         var dimension = this.boundsMaker.getDimension('series'),
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
             width = dimension.width,
             height = dimension.height,
             len = seriesDataModel.getGroupCount(),
@@ -129,7 +129,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _renderSeriesLabel: function(elSeriesLabelArea) {
         var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
+            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
             firstLabel = seriesDataModel.getFirstItemLabel(),
             labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
             htmls;

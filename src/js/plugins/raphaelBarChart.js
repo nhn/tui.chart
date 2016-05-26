@@ -46,7 +46,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         this.overlay = this._renderOverlay();
         this.theme = data.theme;
         this.groupBounds = groupBounds;
-        this.chartType = data.chartType;
 
         return paper;
     },

@@ -28,8 +28,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.legendAlign = params.legendAlign;
 
-        this.isInner = !!params.isInner;
-
         this.isCombo = !!params.isCombo;
 
         /**
@@ -69,22 +67,32 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Transform radius range.
+     * @param {Array.<number>} radiusRange - radius range
+     * @returns {Array}
+     * @private
+     */
+    _transformRadiusRange: function(radiusRange) {
+        radiusRange = radiusRange || ['0%', '100%'];
+        return tui.util.map(radiusRange, function(percent) {
+            var ratio = parseInt(percent, 10) * 0.01;
+            return Math.max(Math.min(ratio, 1), 0);
+        });
+    },
+
+    /**
      * Set default options for series of pie type chart.
      * @private
      */
     _setDefaultOptions: function() {
         var options = this.options;
-        var holeRatio;
 
         options.startAngle = this._makeValidAngle(options.startAngle, 0);
         options.endAngle = this._makeValidAngle(options.endAngle, options.startAngle);
-        options.radiusRatio = Math.min(options.radiusRatio || 1, 1);
+        options.radiusRange = this._transformRadiusRange(options.radiusRange);
 
-        if (predicate.isPieChart(this.chartType)) {
-            options.holeRatio = 0;
-        } else {
-            holeRatio = options.holeRatio || chartConst.DONUT_GRAPH_DEFAULT_HOLE_RATIO;
-            options.holeRatio = Math.min(chartConst.DONUT_GRAPH_MAX_HOLE_RATIO, holeRatio);
+        if (options.radiusRange.length === 1) {
+            options.radiusRange.unshift(0);
         }
     },
 
@@ -117,14 +125,14 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _makeSectorData: function(circleBound) {
         var self = this;
-        var seriesGroup = this.dataProcessor.getSeriesDataModel(this.chartType).getFirstSeriesGroup();
+        var seriesGroup = this.dataProcessor.getSeriesDataModel(this.seriesName).getFirstSeriesGroup();
         var cx = circleBound.cx;
         var cy = circleBound.cy;
         var r = circleBound.r;
         var angle = this.options.startAngle;
         var angleForRendering = this._calculateAngleForRendering();
         var delta = 10;
-        var holeRatio = this.options.holeRatio;
+        var holeRatio = this.options.radiusRange[0];
         var centerR = r * 0.5;
         var paths;
 
@@ -185,18 +193,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     _makeSeriesData: function() {
-        var circleBound = this._makeCircleBound({
-                showLabel: this.options.showLabel,
-                legendAlign: this.legendAlign,
-                radiusRatio: this.options.radiusRatio
-            }),
+        var circleBound = this._makeCircleBound(),
             sectorData = this._makeSectorData(circleBound);
 
         return {
             chartBackground: this.chartBackground,
             circleBound: circleBound,
-            sectorData: sectorData,
-            isInner: this.isInner
+            sectorData: sectorData
         };
     },
 
@@ -282,7 +285,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         var radiusRatio = isOuterAlign ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
         var baseSize = this._calculateBaseSize();
 
-        return baseSize * radiusRatio * this.options.radiusRatio / 2;
+        return baseSize * radiusRatio * this.options.radiusRange[1] / 2;
     },
 
     /**
@@ -368,6 +371,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderGraph: function(dimension, seriesData, paper) {
         var showTootltip = tui.util.bind(this.showTooltip, this, {
             allowNegativeTooltip: !!this.allowNegativeTooltip,
+            seriesName: this.seriesName,
             chartType: this.chartType
         });
         var callbacks = {
@@ -468,9 +472,9 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderLegendLabel: function(params, seriesLabelContainer) {
         var self = this;
         var dataProcessor = this.dataProcessor;
-        var seriesDataModel = dataProcessor.getSeriesDataModel(this.chartType);
+        var seriesDataModel = dataProcessor.getSeriesDataModel(this.seriesName);
         var positions = params.positions;
-        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.chartType), function(legend, index) {
+        var htmls = tui.util.map(dataProcessor.getLegendLabels(this.seriesName), function(legend, index) {
             var html = '',
                 label, position;
 
@@ -610,7 +614,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderSeriesLabel: function(seriesLabelContainer) {
         var legendAlign = this.legendAlign;
 
-        if (predicate.isLegendAlignOuter(legendAlign) && !this.isInner) {
+        if (predicate.isLegendAlignOuter(legendAlign)) {
             this._renderOuterLegend(seriesLabelContainer);
         } else {
             this._renderCenterLegend(seriesLabelContainer);

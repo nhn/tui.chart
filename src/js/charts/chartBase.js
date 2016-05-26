@@ -87,7 +87,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             hasAxes: this.hasAxes,
             isVertical: this.isVertical,
             chartType: this.chartType,
-            chartTypes: params.seriesChartTypes
+            chartTypes: params.seriesNames
         });
 
         /**
@@ -132,7 +132,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      *      @param {object} params.rawData - raw data
      *      @param {DataProcessor} params.DataProcessor - DataProcessor class
      *      @param {{chart: object, chartType: string}} params.options - chart options
-     *      @param {Array} params.seriesChartTypes series - chart types for rendering series
+     *      @param {Array} params.seriesNames series - chart types for rendering series
      * @returns {object} data processor
      * @private
      */
@@ -140,7 +140,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var DataProcessor, dataProcessor;
 
         DataProcessor = params.DataProcessor || DefaultDataProcessor;
-        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesNames);
 
         return dataProcessor;
     },
@@ -475,8 +475,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         chartTypes = this.chartTypes || [chartType || this.chartType];
-        seriesInfos = tui.util.map(chartTypes, function(_chartType) {
-            var component = self.componentManager.get(_chartType + 'Series') || self.componentManager.get('series');
+        seriesInfos = tui.util.map(chartTypes, function(seriesName) {
+            var _chartType = self.dataProcessor.findChartType(seriesName);
+            var componentName = (seriesName || _chartType) + 'Series';
+            var component = self.componentManager.get(componentName) || self.componentManager.get('series');
 
             return {
                 chartType: _chartType,

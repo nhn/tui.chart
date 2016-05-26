@@ -73,6 +73,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.boundsMaker = params.boundsMaker;
 
+        this.dataProcessor = params.dataProcessor;
+
         legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
@@ -266,12 +268,14 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _fireLegendSelectionEvent: function(data) {
         var self = this;
-        var chartTypes = this.chartTypes || [data.chartType];
+        var seriesNames = this.chartTypes || [data.chartType];
         var index = this.legendModel.getSelectedIndex();
         var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
+        tui.util.forEachArray(seriesNames, function(seriesName) {
+            var chartType = self.dataProcessor.findChartType(seriesName);
+            var activeChartType = self.dataProcessor.findChartType(data.chartType);
+            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), activeChartType, legendIndex);
         });
     },
 
