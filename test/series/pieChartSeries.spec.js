@@ -339,14 +339,14 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(160);
         });
 
-        it('legend align이 outer인 경우에는 65%를 반환합니다.', function() {
+        it('isShowOuterLabel이 true인 경우에는 65%를 반환합니다.', function() {
             var actual;
 
             boundsMaker.getDimension.and.returnValue({
                 width: 500,
                 height: 400
             });
-            series.legendAlign = 'outer';
+            series.isShowOuterLabel = true;
 
             actual = series._calculateRadius();
 
@@ -534,10 +534,10 @@ describe('PieChartSeries', function() {
     });
 
     describe('_getSeriesLabel()', function() {
-        it('legendType 옵션만 있을 경우에는 legend만 반환합니다.', function() {
+        it('showLegend 옵션만 true일 경우에는 legend만 반환합니다.', function() {
             var actual, expected;
 
-            series.legendAlign = 'outer';
+            series.options.showLegend = true;
             actual = series._getSeriesLabel({
                 legend: 'legend'
             });
@@ -546,7 +546,7 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('showLabel 옵션만 있을 경우에는 label만 반환한다.', function() {
+        it('showLabel 옵션만 ture일 경우에는 label만 반환한다.', function() {
             var actual, expected;
 
             series.options.showLabel = true;
@@ -558,11 +558,11 @@ describe('PieChartSeries', function() {
             expect(actual).toBe(expected);
         });
 
-        it('legendType, showLabel 옵션이 있을 경우에는 legend + separator + label 형태로 반환합니다.', function() {
+        it('showLegend, showLabel 모두 true일 경우에는 legend + separator + label 형태로 반환합니다.', function() {
             var actual, expected;
 
             series.options.showLabel = true;
-            series.legendAlign = 'outer';
+            series.options.showLegend = true;
 
             actual = series._getSeriesLabel({
                 legend: 'legend',
@@ -592,10 +592,10 @@ describe('PieChartSeries', function() {
 
     describe('_renderCenterLegend()', function() {
         it('legend를 전달받은 position 중앙에 위치시킵니다.', function() {
-            var elLabelArea = dom.create('div'),
-                children;
+            var labelContainer = dom.create('div');
+            var children;
 
-            series.legendAlign = 'center';
+            series.options.showLegend = true;
             series.seriesData = {
                 sectorData: [
                     {
@@ -621,8 +621,9 @@ describe('PieChartSeries', function() {
                     }
                 ]
             };
-            series._renderCenterLegend(elLabelArea);
-            children = elLabelArea.childNodes;
+
+            series._renderCenterLegend(labelContainer);
+            children = labelContainer.childNodes;
 
             expect(children[0].style.left).toBe('80px');
             expect(children[0].style.top).toBe('40px');
@@ -642,25 +643,23 @@ describe('PieChartSeries', function() {
     describe('_addEndPosition()', function() {
         it('pie 차트의 외곽 legend line을 표현하기 위해 요소에 end position정보를 추가합니다.', function() {
             var positions = [
-                    {
-                        middle: {
-                            left: 100,
-                            top: 50
-                        }
-                    },
-                    {
-                        middle: {
-                            left: 150,
-                            top: 100
-                        }
-                    },
-                    {
-                        middle: {
-                            left: 100,
-                            top: 150
-                        }
+                {
+                    middle: {
+                        left: 100,
+                        top: 50
                     }
-                ];
+                }, {
+                    middle: {
+                        left: 150,
+                        top: 100
+                    }
+                }, {
+                    middle: {
+                        left: 100,
+                        top: 150
+                    }
+                }
+            ];
 
             series._addEndPosition(110, positions);
 
@@ -678,11 +677,11 @@ describe('PieChartSeries', function() {
     describe('_moveToOuterPosition()', function() {
         it('position.left값이 기준 값(centerLeft)보다 작으면 좌측으로 label너비 만큼 이동 시킵니다. position.top은 label높이가 중앙에 위치하도록 조절합니다.', function() {
             var actual = series._moveToOuterPosition(120, {
-                    end: {
-                        left: 100,
-                        top: 50
-                    }
-                }, 'label1');
+                end: {
+                    left: 100,
+                    top: 50
+                }
+            }, 'label1');
 
             expect(actual.left).toBe(55);
         });
@@ -705,7 +704,7 @@ describe('PieChartSeries', function() {
                 children;
 
             spyOn(series.graphRenderer, 'renderLegendLines');
-            series.legendAlign = 'outer';
+            series.options.showLegend = true;
             series.seriesData = {
                 circleBound: {
                     cx: 110
@@ -760,12 +759,12 @@ describe('PieChartSeries', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('options.legendType이 "outer"면 _renderSeriesLabel()이 수행됩니다.', function() {
+        it('labelAlign 옵션이 outer면 _renderOuterLegend()가 수행됩니다.', function() {
             var actual = dom.create('div'),
                 expected = dom.create('div');
 
             spyOn(series.graphRenderer, 'renderLegendLines');
-            series.legendAlign = 'outer';
+            series.options.labelAlign = 'outer';
             series.seriesData = {
                 circleBound: {
                     cx: 110
@@ -807,7 +806,7 @@ describe('PieChartSeries', function() {
             expect(actual.className).toEqual(expected.className);
             expect(actual.innerHTML).toEqual(expected.innerHTML);
         });
-        it('options.legendType이 "outer"가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
+        it('labelAlign 옵션이 outer가 아니면 _renderCenterLegend()이 수행됩니다.', function() {
             var actual = dom.create('div'),
                 expected = dom.create('div');
 
@@ -815,7 +814,6 @@ describe('PieChartSeries', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 220
             });
-            series.legendAlign = 'center';
             series.seriesData = {
                 sectorData: [
                     {

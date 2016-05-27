@@ -6,7 +6,6 @@
 
 'use strict';
 
-var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var Legend = require('../legends/legend');
 var Tooltip = require('../tooltips/tooltip');
@@ -25,9 +24,8 @@ var pieTypeMixer = {
      */
     _addLegendComponent: function(chartTypes) {
         var legendOption = this.options.legend || {};
-        var isPieLegendAlign = predicate.isPieLegendAlign(legendOption.align);
 
-        if (!isPieLegendAlign && legendOption.visible) {
+        if (legendOption.visible) {
             this.componentManager.register('legend', Legend, {
                 chartTypes: chartTypes,
                 chartType: this.chartType,
@@ -51,14 +49,11 @@ var pieTypeMixer = {
      */
     _addSeriesComponents: function(seriesData) {
         var componentManager = this.componentManager;
-        var legendOption = this.options.legend || {};
-        var isPieLegendAlign = predicate.isPieLegendAlign(legendOption.align);
         var seriesBaseParams = {
             libType: this.options.libType,
             componentType: 'series',
             chartBackground: this.theme.chart.background,
-            userEvent: this.userEvent,
-            legendAlign: isPieLegendAlign && legendOption.visible ? legendOption.align : null
+            userEvent: this.userEvent
         };
 
         tui.util.forEach(seriesData, function(seriesDatum) {

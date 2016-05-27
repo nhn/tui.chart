@@ -185,18 +185,6 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
     },
 
     /**
-     * Whether skipped legend sizing or not.
-     * @returns {boolean}
-     * @private
-     */
-    _isSkipLegend: function() {
-        var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
-        var isPieLegendAlign = predicate.isPieLegendAlign(this.options.align);
-
-        return (isPieTypeCharts && isPieLegendAlign) || !this.options.visible;
-    },
-
-    /**
      * Make legend dimension.
      * @param {number} chartWidth chart width
      * @returns {{width: number, height: number}}
@@ -204,7 +192,7 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
     makeDimension: function(chartWidth) {
         var dimension = {};
 
-        if (this._isSkipLegend()) {
+        if (!this.options.visible) {
             dimension.width = 0;
         } else if (predicate.isHorizontalLegend(this.options.align)) {
             dimension = this._makeHorizontalDimension(chartWidth);

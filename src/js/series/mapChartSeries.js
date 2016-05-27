@@ -6,9 +6,10 @@
 
 'use strict';
 
-var Series = require('./series'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil');
+var Series = require('./series');
+var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prototype */ {
     /**
@@ -197,7 +198,10 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
         Series.prototype._renderSeriesArea.call(this, seriesContainer, data, funcRenderGraph);
-        this.graphContainer.appendChild(this.seriesLabelContainer);
+
+        if (predicate.isShowLabel(this.options) && !this.seriesLabelContainer) {
+            this.graphContainer.appendChild(this.seriesLabelContainer);
+        }
     },
 
     /**

@@ -189,23 +189,31 @@ var predicate = {
     },
 
     /**
-     * Whether align of legend is outer or not.
+     * Whether align of label is outer or not.
      * @memberOf module:predicate
      * @param {string} align - align of legend
      * @returns {boolean}
      */
-    isLegendAlignOuter: function(align) {
-        return align === chartConst.LEGEND_ALIGN_OUTER;
+    isLabelAlignOuter: function(align) {
+        return align === chartConst.LABEL_ALIGN_OUTER;
     },
 
     /**
-     * Whether align of legend is center or not.
-     * @memberOf module:predicate
-     * @param {string} align - align of legend
+     * Whether show label or not.
+     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
      * @returns {boolean}
      */
-    isLegendAlignCenter: function(align) {
-        return align === chartConst.LEGEND_ALIGN_CENTER;
+    isShowLabel: function(options) {
+        return options.showLabel || options.showLegend;
+    },
+
+    /**
+     * Whether show outer label or not.
+     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
+     * @returns {*|boolean}
+     */
+    isShowOuterLabel: function(options) {
+        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
     },
 
     /**
@@ -257,20 +265,6 @@ var predicate = {
         legendOption = legendOption || {};
 
         return !predicate.isHorizontalLegend(legendOption.align) && legendOption.visible;
-    },
-
-    /**
-     * Whether legend align of pie chart or not.
-     * @memberOf module:predicate
-     * @param {?string} align - align of legend
-     * @returns {boolean}
-     */
-    isPieLegendAlign: function(align) {
-        var result = false;
-        if (align) {
-            result = predicate.isLegendAlignOuter(align) || predicate.isLegendAlignCenter(align);
-        }
-        return result;
     },
 
     /**
