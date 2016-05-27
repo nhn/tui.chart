@@ -253,7 +253,9 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._updateBasePositionForZoom(prevDimension, prevLimitPosition, changedRatio);
         renderUtil.renderPosition(this.graphContainer, this.basePosition);
 
-        this._renderSeriesLabel(this.seriesLabelContainer);
+        if (this.seriesLabelContainer) {
+            this._renderSeriesLabel(this.seriesLabelContainer);
+        }
     },
 
     /**
@@ -287,7 +289,9 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._updatePositionsForResizing(prevRatio);
         renderUtil.renderPosition(this.graphContainer, this.basePosition);
 
-        this._renderSeriesLabel(this.seriesLabelContainer);
+        if (this.seriesLabelContainer) {
+            this._renderSeriesLabel(this.seriesLabelContainer);
+        }
     },
 
     /**

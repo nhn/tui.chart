@@ -22,11 +22,11 @@
 {
     "categories": ["Browser"],
     "seriesAlias": {
-        "pie": "pie",
-        "donut": "pie"
+        "pie1": "pie",
+        "pie2": "pie"
     },
     "series": {
-        "pie": [
+        "pie1": [
             {
                 "name": "Chrome",
                 "data": 46.02
@@ -52,7 +52,7 @@
                 "data": 7.25
             }
         ],
-        "donut": [
+        "pie2": [
             {
                 "name": "Chrome 1",
                 "data": 26.02
@@ -107,12 +107,12 @@
         "title": "Usage share of web browsers"
     },
     "series": {
-        "pie": {
+        "pie1": {
             "radiusRange": ["65%"],
             "labelAlign": "center",
             "showLegend": true
         },
-        "donut": {
+        "pie2": {
             "radiusRange": ["70%", "100%"],
             "labelAlign": "outer",
             "showLegend": true
@@ -136,10 +136,10 @@
         <textarea id="theme">
 {
     "series": {
-        "pie": {
+        "pie1": {
             "colors": ["#ac4142", "#d28445", "#f4bf75", "#90a959", "#75b5aa", "#6a9fb5"]
         },
-        "donut": {
+        "pie2": {
             "colors": ["#b85e5e", "#c57a7b", "#d99661", "#dfa97d", "#e6bb99", "#f5c88a", "#f7d29e", "#a1b672", "#8ac0b7", "#80adc0"]
         }
     }
@@ -160,11 +160,11 @@
         data = {
             categories: ['Browser'],
             seriesAlias: {
-                pie: 'pie',
-                donut: 'pie'
+                pie1: 'pie',
+                pie2: 'pie'
             },
             series: {
-                pie: [
+                pie1: [
                     {
                         name: 'Chrome',
                         data: 46.02
@@ -190,7 +190,7 @@
                         data: 7.25
                     }
                 ],
-                donut: [
+                pie2: [
                     {
                         name: 'Chrome 1',
                         data: 26.02
@@ -240,12 +240,12 @@
                 title: 'Usage share of web browsers'
             },
             series: {
-                pie: {
+                pie1: {
                     radiusRange: ['65%'],
                     labelAlign: 'center',
                     showLegend: true
                 },
-                donut: {
+                pie2: {
                     radiusRange: ['70%', '100%'],
                     labelAlign: 'outer',
                     showLegend: true
@@ -262,10 +262,10 @@
 
     tui.chart.registerTheme('newTheme', {
         series: {
-            pie: {
+            pie1: {
                 colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
             },
-            donut: {
+            pie2: {
                 colors: ['#b85e5e', '#c57a7b', '#d99661', '#dfa97d', '#e6bb99', '#f5c88a', '#f7d29e', '#a1b672', '#8ac0b7', '#80adc0']
             }
         }

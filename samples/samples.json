@@ -56,10 +56,10 @@
   "sample07-01-pie-chart": {
     "title": "[Pie Chart] basic"
   },
-  "sample07-02-legend-type-center-show-label-pie-chart": {
+  "sample07-02-center-legend-pie-chart": {
     "title": "[Pie Chart] center legend"
   },
-  "sample07-03-legend-type-outer-show-label-pie-chart": {
+  "sample07-03-outer-legend-pie-chart": {
     "title": "[Pie Chart] outer legend"
   },
   "sample07-04-donut-chart": {
