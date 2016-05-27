@@ -44,6 +44,11 @@
   top: 10px;
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-title-area {
+  text-align: center;
+  white-space: nowrap;
+  top: 0;
+}
+.tui-chart .tui-chart-axis-area.vertical .tui-chart-title-area.rotation {
   -webkit-transform-origin: top left;
   -moz-transform-origin: top left;
   -ms-transform-origin: top left;
@@ -54,9 +59,6 @@
   -ms-transform: rotate(-90deg);
   -o-transform: rotate(-90deg);
   transform: rotate(-90deg);
-  text-align: center;
-  white-space: nowrap;
-  top: 0;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .tui-chart .tui-chart-axis-area.vertical .tui-chart-tick-area {
@@ -84,6 +86,11 @@
   white-space: nowrap;
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-title-area {
+  text-align: center;
+  white-space: nowrap;
+  top: 0;
+}
+.tui-chart .tui-chart-axis-area.vertical.right .tui-chart-title-area.rotation {
   -webkit-transform-origin: top left;
   -moz-transform-origin: top left;
   -ms-transform-origin: top left;
@@ -94,9 +101,6 @@
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
-  text-align: center;
-  white-space: nowrap;
-  top: 0;
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 }
 .tui-chart .tui-chart-axis-area.vertical.right .tui-chart-tick-area,
@@ -459,6 +463,7 @@
 }
 .tui-chart .tui-chart-circle-legend-area {
   position: absolute;
+  z-index: 400;
 }
 .tui-chart .tui-chart-circle-legend-area .tui-chart-circle-legend-label-area {
   position: absolute;

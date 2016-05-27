@@ -3,7 +3,6 @@
   "authors": [
     "NHN Ent. FE Development Team <dl_javascript@nhnent.com>"
   ],
-  "version": "1.5.3-a",
   "license": "MIT",
   "description": "NHN Ent. Toast UI Chart",
   "dependencies": {
