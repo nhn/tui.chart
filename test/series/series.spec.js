@@ -95,7 +95,7 @@ describe('Series', function() {
 
     describe('render()', function() {
         it('width=200, height=100의 series 영역을 렌더링합니다.', function() {
-            var seriesContainer;
+            var actual, seriesContainer;
 
             series.hasAxes = true;
             boundsMaker.getBound.and.returnValue({
@@ -103,7 +103,8 @@ describe('Series', function() {
                 position: {top: 40, left: 40}
             });
 
-            seriesContainer = series.render({});
+            actual = series.render({});
+            seriesContainer = actual.container;
 
             expect(seriesContainer.className.indexOf('series-area') > -1).toBe(true);
             expect(seriesContainer.style.width).toBe('220px');

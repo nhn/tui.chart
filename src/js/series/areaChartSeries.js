@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Series = require('./series'),
-    LineTypeSeriesBase = require('./lineTypeSeriesBase'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate');
+var Series = require('./series');
+var LineTypeSeriesBase = require('./lineTypeSeriesBase');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.prototype */ {
     /**
@@ -46,9 +46,9 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
     },
 
     /**
-     * Make stacked positions.
+     * Make stackType positions.
      * @param {Array.<Array.<{left: number, top: number}>>} groupPositions group positions
-     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
     _makeStackedPositions: function(groupPositions) {
@@ -58,9 +58,9 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
         return tui.util.map(groupPositions, function(positions) {
             return tui.util.map(positions, function(position, index) {
-                var prevTop = prevPositionTops[index] || firstStartTop,
-                    stackedHeight = height - position.top,
-                    top = prevTop - stackedHeight;
+                var prevTop = prevPositionTops[index] || firstStartTop;
+                var stackedHeight = height - position.top;
+                var top = prevTop - stackedHeight;
 
                 position.startTop = prevTop;
                 position.top = top;
@@ -73,13 +73,13 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make positions.
-     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stacked positions
+     * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
     _makePositions: function() {
         var groupPositions = this._makeBasicPositions();
 
-        if (predicate.isValidStackedOption(this.options.stacked)) {
+        if (predicate.isValidStackOption(this.options.stackType)) {
             groupPositions = this._makeStackedPositions(groupPositions);
         }
 
@@ -98,7 +98,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
         return {
             groupPositions: this._makePositions(),
-            hasRangeData: this.dataProcessor.getSeriesDataModel(this.chartType).hasRangeData(),
+            hasRangeData: this.dataProcessor.getSeriesDataModel(this.seriesName).hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     }

@@ -50,7 +50,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel.rawSeriesData[1].data).toEqual([[-20, 10], [30, 40]]);
         });
 
-        it('range형의 차트(bar, column, area)가 아니더라도 stacked옵션이 있다면 range value를 삭제하지 않습니다.', function() {
+        it('range형의 차트(bar, column, area)가 아니더라도 stackType옵션이 있다면 range value를 삭제하지 않습니다.', function() {
             seriesDataModel.rawSeriesData = [
                 {
                     data: [[10, 20], [20, 30]]
@@ -61,7 +61,7 @@ describe('Test for SeriesDataModel', function() {
 
             seriesDataModel.chartType = 'pie';
             seriesDataModel.options = {
-                stacked: 'normal'
+                stackType: 'normal'
             };
             seriesDataModel._removeRangeValue();
 
@@ -247,7 +247,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenNormalStacked()', function() {
-        it('normal stacked 옵션인 경우에는 limit.min, limit.max의 간격을 구하여 seriesGroup.addRatios에 전달합니다.', function() {
+        it('normal stackType 옵션인 경우에는 limit.min, limit.max의 간격을 구하여 seriesGroup.addRatios에 전달합니다.', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatios']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -286,7 +286,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenPercentStacked()', function() {
-        it('percent stacked 옵션인 경우에는 baseRatio구해 seriesGroup.addRatiosWhenPercentStacked에 전달합니다.', function() {
+        it('percent stackType 옵션인 경우에는 baseRatio구해 seriesGroup.addRatiosWhenPercentStacked에 전달합니다.', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['addRatiosWhenPercentStacked']);
 
             seriesDataModel.groups = [seriesGroup];
@@ -301,7 +301,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_addRatiosWhenDivergingStacked()', function() {
-        it('divergion stacked 옵션인 경우에는 plusSum, minuSum을 구해 seriesGroup.addRatiosWhenDivergingStacked에 전달합니다.', function() {
+        it('divergion stackType 옵션인 경우에는 plusSum, minuSum을 구해 seriesGroup.addRatiosWhenDivergingStacked에 전달합니다.', function() {
             var seriesGroup = jasmine.createSpyObj('seriesGroup', ['pluck', 'addRatiosWhenDivergingStacked']);
 
             seriesGroup.pluck.and.returnValue([10, -20, 30, 40]);
@@ -386,7 +386,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });
 
-        it('stacked option이 유효한 차트의 옵션이 normal stacked인 경우에는 _addRatiosWhenNormalStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('stackType option이 유효한 차트의 옵션이 normal stackType인 경우에는 _addRatiosWhenNormalStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenNormalStacked');
             seriesDataModel.chartType = 'bar';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
@@ -394,7 +394,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenNormalStacked).toHaveBeenCalled();
         });
 
-        it('stacked option이 유효하지 않는 라인 차트에는 normal stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+        it('stackType option이 유효하지 않는 라인 차트에는 normal stackType 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatios');
             seriesDataModel.chartType = 'line';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'normal');
@@ -402,7 +402,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatios).toHaveBeenCalled();
         });
 
-        it('stacked option이 유효한 차트의 옵션이 diverging percent stacked인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('stackType option이 유효한 차트의 옵션이 diverging percent stackType인 경우에는 _addRatiosWhenDivergingStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenDivergingStacked');
             seriesDataModel.divergingOption = true;
             seriesDataModel.chartType = 'bar';
@@ -411,7 +411,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenDivergingStacked).toHaveBeenCalled();
         });
 
-        it('stacked option이 유효한 차트의 옵션이 percent stacked인 경우에는 _addRatiosWhenPercentStacked()를 호출하여 ratio를 추가합니다.', function() {
+        it('stackType option이 유효한 차트의 옵션이 percent stackType인 경우에는 _addRatiosWhenPercentStacked()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatiosWhenPercentStacked');
             seriesDataModel.chartType = 'bar';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
@@ -419,7 +419,7 @@ describe('Test for SeriesDataModel', function() {
             expect(seriesDataModel._addRatiosWhenPercentStacked).toHaveBeenCalled();
         });
 
-        it('stacked option이 유효하지 않는 라인 차트에는 percent stacked 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
+        it('stackType option이 유효하지 않는 라인 차트에는 percent stackType 옵션이 있다 하더라도 _addRatios()를 호출하여 ratio를 추가합니다.', function() {
             spyOn(seriesDataModel, '_addRatios');
             seriesDataModel.chartType = 'line';
             seriesDataModel.addDataRatios({min: 0, max: 160}, 'percent');
@@ -475,11 +475,12 @@ describe('Test for SeriesDataModel', function() {
 
         it('maxRadious를 구하여 각각의 seriesItem의 addRatio를 호출하여 r ratio를 등록합니다.', function() {
             var limitMap = {};
+            var hasRadius = true;
             var seriesItem = jasmine.createSpyObj('seriesItem', ['addRatio']);
 
             seriesDataModel.groups = [new SeriesGroup([seriesItem])];
             spyOn(seriesDataModel, 'getValues').and.returnValue([5, 10]);
-            seriesDataModel.addDataRatiosForCoordinateType(limitMap);
+            seriesDataModel.addDataRatiosForCoordinateType(limitMap, hasRadius);
 
             expect(seriesItem.addRatio).toHaveBeenCalledWith('r', 10, 0);
         });

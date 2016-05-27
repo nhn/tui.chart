@@ -6,13 +6,13 @@
 
 'use strict';
 
-var RaphaelLineBase = require('./raphaelLineTypeBase'),
-    raphaelRenderUtil = require('./raphaelRenderUtil');
+var RaphaelLineBase = require('./raphaelLineTypeBase');
+var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
 
+var raphael = window.Raphael;
 var concat = Array.prototype.concat;
 
 var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelAreaChart.prototype */ {
@@ -46,13 +46,12 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             groupPositions = data.groupPositions,
             theme = data.theme,
             colors = theme.colors,
-            opacity = data.options.hasDot ? 1 : 0,
+            opacity = data.options.showDot ? 1 : 0,
             borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
             outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
             paper;
 
         this.paper = paper = raphael(container, 1, dimension.height);
-        this.stackedOption = data.options.stacked;
         this.isSpline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
@@ -63,7 +62,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
-        if (data.options.hasSelection) {
+        if (data.options.allowSelect) {
             this.selectionDot = this._makeSelectionDot(paper);
             this.selectionColor = theme.selectionColor;
 

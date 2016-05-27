@@ -1,21 +1,22 @@
 /**
- * @fileoverview axisTypeMixer is mixer of axis type chart(bar, column, line, area).
+ * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var renderUtil = require('../helpers/renderUtil'),
-    ChartBase = require('./chartBase'),
-    Axis = require('../axes/axis'),
-    Plot = require('../plots/plot'),
-    Legend = require('../legends/legend'),
-    GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent'),
-    BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent'),
-    Tooltip = require('../tooltips/tooltip'),
-    GroupTooltip = require('../tooltips/groupTooltip');
-
+var ChartBase = require('./chartBase');
+var axisDataMaker = require('../helpers/axisDataMaker');
+var renderUtil = require('../helpers/renderUtil');
+var predicate = require('../helpers/predicate');
+var Axis = require('../axes/axis');
+var Plot = require('../plots/plot');
+var Legend = require('../legends/legend');
+var GroupTypeCustomEvent = require('../customEvents/groupTypeCustomEvent');
+var BoundsTypeCustomEvent = require('../customEvents/boundsTypeCustomEvent');
+var Tooltip = require('../tooltips/tooltip');
+var GroupTooltip = require('../tooltips/groupTooltip');
 
 /**
  * Axis limit value.
@@ -23,7 +24,7 @@ var renderUtil = require('../helpers/renderUtil'),
  */
 
 /**
- * axisTypeMixer is base class of axis type chart(bar, column, line, area).
+ * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
  * @mixin
  */
 var axisTypeMixer = {
@@ -86,17 +87,14 @@ var axisTypeMixer = {
      * Add legend component.
      * @param {Array.<string>} chartTypes series chart types
      * @param {string} chartType chartType
-     * @param {object} legendOptions legend options
      * @private
      */
-    _addLegendComponent: function(chartTypes, chartType, legendOptions) {
-        if (!legendOptions || !legendOptions.hidden) {
-            this.componentManager.register('legend', Legend, {
-                chartTypes: chartTypes,
-                chartType: chartType,
-                userEvent: this.userEvent
-            });
-        }
+    _addLegendComponent: function(chartTypes, chartType) {
+        this.componentManager.register('legend', Legend, {
+            chartTypes: chartTypes,
+            chartType: chartType,
+            userEvent: this.userEvent
+        });
     },
 
     /**
@@ -108,14 +106,16 @@ var axisTypeMixer = {
      * @private
      */
     _addComponentsForAxisType: function(params) {
-        var options = this.options,
-            aligned = !!params.aligned;
+        var options = this.options;
+        var aligned = !!params.aligned;
 
         this.componentManager.register('plot', Plot);
         this._addAxisComponents(params.axes, aligned);
-        this._addLegendComponent(params.seriesChartTypes, params.chartType, this.options.legend);
+        if (options.legend.visible) {
+            this._addLegendComponent(params.seriesNames, params.chartType);
+        }
         this._addSeriesComponents(params.serieses, options);
-        this._addTooltipComponent(options.chartType);
+        this._addTooltipComponent();
     },
 
     /**
@@ -139,6 +139,75 @@ var axisTypeMixer = {
     },
 
     /**
+     * Get map for AxisScaleMaker of axes(xAxis, yAxis).
+     * @returns {Object.<string, AxisScaleMaker>}
+     * @private
+     */
+    _getAxisScaleMakerMap: function() {
+        if (!this.axisScaleMakerMap) {
+            this.axisScaleMakerMap = this._makeAxisScaleMakerMap();
+        }
+
+        return this.axisScaleMakerMap;
+    },
+
+    /**
+     * Make axis data for rendering area of axis like yAxis, xAxis, rightYAxis.
+     * @param {AxisScaleMaker} axisScaleMaker - AxisScaleMaker
+     * @param {object} options - options for axis
+     * @param {boolean} [isVertical] - whether vertical or not
+     * @param {boolean} [isPositionRight] - whether right position or not
+     * @returns {object}
+     * @private
+     */
+    _makeAxisData: function(axisScaleMaker, options, isVertical, isPositionRight) {
+        var aligned = predicate.isLineTypeChart(this.chartType);
+        var axisData;
+
+        if (axisScaleMaker) {
+            axisData = axisDataMaker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker,
+                options: options,
+                isVertical: !!isVertical,
+                isPositionRight: !!isPositionRight,
+                aligned: !!aligned
+            });
+        } else {
+            axisData = axisDataMaker.makeLabelAxisData({
+                labels: this.dataProcessor.getCategories(),
+                options: options,
+                isVertical: !!isVertical,
+                isPositionRight: !!isPositionRight,
+                aligned: !!aligned
+            });
+        }
+
+        return axisData;
+    },
+
+    /**
+     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
+     * @returns {object} axes data
+     * @private
+     * @override
+     */
+    _makeAxesData: function() {
+        var axisScaleMakerMap = this._getAxisScaleMakerMap();
+        var options = this.options;
+        var yAxisOptions = tui.util.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+        var axesData = {
+            xAxis: this._makeAxisData(axisScaleMakerMap.xAxis, options.xAxis),
+            yAxis: this._makeAxisData(axisScaleMakerMap.yAxis, yAxisOptions[0], true)
+        };
+
+        if (this.hasRightYAxis) {
+            axesData.rightYAxis = this._makeAxisData(null, yAxisOptions[1], true, true);
+        }
+
+        return axesData;
+    },
+
+    /**
      * Make series data for rendering.
      * @param {{yAxis: object, xAxis: object}} axesData axes data
      * @param {Array.<string>} chartTypes chart types
@@ -147,9 +216,9 @@ var axisTypeMixer = {
      * @private
      */
     _makeSeriesDataForRendering: function(axesData, chartTypes) {
-        var limitMap = this._getLimitMap(axesData, chartTypes),
-            aligned = axesData.xAxis.aligned,
-            seriesData = {};
+        var limitMap = this._getLimitMap(axesData, chartTypes);
+        var aligned = axesData.xAxis.aligned;
+        var seriesData = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
             seriesData[chartType + 'Series'] = {
@@ -172,10 +241,10 @@ var axisTypeMixer = {
         var axesData = this.boundsMaker.getAxesData();
         var chartTypes = this.chartTypes || [this.chartType];
         var limitMap = this._getLimitMap(axesData, chartTypes);
-        var stackedOption = this.options.series && this.options.series.stacked;
+        var stackType = tui.util.pick(this.options.series, 'stackType');
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackedOption, chartType);
+            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
         });
     },
 
@@ -316,6 +385,16 @@ var axisTypeMixer = {
         }
 
         this._attachCustomEventForSeriesSelection(customEvent, serieses);
+    },
+
+    /**
+     * Override for initializing to axisScaleMakerMap.
+     * @private
+     * @override
+     */
+    _rerender: function() {
+        this.axisScaleMakerMap = null;
+        ChartBase.prototype._rerender.apply(this, arguments);
     },
 
     /**

@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Outer Legend Pie Chart Sample</title>
+    <title>[Pie Chart] outer legend</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -60,10 +60,13 @@
         "title": "Usage share of web browsers"
     },
     "series": {
-        "showLabel": true
+        "showLabel": true,
+        "showLegend": true,
+        "labelAlign": "outer"
     },
     "legend": {
-        "align": "outer"
+        "align": "outer",
+        "visible": false
     }
 }
         </textarea>
@@ -129,13 +132,15 @@
                 title: 'Usage share of web browsers'
             },
             series: {
-                showLabel: true
+                showLabel: true,
+                showLegend: true,
+                labelAlign: 'outer'
             },
-            "tooltip": {
-                "suffix": "%"
+            tooltip: {
+                suffix: '%'
             },
             legend: {
-                align: 'outer'
+                visible: false
             }
         };
     tui.chart.pieChart(container, data, options);

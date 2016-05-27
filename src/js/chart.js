@@ -5,11 +5,11 @@
  */
 'use strict';
 
-var chartConst = require('./const'),
-    chartFactory = require('./factories/chartFactory'),
-    pluginFactory = require('./factories/pluginFactory'),
-    themeFactory = require('./factories/themeFactory'),
-    mapFactory = require('./factories/mapFactory');
+var chartConst = require('./const');
+var chartFactory = require('./factories/chartFactory');
+var pluginFactory = require('./factories/pluginFactory');
+var themeFactory = require('./factories/themeFactory');
+var mapFactory = require('./factories/mapFactory');
 
 var _createChart;
 
@@ -45,7 +45,7 @@ tui.util.defineNamespace('tui.chart');
 /**
  * Create chart.
  * @param {HTMLElement} container container
- * @param {rawData} rawData raw data
+ * @param {rawData} rawData - raw data
  * @param {{
  *   chart: {
  *     width: number,
@@ -66,7 +66,7 @@ tui.util.defineNamespace('tui.chart');
  *     template: function
  *   },
  *   theme: string
- * }} options chart options
+ * }} options - chart options
  * @returns {object} chart instance.
  * @private
  * @ignore
@@ -89,43 +89,46 @@ _createChart = function(container, rawData, options) {
 /**
  * Bar chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {string} options.yAxis.align align option for diverging option
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.min minimal value of horizontal axis
- *          @param {number} options.xAxis.max maximum value of horizontal axis
- *      @param {object} options.series options of series
- *          @param {string} options.series.stacked stacked type
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {number} options.series.barWidth bar width
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *          @param {boolean} options.series.diverging whether diverging or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string} options.yAxis.align - align option for center y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.min - minimum value for x axis
+ *          @param {number} options.xAxis.max - maximum value for x axis
+ *      @param {object} options.series - options for series component
+ *          @param {string} options.series.stackType - type of stack
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {number} options.series.barWidth - bar width
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.diverging - whether diverging or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example
@@ -173,44 +176,47 @@ tui.chart.barChart = function(container, rawData, options) {
 /**
  * Column chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
- *      @param {object} options.series options of series
- *          @param {string} options.series.stacked stacked type
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {number} options.series.barWidth bar width
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *          @param {boolean} options.series.diverging whether diverging or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *      @param {object} options.series - options for series component
+ *          @param {string} options.series.stackType - type of stack
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {number} options.series.barWidth - bar width
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.diverging - whether diverging or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} column chart
  * @api
  * @example
@@ -258,43 +264,46 @@ tui.chart.columnChart = function(container, rawData, options) {
 /**
  * Line chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
- *      @param {object} options.series options of series
- *          @param {boolean} options.series.hasDot whether has dot or not
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *          @param {boolean} options.series.spline whether spline or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showDot - whether show dot or not
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.spline - whether spline or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example
@@ -331,7 +340,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       },
  *       series: {
- *         hasDot: true
+ *         showDot: true
  *       }
  *     };
  * tui.chart.lineChart(container, rawData, options);
@@ -345,43 +354,46 @@ tui.chart.lineChart = function(container, rawData, options) {
 /**
  * Area chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
- *      @param {object} options.series options of series
- *          @param {boolean} options.series.hasDot whether has dot or not
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *          @param {boolean} options.series.spline whether spline or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showDot - whether show dot or not
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.spline - whether spline or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example
@@ -429,41 +441,48 @@ tui.chart.areaChart = function(container, rawData, options) {
 /**
  * Bubble chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
- *      @param {object} options.series options of series
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {number} options.xAxis.min - minimum value for y axis
+ *          @param {number} options.xAxis.max - maximum value for y axis
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.circleLegend - options for circleLegend
+ *          @param {boolean} options.circleLegend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bubble chart
  * @api
  * @example
@@ -520,52 +539,149 @@ tui.chart.bubbleChart = function(container, rawData, options) {
 };
 
 /**
+ * Scatter chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.min - minimum value for y axis
+ *          @param {number} options.xAxis.max - maximum value for y axis
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
+ * @returns {object} scatter chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     rawData = {
+ *       series: [
+ *         {
+ *           name: 'Legend1',
+ *           data: [{
+ *              x: 10,
+ *              y: 20
+ *           }, {
+ *              x: 20,
+ *              y: 40
+ *           }]
+ *         },
+ *         {
+ *           name: 'Legend2',
+ *           data: [{
+ *              x: 40,
+ *              y: 10
+ *           }, {
+ *              x: 30,
+ *              y: 40
+ *           }]
+ *         }
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Scatter Chart'
+ *       },
+ *       yAxis: {
+ *         title: 'Y Axis'
+ *       },
+ *       xAxis: {
+ *         title: 'X Axis'
+ *       }
+ *     };
+ * tui.chart.scatterChart(container, rawData, options);
+ */
+tui.chart.scatterChart = function(container, rawData, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_SCATTER;
+    return _createChart(container, rawData, options);
+};
+
+/**
  * Combo chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<string>} rawData.categories categories
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object|Array} options.yAxis options of vertical axis
- *          @param {string} options.yAxis.title title of vertical axis
- *          @param {number} options.yAxis.min minimal value of vertical axis
- *          @param {number} options.yAxis.max maximum value of vertical axis
- *      @param {object} options.xAxis options of horizontal axis
- *          @param {string} options.xAxis.title title of horizontal axis
- *          @param {number} options.xAxis.labelInterval label interval of horizontal axis
- *          @param {boolean} options.xAxis.rotation whether label rotation or not (default: true)
- *      @param {object} options.series options of series
- *          @param {object} options.series.column options of column series
- *              @param {string} options.series.column.stacked stacked type
- *              @param {boolean} options.series.column.showLabel whether show label or not
- *              @param {number} options.series.column.barWidth bar width
- *              @param {boolean} options.series.column.hasSelection whether has selection or not
- *          @param {object} options.series.line options of line series
- *              @param {boolean} options.series.line.hasDot whether has dot or not
- *              @param {boolean} options.series.line.showLabel whether show label or not
- *              @param {boolean} options.series.line.hasSelection whether has selection or not
- *              @param {boolean} options.series.line.spline whether spline or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {object} options.tooltip.column options of column tooltip
- *              @param {string} options.tooltip.column.suffix suffix of tooltip
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<string>} rawData.categories - categories
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object|Array} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {number} options.yAxis.min - minimum value for y axis
+ *          @param {number} options.yAxis.max - maximum value for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *      @param {object} options.series - options for series component
+ *          @param {?object} options.series.column - options for column series component
+ *              @param {string} options.series.column.stackType - type of stack
+ *              @param {boolean} options.series.column.showLabel - whether show label or not
+ *              @param {number} options.series.column.barWidth - bar width
+ *              @param {boolean} options.series.column.allowSelect - whether allow select or not
+ *          @param {?object} options.series.line - options for line series component
+ *              @param {boolean} options.series.line.showDot - whether show dot or not
+ *              @param {boolean} options.series.line.showLabel - whether show label or not
+ *              @param {boolean} options.series.line.allowSelect - whether allow select or not
+ *              @param {boolean} options.series.line.spline - whether spline or not
+ *          @param {?object} options.series.pie - options for pie series component
+ *              @param {boolean} options.series.pie.showLabel - whether show label or not
+ *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
+ *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
+ *              @param {boolean} options.series.pie.startAngle - start angle
+ *              @param {boolean} options.series.pie.endAngle - end angle
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {object} options.tooltip.column - options for column tooltip
+ *              @param {string} options.tooltip.column.suffix - suffix for tooltip
  *              @param {function} [options.tooltip.column.template] template of tooltip
- *              @param {string} options.tooltip.column.align tooltip align option
- *              @param {object} options.tooltip.column.position relative position
- *                  @param {number} options.tooltip.column.position.left position left
- *                  @param {number} options.tooltip.column.position.top position top
- *          @param {boolean} options.tooltip.grouped whether group tooltip or not
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ *              @param {string} options.tooltip.column.align - align option for tooltip
+ *              @param {object} options.tooltip.column.position - relative position
+ *                  @param {number} options.tooltip.column.position.left - position left
+ *                  @param {number} options.tooltip.column.position.top - position top
+ *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {object} options.plot - options for plot component
+ *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example
@@ -616,7 +732,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *         title: 'X Axis'
  *       },
  *       series: {
- *         hasDot: true
+ *         showDot: true
  *       }
  *     };
  * tui.chart.comboChart(container, rawData, options);
@@ -630,31 +746,34 @@ tui.chart.comboChart = function(container, rawData, options) {
 /**
  * Pie chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
- * @param {rawData} rawData raw data
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.series options of series
- *          @param {boolean} options.series.showLabel whether show label or not
- *          @param {boolean} options.series.hasSelection whether has selection or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
- *          @param {boolean} options.legend.hasCheckbox whether has checkbox or not (default: true)
- *          @param {boolean} options.legend.hidden whether hidden or not
- *      @param {string} options.theme theme name
- *      @param {string} options.libType graph library type
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {number} options.series.radiusRatio - ratio of radius for pie graph
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.startAngle - start angle
+ *          @param {boolean} options.series.endAngle - end angle
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
+ *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example
@@ -695,29 +814,29 @@ tui.chart.pieChart = function(container, rawData, options) {
 /**
  * Map chart creator.
  * @memberOf tui.chart
- * @param {HTMLElement} container chart container
+ * @param {HTMLElement} container - chart container
  * @param {rawData} rawData chart data
- *      @param {Array.<Array>} rawData.series series data
- * @param {object} options chart options
- *      @param {object} options.chart chart options
- *          @param {number} options.chart.width chart width
- *          @param {number} options.chart.height chart height
- *          @param {string} options.chart.title chart title
- *          @param {string} options.chart.format value format
- *      @param {object} options.series options of series
- *          @param {boolean} options.series.showLabel whether show label or not
- *      @param {object} options.tooltip options of tooltip
- *          @param {string} options.tooltip.suffix suffix of tooltip
- *          @param {function} [options.tooltip.template] template of tooltip
- *          @param {string} options.tooltip.align tooltip align option
- *          @param {object} options.tooltip.position relative position
- *              @param {number} options.tooltip.position.left position left
- *              @param {number} options.tooltip.position.top position top
- *      @param {object} options.legend options of legend
- *          @param {string} options.legend.align legend align (top|bottom|left|center|outer)
- *      @param {string} options.theme theme name
+ *      @param {Array.<Array>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left|center|outer)
+ *      @param {string} options.theme - theme name
  *      @param {string} options.map map type
- *      @param {string} options.libType graph library type
+ *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
  * @api
  * @example

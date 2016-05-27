@@ -61,12 +61,14 @@
       top: @chart-padding;
 
       .tui-chart-title-area {
-        .transform-origin(top left);
-        .rotate(-90deg);
         text-align: center;
         white-space: nowrap;
         top: 0;
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        &.rotation {
+          .transform-origin(top left);
+          .rotate(-90deg);
+          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        }
       }
 
       .tui-chart-tick-area {
@@ -98,12 +100,14 @@
 
       &.right {
         .tui-chart-title-area {
-          .transform-origin(top left);
-          .rotate(90deg);
           text-align: center;
           white-space: nowrap;
           top: 0;
-          filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+          &.rotation {
+            .transform-origin(top left);
+            .rotate(90deg);
+            filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+          }
         }
 
         .tui-chart-tick-area, .tui-chart-label-area {
@@ -463,7 +467,7 @@
 
   .tui-chart-circle-legend-area {
     position: absolute;
-
+    z-index: 400;
     .tui-chart-circle-legend-label-area {
       position: absolute;
       left: 0;

@@ -37,9 +37,15 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_COMBO: 'combo',
     /** @type {string} */
+    CHART_TYPE_COLUMN_LINE_COMBO: 'columnLineCombo',
+    /** @type {string} */
+    CHART_TYPE_PIE_DONUT_COMBO: 'pieDonutCombo',
+    /** @type {string} */
     CHART_TYPE_PIE: 'pie',
     /** @type {string} */
     CHART_TYPE_BUBBLE: 'bubble',
+    /** @type {string} */
+    CHART_TYPE_SCATTER: 'scatter',
     /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
@@ -77,12 +83,12 @@ var chartConst = {
      */
     DEFAULT_THEME_NAME: 'default',
     MAX_HEIGHT_WORLD: 'A',
-    /** stacked option types
+    /** stack type
      * @type {string}
      */
-    STACKED_NORMAL_TYPE: 'normal',
+    NORMAL_STACK_TYPE: 'normal',
     /** @type {string} */
-    STACKED_PERCENT_TYPE: 'percent',
+    PERCENT_STACK_TYPE: 'percent',
     DEFAULT_STACK: '___DEFAULT___STACK___',
     DUMMY_KEY: '___DUMMY___KEY___',
     /** empty axis label */
@@ -93,12 +99,10 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
-    /** series legend aligns
+    /** series label align outer
      * @type {string}
      */
-    LEGEND_ALIGN_OUTER: 'outer',
-    /** @type {string} */
-    LEGEND_ALIGN_CENTER: 'center',
+    LABEL_ALIGN_OUTER: 'outer',
     /** @type {string} */
     LEGEND_ALIGN_TOP: 'top',
     /** @type {string} */
@@ -107,10 +111,10 @@ var chartConst = {
     LEGEND_ALIGN_LEFT: 'left',
     /** series outer label padding */
     SERIES_OUTER_LABEL_PADDING: 20,
-    /** default rate of pie graph */
-    PIE_GRAPH_DEFAULT_RATE: 0.8,
-    /** small rate of pie graph */
-    PIE_GRAPH_SMALL_RATE: 0.65,
+    /** default ratio for pie graph */
+    PIE_GRAPH_DEFAULT_RATIO: 0.8,
+    /** small ratio for pie graph */
+    PIE_GRAPH_SMALL_RATIO: 0.65,
     /** tick count for map chart legend */
     MAP_CHART_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
@@ -122,6 +126,8 @@ var chartConst = {
     },
     /** dot radius */
     DOT_RADIUS: 4,
+    /** radius for circle of scatter chart*/
+    SCATTER_RADIUS: 5,
     /** yAxis properties
      * @type {Array.<string>}
      */
@@ -148,10 +154,10 @@ var chartConst = {
     /** tooltip animation time for pie chart */
     TOOLTIP_PIE_ANIMATION_TIME: 50,
     /** minimum pixel type step size */
-    MIN_PIXEL_TYPE_STEP_SIZE: 40,
+    MIN_PIXEL_TYPE_STEP_SIZE: 45,
     /** maximum pixel type step size */
-    MAX_PIXEL_TYPE_STEP_SIZE: 60,
-    /** axis scale of percent stacked option
+    MAX_PIXEL_TYPE_STEP_SIZE: 65,
+    /** axis scale for percent stack option
      * @type {object}
      */
     PERCENT_STACKED_AXIS_SCALE: {
@@ -162,7 +168,7 @@ var chartConst = {
         step: 25,
         labels: [0, 25, 50, 75, 100]
     },
-    /** axis scale of minus percent stacked option
+    /** axis scale for minus percent stack option
      * @type {object}
      */
     MINUS_PERCENT_STACKED_AXIS_SCALE: {
@@ -173,7 +179,7 @@ var chartConst = {
         step: 25,
         labels: [0, -25, -50, -75, -100]
     },
-    /** axis scale of dual percent stacked option
+    /** axis scale of dual percent stack option
      * @type {object}
      */
     DUAL_PERCENT_STACKED_AXIS_SCALE: {
@@ -184,7 +190,7 @@ var chartConst = {
         step: 25,
         labels: [-100, -75, -50, -25, 0, 25, 50, 75, 100]
     },
-    /** axis scale of diverging percent stacked option
+    /** axis scale of diverging percent stack option
      * @type {object}
      */
     DIVERGING_PERCENT_STACKED_AXIS_SCALE: {
@@ -205,6 +211,7 @@ var chartConst = {
     LEGEND_RECT_WIDTH: 12,
     /** lgend label left padding */
     LEGEND_LABEL_LEFT_PADDING: 5,
+    MIN_LEGEND_WIDTH: 100,
     /** map legend height */
     MAP_LEGEND_SIZE: 200,
     /** map legend graph size */
@@ -212,7 +219,7 @@ var chartConst = {
     /** map legend label padding */
     MAP_LEGEND_LABEL_PADDING: 5,
     CIRCLE_LEGEND_LABEL_FONT_SIZE: 9,
-    CIRCLE_LEGEND_PADDING: 20,
+    CIRCLE_LEGEND_PADDING: 10,
     HALF_RATIO: 0.5,
     /** AXIS LABEL PADDING */
     AXIS_LABEL_PADDING: 7,

@@ -94,7 +94,7 @@ describe('AreaChartSeries', function() {
     });
 
     describe('_makeStackedPositions()', function() {
-        it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stacked position 정보를 구합니다.', function() {
+        it('영역 chart의 기존 position값에 이전 top을 startTop으로 설정하여 stackType position 정보를 구합니다.', function() {
             var actual, expected;
 
             boundsMaker.getDimension.and.returnValue({
@@ -111,7 +111,7 @@ describe('AreaChartSeries', function() {
     });
 
     describe('_makePositions()', function() {
-        it('영역 차트의 position은 stacked의 경우 _makeBasicPositions 실행 결과를 전달하여 _makeStackedPositions를 실행한 결과를 반환합니다.', function() {
+        it('영역 차트의 position은 stack 차트의 경우 _makeBasicPositions 실행 결과를 전달하여 _makeStackedPositions를 실행한 결과를 반환합니다.', function() {
             var basicPositions = [[{top: 150}], [{top: 100}], [{top: 180}]],
                 actual, expected;
 
@@ -128,7 +128,7 @@ describe('AreaChartSeries', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('영역 차트의 position은 stacked가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
+        it('영역 차트의 position은 stack 차트가 아닌경우 경우 _makeBasicPositions 실행한 결과를 반환합니다.', function() {
             var actual, expected;
 
             boundsMaker.getDimension.and.returnValue({

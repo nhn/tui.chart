@@ -188,6 +188,8 @@ var colorutil = {
         return hexRX.test(str);
     },
 
+    // @license RGB <-> HSV conversion utilities based off of http://www.cs.rit.edu/~ncs/color/t_convert.html
+
     /**
      * Convert color hex string to rgb number array
      * @param {string} hexStr - hex string

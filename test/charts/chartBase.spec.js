@@ -60,7 +60,8 @@ describe('Test for ChartBase', function() {
     describe('_makeProcessedData()', function() {
         it('전달된 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;
-            actual = chartBase._createDataProcessor(DataProcessor, {
+            actual = chartBase._createDataProcessor({
+                DataProcessor: DataProcessor,
                 rawData: {
                     categories: ['a', 'b', 'c']
                 },

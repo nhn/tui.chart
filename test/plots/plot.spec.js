@@ -54,7 +54,7 @@ describe('Test for Plot', function() {
             expect(plot.data).toBe('data');
         });
 
-        it('options.hideLine이 없으면 _renderLines()을 호출하여 line을 렌더링 합니다.', function() {
+        it('options.showLine을 설정하지 않으면 기본값이 true로 설정되어 line을 렌더링 합니다.', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 400,
                 height: 300
@@ -71,7 +71,7 @@ describe('Test for Plot', function() {
             });
         });
 
-        it('options.hideLine이 true이면 _renderLines()을 호출하지 않습니다.', function() {
+        it('options.showLine이 false이면 _renderLines()을 호출하지 않습니다.', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 400,
                 height: 300
@@ -80,7 +80,7 @@ describe('Test for Plot', function() {
             spyOn(renderUtil, 'renderPosition');
             spyOn(plot, '_renderLines');
             plot.options = {
-                hideLine: true
+                showLine: false
             };
 
             plot._renderPlotArea('plotContainer');

@@ -119,9 +119,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
      */
     rerender: function() {
         this.data = this._makeTooltipData();
-        if (this.positionModel) {
-            this.positionModel.updateBound(this.boundsMaker.getBound('tooltip'));
-        }
+        this.resize();
     },
 
     /**

@@ -1,89 +1,101 @@
 {
   "sample01-01-bar-chart": {
-    "title": "Bar Chart Sample"
+    "title": "[Bar Chart] basic"
   },
   "sample01-02-negative-bar-chart": {
-    "title": "Negative Bar Chart Sample"
+    "title": "[Bar Chart] negative data"
   },
   "sample01-03-normal-stacked-bar-chart": {
-    "title": "Stacked Bar Chart Sample"
+    "title": "[Bar Chart] normal stacked"
   },
   "sample01-04-diverging-bar-chart": {
-    "title": "Diverging Bar Chart Sample"
+    "title": "[Bar Chart] diverging"
   },
-  "sample01-05-single-yaxis-diverging-bar-chart": {
-    "title": "Single yAxis Diverging Bar Chart Sample"
+  "sample01-05-diverging-center-yaxis-bar-chart": {
+    "title": "[Bar Chart] diverging and center yAxis"
   },
   "sample01-06-range-bar-chart": {
-    "title": "Range Bar Chart Sample"
+    "title": "[Bar Chart] range data"
   },
   "sample02-01-column-chart": {
-    "title": "Column Chart Sample"
+    "title": "[Column Chart] basic"
   },
   "sample02-02-negative-column-chart": {
-    "title": "Negative Column Chart Sample"
+    "title": "[Column Chart] negative data"
   },
   "sample02-03-percent-stacked-column-chart": {
-    "title": "Percent Stacked Column Chart Sample"
+    "title": "[Column Chart] normal stacked"
   },
   "sample02-04-group-stacked-column-chart": {
-    "title": "Group Stacked Column Chart Sample"
+    "title": "[Column Chart] group stack data"
   },
   "sample02-05-stacked-diverging-column-chart": {
-    "title": "Diverging Stacked Column Chart Sample"
+    "title": "[Column Chart] diverging and stacked"
   },
   "sample03-01-line-chart": {
-    "title": "Line Chart Sample"
+    "title": "[Line Chart] basic"
   },
   "sample03-02-spline-line-chart": {
-    "title": "Spline Line Chart Sample"
+    "title": "[Line Chart] spline"
   },
   "sample04-01-area-chart": {
-    "title": "Area Chart Sample"
+    "title": "[Area Chart] basic"
   },
   "sample04-02-stacked-area-chart": {
-    "title": "Stacked Area Chart Sample"
+    "title": "[Area Chart] normal stacked"
   },
   "sample04-03-range-area-chart": {
-    "title": "Range Area Chart Sample"
+    "title": "[Area Chart] range data"
   },
   "sample05-01-bubble-chart": {
-    "title": "Bubble Chart Sample"
+    "title": "[Bubble Chart] basic"
   },
-  "sample06-01-combo-chart": {
-    "title": "Combo Chart Sample"
+  "sample06-01-scatter-chart": {
+    "title": "[Scatter Chart] basic"
   },
   "sample07-01-pie-chart": {
-    "title": "Pie Chart Sample"
+    "title": "[Pie Chart] basic"
   },
-  "sample07-02-legend-type-center-show-label-pie-chart": {
-    "title": "Center Legend Pie Chart Sample"
+  "sample07-02-center-legend-pie-chart": {
+    "title": "[Pie Chart] center legend"
   },
-  "sample07-03-legend-type-outer-show-label-pie-chart": {
-    "title": "Outer Legend Pie Chart Sample"
+  "sample07-03-outer-legend-pie-chart": {
+    "title": "[Pie Chart] outer legend"
   },
-  "sample08-01-world-map-chart": {
-    "title": "World Map Chart Sample"
+  "sample07-04-donut-chart": {
+    "title": "[Pie Chart] donut"
   },
-  "sample08-02-south-korea-map-chart": {
-    "title": "South Korea Map Chart Sample"
+  "sample07-05-semi-circle-donut-chart": {
+    "title": "[Pie Chart] semi circle donut"
   },
-  "sample08-03-usa-map-chart": {
-    "title": "USA Map Chart Sample"
+  "sample08-01-column-line-combo-chart": {
+    "title": "[Combo Chart] column and line"
   },
-  "sample08-04-china-map-chart": {
-    "title": "China Map Chart Sample"
+  "sample08-02-pie-donut-combo-chart": {
+    "title": "[Combo Chart] pie and donut"
   },
-  "sample08-05-japan-map-chart": {
-    "title": "Japan Map Chart Sample"
+  "sample09-01-world-map-chart": {
+    "title": "[Map chart] world map"
   },
-  "sample08-06-singapore-map-chart": {
-    "title": "Singapore Map Chart Sample"
+  "sample09-02-south-korea-map-chart": {
+    "title": "[Map chart] south korea map"
   },
-  "sample08-07-thailand-map-chart": {
-    "title": "Thailand Map Chart Sample"
+  "sample09-03-usa-map-chart": {
+    "title": "[Map chart] USA map"
   },
-  "sample08-08-taiwan-map-chart": {
-    "title": "Taiwan Map Chart Sample"
+  "sample09-04-china-map-chart": {
+    "title": "[Map chart] china map"
+  },
+  "sample09-05-japan-map-chart": {
+    "title": "[Map chart] japan map"
+  },
+  "sample09-06-singapore-map-chart": {
+    "title": "[Map chart] singapore map"
+  },
+  "sample09-07-thailand-map-chart": {
+    "title": "[Map chart] thailand map"
+  },
+  "sample09-08-taiwan-map-chart": {
+    "title": "[Map chart] taiwan map"
   }
 }

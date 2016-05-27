@@ -42,7 +42,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * chart types
          * @type {?Array.<string>}
          */
-        this.chartTypes = params.chartTypes;
+        this.chartTypes = params.chartTypes || [];
 
         /**
          * chart type
@@ -133,11 +133,11 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
      * @private
      */
     _setData: function() {
-        var self = this,
-            legendData = this.legendData,
-            data, defaultLegendTheme, startIndex, startThemeIndex;
+        var self = this;
+        var legendData = this.legendData;
+        var data, defaultLegendTheme, startIndex, startThemeIndex;
 
-        if (!this.chartTypes) {
+        if (!this.chartTypes || this.chartTypes.length < 2) {
             data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.checkedIndexesMap[this.chartType]);
         } else {
             startIndex = 0;
@@ -146,10 +146,10 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
                 colors: defaultTheme.series.colors
             };
             data = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
-                var chartTheme = self.theme[chartType],
-                    labelLen = self.labels[chartType].length,
-                    endIndex = startIndex + labelLen,
-                    slicedLegendData, checkedIndexes, themeEndIndex, datum;
+                var chartTheme = self.theme[chartType];
+                var labelLen = self.labels[chartType].length;
+                var endIndex = startIndex + labelLen;
+                var slicedLegendData, checkedIndexes, themeEndIndex, datum;
 
                 if (!chartTheme) {
                     themeEndIndex = startThemeIndex + labelLen;

@@ -6,15 +6,17 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    Legend = require('../legends/legend'),
-    Tooltip = require('../tooltips/tooltip'),
-    Series = require('../series/pieChartSeries'),
-    SimpleCustomEvent = require('../customEvents/simpleCustomEvent');
+var ChartBase = require('./chartBase');
+var pieTypeMixer = require('./pieTypeMixer');
+var chartConst = require('../const');
 
 var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ {
+    /**
+     * className
+     * @type {string}
+     */
+    className: 'tui-pie-chart',
+
     /**
      * Pie chart.
      * @constructs PieChart
@@ -24,8 +26,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @param {object} options chart options
      */
     init: function(rawData, theme, options) {
-        this.className = 'tui-pie-chart';
-
         options.tooltip = options.tooltip || {};
 
         if (!options.tooltip.align) {
@@ -38,7 +38,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
             options: options
         });
 
-        this._addComponents(theme.chart.background, options);
+        this._addComponents();
     },
 
     /**
@@ -47,40 +47,15 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @param {object} options chart options
      * @private
      */
-    _addComponents: function(chartBackground, options) {
-        var legendAlign, isPieLegendType;
-
-        options.legend = options.legend || {};
-        legendAlign = options.legend && options.legend.align;
-        isPieLegendType = predicate.isPieLegendAlign(legendAlign);
-
-        if (!isPieLegendType && !options.legend.hidden) {
-            this.componentManager.register('legend', Legend, {
-                chartType: options.chartType,
-                userEvent: this.userEvent
-            });
-        }
-
-        this.componentManager.register('tooltip', Tooltip, this._makeTooltipData());
-
-        this.componentManager.register('pieSeries', Series, {
-            libType: options.libType,
-            chartType: options.chartType,
-            componentType: 'series',
-            chartBackground: chartBackground,
-            userEvent: this.userEvent,
-            legendAlign: isPieLegendType && !options.legend.hidden ? legendAlign : null
-        });
-    },
-
-    /**
-     * Add custom event component.
-     * @private
-     */
-    _addCustomEventComponent: function() {
-        this.componentManager.register('customEvent', SimpleCustomEvent, {
-            chartType: this.chartType
-        });
+    _addComponents: function() {
+        this._addLegendComponent();
+        this._addTooltipComponent();
+        this._addSeriesComponents([{
+            name: 'pieSeries',
+            additionalParams: {
+                chartType: this.chartType
+            }
+        }]);
     },
 
     /**
@@ -89,35 +64,31 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
      * @override
      */
     _addDataRatios: function() {
-        this.dataProcessor.addDataRatiosOfPieChart();
+        this.dataProcessor.addDataRatiosOfPieChart(this.chartType);
     },
 
     /**
-     * Attach custom evnet.
+     * Send series data.
+     * @private
+     * @override
+     */
+    _sendSeriesData: function() {
+        ChartBase.prototype._sendSeriesData.call(this, chartConst.CHART_TYPE_PIE);
+    },
+
+    /**
+     * Attach custom event.
      * @private
      * @override
      */
     _attachCustomEvent: function() {
-        var customEvent, tooltip, pieSeries;
+        var pieSeries = this.componentManager.get('pieSeries');
 
+        this._attachCustomEventForPieTypeChart([pieSeries]);
         ChartBase.prototype._attachCustomEvent.call(this);
-
-        customEvent = this.componentManager.get('customEvent');
-        tooltip = this.componentManager.get('tooltip');
-        pieSeries = this.componentManager.get('pieSeries');
-
-        customEvent.on({
-            clickPieSeries: pieSeries.onClickSeries,
-            movePieSeries: pieSeries.onMoveSeries
-        }, pieSeries);
-
-        pieSeries.on({
-            showTooltip: tooltip.onShow,
-            hideTooltip: tooltip.onHide,
-            showTooltipContainer: tooltip.onShowTooltipContainer,
-            hideTooltipContainer: tooltip.onHideTooltipContainer
-        }, tooltip);
     }
 });
+
+pieTypeMixer.mixin(PieChart);
 
 module.exports = PieChart;

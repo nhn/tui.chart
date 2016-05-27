@@ -256,11 +256,11 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_makeStackedLabelsHtml()', function() {
-        it('bar type(bar, column) stacked 차트의 series label html을 전달하는 values의 수 만큼 생성합니다.', function() {
+        it('bar type(bar, column) stack 차트의 series label html을 전달하는 values의 수 만큼 생성합니다.', function() {
             var container = dom.create('div'),
                 html;
             series.options = {
-                stacked: 'percent'
+                stackType: 'percent'
             };
 
             html = series._makeStackedLabelsHtml({
@@ -285,12 +285,12 @@ describe('BarTypeSeriesBase', function() {
             expect(container.childNodes.length).toBe(2);
         });
 
-        it('stacked옵션이 normal일 경우에는 series label html을 전달하는 values + 1(sum)만큼 생성합니다.', function() {
+        it('stackType옵션이 normal일 경우에는 series label html을 전달하는 values + 1(sum)만큼 생성합니다.', function() {
             var container = dom.create('div'),
                 html;
 
             series.options = {
-                stacked: 'normal'
+                stackType: 'normal'
             };
 
             html = series._makeStackedLabelsHtml({
@@ -317,7 +317,7 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_renderStackedSeriesLabel()', function() {
-        it('bar type(bar, column) stacked=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
+        it('bar type(bar, column) stackType=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
             var elLabelArea = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
 
@@ -332,7 +332,7 @@ describe('BarTypeSeriesBase', function() {
             ];
 
             series.options = {
-                stacked: 'normal'
+                stackType: 'normal'
             };
             series.seriesData = {
                 groupBounds: [
@@ -353,7 +353,7 @@ describe('BarTypeSeriesBase', function() {
     });
 
     describe('_renderSeriesLabel()', function() {
-        it('stacked 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
+        it('stackType 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
@@ -390,7 +390,7 @@ describe('BarTypeSeriesBase', function() {
             expect(elLabelArea.innerHTML).toEqual(elExpected.innerHTML);
         });
 
-        it('stacked 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
+        it('stackType 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
             var elLabelArea = dom.create('div'),
                 elExpected = dom.create('div'),
                 seriesDataModel = new SeriesDataModel();
@@ -407,7 +407,7 @@ describe('BarTypeSeriesBase', function() {
             ];
 
             series.options = {
-                stacked: 'normal'
+                stackType: 'normal'
             };
             series.seriesData = {
                 groupBounds: [

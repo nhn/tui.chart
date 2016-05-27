@@ -6,10 +6,9 @@
 
 'use strict';
 
-var Axis = require('../../src/js/axes/axis'),
-    chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var Axis = require('../../src/js/axes/axis');
+var dom = require('../../src/js/helpers/domHandler');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Test for Axis', function() {
     var dataProcessor, boundsMaker, axis;
@@ -54,12 +53,25 @@ describe('Test for Axis', function() {
     });
 
     describe('_makeYAxisWidth()', function() {
-        it('y축 영역의 너비를 계산하여 반환합니다.', function() {
+        it('제목 높이와 tick 레이블 너비를 계산하여 y축 영역의 너비를 구합니다.', function() {
             var actual, expected;
 
-            axis.options.title = 'Axis Title';
-            actual = axis._makeYAxisWidth(['label1', 'label12']);
+            actual = axis._makeYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title'
+            });
             expected = 87;
+
+            expect(actual).toBe(expected);
+        });
+
+        it('rotateTitle옵션이 false인 경우에는 제목 높이로 계산합니다.', function() {
+            var actual, expected;
+
+            actual = axis._makeYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title',
+                rotateTitle: false
+            });
+            expected = 117;
 
             expect(actual).toBe(expected);
         });
@@ -67,8 +79,10 @@ describe('Test for Axis', function() {
         it('isCenter 옵션으로 인해 중앙에 배치될 경우에는 title영역의 너비는 배제되고 여백이 추가로 적용됩니다.', function() {
             var actual, expected;
 
-            axis.options.isCenter = true;
-            actual = axis._makeYAxisWidth(['label1', 'label12']);
+            actual = axis._makeYAxisWidth(['label1', 'label12'], {
+                title: 'Axis Title',
+                isCenter: true
+            });
             expected = 64;
 
             expect(actual).toBe(expected);
@@ -171,7 +185,10 @@ describe('Test for Axis', function() {
 
             boundsMaker.axesData = {
                 yAxis: {
-                    labels: ['label1', 'label2']
+                    labels: ['label1', 'label2'],
+                    options: {
+                        title: 'Axis title'
+                    }
                 }
             };
 
@@ -273,37 +290,205 @@ describe('Test for Axis', function() {
         });
     });
 
+    describe('_makePositionMapForCenterAlign()', function() {
+        it('y축이 중앙 정렬을 위해 제목 높이와 y축 너비 x축 높이를 이용하여 postion(left, bottom)정보를 생성합니다.', function() {
+            var actual;
+
+            boundsMaker.getDimension.and.callFake(function(componentType) {
+                return {
+                    xAxis: {
+                        height: 50
+                    },
+                    yAxis: {
+                        width: 100
+                    }
+                }[componentType];
+            });
+
+            actual = axis._makePositionMapForCenterAlign();
+
+            expect(actual.left).toBe(25);
+            expect(actual.bottom).toBe(-50);
+        });
+    });
+
+    describe('_makeRightPosition', function() {
+        it('IE7에서는 0을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isIE7').and.returnValue(true);
+
+            actual = axis._makeRightPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('rotateTitle옵션이 false인 경우에도 0을 반환합니다.', function() {
+            var actual;
+
+            axis.options.rotateTitle = false;
+
+            actual = axis._makeRightPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('IE7도 아니고 rotateTitle옵션도 없다면 전달하는 size를 음수로 변경하여 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
+
+            actual = axis._makeRightPosition(100);
+
+            expect(actual).toBe(-100);
+        });
+    });
+
+    describe('_makeTopPosition()', function() {
+        it('rotateTitle옵션이 false인 경우에는 전달하는 size에서 제목 높이값을 뺀 값의 반을 반환합니다.', function() {
+            var actual;
+
+            axis.options.rotateTitle = false;
+
+            actual = axis._makeTopPosition(100);
+
+            expect(actual).toBe(40);
+        });
+
+        it('rotateTitle옵션 없이 오른쪽 y축(isPositionRight=true)인 경우에는 0을 반환합니다.', function() {
+            var actual;
+
+            axis.data.isPositionRight = true;
+            actual = axis._makeTopPosition();
+
+            expect(actual).toBe(0);
+        });
+
+        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)도 아닌 경우에는 전달한 size 그대로 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
+
+            actual = axis._makeTopPosition(100);
+
+            expect(actual).toBe(100);
+        });
+
+        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)인 경우에는 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
+
+            actual = axis._makeTopPosition();
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_makePositionMapForNotCenterAlign()', function() {
+        it('y축이 중앙 정렬이 아닌 경우의 position(top, left) map을 구합니다.', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(50);
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.left).toBe(0);
+            expect(actual.top).toBe(50);
+        });
+
+        it('오른쪽 y축인 경우에는 left가 아닌 right값을 반환합니다.', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(50);
+            spyOn(axis, '_makeRightPosition').and.returnValue(30);
+            axis.data.isPositionRight = true;
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.right).toBe(30);
+            expect(actual.left).toBeUndefined();
+            expect(actual.top).toBe(50);
+        });
+
+        it('top position값이 null인 경우에는 top을 반환하지 않습니다. ', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(null);
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.left).toBe(0);
+            expect(actual.top).toBeUndefined();
+        });
+    });
+
     describe('_renderTitleAreaStyle()', function() {
         it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.', function() {
             var elTitle = dom.create('DIV');
 
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
+
             axis._renderTitleAreaStyle(elTitle, 50);
 
-            // 세로 영역임에도 회전되어 처리되기 때문에 높이 대신 너비 값을 설정 합니다.
             expect(elTitle.style.width).toBe('50px');
             expect(elTitle.style.left).toBe('0px');
+            expect(elTitle.style.top).toBe('50px');
+        });
 
-            // IE8에서는 회전 방법 이슈로 인해 top값을 설정하지 않습니다.
-            if (!renderUtil.isOldBrowser()) {
-                expect(elTitle.style.top).toBe('50px');
-            }
+        it('IE8이하의 구형 브라우저에서는 top값을 설정하지 않습니다.', function() {
+            var elTitle = dom.create('DIV');
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
+
+            axis._renderTitleAreaStyle(elTitle, 50);
+
+            expect(elTitle.style.width).toBe('50px');
+            expect(elTitle.style.left).toBe('0px');
+            expect(elTitle.style.top).toBe('');
+        });
+
+        it('rotateTitle옵션이 false인 경우에는 top값을 제목 높이와 yAxis높이로 계산합니다. ', function() {
+            var elTitle = dom.create('DIV');
+
+            axis.options.rotateTitle = false;
+
+            axis._renderTitleAreaStyle(elTitle, 200);
+
+            expect(elTitle.style.top).toBe('90px');
         });
 
         it('우측 y axis 타이틀 영역의 css style을 렌더링합니다. 우측에 배치되기 때문에 right값으로 설정됩니다.', function() {
             var elTitle = dom.create('DIV');
 
             axis.data.isPositionRight = true;
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
             axis._renderTitleAreaStyle(elTitle, 50);
 
             expect(elTitle.style.width).toBe('50px');
-
-            if (renderUtil.isIE7()) {
-                expect(elTitle.style.right).toBe('0px');
-            } else {
-                expect(elTitle.style.right).toBe('-50px');
-            }
-
+            expect(elTitle.style.right).toBe('-50px');
             expect(elTitle.style.top).toBe('0px');
+        });
+
+        it('우측 y axis 타이틀 이면서 IE7의 경우는 right를 0으로 설정합니다.', function() {
+            var elTitle = dom.create('DIV');
+
+            axis.data.isPositionRight = true;
+            spyOn(renderUtil, 'isIE7').and.returnValue(true);
+            axis._renderTitleAreaStyle(elTitle, 50);
+
+            expect(elTitle.style.right).toBe('0px');
+        });
+
+        it('우측 y axis 타이틀 이면서 rotateTitle옵션이 false인 경우도 right를 0으로 설정합니다.', function() {
+            var elTitle = dom.create('DIV');
+
+            axis.data.isPositionRight = true;
+            spyOn(renderUtil, 'isIE7').and.returnValue(false);
+            axis.options.rotateTitle = false;
+            axis._renderTitleAreaStyle(elTitle, 50);
+
+            expect(elTitle.style.right).toBe('0px');
         });
 
         it('isCenter 옵션으로 인해 중앙에 배치될 경우의 css style을 랜더링 합니다.', function() {
@@ -394,27 +579,6 @@ describe('Test for Axis', function() {
             expect(childNodes[3].style.bottom).toBe('150px');
             expect(childNodes[4].style.bottom).toBe('224px');
             expect(childNodes[5].style.bottom).toBe('299px');
-        });
-
-
-        it('aligned=true이며 레이블 중에 EMPTY_AXIS_LABEL이 포함되어있는 경우 tick을 표시하지 않습니다.', function() {
-            var size = 300,
-                tickCount = 5,
-                categories = ['cate1', 'cate2', chartConst.EMPTY_AXIS_LABEL, chartConst.EMPTY_AXIS_LABEL, 'cate5'],
-                elTickArea, childNodes;
-
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = false;
-            axis.data.aligned = true;
-
-            elTickArea = axis._renderTickArea(size, tickCount, categories);
-            childNodes = elTickArea.childNodes;
-
-            expect(childNodes.length).toBe(4);
-            expect(childNodes[0].className).toBe('tui-chart-tick-line');
-            expect(childNodes[1].style.left).toBe('-1px');
-            expect(childNodes[2].style.left).toBe('75px');
-            expect(childNodes[3].style.left).toBe('299px');
         });
     });
 
@@ -808,7 +972,7 @@ describe('Test for Axis', function() {
                 isVertical: false,
                 isLabelAxis: true
             };
-            axis.options.rotation = false;
+            axis.options.rotateLabel = false;
             dataProcessor.getMultilineCategories.and.returnValue([]);
             spyOn(axis, '_makeRotationLabelsHtml');
             spyOn(axis, '_makeNormalLabelsHtml');
@@ -866,7 +1030,7 @@ describe('Test for Axis', function() {
                 actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
 
             expect(actual.length).toBe(4);
-            expect(actual[0].className).toBe('tui-chart-title-area');
+            expect(actual[0].className).toBe('tui-chart-title-area rotation');
             expect(actual[1].className).toBe('tui-chart-label-area');
             expect(actual[2].className).toBe('tui-chart-tick-area');
             // isCenter가 true인 경우(yAxis 중앙정렬)에만 tick area가 추가됨
@@ -886,7 +1050,7 @@ describe('Test for Axis', function() {
             actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
 
             expect(actual.length).toBe(2);
-            expect(actual[0].className).toBe('tui-chart-title-area');
+            expect(actual[0].className).toBe('tui-chart-title-area rotation');
             expect(actual[1].className).toBe('tui-chart-label-area');
         });
     });
@@ -906,12 +1070,12 @@ describe('Test for Axis', function() {
 
             axis._renderDivisionAxisArea(container, 300);
 
-            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(container.childNodes[0].className).toBe('tui-chart-title-area rotation');
             expect(container.childNodes[1].className).toBe('tui-chart-label-area');
             expect(container.childNodes[2].className).toBe('tui-chart-tick-area');
             expect(container.childNodes[2].firstChild.className).toBe('tui-chart-tick-line');
             expect(container.childNodes[2].firstChild.style.width).toBe('151px');
-            expect(container.childNodes[3].className).toBe('tui-chart-title-area right');
+            expect(container.childNodes[3].className).toBe('tui-chart-title-area rotation right');
             expect(container.childNodes[4].className).toBe('tui-chart-label-area');
             expect(container.childNodes[5].className).toBe('tui-chart-tick-area');
         });
@@ -931,7 +1095,7 @@ describe('Test for Axis', function() {
                 height: 50
             });
 
-            expect(container.childNodes[0].className).toBe('tui-chart-title-area');
+            expect(container.childNodes[0].className).toBe('tui-chart-title-area rotation');
             expect(container.childNodes[1].className).toBe('tui-chart-label-area');
             expect(container.childNodes[2].className).toBe('tui-chart-tick-area');
             expect(container.childNodes[2].firstChild.className).toBe('tui-chart-tick-line');

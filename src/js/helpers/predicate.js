@@ -16,8 +16,8 @@ var predicate = {
     /**
      * Whether bar chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isBarChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_BAR;
@@ -26,8 +26,8 @@ var predicate = {
     /**
      * Whether column chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isColumnChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_COLUMN;
@@ -36,28 +36,42 @@ var predicate = {
     /**
      * Whether bar type chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isBarTypeChart: function(chartType) {
-        return this.isBarChart(chartType) || this.isColumnChart(chartType);
+        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType);
     },
 
     /**
      * Whether combo chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isComboChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_COMBO;
     },
 
     /**
+     * Whether pie and donut combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isPieDonutComboChart: function(chartType, subChartTypes) {
+        var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
+            return predicate.isPieTypeChart(subChartType);
+        });
+        return predicate.isComboChart(chartType) && isAllPieType;
+    },
+
+    /**
      * Whether line chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isLineChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_LINE;
@@ -66,8 +80,8 @@ var predicate = {
     /**
      * Whether area chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isAreaChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_AREA;
@@ -76,41 +90,81 @@ var predicate = {
     /**
      * Whether line type chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isLineTypeChart: function(chartType) {
-        return this.isLineChart(chartType) || this.isAreaChart(chartType);
+        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType);
     },
 
     /**
      * Whether bubble chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isBubbleChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_BUBBLE;
     },
 
     /**
+     * Whether scatter chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isScatterChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_SCATTER;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - chart type
+     * @returns {boolean}
      */
     isPieChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_PIE;
     },
 
     /**
+     * Whether donut chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType -chart type
+     * @returns {boolean}
+     */
+    isDonutChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_DONUT;
+    },
+
+    /**
+     * Whether pie type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isPieTypeChart: function(chartType) {
+        return predicate.isPieChart(chartType) || predicate.isDonutChart(chartType);
+    },
+
+    /**
      * Whether map chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isMapChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_MAP;
+    },
+
+    /**
+     * Whether coordinate type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isCoordinateTypeChart: function(chartType) {
+        return predicate.isBubbleChart(chartType) || predicate.isScatterChart(chartType);
     },
 
     /**
@@ -120,44 +174,53 @@ var predicate = {
      * @returns {boolean}
      */
     allowMinusPointRender: function(chartType) {
-        return this.isLineTypeChart(chartType) || this.isBubbleChart(chartType);
+        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType);
     },
 
     /**
      * Whether mouse position chart or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
     isMousePositionChart: function(chartType) {
-        return this.isPieChart(chartType) || this.isMapChart(chartType) || this.isBubbleChart(chartType);
+        return predicate.isPieTypeChart(chartType) || predicate.isMapChart(chartType)
+            || predicate.isCoordinateTypeChart(chartType);
     },
 
     /**
-     * Whether align of legend is outer or not.
+     * Whether align of label is outer or not.
      * @memberOf module:predicate
-     * @param {string} align legend type
-     * @returns {boolean} result boolean
+     * @param {string} align - align of legend
+     * @returns {boolean}
      */
-    isLegendAlignOuter: function(align) {
-        return align === chartConst.LEGEND_ALIGN_OUTER;
+    isLabelAlignOuter: function(align) {
+        return align === chartConst.LABEL_ALIGN_OUTER;
     },
 
     /**
-     * Whether align of legend is center or not.
-     * @memberOf module:predicate
-     * @param {string} align legend type
-     * @returns {boolean} result boolean
+     * Whether show label or not.
+     * @param {{showLabel: ?boolean, showLegend: ?boolean}} options - options
+     * @returns {boolean}
      */
-    isLegendAlignCenter: function(align) {
-        return align === chartConst.LEGEND_ALIGN_CENTER;
+    isShowLabel: function(options) {
+        return options.showLabel || options.showLegend;
+    },
+
+    /**
+     * Whether show outer label or not.
+     * @param {{showLabel: ?boolean, showLegend: ?boolean, labelAlign: string}} options - options
+     * @returns {*|boolean}
+     */
+    isShowOuterLabel: function(options) {
+        return predicate.isShowLabel(options) && predicate.isLabelAlignOuter(options.labelAlign);
     },
 
     /**
      * Whether align of legend is left or not.
      * @memberOf module:predicate
-     * @param {string} align legend type
-     * @returns {boolean} result boolean
+     * @param {string} align - align of legend
+     * @returns {boolean}
      */
     isLegendAlignLeft: function(align) {
         return align === chartConst.LEGEND_ALIGN_LEFT;
@@ -166,8 +229,8 @@ var predicate = {
     /**
      * Whether align of legend is top or not.
      * @memberOf module:predicate
-     * @param {string} align legend type
-     * @returns {boolean} result boolean
+     * @param {string} align - align of legend
+     * @returns {boolean}
      */
     isLegendAlignTop: function(align) {
         return align === chartConst.LEGEND_ALIGN_TOP;
@@ -176,8 +239,8 @@ var predicate = {
     /**
      * Whether align of legend is bottom or not.
      * @memberOf module:predicate
-     * @param {string} align legend type
-     * @returns {boolean} result boolean
+     * @param {string} align - align of legend
+     * @returns {boolean}
      */
     isLegendAlignBottom: function(align) {
         return align === chartConst.LEGEND_ALIGN_BOTTOM;
@@ -186,82 +249,81 @@ var predicate = {
     /**
      * Whether horizontal legend align or not.
      * @memberOf module:predicate
-     * @param {string} align align
-     * @returns {boolean} result boolean
+     * @param {string} align - align of legend
+     * @returns {boolean}
      */
     isHorizontalLegend: function(align) {
-        return this.isLegendAlignTop(align) || this.isLegendAlignBottom(align);
+        return predicate.isLegendAlignTop(align) || predicate.isLegendAlignBottom(align);
     },
 
     /**
-     * Whether legend align of pie chart or not.
-     * @memberOf module:predicate
-     * @param {?string} align chart type
-     * @returns {boolean} result boolean
+     * Whether has width for vertical type legend or not.
+     * @param {{align: string, visible: boolean}} legendOption - option for legend component
+     * @returns {boolean}
      */
-    isPieLegendAlign: function(align) {
-        var result = false;
-        if (align) {
-            result = this.isLegendAlignOuter(align) || this.isLegendAlignCenter(align);
-        }
-        return result;
+    hasVerticalLegendWidth: function(legendOption) {
+        legendOption = legendOption || {};
+
+        return !predicate.isHorizontalLegend(legendOption.align) && legendOption.visible;
     },
 
     /**
-     * Whether allowed stacked option or not.
+     * Whether allowed stackType option or not.
      * @memberOf module:predicate
-     * @param {string} chartType chart type
-     * @returns {boolean} result boolean
+     * @param {string} chartType - type of chart
+     * @returns {boolean}
      */
-    isAllowedStackedOption: function(chartType) {
-        return this.isBarChart(chartType) || this.isColumnChart(chartType) || this.isAreaChart(chartType);
+    isAllowedStackOption: function(chartType) {
+        return predicate.isBarChart(chartType) || predicate.isColumnChart(chartType)
+            || predicate.isAreaChart(chartType);
     },
 
     /**
-     * Whether normal stacked or not.
+     * Whether normal stack type or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked stacked option
-     * @returns {boolean} result boolean
+     * @param {boolean} stackType - stackType option
+     * @returns {boolean}
      */
-    isNormalStacked: function(stacked) {
-        return stacked === chartConst.STACKED_NORMAL_TYPE;
+    isNormalStack: function(stackType) {
+        return stackType === chartConst.NORMAL_STACK_TYPE;
     },
 
     /**
-     * Whether percent stacked or not.
+     * Whether percent stack type or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked stacked option
-     * @returns {boolean} result boolean
+     * @param {boolean} stackType - stackType option
+     * @returns {boolean}
      */
-    isPercentStacked: function(stacked) {
-        return stacked === chartConst.STACKED_PERCENT_TYPE;
+    isPercentStack: function(stackType) {
+        return stackType === chartConst.PERCENT_STACK_TYPE;
     },
 
     /**
-     * Whether valid stacked option or not.
+     * Whether valid stackType option or not.
      * @memberOf module:predicate
-     * @param {boolean} stacked stacked option
-     * @returns {boolean} result boolean
+     * @param {boolean} stackType - stackType option
+     * @returns {boolean}
      */
-    isValidStackedOption: function(stacked) {
-        return stacked && (this.isNormalStacked(stacked) || this.isPercentStacked(stacked));
+    isValidStackOption: function(stackType) {
+        return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
     },
 
     /**
      * Whether allow range data or not.
+     * @memberOf module:predicate
      * @param {string} chartType - chart type
      * @returns {boolean}
      */
     isAllowRangeData: function(chartType) {
-        return this.isBarTypeChart(chartType) || this.isAreaChart(chartType);
+        return predicate.isBarTypeChart(chartType) || predicate.isAreaChart(chartType);
     },
 
     /**
      * Whether align of yAxis is center or not.
      * @memberOf module:predicate
-     * @param {boolean} hasRightYAxis whether has right yAxis.
-     * @param {string} alignOption align option of yAxis.
-     * @returns {boolean} whether align center or not.
+     * @param {boolean} hasRightYAxis - whether has right yAxis.
+     * @param {string} alignOption - align option of yAxis.
+     * @returns {boolean} whether - align center or not.
      */
     isYAxisAlignCenter: function(hasRightYAxis, alignOption) {
         return !hasRightYAxis && (alignOption === chartConst.YAXIS_ALIGN_CENTER);
@@ -269,20 +331,12 @@ var predicate = {
 
     /**
      * Whether minus limit or not.
-     * @param {{min: number, max: number}} limit limit
+     * @memberOf module:predicate
+     * @param {{min: number, max: number}} limit - limit
      * @returns {boolean}
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
-    },
-
-    /**
-     * Whether options.hidden is true or not.
-     * @param {object} [options] - options
-     * @returns {boolean}
-     */
-    isHidden: function(options) {
-        return !!tui.util.pick(options, 'hidden');
     }
 };
 

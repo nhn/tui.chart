@@ -20,7 +20,9 @@ describe('Test for LegendDimensionModel', function() {
 
     beforeEach(function() {
         dimensionModel = new LegendDimensionModel({
-            options: {},
+            options: {
+                visible: true
+            },
             theme: {}
         });
     });
@@ -128,37 +130,11 @@ describe('Test for LegendDimensionModel', function() {
         });
     });
 
-    describe('_isSkipLegend()', function() {
-        it('파이 차트이면서 align 옵션이 pie전용 align인 "center"나 "outer"이면 true를 반환합니다.', function() {
-            var actual, expected;
-
-            dimensionModel.chartType = chartConst.CHART_TYPE_PIE;
-            dimensionModel.options.align = chartConst.LEGEND_ALIGN_CENTER;
-
-            actual = dimensionModel._isSkipLegend();
-            expected = true;
-
-            expect(actual).toBe(expected);
-        });
-
-        it('align이 hidden이면 true를 반환합니다.', function() {
-            var actual, expected;
-
-            dimensionModel.options.hidden = true;
-
-            actual = dimensionModel._isSkipLegend();
-            expected = true;
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('makeDimension()', function() {
-        it('_isSkipLegend()의 결과가 true이면 0을 반환합니다.', function() {
+        it('visible options이 false이면 0을 반환합니다.', function() {
             var actual;
 
-            spyOn(dimensionModel, '_isSkipLegend').and.returnValue(true);
-
+            dimensionModel.options.visible = false;
             actual = dimensionModel.makeDimension();
 
             expect(actual.width).toBe(0);

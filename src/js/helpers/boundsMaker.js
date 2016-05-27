@@ -60,6 +60,11 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         this.chartType = params.chartType;
 
         /**
+         * chart types for combo.
+         */
+        this.chartTypes = params.chartTypes || [];
+
+        /**
          * data processor
          * @type {DataProcessor}
          */
@@ -179,6 +184,18 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var xPixelStep = this._calculatePixelStep(this.axesData.xAxis, dimension.width);
 
         return Math.min(yPixelStep, xPixelStep);
+    },
+
+    /**
+     * Get max radius for bubble chart.
+     * @returns {number}
+     */
+    getMaxRadiusForBubbleChart: function() {
+        var maxRadius = this.getMinimumPixelStepForAxis();
+        var legendWidth = this.getDimension('calculationLegend').width || chartConst.MIN_LEGEND_WIDTH;
+        var circleLegendWidth = this.getDimension('circleLegend').width || legendWidth;
+
+        return Math.min((circleLegendWidth - chartConst.CIRCLE_LEGEND_PADDING) / 2, maxRadius);
     },
 
     /**
@@ -440,7 +457,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             labels = this.axesData.xAxis.labels,
             rotationInfo, overflowLeft, diffHeight;
 
-        if (xAxisOptions.rotation !== false) {
+        if (xAxisOptions.rotateLabel !== false) {
             rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);
         }
 
@@ -502,10 +519,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var legendDimension = this.getDimension('calculationLegend');
         var legendWidth, rightAreaWidth;
 
-        if (predicate.isHorizontalLegend(this.options.legend.align)) {
-            legendWidth = 0;
-        } else {
+        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
             legendWidth = legendDimension ? legendDimension.width : 0;
+        } else {
+            legendWidth = 0;
         }
 
         rightAreaWidth = legendWidth + this.getDimension('rightYAxis').width;
@@ -518,11 +535,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {number} series height
      */
     makeSeriesHeight: function() {
-        var chartHeight = this.getDimension('chart').height,
-            titleHeight = this.getDimension('title').height,
-            legendHeight, bottomAreaWidth;
+        var chartHeight = this.getDimension('chart').height;
+        var titleHeight = this.getDimension('title').height;
+        var legendOption = this.options.legend;
+        var legendHeight, bottomAreaWidth;
 
-        if (predicate.isHorizontalLegend(this.options.legend.align)) {
+        if (predicate.isHorizontalLegend(legendOption.align) && legendOption.visible) {
             legendHeight = this.getDimension('legend').height;
         } else {
             legendHeight = 0;
@@ -629,12 +647,18 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
         var seriesPosition = this.getPosition('series');
         var seriesDimension = this.getDimension('series');
         var circleDimension = this.getDimension('circleLegend');
-        var left;
+        var legendOption = this.options.legend;
+        var left, legendWidth;
 
-        if (predicate.isLegendAlignLeft(this.options.legend.align)) {
+        if (predicate.isLegendAlignLeft(legendOption.align)) {
             left = 0;
         } else {
             left = seriesPosition.left + seriesDimension.width;
+        }
+
+        if (predicate.hasVerticalLegendWidth(this.options.legend)) {
+            legendWidth = this.getDimension('legend').width + chartConst.CHART_PADDING;
+            left += (legendWidth - circleDimension.width) / 2;
         }
 
         return {
@@ -644,12 +668,25 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     },
 
     /**
+     * Whether need expansion series or not.
+     * @returns {boolean}
+     * @private
+     */
+    _isNeedExpansionSeries: function() {
+        var chartType = this.chartType;
+
+        return !predicate.isMousePositionChart(chartType)
+            && !predicate.isPieDonutComboChart(chartType, this.chartTypes);
+    },
+
+    /**
      * Register essential components positions.
+     * Essential components is all components except components for axis.
      * @private
      */
     _registerEssentialComponentsPositions: function() {
-        var seriesPosition = this.getPosition('series'),
-            tooltipPosition;
+        var seriesPosition = this.getPosition('series');
+        var tooltipPosition;
 
         this.positions.customEvent = tui.util.extend({}, seriesPosition);
         this.positions.legend = this._makeLegendPosition();
@@ -658,7 +695,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
             this.positions.circleLegend = this._makeCircleLegendPosition();
         }
 
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (this._isNeedExpansionSeries()) {
             tooltipPosition = {
                 top: seriesPosition.top - chartConst.SERIES_EXPAND_SIZE,
                 left: seriesPosition.left - chartConst.SERIES_EXPAND_SIZE
@@ -675,14 +712,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _registerPositions: function() {
-        var alignOption = this.options.legend.align,
-            legendDimension = this.getDimension('legend'),
-            topLegendHeight = predicate.isLegendAlignTop(alignOption) ? legendDimension.height : 0,
-            leftLegendWidth = predicate.isLegendAlignLeft(alignOption) ? legendDimension.width : 0,
-            seriesPosition = {
-                top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
-                left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
-            };
+        var alignOption = this.options.legend.align;
+        var isVisibleLegend = this.options.legend.visible;
+        var legendDimension = this.getDimension('legend');
+        var topLegendHeight = (predicate.isLegendAlignTop(alignOption) && isVisibleLegend) ? legendDimension.height : 0;
+        var leftLegendWidth = (predicate.isLegendAlignLeft(alignOption) && isVisibleLegend) ? legendDimension.width : 0;
+        var seriesPosition = {
+            top: this.getDimension('title').height + chartConst.CHART_PADDING + topLegendHeight,
+            left: this.chartLeftPadding + leftLegendWidth + this.getDimension('yAxis').width
+        };
 
         this.positions.series = seriesPosition;
 
@@ -700,7 +738,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _registerExtendedSeriesBound: function() {
         var seriesBound = this.getBound('series');
-        if (!predicate.isMousePositionChart(this.chartType)) {
+        if (this._isNeedExpansionSeries()) {
             seriesBound = renderUtil.expandBound(seriesBound);
         }
 

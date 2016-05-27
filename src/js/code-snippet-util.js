@@ -58,15 +58,15 @@ var max = function(arr, condition, context) {
 
 /**
  * Whether one of them is true or not.
- * @param {Array} arr target array
+ * @param {Array} collection target collection
  * @param {function} condition condition function
  * @param {?object} context target context
  * @returns {boolean} result boolean
  */
-var any = function(arr, condition, context) {
+var any = function(collection, condition, context) {
     var result = false;
-    tui.util.forEachArray(arr, function(item, index) {
-        if (condition.call(context, item, index, arr)) {
+    tui.util.forEach(collection, function(item, key) {
+        if (condition.call(context, item, key, collection)) {
             result = true;
             return false;
         }
@@ -76,15 +76,15 @@ var any = function(arr, condition, context) {
 
 /**
  * All of them is true or not.
- * @param {Array} arr target array
+ * @param {Array} collection target collection
  * @param {function} condition condition function
  * @param {[object]} context target context
  * @returns {boolean} result boolean
  */
-var all = function(arr, condition, context) {
+var all = function(collection, condition, context) {
     var result = true;
-    tui.util.forEachArray(arr, function(item, index) {
-        if (!condition.call(context, item, index, arr)) {
+    tui.util.forEach(collection, function(item, key) {
+        if (!condition.call(context, item, key, collection)) {
             result = false;
             return false;
         }

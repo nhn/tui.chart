@@ -40,16 +40,16 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.options = params.options || {};
 
         /**
-         * chart types
-         * @type {?Array.<string>}
-         */
-        this.chartTypes = params.chartTypes;
-
-        /**
          * chart type
          * @type {string}
          */
         this.chartType = params.chartType;
+
+        /**
+         * chart types
+         * @type {?Array.<string>}
+         */
+        this.chartTypes = params.chartTypes || [this.chartType];
 
         /**
          * user event object
@@ -73,6 +73,8 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
          */
         this.boundsMaker = params.boundsMaker;
 
+        this.dataProcessor = params.dataProcessor;
+
         legendData = params.dataProcessor.getLegendData();
         /**
          * legend model
@@ -87,6 +89,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.dimensionModel = new LegendDimensionModel({
             legendLabels: tui.util.pluck(legendData, 'label'),
+            chartTypes: this.chartTypes,
             chartType: this.chartType,
             options: this.options,
             theme: this.theme
@@ -102,7 +105,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         this.boundsMaker.registerBaseDimension('legend', legendDimension);
 
-        if (!predicate.isHorizontalLegend(this.options.align) && this.options.hidden !== true) {
+        if (predicate.hasVerticalLegendWidth(this.options)) {
             this.boundsMaker.registerBaseDimension('calculationLegend', {
                 width: legendDimension.width
             });
@@ -112,8 +115,6 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     /**
      * Render legend area.
      * @param {HTMLElement} legendContainer legend container
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound lengend bound
-     * @param {Array.<boolean>} checkedIndexes checked indexes
      * @private
      */
     _renderLegendArea: function(legendContainer) {
@@ -212,7 +213,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
             html = tui.util.map(legendData, function(legendDatum, index) {
                 var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop),
-                    checkbox = self.options.hasCheckbox === false ? '' : checkBoxTemplate({
+                    checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
                         index: index,
                         checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
                     }),
@@ -266,13 +267,15 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _fireLegendSelectionEvent: function(data) {
-        var self = this,
-            chartTypes = this.chartTypes || [data.chartType],
-            index = this.legendModel.getSelectedIndex(),
-            legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
+        var self = this;
+        var seriesNames = this.chartTypes || [data.chartType];
+        var index = this.legendModel.getSelectedIndex();
+        var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
+        tui.util.forEachArray(seriesNames, function(seriesName) {
+            var chartType = self.dataProcessor.findChartType(seriesName);
+            var activeChartType = self.dataProcessor.findChartType(data.chartType);
+            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), activeChartType, legendIndex);
         });
     },
 
@@ -330,11 +333,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _checkLegend: function() {
-        var checkedIndexes = this._getCheckedIndexes(),
-            checkedCount = checkedIndexes.length,
-            data;
+        var checkedIndexes = this._getCheckedIndexes();
+        var checkedCount = checkedIndexes.length;
+        var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
+        var data;
 
-        if ((predicate.isPieChart(this.chartType) && checkedCount === 1) || checkedCount === 0) {
+        if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {
             this._renderLegendArea(this.legendContainer);
         } else {
             this.legendModel.updateCheckedData(checkedIndexes);

@@ -33,8 +33,10 @@ describe('Test for axisDataMaker', function() {
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 validTickCount: 0,
+                options: {},
                 isLabelAxis: true,
                 isVertical: false,
+                isPositionRight: false,
                 aligned: false
             });
         });
@@ -62,6 +64,7 @@ describe('Test for axisDataMaker', function() {
 
             actual = maker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                options: 'options',
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true
@@ -75,6 +78,7 @@ describe('Test for axisDataMaker', function() {
                     max: 100
                 },
                 step: 25,
+                options: 'options',
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true

@@ -8,12 +8,12 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    SeriesDataModel = require('../dataModels/seriesDataModel'),
-    SeriesGroup = require('./seriesGroup'),
-    predicate = require('../helpers/predicate'),
-    rawDataHandler = require('../helpers/rawDataHandler'),
-    renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../const');
+var SeriesDataModel = require('../dataModels/seriesDataModel');
+var SeriesGroup = require('./seriesGroup');
+var rawDataHandler = require('../helpers/rawDataHandler');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 var concat = Array.prototype.concat;
 
@@ -53,9 +53,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {rawData} rawData raw data
      * @param {string} chartType chart type
      * @param {object} options options
-     * @param {Array.<string>} seriesChartTypes chart types
+     * @param {Array.<string>} seriesNames chart types
      */
-    init: function(rawData, chartType, options, seriesChartTypes) {
+    init: function(rawData, chartType, options, seriesNames) {
         var seriesOption = options.series || {};
 
         /**
@@ -77,10 +77,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.options = options;
 
         /**
-         * seriesChartTypes is sorted chart types for rendering series area of combo chart.
+         * seriesNames is sorted chart types for rendering series area of combo chart.
          * @type {Array.<string>}
          */
-        this.seriesChartTypes = seriesChartTypes;
+        this.seriesNames = seriesNames;
 
         /**
          * diverging option
@@ -172,12 +172,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Find chart type from series name.
+     * @param {string} seriesName - series name
+     * @returns {*}
+     */
+    findChartType: function(seriesName) {
+        return rawDataHandler.findChartType(this.rawData.seriesAlias, seriesName);
+    },
+
+    /**
      * Process categories
      * @returns {Array.<string>} processed categories
      * @private
      */
     _processCategories: function() {
-        return tui.util.map(this.rawData.categories, tui.util.encodeHTMLEntity);
+        return tui.util.map(this.rawData.categories, function(category) {
+            return tui.util.encodeHTMLEntity(String(category));
+        });
     },
 
     /**
@@ -240,19 +251,20 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Get SeriesDataModel.
-     * @param {string} chartType - chart type
+     * @param {string} seriesName - series name
      * @returns {SeriesDataModel}
      */
-    getSeriesDataModel: function(chartType) {
-        var rawSeriesData;
+    getSeriesDataModel: function(seriesName) {
+        var rawSeriesData, chartType;
 
-        if (!this.seriesDataModelMap[chartType]) {
-            rawSeriesData = this.rawData.series[chartType] || this.rawData.series;
-            this.seriesDataModelMap[chartType] = new SeriesDataModel(rawSeriesData, chartType,
+        if (!this.seriesDataModelMap[seriesName]) {
+            chartType = this.findChartType(seriesName);
+            rawSeriesData = this.rawData.series[seriesName] || this.rawData.series;
+            this.seriesDataModelMap[seriesName] = new SeriesDataModel(rawSeriesData, chartType,
                 this.options, this.getFormatFunctions());
         }
 
-        return this.seriesDataModelMap[chartType];
+        return this.seriesDataModelMap[seriesName];
     },
 
     /**
@@ -265,15 +277,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Traverse all SeriesDataModel by seriesChartTypes, and executes iteratee function.
+     * Traverse all SeriesDataModel by seriesNames, and executes iteratee function.
      * @param {function} iteratee iteratee function
      * @private
      */
     _eachByAllSeriesDataModel: function(iteratee) {
         var self = this,
-            seriesChartTypes = this.seriesChartTypes || [this.chartType];
+            seriesNames = this.seriesNames || [this.chartType];
 
-        tui.util.forEachArray(seriesChartTypes, function(chartType) {
+        tui.util.forEachArray(seriesNames, function(chartType) {
             return iteratee(self.getSeriesDataModel(chartType), chartType);
         });
     },
@@ -467,18 +479,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     _makeLegendData: function() {
         var legendLabels = this.getLegendLabels(),
-            seriesChartTypes = this.seriesChartTypes || [this.chartType],
+            seriesNames = this.seriesNames || [this.chartType],
             legendLabelsMap, legendData;
 
         if (tui.util.isArray(legendLabels)) {
             legendLabelsMap = [this.chartType];
             legendLabelsMap[this.chartType] = legendLabels;
         } else {
-            seriesChartTypes = this.seriesChartTypes;
+            seriesNames = this.seriesNames;
             legendLabelsMap = legendLabels;
         }
 
-        legendData = tui.util.map(seriesChartTypes, function(chartType) {
+        legendData = tui.util.map(seriesNames, function(chartType) {
             return tui.util.map(legendLabelsMap[chartType], function(label) {
                 return {
                     chartType: chartType,
@@ -715,17 +727,20 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
     /**
      * Add data ratios of pie chart.
+     * @param {string} chartType - type of chart.
      */
-    addDataRatiosOfPieChart: function() {
-        this.getSeriesDataModel(chartConst.CHART_TYPE_PIE).addDataRatiosOfPieChart();
+    addDataRatiosOfPieChart: function(chartType) {
+        this.getSeriesDataModel(chartType).addDataRatiosOfPieChart();
     },
 
     /**
      * Add data ratios for chart of coordinate type.
+     * @param {string} chartType - type of chart.
      * @param {{x: {min: number, max: number}, y: {min: number, max: number}}} limitMap - limit map
+     * @param {boolean} [hasRadius] - whether has radius or not
      */
-    addDataRatiosForCoordinateType: function(limitMap) {
-        this.getSeriesDataModel(chartConst.CHART_TYPE_BUBBLE).addDataRatiosForCoordinateType(limitMap);
+    addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+        this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
     },
 
     /**
@@ -749,15 +764,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Register percent values.
      * @param {{min: number, max: number}} limit axis limit
-     * @param {string} stacked stacked option
+     * @param {string} stackType stackType option
      * @param {string} chartType chart type
      * @private
      */
-    addDataRatios: function(limit, stacked, chartType) {
+    addDataRatios: function(limit, stackType, chartType) {
         var seriesDataModel = this.getSeriesDataModel(chartType);
 
         this._addStartValueToAllSeriesItem(limit, chartType);
-        seriesDataModel.addDataRatios(limit, stacked);
+        seriesDataModel.addDataRatios(limit, stackType);
     }
 });
 

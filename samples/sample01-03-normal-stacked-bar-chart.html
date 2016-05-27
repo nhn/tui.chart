@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Stacked Bar Chart Sample</title>
+    <title>[Bar Chart] normal stacked</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -60,7 +60,7 @@
         "max": 24000
     },
     "series": {
-        "stacked": "normal"
+        "stackType": "normal"
     }
 }
         </textarea>
@@ -125,7 +125,7 @@
             max: 24000
         },
         series: {
-            stacked: 'normal'
+            stackType: 'normal'
         }
     };
     tui.chart.barChart(container, data, options);

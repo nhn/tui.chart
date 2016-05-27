@@ -1,21 +1,21 @@
 /**
- * @fileoverview Axis scale maker.
+ * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
  *       FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('./predicate'),
-    calculator = require('./calculator'),
-    renderUtil = require('./renderUtil');
+var chartConst = require('../const');
+var predicate = require('./predicate');
+var calculator = require('./calculator');
+var renderUtil = require('./renderUtil');
 
 var abs = Math.abs;
 
 var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */{
     /**
-     * Axis scale.
+     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
      * @param {object} params parameters
      * @constructs AxisScaleMaker
      */
@@ -116,27 +116,27 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Whether percent stacked chart or not.
+     * Whether percent stack chart or not.
      * @returns {boolean}
      * @private
      */
-    _isPercentStackedChart: function() {
-        var isAllowedStackedOption = predicate.isAllowedStackedOption(this.chartType),
-            isPercentStacked = predicate.isPercentStacked(this.options.stacked);
+    _isPercentStackChart: function() {
+        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
+            isPercentStack = predicate.isPercentStack(this.options.stackType);
 
-        return isAllowedStackedOption && isPercentStacked;
+        return isAllowedStackOption && isPercentStack;
     },
 
     /**
-     * Whether normal stacked chart or not.
+     * Whether normal stack chart or not.
      * @returns {boolean}
      * @private
      */
-    _isNormalStackedChart: function() {
-        var isAllowedStackedOption = predicate.isAllowedStackedOption(this.chartType),
-            isNormalStacked = predicate.isNormalStacked(this.options.stacked);
+    _isNormalStackChart: function() {
+        var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
+            isNormalStack = predicate.isNormalStack(this.options.stackType);
 
-        return isAllowedStackedOption && isNormalStacked;
+        return isAllowedStackOption && isNormalStack;
     },
 
     /**
@@ -156,7 +156,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _getFormatFunctions: function() {
         var formatFunctions;
 
-        if (this._isPercentStackedChart()) {
+        if (this._isPercentStackChart()) {
             formatFunctions = [function(value) {
                 return value + '%';
             }];
@@ -196,7 +196,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Make base values of normal stacked chart.
+     * Make base values of normal stackType chart.
      * @returns {Array.<number>}
      * @private
      */
@@ -229,7 +229,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             baseValues = this.dataProcessor.getValues();
         } else if (this.isSingleYAxis) {
             baseValues = this.dataProcessor.getValues();
-        } else if (this._isNormalStackedChart()) {
+        } else if (this._isNormalStackChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
         } else {
             baseValues = this.dataProcessor.getValues(this.chartType, this.valueType);
@@ -788,7 +788,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Get percent stacked scale.
+     * Get percent stackType scale.
      * @returns {{limit: {min:number, max:number}, step: number}}
      * @private
      */
@@ -816,7 +816,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _makeScale: function() {
         var scale;
 
-        if (this._isPercentStackedChart()) {
+        if (this._isPercentStackChart()) {
             scale = this._getPercentStackedScale();
         } else {
             scale = this._calculateScale();

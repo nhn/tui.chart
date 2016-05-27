@@ -6,13 +6,13 @@
 
 'use strict';
 
-var ComponentManager = require('./componentManager'),
-    DefaultDataProcessor = require('../dataModels/dataProcessor'),
-    BoundsMaker = require('../helpers/boundsMaker'),
-    AxisScaleMaker = require('../helpers/axisScaleMaker'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    UserEventListener = require('../helpers/userEventListener');
+var ComponentManager = require('./componentManager');
+var DefaultDataProcessor = require('../dataModels/dataProcessor');
+var BoundsMaker = require('../helpers/boundsMaker');
+var AxisScaleMaker = require('../helpers/axisScaleMaker');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
+var UserEventListener = require('../helpers/userEventListener');
 
 var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     /**
@@ -43,7 +43,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * options
          * @type {object}
          */
-        this.options = params.options;
+        this.options = null;
+        this._setDefaultOptions(params.options);
 
         /**
          * chart type
@@ -73,7 +74,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * data processor
          * @type {DataProcessor}
          */
-        this.dataProcessor = this._createDataProcessor(params.DataProcessor || DefaultDataProcessor, params);
+        this.dataProcessor = this._createDataProcessor(params);
 
         /**
          * bounds maker
@@ -85,7 +86,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             hasAxes: this.hasAxes,
             isVertical: this.isVertical,
-            chartType: this.chartType
+            chartType: this.chartType,
+            chartTypes: params.seriesNames
         });
 
         /**
@@ -110,30 +112,67 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Create dataProcessor.
-     * @param {DataProcessor} DataProcessor DataProcessor class
+     * Set default options.
+     * @param {object} options - options for chart
+     * @private
+     */
+    _setDefaultOptions: function(options) {
+        options.legend = options.legend || {};
+
+        if (tui.util.isUndefined(options.legend.visible)) {
+            options.legend.visible = true;
+        }
+
+        this.options = options;
+    },
+
+    /**
+     * Create dataProcessor for processing raw data.
      * @param {object} params parameters
-     *      @params {object} rawData raw data
-     *      @params {{chart: object, chartType: string}} options chart options
-     *      @params {Array} seriesChartTypes series chart types
+     *      @param {object} params.rawData - raw data
+     *      @param {DataProcessor} params.DataProcessor - DataProcessor class
+     *      @param {{chart: object, chartType: string}} params.options - chart options
+     *      @param {Array} params.seriesNames series - chart types for rendering series
      * @returns {object} data processor
      * @private
      */
-    _createDataProcessor: function(DataProcessor, params) {
-        var dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesChartTypes);
+    _createDataProcessor: function(params) {
+        var DataProcessor, dataProcessor;
+
+        DataProcessor = params.DataProcessor || DefaultDataProcessor;
+        dataProcessor = new DataProcessor(params.rawData, this.chartType, params.options, params.seriesNames);
 
         return dataProcessor;
     },
 
     /**
-     * Create axis scale maker.
-     * @param {{min: number, max: number}} limitOption limit
+     * Pick limit from options.
+     * @param {{min: number, max: number, title: string}} options - axis options
+     * @returns {{min: ?number, max: ?number}}
+     * @private
+     */
+    _pickLimitFromOptions: function(options) {
+        options = options || {};
+
+        return {
+            min: options.min,
+            max: options.max
+        };
+    },
+
+    /**
+     * Create AxisScaleMaker.
+     * AxisScaleMaker calculates the limit and step into values of processed data and returns it.
+     * @param {{title: string, min: number, max: number}} axisOptions - options for axis
+     * @param {string} areaType - type of area like series, xAxis, yAxis, circleLegend, legend
+     * @param {string} valueType - type of value like value, x, y, r
+     * @param {string} chartType - type of chart
      * @param {?object} additionalParams additional parameters
-     * @param {string} chartType chart type
      * @returns {AxisScaleMaker}
      * @private
      */
-    _createAxisScaleMaker: function(limitOption, additionalParams, chartType) {
+    _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
+        var limit = this._pickLimitFromOptions(axisOptions);
         var seriesOptions = this.options.series || {};
 
         chartType = chartType || this.chartType;
@@ -143,11 +182,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
             options: {
-                stacked: seriesOptions.stacked,
+                stackType: seriesOptions.stackType,
                 diverging: seriesOptions.diverging,
-                limit: limitOption
+                limit: limit
             },
             isVertical: this.isVertical,
+            areaType: areaType,
+            valueType: valueType,
             chartType: chartType
         }, additionalParams));
     },
@@ -182,7 +223,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Attach custom evnet.
+     * Attach custom event.
      * @param {Array.<object>} serieses serieses
      * @private
      */
@@ -201,7 +242,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Make axes data.
+     * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
      * @abstract
      * @private
      */
@@ -235,17 +276,24 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Register axes data, used in a axis component like yAxis, xAxis.
+     * @private
+     */
+    _registerAxesData: function() {
+        var axesData = this._makeAxesData();
+        this.boundsMaker.registerAxesData(axesData);
+    },
+
+    /**
      * Render.
      * @param {function} onRender render callback function
      * @private
      */
     _render: function(onRender) {
-        var axesData, renderingData;
+        var renderingData;
 
         this._executeComponentFunc('registerDimension');
-        axesData = this._makeAxesData();
-
-        this.boundsMaker.registerAxesData(axesData);
+        this._registerAxesData();
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 
@@ -368,14 +416,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Render title.
-     * @param {HTMLElement} el target element
+     * @param {HTMLElement} container - container
      * @private
      */
-    _renderTitle: function(el) {
-        var chartOptions = this.options.chart || {},
-            elTitle = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
+    _renderTitle: function(container) {
+        var chartOptions = this.options.chart || {};
+        var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
 
-        dom.append(el, elTitle);
+        dom.append(container, titleElement);
     },
 
     /**
@@ -386,12 +434,22 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _renderComponents: function(renderingData, funcName, container) {
+        var paper;
         var elements = this.componentManager.map(function(component) {
-            var data = renderingData[component.componentName],
-                element = null;
+            var element = null;
+            var data, result;
 
             if (component[funcName]) {
-                element = component[funcName](data);
+                data = renderingData[component.componentName] || {};
+                data.paper = paper;
+                result = component[funcName](data);
+
+                if (result && result.container) {
+                    element = result.container;
+                    paper = result.paper;
+                } else {
+                    element = result;
+                }
             }
 
             return element;
@@ -404,9 +462,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Send series data to custom event component.
+     * @param {string} chartType - type of chart
      * @private
      */
-    _sendSeriesData: function() {
+    _sendSeriesData: function(chartType) {
         var self = this,
             customEvent = this.componentManager.get('customEvent'),
             seriesInfos, chartTypes;
@@ -415,12 +474,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             return;
         }
 
-        chartTypes = this.chartTypes || [this.chartType];
-        seriesInfos = tui.util.map(chartTypes, function(chartType) {
-            var component = self.componentManager.get(chartType + 'Series') || self.componentManager.get('series');
+        chartTypes = this.chartTypes || [chartType || this.chartType];
+        seriesInfos = tui.util.map(chartTypes, function(seriesName) {
+            var _chartType = self.dataProcessor.findChartType(seriesName);
+            var componentName = (seriesName || _chartType) + 'Series';
+            var component = self.componentManager.get(componentName) || self.componentManager.get('series');
 
             return {
-                chartType: chartType,
+                chartType: _chartType,
                 data: component.getSeriesData()
             };
         });
