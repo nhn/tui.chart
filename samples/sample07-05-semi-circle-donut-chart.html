@@ -14,7 +14,7 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="donutChart" />
+        <input type="hidden" id="type" value="pieChart" />
     </div>
     <div>
         <div>Chart Data</div>
@@ -60,9 +60,9 @@
         "title": "Usage share of web browsers"
     },
     "series": {
-        "holeRatio": 0.6,
         "startAngle": -90,
         "endAngle": 90,
+        "radiusRange": ["60%", "100%"],
         "showLabel": true
     },
     "tooltip": {

@@ -11,13 +11,15 @@ This application supports drawing a chart on web browser.<br>
 * Line Chart<br>
   * A line chart is a type of chart which displays information as a series of data by line segments.
 * Area Chart<br>
-  * An area chart displays graphically quantitive data. It is based on the line chart.
+  * An area chart displays graphically quantitative data. It is based on the line chart.
 * Bubble Chart<br>
   * A bubble chart is a type of chart that displays three dimensions of data.
+* Scatter Chart<br>
+  * A scatter chart is a type of chart that displays values for typically two variables for a set of data.
 * Pie Chart<br>
   * A type of graph in which a circle is divided into sectors that each represent a proportion of the whole.
 * Combo Chart (Combination Chart)<br>
-  * A combo chart is a visualization that combines the features of the column chart and the line chart.
+  * A combo chart is a visualization that combines the features of two kinds of charts.
 * Map Chart<br>
   * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
 
@@ -31,11 +33,13 @@ This application supports drawing a chart on web browser.<br>
 
 ![area chart](https://cloud.githubusercontent.com/assets/2888775/14877608/45a037d0-0d59-11e6-9488-7b3812e17beb.png)
 
-![bubble chart](https://cloud.githubusercontent.com/assets/2888775/14877999/99cbfd7e-0d5b-11e6-8b79-44fa04c540ea.png)
+![bubble chart](https://cloud.githubusercontent.com/assets/2888775/15598957/5eed6618-241a-11e6-9983-ed2a23519a1f.png)
 
-![pie chart](https://cloud.githubusercontent.com/assets/2888775/13280700/dad6c562-db22-11e5-8d48-9fe247f65b58.png)
+![scatter chart](https://cloud.githubusercontent.com/assets/2888775/15598912/e648cd2e-2419-11e6-848c-9efe9e2e3700.png)
 
-![combo chart](https://cloud.githubusercontent.com/assets/2888775/13280701/e07e3522-db22-11e5-9477-f124a9675671.png)
+![pie chart](https://cloud.githubusercontent.com/assets/2888775/15598910/e6268796-2419-11e6-9c6d-1b95719e59f7.png)
+
+![combo chart](https://cloud.githubusercontent.com/assets/2888775/15598911/e6273be6-2419-11e6-8671-7e45a6fc3203.png)
 
 ![map chart](https://cloud.githubusercontent.com/assets/2888775/14169302/e228221a-f761-11e5-88ed-20e9a2aba45c.png)
 
