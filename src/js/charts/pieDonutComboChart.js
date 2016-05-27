@@ -9,6 +9,7 @@
 var ChartBase = require('./chartBase');
 var pieTypeMixer = require('./pieTypeMixer');
 var comboTypeMixer = require('./comboTypeMixer');
+var predicate = require('../helpers/predicate');
 
 var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComboChart.prototype */ {
     /**
@@ -65,12 +66,14 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         var optionsMap = this._makeOptionsMap(this.chartTypes);
         var themeMap = this._makeThemeMap(seriesNames);
         var dataProcessor = this.dataProcessor;
+        var isShowOuterLabel = tui.util.any(optionsMap, predicate.isShowOuterLabel);
         var seriesData = tui.util.map(seriesNames, function(seriesName) {
             var chartType = dataProcessor.findChartType(seriesName);
             var additionalParams = {
                 chartType: chartType,
                 seriesName: seriesName,
                 options: optionsMap[seriesName],
+                isShowOuterLabel: isShowOuterLabel,
                 isCombo: true,
                 theme: themeMap[seriesName]
             };

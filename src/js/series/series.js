@@ -154,6 +154,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         }
 
         this._renderSeriesLabel(seriesLabelContainer);
+
         return seriesLabelContainer;
     },
 
@@ -182,9 +183,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             paper = funcRenderGraph(expansionBound.dimension, seriesData, data.paper);
         }
 
-        seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
-
-        if (!this.seriesLabelContainer) {
+        if ((this.options.showLabel || this.options.showLegend) && !this.seriesLabelContainer) {
+            seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
             this.seriesLabelContainer = seriesLabelContainer;
             dom.append(seriesContainer, seriesLabelContainer);
         }
@@ -473,7 +473,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     animateShowingAboutSeriesLabelArea: function() {
         var self = this;
 
-        if ((!this.options.showLabel && !this.legendAlign) || !this.seriesLabelContainer) {
+        if ((!this.options.showLabel && !this.options.showLegend) || !this.seriesLabelContainer) {
             return;
         }
 
