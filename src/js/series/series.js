@@ -6,11 +6,12 @@
 
 'use strict';
 
-var seriesTemplate = require('./seriesTemplate'),
-    chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    pluginFactory = require('../factories/pluginFactory');
+var seriesTemplate = require('./seriesTemplate');
+var chartConst = require('../const');
+var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+var pluginFactory = require('../factories/pluginFactory');
 
 var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     /**
@@ -183,7 +184,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             paper = funcRenderGraph(expansionBound.dimension, seriesData, data.paper);
         }
 
-        if ((this.options.showLabel || this.options.showLegend) && !this.seriesLabelContainer) {
+        if (predicate.isShowLabel(this.options) && !this.seriesLabelContainer) {
             seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
             this.seriesLabelContainer = seriesLabelContainer;
             dom.append(seriesContainer, seriesLabelContainer);
