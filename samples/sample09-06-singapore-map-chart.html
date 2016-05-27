@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Semi Circle Donut Chart Sample</title>
+    <title>[Map chart] singapore map</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -14,37 +14,32 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="donutChart" />
+        <input type="hidden" id="type" value="mapChart" />
     </div>
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Browser"],
     "series": [
         {
-            "name": "Chrome",
-            "data": 46.02
+            "code": "SG-CS",
+            "data": 946240
         },
         {
-            "name": "IE",
-            "data": 20.47
+            "code": "SG-NE",
+            "data": 810200
         },
         {
-            "name": "Firefox",
-            "data": 17.71
+            "code": "SG-NW",
+            "data": 521510
         },
         {
-            "name": "Safari",
-            "data": 5.45
+            "code": "SG-SE",
+            "data": 692040
         },
         {
-            "name": "Opera",
-            "data": 3.10
-        },
-        {
-            "name": "Etc",
-            "data": 7.25
+            "code": "SG-SW",
+            "data": 900820
         }
     ]
 }
@@ -55,21 +50,14 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
-        "height": 300,
-        "title": "Usage share of web browsers"
+        "width": 640,
+        "height": 500,
+        "title": "Population of Singapore (thousand person)",
+        "format": "1,000"
     },
-    "series": {
-        "holeRatio": 0.6,
-        "startAngle": -90,
-        "endAngle": 90,
-        "showLabel": true
-    },
-    "tooltip": {
-        "suffix": "%"
-    },
+    "map": "singapore",
     "legend": {
-        "align": "center"
+        "align": "bottom"
     }
 }
         </textarea>
@@ -82,7 +70,9 @@
         <textarea id="theme">
 {
     "series": {
-        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
+            "startColor": "#ffefef",
+            "endColor": "#ac4142",
+            "overColor": "#75b5aa"
     }
 }
         </textarea>
@@ -90,63 +80,53 @@
             <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
         </div>
     </div>
+
 </div>
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
 <script src="dist/chart.min.js"></script>
+<script src="dist/maps/singapore.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['Browser'],
             series: [
                 {
-                    name: 'Chrome',
-                    data: 46.02
+                    code: 'SG-CS',
+                    data: 946
                 },
                 {
-                    name: 'IE',
-                    data: 20.47
+                    code: 'SG-NE',
+                    data: 810
                 },
                 {
-                    name: 'Firefox',
-                    data: 17.71
+                    code: 'SG-NW',
+                    data: 522
                 },
                 {
-                    name: 'Safari',
-                    data: 5.45
+                    code: 'SG-SE',
+                    data: 692
                 },
                 {
-                    name: 'Opera',
-                    data: 3.10
-                },
-                {
-                    name: 'Etc',
-                    data: 7.25
+                    code: 'SG-SW',
+                    data: 901
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
-                height: 300,
-                title: 'Usage share of web browsers'
+                width:640,
+                height: 500,
+                title: 'Population of Singapore (thousand person)',
+                format: '1,000'
             },
-            series: {
-                holeRatio: 0.6,
-                startAngle: -90,
-                endAngle: 90,
-                showLabel: true
-            },
-            tooltip: {
-                suffix: '%'
-            },
+            map: 'singapore',
             legend: {
-                align: 'center'
+                align: 'bottom'
             }
         };
-    tui.chart.donutChart(container, data, options);
+    tui.chart.mapChart(container, data, options);
 </script>
 </body>
 </html>

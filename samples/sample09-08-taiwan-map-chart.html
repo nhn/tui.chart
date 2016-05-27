@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>South Korea Map Chart Sample</title>
+    <title>[Map chart] taiwan map</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -22,72 +22,92 @@
 {
     "series": [
         {
-            "code": "KR-SU",
-            "data": 12.5
+            "code": "TW-LCG",
+            "data": 13
         },
         {
-            "code": "KR-BS",
-            "data": 14.7
+            "code": "TW-KNM",
+            "data": 128
         },
         {
-            "code": "KR-DG",
-            "data": 14.1
+            "code": "TW-PEN",
+            "data": 102
         },
         {
-            "code": "KR-IC",
-            "data": 12.1
+            "code": "TW-TTT",
+            "data": 224
         },
         {
-            "code": "KR-GJ",
-            "data": 13.8
+            "code": "TW-YUN",
+            "data": 705
         },
         {
-            "code": "KR-DJ",
-            "data": 13.0
+            "code": "TW-TXQ",
+            "data": 0
         },
         {
-            "code": "KR-US",
-            "data": 14.1
+            "code": "TW-NAN",
+            "data": 514
         },
         {
-            "code": "KR-GG",
-            "data": 11.6
+            "code": "TW-HUA",
+            "data": 333
         },
         {
-            "code": "KR-GW",
-            "data": 11.3
+            "code": "TW-CYI",
+            "data": 0
         },
         {
-            "code": "KR-NC",
-            "data": 11.7
+            "code": "TW-CYQ",
+            "data": 525
         },
         {
-            "code": "KR-SC",
-            "data": 11.9
+            "code": "TW-CHA",
+            "data": 1291
         },
         {
-            "code": "KR-NJ",
-            "data": 12.8
+            "code": "TW-TAO",
+            "data": 0
         },
         {
-            "code": "KR-SJ",
-            "data": 13.6
+            "code": "TW-TPQ",
+            "data": 6870
         },
         {
-            "code": "KR-NG",
-            "data": 12.8
+            "code": "TW-TPE",
+            "data": 0
         },
         {
-            "code": "KR-SG",
-            "data": 14.2
+            "code": "TW-MIA",
+            "data": 567
         },
         {
-            "code": "KR-JJ",
-            "data": 15.5
+            "code": "TW-KEE",
+            "data": 0
         },
         {
-            "code": "KR-SE",
-            "data": 11.8
+            "code": "TW-ILA",
+            "data": 458
+        },
+        {
+            "code": "TW-HSZ",
+            "data": 538
+        },
+        {
+            "code": "TW-HSQ",
+            "data": 0
+        },
+        {
+            "code": "TW-TNQ",
+            "data": 0
+        },
+        {
+            "code": "TW-PIF",
+            "data": 847
+        },
+        {
+            "code": "TW-KHQ",
+            "data": 0
         }
     ]
 }
@@ -98,16 +118,14 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 500,
-        "height": 680,
-        "title": "Average annual temperature of South Korea (°C)"
+        "width": 480,
+        "height": 550,
+        "title": "Population of Taiwan (thousand person)",
+        "format": "1,000"
     },
-    "map": "south-korea",
+    "map": "taiwan",
     "legend": {
         "align": "right"
-    },
-    "tooltip": {
-        "suffix": "°C"
     }
 }
         </textarea>
@@ -136,94 +154,76 @@
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
 <script src="dist/chart.min.js"></script>
-<script src="dist/maps/south-korea.js"></script>
+<script src="dist/maps/taiwan.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
             series: [
                 {
-                    code: 'KR-SU',
-                    data: 12.5
+                    "code": "TW-LCG",
+                    "data": 13
                 },
                 {
-                    code: 'KR-BS',
-                    data: 14.7
+                    "code": "TW-KNM",
+                    "data": 128
                 },
                 {
-                    code: 'KR-DG',
-                    data: 14.1
+                    "code": "TW-PEN",
+                    "data": 102
                 },
                 {
-                    code: 'KR-IC',
-                    data: 12.1
+                    "code": "TW-TTT",
+                    "data": 224
                 },
                 {
-                    code: 'KR-GJ',
-                    data: 13.8
+                    "code": "TW-YUN",
+                    "data": 705
                 },
                 {
-                    code: 'KR-DJ',
-                    data: 13.0
+                    "code": "TW-NAN",
+                    "data": 514
                 },
                 {
-                    code: 'KR-US',
-                    data: 14.1
+                    "code": "TW-HUA",
+                    "data": 333
                 },
                 {
-                    code: 'KR-GG',
-                    data: 11.6
+                    "code": "TW-CYQ",
+                    "data": 525
                 },
                 {
-                    code: 'KR-GW',
-                    data: 11.3
+                    "code": "TW-CHA",
+                    "data": 1291
                 },
                 {
-                    code: 'KR-NC',
-                    data: 11.7
+                    "code": "TW-MIA",
+                    "data": 567
                 },
                 {
-                    code: 'KR-SC',
-                    data: 11.9
+                    "code": "TW-ILA",
+                    "data": 458
                 },
                 {
-                    code: 'KR-NJ',
-                    data: 12.8
+                    "code": "TW-HSZ",
+                    "data": 538
                 },
                 {
-                    code: 'KR-SJ',
-                    data: 13.6
-                },
-                {
-                    code: 'KR-NG',
-                    data: 12.8
-                },
-                {
-                    code: 'KR-SG',
-                    data: 14.2
-                },
-                {
-                    code: 'KR-JJ',
-                    data: 15.5
-                },
-                {
-                    code: 'KR-SE',
-                    data: 11.8
+                    "code": "TW-PIF",
+                    "data": 847
                 }
             ]
         },
         options = {
             chart: {
-                width: 500,
-                height: 680,
-                title: 'Average annual temperature of South Korea (°C)'
+                width:480,
+                height: 550,
+                title: 'Population of Taiwan (thousand person)',
+                format: '1,000'
             },
-            map: 'south-korea',
+            map: 'taiwan',
             legend: {
                 align: 'right'
-            },
-            tooltip: {
-                suffix: '°C'
             }
         };
     tui.chart.mapChart(container, data, options);

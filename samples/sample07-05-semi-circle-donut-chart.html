@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Donut Chart Sample</title>
+    <title>[Pie Chart] semi circle donut</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -56,14 +56,20 @@
 {
     "chart": {
         "width": 500,
-        "height": 400,
+        "height": 300,
         "title": "Usage share of web browsers"
     },
     "series": {
+        "holeRatio": 0.6,
+        "startAngle": -90,
+        "endAngle": 90,
         "showLabel": true
     },
     "tooltip": {
         "suffix": "%"
+    },
+    "legend": {
+        "align": "center"
     }
 }
         </textarea>
@@ -84,7 +90,6 @@
             <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
         </div>
     </div>
-
 </div>
 <script src="lib/code-snippet.min.js"></script>
 <script src="lib/effects.min.js"></script>
@@ -125,17 +130,23 @@
         options = {
             chart: {
                 width: 500,
-                height: 400,
+                height: 300,
                 title: 'Usage share of web browsers'
             },
             series: {
+                startAngle: -90,
+                endAngle: 90,
+                radiusRange: ['60%', '100%'],
                 showLabel: true
             },
             tooltip: {
                 suffix: '%'
+            },
+            legend: {
+                align: 'center'
             }
         };
-    tui.chart.donutChart(container, data, options);
+    tui.chart.pieChart(container, data, options);
 </script>
 </body>
 </html>

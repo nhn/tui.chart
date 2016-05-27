@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Pie and Donut Combo Chart Sample</title>
+    <title>[Combo Chart] pie and donut</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -21,6 +21,10 @@
         <textarea id="data">
 {
     "categories": ["Browser"],
+    "seriesAlias": {
+        "pie": "pie",
+        "donut": "pie"
+    },
     "series": {
         "pie": [
             {
@@ -104,14 +108,18 @@
     },
     "series": {
         "pie": {
-            "radiusRatio": 0.65
+            "radiusRange": ["65%"],
+            "labelAlign": "center",
+            "showLegend": true
         },
         "donut": {
-            "holeRatio": 0.7
+            "radiusRange": ["70%", "100%"],
+            "labelAlign": "outer",
+            "showLegend": true
         }
     },
     "legend": {
-        "align": "outer"
+        "visible": false
     },
     "tooltip": {
         "suffix": "%"
@@ -151,6 +159,10 @@
     var container = document.getElementById('chart-area'),
         data = {
             categories: ['Browser'],
+            seriesAlias: {
+                pie: 'pie',
+                donut: 'pie'
+            },
             series: {
                 pie: [
                     {
@@ -229,14 +241,18 @@
             },
             series: {
                 pie: {
-                    radiusRatio: 0.65
+                    radiusRange: ['65%'],
+                    labelAlign: 'center',
+                    showLegend: true
                 },
                 donut: {
-                    holeRatio: 0.7
+                    radiusRange: ['70%', '100%'],
+                    labelAlign: 'outer',
+                    showLegend: true
                 }
             },
             legend: {
-                align: 'outer'
+                visible: false
             },
             tooltip: {
                 suffix: '%'

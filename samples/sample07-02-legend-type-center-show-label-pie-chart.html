@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Center Legend Pie Chart Sample</title>
+    <title>[Pie Chart] center legend</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -60,13 +60,14 @@
         "title": "Usage share of web browsers"
     },
     "series": {
-        "showLabel": true
+        "showLegend": true,
+        "labelAlign": "center"
     },
     "tooltip": {
         "suffix": "%"
     },
     "legend": {
-        "align": "center"
+        "visible": false
     }
 }
         </textarea>
@@ -132,13 +133,14 @@
                 title: 'Usage share of web browsers'
             },
             series: {
-                showLabel: true
+                showLegend: true,
+                labelAlign: 'center'
             },
             tooltip: {
                 suffix: '%'
             },
             legend: {
-                align: 'center'
+                visible: false
             }
         };
 

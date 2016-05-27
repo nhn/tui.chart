@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>Singapore Map Chart Sample</title>
+    <title>[Pie Chart] donut</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -14,32 +14,37 @@
         <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
-        <input type="hidden" id="type" value="mapChart" />
+        <input type="hidden" id="type" value="donutChart" />
     </div>
     <div>
         <div>Chart Data</div>
         <textarea id="data">
 {
+    "categories": ["Browser"],
     "series": [
         {
-            "code": "SG-CS",
-            "data": 946240
+            "name": "Chrome",
+            "data": 46.02
         },
         {
-            "code": "SG-NE",
-            "data": 810200
+            "name": "IE",
+            "data": 20.47
         },
         {
-            "code": "SG-NW",
-            "data": 521510
+            "name": "Firefox",
+            "data": 17.71
         },
         {
-            "code": "SG-SE",
-            "data": 692040
+            "name": "Safari",
+            "data": 5.45
         },
         {
-            "code": "SG-SW",
-            "data": 900820
+            "name": "Opera",
+            "data": 3.10
+        },
+        {
+            "name": "Etc",
+            "data": 7.25
         }
     ]
 }
@@ -50,14 +55,15 @@
         <textarea id="options">
 {
     "chart": {
-        "width": 640,
-        "height": 500,
-        "title": "Population of Singapore (thousand person)",
-        "format": "1,000"
+        "width": 500,
+        "height": 400,
+        "title": "Usage share of web browsers"
     },
-    "map": "singapore",
-    "legend": {
-        "align": "bottom"
+    "series": {
+        "showLabel": true
+    },
+    "tooltip": {
+        "suffix": "%"
     }
 }
         </textarea>
@@ -70,9 +76,7 @@
         <textarea id="theme">
 {
     "series": {
-            "startColor": "#ffefef",
-            "endColor": "#ac4142",
-            "overColor": "#75b5aa"
+        "colors": ["#e6d3df", "#cfb4be", "#a9888d", "#8e6969", "#6d514b", "#55443c"]
     }
 }
         </textarea>
@@ -86,47 +90,53 @@
 <script src="lib/effects.min.js"></script>
 <script src="lib/raphael-min.js"></script>
 <script src="dist/chart.min.js"></script>
-<script src="dist/maps/singapore.js"></script>
 <script src="js/sample.js"></script>
 <script>
     var container = document.getElementById('chart-area'),
         data = {
+            categories: ['Browser'],
             series: [
                 {
-                    code: 'SG-CS',
-                    data: 946
+                    name: 'Chrome',
+                    data: 46.02
                 },
                 {
-                    code: 'SG-NE',
-                    data: 810
+                    name: 'IE',
+                    data: 20.47
                 },
                 {
-                    code: 'SG-NW',
-                    data: 522
+                    name: 'Firefox',
+                    data: 17.71
                 },
                 {
-                    code: 'SG-SE',
-                    data: 692
+                    name: 'Safari',
+                    data: 5.45
                 },
                 {
-                    code: 'SG-SW',
-                    data: 901
+                    name: 'Opera',
+                    data: 3.10
+                },
+                {
+                    name: 'Etc',
+                    data: 7.25
                 }
             ]
         },
         options = {
             chart: {
-                width:640,
-                height: 500,
-                title: 'Population of Singapore (thousand person)',
-                format: '1,000'
+                width: 500,
+                height: 400,
+                title: 'Usage share of web browsers'
             },
-            map: 'singapore',
-            legend: {
-                align: 'bottom'
+            series: {
+                radiusRange: ['40%', '100%'],
+                showLabel: true
+            },
+            tooltip: {
+                suffix: '%'
             }
         };
-    tui.chart.mapChart(container, data, options);
+    tui.chart.pieChart(container, data, options);
 </script>
 </body>
 </html>
