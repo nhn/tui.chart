@@ -31,7 +31,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
          * chart types.
          * @type {Array.<string>}
          */
-        this.chartTypes = this._pickSeriesNames(rawData.series);
+        this.chartTypes = tui.util.keys(rawData.series).sort();
 
         ChartBase.call(this, {
             rawData: rawData,
@@ -42,18 +42,6 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         });
 
         this._addComponents();
-    },
-
-    /**
-     * Pick chart types from rawData.series
-     * @param {object} rawSeriesData rawData.series
-     * @returns {object} chart types map
-     * @private
-     */
-    _pickSeriesNames: function(rawSeriesData) {
-        return tui.util.keys(rawSeriesData).sort(function(a, b) {
-            return b - a;
-        });
     },
 
     /**
