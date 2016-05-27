@@ -22,13 +22,11 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {object} params.theme series theme
      */
     init: function(params) {
-        /**
-         * legend align option.
-         * @type {boolean}
-         */
-        this.legendAlign = params.legendAlign;
+        Series.call(this, params);
 
         this.isCombo = !!params.isCombo;
+
+        this.isShowOuterLabel = !!params.isShowOuterLabel || predicate.isShowOuterLabel(this.options);
 
         /**
          * chart background.
@@ -41,8 +39,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          * @type {?number}
          */
         this.quadrantRange = null;
-
-        Series.call(this, params);
 
         this._setDefaultOptions();
     },
@@ -281,8 +277,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _calculateRadius: function() {
-        var isOuterAlign = predicate.isLegendAlignOuter(this.legendAlign);
-        var radiusRatio = isOuterAlign ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
+        var radiusRatio = this.isShowOuterLabel ? chartConst.PIE_GRAPH_SMALL_RATIO : chartConst.PIE_GRAPH_DEFAULT_RATIO;
         var baseSize = this._calculateBaseSize();
 
         return baseSize * radiusRatio * this.options.radiusRange[1] / 2;
@@ -441,14 +436,13 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      *      @param {string} params.legend legend
      *      @param {string} params.label label
      *      @param {string} params.separator separator
-     *      @param {{legendAlign: ?string, showLabel: boolean}} params.options options
      * @returns {string} series label
      * @private
      */
     _getSeriesLabel: function(params) {
         var seriesLabel = '';
 
-        if (this.legendAlign) {
+        if (this.options.showLegend) {
             seriesLabel = '<span class="tui-chart-series-legend">' + params.legend + '</span>';
         }
 
@@ -612,9 +606,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @private
      */
     _renderSeriesLabel: function(seriesLabelContainer) {
-        var legendAlign = this.legendAlign;
-
-        if (predicate.isLegendAlignOuter(legendAlign)) {
+        if (predicate.isLabelAlignOuter(this.options.labelAlign)) {
             this._renderOuterLegend(seriesLabelContainer);
         } else {
             this._renderCenterLegend(seriesLabelContainer);

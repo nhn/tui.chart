@@ -99,12 +99,10 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
-    /** series legend aligns
+    /** series label align outer
      * @type {string}
      */
-    LEGEND_ALIGN_OUTER: 'outer',
-    /** @type {string} */
-    LEGEND_ALIGN_CENTER: 'center',
+    LABEL_ALIGN_OUTER: 'outer',
     /** @type {string} */
     LEGEND_ALIGN_TOP: 'top',
     /** @type {string} */
