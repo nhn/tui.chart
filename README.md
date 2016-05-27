@@ -50,7 +50,7 @@ This application supports drawing a chart on web browser.<br>
 * **Sample** : https://nhnent.github.io/tui.chart/latest/tutorial.html
 
 ## Dependency
-* tui.code-snippet 1.0.4
+* tui.code-snippet 1.0.8
 * tui.component-effects 1.1.0
 * Raphaël 2.1.4
 
