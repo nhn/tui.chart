@@ -155,9 +155,9 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
         CustomEventBase.prototype.attachEvent.call(this, target);
 
         if (tui.util.browser.firefox) {
-            eventListener.bindEvent('DOMMouseScroll', target, this._onMousewheel, this);
+            eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
         } else {
-            eventListener.bindEvent('mousewheel', target, this._onMousewheel, this);
+            eventListener.on(target, 'mousewheel', this._onMousewheel, this);
         }
     }
 });

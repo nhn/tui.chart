@@ -6,12 +6,12 @@
 
 'use strict';
 
-var eventListener = require('../helpers/eventListener'),
-    TickBaseCoordinateModel = require('./tickBaseCoordinateModel'),
-    BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel'),
-    chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil');
+var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
+var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
+var chartConst = require('../const');
+var eventListener = require('../helpers/eventListener');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
 
 var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype */ {
     /**
@@ -196,11 +196,13 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {HTMLElement} target - target element
      */
     attachEvent: function(target) {
-        eventListener.bindEvent('click', target, this._onClick, this);
-        eventListener.bindEvent('mousedown', target, this._onMousedown, this);
-        eventListener.bindEvent('mouseup', target, this._onMouseup, this);
-        eventListener.bindEvent('mousemove', target, this._onMousemove, this);
-        eventListener.bindEvent('mouseout', target, this._onMouseout, this);
+        eventListener.on(target, {
+            click: this._onClick,
+            mousedown: this._onMousedown,
+            mouseup: this._onMouseup,
+            mousemove: this._onMousemove,
+            mouseout: this._onMouseout
+        }, this);
     }
 });
 

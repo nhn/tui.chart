@@ -389,7 +389,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _attachEvent: function(target) {
-        eventListener.bindEvent('click', target, this._onClick, this);
+        eventListener.on(target, 'click', this._onClick, this);
     }
 });
 
