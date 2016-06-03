@@ -30,7 +30,9 @@
   .tui-chart-axis-area {
     z-index: 300;
     position: absolute;
-
+    * {
+      .user-select();
+    }
     .tui-chart-title-area {
       position: absolute;
     }
@@ -341,14 +343,27 @@
     position: absolute;
     left: 0;
     top: 0;
-    background-color: #fff;
-    .opacity(0);
+    //background-color: #fff;
+    //.opacity(0);
     &.hide {
       display: none;
     }
 
     &.drag {
       cursor: move;
+    }
+
+    .tui-chart-selection {
+      top: 10px;
+      height: 100%;
+      background-color: gray;
+      border: 1px solid #000;
+      .opacity(0.3);
+      position: absolute;
+      display: none;
+      &.show {
+        display: block;
+      }
     }
   }
 
@@ -484,6 +499,9 @@
   .tui-chart-tooltip-area {
     position: absolute;
     z-index: 500;
+    * {
+      .user-select();
+    }
     .tui-chart-tooltip {
       z-index: 100;
       position: absolute;
