@@ -32,7 +32,7 @@ var eventListener = {
         }
 
         bindHandlerMap[type + handler] = bindHandler;
-        target.attachEvent(context, 'on' + type, bindHandler);
+        target.attachEvent('on' + type, bindHandler);
     },
 
     /**
@@ -111,8 +111,10 @@ var eventListener = {
      * @private
      */
     _detachEvent: function(target, type, handler) {
-        target.detachEvent('on' + type, bindHandlerMap[type + handler]);
-        delete bindHandlerMap[type + handler];
+        if (bindHandlerMap[type + handler]) {
+            target.detachEvent('on' + type, bindHandlerMap[type + handler]);
+            delete bindHandlerMap[type + handler];
+        }
     },
 
     /**
@@ -140,9 +142,9 @@ var eventListener = {
     _unbindEvent: function(target, type, handler) {
         var unbindEvent;
         if ('removeEventListener' in target) {
-            unbindEvent = this._removeEventListener;
+            unbindEvent = eventListener._removeEventListener;
         } else if ('detachEvent' in target) {
-            unbindEvent = this._detachEvent;
+            unbindEvent = eventListener._detachEvent;
         }
         eventListener._unbindEvent = unbindEvent;
 
