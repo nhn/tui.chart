@@ -62,7 +62,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = rawData;
+        this.originalRawData = JSON.parse(JSON.stringify(rawData));
 
         /**
          * chart type
@@ -102,7 +102,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return this.originalRawData;
+        return JSON.parse(JSON.stringify(this.originalRawData));
     },
 
     /**
@@ -169,6 +169,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * @type {Array.<string>}
          */
         this.multilineCategories = null;
+    },
+
+    /**
+     * Get raw data.
+     * @returns {rawData}
+     */
+    getRawData: function() {
+        return this.rawData;
     },
 
     /**

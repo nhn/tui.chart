@@ -7,10 +7,8 @@
 'use strict';
 
 var CustomEventBase = require('./customEventBase');
+var zoomMixer = require('./zoomMixer');
 var AreaTypeDataModel = require('./areaTypeDataModel');
-var chartConst = require('../const');
-var eventListener = require('../helpers/eventListener');
-var dom = require('../helpers/domHandler');
 
 var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaTypeCustomEvent.prototype */ {
     /**
@@ -28,29 +26,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
          */
         this.prevFoundData = null;
 
-        /**
-         * drag start data.
-         * @type {null | object}
-         */
-        this.dragStartData = null;
-
-        /**
-         * start layerX
-         * @type {null | number}
-         */
-        this.startLayerX = null;
-
-        /**
-         * drag selection element
-         * @type {null | HTMLElement}
-         */
-        this.dragSelectionElement = null;
-
-        /**
-         * container bound
-         * @type {null | {left: number, right: number, top: number}}
-         */
-        this.containerBound = null;
+        this._initForZoom(params.useLargeData);
     },
 
     /**
@@ -60,43 +36,11 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      */
     initCustomEventData: function(seriesInfos) {
         var seriesInfo = seriesInfos[0];
+
         this.dataModel = new AreaTypeDataModel(seriesInfo);
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
-    },
 
-    /**
-     * Get container bound.
-     * @returns {ClientRect}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.customEventContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
-     * Calculate layer position by client position.
-     * @param {number} clientX - clientX
-     * @param {number} [clientY] - clientY
-     * @returns {{x: number, y: ?number}}
-     * @private
-     */
-    _calculateLayerPosition: function(clientX, clientY) {
-        var bound = this._getContainerBound();
-        var maxLeft = bound.right - chartConst.SERIES_EXPAND_SIZE;
-        var minLeft = bound.left + chartConst.SERIES_EXPAND_SIZE;
-        var layerPosition = {
-            x: Math.min(Math.max(clientX, minLeft), maxLeft) - chartConst.SERIES_EXPAND_SIZE - bound.left
-        };
-
-        if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top;
-        }
-
-        return layerPosition;
+        this._showTooltipAfterZoom();
     },
 
     /**
@@ -114,73 +58,40 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     },
 
     /**
-     * Render drag selection.
-     * @returns {HTMLElement}
+     * Get first model data.
+     * @param {number} index - index
+     * @returns {object}
      * @private
      */
-    _renderDragSelection: function() {
-        var selectionElement = dom.create('DIV', 'tui-chart-selection');
-        var height = this.boundsMaker.getDimension('customEvent').height;
-
-        selectionElement.style.height = height + 'px';
-
-        return selectionElement;
+    _getFirstData: function(index) {
+        return this.dataModel.getFirstData(index);
     },
 
     /**
-     * Render.
-     * @param {object} data - data for rendering
-     * @returns {HTMLElement}
-     * @override
+     * Get last model data.
+     * @param {number} index - index
+     * @returns {object}
+     * @private
      */
-    render: function(data) {
-        var container = CustomEventBase.prototype.render.call(this, data);
-        var selectionElement = this._renderDragSelection();
-
-        this.dragSelectionElement = selectionElement;
-        dom.append(container, selectionElement);
-
-        return container;
+    _getLastData: function(index) {
+        return this.dataModel.getLastData(index);
     },
 
     /**
-     * Resize.
-     * @param {{tickCount: number}} data - data for resizing
-     * @override
+     * Show tooltip.
+     * @param {object} foundData - model data
+     * @private
      */
-    resize: function(data) {
-        this.containerBound = null;
-        CustomEventBase.prototype.resize.call(this, data);
+    _showTooltip: function(foundData) {
+        this.fire('showTooltip', foundData);
     },
 
     /**
-     * On click.
+     * Hide tooltip.
      * @private
-     * @override
      */
-    _onClick: function() {},
-
-    /**
-     * On mouse down.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     * @override
-     */
-    _onMousedown: function(e) {
-        var target = e.target || e.srcElement;
-        var layerX = this._calculateLayerPosition(e.clientX).x;
-
-        this.startLayerX = layerX;
-        this.downTarget = target;
-
-        if (target.setCapture) {
-            target.setCapture();
-        }
-
-        eventListener.off(this.customEventContainer, 'mousemove', this._onMousemove, this);
-        eventListener.on(document, 'mousemove', this._onDrag, this);
-        eventListener.off(this.customEventContainer, 'mouseup', this._onMouseup, this);
-        eventListener.on(document, 'mouseup', this._onMouseup, this);
+    _hideTooltip: function() {
+        this.fire('hideTooltip', this.prevFoundData);
     },
 
     /**
@@ -190,85 +101,21 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMousemove: function(e) {
-        var foundData = this._findData(e.clientX, e.clientY);
+        var foundData;
 
-        if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
+        if (this._isAfterDragMouseup() || !this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 
+        foundData = this._findData(e.clientX, e.clientY);
+
         if (foundData) {
-            this.fire('showTooltip', foundData);
+            this._showTooltip(foundData);
         } else if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
         }
+
         this.prevFoundData = foundData;
-    },
-
-    /**
-     * Show drag selection.
-     * @param {number} clientX - clientX
-     * @private
-     */
-    _showDragSelection: function(clientX) {
-        var layerX = this._calculateLayerPosition(clientX).x;
-        var left = Math.min(layerX, this.startLayerX);
-        var width = Math.abs(layerX - this.startLayerX);
-        var element = this.dragSelectionElement;
-
-        element.style.left = left + chartConst.SERIES_EXPAND_SIZE + 'px';
-        element.style.width = width + 'px';
-
-        dom.addClass(element, 'show');
-    },
-
-    /**
-     * Hide drag selection.
-     * @private
-     */
-    _hideDragSelection: function() {
-        dom.removeClass(this.dragSelectionElement, 'show');
-    },
-
-    /**
-     * On mouse drag.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     */
-    _onDrag: function(e) {
-        if (!this.dragStartData) {
-            this.dragStartData = this._findData(e.clientX, e.clientY);
-            this.fire('hideTooltip', this.prevFoundData);
-        } else {
-            this._showDragSelection(e.clientX);
-        }
-    },
-
-    /**
-     * On mouse up.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     */
-    _onMouseup: function(e) {
-        var dragEndData;
-
-        if (this.downTarget.releaseCapture) {
-            this.downTarget.releaseCapture();
-        }
-
-        eventListener.off(document, 'mousemove', this._onDrag, this);
-        eventListener.on(this.customEventContainer, 'mousemove', this._onMousemove, this);
-        eventListener.off(document, 'mouseup', this._onMouseup, this);
-        eventListener.on(this.customEventContainer, 'mouseup', this._onMouseup, this);
-
-        this._hideDragSelection();
-        this.dragStartData = null;
-        this.startLayerX = null;
-
-        if (this.dragStartData) {
-            dragEndData = this._findData(e.clientX, e.clientY);
-        } else {
-            CustomEventBase.prototype._onClick.call(this, e);
-        }
     },
 
     /**
@@ -278,10 +125,12 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      */
     _onMouseout: function() {
         if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
             this.prevFoundData = null;
         }
     }
 });
+
+zoomMixer.mixin(AreaTypeCustomEvent);
 
 module.exports = AreaTypeCustomEvent;

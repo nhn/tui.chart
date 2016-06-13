@@ -87,4 +87,14 @@ describe('Test for axisDataMaker', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('_calculateNewBlockInfo()', function() {
+        it('현재의 블럭 수(tick개수 - 1)와 시리즈 영역의 너비 정보를 이용하여 축의 자동 계산된 블럭 정보를 반환합니다.', function() {
+            var actual = maker._calculateNewBlockInfo(73, 300);
+
+            expect(actual.blockCount).toBe(5);
+            expect(actual.beforeRemainBlockCount).toBe(3);
+            expect(actual.interval).toBe(14);
+        });
+    });
 });

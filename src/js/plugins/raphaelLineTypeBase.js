@@ -200,12 +200,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                     var dotMap = {
                         dot: self.renderDot(paper, position, color, opacity)
                     };
-                    var startPositon;
+                    var startPosition;
 
                     if (self.hasRangeData) {
-                        startPositon = tui.util.extend({}, position);
-                        startPositon.top = startPositon.startTop;
-                        dotMap.startDot = self.renderDot(paper, startPositon, color, opacity);
+                        startPosition = tui.util.extend({}, position);
+                        startPosition.top = startPosition.startTop;
+                        dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
                     }
 
                     return dotMap;
@@ -454,6 +454,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         dot.attr(dotAttrs);
+    },
+
+    /**
+     * Show graph for zoom.
+     */
+    showGraph: function() {
+        this.paper.setSize(this.dimension.width, this.dimension.height);
     },
 
     /**

@@ -122,7 +122,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var rawData = this._filterRawData(this.rawData, checkedLegends);
+        var rawData = this._filterCheckedRawData(this.rawData, checkedLegends);
 
         this.chartTypes = this._pickChartTypes(rawData.series);
 

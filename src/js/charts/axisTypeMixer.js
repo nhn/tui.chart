@@ -116,6 +116,7 @@ var axisTypeMixer = {
         }
         this._addSeriesComponents(params.serieses, options);
         this._addTooltipComponent();
+        this._addCustomEventComponent();
     },
 
     /**
@@ -259,6 +260,7 @@ var axisTypeMixer = {
         var optionChartTypes = this.chartTypes || [this.chartType];
         var seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
         var yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
+        var xAxis = axesData.xAxis;
 
         return tui.util.extend({
             plot: {
@@ -266,7 +268,7 @@ var axisTypeMixer = {
                 hTickCount: axesData.xAxis.validTickCount
             },
             customEvent: {
-                tickCount: this.isVertical ? axesData.xAxis.tickCount : yAxis.tickCount
+                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
             }
         }, seriesData, axesData);
     },
@@ -279,7 +281,8 @@ var axisTypeMixer = {
     _addCustomEventComponentForGroupTooltip: function() {
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            useLargeData: tui.util.pick(this.options.chart, 'useLargeData')
         });
     },
 

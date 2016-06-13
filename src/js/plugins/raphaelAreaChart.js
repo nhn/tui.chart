@@ -200,11 +200,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            var linesPath, areasBottomPath;
-
-            positions[0].left -= 1;
-            linesPath = self._makeSplineLinesPath(positions);
-            areasBottomPath = self._makeSplineAreaBottomPath(positions);
+            var linesPath = self._makeSplineLinesPath(positions);
+            var areasBottomPath = self._makeSplineAreaBottomPath(positions);
 
             return {
                 area: linesPath.concat(areasBottomPath),
@@ -224,6 +221,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             dimension = params.dimension,
             groupPositions = params.groupPositions;
 
+        this.zeroTop = params.zeroTop;
         this.groupPositions = groupPositions;
         this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);

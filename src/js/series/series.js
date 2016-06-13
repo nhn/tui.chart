@@ -263,13 +263,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Rerender.
-     * @param {object} data data for rendering
-     * @returns {{container: HTMLElement, paper: object}}
+     * Clear container.
+     * @private
      */
-    rerender: function(data) {
-        var paper;
-
+    _clearContainer: function() {
         if (this.graphRenderer.clear) {
             this.graphRenderer.clear();
         }
@@ -278,6 +275,17 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.seriesLabelContainer = null;
         this.selectedLegendIndex = null;
         this.seriesData = [];
+    },
+
+    /**
+     * Rerender.
+     * @param {object} data data for rendering
+     * @returns {{container: HTMLElement, paper: object}}
+     */
+    rerender: function(data) {
+        var paper;
+
+        this._clearContainer();
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
             this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
@@ -292,6 +300,38 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             container: this.seriesContainer,
             paper: paper
         };
+    },
+
+    /**
+     * Whether use label or not.
+     * @returns {boolean}
+     * @private
+     */
+    _useLabel: function() {
+        return this.seriesLabelContainer && (this.options.showLabel || this.options.showLegend);
+    },
+
+    /**
+     * Zoom.
+     * @param {object} data - data
+     */
+    zoom: function(data) {
+        var prevSelectedLegendIndex = this.selectedLegendIndex;
+
+        this._clearContainer();
+        this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+        this.graphRenderer.showGraph();
+
+        if (!tui.util.isNull(prevSelectedLegendIndex)) {
+            this.graphRenderer.selectLegend(prevSelectedLegendIndex);
+            this.selectedLegendIndex = prevSelectedLegendIndex;
+        }
+
+        if (this._useLabel()) {
+            dom.addClass(this.seriesLabelContainer, 'show');
+            this.seriesLabelContainer.style.filter = '';
+            this.seriesLabelContainer.style.opacity = 1;
+        }
     },
 
     /**
@@ -347,6 +387,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (min <= 0 && max >= 0) {
             toMax = (distance + min) / distance * size;
             toMin = (distance - max) / distance * size;
+        } else if (min > 0) {
+            toMax = size;
         }
 
         return {
@@ -474,7 +516,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     animateShowingAboutSeriesLabelArea: function() {
         var self = this;
 
-        if ((!this.options.showLabel && !this.options.showLegend) || !this.seriesLabelContainer) {
+        if (!this._useLabel()) {
             return;
         }
 

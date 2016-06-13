@@ -56,6 +56,26 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
             }
         });
         return result;
+    },
+
+    /**
+     * Get first data.
+     * @param {number} index - index
+     * @returns {object}
+     */
+    getFirstData: function(index) {
+        return this.data[0][index];
+    },
+
+    /**
+     * Get last data.
+     * @param {number} index - index
+     * @returns {object}
+     */
+    getLastData: function(index) {
+        var lastGroupIndex = this.data.length - 1;
+
+        return this.data[lastGroupIndex][index];
     }
 });
 

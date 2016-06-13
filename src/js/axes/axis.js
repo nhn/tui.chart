@@ -214,7 +214,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} width axis width
      * @param {number} tickCount tick count
      * @param {Array.<number|string>} categories categories
-     * @param {number} additionalWidth aditional width
+     * @param {number} additionalWidth additional width
      * @returns {Array.<HTMLElement>} child containers
      * @private
      */
@@ -222,11 +222,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var titleContainer = this._renderTitleArea(size),
             labelContainer = this._renderLabelArea(size, width, tickCount, categories, additionalWidth),
             childContainers = [titleContainer, labelContainer],
-            isLineType = this.data.isVertical && this.data.aligned,
+            isVerticalLineType = this.data.isVertical && this.data.aligned,
             tickContainer, oppositeSideTickContainer;
 
-        if (!isLineType) {
-            tickContainer = this._renderTickArea(size, tickCount, categories, additionalWidth);
+        if (!isVerticalLineType) {
+            tickContainer = this._renderTickArea(size, tickCount, additionalWidth);
             oppositeSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
             childContainers = childContainers.concat([tickContainer, oppositeSideTickContainer]);
         }
@@ -266,9 +266,22 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderSingleAxisArea: function(axisContainer, dimension) {
-        var isVertical = !!this.data.isVertical,
-            size = isVertical ? dimension.height : dimension.width,
-            childContainers = this._renderChildContainers(size, dimension.width, this.data.tickCount, this.data.labels);
+        var data = this.data;
+        var isVertical = !!data.isVertical;
+        var width = dimension.width;
+        var size = isVertical ? dimension.height : width;
+        var additionalSize = 0;
+        var childContainers;
+
+        if (data.positionRatio) {
+            additionalSize = size * data.positionRatio;
+        }
+
+        if (data.sizeRatio) {
+            size *= data.sizeRatio;
+        }
+
+        childContainers = this._renderChildContainers(size, width, data.tickCount, data.labels, additionalSize);
 
         dom.append(axisContainer, childContainers);
     },
@@ -312,7 +325,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Rerender axis component.
-     * @param {object} data rendering data
+     * @param {object} data - data for rendering
      */
     rerender: function(data) {
         this.axisContainer.innerHTML = '';
@@ -328,11 +341,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Resize axis component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
-     * @param {object} data rendering data
+     * @param {object} data - data for rendering
      */
-    resize: function(bound, data) {
-        this.rerender(bound, data);
+    resize: function(data) {
+        this.rerender(data);
+    },
+
+    /**
+     * Zoom.
+     * @param {object} data - data for rendering
+     */
+    zoom: function(data) {
+        this.rerender(data);
     },
 
     /**
@@ -473,42 +493,44 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render tick area.
-     * @param {number} size size or height
-     * @param {number} tickCount tick count
-     * @param {Array.<string>} categories categories
-     * @param {?number} additionalSize additional size (width or height)
-     * @returns {HTMLElement} tick area element
+     * Make tick line html.
+     * @param {number} size - area size
+     * @param {string} posType - position type
+     * @param {boolean} isSingleXAxis - whether single x axis or not
+     * @param {number} additionalSize - additional size
+     * @returns {string}
      * @private
      */
-    _renderTickArea: function(size, tickCount, categories, additionalSize) {
-        var data = this.data,
-            isSingleXAxis = !data.isVertical && !this.options.divided,
-            tickColor = this.theme.tickColor,
-            positions = calculator.makeTickPixelPositions(size, tickCount),
-            elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
-            template = axisTemplate.tplAxisTick,
-            tickLineExtend = isSingleXAxis ? 1 : 0,
-            posType, lineSizeType, lineHtml, ticksHtml;
-
-        additionalSize = additionalSize || 0;
-
-        if (data.isVertical) {
-            posType = 'bottom';
-            lineSizeType = 'height';
-        } else {
-            posType = 'left';
-            lineSizeType = 'width';
-        }
-
-        lineHtml = axisTemplate.tplTickLine({
+    _makeTickLineHtml: function(size, posType, isSingleXAxis, additionalSize) {
+        var data = this.data;
+        var tickLineExtend = isSingleXAxis ? 1 : 0;
+        var linePositionValue = (data.positionRatio ? 0 : additionalSize) - tickLineExtend;
+        var lineSize = data.lineWidth || (size + tickLineExtend);
+        var html = axisTemplate.tplTickLine({
             positionType: posType,
-            positionValue: additionalSize - tickLineExtend,
-            sizeType: lineSizeType,
-            size: size + tickLineExtend
+            positionValue: linePositionValue,
+            sizeType: data.isVertical ? 'height' : 'width',
+            size: lineSize
         });
 
-        ticksHtml = tui.util.map(positions, function(position, index) {
+        return html;
+    },
+
+    /**
+     * Make tick html.
+     * @param {number} size - area size
+     * @param {number} tickCount - tick count
+     * @param {string} posType - position type
+     * @param {boolean} isSingleXAxis - whether single x axis or not
+     * @param {number} additionalSize - additional size
+     * @returns {string}
+     * @private
+     */
+    _makeTickHtml: function(size, tickCount, posType, isSingleXAxis, additionalSize) {
+        var tickColor = this.theme.tickColor;
+        var positions = calculator.makeTickPixelPositions(size, tickCount);
+        var template = axisTemplate.tplAxisTick;
+        var html = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
             position -= (index === 0 && isSingleXAxis) ? 1 : 0;
@@ -521,9 +543,32 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             return tickHtml;
         }).join('');
 
-        elTickArea.innerHTML = lineHtml + ticksHtml;
+        return html;
+    },
 
-        return elTickArea;
+    /**
+     * Render tick area.
+     * @param {number} size size or height
+     * @param {number} tickCount tick count
+     * @param {?number} additionalSize additional size (width or height)
+     * @returns {HTMLElement} tick area element
+     * @private
+     */
+    _renderTickArea: function(size, tickCount, additionalSize) {
+        var data = this.data;
+        var tickContainer = dom.create('DIV', 'tui-chart-tick-area');
+        var posType = data.isVertical ? 'bottom' : 'left';
+        var isSingleXAxis = !this.data.isVertical && !this.options.divided;
+        var lineHtml, ticksHtml;
+
+        additionalSize = additionalSize || 0;
+
+        lineHtml = this._makeTickLineHtml(size, posType, isSingleXAxis, additionalSize);
+        ticksHtml = this._makeTickHtml(size, tickCount, posType, isSingleXAxis, additionalSize);
+
+        tickContainer.innerHTML = lineHtml + ticksHtml;
+
+        return tickContainer;
     },
 
     /**

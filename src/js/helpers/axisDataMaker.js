@@ -102,6 +102,69 @@ var axisDataMaker = {
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
+    },
+
+    /**
+     * Calculate new axis block information for adjust tick count.
+     * @param {number} curBlockCount - current block count
+     * @param {number} seriesWidth - series width
+     * @returns {{newBlockCount: number, remainBlockCount: number, interval: number}}
+     * @private
+     */
+    _calculateNewBlockInfo: function(curBlockCount, seriesWidth) {
+        var tickSizeRange = tui.util.range(60, 91, 5); // [60, 65, 70, 75, 80, 85, 90]
+        var candidates = tui.util.map(tickSizeRange, function(blockWidth) {
+            var blockCount = parseInt(seriesWidth / blockWidth, 10);
+            var interval = parseInt(curBlockCount / blockCount, 10);
+            var remainCount = curBlockCount - (interval * blockCount);
+            if (remainCount >= interval) {
+                blockCount += parseInt(remainCount / interval, 0);
+                remainCount = remainCount % interval;
+            }
+
+            return {
+                blockCount: blockCount,
+                beforeRemainBlockCount: remainCount,
+                interval: interval
+            };
+        });
+
+        return tui.util.min(candidates, function(candidate) {
+            return candidate.newBlockCount;
+        });
+    },
+
+    /**
+     * Update label type axisData for adjust tick count.
+     * @param {object} axisData - axisData
+     * @param {number} seriesWidth - series width
+     */
+    updateLabelAxisDataForAdjustTickCount: function(axisData, seriesWidth) {
+        var beforeBlockCount = axisData.tickCount - 1;
+        var newBlockInfo = this._calculateNewBlockInfo(beforeBlockCount, seriesWidth);
+        var newBlockCount, interval, beforeRemainBlockCount, startIndex;
+
+        if (!newBlockInfo) {
+            return;
+        }
+
+        newBlockCount = newBlockInfo.blockCount;
+        interval = newBlockInfo.interval;
+
+        if ((newBlockCount < beforeBlockCount) && (interval > 1)) {
+            beforeRemainBlockCount = newBlockInfo.beforeRemainBlockCount;
+            axisData.eventTickCount = axisData.tickCount;
+            startIndex = Math.round(beforeRemainBlockCount / 2);
+
+            axisData.labels = tui.util.filter(axisData.labels.slice(startIndex), function(label, index) {
+                return index % interval === 0;
+            });
+
+            axisData.tickCount = newBlockCount + 1;
+            axisData.positionRatio = startIndex / beforeBlockCount;
+            axisData.sizeRatio = 1 - (beforeRemainBlockCount / beforeBlockCount);
+            axisData.lineWidth = seriesWidth + chartConst.OVERLAPPING_WIDTH;
+        }
     }
 };
 
