@@ -64,6 +64,7 @@ describe('Test for ComboChart', function() {
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+            axisTypeMixer.options = {};
 
             actual = axisTypeMixer._makeAxisData(null, 'options');
             expected = 'label type';
@@ -71,6 +72,7 @@ describe('Test for ComboChart', function() {
             expect(axisDataMaker.makeLabelAxisData).toHaveBeenCalledWith({
                 labels: ['cate1', 'cate2'],
                 options: 'options',
+                useLargeData: false,
                 isVertical: false,
                 isPositionRight: false,
                 aligned: false

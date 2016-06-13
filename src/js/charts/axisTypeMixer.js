@@ -177,6 +177,7 @@ var axisTypeMixer = {
             axisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
                 options: options,
+                useLargeData: !!tui.util.pick(this.options.chart, 'useLargeData'),
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
                 aligned: !!aligned

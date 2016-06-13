@@ -10,15 +10,9 @@ var maker = require('../../src/js/helpers/axisDataMaker'),
     chartConst = require('../../src/js/const');
 
 describe('Test for axisDataMaker', function() {
-    describe('_makeLabels()', function() {
-        it('전달받은 labelInterval 옵션 정보가 없으면, labels를 그대로 반환합니다.', function() {
-            var actual = maker._makeLabels(['label1', 'label2', 'label3']),
-                expected = ['label1', 'label2', 'label3'];
-            expect(actual).toEqual(expected);
-        });
-
-        it('labelInterval 옵션이 있을 경우 처음과, 끝, 그리고 interval 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
-            var actual = maker._makeLabels(['label1', 'label2', 'label3', 'label4', 'label5'], 2),
+    describe('_makeLabelInterval()', function() {
+        it('처음과, 끝, 그리고 labelInterval 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
+            var actual = maker._makeLabelInterval(['label1', 'label2', 'label3', 'label4', 'label5'], 2),
                 expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
             expect(actual).toEqual(expected);
         });
@@ -34,6 +28,28 @@ describe('Test for axisDataMaker', function() {
                 tickCount: 4,
                 validTickCount: 0,
                 options: {},
+                isLabelAxis: true,
+                isVertical: false,
+                isPositionRight: false,
+                aligned: false
+            });
+        });
+
+        it('labelInterval옵션이 있으면 label을 labelInterval옵션으로 필터링 하여 반환합니다.', function() {
+            var result = maker.makeLabelAxisData({
+                labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+                options: {
+                    labelInterval: 2
+                }
+            });
+
+            expect(result).toEqual({
+                labels: ['label1', '', 'label3', '', 'label5'],
+                tickCount: 6,
+                validTickCount: 0,
+                options: {
+                    labelInterval: 2
+                },
                 isLabelAxis: true,
                 isVertical: false,
                 isPositionRight: false,

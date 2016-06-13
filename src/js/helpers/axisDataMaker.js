@@ -14,17 +14,14 @@ var chartConst = require('../const');
  */
 var axisDataMaker = {
     /**
-     * Make labels.
+     * Makes label interval by labelInterval option.
      * @param {Array.<string>} labels labels
      * @param {number} labelInterval label interval
      * @returns {Array.<string>} labels
      * @private
      */
-    _makeLabels: function(labels, labelInterval) {
+    _makeLabelInterval: function(labels, labelInterval) {
         var lastIndex;
-        if (!labelInterval) {
-            return labels;
-        }
 
         lastIndex = labels.length - 1;
         return tui.util.map(labels, function(label, index) {
@@ -51,9 +48,13 @@ var axisDataMaker = {
      * }} axis data
      */
     makeLabelAxisData: function(params) {
-        var tickCount = params.labels.length,
-            options = params.options || {},
-            labels = this._makeLabels(params.labels, options.labelInterval);
+        var tickCount = params.labels.length;
+        var options = params.options || {};
+        var labels = params.labels;
+
+        if (options.labelInterval && !params.useLargeData) {
+            labels = this._makeLabelInterval(params.labels, options.labelInterval);
+        }
 
         if (!params.aligned) {
             tickCount += 1;

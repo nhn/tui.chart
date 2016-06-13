@@ -108,6 +108,7 @@ var lineTypeMixer = {
         var self = this;
 
         this.dataProcessor.initData(rawData);
+        this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
             renderingData.customEvent.isResetZoom = isResetZoom;
             self._renderComponents(renderingData, 'zoom');

@@ -436,6 +436,7 @@ var zoomMixer = {
     zoom: function(data) {
         this.prevFoundData = null;
         this.rerender(data);
+        this._updateDimensionForDragSelection(this.dragSelectionElement);
 
         if (!this.resetZoomBtn) {
             this.resetZoomBtn = this._renderResetZoomBtn();
