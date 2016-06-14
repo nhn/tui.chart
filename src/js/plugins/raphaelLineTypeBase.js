@@ -368,12 +368,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation: function(data) {
-        var index = data.groupIndex, // Line chart has pivot values.
-            groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
-            item = this.groupDots[groupIndex][index],
-            opacity = this.dotOpacity,
-            strokeWidth, startLine;
+        var index = data.groupIndex; // Line chart has pivot values.
+        var groupIndex = data.index;
+        var opacity = this.dotOpacity;
+        var groupDot = this.groupDots[groupIndex];
+        var line, item, strokeWidth, startLine;
+
+        if (!groupDot || !groupDot[index]) {
+            return;
+        }
+
+        line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+        item = groupDot[index];
 
         if (this.chartType === 'area') {
             strokeWidth = 1;

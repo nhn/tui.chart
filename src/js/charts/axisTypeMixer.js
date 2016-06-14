@@ -1,5 +1,6 @@
 /**
- * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
+ * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area,
+ *                  bubble, column&line combo.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -24,7 +25,7 @@ var GroupTooltip = require('../tooltips/groupTooltip');
  */
 
 /**
- * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
+ * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, column&line combo.
  * @mixin
  */
 var axisTypeMixer = {

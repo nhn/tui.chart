@@ -136,11 +136,11 @@ var axisDataMaker = {
     },
 
     /**
-     * Update label type axisData for adjust tick count.
+     * Update label type axisData for adjusting tick count.
      * @param {object} axisData - axisData
      * @param {number} seriesWidth - series width
      */
-    updateLabelAxisDataForAdjustTickCount: function(axisData, seriesWidth) {
+    updateLabelAxisDataForAdjustingTickCount: function(axisData, seriesWidth) {
         var beforeBlockCount = axisData.tickCount - 1;
         var newBlockInfo = this._calculateNewBlockInfo(beforeBlockCount, seriesWidth);
         var newBlockCount, interval, beforeRemainBlockCount, startIndex;

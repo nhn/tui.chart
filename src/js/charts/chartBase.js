@@ -552,14 +552,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _updateChartDimension: function(dimension) {
         var updated = false;
+        var chartOptions = this.options.chart;
 
-        if (dimension.width) {
-            this.options.chart.width = dimension.width;
+        if (dimension.width && chartOptions.width !== dimension.width) {
+            chartOptions.width = dimension.width;
             updated = true;
         }
 
-        if (dimension.height) {
-            this.options.chart.height = dimension.height;
+        if (dimension.height && chartOptions.height !== dimension.height) {
+            chartOptions.height = dimension.height;
             updated = true;
         }
 

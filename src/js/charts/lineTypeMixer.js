@@ -93,12 +93,11 @@ var lineTypeMixer = {
         var axesData = boundsMaker.getAxesData();
         var seriesWidth = boundsMaker.getDimension('series').width;
 
-        axisDataMaker.updateLabelAxisDataForAdjustTickCount(axesData.xAxis, seriesWidth);
+        axisDataMaker.updateLabelAxisDataForAdjustingTickCount(axesData.xAxis, seriesWidth);
     },
 
     /**
      * Render for zoom.
-     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
      * @param {boolean} isResetZoom - whether reset zoom or not
      * @private
      */
@@ -113,30 +112,21 @@ var lineTypeMixer = {
     },
 
     /**
-     * Zoom.
+     * On zoom.
      * @param {Array.<number>} indexRange - index range for zoom
-     * @private
+     * @override
      */
-    _zoom: function(indexRange) {
+    onZoom: function(indexRange) {
         this.dataProcessor.updateRawDataForZoom(indexRange);
         this.axisScaleMakerMap = null;
         this._renderForZoom(false);
     },
 
     /**
-     * On zoom.
-     * @param {Array.<number>} indexRange - index range for zoom
+     * On reset zoom.
      * @override
      */
-    onZoom: function(indexRange) {
-        this._zoom(indexRange);
-    },
-
-    /**
-     * Reset zoom.
-     * @private
-     */
-    _resetZoom: function() {
+    onResetZoom: function() {
         var rawData = this.dataProcessor.getOriginalRawData();
 
         this.axisScaleMakerMap = null;
@@ -145,14 +135,6 @@ var lineTypeMixer = {
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
         this._renderForZoom(true);
-    },
-
-    /**
-     * On reset zoom.
-     * @override
-     */
-    onResetZoom: function() {
-        this._resetZoom();
     },
 
     /**

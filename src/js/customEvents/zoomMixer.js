@@ -98,9 +98,9 @@ var zoomMixer = {
         var isShowTooltipAfterZoom = this.isShowTooltipAfterZoom;
         var lastDataBeforeZoom;
 
-        this.isShowTooltipAfterZoom = null;
+        this.isShowTooltipAfterZoom = false;
 
-        if (!isShowTooltipAfterZoom) {
+        if (!isShowTooltipAfterZoom || !this.dragStartIndexes) {
             return;
         }
 
