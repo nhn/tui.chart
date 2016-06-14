@@ -37,6 +37,21 @@ describe('Test for AreaTypeCustomEvent', function() {
             expect(actual.x).toBe(0);
         });
 
+        it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {
+            var clientX = 30;
+            var checkLimit = false;
+            var actual, clientY;
+
+            spyOn(zoomMixer, '_getContainerBound').and.returnValue({
+                left: 50,
+                right: 450
+            });
+
+            actual = zoomMixer._calculateLayerPosition(clientX, clientY, checkLimit);
+
+            expect(actual.x).toBe(-30);
+        });
+
         it('전달하는 clientX가 container의 bound.right 보다 클 경우의 x를 구합니다.', function() {
             var actual;
 
@@ -48,6 +63,21 @@ describe('Test for AreaTypeCustomEvent', function() {
             actual = zoomMixer._calculateLayerPosition(480);
 
             expect(actual.x).toBe(380);
+        });
+
+        it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 크더라도 그대로 반환합니다.', function() {
+            var clientX = 480;
+            var checkLimit = false;
+            var actual, clientY;
+
+            spyOn(zoomMixer, '_getContainerBound').and.returnValue({
+                left: 50,
+                right: 450
+            });
+
+            actual = zoomMixer._calculateLayerPosition(clientX, clientY, checkLimit);
+
+            expect(actual.x).toBe(420);
         });
 
         it('clientY값이 있는 경우 y값을 계산하여 반환합니다.', function() {
@@ -157,6 +187,18 @@ describe('Test for AreaTypeCustomEvent', function() {
             var actual = zoomMixer._adjustIndexRange(5, 6);
 
             expect(actual).toEqual([4, 6]);
+        });
+
+        it('startIndex와 endIndex의 값의 차이가 1보다 크면 그대로 반환합니다.', function() {
+            var actual = zoomMixer._adjustIndexRange(5, 10);
+
+            expect(actual).toEqual([5, 10]);
+        });
+
+        it('startIndex가 endIndex보다 크면서 값의 차이가 1보다 두 index의 위치를 바꿔 반환합니다.', function() {
+            var actual = zoomMixer._adjustIndexRange(15, 10);
+
+            expect(actual).toEqual([10, 15]);
         });
     });
 });
