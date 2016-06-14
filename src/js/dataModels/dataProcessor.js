@@ -95,6 +95,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         this.originalLegendData = null;
 
         this.initData(rawData);
+        this.initZoomedRawData();
     },
 
     /**
@@ -103,6 +104,61 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getOriginalRawData: function() {
         return JSON.parse(JSON.stringify(this.originalRawData));
+    },
+
+    /**
+     * Get zoomed raw data.
+     * @returns {*|null}
+     */
+    getZoomedRawData: function() {
+        var zoomedRawData = this.zoomedRawData;
+        if (zoomedRawData) {
+            zoomedRawData = JSON.parse(JSON.stringify(zoomedRawData));
+        } else {
+            zoomedRawData = this.getOriginalRawData();
+        }
+
+        return zoomedRawData;
+    },
+
+    /**
+     * Filter raw data by index range.
+     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
+     * @param {Array.<number>} indexRange - index range for zoom
+     * @returns {*}
+     * @private
+     */
+    _filterRawDataByIndexRange: function(rawData, indexRange) {
+        var startIndex = indexRange[0];
+        var endIndex = indexRange[1];
+
+        rawData.series = tui.util.map(rawData.series, function(seriesData) {
+            seriesData.data = seriesData.data.slice(startIndex, endIndex + 1);
+            return seriesData;
+        });
+        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+
+        return rawData;
+    },
+
+    /**
+     * Update raw data for zoom
+     * @param {Array.<number>} indexRange - index range for zoom
+     */
+    updateRawDataForZoom: function(indexRange) {
+        var rawData = this.getRawData();
+        var zoomedRawData = this.getZoomedRawData();
+
+        this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
+        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+        this.initData(rawData);
+    },
+
+    /**
+     * Init zoomed raw data.
+     */
+    initZoomedRawData: function() {
+        this.zoomedRawData = null;
     },
 
     /**

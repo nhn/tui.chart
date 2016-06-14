@@ -395,13 +395,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Filter raw data for zoom.
-     * @private
-     * @abstract
-     */
-    _filterRawDataForZoom: function() {},
-
-    /**
      * Rerender.
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @param {?object} rawData rawData
@@ -409,11 +402,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _rerender: function(checkedLegends, rawData) {
         var self = this;
+        var dataProcessor = this.dataProcessor;
 
-        rawData = rawData || this._filterCheckedRawData(this.dataProcessor.getOriginalRawData(), checkedLegends);
-
-        if (this.indexRangeForZoom) {
-            rawData = this._filterRawDataForZoom(rawData, this.indexRangeForZoom);
+        if (!rawData) {
+            rawData = this._filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
         }
 
         this.dataProcessor.initData(rawData);

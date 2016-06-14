@@ -31,8 +31,6 @@ var lineTypeMixer = {
             isVertical: true
         });
 
-        this.indexRangeForZoom = null;
-
         this._addComponents(options.chartType);
     },
 
@@ -104,10 +102,9 @@ var lineTypeMixer = {
      * @param {boolean} isResetZoom - whether reset zoom or not
      * @private
      */
-    _renderForZoom: function(rawData, isResetZoom) {
+    _renderForZoom: function(isResetZoom) {
         var self = this;
 
-        this.dataProcessor.initData(rawData);
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
             renderingData.customEvent.isResetZoom = isResetZoom;
@@ -116,39 +113,14 @@ var lineTypeMixer = {
     },
 
     /**
-     * Filter raw data for zoom.
-     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
-     * @param {Array.<number>} indexRange - index range for zoom
-     * @returns {*}
-     * @private
-     */
-    _filterRawDataForZoom: function(rawData, indexRange) {
-        var startIndex = indexRange[0];
-        var endIndex = indexRange[1];
-
-        rawData.series = tui.util.map(rawData.series, function(seriesData) {
-            seriesData.data = seriesData.data.slice(startIndex, endIndex + 1);
-            return seriesData;
-        });
-        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
-
-        return rawData;
-    },
-
-    /**
      * Zoom.
      * @param {Array.<number>} indexRange - index range for zoom
      * @private
      */
     _zoom: function(indexRange) {
-        var rawData = this.dataProcessor.getRawData();
-
+        this.dataProcessor.updateRawDataForZoom(indexRange);
         this.axisScaleMakerMap = null;
-        this.indexRangeForZoom = indexRange;
-
-        rawData = this._filterRawDataForZoom(rawData, indexRange);
-
-        this._renderForZoom(rawData, false);
+        this._renderForZoom(false);
     },
 
     /**
@@ -170,7 +142,9 @@ var lineTypeMixer = {
         this.axisScaleMakerMap = null;
         this.indexRange = null;
 
-        this._renderForZoom(rawData, true);
+        this.dataProcessor.initData(rawData);
+        this.dataProcessor.initZoomedRawData();
+        this._renderForZoom(true);
     },
 
     /**

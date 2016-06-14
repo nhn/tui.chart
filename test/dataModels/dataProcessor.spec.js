@@ -18,6 +18,36 @@ describe('Test for DataProcessor', function() {
         dataProcessor = new DataProcessor({}, '', {});
     });
 
+    describe('_filterRawDataByIndexRange()', function() {
+        it('전달하는 raw data를 전달하는 index 범위(indexRange)로 필터링하여 반환합니다.', function() {
+            var rawData = {
+                categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
+                series: [
+                    {
+                        data: [1, 2, 3, 4, 5]
+                    },
+                    {
+                        data: [11, 12, 13, 14 ,15]
+                    }
+                ]
+            };
+            var actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
+            var expected = {
+                categories: ['cate2', 'cate3', 'cate4'],
+                series: [
+                    {
+                        data: [2, 3, 4]
+                    },
+                    {
+                        data: [12, 13, 14]
+                    }
+                ]
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_processCategories()', function() {
         it('카테고리에 대해 escaping 처리를 합니다.', function() {
             var actual, expected;
