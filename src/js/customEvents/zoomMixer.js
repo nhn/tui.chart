@@ -400,6 +400,7 @@ var zoomMixer = {
         if (tui.util.isNull(this.dragStartIndexes)) {
             target = e.target || e.srcElement;
             if (dom.hasClass(target, 'tui-chart-reset-zoom-btn')) {
+                this._hideTooltip();
                 this.fire('resetZoom');
             } else {
                 CustomEventBase.prototype._onClick.call(this, e);
@@ -419,7 +420,7 @@ var zoomMixer = {
 
     /**
      * Render reset zoom button element.
-     * @returns {DIV}
+     * @returns {HTMLElement}
      * @private
      */
     _renderResetZoomBtn: function() {
