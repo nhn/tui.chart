@@ -6,11 +6,12 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
-    chartConst = require('../const'),
-    calculator = require('../helpers/calculator'),
-    renderUtil = require('../helpers/renderUtil'),
-    axisTemplate = require('./axisTemplate');
+var dom = require('../helpers/domHandler');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
+var axisTemplate = require('./axisTemplate');
 
 var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
@@ -617,10 +618,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderLabelArea: function(size, axisWidth, tickCount, categories, additionalSize) {
-        var labelContainer = dom.create('DIV', 'tui-chart-label-area'),
-            tickPixelPositions = calculator.makeTickPixelPositions(size, tickCount),
-            labelSize = tickPixelPositions[1] - tickPixelPositions[0],
-            labelsHtml;
+        var labelContainer = dom.create('DIV', 'tui-chart-label-area');
+        var tickPixelPositions = calculator.makeTickPixelPositions(size, tickCount);
+        var labelSize = tickPixelPositions[1] - tickPixelPositions[0];
+        var options = this.options;
+        var labelsHtml;
+
+        if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
+            labelSize *= options.labelInterval;
+        }
 
         additionalSize = additionalSize || 0;
         labelsHtml = this._makeLabelsHtml(tickPixelPositions, categories, labelSize, additionalSize);

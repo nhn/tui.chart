@@ -346,6 +346,16 @@ var predicate = {
      */
     isAutoTickInterval: function(tickInterval) {
         return tickInterval === chartConst.TICK_INTERVAL_AUTO;
+    },
+
+    /**
+     * Whether valid label interval or not.
+     * @param {number} [labelInterval] - label interval option
+     * @param {string} [tickInterval] - tick interval option
+     * @returns {*|boolean}
+     */
+    isValidLabelInterval: function(labelInterval, tickInterval) {
+        return labelInterval && labelInterval > 1 && !tickInterval;
     }
 };
 

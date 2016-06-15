@@ -7,6 +7,7 @@
 'use strict';
 
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 /**
  * Axis data maker.
@@ -21,15 +22,16 @@ var axisDataMaker = {
      * @private
      */
     _makeLabelInterval: function(labels, labelInterval) {
-        var lastIndex;
+        if (labels.length > labelInterval) {
+            labels = tui.util.map(labels, function(label, index) {
+                if ((index % labelInterval) > 0) {
+                    label = chartConst.EMPTY_AXIS_LABEL;
+                }
+                return label;
+            });
+        }
 
-        lastIndex = labels.length - 1;
-        return tui.util.map(labels, function(label, index) {
-            if (index > 0 && index < lastIndex && (index % labelInterval) > 0) {
-                label = chartConst.EMPTY_AXIS_LABEL;
-            }
-            return label;
-        });
+        return labels;
     },
 
     /**
@@ -52,7 +54,7 @@ var axisDataMaker = {
         var options = params.options || {};
         var labels = params.labels;
 
-        if (options.labelInterval && !params.useLargeData) {
+        if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
             labels = this._makeLabelInterval(params.labels, options.labelInterval);
         }
 

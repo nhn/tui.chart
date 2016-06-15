@@ -6,10 +6,10 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    calculator = require('./calculator'),
-    predicate = require('./predicate'),
-    renderUtil = require('./renderUtil');
+var chartConst = require('../const');
+var calculator = require('./calculator');
+var predicate = require('./predicate');
+var renderUtil = require('./renderUtil');
 
 /**
  * Dimension.
@@ -273,9 +273,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _calculateXAxisLabelLimitWidth: function() {
-        var seriesWidth = this.getDimension('series').width,
-            labelCount = this.axesData.xAxis.labels.length,
-            isAlign = predicate.isLineTypeChart(this.chartType);
+        var seriesWidth = this.getDimension('series').width;
+        var labelCount = this.axesData.xAxis.labels.length;
+        var isAlign = predicate.isLineTypeChart(this.chartType);
+        var xAxisOptions = this.options.xAxis || {};
+
+        if (predicate.isValidLabelInterval(xAxisOptions.labelInterval, xAxisOptions.tickInterval)) {
+            seriesWidth *= xAxisOptions.labelInterval;
+        }
+
         return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
 
