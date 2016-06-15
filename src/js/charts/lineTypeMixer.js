@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var axisDataMaker = require('../helpers/axisDataMaker');
 var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
@@ -51,7 +52,8 @@ var lineTypeMixer = {
     _addCustomEventComponentForNormalTooltip: function() {
         this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            useLargeData: tui.util.pick(this.options.chart, 'useLargeData')
         });
     },
 
@@ -82,11 +84,57 @@ var lineTypeMixer = {
     },
 
     /**
-     * Render
-     * @returns {HTMLElement} chart element
+     * Update axesData.
+     * @private
+     * @override
      */
-    render: function() {
-        return ChartBase.prototype.render.apply(this, arguments);
+    _updateAxesData: function() {
+        var boundsMaker = this.boundsMaker;
+        var axesData = boundsMaker.getAxesData();
+        var seriesWidth = boundsMaker.getDimension('series').width;
+
+        axisDataMaker.updateLabelAxisDataForAdjustingTickCount(axesData.xAxis, seriesWidth);
+    },
+
+    /**
+     * Render for zoom.
+     * @param {boolean} isResetZoom - whether reset zoom or not
+     * @private
+     */
+    _renderForZoom: function(isResetZoom) {
+        var self = this;
+
+        this.boundsMaker.initBoundsData();
+        this._render(function(renderingData) {
+            renderingData.customEvent.isResetZoom = isResetZoom;
+            self._renderComponents(renderingData, 'zoom');
+        });
+    },
+
+    /**
+     * On zoom.
+     * @param {Array.<number>} indexRange - index range for zoom
+     * @override
+     */
+    onZoom: function(indexRange) {
+        this.dataProcessor.updateRawDataForZoom(indexRange);
+        this.axisScaleMakerMap = null;
+        this._renderForZoom(false);
+    },
+
+    /**
+     * On reset zoom.
+     * @override
+     */
+    onResetZoom: function() {
+        var rawData = this.dataProcessor.getOriginalRawData();
+
+        this.axisScaleMakerMap = null;
+        this.indexRange = null;
+
+        this.dataProcessor.initData(rawData);
+        this.dataProcessor.initZoomedRawData();
+        this._renderForZoom(true);
     },
 
     /**

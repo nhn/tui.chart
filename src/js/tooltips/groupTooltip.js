@@ -27,6 +27,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      *      @param {object} params.theme axis theme
      */
     init: function(params) {
+        this.prevIndex = null;
         TooltipBase.call(this, params);
     },
 
@@ -92,8 +93,16 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      */
     rerender: function(data) {
         TooltipBase.prototype.rerender.call(this, data);
-
+        this.prevIndex = null;
         this.theme = this._updateLegendTheme(data.checkedLegends);
+    },
+
+    /**
+     * Zoom.
+     */
+    zoom: function() {
+        this.prevIndex = null;
+        TooltipBase.prototype.zoom.call(this);
     },
 
     /**
@@ -334,7 +343,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     _showTooltip: function(elTooltip, params, prevPosition) {
         var dimension, position;
 
-        if (!tui.util.isUndefined(this.prevIndex)) {
+        if (!tui.util.isNull(this.prevIndex)) {
             this.fire('hideGroupAnimation', this.prevIndex);
         }
 
@@ -393,7 +402,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @private
      */
     _hideTooltip: function(elTooltip, index) {
-        delete this.prevIndex;
+        this.prevIndex = null;
         this._hideTooltipSector(index);
         dom.removeClass(elTooltip, 'show');
         elTooltip.style.cssText = '';

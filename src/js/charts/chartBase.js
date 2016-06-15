@@ -107,8 +107,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * @type {object}
          */
         this.userEvent = new UserEventListener();
-
-        this._addCustomEventComponent();
     },
 
     /**
@@ -207,13 +205,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Add custom event component.
-     * @private
-     * @abstract
-     */
-    _addCustomEventComponent: function() {},
-
-    /**
      * Make rendering data for axis type chart.
      * @returns {object} rendering data.
      * @private
@@ -229,8 +220,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _attachCustomEvent: function(serieses) {
         var legend = this.componentManager.get('legend');
+        var customEvent = this.componentManager.get('customEvent');
 
         serieses = serieses || this.componentManager.where({componentType: 'series'});
+
+        if (this.options.chart.useLargeData) {
+            customEvent.on('zoom', this.onZoom, this);
+            customEvent.on('resetZoom', this.onResetZoom, this);
+        }
 
         if (legend) {
             legend.on('changeCheckedLegends', this.onChangeCheckedLegends, this);
@@ -285,6 +282,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Update axesData.
+     * @private
+     * @abstract
+     */
+    _updateAxesData: function() {},
+
+    /**
      * Render.
      * @param {function} onRender render callback function
      * @private
@@ -296,6 +300,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._registerAxesData();
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
+
+        if (tui.util.pick(this.options.chart, 'useLargeData')) {
+            this._updateAxesData();
+        }
 
         this._updateDimensions();
 
@@ -334,13 +342,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Filter raw data.
+     * Filter raw data belong to checked legend.
      * @param {object} rawData raw data
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      * @returns {object} rawData
      * @private
      */
-    _filterRawData: function(rawData, checkedLegends) {
+    _filterCheckedRawData: function(rawData, checkedLegends) {
         var cloneData = JSON.parse(JSON.stringify(rawData));
 
         if (tui.util.isArray(cloneData.series)) {
@@ -394,8 +402,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _rerender: function(checkedLegends, rawData) {
         var self = this;
+        var dataProcessor = this.dataProcessor;
 
-        rawData = rawData || this._filterRawData(this.dataProcessor.getOriginalRawData(), checkedLegends);
+        if (!rawData) {
+            rawData = this._filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
+        }
+
         this.dataProcessor.initData(rawData);
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {
@@ -413,6 +425,18 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._rerender(checkedLegends, rawData, boundsParams);
     },
+
+    /**
+     * On zoom.
+     * @abstract
+     */
+    onZoom: function() {},
+
+    /**
+     * On reset zoom.
+     * @abstract
+     */
+    onResetZoom: function() {},
 
     /**
      * Render title.
@@ -528,14 +552,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _updateChartDimension: function(dimension) {
         var updated = false;
+        var chartOptions = this.options.chart;
 
-        if (dimension.width) {
-            this.options.chart.width = dimension.width;
+        if (dimension.width && chartOptions.width !== dimension.width) {
+            chartOptions.width = dimension.width;
             updated = true;
         }
 
-        if (dimension.height) {
-            this.options.chart.height = dimension.height;
+        if (dimension.height && chartOptions.height !== dimension.height) {
+            chartOptions.height = dimension.height;
             updated = true;
         }
 
@@ -550,8 +575,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @api
      */
     resize: function(dimension) {
-        var self = this,
-            updated;
+        var self = this;
+        var updated;
 
         if (!dimension) {
             return;
@@ -564,7 +589,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         }
 
         this.boundsMaker.initBoundsData(this.options.chart);
-        renderUtil.renderDimension(this.chartContainer, dimension);
+        renderUtil.renderDimension(this.chartContainer, this.boundsMaker.getDimension('chart'));
 
         this._render(function(renderingData) {
             self._renderComponents(renderingData, 'resize');

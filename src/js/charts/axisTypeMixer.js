@@ -1,5 +1,6 @@
 /**
- * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
+ * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area,
+ *                  bubble, column&line combo.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -24,7 +25,7 @@ var GroupTooltip = require('../tooltips/groupTooltip');
  */
 
 /**
- * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, combo.
+ * axisTypeMixer is mixer for help to axis types charts like bar, column, line, area, bubble, column&line combo.
  * @mixin
  */
 var axisTypeMixer = {
@@ -116,6 +117,7 @@ var axisTypeMixer = {
         }
         this._addSeriesComponents(params.serieses, options);
         this._addTooltipComponent();
+        this._addCustomEventComponent();
     },
 
     /**
@@ -176,6 +178,7 @@ var axisTypeMixer = {
             axisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
                 options: options,
+                useLargeData: !!tui.util.pick(this.options.chart, 'useLargeData'),
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
                 aligned: !!aligned
@@ -259,6 +262,7 @@ var axisTypeMixer = {
         var optionChartTypes = this.chartTypes || [this.chartType];
         var seriesData = this._makeSeriesDataForRendering(axesData, optionChartTypes, this.isVertical);
         var yAxis = axesData.yAxis ? axesData.yAxis : axesData.rightYAxis;
+        var xAxis = axesData.xAxis;
 
         return tui.util.extend({
             plot: {
@@ -266,7 +270,7 @@ var axisTypeMixer = {
                 hTickCount: axesData.xAxis.validTickCount
             },
             customEvent: {
-                tickCount: this.isVertical ? axesData.xAxis.tickCount : yAxis.tickCount
+                tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
             }
         }, seriesData, axesData);
     },
@@ -279,7 +283,8 @@ var axisTypeMixer = {
     _addCustomEventComponentForGroupTooltip: function() {
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            useLargeData: tui.util.pick(this.options.chart, 'useLargeData')
         });
     },
 

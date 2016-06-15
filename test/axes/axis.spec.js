@@ -538,6 +538,68 @@ describe('Test for Axis', function() {
         });
     });
 
+    describe('_makeTickLineHtml()', function() {
+        it('세로 axis의 tick line의 html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.isVertical = true;
+
+            actual = axis._makeTickLineHtml(100, 'top', true, 0);
+            expected = '<div class="tui-chart-tick-line" style="top:-1px;height:101px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('가로 axis의 tick line의 html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.isVertical = false;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 0);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:101px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.isVertical = false;
+            axis.data.positionRatio = 0.2;
+            axis.data.lineWidth = 100;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 20);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.isVertical = false;
+            axis.data.positionRatio = 0.2;
+            axis.data.lineWidth = 100;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 20);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTickHtml()', function() {
+        it('tick html을 생성합니다.', function() {
+            var actual = axis._makeTickHtml(100, 5, 'left', true, 0);
+            var expected = '<div class="tui-chart-tick" style="background-color:black;left: -1px"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 25px"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 50px"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 74px"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 99px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
 
     describe('_renderTickArea()', function() {
         it('axis 영역의 너비가 300이고 tick count가 5인 x축(레이블 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 좌측에서 부터 렌더링 됩니다.', function() {
@@ -986,7 +1048,7 @@ describe('Test for Axis', function() {
     describe('_changeLabelAreaPosition()', function() {
         it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var labelContainer = dom.create('DIV');
-            
+
             axis.data.isLabelAxis = true;
             axis._changeLabelAreaPosition(labelContainer);
 
@@ -1055,7 +1117,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderDivisionAxisArea()', function() {
+    describe('_renderDividedAxis()', function() {
         it('분할 axis영역을 렌더링 합니다.', function() {
             var container = dom.create('DIV');
 
@@ -1068,7 +1130,7 @@ describe('Test for Axis', function() {
                 width: 50
             });
 
-            axis._renderDivisionAxisArea(container, 300);
+            axis._renderDividedAxis(container, 300);
 
             expect(container.childNodes[0].className).toBe('tui-chart-title-area rotation');
             expect(container.childNodes[1].className).toBe('tui-chart-label-area');
@@ -1081,7 +1143,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderSingleAxisArea()', function() {
+    describe('_renderNotDividedAxis()', function() {
         it('단독 axis영역을 렌더링 합니다.', function() {
             var container = dom.create('DIV');
 
@@ -1090,7 +1152,7 @@ describe('Test for Axis', function() {
                 tickCount: 4
             };
 
-            axis._renderSingleAxisArea(container, {
+            axis._renderNotDividedAxis(container, {
                 width: 300,
                 height: 50
             });
@@ -1127,12 +1189,12 @@ describe('Test for Axis', function() {
             expect(dom.hasClass(container, 'horizontal')).toBe(true);
         });
 
-        it('divided이 true이면 _renderDivisionAxisArea()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
+        it('divided이 true이면 _renderDividedAxis()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
             var container = dom.create('DIV');
 
 
-            spyOn(axis, '_renderSingleAxisArea');
-            spyOn(axis, '_renderDivisionAxisArea');
+            spyOn(axis, '_renderNotDividedAxis');
+            spyOn(axis, '_renderDividedAxis');
             boundsMaker.getDimension.and.callFake(function(type) {
                 if (type === 'yAxis') {
                     return {
@@ -1160,16 +1222,16 @@ describe('Test for Axis', function() {
             axis._renderAxisArea(container);
 
             expect(container.style.width).toBe('380px');
-            expect(axis._renderSingleAxisArea).not.toHaveBeenCalled();
-            expect(axis._renderDivisionAxisArea).toHaveBeenCalled();
+            expect(axis._renderNotDividedAxis).not.toHaveBeenCalled();
+            expect(axis._renderDividedAxis).toHaveBeenCalled();
         });
 
-        it('divided이 true가 아니면 _renderSingleAxisArea()를 수행합니다.', function() {
+        it('divided이 true가 아니면 _renderNotDividedAxis()를 수행합니다.', function() {
             var container = dom.create('DIV');
 
 
-            spyOn(axis, '_renderSingleAxisArea');
-            spyOn(axis, '_renderDivisionAxisArea');
+            spyOn(axis, '_renderNotDividedAxis');
+            spyOn(axis, '_renderDividedAxis');
             boundsMaker.getDimension.and.callFake(function(type) {
                 if (type === 'yAxis') {
                     return {
@@ -1196,8 +1258,8 @@ describe('Test for Axis', function() {
             axis._renderAxisArea(container);
 
             expect(container.style.width).toBe('300px');
-            expect(axis._renderSingleAxisArea).toHaveBeenCalled();
-            expect(axis._renderDivisionAxisArea).not.toHaveBeenCalled();
+            expect(axis._renderNotDividedAxis).toHaveBeenCalled();
+            expect(axis._renderDividedAxis).not.toHaveBeenCalled();
         });
     });
 

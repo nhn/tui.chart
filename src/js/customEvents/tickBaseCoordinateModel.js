@@ -104,11 +104,11 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
     },
 
     /**
-     * Get tick base data length.
-     * @returns {number} length
+     * Get last index.
+     * @returns {number}
      */
-    getLength: function() {
-        return this.data.length;
+    getLastIndex: function() {
+        return this.data.length - 1;
     },
 
     /**

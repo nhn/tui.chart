@@ -17,10 +17,6 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @constructs AreaChartSeries
      * @extends Series
      * @mixes LineTypeSeriesBase
-     * @param {object} params parameters
-     *      @param {object} params.model series model
-     *      @param {object} params.options series options
-     *      @param {object} params.theme series theme
      */
     init: function() {
         Series.apply(this, arguments);
@@ -28,7 +24,6 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make position top of zero point.
-     * @param {{height: number}} dimension dimension
      * @returns {number} position top
      * @private
      */

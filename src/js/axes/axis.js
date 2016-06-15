@@ -214,7 +214,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {number} width axis width
      * @param {number} tickCount tick count
      * @param {Array.<number|string>} categories categories
-     * @param {number} additionalWidth aditional width
+     * @param {number} additionalWidth additional width
      * @returns {Array.<HTMLElement>} child containers
      * @private
      */
@@ -222,11 +222,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var titleContainer = this._renderTitleArea(size),
             labelContainer = this._renderLabelArea(size, width, tickCount, categories, additionalWidth),
             childContainers = [titleContainer, labelContainer],
-            isLineType = this.data.isVertical && this.data.aligned,
+            isVerticalLineType = this.data.isVertical && this.data.aligned,
             tickContainer, oppositeSideTickContainer;
 
-        if (!isLineType) {
-            tickContainer = this._renderTickArea(size, tickCount, categories, additionalWidth);
+        if (!isVerticalLineType) {
+            tickContainer = this._renderTickArea(size, tickCount, additionalWidth);
             oppositeSideTickContainer = this._renderOppositeSideTickArea(tickContainer.innerHTML);
             childContainers = childContainers.concat([tickContainer, oppositeSideTickContainer]);
         }
@@ -235,40 +235,51 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     Render division xAxis area if yAxis rendered in the center.
+     * Render divided xAxis if yAxis rendered in the center.
      * @param {HTMLElement} axisContainer axis container element
      * @param {number} width axis area width
      * @private
      */
-    _renderDivisionAxisArea: function(axisContainer, width) {
-        var leftWidth = Math.round(width / 2),
-            rightWidth = width - leftWidth,
-            tickCount = this.data.tickCount,
-            halfTickCount = parseInt(tickCount / 2, 10) + 1,
-            categories = this.data.labels,
-            leftCates = categories.slice(0, halfTickCount),
-            rightCates = categories.slice(halfTickCount - 1, tickCount),
-            additionWidth = leftWidth + this.boundsMaker.getDimension('yAxis').width,
-            leftContainers, rightContainers, rightTitleContainer;
+    _renderDividedAxis: function(axisContainer, width) {
+        var lWidth = Math.round(width / 2);
+        var rWidth = width - lWidth;
+        var tickCount = this.data.tickCount;
+        var halfTickCount = parseInt(tickCount / 2, 10) + 1;
+        var categories = this.data.labels;
+        var lCategories = categories.slice(0, halfTickCount);
+        var rCategories = categories.slice(halfTickCount - 1, tickCount);
+        var additionalWidth = lWidth + this.boundsMaker.getDimension('yAxis').width;
+        var lContainers = this._renderChildContainers(lWidth, lWidth, halfTickCount, lCategories);
+        var rContainers = this._renderChildContainers(rWidth, rWidth, halfTickCount, rCategories, additionalWidth);
+        var rTitleContainer = rContainers[0];
 
-        leftContainers = this._renderChildContainers(leftWidth, leftWidth, halfTickCount, leftCates);
-        rightContainers = this._renderChildContainers(rightWidth, rightWidth, halfTickCount, rightCates, additionWidth);
-
-        rightTitleContainer = rightContainers[0];
-        dom.addClass(rightTitleContainer, 'right');
-        dom.append(axisContainer, leftContainers.concat(rightContainers));
+        dom.addClass(rTitleContainer, 'right');
+        dom.append(axisContainer, lContainers.concat(rContainers));
     },
 
     /**
-     * Render single axis area if yAxis did not rendered in the center.
+     * Render single axis if not divided.
      * @param {HTMLElement} axisContainer axis container element
      * @param {{width: number, height: number}} dimension axis area dimension
      * @private
      */
-    _renderSingleAxisArea: function(axisContainer, dimension) {
-        var isVertical = !!this.data.isVertical,
-            size = isVertical ? dimension.height : dimension.width,
-            childContainers = this._renderChildContainers(size, dimension.width, this.data.tickCount, this.data.labels);
+    _renderNotDividedAxis: function(axisContainer, dimension) {
+        var data = this.data;
+        var isVertical = !!data.isVertical;
+        var width = dimension.width;
+        var size = isVertical ? dimension.height : width;
+        var additionalSize = 0;
+        var childContainers;
+
+        if (data.positionRatio) {
+            additionalSize = size * data.positionRatio;
+        }
+
+        if (data.sizeRatio) {
+            size *= data.sizeRatio;
+        }
+
+        childContainers = this._renderChildContainers(size, width, data.tickCount, data.labels, additionalSize);
 
         dom.append(axisContainer, childContainers);
     },
@@ -285,10 +296,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this._addCssClasses(axisContainer);
 
         if (this.options.divided) {
-            this._renderDivisionAxisArea(axisContainer, dimension.width);
+            this._renderDividedAxis(axisContainer, dimension.width);
             dimension.width += this.boundsMaker.getDimension('yAxis').width;
         } else {
-            this._renderSingleAxisArea(axisContainer, dimension);
+            this._renderNotDividedAxis(axisContainer, dimension);
             dimension.width += this.options.isCenter ? 2 : 0;
         }
 
@@ -302,17 +313,17 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @returns {HTMLElement} axis area base element
      */
     render: function(data) {
-        var el = dom.create('DIV', this.className);
+        var container = dom.create('DIV', this.className);
 
         this.data = data;
-        this._renderAxisArea(el);
-        this.axisContainer = el;
-        return el;
+        this._renderAxisArea(container);
+        this.axisContainer = container;
+        return container;
     },
 
     /**
      * Rerender axis component.
-     * @param {object} data rendering data
+     * @param {object} data - data for rendering
      */
     rerender: function(data) {
         this.axisContainer.innerHTML = '';
@@ -328,11 +339,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
     /**
      * Resize axis component.
-     * @param {{dimension: {width: number, height: number}, position: {left: number, top: number}}} bound axis bound
-     * @param {object} data rendering data
+     * @param {object} data - data for rendering
      */
-    resize: function(bound, data) {
-        this.rerender(bound, data);
+    resize: function(data) {
+        this.rerender(data);
+    },
+
+    /**
+     * Zoom.
+     * @param {object} data - data for rendering
+     */
+    zoom: function(data) {
+        this.rerender(data);
     },
 
     /**
@@ -473,42 +491,52 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render tick area.
-     * @param {number} size size or height
-     * @param {number} tickCount tick count
-     * @param {Array.<string>} categories categories
-     * @param {?number} additionalSize additional size (width or height)
-     * @returns {HTMLElement} tick area element
+     * Make tick line html.
+     * @param {number} areaSize - area size (width or height)
+     * @param {string} posType - position type
+     * @param {boolean} isNotDividedXAxis - whether not divided xAxis or not
+     * @param {number} additionalSize - additional size
+     * @returns {string}
      * @private
      */
-    _renderTickArea: function(size, tickCount, categories, additionalSize) {
-        var data = this.data,
-            isSingleXAxis = !data.isVertical && !this.options.divided,
-            tickColor = this.theme.tickColor,
-            positions = calculator.makeTickPixelPositions(size, tickCount),
-            elTickArea = dom.create('DIV', 'tui-chart-tick-area'),
-            template = axisTemplate.tplAxisTick,
-            tickLineExtend = isSingleXAxis ? 1 : 0,
-            posType, lineSizeType, lineHtml, ticksHtml;
+    _makeTickLineHtml: function(areaSize, posType, isNotDividedXAxis, additionalSize) {
+        var data = this.data;
+        var tickLineExtend = isNotDividedXAxis ? chartConst.OVERLAPPING_WIDTH : 0;
+        var linePositionValue = -tickLineExtend;
+        var lineSize, html;
 
-        additionalSize = additionalSize || 0;
-
-        if (data.isVertical) {
-            posType = 'bottom';
-            lineSizeType = 'height';
+        if (data.lineWidth) {
+            lineSize = data.lineWidth;
         } else {
-            posType = 'left';
-            lineSizeType = 'width';
+            lineSize = areaSize + tickLineExtend;
+            linePositionValue += additionalSize;
         }
 
-        lineHtml = axisTemplate.tplTickLine({
+        html = axisTemplate.tplTickLine({
             positionType: posType,
-            positionValue: additionalSize - tickLineExtend,
-            sizeType: lineSizeType,
-            size: size + tickLineExtend
+            positionValue: linePositionValue,
+            sizeType: data.isVertical ? 'height' : 'width',
+            size: lineSize
         });
 
-        ticksHtml = tui.util.map(positions, function(position, index) {
+        return html;
+    },
+
+    /**
+     * Make tick html.
+     * @param {number} size - area size
+     * @param {number} tickCount - tick count
+     * @param {string} posType - position type
+     * @param {boolean} isSingleXAxis - whether single x axis or not
+     * @param {number} additionalSize - additional size
+     * @returns {string}
+     * @private
+     */
+    _makeTickHtml: function(size, tickCount, posType, isSingleXAxis, additionalSize) {
+        var tickColor = this.theme.tickColor;
+        var positions = calculator.makeTickPixelPositions(size, tickCount);
+        var template = axisTemplate.tplAxisTick;
+        var html = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
             position -= (index === 0 && isSingleXAxis) ? 1 : 0;
@@ -521,9 +549,32 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             return tickHtml;
         }).join('');
 
-        elTickArea.innerHTML = lineHtml + ticksHtml;
+        return html;
+    },
 
-        return elTickArea;
+    /**
+     * Render tick area.
+     * @param {number} size - width or height
+     * @param {number} tickCount - tick count
+     * @param {?number} additionalSize - additional size (width or height)
+     * @returns {HTMLElement}
+     * @private
+     */
+    _renderTickArea: function(size, tickCount, additionalSize) {
+        var data = this.data;
+        var tickContainer = dom.create('DIV', 'tui-chart-tick-area');
+        var posType = data.isVertical ? 'bottom' : 'left';
+        var isNotDividedXAxis = !this.data.isVertical && !this.options.divided;
+        var lineHtml, ticksHtml;
+
+        additionalSize = additionalSize || 0;
+
+        lineHtml = this._makeTickLineHtml(size, posType, isNotDividedXAxis, additionalSize);
+        ticksHtml = this._makeTickHtml(size, tickCount, posType, isNotDividedXAxis, additionalSize);
+
+        tickContainer.innerHTML = lineHtml + ticksHtml;
+
+        return tickContainer;
     },
 
     /**

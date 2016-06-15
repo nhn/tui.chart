@@ -16,7 +16,7 @@ describe('Test for ChartBase', function() {
 
     beforeAll(function() {
         componentManager = jasmine.createSpyObj('componentManager', ['where']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getDimension']);
     });
 
     beforeEach(function() {
@@ -74,9 +74,9 @@ describe('Test for ChartBase', function() {
         });
     });
 
-    describe('_filterRawData()', function() {
+    describe('_filterCheckedRawData()', function() {
         it('한가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterRawData({
+            var actual = chartBase._filterCheckedRawData({
                     series: ['a', 'b', 'c', 'd']
                 }, [null, true, true]),
                 expected = ['b', 'c'];
@@ -84,7 +84,7 @@ describe('Test for ChartBase', function() {
         });
 
         it('두가지 종류의 series data를 checkedLegends에 값을 갖고 있는 index로 필터링합니다.', function() {
-            var actual = chartBase._filterRawData({
+            var actual = chartBase._filterCheckedRawData({
                     series: {
                         column: ['a', 'b', 'c', 'd'],
                         line: ['e', 'f', 'g']
@@ -204,6 +204,7 @@ describe('Test for ChartBase', function() {
             };
             chartBase.chartContainer = 'chart container';
             spyOn(renderUtil, 'renderDimension');
+            boundsMaker.getDimension.and.returnValue('chart dimension');
 
 
             chartBase.resize({
@@ -211,10 +212,7 @@ describe('Test for ChartBase', function() {
                 height: 300
             });
 
-            expect(renderUtil.renderDimension).toHaveBeenCalledWith('chart container', {
-                width: 400,
-                height: 300
-            });
+            expect(renderUtil.renderDimension).toHaveBeenCalledWith('chart container', 'chart dimension');
         });
 
         it('dimension이 변경되었다면, _render()를 호출하여 렌더링을 수행합니다.', function() {

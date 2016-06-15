@@ -43,8 +43,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
     /**
      * Add components
-     * @param {object} chartBackground chart background
-     * @param {object} options chart options
      * @private
      */
     _addComponents: function() {
@@ -56,6 +54,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 chartType: this.chartType
             }
         }]);
+        this._addCustomEventComponent();
     },
 
     /**

@@ -46,13 +46,13 @@ describe('Series', function() {
             });
         });
 
-        it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
+        it('min, max 모두 0보다 큰 경우에는 toMax는 size를, toMin은 0을 반환합니다.', function() {
             var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
             });
             expect(result).toEqual({
-                toMax: 0,
+                toMax: 100,
                 toMin: 0
             });
         });

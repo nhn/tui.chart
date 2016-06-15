@@ -109,8 +109,8 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]]);
             expected = [{
-                area: [['M', 8, 30, 'C', 8, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 8, 50]],
-                line: [['M', 8, 30, 'C', 8, 30], [30, 40, 30, 40]]
+                area: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 9, 50]],
+                line: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]
             }];
             expect(actual).toEqual(expected);
         });

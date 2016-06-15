@@ -65,14 +65,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             componentType: 'series',
             userEvent: this.userEvent
         });
-        this.componentManager.register('zoom', Zoom);
-    },
 
-    /**
-     * Add custom event component.
-     * @private
-     */
-    _addCustomEventComponent: function() {
+        this.componentManager.register('zoom', Zoom);
+
         this.componentManager.register('customEvent', mapChartCustomEvent, {
             chartType: this.chartType
         });

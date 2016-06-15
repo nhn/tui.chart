@@ -200,12 +200,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                     var dotMap = {
                         dot: self.renderDot(paper, position, color, opacity)
                     };
-                    var startPositon;
+                    var startPosition;
 
                     if (self.hasRangeData) {
-                        startPositon = tui.util.extend({}, position);
-                        startPositon.top = startPositon.startTop;
-                        dotMap.startDot = self.renderDot(paper, startPositon, color, opacity);
+                        startPosition = tui.util.extend({}, position);
+                        startPosition.top = startPosition.startTop;
+                        dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
                     }
 
                     return dotMap;
@@ -368,12 +368,18 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{groupIndex: number, index:number}} data hide info
      */
     hideAnimation: function(data) {
-        var index = data.groupIndex, // Line chart has pivot values.
-            groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
-            item = this.groupDots[groupIndex][index],
-            opacity = this.dotOpacity,
-            strokeWidth, startLine;
+        var index = data.groupIndex; // Line chart has pivot values.
+        var groupIndex = data.index;
+        var opacity = this.dotOpacity;
+        var groupDot = this.groupDots[groupIndex];
+        var line, item, strokeWidth, startLine;
+
+        if (!groupDot || !groupDot[index]) {
+            return;
+        }
+
+        line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+        item = groupDot[index];
 
         if (this.chartType === 'area') {
             strokeWidth = 1;
@@ -454,6 +460,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         dot.attr(dotAttrs);
+    },
+
+    /**
+     * Show graph for zoom.
+     */
+    showGraph: function() {
+        this.paper.setSize(this.dimension.width, this.dimension.height);
     },
 
     /**

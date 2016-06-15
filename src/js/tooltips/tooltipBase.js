@@ -134,6 +134,13 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
+     * Zoom.
+     */
+    zoom: function() {
+        this.data = this._makeTooltipData();
+    },
+
+    /**
      * Get tooltip element.
      * @returns {HTMLElement} tooltip element
      * @private

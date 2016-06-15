@@ -284,7 +284,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {number} limitWidth limit width
      * @param {number} labelWidth label width
      * @param {number} labelHeight label height
-     * @param {number} index candidates index
      * @returns {number} rotation degree
      * @private
      */
