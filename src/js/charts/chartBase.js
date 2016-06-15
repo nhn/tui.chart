@@ -11,6 +11,7 @@ var DefaultDataProcessor = require('../dataModels/dataProcessor');
 var BoundsMaker = require('../helpers/boundsMaker');
 var AxisScaleMaker = require('../helpers/axisScaleMaker');
 var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var UserEventListener = require('../helpers/userEventListener');
 
@@ -224,7 +225,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         serieses = serieses || this.componentManager.where({componentType: 'series'});
 
-        if (this.options.chart.useLargeData) {
+        if (tui.util.pick(this.options.series, 'zoomable')) {
             customEvent.on('zoom', this.onZoom, this);
             customEvent.on('resetZoom', this.onResetZoom, this);
         }
@@ -294,6 +295,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _render: function(onRender) {
+        var xAxisOptions = this.options.xAxis;
         var renderingData;
 
         this._executeComponentFunc('registerDimension');
@@ -301,7 +303,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 
-        if (tui.util.pick(this.options.chart, 'useLargeData')) {
+        if (predicate.isAutoTickInterval(xAxisOptions.tickInterval)) {
             this._updateAxesData();
         }
 

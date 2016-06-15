@@ -26,7 +26,7 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
          */
         this.prevFoundData = null;
 
-        this._initForZoom(params.useLargeData);
+        this._initForZoom(params.zoomable);
     },
 
     /**

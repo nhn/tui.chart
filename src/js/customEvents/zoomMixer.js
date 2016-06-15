@@ -19,15 +19,15 @@ var eventListener = require('../helpers/eventListener');
 var zoomMixer = {
     /**
      * Initialize for zoom.
-     * @param {boolean} useLargeData - whether use large data or not
+     * @param {boolean} zoomable - whether zoomable or not
      * @private
      */
-    _initForZoom: function(useLargeData) {
+    _initForZoom: function(zoomable) {
         /**
-         * whether use large data or not
+         * whether zoomable or not
          * @type {boolean}
          */
-        this.useLargeData = useLargeData;
+        this.zoomable = zoomable;
 
         /**
          * drag start index.
@@ -267,7 +267,7 @@ var zoomMixer = {
     _onMousedown: function(e) {
         var target;
 
-        if (!this.useLargeData) {
+        if (!this.zoomable) {
             return;
         }
 

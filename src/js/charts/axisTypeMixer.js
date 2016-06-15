@@ -178,7 +178,6 @@ var axisTypeMixer = {
             axisData = axisDataMaker.makeLabelAxisData({
                 labels: this.dataProcessor.getCategories(),
                 options: options,
-                useLargeData: !!tui.util.pick(this.options.chart, 'useLargeData'),
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
                 aligned: !!aligned
@@ -284,7 +283,7 @@ var axisTypeMixer = {
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            useLargeData: tui.util.pick(this.options.chart, 'useLargeData')
+            zoomable: tui.util.pick(this.options.series, 'zoomable')
         });
     },
 

@@ -225,6 +225,11 @@ var chartConst = {
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /**
+     * auto tick interval
+     * @type {string}
+     */
+    TICK_INTERVAL_AUTO: 'auto',
     /** yAxis align option
      * @type {string}
      */

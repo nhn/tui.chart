@@ -31,7 +31,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
          */
         this.sizeType = this.isVertical ? 'height' : 'width';
 
-        this._initForZoom(params.useLargeData);
+        this._initForZoom(params.zoomable);
     },
 
     /**

@@ -53,7 +53,7 @@ var lineTypeMixer = {
         this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            useLargeData: tui.util.pick(this.options.chart, 'useLargeData')
+            zoomable: tui.util.pick(this.options.series, 'zoomable')
         });
     },
 

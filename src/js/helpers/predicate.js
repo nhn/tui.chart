@@ -337,6 +337,15 @@ var predicate = {
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
+    },
+
+    /**
+     * Whether auto tick interval or not.
+     * @param {string} [tickInterval] - tick interval option
+     * @returns {boolean}
+     */
+    isAutoTickInterval: function(tickInterval) {
+        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
     }
 };
 
