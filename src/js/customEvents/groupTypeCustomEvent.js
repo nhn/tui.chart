@@ -19,9 +19,18 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     init: function(params) {
         CustomEventBase.call(this, params);
 
+        /**
+         * previous index of group data
+         * @type {null}
+         */
         this.prevIndex = null;
 
+        /**
+         * type of size
+         * @type {string}
+         */
         this.sizeType = this.isVertical ? 'height' : 'width';
+
         this._initForZoom(params.useLargeData);
     },
 
