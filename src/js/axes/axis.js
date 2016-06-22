@@ -759,18 +759,17 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRotationLabelsHtml: function(positions, categories, labelSize, additionalSize) {
-        var self = this,
-            degree = this.boundsMaker.xAxisDegree,
-            template = axisTemplate.tplAxisLabel,
-            labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label),
-            labelCssText = this._makeLabelCssText(labelSize),
-            additionalClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + degree,
-            halfWidth = labelSize / 2,
-            moveLeft = calculator.calculateAdjacent(degree, halfWidth),
-            top = calculator.calculateOpposite(degree, halfWidth) +
-                chartConst.XAXIS_LABEL_TOP_MARGIN,
-            spanCssText = (renderUtil.isIE7() && degree) ? chartConst.IE7_ROTATION_FILTER_STYLE_MAP[degree] : '',
-            labelsHtml;
+        var self = this;
+        var degree = this.boundsMaker.xAxisDegree;
+        var template = axisTemplate.tplAxisLabel;
+        var labelHeight = renderUtil.getRenderedLabelHeight(categories[0], this.theme.label);
+        var labelCssText = this._makeLabelCssText(labelSize);
+        var additionalClass = ' tui-chart-xaxis-rotation tui-chart-xaxis-rotation' + degree;
+        var halfWidth = labelSize / 2;
+        var moveLeft = calculator.calculateAdjacent(degree, halfWidth);
+        var top = calculator.calculateOpposite(degree, halfWidth) + chartConst.XAXIS_LABEL_TOP_MARGIN;
+        var spanCssText = (renderUtil.isIE7() && degree) ? chartConst.IE7_ROTATION_FILTER_STYLE_MAP[degree] : '';
+        var labelsHtml;
 
         additionalSize = additionalSize || 0;
         labelsHtml = tui.util.map(positions, function(position, index) {
