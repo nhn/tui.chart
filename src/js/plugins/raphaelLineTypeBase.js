@@ -8,11 +8,11 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var ANIMATION_TIME = 700,
-    DEFAULT_DOT_RADIUS = 3,
-    HOVER_DOT_RADIUS = 4,
-    SELECTION_DOT_RADIUS = 7,
-    DE_EMPHASIS_OPACITY = 0.3;
+var ANIMATION_TIME = 700;
+var DEFAULT_DOT_RADIUS = 3;
+var HOVER_DOT_RADIUS = 4;
+var SELECTION_DOT_RADIUS = 7;
+var DE_EMPHASIS_OPACITY = 0.3;
 
 var concat = Array.prototype.concat;
 
@@ -557,6 +557,13 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 'stroke-opacity': 0
             });
         }
+    },
+
+    /**
+     * Clear paper.
+     */
+    clear: function() {
+        this.paper.clear();
     }
 });
 

@@ -26,10 +26,34 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      *      @param {boolean} params.isVertical whether vertical or not
      */
     init: function(params) {
+        /**
+         * type of chart
+         * @type {string}
+         */
         this.chartType = params.chartType;
+
+        /**
+         * whether vertical or not
+         * @type {boolean}
+         */
         this.isVertical = params.isVertical;
+
+        /**
+         * data processor
+         * @type {DataProcessor}
+         */
         this.dataProcessor = params.dataProcessor;
+
+        /**
+         * bounds maker
+         * @type {BoundsMaker}
+         */
         this.boundsMaker = params.boundsMaker;
+
+        /**
+         * selected series item.
+         * @type {null | object}
+         */
         this.selectedData = null;
     },
 

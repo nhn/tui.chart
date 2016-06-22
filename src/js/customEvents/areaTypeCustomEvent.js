@@ -103,11 +103,11 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     _onMousemove: function(e) {
         var foundData;
 
+        foundData = this._findData(e.clientX, e.clientY);
+
         if (this._isAfterDragMouseup() || !this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
-
-        foundData = this._findData(e.clientX, e.clientY);
 
         if (foundData) {
             this._showTooltip(foundData);

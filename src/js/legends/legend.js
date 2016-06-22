@@ -152,7 +152,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * Resize legend component.
      */
     resize: function() {
-        this._renderLegendArea(this.legendContainer);
+        this.rerender();
     },
 
     /**

@@ -8,6 +8,7 @@
 
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
+var chartConst = require('../const');
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
@@ -59,7 +60,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         if (this.isVertical) {
             pointValue = layerPosition.x;
         } else {
-            pointValue = layerPosition.y;
+            pointValue = layerPosition.y - chartConst.SERIES_EXPAND_SIZE;
         }
 
         return {
@@ -150,7 +151,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         index = foundData.indexes.groupIndex;
 
         if (index === -1) {
-            this._onMouseout();
+            this._onMouseout(e);
         } else if (this.prevIndex !== index) {
             this._showTooltip(foundData);
         }

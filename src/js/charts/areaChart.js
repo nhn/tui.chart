@@ -6,11 +6,11 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    lineTypeMixer = require('./lineTypeMixer'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    rawDataHandler = require('../helpers/rawDataHandler'),
-    Series = require('../series/areaChartSeries');
+var ChartBase = require('./chartBase');
+var lineTypeMixer = require('./lineTypeMixer');
+var axisTypeMixer = require('./axisTypeMixer');
+var rawDataHandler = require('../helpers/rawDataHandler');
+var Series = require('../series/areaChartSeries');
 
 var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**

@@ -178,7 +178,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Make spline area bottom path.
      * @param {Array.<{left: number, top: number}>} positions positions
-     * @param {Array.<{left: number, top: number}>} prevPositions previous positions
      * @returns {Array.<string | number>} spline area path
      * @private
      */
@@ -260,9 +259,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
-            var area = self.groupAreas[groupIndex],
-                opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
+            var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             area.area.attr({'fill-opacity': opacity});
             area.line.attr({'stroke-opacity': opacity});

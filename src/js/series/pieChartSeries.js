@@ -29,12 +29,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.isShowOuterLabel = !!params.isShowOuterLabel || predicate.isShowOuterLabel(this.options);
 
         /**
-         * chart background.
-         * @type {string}
-         */
-        this.chartBackground = params.chartBackground;
-
-        /**
          * range for quadrant.
          * @type {?number}
          */

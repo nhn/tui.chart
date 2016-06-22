@@ -68,13 +68,14 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @param {{width: number, height: number}} dimension dimension
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
-     * @param {boolan} isVertical whether vertical or not
+     * @param {boolean} isVertical whether vertical or not
      * @returns {Array.<object>} tick base data
      * @private
      */
     _makeData: function(dimension, tickCount, chartType, isVertical) {
-        var sizeType = isVertical ? 'width' : 'height',
-            data;
+        var sizeType = isVertical ? 'width' : 'height';
+        var data;
+
         if (predicate.isLineTypeChart(chartType)) {
             data = this._makeLineTypeData(dimension[sizeType], tickCount);
         } else {

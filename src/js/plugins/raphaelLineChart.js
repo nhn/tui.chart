@@ -9,9 +9,10 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
+
+var raphael = window.Raphael;
 
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
@@ -152,10 +153,10 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            self.groupLines[groupIndex].attr({'stroke-opacity': opacity});
+            line.attr({'stroke-opacity': opacity});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;

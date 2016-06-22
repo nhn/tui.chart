@@ -6,10 +6,10 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    lineTypeMixer = require('./lineTypeMixer'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    Series = require('../series/lineChartSeries');
+var ChartBase = require('./chartBase');
+var lineTypeMixer = require('./lineTypeMixer');
+var axisTypeMixer = require('./axisTypeMixer');
+var Series = require('../series/lineChartSeries');
 
 var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**

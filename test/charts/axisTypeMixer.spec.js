@@ -120,6 +120,10 @@ describe('Test for ComboChart', function() {
 
     describe('_addSeriesComponents', function() {
         it('series 컴포넌트들을 추가합니다..', function() {
+            axisTypeMixer.theme = {
+                chart: {}
+            };
+
             axisTypeMixer._addSeriesComponents(
                 [
                     {

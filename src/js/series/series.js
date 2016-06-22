@@ -61,6 +61,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.userEvent = params.userEvent;
 
         /**
+         * chart background.
+         * @type {string}
+         */
+        this.chartBackground = params.chartBackground;
+
+        /**
          * Options
          * @type {object}
          */

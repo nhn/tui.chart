@@ -419,8 +419,8 @@ var renderUtil = {
 
     /**
      * Start animation.
-     * @param {number} animationTime animation time
-     * @param {function} onAnimation animation callback function
+     * @param {number} animationTime - animation time
+     * @param {function} onAnimation - animation callback function
      * @returns {{id: number}} requestAnimationFrame id
      */
     startAnimation: function(animationTime, onAnimation) {
