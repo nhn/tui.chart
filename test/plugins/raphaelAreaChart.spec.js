@@ -66,8 +66,8 @@ describe('RaphaelAreaChart', function() {
                     startTop: 50
                 }]]),
                 expected = [{
-                    area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 9, 50],
-                    line: ['M', 9, 30, 'L', 30, 40]
+                    area: ['M', 10, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 10, 50],
+                    line: ['M', 10, 30, 'L', 30, 40]
                 }];
             expect(actual).toEqual(expected);
         });
@@ -86,9 +86,9 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]]);
             expected = [{
-                area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 9, 40],
-                line: ['M', 9, 30, 'L', 30, 40],
-                startLine: ['M', 9, 40, 'L', 30, 50]
+                area: ['M', 10, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 10, 40],
+                line: ['M', 10, 30, 'L', 30, 40],
+                startLine: ['M', 10, 40, 'L', 30, 50]
             }];
             expect(actual).toEqual(expected);
         });
@@ -124,8 +124,8 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]]);
             expected = [{
-                area: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40], ['L', 30, 40], ['L', 30, 50], ['L', 30, 50], ['L', 9, 50]],
-                line: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]
+                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['L', 30, 40], ['L', 30, 50], ['L', 30, 50], ['L', 10, 50]],
+                line: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40]]
             }];
             expect(actual).toEqual(expected);
         });
@@ -145,8 +145,8 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]], hasExtraPath);
             expected = [{
-                area: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 9, 50]],
-                line: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]
+                area: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 10, 50]],
+                line: [['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40]]
             }];
             expect(actual).toEqual(expected);
         });

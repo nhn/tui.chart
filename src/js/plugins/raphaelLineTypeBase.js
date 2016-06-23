@@ -14,7 +14,7 @@ var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
 var MOVING_ANIMATION_TIME = 300;
-var LEFT_BAR_WIDTH = 9;
+var LEFT_BAR_WIDTH = 10;
 
 var concat = Array.prototype.concat;
 
@@ -109,7 +109,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
             });
 
-        firstPos.left -= 1;
         path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
         path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
 

@@ -11,7 +11,7 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
-var LEFT_BAR_WIDTH = 9;
+var LEFT_BAR_WIDTH = 10;
 
 var raphael = window.Raphael;
 
@@ -88,8 +88,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            positions[0].left -= 1;
-
             return self._makeLinesPath(positions);
         });
     },

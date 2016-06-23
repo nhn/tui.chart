@@ -11,7 +11,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
-var LEFT_BAR_WIDTH = 9;
+var LEFT_BAR_WIDTH = 10;
 
 var raphael = window.Raphael;
 var concat = Array.prototype.concat;
@@ -189,8 +189,6 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         return tui.util.map(groupPositions, function(positions) {
             var paths;
-
-            positions[0].left -= 1;
 
             paths = {
                 area: self._makeAreasPath(positions, hasExtraPath),

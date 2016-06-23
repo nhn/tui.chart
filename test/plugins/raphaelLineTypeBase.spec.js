@@ -60,7 +60,7 @@ describe('RaphaelLineTypeBase', function() {
                         top: 100
                     }
                 ]),
-                expected = [['M', 9, 10, 'C', 9, 10], [100, 100, 100, 100]];
+                expected = [['M', 10, 10, 'C', 10, 10], [100, 100, 100, 100]];
 
             expect(actual).toEqual(expected);
         });
