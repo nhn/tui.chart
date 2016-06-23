@@ -306,7 +306,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             }
 
             if (data.checkedLegends) {
-                this.animateComponent();
+                this.animateComponent(true);
             } else {
                 this._showGraphWithoutAnimation();
             }
@@ -472,10 +472,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Animate component.
+     * @param {boolean} [isRerendering] - whether rerendering or not
      */
-    animateComponent: function() {
+    animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(tui.util.bind(this.animateShowingAboutSeriesLabelArea, this));
+            this.graphRenderer.animate(tui.util.bind(this.animateShowingAboutSeriesLabelArea, this, isRerendering));
         }
     },
 
@@ -525,12 +526,25 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Animate showing about series label area.
+     * Fire load event.
+     * @param {boolean} [isRerendering] - whether rerendering or not
+     * @private
      */
-    animateShowingAboutSeriesLabelArea: function() {
+    _fireLoadEvent: function(isRerendering) {
+        if (!isRerendering) {
+            this.userEvent.fire('load');
+        }
+    },
+
+    /**
+     * Animate showing about series label area.
+     * @param {boolean} [isRerendering] - whether rerendering or not
+     */
+    animateShowingAboutSeriesLabelArea: function(isRerendering) {
         var self = this;
 
         if (!this._useLabel()) {
+            this._fireLoadEvent(isRerendering);
             return;
         }
 
@@ -538,6 +552,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (renderUtil.isIE7()) {
             this.seriesLabelContainer.style.filter = '';
+            this._fireLoadEvent(isRerendering);
         } else {
             this.labelShowEffector = new tui.component.Effects.Fade({
                 element: this.seriesLabelContainer,
@@ -551,6 +566,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                         clearInterval(self.labelShowEffector.timerId);
                     }
                     self.labelShowEffector = null;
+                    self._fireLoadEvent(isRerendering);
                 }
             });
         }
