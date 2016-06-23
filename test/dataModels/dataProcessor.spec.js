@@ -76,6 +76,276 @@ describe('Test for DataProcessor', function() {
         });
     });
 
+    describe('_pushCategory', function() {
+        it('전달된 category를 rawData와 originalRawData의 categories에 추가합니다.', function() {
+            dataProcessor.rawData.categories = ['cate1', 'cate2'];
+            dataProcessor.originalRawData.categories = ['cate1', 'cate2'];
+
+            dataProcessor._pushCategory('new cate');
+
+            expect(dataProcessor.rawData.categories).toEqual(['cate1', 'cate2', 'new cate']);
+            expect(dataProcessor.originalRawData.categories).toEqual(['cate1', 'cate2', 'new cate']);
+        });
+    });
+
+    describe('_shiftCategory', function() {
+        it('rawData와 originalRawData의 categories에서 첫번째 요소를 삭제합니다.', function() {
+            dataProcessor.rawData.categories = ['cate1', 'cate2', 'cate3'];
+            dataProcessor.originalRawData.categories = ['cate1', 'cate2', 'cate3'];
+
+            dataProcessor._shiftCategory();
+
+            expect(dataProcessor.rawData.categories).toEqual(['cate2', 'cate3']);
+            expect(dataProcessor.originalRawData.categories).toEqual(['cate2', 'cate3']);
+        });
+    });
+
+    describe('_findRawSeriesDatumByName()', function() {
+        it('rawData의 series 하위 항목의 data에서 전달된 name과 같은 항목을 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                },
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+
+            actual = dataProcessor._findRawSeriesDatumByName('legend2');
+
+            expect(actual).toEqual({
+                name: 'legend2',
+                data: [3, 4]
+            });
+        });
+
+        it('rawData의 series 하위 항목의 data에 전달된 name과 같은 항목이 없으면 null을 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                },
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+
+            actual = dataProcessor._findRawSeriesDatumByName('legend3');
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_pushSeriesData()', function() {
+        it('rawData와 originalRawData의 series배열 각 항목의 data요소에 전달된 values를 순서에 맞춰 추가합니다.', function() {
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                },
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+            dataProcessor.originalRawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                },
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+
+            dataProcessor._pushSeriesData([5, 6]);
+
+            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series[1].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.originalRawData.series[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.originalRawData.series[1].data).toEqual([3, 4, 6]);
+        });
+
+        it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 value를 설정합니다.', function() {
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+            dataProcessor.originalRawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                },
+                {
+                    name: 'legend2',
+                    data: [3, 4]
+                }
+            ];
+
+            dataProcessor._pushSeriesData([5, 6]);
+
+            expect(dataProcessor.rawData.series[0].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.originalRawData.series[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.originalRawData.series[1].data).toEqual([3, 4, 6]);
+        });
+    });
+
+    describe('_shiftSeriesData', function() {
+        it('rawData와 originalRawData의 series배열 각 항목의 data요소 첫번째 항목을 삭제합니다.', function() {
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                },
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+            dataProcessor.originalRawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                },
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+
+            dataProcessor._shiftSeriesData();
+
+            expect(dataProcessor.rawData.series[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series[1].data).toEqual([5, 6]);
+            expect(dataProcessor.originalRawData.series[0].data).toEqual([2, 3]);
+            expect(dataProcessor.originalRawData.series[1].data).toEqual([5, 6]);
+        });
+
+        it('rawData에 선택된 legend만 남은 경우 originalRawData name 기준으로 data요소 첫번째 항목을 삭제합니다.', function() {
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+            dataProcessor.originalRawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                },
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+
+            dataProcessor._shiftSeriesData();
+
+            expect(dataProcessor.rawData.series[0].data).toEqual([5, 6]);
+            expect(dataProcessor.originalRawData.series[0].data).toEqual([2, 3]);
+            expect(dataProcessor.originalRawData.series[1].data).toEqual([5, 6]);
+        });
+    });
+
+    describe('addDataFromDynamicData()', function() {
+        it('dynamicData로부터 값을 추출하여 category와 seriesData 갱신과 초기화를 하고 true를 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.dynamicData = [
+                {
+                    category: 'cate',
+                    values: [1, 2]
+                }
+            ];
+            spyOn(dataProcessor, '_pushCategory');
+            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, 'initData');
+
+            actual = dataProcessor.addDataFromDynamicData();
+
+            expect(dataProcessor._pushCategory).toHaveBeenCalled();
+            expect(dataProcessor._pushSeriesData).toHaveBeenCalled();
+            expect(dataProcessor.initData).toHaveBeenCalled();
+            expect(actual).toBe(true);
+        });
+
+        it('dynamicData에 값이 없으면 아무 처리 없이 false를 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.dynamicData = [];
+            spyOn(dataProcessor, '_pushCategory');
+            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, 'initData');
+
+            actual = dataProcessor.addDataFromDynamicData();
+
+            expect(dataProcessor._pushCategory).not.toHaveBeenCalled();
+            expect(dataProcessor._pushSeriesData).not.toHaveBeenCalled();
+            expect(dataProcessor.initData).not.toHaveBeenCalled();
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('addDataFromRemainDynamicData', function() {
+        it('남은 동적 데이터 모두 기존 data에 추가합니다.', function() {
+            dataProcessor.dynamicData = [
+                {
+                    category: 'cate1',
+                    values: [1, 2]
+                },
+                {
+                    category: 'cate2',
+                    values: [3, 4]
+                }
+            ];
+            spyOn(dataProcessor, '_pushCategory');
+            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, 'initData');
+
+            dataProcessor.addDataFromRemainDynamicData();
+
+            expect(dataProcessor._pushCategory).toHaveBeenCalledTimes(2);
+            expect(dataProcessor._pushSeriesData).toHaveBeenCalledTimes(2);
+            expect(dataProcessor.initData).toHaveBeenCalled();
+            expect(dataProcessor.dynamicData.length).toBe(0);
+        });
+
+        it('shifting옵션이 있을 경우 기존 데이터의 첫 항목들을 제거합니다.', function() {
+            var shiftingOption = true;
+
+            dataProcessor.dynamicData = [
+                {
+                    category: 'cate1',
+                    values: [1, 2]
+                },
+                {
+                    category: 'cate2',
+                    values: [3, 4]
+                }
+            ];
+            spyOn(dataProcessor, '_pushCategory');
+            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, '_shiftCategory');
+            spyOn(dataProcessor, '_shiftSeriesData');
+            spyOn(dataProcessor, 'initData');
+
+            dataProcessor.addDataFromRemainDynamicData(shiftingOption);
+
+            expect(dataProcessor._shiftCategory).toHaveBeenCalledTimes(2);
+            expect(dataProcessor._shiftSeriesData).toHaveBeenCalledTimes(2);
+        });
+    });
+
     describe('isValidAllSeriesDataModel()', function() {
         it('모든 SeriesDataModel이 유효한 seriesGroup을 갖고 있으면 true를 반환합니다.', function() {
             var actual, expected;

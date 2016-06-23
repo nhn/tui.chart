@@ -366,20 +366,42 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Find raw serise datum by name.
+     * @param {string} name - name
+     * @returns {null | object}
+     * @private
+     */
+    _findRawSeriesDatumByName: function(name) {
+        var foundSeriesDatum = null;
+
+        tui.util.forEachArray(this.rawData.series, function(seriesDatum) {
+            var isEqual = seriesDatum.name === name;
+
+            if (isEqual) {
+                foundSeriesDatum = seriesDatum;
+            }
+
+            return !isEqual;
+        });
+
+        return foundSeriesDatum;
+    },
+
+    /**
      * Push series data.
      * @param {Array.<number>} values - values
      * @private
      */
     _pushSeriesData: function(values) {
-        var rawSeriesData = this.rawData.series;
+        var self = this;
 
-        tui.util.forEachArray(this.originalRawData.series, function(seriesData, index) {
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum, index) {
             var value = values[index];
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
 
-            seriesData.data.push(value);
-
-            if (rawSeriesData[index]) {
-                rawSeriesData[index].data.push(value);
+            seriesDatum.data.push(value);
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.push(value);
             }
         });
     },
@@ -389,12 +411,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _shiftSeriesData: function() {
-        var rawSeriesData = this.rawData.series;
-        tui.util.forEachArray(this.originalRawData.series, function(seriesData, index) {
-            seriesData.data.shift();
+        var self = this;
 
-            if (rawSeriesData[index]) {
-                rawSeriesData[index].data.shift();
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+
+            seriesDatum.data.shift();
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.shift();
             }
         });
     },
