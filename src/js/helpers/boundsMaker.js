@@ -269,14 +269,16 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Calculate limit width of x axis.
+     * @param {number} labelCount - label count
      * @returns {number} limit width
      * @private
      */
-    _calculateXAxisLabelLimitWidth: function() {
+    _calculateXAxisLabelLimitWidth: function(labelCount) {
         var seriesWidth = this.getDimension('series').width;
-        var labelCount = this.axesData.xAxis.labels.length;
         var isAlign = predicate.isLineTypeChart(this.chartType);
         var xAxisOptions = this.options.xAxis || {};
+
+        labelCount = labelCount || this.axesData.xAxis.labels.length;
 
         if (predicate.isValidLabelInterval(xAxisOptions.labelInterval, xAxisOptions.tickInterval)) {
             seriesWidth *= xAxisOptions.labelInterval;
@@ -383,10 +385,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {number} overflowLeft - overflow left
      * @private
      */
-    _updateDegree: function(rotationInfo, labelLength, overflowLeft) {
+    _updateDegree: function(rotationInfo, labelCount, overflowLeft) {
         var limitWidth, newDegree;
         if (overflowLeft > 0) {
-            limitWidth = this.getDimension('series').width / labelLength + chartConst.XAXIS_LABEL_GUTTER;
+            limitWidth = this._calculateXAxisLabelLimitWidth(labelCount) + chartConst.XAXIS_LABEL_GUTTER;
             newDegree = this._findRotationDegree(limitWidth, rotationInfo.maxLabelWidth, rotationInfo.labelHeight);
             rotationInfo.degree = newDegree;
         }

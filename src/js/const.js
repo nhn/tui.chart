@@ -99,6 +99,7 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
+    RERENDER_TIME: 700,
     /** series label align outer
      * @type {string}
      */

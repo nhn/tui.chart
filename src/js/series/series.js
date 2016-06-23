@@ -156,8 +156,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderSeriesLabelArea: function(seriesLabelContainer) {
+        var extendedDimension;
+
         if (!seriesLabelContainer) {
+            extendedDimension = this.boundsMaker.getDimension('extendedSeries');
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
+            renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
         }
 
         this._renderSeriesLabel(seriesLabelContainer);
@@ -174,7 +178,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderSeriesArea: function(seriesContainer, data, funcRenderGraph) {
-        var expansionBound = this.boundsMaker.getBound('extendedSeries');
+        var extendedBound = this.boundsMaker.getBound('extendedSeries');
         var seriesData, seriesLabelContainer, paper;
 
         this.data = data;
@@ -182,12 +186,12 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.seriesData = seriesData = this._makeSeriesData();
 
         if (!data.paper) {
-            renderUtil.renderDimension(seriesContainer, expansionBound.dimension);
+            renderUtil.renderDimension(seriesContainer, extendedBound.dimension);
         }
-        this._renderPosition(seriesContainer, expansionBound.position);
+        this._renderPosition(seriesContainer, extendedBound.position);
 
         if (funcRenderGraph) {
-            paper = funcRenderGraph(expansionBound.dimension, seriesData, data.paper);
+            paper = funcRenderGraph(extendedBound.dimension, seriesData, data.paper);
         }
 
         if (predicate.isShowLabel(this.options) && !this.seriesLabelContainer) {
@@ -279,7 +283,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.seriesContainer.innerHTML = '';
         this.seriesLabelContainer = null;
-        this.selectedLegendIndex = null;
         this.seriesData = [];
     },
 
@@ -294,12 +297,23 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this._clearContainer();
 
         if (this.dataProcessor.getGroupCount(this.seriesName)) {
-            this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
+            if (data.checkedLegends) {
+                this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
+            }
             paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
             if (this.labelShowEffector) {
                 clearInterval(this.labelShowEffector.timerId);
             }
-            this.animateComponent();
+
+            if (data.checkedLegends) {
+                this.animateComponent();
+            } else {
+                this._showGraphWithoutAnimation();
+            }
+
+            if (!tui.util.isNull(this.selectedLegendIndex)) {
+                this.graphRenderer.selectLegend(this.selectedLegendIndex);
+            }
         }
 
         return {
@@ -318,20 +332,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Zoom.
-     * @param {object} data - data
+     * Show graph without animation.
+     * @private
      */
-    zoom: function(data) {
-        var prevSelectedLegendIndex = this.selectedLegendIndex;
-
-        this._clearContainer();
-        this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+    _showGraphWithoutAnimation: function() {
         this.graphRenderer.showGraph();
-
-        if (!tui.util.isNull(prevSelectedLegendIndex)) {
-            this.graphRenderer.selectLegend(prevSelectedLegendIndex);
-            this.selectedLegendIndex = prevSelectedLegendIndex;
-        }
 
         if (this._useLabel()) {
             dom.addClass(this.seriesLabelContainer, 'show');
@@ -499,11 +504,14 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {{left: number, top: number}} position - position for rendering
      * @param {string} label - label of SeriesItem
      * @param {number} index - index of legend
+     * @param {object} [tplCssText] - cssText template object
      * @returns {string}
      * @private
      */
-    _makeSeriesLabelHtml: function(position, label, index) {
+    _makeSeriesLabelHtml: function(position, label, index, tplCssText) {
         var cssObj = tui.util.extend(position, this.theme.label);
+
+        tplCssText = tplCssText || seriesTemplate.tplCssText;
 
         if (!tui.util.isNull(this.selectedLegendIndex) && (this.selectedLegendIndex !== index)) {
             cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
@@ -511,7 +519,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             cssObj.opacity = '';
         }
         return seriesTemplate.tplSeriesLabel({
-            cssText: seriesTemplate.tplCssText(cssObj),
+            cssText: tplCssText(cssObj),
             label: label
         });
     },

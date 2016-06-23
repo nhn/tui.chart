@@ -11,6 +11,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
+var LEFT_BAR_WIDTH = 9;
 
 var raphael = window.Raphael;
 var concat = Array.prototype.concat;
@@ -57,9 +58,10 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.zeroTop = data.zeroTop;
         this.hasRangeData = data.hasRangeData;
 
-        this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupPaths = this._getAreaChartPath(groupPositions);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.allowSelect) {
@@ -74,9 +76,29 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         this.outDotStyle = outDotStyle;
         this.groupPositions = groupPositions;
         this.dotOpacity = opacity;
-        delete this.pivotGroupDots;
+
+        this.pivotGroupDots = null;
 
         return paper;
+    },
+
+    /**
+     * Get path for area chart.
+     * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions - positions
+     * @param {boolean} [hasExtraPath] - whether has extra path or not
+     * @returns {*}
+     * @private
+     */
+    _getAreaChartPath: function(groupPositions, hasExtraPath) {
+        var path;
+
+        if (this.isSpline) {
+            path = this._makeSplineAreaChartPath(groupPositions, hasExtraPath);
+        } else {
+            path = this._makeAreaChartPath(groupPositions, hasExtraPath);
+        }
+
+        return path;
     },
 
     /**
@@ -130,17 +152,24 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     /**
      * Make areas path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
+     * @param {boolean} [hasExtraPath] - whether has extra path or not
      * @returns {Array.<string | number>} path
      * @private
      */
-    _makeAreasPath: function(positions) {
-        var len = positions.length * 2,
-            path = [];
+    _makeAreasPath: function(positions, hasExtraPath) {
+        var len = positions.length * 2;
+        var path = [];
+        var targetIndex;
 
         tui.util.forEachArray(positions, function(position, index) {
             path[index] = ['L', position.left, position.top];
             path[len - index - 1] = ['L', position.left, position.startTop];
         });
+
+        if (hasExtraPath !== false) {
+            targetIndex = positions.length - 1;
+            path.splice(targetIndex + 1, 0, path[targetIndex], path[targetIndex + 1]);
+        }
 
         path = concat.apply([], path);
         path[0] = 'M';
@@ -149,12 +178,13 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * Get area path.
+     * Make path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @param {boolean} [hasExtraPath] - whether has extra path or not
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _getAreasPath: function(groupPositions) {
+    _makeAreaChartPath: function(groupPositions, hasExtraPath) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
@@ -163,7 +193,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             positions[0].left -= 1;
 
             paths = {
-                area: self._makeAreasPath(positions),
+                area: self._makeAreasPath(positions, hasExtraPath),
                 line: self._makeLinesPath(positions)
             };
 
@@ -190,20 +220,29 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
     },
 
     /**
-     * Get spline areas path.
+     * Make spline path for area chart.
      * @param {Array.<Array.<{left: number, top: number, startTop: number}>>} groupPositions positions
+     * @param {boolean} [hasExtraPath] - whether has extra path or not
      * @returns {Array.<{area: Array.<string | number>, line: Array.<string | number>}>} path
      * @private
      */
-    _getSplineAreasPath: function(groupPositions) {
+    _makeSplineAreaChartPath: function(groupPositions, hasExtraPath) {
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
             var linesPath = self._makeSplineLinesPath(positions);
+            var areaPath = JSON.parse(JSON.stringify(linesPath));
             var areasBottomPath = self._makeSplineAreaBottomPath(positions);
+            var lastPosition;
+
+            if (hasExtraPath !== false) {
+                lastPosition = positions[positions.length - 1];
+                areaPath.push(['L', lastPosition.left, lastPosition.top]);
+                areasBottomPath.unshift(['L', lastPosition.left, self.zeroTop]);
+            }
 
             return {
-                area: linesPath.concat(areasBottomPath),
+                area: areaPath.concat(areasBottomPath),
                 line: linesPath
             };
         });
@@ -222,7 +261,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.zeroTop = params.zeroTop;
         this.groupPositions = groupPositions;
-        this.groupPaths = this.isSpline ? this._getSplineAreasPath(groupPositions) : this._getAreasPath(groupPositions);
+        this.groupPaths = this._getAreaChartPath(groupPositions);
         this.paper.setSize(dimension.width, dimension.height);
         this.tooltipLine.attr({top: dimension.height});
 
@@ -277,6 +316,61 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                     }
                 }
             });
+        });
+    },
+
+    /**
+     * Animate for adding data.
+     * @param {object} data - data for graph rendering
+     * @param {number} tickSize - tick size
+     * @param {Array.<Array.<object>>} groupPositions - group positions
+     * @param {boolean} [shiftingOption] - shifting option
+     * @param {number} zeroTop - position top value for zero point
+     */
+    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption, zeroTop) {
+        var self = this;
+        var additionalIndex = 0;
+        var groupPaths;
+
+        this.zeroTop = zeroTop;
+
+        groupPaths = this._getAreaChartPath(groupPositions, false);
+
+        if (shiftingOption) {
+            this.leftBar.animate({
+                width: tickSize + LEFT_BAR_WIDTH
+            }, 300);
+            additionalIndex = 1;
+        }
+
+        tui.util.forEachArray(this.groupAreas, function(area, groupIndex) {
+            var dots = self.groupDots[groupIndex];
+            var groupPosition = groupPositions[groupIndex];
+            var pathMap = groupPaths[groupIndex];
+
+            if (shiftingOption) {
+                self._removeFirstDot(dots);
+            }
+
+            tui.util.forEachArray(dots, function(item, index) {
+                var position = groupPosition[index + additionalIndex];
+
+                self._animateByPosition(item.dot.dot, position);
+
+                if (item.startDot) {
+                    self._animateByPosition(item.startDot.dot, {
+                        left: position.left,
+                        top: position.startTop
+                    });
+                }
+            });
+
+            self._animateByPath(area.area, pathMap.area);
+            self._animateByPath(area.line, pathMap.line);
+
+            if (area.startLine) {
+                self._animateByPath(area.startLine, pathMap.startLine);
+            }
         });
     }
 });

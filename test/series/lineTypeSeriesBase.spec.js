@@ -191,32 +191,38 @@ describe('LineTypeSeriesBase', function() {
     });
 
     describe('_makeLabelPosition()', function() {
-        it('라벨 너비와 basePostion.left를 이용하여 left값을 계산합니다.', function() {
+        it('라벨 너비와 basePostion.left를 이용하여 너비에 비하는 left값 비율을 계산합니다.', function() {
             var position, actual, expected;
 
             spyOn(series, '_calculateLabelPositionTop');
             series.theme = {};
+            boundsMaker.getDimension.and.returnValue({
+                width: 200
+            });
 
             position = series._makeLabelPosition({
                 left: 60
             });
             actual = position.left;
-            expected = 35;
+            expected = 17.5;
 
             expect(actual).toBe(expected);
         });
 
-        it('라벨 너비와 _calculateLabelPositionTop()의 실행 결과로 top을 설정합니다.', function() {
+        it('라벨 너비와 _calculateLabelPositionTop()의 실행 결과를 영역 높이로 나누어 top을 설정합니다.', function() {
             var position, actual, expected;
 
             spyOn(series, '_calculateLabelPositionTop').and.returnValue(50);
             series.theme = {};
+            boundsMaker.getDimension.and.returnValue({
+                height: 200
+            });
 
             position = series._makeLabelPosition({
                 left: 60
             });
             actual = position.top;
-            expected = 50;
+            expected = 25;
 
             expect(actual).toBe(expected);
         });
@@ -317,9 +323,20 @@ describe('LineTypeSeriesBase', function() {
                     ]
                 ]
             };
+            boundsMaker.getDimension.and.returnValue({
+                width: 200,
+                height: 200
+            });
+
             series._renderSeriesLabel(elLabelArea);
 
             expect(elLabelArea.childNodes.length).toBe(2);
+        });
+    });
+
+    describe('_animate()', function() {
+        it('캐싱된 limit과 새로 생성된 yAxis의 limit의 min이 다르면 true를 반환합니다.', function() {
+
         });
     });
 });

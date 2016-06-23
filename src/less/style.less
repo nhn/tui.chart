@@ -187,6 +187,12 @@
           background-color: @axis-color;
           position: absolute;
         }
+        .tui-chart-ticks {
+          width: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
         .tui-chart-tick {
           top: 1px;
           width: 1px;
@@ -262,12 +268,15 @@
   .tui-chart-series-area {
     z-index: 200;
     position: absolute;
+    overflow-x: hidden;
+    overflow-y: visible;
     &:first-child {
       overflow: visible;
     }
     .user-select();
     .tui-chart-series-label-area {
       position: absolute;
+      overflow: visible;
       left: 0px;
       top: 0px;
       display: none;

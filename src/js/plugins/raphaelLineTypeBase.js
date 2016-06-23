@@ -13,6 +13,8 @@ var DEFAULT_DOT_RADIUS = 3;
 var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
+var MOVING_ANIMATION_TIME = 300;
+var LEFT_BAR_WIDTH = 9;
 
 var concat = Array.prototype.concat;
 
@@ -21,6 +23,20 @@ var concat = Array.prototype.concat;
  * @class RaphaelLineTypeBase
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
+    /**
+     * Render left bar.
+     * @param {number} height - area height
+     * @param {string} chartBackground - background style of chart
+     * @returns {object}
+     * @private
+     */
+    _renderLeftBar: function(height, chartBackground) {
+        return this.paper.rect(0, 0, LEFT_BAR_WIDTH, height).attr({
+            fill: chartBackground,
+            stroke: 'none'
+        });
+    },
+
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
@@ -556,6 +572,57 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 'fill-opacity': 0,
                 'stroke-opacity': 0
             });
+        }
+    },
+
+    /**
+     * Set width or height of paper.
+     * @param {number} width - width
+     * @param {number} height - height
+     */
+    setSize: function(width, height) {
+        width = width || this.dimension.width;
+        height = height || this.dimension.height;
+        this.paper.setSize(width, height);
+    },
+
+    /**
+     * Animate by position.
+     * @param {object} raphaelObj - raphael object
+     * @param {{left: number, top: number}} position - position
+     * @private
+     */
+    _animateByPosition: function(raphaelObj, position) {
+        raphaelObj.animate({
+            cx: position.left,
+            cy: position.top
+        }, MOVING_ANIMATION_TIME);
+    },
+
+    /**
+     * Animate by path.
+     * @param {object} raphaelObj - raphael object
+     * @param {Array.<string | number>} paths - paths
+     * @private
+     */
+    _animateByPath: function(raphaelObj, paths) {
+        raphaelObj.animate({
+            path: paths.join(' ')
+        }, MOVING_ANIMATION_TIME);
+    },
+
+    /**
+     * Remove first dot.
+     * @param {Array.<object>} dots - dots
+     * @private
+     */
+    _removeFirstDot: function(dots) {
+        var firstDot = dots.shift();
+
+        firstDot.dot.dot.remove();
+
+        if (firstDot.startDot) {
+            firstDot.startDot.dot.remove();
         }
     },
 

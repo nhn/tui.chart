@@ -9,6 +9,7 @@
 var ChartBase = require('./chartBase');
 var lineTypeMixer = require('./lineTypeMixer');
 var axisTypeMixer = require('./axisTypeMixer');
+var addingDynamicDataMixer = require('./addingDynamicDataMixer');
 var Series = require('../series/lineChartSeries');
 
 var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
@@ -33,10 +34,12 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     init: function() {
         this._lineTypeInit.apply(this, arguments);
+        this._initForAddingData();
     }
 });
 
 axisTypeMixer.mixin(LineChart);
 lineTypeMixer.mixin(LineChart);
+addingDynamicDataMixer.mixin(LineChart);
 
 module.exports = LineChart;

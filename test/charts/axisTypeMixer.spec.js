@@ -74,7 +74,8 @@ describe('Test for ComboChart', function() {
                 options: 'options',
                 isVertical: false,
                 isPositionRight: false,
-                aligned: false
+                aligned: false,
+                addedDataCount: 0
             });
             expect(actual).toBe(expected);
         });

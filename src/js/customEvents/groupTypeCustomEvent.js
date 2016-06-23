@@ -143,6 +143,8 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     _onMousemove: function(e) {
         var foundData, index;
 
+        CustomEventBase.prototype._onMousemove.call(this, e);
+
         if (this._isAfterDragMouseup()) {
             return;
         }
@@ -162,7 +164,11 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @override
      */
     _onMouseout: function(e) {
-        var layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
+        var layerPosition;
+
+        CustomEventBase.prototype._onMouseout.call(this);
+
+        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
         if (this._isOutPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
             this._hideTooltip();

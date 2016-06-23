@@ -34,14 +34,29 @@ describe('RaphaelAreaChart', function() {
                     top: 40,
                     startTop: 50
                 }]),
-                expected = ['M', 10, 30, 'L', 30, 40, 'L', 30, 50, 'L', 10, 50];
+                expected = [ 'M', 10, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 10, 50 ];
+            expect(actual).toEqual(expected);
+        });
+
+        it('hasExtraPath가 false이면 추가 path를 제외합니다.', function() {
+            var hasExtraPath = false;
+            var actual = areaChart._makeAreasPath([{
+                    left: 10,
+                    top: 30,
+                    startTop: 50
+                }, {
+                    left: 30,
+                    top: 40,
+                    startTop: 50
+                }], hasExtraPath),
+                expected = [ 'M', 10, 30, 'L', 30, 40, 'L', 30, 50, 'L', 10, 50 ];
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_getAreasPath()', function() {
+    describe('_makeAreaChartPath()', function() {
         it('영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
-            var actual = areaChart._getAreasPath([[{
+            var actual = areaChart._makeAreaChartPath([[{
                     left: 10,
                     top: 30,
                     startTop: 50
@@ -51,7 +66,7 @@ describe('RaphaelAreaChart', function() {
                     startTop: 50
                 }]]),
                 expected = [{
-                    area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 50, 'L', 9, 50],
+                    area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 9, 50],
                     line: ['M', 9, 30, 'L', 30, 40]
                 }];
             expect(actual).toEqual(expected);
@@ -61,7 +76,7 @@ describe('RaphaelAreaChart', function() {
             var actual, expected;
 
             areaChart.hasRangeData = true;
-            actual = areaChart._getAreasPath([[{
+            actual = areaChart._makeAreaChartPath([[{
                 left: 10,
                 top: 30,
                 startTop: 40
@@ -71,7 +86,7 @@ describe('RaphaelAreaChart', function() {
                 startTop: 50
             }]]);
             expected = [{
-                area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 50, 'L', 9, 40],
+                area: ['M', 9, 30, 'L', 30, 40, 'L', 30, 40, 'L', 30, 50, 'L', 30, 50, 'L', 9, 40],
                 line: ['M', 9, 30, 'L', 30, 40],
                 startLine: ['M', 9, 40, 'L', 30, 50]
             }];
@@ -94,12 +109,12 @@ describe('RaphaelAreaChart', function() {
         });
     });
 
-    describe('_getSplineAreasPath()', function() {
+    describe('_makeSplineAreaChartPath()', function() {
         it('spline 영역 차트를 그리기 위한 area, line path정보를 반환합니다.', function() {
             var actual, expected;
 
             areaChart.zeroTop = 50;
-            actual = areaChart._getSplineAreasPath([[{
+            actual = areaChart._makeSplineAreaChartPath([[{
                 left: 10,
                 top: 30,
                 startTop: 50
@@ -108,6 +123,27 @@ describe('RaphaelAreaChart', function() {
                 top: 40,
                 startTop: 50
             }]]);
+            expected = [{
+                area: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40], ['L', 30, 40], ['L', 30, 50], ['L', 30, 50], ['L', 9, 50]],
+                line: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]
+            }];
+            expect(actual).toEqual(expected);
+        });
+
+        it('hasExtraPath가 false이면 추가 path를 제외합니다.', function() {
+            var hasExtraPath = false;
+            var actual, expected;
+
+            areaChart.zeroTop = 50;
+            actual = areaChart._makeSplineAreaChartPath([[{
+                left: 10,
+                top: 30,
+                startTop: 50
+            }, {
+                left: 30,
+                top: 40,
+                startTop: 50
+            }]], hasExtraPath);
             expected = [{
                 area: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40], ['L', 30, 50], ['L', 9, 50]],
                 line: [['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]
