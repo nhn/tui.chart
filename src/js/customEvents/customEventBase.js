@@ -133,11 +133,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _findDataFromBoundsCoordinateModel: function(target, clientX, clientY) {
-        var bound = target.getBoundingClientRect(),
-            layerX = clientX - bound.left,
-            layerY = clientY - bound.top,
-            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
-        return this.boundsBaseCoordinateModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
+        var bound = target.getBoundingClientRect();
+        var layerX = clientX - bound.left;
+        var layerY = clientY - bound.top;
+        var groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+
+        layerX += chartConst.SERIES_EXPAND_SIZE;
+        layerY += chartConst.SERIES_EXPAND_SIZE;
+        return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
     },
 
     /**

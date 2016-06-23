@@ -38,9 +38,9 @@ var axisDataMaker = {
      * Make data about label axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
-     *      @param {Array.<string>} params.labels chart labels
-     *      @param {boolean} params.isVertical whether vertical or not
-     *      @param {boolean} params.aligned whether align or not
+     *      @param {Array.<string>} params.labels - chart labels
+     *      @param {boolean} params.isVertical - whether vertical or not
+     *      @param {boolean} params.aligned - whether align or not
      * @returns {{
      *      labels: Array.<string>,
      *      tickCount: number,

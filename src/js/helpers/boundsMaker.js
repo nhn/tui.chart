@@ -378,9 +378,9 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Update degree of rotationInfo.
-     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
-     * @param {number} labelLength labelLength
-     * @param {number} overflowLeft overflow left
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo - rotation info
+     * @param {number} labelCount - label count
+     * @param {number} overflowLeft - overflow left
      * @private
      */
     _updateDegree: function(rotationInfo, labelLength, overflowLeft) {
