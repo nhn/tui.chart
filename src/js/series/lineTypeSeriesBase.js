@@ -269,7 +269,13 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animateForResizing: function(interval) {
         var seriesLabelContainer = this.seriesLabelContainer;
-        var areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
+        var areaWidth;
+
+        if (!seriesLabelContainer) {
+            return;
+        }
+
+        areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
 
         this._animate(function(ratio) {
             var left = interval * ratio;
