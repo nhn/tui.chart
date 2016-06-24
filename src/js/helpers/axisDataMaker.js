@@ -211,6 +211,7 @@ var axisDataMaker = {
         var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
 
         if (!intervalInfo) {
+            axisData.startIndex = 0;
             return;
         }
 
