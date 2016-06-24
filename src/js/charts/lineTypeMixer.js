@@ -203,6 +203,7 @@ var lineTypeMixer = {
 
         this.axisScaleMakerMap = null;
         this.prevUpdatedData = null;
+        this.firstTickCount = null;
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
