@@ -275,11 +275,15 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        var index = data.groupIndex, // Line chart has pivot values.
-            groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
-            item = this.groupDots[groupIndex][index],
-            strokeWidth, startLine;
+        var index = data.groupIndex; // Line chart has pivot values.
+        var groupIndex = data.index;
+        var line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+        var item = this.groupDots[groupIndex][index];
+        var strokeWidth, startLine;
+
+        if (!item) {
+            return;
+        }
 
         if (this.chartType === 'area') {
             strokeWidth = 2;

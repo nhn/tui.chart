@@ -307,7 +307,7 @@ describe('Test for Axis', function() {
                 expect(ticksElement.style.left).toBe('-30px');
                 expect(labelContainer.style.left).toBe('-30px');
                 done();
-            }, 400);
+            }, 450);
 
         });
 
@@ -325,7 +325,7 @@ describe('Test for Axis', function() {
                 expect(ticksElement.style.left).toBe('-50px');
                 expect(labelContainer.style.left).toBe('-50px');
                 done();
-            }, 400);
+            }, 450);
         });
 
         it('startIndex가 0이면 첫번째 tick와 첫번째 label의 opacity를 0으로 변경시킵니다.', function(done) {
@@ -346,7 +346,7 @@ describe('Test for Axis', function() {
             setTimeout(function() {
                 expect(renderUtil.setOpacity).toHaveBeenCalledWith([firstTickElement, firstLabelElement], 0);
                 done();
-            }, 400);
+            }, 450);
         });
     });
 
@@ -367,7 +367,7 @@ describe('Test for Axis', function() {
                 expect(ticksElement.style.width).toBe('150px');
                 expect(labelContainer.style.width).toBe('150px');
                 done();
-            }, 400);
+            }, 450);
         });
     });
 
