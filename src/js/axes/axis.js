@@ -362,7 +362,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var firstLabelElement = labelContainer.firstChild;
         var ticksBeforeLeft = parseInt(ticksElement.style.left, 10) || 0;
         var labelBeforeLeft = parseInt(labelContainer.style.left, 10) || 0;
-        var startIndex = this.data.startIndex;
+        var startIndex = this.data.startIndex || 0;
 
         renderUtil.startAnimation(300, function(ratio) {
             var left = tickSize * ratio;
@@ -759,8 +759,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             labelSize *= options.labelInterval;
         }
 
-        additionalSize = additionalSize || 0;
-        additionalSize = additionalSize / size * 100;
+        additionalSize = (additionalSize || 0) / size * 100;
         labelsHtml = this._makeLabelsHtml(size, positions, categories, labelSize, additionalSize);
         labelContainer.innerHTML = labelsHtml;
 
