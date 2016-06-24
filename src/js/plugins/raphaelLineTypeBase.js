@@ -24,7 +24,7 @@ var concat = Array.prototype.concat;
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
     /**
-     * Render left bar.
+     * Render left bar for hiding overflow graph.
      * @param {number} height - area height
      * @param {string} chartBackground - background style of chart
      * @returns {object}

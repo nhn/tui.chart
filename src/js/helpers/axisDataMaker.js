@@ -15,7 +15,7 @@ var predicate = require('../helpers/predicate');
  */
 var axisDataMaker = {
     /**
-     * Makes label interval by labelInterval option.
+     * Makes labels by labelInterval option.
      * @param {Array.<string>} labels - labels
      * @param {number} labelInterval - label interval option
      * @param {number} [addedDataCount] - added data count
@@ -243,7 +243,7 @@ var axisDataMaker = {
     },
 
     /**
-     * Update label type axisData for auto tick interval option and stacking dynamic data.
+     * Update label type axisData for stacking dynamic data.
      * @param {object} axisData - axis data
      * @param {object} prevUpdatedData - previous updated axisData
      * @param {number} firstTickCount - calculated first tick count

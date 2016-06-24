@@ -591,7 +591,7 @@ if (isOldBrowser) {
     };
 } else {
     /**
-     * Set opacity for supporting opacity property of CSS3.
+     * Set opacity for browser supporting opacity property of CSS3.
      * @param {HTMLElement | Array.<HTMLElement>} elements - elements
      * @param {number} opacity - opacity
      */

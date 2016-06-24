@@ -18,7 +18,7 @@ var renderUtil = require('../helpers/renderUtil');
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
-     * Make positions of line chart.
+     * Make basic positions for rendering line graph.
      * @param {number} [seriesWidth] - width of series area
      * @returns {Array.<Array.<object>>}
      * @private
@@ -195,7 +195,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * Zoom.
+     * Zoom by mouse drag.
      * @param {object} data - data
      */
     zoom: function(data) {
@@ -211,7 +211,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * Whether changed limit or not.
+     * Whether changed limit(min, max) or not.
      * @returns {boolean}
      * @private
      */
