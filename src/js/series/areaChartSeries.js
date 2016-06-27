@@ -20,6 +20,12 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      */
     init: function() {
         Series.apply(this, arguments);
+
+        /**
+         * object for requestAnimationFrame
+         * @type {null | {id: number}}
+         */
+        this.movingAnimation = null;
     },
 
     /**
@@ -67,11 +73,12 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make positions.
+     * @param {number} seriesWidth - width of series area
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
-    _makePositions: function() {
-        var groupPositions = this._makeBasicPositions();
+    _makePositions: function(seriesWidth) {
+        var groupPositions = this._makeBasicPositions(seriesWidth);
 
         if (predicate.isValidStackOption(this.options.stackType)) {
             groupPositions = this._makeStackedPositions(groupPositions);
@@ -91,10 +98,21 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
             zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.data.limit).toMax;
 
         return {
+            chartBackground: this.chartBackground,
             groupPositions: this._makePositions(),
             hasRangeData: this.dataProcessor.getSeriesDataModel(this.seriesName).hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
+    },
+
+    /**
+     * Rerender.
+     * @param {object} data - data for rerendering
+     * @override
+     */
+    rerender: function(data) {
+        this._cancelMovingAnimation();
+        Series.prototype.rerender.call(this, data);
     }
 });
 

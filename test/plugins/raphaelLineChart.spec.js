@@ -27,7 +27,7 @@ describe('RaphaelLineChart', function() {
                     top: 40,
                     startTop: 50
                 }]]),
-                expected = [['M', 9, 30, 'L', 30, 40]];
+                expected = [['M', 10, 30, 'L', 30, 40]];
             expect(actual).toEqual(expected);
         });
     });
@@ -46,7 +46,7 @@ describe('RaphaelLineChart', function() {
                 top: 40,
                 startTop: 50
             }]]);
-            expected = [[['M', 9, 30, 'C', 9, 30], [30, 40, 30, 40]]];
+            expected = [[['M', 10, 30, 'C', 10, 30], [30, 40, 30, 40]]];
             expect(actual).toEqual(expected);
         });
     });

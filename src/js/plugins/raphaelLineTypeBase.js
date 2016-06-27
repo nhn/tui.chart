@@ -13,6 +13,8 @@ var DEFAULT_DOT_RADIUS = 3;
 var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
+var MOVING_ANIMATION_TIME = 300;
+var LEFT_BAR_WIDTH = 10;
 
 var concat = Array.prototype.concat;
 
@@ -21,6 +23,20 @@ var concat = Array.prototype.concat;
  * @class RaphaelLineTypeBase
  */
 var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.prototype */ {
+    /**
+     * Render left bar for hiding overflow graph.
+     * @param {number} height - area height
+     * @param {string} chartBackground - background style of chart
+     * @returns {object}
+     * @private
+     */
+    _renderLeftBar: function(height, chartBackground) {
+        return this.paper.rect(0, 0, LEFT_BAR_WIDTH, height).attr({
+            fill: chartBackground,
+            stroke: 'none'
+        });
+    },
+
     /**
      * Make lines path.
      * @param {Array.<{left: number, top: number, startTop: number}>} positions positions
@@ -93,7 +109,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
             });
 
-        firstPos.left -= 1;
         path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
         path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
 
@@ -198,7 +213,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 var color = colors[groupIndex];
                 return tui.util.map(positions, function(position) {
                     var dotMap = {
-                        dot: self.renderDot(paper, position, color, opacity)
+                        endDot: self.renderDot(paper, position, color, opacity)
                     };
                     var startPosition;
 
@@ -260,11 +275,15 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @param {{groupIndex: number, index:number}} data show info
      */
     showAnimation: function(data) {
-        var index = data.groupIndex, // Line chart has pivot values.
-            groupIndex = data.index,
-            line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex],
-            item = this.groupDots[groupIndex][index],
-            strokeWidth, startLine;
+        var index = data.groupIndex; // Line chart has pivot values.
+        var groupIndex = data.index;
+        var line = this.groupLines ? this.groupLines[groupIndex] : this.groupAreas[groupIndex];
+        var item = this.groupDots[groupIndex][index];
+        var strokeWidth, startLine;
+
+        if (!item) {
+            return;
+        }
 
         if (this.chartType === 'area') {
             strokeWidth = 2;
@@ -280,7 +299,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
 
-        this._showDot(item.dot.dot);
+        this._showDot(item.endDot.dot);
 
         if (item.startDot) {
             this._showDot(item.startDot.dot);
@@ -310,7 +329,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             groupDots = this._getPivotGroupDots();
 
         tui.util.forEachArray(groupDots[index], function(item) {
-            self._showDot(item.dot.dot);
+            self._showDot(item.endDot.dot);
         });
     },
 
@@ -402,7 +421,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         if (item) {
-            this._hideDot(item.dot.dot, opacity);
+            this._hideDot(item.endDot.dot, opacity);
 
             if (item.startDot) {
                 this._hideDot(item.startDot.dot, opacity);
@@ -428,7 +447,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
-            self._hideDot(item.dot.dot, opacity);
+            self._hideDot(item.endDot.dot, opacity);
         });
     },
 
@@ -556,6 +575,57 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 'fill-opacity': 0,
                 'stroke-opacity': 0
             });
+        }
+    },
+
+    /**
+     * Set width or height of paper.
+     * @param {number} width - width
+     * @param {number} height - height
+     */
+    setSize: function(width, height) {
+        width = width || this.dimension.width;
+        height = height || this.dimension.height;
+        this.paper.setSize(width, height);
+    },
+
+    /**
+     * Animate by position.
+     * @param {object} raphaelObj - raphael object
+     * @param {{left: number, top: number}} position - position
+     * @private
+     */
+    _animateByPosition: function(raphaelObj, position) {
+        raphaelObj.animate({
+            cx: position.left,
+            cy: position.top
+        }, MOVING_ANIMATION_TIME);
+    },
+
+    /**
+     * Animate by path.
+     * @param {object} raphaelObj - raphael object
+     * @param {Array.<string | number>} paths - paths
+     * @private
+     */
+    _animateByPath: function(raphaelObj, paths) {
+        raphaelObj.animate({
+            path: paths.join(' ')
+        }, MOVING_ANIMATION_TIME);
+    },
+
+    /**
+     * Remove first dot.
+     * @param {Array.<object>} dots - dots
+     * @private
+     */
+    _removeFirstDot: function(dots) {
+        var firstDot = dots.shift();
+
+        firstDot.endDot.dot.remove();
+
+        if (firstDot.startDot) {
+            firstDot.startDot.dot.remove();
         }
     },
 

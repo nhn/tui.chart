@@ -22,15 +22,22 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
      */
     init: function() {
         Series.apply(this, arguments);
+
+        /**
+         * object for requestAnimationFrame
+         * @type {null | {id: number}}
+         */
+        this.movingAnimation = null;
     },
 
     /**
      * Make positions.
+     * @param {number} [seriesWidth] - series width
      * @returns {Array.<Array.<{left: number, top: number}>>} positions
      * @private
      */
-    _makePositions: function() {
-        return this._makeBasicPositions();
+    _makePositions: function(seriesWidth) {
+        return this._makeBasicPositions(seriesWidth);
     },
 
     /**
@@ -41,8 +48,19 @@ var LineChartSeries = tui.util.defineClass(Series, /** @lends LineChartSeries.pr
      */
     _makeSeriesData: function() {
         return {
+            chartBackground: this.chartBackground,
             groupPositions: this._makePositions()
         };
+    },
+
+    /**
+     * Rerender.
+     * @param {object} data - data for rerendering
+     * @override
+     */
+    rerender: function(data) {
+        this._cancelMovingAnimation();
+        Series.prototype.rerender.call(this, data);
     }
 });
 

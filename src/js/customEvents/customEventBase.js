@@ -55,6 +55,12 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {null | object}
          */
         this.selectedData = null;
+
+        /**
+         * previous client position of mouse event (clientX, clientY)
+         * @type {null}
+         */
+        this.prevClientPosition = null;
     },
 
     /**
@@ -154,6 +160,37 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Find data.
+     * @private
+     * @abstract
+     */
+    _findData: function() {},
+
+    /**
+     * Show tooltip
+     * @private
+     * @abstract
+     */
+    _showTooltip: function() {},
+
+    /**
+     * Animate for adding data.
+     */
+    animateForAddingData: function() {
+        var foundData;
+
+        if (!this.prevClientPosition) {
+            return;
+        }
+
+        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
+
+        if (foundData) {
+            this._showTooltip(foundData);
+        }
+    },
+
+    /**
      * On mouse event.
      * @param {string} eventType - custom event type
      * @param {MouseEvent} e - mouse event
@@ -206,17 +243,23 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * On mouse move
+     * @param {MouseEvent} e - mouse event
      * @private
-     * @abstract
      */
-    _onMousemove: function() {},
+    _onMousemove: function(e) {
+        this.prevClientPosition = {
+            x: e.clientX,
+            y: e.clientY
+        };
+    },
 
     /**
      * On mouse out
      * @private
-     * @abstract
      */
-    _onMouseout: function() {},
+    _onMouseout: function() {
+        this.prevClientPosition = null;
+    },
 
     /**
      * Attach event

@@ -421,9 +421,10 @@ var renderUtil = {
      * Start animation.
      * @param {number} animationTime - animation time
      * @param {function} onAnimation - animation callback function
+     * @param {function} onCompleted - completed callback function
      * @returns {{id: number}} requestAnimationFrame id
      */
-    startAnimation: function(animationTime, onAnimation) {
+    startAnimation: function(animationTime, onAnimation, onCompleted) {
         var animation = {},
             startTime;
 
@@ -438,6 +439,9 @@ var renderUtil = {
 
             if (ratio === 1) {
                 delete animation.id;
+                if (onCompleted) {
+                    onCompleted();
+                }
             } else {
                 animation.id = requestAnimationFrame(animate);
             }
@@ -549,8 +553,54 @@ var renderUtil = {
         }
 
         return formattedValue;
+    },
+
+    /**
+     * Make cssText from map.
+     * @param {object} cssMap - css map
+     * @returns {string}
+     */
+    makeCssTextFromMap: function(cssMap) {
+        return tui.util.map(cssMap, function(value, name) {
+            return renderUtil.concatStr(name, ':', value);
+        }).join(';');
     }
 };
+
+/**
+ * Set opacity
+ * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+ * @param {function} iteratee - iteratee
+ */
+function setOpacity(elements, iteratee) {
+    elements = tui.util.isArray(elements) ? elements : [elements];
+    tui.util.forEachArray(elements, iteratee);
+}
+
+if (isOldBrowser) {
+    /**
+     * Set opacity for old browser(IE7, IE8).
+     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+     * @param {number} opacity - opacity
+     */
+    renderUtil.setOpacity = function(elements, opacity) {
+        var filter = 'alpha(opacity=' + (opacity * 100) + ')';
+        setOpacity(elements, function(element) {
+            element.style.filter = filter;
+        });
+    };
+} else {
+    /**
+     * Set opacity for browser supporting opacity property of CSS3.
+     * @param {HTMLElement | Array.<HTMLElement>} elements - elements
+     * @param {number} opacity - opacity
+     */
+    renderUtil.setOpacity = function(elements, opacity) {
+        setOpacity(elements, function(element) {
+            element.style.opacity = opacity;
+        });
+    };
+}
 
 tui.util.defineNamespace('tui.chart');
 tui.chart.renderUtil = renderUtil;

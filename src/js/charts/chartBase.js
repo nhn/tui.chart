@@ -295,7 +295,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _render: function(onRender) {
-        var xAxisOptions = this.options.xAxis;
+        var labelAxisOptions = this.isVertical ? this.options.xAxis : this.options.yAxis;
         var renderingData;
 
         this._executeComponentFunc('registerDimension');
@@ -303,7 +303,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 
-        if (predicate.isAutoTickInterval(xAxisOptions.tickInterval)) {
+        if (predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
             this._updateAxesData();
         }
 
@@ -466,7 +466,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             var data, result;
 
             if (component[funcName]) {
-                data = renderingData[component.componentName] || {};
+                data = renderingData[component.componentName] || renderingData || {};
                 data.paper = paper;
                 result = component[funcName](data);
 
@@ -656,7 +656,13 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         tui.util.forEachArray(serieses, function(series) {
             series.hideLabel();
         });
-    }
+    },
+
+    /**
+     * Add data.
+     * @abstract
+     */
+    addData: function() {}
 });
 
 module.exports = ChartBase;

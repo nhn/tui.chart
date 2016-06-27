@@ -66,7 +66,8 @@ var axisTypeMixer = {
                 libType: options.libType,
                 chartType: options.chartType,
                 userEvent: this.userEvent,
-                componentType: 'series'
+                componentType: 'series',
+                chartBackground: this.theme.chart.background
             };
 
         tui.util.forEach(serieses, function(series) {
@@ -165,7 +166,6 @@ var axisTypeMixer = {
     _makeAxisData: function(axisScaleMaker, options, isVertical, isPositionRight) {
         var aligned = predicate.isLineTypeChart(this.chartType);
         var axisData;
-
         if (axisScaleMaker) {
             axisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
@@ -180,7 +180,8 @@ var axisTypeMixer = {
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned
+                aligned: !!aligned,
+                addedDataCount: tui.util.pick(this.options.series, 'shifting') ? this.addedDataCount : 0
             });
         }
 

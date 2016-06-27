@@ -94,6 +94,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          */
         this.originalLegendData = null;
 
+        /**
+         * dynamic data array for adding data.
+         * @type {Array.<{category: string | number, values: Array.<number>}>}
+         */
+        this.dynamicData = [];
+
         this.initData(rawData);
         this.initZoomedRawData();
     },
@@ -338,6 +344,146 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getGroupCount: function(chartType) {
         return this.getSeriesDataModel(chartType).getGroupCount();
+    },
+
+    /**
+     * Push category.
+     * @param {string} category - category
+     * @private
+     */
+    _pushCategory: function(category) {
+        this.rawData.categories.push(category);
+        this.originalRawData.categories.push(category);
+    },
+
+    /**
+     * Shift category.
+     * @private
+     */
+    _shiftCategory: function() {
+        this.rawData.categories.shift();
+        this.originalRawData.categories.shift();
+    },
+
+    /**
+     * Find raw serise datum by name.
+     * @param {string} name - name
+     * @returns {null | object}
+     * @private
+     */
+    _findRawSeriesDatumByName: function(name) {
+        var foundSeriesDatum = null;
+
+        tui.util.forEachArray(this.rawData.series, function(seriesDatum) {
+            var isEqual = seriesDatum.name === name;
+
+            if (isEqual) {
+                foundSeriesDatum = seriesDatum;
+            }
+
+            return !isEqual;
+        });
+
+        return foundSeriesDatum;
+    },
+
+    /**
+     * Push series data.
+     * @param {Array.<number>} values - values
+     * @private
+     */
+    _pushSeriesData: function(values) {
+        var self = this;
+
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum, index) {
+            var value = values[index];
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+
+            seriesDatum.data.push(value);
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.push(value);
+            }
+        });
+    },
+
+    /**
+     * Shift series data.
+     * @private
+     */
+    _shiftSeriesData: function() {
+        var self = this;
+
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+
+            seriesDatum.data.shift();
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.shift();
+            }
+        });
+    },
+
+    /**
+     * Add dynamic data.
+     * @param {string} category - category
+     * @param {Array.<number>} values - values
+     */
+    addDynamicData: function(category, values) {
+        this.dynamicData.push({
+            category: category,
+            values: values
+        });
+    },
+
+    /**
+     * Add data from dynapmic data.
+     * @returns {boolean}
+     */
+    addDataFromDynamicData: function() {
+        var datum = this.dynamicData.shift();
+
+        if (!datum) {
+            return false;
+        }
+
+        this._pushCategory(datum.category);
+        this._pushSeriesData(datum.values);
+
+        this.initData(this.rawData);
+
+        return true;
+    },
+
+    /**
+     * Shift data.
+     */
+    shiftData: function() {
+        this._shiftCategory();
+        this._shiftSeriesData();
+
+        this.initData(this.rawData);
+    },
+
+    /**
+     * Add data from remain dynamic data.
+     * @param {boolean} shiftingOption - whether has shifting option or not.
+     */
+    addDataFromRemainDynamicData: function(shiftingOption) {
+        var self = this;
+        var dynamicData = this.dynamicData;
+
+        this.dynamicData = [];
+
+        tui.util.forEach(dynamicData, function(datum) {
+            self._pushCategory(datum.category);
+            self._pushSeriesData(datum.values);
+            if (shiftingOption) {
+                self._shiftCategory();
+                self._shiftSeriesData();
+            }
+        });
+
+        this.initData(this.rawData);
     },
 
     /**

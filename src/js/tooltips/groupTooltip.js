@@ -94,7 +94,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     rerender: function(data) {
         TooltipBase.prototype.rerender.call(this, data);
         this.prevIndex = null;
-        this.theme = this._updateLegendTheme(data.checkedLegends);
+
+        if (data.checkedLegends) {
+            this.theme = this._updateLegendTheme(data.checkedLegends);
+        }
     },
 
     /**

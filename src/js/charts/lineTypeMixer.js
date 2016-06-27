@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var chartConst = require('../const');
 var axisDataMaker = require('../helpers/axisDataMaker');
 var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
@@ -31,7 +32,32 @@ var lineTypeMixer = {
             isVertical: true
         });
 
+        /**
+         * checked legends.
+         * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
+         */
+        this.checkedLegends = null;
+
+        this._initForAutoTickInterval();
+
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Initialize for auto tick interval option.
+     * @private
+     */
+    _initForAutoTickInterval: function() {
+        /**
+         * previous updated xAxisData
+         * @type {null | object}
+         */
+        this.prevUpdatedData = null;
+
+        /**
+         * first updated tick count
+         */
+        this.firstTickCount = null;
     },
 
     /**
@@ -91,9 +117,50 @@ var lineTypeMixer = {
     _updateAxesData: function() {
         var boundsMaker = this.boundsMaker;
         var axesData = boundsMaker.getAxesData();
+        var xAxisData = axesData.xAxis;
         var seriesWidth = boundsMaker.getDimension('series').width;
+        var shiftingOption = tui.util.pick(this.options.series, 'shifting');
+        var prevUpdatedData = this.prevUpdatedData;
 
-        axisDataMaker.updateLabelAxisDataForAdjustingTickCount(axesData.xAxis, seriesWidth);
+        if (shiftingOption || !prevUpdatedData) {
+            axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, this.addedDataCount);
+        } else {
+            axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevUpdatedData, this.firstTickCount);
+        }
+
+        this.prevUpdatedData = xAxisData;
+
+        if (!this.firstTickCount) {
+            this.firstTickCount = xAxisData.tickCount;
+        }
+
+        boundsMaker.registerAxesData(axesData);
+    },
+
+    /**
+     * On change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
+     * @override
+     */
+    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        var self = this;
+        var pastPaused = this.paused;
+
+        if (!pastPaused) {
+            this._pauseAnimationForAddingData();
+        }
+
+        this._rerender(checkedLegends, rawData, boundsParams);
+
+        this.checkedLegends = checkedLegends;
+
+        if (!pastPaused) {
+            setTimeout(function() {
+                self._restartAnimationForAddingData();
+            }, chartConst.RERENDER_TIME);
+        }
     },
 
     /**
@@ -117,6 +184,7 @@ var lineTypeMixer = {
      * @override
      */
     onZoom: function(indexRange) {
+        this._pauseAnimationForAddingData();
         this.dataProcessor.updateRawDataForZoom(indexRange);
         this.axisScaleMakerMap = null;
         this._renderForZoom(false);
@@ -129,12 +197,19 @@ var lineTypeMixer = {
     onResetZoom: function() {
         var rawData = this.dataProcessor.getOriginalRawData();
 
+        if (this.checkedLegends) {
+            rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
+        }
+
         this.axisScaleMakerMap = null;
-        this.indexRange = null;
+        this.prevUpdatedData = null;
+        this.firstTickCount = null;
 
         this.dataProcessor.initData(rawData);
         this.dataProcessor.initZoomedRawData();
+        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
         this._renderForZoom(true);
+        this._restartAnimationForAddingData();
     },
 
     /**

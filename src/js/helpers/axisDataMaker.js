@@ -15,21 +15,21 @@ var predicate = require('../helpers/predicate');
  */
 var axisDataMaker = {
     /**
-     * Makes label interval by labelInterval option.
-     * @param {Array.<string>} labels labels
-     * @param {number} labelInterval label interval
+     * Makes labels by labelInterval option.
+     * @param {Array.<string>} labels - labels
+     * @param {number} labelInterval - label interval option
+     * @param {number} [addedDataCount] - added data count
      * @returns {Array.<string>} labels
      * @private
      */
-    _makeLabelInterval: function(labels, labelInterval) {
-        if (labels.length > labelInterval) {
-            labels = tui.util.map(labels, function(label, index) {
-                if ((index % labelInterval) > 0) {
-                    label = chartConst.EMPTY_AXIS_LABEL;
-                }
-                return label;
-            });
-        }
+    _makeLabelsByIntervalOption: function(labels, labelInterval, addedDataCount) {
+        addedDataCount = addedDataCount || 0;
+        labels = tui.util.map(labels, function(label, index) {
+            if (((index + addedDataCount) % labelInterval) !== 0) {
+                label = chartConst.EMPTY_AXIS_LABEL;
+            }
+            return label;
+        });
 
         return labels;
     },
@@ -41,6 +41,7 @@ var axisDataMaker = {
      *      @param {Array.<string>} params.labels - chart labels
      *      @param {boolean} params.isVertical - whether vertical or not
      *      @param {boolean} params.aligned - whether align or not
+     *      @param {?boolean} params.addedDataCount - added data count
      * @returns {{
      *      labels: Array.<string>,
      *      tickCount: number,
@@ -54,8 +55,9 @@ var axisDataMaker = {
         var options = params.options || {};
         var labels = params.labels;
 
-        if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
-            labels = this._makeLabelInterval(params.labels, options.labelInterval);
+        if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)
+                && params.labels.length > options.labelInterval) {
+            labels = this._makeLabelsByIntervalOption(params.labels, options.labelInterval, params.addedDataCount);
         }
 
         if (!params.aligned) {
@@ -108,66 +110,170 @@ var axisDataMaker = {
     },
 
     /**
-     * Calculate new axis block information for adjust tick count.
+     * Make adjusting tick interval information.
+     * @param {number} beforeBlockCount - before block count
+     * @param {number} seriesWidth - width of series area
+     * @param {number} blockSize - block size
+     * @returns {null | {blockCount: number, beforeRemainBlockCount: number, interval: number}}
+     * @private
+     */
+    _makeAdjustingIntervalInfo: function(beforeBlockCount, seriesWidth, blockSize) {
+        var newBlockCount = parseInt(seriesWidth / blockSize, 10);
+        // interval : 하나의 새로운 block(tick과 tick 사이의 공간) 영역에 포함되는 이전 block 수
+        var interval = parseInt(beforeBlockCount / newBlockCount, 10);
+        var intervalInfo = null;
+        var remainCount;
+
+        if (interval > 1) {
+            // remainCount : 이전 block들 중 새로운 block으로 채우고 남은 이전 block 수
+            // | | | | | | | | | | | |  - 이전 block
+            // |     |     |     |      - 새로 계산된 block
+            //                   |*|*|  - 남은 이전 block 수
+            remainCount = beforeBlockCount - (interval * newBlockCount);
+
+            if (remainCount >= interval) {
+                newBlockCount += parseInt(remainCount / interval, 0);
+                remainCount = remainCount % interval;
+            }
+
+            intervalInfo = {
+                blockCount: newBlockCount,
+                beforeRemainBlockCount: remainCount,
+                interval: interval
+            };
+        }
+
+        return intervalInfo;
+    },
+
+    /**
+     * Make candidate for adjusting tick interval.
+     * @param {number} beforeBlockCount - before block count
+     * @param {number} seriesWidth - width of series area
+     * @returns {Array.<{newBlockCount: number, remainBlockCount: number, interval: number}>}
+     * @private
+     */
+    _makeCandidatesForAdjustingInterval: function(beforeBlockCount, seriesWidth) {
+        var self = this;
+        var blockSizeRange = tui.util.range(90, 121, 5); // [90, 95, 100, 105, 110, 115, 120]
+        var candidates = tui.util.map(blockSizeRange, function(blockSize) {
+            return self._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
+        });
+
+        return tui.util.filter(candidates, function(info) {
+            return !!info;
+        });
+    },
+
+    /**
+     * Calculate adjusting interval information for auto tick interval option.
      * @param {number} curBlockCount - current block count
      * @param {number} seriesWidth - series width
      * @returns {{newBlockCount: number, remainBlockCount: number, interval: number}}
      * @private
      */
-    _calculateNewBlockInfo: function(curBlockCount, seriesWidth) {
-        var tickSizeRange = tui.util.range(60, 91, 5); // [60, 65, 70, 75, 80, 85, 90]
-        var candidates = tui.util.map(tickSizeRange, function(blockWidth) {
-            var blockCount = parseInt(seriesWidth / blockWidth, 10);
-            var interval = parseInt(curBlockCount / blockCount, 10);
-            var remainCount = curBlockCount - (interval * blockCount);
-            if (remainCount >= interval) {
-                blockCount += parseInt(remainCount / interval, 0);
-                remainCount = remainCount % interval;
-            }
+    _calculateAdjustingIntervalInfo: function(curBlockCount, seriesWidth) {
+        var candidates = this._makeCandidatesForAdjustingInterval(curBlockCount, seriesWidth);
+        var intervalInfo = null;
 
-            return {
-                blockCount: blockCount,
-                beforeRemainBlockCount: remainCount,
-                interval: interval
-            };
-        });
+        if (candidates.length) {
+            intervalInfo = tui.util.min(candidates, function(candidate) {
+                return candidate.blockCount;
+            });
+        }
 
-        return tui.util.min(candidates, function(candidate) {
-            return candidate.newBlockCount;
+        return intervalInfo;
+    },
+
+    /**
+     * Make filtered labels by interval.
+     * @param {Array.<string>} labels - labels
+     * @param {number} startIndex - start index
+     * @param {numbrer} interval - interval
+     * @returns {Array.<string>}
+     * @private
+     */
+    _makeFilteredLabelsByInterval: function(labels, startIndex, interval) {
+        return tui.util.filter(labels.slice(startIndex), function(label, index) {
+            return index % interval === 0;
         });
     },
 
     /**
-     * Update label type axisData for adjusting tick count.
+     * Update label type axisData for auto tick interval option.
      * @param {object} axisData - axisData
      * @param {number} seriesWidth - series width
+     * @param {number} [addedDataCount] - added data count
      */
-    updateLabelAxisDataForAdjustingTickCount: function(axisData, seriesWidth) {
+    updateLabelAxisDataForAutoTickInterval: function(axisData, seriesWidth, addedDataCount) {
         var beforeBlockCount = axisData.tickCount - 1;
-        var newBlockInfo = this._calculateNewBlockInfo(beforeBlockCount, seriesWidth);
-        var newBlockCount, interval, beforeRemainBlockCount, startIndex;
+        var intervalInfo = this._calculateAdjustingIntervalInfo(beforeBlockCount, seriesWidth);
+        var adjustingBlockCount, interval, beforeRemainBlockCount, startIndex;
 
-        if (!newBlockInfo) {
+        if (!intervalInfo) {
             return;
         }
 
-        newBlockCount = newBlockInfo.blockCount;
-        interval = newBlockInfo.interval;
+        adjustingBlockCount = intervalInfo.blockCount;
+        interval = intervalInfo.interval;
+        beforeRemainBlockCount = intervalInfo.beforeRemainBlockCount;
+        axisData.eventTickCount = axisData.tickCount;
 
-        if ((newBlockCount < beforeBlockCount) && (interval > 1)) {
-            beforeRemainBlockCount = newBlockInfo.beforeRemainBlockCount;
-            axisData.eventTickCount = axisData.tickCount;
-            startIndex = Math.round(beforeRemainBlockCount / 2);
+        // startIndex는 남은 block수의 반 만큼에서 현재 이동된 tick 수를 뺀 만큼으로 설정함
+        // |     |     |     |*|*|*|    - * 영역이 남은 이전 block 수
+        // |*|*|O    |     |     |*|    - 현재 이동된 tick이 없을 경우 (O 지점이 startIndex = 2)
+        // |*|O    |     |     |*|*|    - tick이 하나 이동 됐을 경우 : O 지점이 startIndex = 1)
+        startIndex = Math.round(beforeRemainBlockCount / 2) - (addedDataCount % interval);
 
-            axisData.labels = tui.util.filter(axisData.labels.slice(startIndex), function(label, index) {
-                return index % interval === 0;
-            });
-
-            axisData.tickCount = newBlockCount + 1;
-            axisData.positionRatio = startIndex / beforeBlockCount;
-            axisData.sizeRatio = 1 - (beforeRemainBlockCount / beforeBlockCount);
-            axisData.lineWidth = seriesWidth + chartConst.OVERLAPPING_WIDTH;
+        // startIndex가 0보다 작을 경우 interval만큼 증가시킴
+        if (startIndex < 0) {
+            startIndex += interval;
         }
+
+        axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
+
+        tui.util.extend(axisData, {
+            startIndex: startIndex,
+            tickCount: adjustingBlockCount + 1,
+            positionRatio: (startIndex / beforeBlockCount),
+            sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
+            lineWidth: seriesWidth + chartConst.OVERLAPPING_WIDTH,
+            interval: interval
+        });
+    },
+
+    /**
+     * Update label type axisData for stacking dynamic data.
+     * @param {object} axisData - axis data
+     * @param {object} prevUpdatedData - previous updated axisData
+     * @param {number} firstTickCount - calculated first tick count
+     */
+    updateLabelAxisDataForStackingDynamicData: function(axisData, prevUpdatedData, firstTickCount) {
+        var interval = prevUpdatedData.interval;
+        var startIndex = prevUpdatedData.startIndex;
+        var beforeBlockCount = axisData.tickCount - 1;
+        var newBlockCount = beforeBlockCount / interval;
+        var firstBlockCount = firstTickCount ? firstTickCount - 1 : 0;
+        var beforeRemainBlockCount;
+
+        // 새로 계산된 block의 수가 최초로 계산된 block 수의 두배수 보다 많아지면 interval 숫자를 두배로 늘림
+        if (firstBlockCount && ((firstBlockCount * 2) <= newBlockCount)) {
+            interval *= 2;
+        }
+
+        axisData.labels = this._makeFilteredLabelsByInterval(axisData.labels, startIndex, interval);
+        newBlockCount = axisData.labels.length - 1;
+        beforeRemainBlockCount = beforeBlockCount - (interval * newBlockCount);
+
+        tui.util.extend(axisData, {
+            startIndex: startIndex,
+            eventTickCount: axisData.tickCount,
+            tickCount: axisData.labels.length,
+            positionRatio: startIndex / beforeBlockCount,
+            sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
+            lineWidth: prevUpdatedData.lineWidth,
+            interval: interval
+        });
     }
 };
 
