@@ -65,7 +65,7 @@ var barTypeMixer = {
      */
     _makeRawSeriesDataForStackedDiverging: function(rawSeriesData) {
         var self = this,
-            stacks = rawDataHandler.pickStacks(rawSeriesData),
+            stacks = rawDataHandler.pickStacks(rawSeriesData, true),
             result = [],
             leftStack = stacks[0],
             rightStack = stacks[1];
