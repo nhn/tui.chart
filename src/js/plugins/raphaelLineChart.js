@@ -138,7 +138,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             self.groupLines[groupIndex].attr({path: path.join(' ')});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.dot.dot, groupPositions[groupIndex][index]);
+                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
             });
         });
     },
@@ -162,7 +162,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
                 item.opacity = opacity;
 
                 if (self.dotOpacity) {
-                    item.dot.dot.attr({'fill-opacity': opacity});
+                    item.endDot.dot.attr({'fill-opacity': opacity});
                 }
             });
         });
@@ -198,7 +198,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
             tui.util.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
-                self._animateByPosition(item.dot.dot, position);
+                self._animateByPosition(item.endDot.dot, position);
             });
 
             self._animateByPath(line, groupPaths[groupIndex]);

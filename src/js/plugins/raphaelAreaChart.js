@@ -276,7 +276,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
                 var position = groupPositions[groupIndex][index];
                 var startPositon;
 
-                self._moveDot(item.dot.dot, position);
+                self._moveDot(item.endDot.dot, position);
                 if (item.startDot) {
                     startPositon = tui.util.extend({}, position);
                     startPositon.top = startPositon.startTop;
@@ -308,7 +308,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
                 if (self.dotOpacity) {
-                    item.dot.dot.attr({'fill-opacity': opacity});
+                    item.endDot.dot.attr({'fill-opacity': opacity});
                     if (item.startDot) {
                         item.startDot.dot.attr({'fill-opacity': opacity});
                     }
@@ -353,7 +353,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
             tui.util.forEachArray(dots, function(item, index) {
                 var position = groupPosition[index + additionalIndex];
 
-                self._animateByPosition(item.dot.dot, position);
+                self._animateByPosition(item.endDot.dot, position);
 
                 if (item.startDot) {
                     self._animateByPosition(item.startDot.dot, {

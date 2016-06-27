@@ -168,23 +168,23 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer._initForAutoTickInterval).toHaveBeenCalled();
         });
 
-        it('this.delayRerender에 값이 있으면 clearTimeout을 수행하고 this.delayRerender를 null로 설정합니다.', function() {
+        it('this.rerenderingDelayTimerId 값이 있으면 clearTimeout을 수행하고 this.delayRerender를 null로 설정합니다.', function() {
             spyOn(window, 'clearTimeout');
 
-            mixer.delayRerender = 1;
+            mixer.rerenderingDelayTimerId = 1;
             mixer._pauseAnimationForAddingData();
 
-            expect(mixer.delayRerender).toBeNull();
+            expect(mixer.rerenderingDelayTimerId).toBeNull();
             expect(window.clearTimeout).toHaveBeenCalled();
         });
 
-        it('this.delayRerender에 값이 있으면서 shifting옵션이 ture이면 dataProcessor.shiftData함수를 호출합니다.', function() {
+        it('this.rerenderingDelayTimerId 값이 있으면서 shifting옵션이 ture이면 dataProcessor.shiftData함수를 호출합니다.', function() {
             spyOn(window, 'clearTimeout');
 
             mixer.options.series = {
                 shifting: true
             };
-            mixer.delayRerender = 1;
+            mixer.rerenderingDelayTimerId = 1;
             mixer._pauseAnimationForAddingData();
 
             expect(dataProcessor.shiftData).toHaveBeenCalled();

@@ -201,6 +201,16 @@ var calculator = {
             return value < 0;
         });
         return tui.util.sum(minusValues);
+    },
+
+    /**
+     * Make percentage value.
+     * @param {number} value - value
+     * @param {number} totalValue - total value
+     * @returns {number}
+     */
+    makePercentageValue: function(value, totalValue) {
+        return value / totalValue * 100;
     }
 };
 

@@ -25,10 +25,10 @@ var addingDynamicDataMixer = {
         this.paused = false;
 
         /**
-         * rendering delay timer
+         * rendering delay timer id
          * @type {null}
          */
-        this.delayRerender = null;
+        this.rerenderingDelayTimerId = null;
 
         /**
          * added data count
@@ -54,7 +54,7 @@ var addingDynamicDataMixer = {
 
         this._render(function() {
             var xAxisWidth = boundsMaker.getDimension('xAxis').width * beforeSizeRatio;
-            var tickSize = (xAxisWidth / (self.dataProcessor.getCategories().length - 1));
+            var tickSize = (xAxisWidth / (self.dataProcessor.getCategories(false).length - 1));
 
             self._renderComponents({
                 tickSize: tickSize + chartConst.OVERLAPPING_WIDTH,
@@ -102,8 +102,8 @@ var addingDynamicDataMixer = {
         }
 
         this._animateForAddingData();
-        this.delayRerender = setTimeout(function() {
-            self.delayRerender = null;
+        this.rerenderingDelayTimerId = setTimeout(function() {
+            self.rerenderingDelayTimerId = null;
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
@@ -117,9 +117,9 @@ var addingDynamicDataMixer = {
         this.paused = true;
         this._initForAutoTickInterval();
 
-        if (this.delayRerender) {
-            clearTimeout(this.delayRerender);
-            this.delayRerender = null;
+        if (this.rerenderingDelayTimerId) {
+            clearTimeout(this.rerenderingDelayTimerId);
+            this.rerenderingDelayTimerId = null;
 
             if (tui.util.pick(this.options.series, 'shifting')) {
                 this.dataProcessor.shiftData();
@@ -133,7 +133,8 @@ var addingDynamicDataMixer = {
      */
     _restartAnimationForAddingData: function() {
         this.paused = false;
-        this._checkForAddedData();
+        this.lookupping = false;
+        this._startLookup();
     },
 
     /**

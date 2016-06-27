@@ -351,7 +351,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Move to left.
+     * Move axis to left.
      * @param {number} tickSize - tick size for moving
      * @private
      */
@@ -583,6 +583,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Make percentage position.
+     * @param {Array.<number>} positions - positions
+     * @param {number} areaSize - area size
+     * @returns {Array.<number>}
+     * @private
+     */
+    _makePercentagePositions: function(positions, areaSize) {
+        return tui.util.map(positions, function(position) {
+            return calculator.makePercentageValue(position, areaSize);
+        });
+    },
+
+    /**
      * Make tick html.
      * @param {number} size - area size
      * @param {number} tickCount - tick count
@@ -600,17 +613,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         positions.length = this.data.labels.length;
 
-        additionalSize = additionalSize / size * 100;
-        positions = tui.util.map(positions, function(position) {
-            return position / size * 100;
-        });
-
+        additionalSize = calculator.makePercentageValue(additionalSize, size);
+        positions = this._makePercentagePositions(positions, size);
 
         template = axisTemplate.tplAxisTick;
         html = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
-            position -= (index === 0 && isNotDividedXAxis) ? (1 / size * 100) : 0;
+            position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, size) : 0;
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
@@ -748,9 +758,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelContainer = dom.create('DIV', 'tui-chart-label-area');
         var sizeRatio = this.data.sizeRatio || 1;
         var tickPixelPositions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
-        var positions = tui.util.map(tickPixelPositions, function(position) {
-            return position / size * 100;
-        });
         var labelSize = tickPixelPositions[1] - tickPixelPositions[0];
         var options = this.options;
         var labelsHtml;
@@ -759,8 +766,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             labelSize *= options.labelInterval;
         }
 
-        additionalSize = (additionalSize || 0) / size * 100;
-        labelsHtml = this._makeLabelsHtml(size, positions, categories, labelSize, additionalSize);
+        additionalSize = additionalSize ? calculator.makePercentageValue(additionalSize, size) : 0;
+        labelsHtml = this._makeLabelsHtml(size, tickPixelPositions, categories, labelSize, additionalSize);
         labelContainer.innerHTML = labelsHtml;
 
         this._applyLabelAreaStyle(labelContainer, axisWidth);
@@ -823,7 +830,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         return {
             top: params.top,
-            left: params.left - (moveLeft / params.size * 100)
+            left: params.left - calculator.makePercentageValue(moveLeft, params.size)
         };
     },
 
@@ -852,7 +859,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         return {
             top: chartConst.XAXIS_LABEL_TOP_MARGIN,
-            left: params.left + ((changedWidth - moveLeft) / params.size * 100)
+            left: params.left + calculator.makePercentageValue(changedWidth - moveLeft, params.size)
         };
     },
 
@@ -973,15 +980,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeLabelsHtml: function(areaSize, positions, categories, labelSize, additionalSize) {
-        var isRotationlessXAxis = !this.data.isVertical && this.data.isLabelAxis && this.options.rotateLabel === false,
-            hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree,
-            labelsHtml;
+        var isRotationlessXAxis = !this.data.isVertical && this.data.isLabelAxis && this.options.rotateLabel === false;
+        var hasRotatedXAxisLabel = this.componentName === 'xAxis' && this.boundsMaker.xAxisDegree;
+        var labelsHtml;
 
         if (isRotationlessXAxis) {
             categories = this.dataProcessor.getMultilineCategories();
         }
 
-        positions.length = categories.length;
+        if (categories.length) {
+            positions.length = categories.length;
+        }
+
+        positions = this._makePercentagePositions(positions, areaSize);
 
         if (hasRotatedXAxisLabel) {
             labelsHtml = this._makeRotationLabelsHtml(areaSize, positions, categories, labelSize, additionalSize);

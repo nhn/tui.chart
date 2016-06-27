@@ -213,7 +213,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 var color = colors[groupIndex];
                 return tui.util.map(positions, function(position) {
                     var dotMap = {
-                        dot: self.renderDot(paper, position, color, opacity)
+                        endDot: self.renderDot(paper, position, color, opacity)
                     };
                     var startPosition;
 
@@ -299,7 +299,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             this._updateLineStrokeWidth(startLine, strokeWidth);
         }
 
-        this._showDot(item.dot.dot);
+        this._showDot(item.endDot.dot);
 
         if (item.startDot) {
             this._showDot(item.startDot.dot);
@@ -329,7 +329,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             groupDots = this._getPivotGroupDots();
 
         tui.util.forEachArray(groupDots[index], function(item) {
-            self._showDot(item.dot.dot);
+            self._showDot(item.endDot.dot);
         });
     },
 
@@ -421,7 +421,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         }
 
         if (item) {
-            this._hideDot(item.dot.dot, opacity);
+            this._hideDot(item.endDot.dot, opacity);
 
             if (item.startDot) {
                 this._hideDot(item.startDot.dot, opacity);
@@ -447,7 +447,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
                 opacity = DE_EMPHASIS_OPACITY;
             }
 
-            self._hideDot(item.dot.dot, opacity);
+            self._hideDot(item.endDot.dot, opacity);
         });
     },
 
@@ -622,7 +622,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     _removeFirstDot: function(dots) {
         var firstDot = dots.shift();
 
-        firstDot.dot.dot.remove();
+        firstDot.endDot.dot.remove();
 
         if (firstDot.startDot) {
             firstDot.startDot.dot.remove();

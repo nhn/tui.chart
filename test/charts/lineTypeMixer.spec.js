@@ -34,7 +34,8 @@ describe('Test for lineTypeMixer', function() {
             });
         });
 
-        it('shifting옵션이 true면 axisDataMaker.updateLabelAxisDataForAutoTickInterval를 수행하여 xAxisData를 갱신합니다.', function() {
+        it('shifting옵션이 true면 axisDataMaker.updateLabelAxisDataForAutoTickInterval를 수행하여' +
+            ' xAxisData를 갱신합니다.', function() {
             mixer.options.series = {
                 shifting: true
             };
@@ -45,14 +46,16 @@ describe('Test for lineTypeMixer', function() {
             expect(boundsMaker.registerAxesData).toHaveBeenCalled();
         });
 
-        it('shifting옵션이 없어도 이전에 갱신된 자동 조정 axisData가 없으면 axisDataMaker.updateLabelAxisDataForAutoTickInterval를 수행하여 xAxisData를 갱신합니다.', function() {
+        it('shifting옵션이 없어도 이전에 갱신된 자동 조정 axisData가 없으면' +
+            ' axisDataMaker.updateLabelAxisDataForAutoTickInterval를 수행하여 xAxisData를 갱신합니다.', function() {
             mixer._updateAxesData();
 
             expect(axisDataMaker.updateLabelAxisDataForAutoTickInterval).toHaveBeenCalled();
             expect(boundsMaker.registerAxesData).toHaveBeenCalled();
         });
 
-        it('shifting옵션이 없으면서 이전에 갱신된 자동 조정 axisData가 있으면 axisDataMaker.updateLabelAxisDataForStackingDynamicData 수행하여 xAxisData를 갱신합니다.', function() {
+        it('shifting옵션이 없으면서 이전에 갱신된 자동 조정 axisData가 있으면' +
+            ' axisDataMaker.updateLabelAxisDataForStackingDynamicData 수행하여 xAxisData를 갱신합니다.', function() {
             mixer.prevUpdatedData = {};
 
             mixer._updateAxesData();
@@ -69,7 +72,8 @@ describe('Test for lineTypeMixer', function() {
             mixer._restartAnimationForAddingData = jasmine.createSpy('_restartAnimationForAddingData');
         });
 
-        it('일시정지 상태가 아니라면 _pauseAnimationForAddingData를 호출하여 동적데이터 추가 애니메이션을 일시 정지하고 rerender를 실행합니다', function() {
+        it('일시정지 상태가 아니라면 _pauseAnimationForAddingData를 호출하여 동적데이터 추가 애니메이션을 일시 정지하고' +
+            ' rerender를 실행합니다', function() {
             mixer.onChangeCheckedLegends();
 
             expect(mixer._pauseAnimationForAddingData).toHaveBeenCalled();
