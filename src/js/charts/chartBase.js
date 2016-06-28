@@ -410,6 +410,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             rawData = this._filterCheckedRawData(dataProcessor.getZoomedRawData(), checkedLegends);
         }
 
+        this.axisScaleMakerMap = null;
         this.dataProcessor.initData(rawData);
         this.boundsMaker.initBoundsData();
         this._render(function(renderingData) {

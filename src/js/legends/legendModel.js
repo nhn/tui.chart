@@ -42,7 +42,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
          * chart types
          * @type {?Array.<string>}
          */
-        this.chartTypes = params.chartTypes || [];
+        this.seriesNames = params.seriesNames || [];
 
         /**
          * chart type
@@ -137,7 +137,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
         var legendData = this.legendData;
         var data, defaultLegendTheme, startIndex, startThemeIndex;
 
-        if (!this.chartTypes || this.chartTypes.length < 2) {
+        if (!this.seriesNames || this.seriesNames.length < 2) {
             data = this._makeLabelInfoAppliedTheme(legendData, this.theme, this.checkedIndexesMap[this.chartType]);
         } else {
             startIndex = 0;
@@ -145,9 +145,9 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
             defaultLegendTheme = {
                 colors: defaultTheme.series.colors
             };
-            data = concat.apply([], tui.util.map(this.chartTypes, function(chartType) {
-                var chartTheme = self.theme[chartType];
-                var labelLen = self.labels[chartType].length;
+            data = concat.apply([], tui.util.map(this.seriesNames, function(seriesName) {
+                var chartTheme = self.theme[seriesName];
+                var labelLen = self.labels[seriesName].length;
                 var endIndex = startIndex + labelLen;
                 var slicedLegendData, checkedIndexes, themeEndIndex, datum;
 
@@ -159,7 +159,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
                 }
 
                 slicedLegendData = legendData.slice(startIndex, endIndex);
-                checkedIndexes = self.checkedIndexesMap[chartType];
+                checkedIndexes = self.checkedIndexesMap[seriesName];
                 datum = self._makeLabelInfoAppliedTheme(slicedLegendData, chartTheme, checkedIndexes);
                 startIndex = endIndex;
                 return datum;

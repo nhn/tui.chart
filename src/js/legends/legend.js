@@ -46,10 +46,10 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
         this.chartType = params.chartType;
 
         /**
-         * chart types
+         * series names
          * @type {?Array.<string>}
          */
-        this.chartTypes = params.chartTypes || [this.chartType];
+        this.seriesNames = params.seriesNames || [this.chartType];
 
         /**
          * user event object
@@ -83,13 +83,12 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
             theme: this.theme,
             labels: params.dataProcessor.getLegendLabels(),
             legendData: legendData,
-            chartTypes: this.chartTypes,
+            seriesNames: this.seriesNames,
             chartType: this.chartType
         });
 
         this.dimensionModel = new LegendDimensionModel({
             legendLabels: tui.util.pluck(legendData, 'label'),
-            chartTypes: this.chartTypes,
             chartType: this.chartType,
             options: this.options,
             theme: this.theme
@@ -268,7 +267,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _fireLegendSelectionEvent: function(data) {
         var self = this;
-        var seriesNames = this.chartTypes || [data.chartType];
+        var seriesNames = this.seriesNames || [data.chartType];
         var index = this.legendModel.getSelectedIndex();
         var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
@@ -335,7 +334,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
     _checkLegend: function() {
         var checkedIndexes = this._getCheckedIndexes();
         var checkedCount = checkedIndexes.length;
-        var isPieTypeCharts = tui.util.all(this.chartTypes, predicate.isPieTypeChart);
+        var isPieTypeCharts = tui.util.all(this.seriesNames, predicate.isPieTypeChart);
         var data;
 
         if ((isPieTypeCharts && checkedCount === 1) || checkedCount === 0) {

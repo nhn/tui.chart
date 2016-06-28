@@ -223,7 +223,7 @@ describe('Test for Axis', function() {
             var container = dom.create('DIV'),
                 actual, expected;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._addCssClasses(container);
             actual = container.className;
             expected = 'vertical';
@@ -244,7 +244,6 @@ describe('Test for Axis', function() {
 
         it('isPositionRight이 true인 경우에는 container의 css className에 right 값을 설정합니다.', function() {
             var container = dom.create('DIV'),
-                isPositionRight = true,
                 actual, expected;
 
             axis.data.isPositionRight = true;
@@ -397,7 +396,7 @@ describe('Test for Axis', function() {
             spyOn(axis, '_moveToLeft');
             spyOn(axis, '_resizeByTickSize');
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis.animateForAddingData();
 
             expect(axis._moveToLeft).not.toHaveBeenCalled();
@@ -648,7 +647,7 @@ describe('Test for Axis', function() {
 
             axis.options.title = 'Axis Title';
             axis.theme.fontSize = 12;
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle.innerHTML).toBe('Axis Title');
@@ -659,7 +658,7 @@ describe('Test for Axis', function() {
 
             axis.options.title = '';
             axis.theme.fontSize = 12;
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle).toBeNull();
@@ -670,7 +669,7 @@ describe('Test for Axis', function() {
         it('세로 axis의 tick line의 html을 생성합니다.', function() {
             var actual, expected;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
 
             actual = axis._makeTickLineHtml(100, 'top', true, 0);
             expected = '<div class="tui-chart-tick-line" style="top:-1px;height:101px"></div>';
@@ -681,7 +680,7 @@ describe('Test for Axis', function() {
         it('가로 axis의 tick line의 html을 생성합니다.', function() {
             var actual, expected;
 
-            axis.data.isVertical = false;
+            axis.isVertical = false;
 
             actual = axis._makeTickLineHtml(100, 'left', true, 0);
             expected = '<div class="tui-chart-tick-line" style="left:-1px;width:101px"></div>';
@@ -692,7 +691,7 @@ describe('Test for Axis', function() {
         it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
             var actual, expected;
 
-            axis.data.isVertical = false;
+            axis.isVertical = false;
             axis.data.positionRatio = 0.2;
             axis.data.lineWidth = 100;
 
@@ -705,7 +704,7 @@ describe('Test for Axis', function() {
         it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
             var actual, expected;
 
-            axis.data.isVertical = false;
+            axis.isVertical = false;
             axis.data.positionRatio = 0.2;
             axis.data.lineWidth = 100;
 
@@ -767,7 +766,7 @@ describe('Test for Axis', function() {
         it('세로 축 tick line 엘리먼트를 생성합니다.', function() {
             var actual;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
 
             actual = axis._renderTickLine(200, false, 0);
 
@@ -850,7 +849,7 @@ describe('Test for Axis', function() {
         it('세로차트(isVertical=true)인 경우에는 너비값(width)도 설정합니다.', function() {
             var labelContainer = dom.create('DIV');
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._applyLabelAreaStyle(labelContainer, 50);
 
             expect(labelContainer.style.width).toBe('20px');
@@ -865,8 +864,8 @@ describe('Test for Axis', function() {
             var categories = ['label1', 'label2', 'label3'];
             var elLabelArea, childNodes;
 
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = false;
+            axis.isLabel = true;
+            axis.isVertical = false;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -890,8 +889,8 @@ describe('Test for Axis', function() {
             var categories = ['label1', 'label2', 'label3'];
             var elLabelArea, childNodes;
 
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = true;
+            axis.isLabel = true;
+            axis.isVertical = true;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -942,7 +941,7 @@ describe('Test for Axis', function() {
             var categories = ['0.00', '30.00', '60.00'];
             var elLabelArea, childNodes;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -969,8 +968,8 @@ describe('Test for Axis', function() {
         it('레이블 높이가 100인 레이블 타입 y축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = true;
-            axis.data.isLabelAxis = true;
+            axis.isVertical = true;
+            axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'height:100px;line-height:100px;';
 
@@ -980,8 +979,8 @@ describe('Test for Axis', function() {
         it('레이블 너비가 100인 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = false;
-            axis.data.isLabelAxis = true;
+            axis.isVertical = false;
+            axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
 
@@ -991,8 +990,8 @@ describe('Test for Axis', function() {
         it('벨류 타입 y축의 경우는 빈 cssText가 생성됩니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = true;
-            axis.data.isLabelAxis = false;
+            axis.isVertical = true;
+            axis.isLabel = false;
             actual = axis._makeLabelCssText();
             expected = '';
 
@@ -1002,8 +1001,8 @@ describe('Test for Axis', function() {
         it('너비가 100인 벨류 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = false;
-            axis.data.isLabelAxis = false;
+            axis.isVertical = false;
+            axis.isLabel = false;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
 
@@ -1218,10 +1217,8 @@ describe('Test for Axis', function() {
         });
 
         it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 dataProcessor.getMultilineCategories() 를 호출하여 categories를 덮어씌웁니다.', function() {
-            axis.data = {
-                isVertical: false,
-                isLabelAxis: true
-            };
+            axis.isVertical = false;
+            axis.isLabel = true;
             axis.options.rotateLabel = false;
             dataProcessor.getMultilineCategories.and.returnValue([]);
             spyOn(axis, '_makeRotationLabelsHtml');
@@ -1249,7 +1246,7 @@ describe('Test for Axis', function() {
             var labelContainer = dom.create('DIV'),
                 actual, expected;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._changeLabelAreaPosition(labelContainer);
 
             actual = labelContainer.style.top;
@@ -1298,7 +1295,7 @@ describe('Test for Axis', function() {
             var categories = ['label1', 'label2', 'label3'];
             var actual;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis.data.aligned = true;
 
             actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
@@ -1469,8 +1466,8 @@ describe('Test for Axis', function() {
 
         it('_isInvalidRightYAxis()가 false이서 this.options가 있을 경우 options의 내용을 갱신하면서 _renderAxisArea()를 수행합니다.', function() {
             var options = {
-                    title: 'ABC'
-                };
+                title: 'ABC'
+            };
 
             spyOn(axis, '_renderAxisArea');
 

@@ -8,6 +8,8 @@
 
 /*eslint no-magic-numbers: 0*/
 
+var raphaelRenderUtil = require('./raphaelRenderUtil');
+
 var raphael = window.Raphael;
 
 var PADDING = 10;
@@ -43,10 +45,9 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * @private
      */
     _renderGradientBar: function(paper, dimension, colorModel, isHorizontal) {
-        var rectWidth = dimension.width - PADDING,
-            rectHeight = dimension.height,
-            left = 0,
-            degree;
+        var rectHeight = dimension.height;
+        var left = 0;
+        var degree, bound;
 
         if (isHorizontal) {
             rectHeight -= PADDING;
@@ -58,7 +59,14 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
             this._makeWedghPath = this._makeVerticalWedgePath;
         }
 
-        paper.rect(left, 0, rectWidth, rectHeight).attr({
+        bound = {
+            left: left,
+            top: 0,
+            width: dimension.width - PADDING,
+            height: rectHeight
+        };
+
+        raphaelRenderUtil.renderRect(paper, bound, {
             fill: degree + '-' + colorModel.start + '-' + colorModel.end,
             stroke: 'none'
         });

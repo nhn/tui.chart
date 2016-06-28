@@ -142,7 +142,8 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         var axes = [
             {
                 name: 'yAxis',
-                chartType: chartTypesMap.chartTypes[0]
+                chartType: chartTypesMap.chartTypes[0],
+                isVertical: true
             },
             {
                 name: 'xAxis',

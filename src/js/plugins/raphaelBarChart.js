@@ -56,19 +56,17 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @private
      */
     _renderOverlay: function() {
-        var rect = this._renderBar({
-            bound: {
-                width: 1,
-                height: 1,
-                left: 0,
-                top: 0
-            },
-            color: '#fff'
-        }).attr({
+        var bound = {
+            width: 1,
+            height: 1,
+            left: 0,
+            top: 0
+        };
+        var attributes = {
             'fill-opacity': 0
-        });
+        };
 
-        return rect;
+        return this._renderBar(bound, '#fff', attributes);
     },
 
     /**
@@ -78,18 +76,17 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @returns {object} bar rect
      * @private
      */
-    _renderBar: function(bound, color) {
+    _renderBar: function(bound, color, attributes) {
         var rect;
 
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
 
-        rect = this.paper.rect(bound.left, bound.top, bound.width, bound.height);
-        rect.attr({
+        rect = raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
             fill: color,
             stroke: 'none'
-        });
+        }, attributes));
 
         return rect;
     },

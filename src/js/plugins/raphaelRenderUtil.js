@@ -92,9 +92,28 @@ var raphaelRenderUtil = {
     renderCircle: function(paper, position, radius, attributes) {
         var circle = paper.circle(position.left, position.top, radius);
 
-        circle.attr(attributes);
+        if (attributes) {
+            circle.attr(attributes);
+        }
 
         return circle;
+    },
+
+    /**
+     * Render rect.
+     * @param {object} paper - raphael object
+     * @param {{left: number, top: number, width: number, height, number}} bound - bound
+     * @param {object} attributes - attributes
+     * @returns {*}
+     */
+    renderRect: function(paper, bound, attributes) {
+        var rect = paper.rect(bound.left, bound.top, bound.width, bound.height);
+
+        if (attributes) {
+            rect.attr(attributes);
+        }
+
+        return rect;
     },
 
     /**

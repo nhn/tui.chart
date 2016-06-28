@@ -568,7 +568,7 @@ var renderUtil = {
 };
 
 /**
- * Set opacity
+ * Set css opacity.
  * @param {HTMLElement | Array.<HTMLElement>} elements - elements
  * @param {function} iteratee - iteratee
  */
@@ -579,7 +579,7 @@ function setOpacity(elements, iteratee) {
 
 if (isOldBrowser) {
     /**
-     * Set opacity for old browser(IE7, IE8).
+     * Set css opacity for old browser(IE7, IE8).
      * @param {HTMLElement | Array.<HTMLElement>} elements - elements
      * @param {number} opacity - opacity
      */
@@ -591,7 +591,7 @@ if (isOldBrowser) {
     };
 } else {
     /**
-     * Set opacity for browser supporting opacity property of CSS3.
+     * Set css opacity for browser supporting opacity property of CSS3.
      * @param {HTMLElement | Array.<HTMLElement>} elements - elements
      * @param {number} opacity - opacity
      */

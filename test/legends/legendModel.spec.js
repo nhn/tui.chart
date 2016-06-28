@@ -131,7 +131,7 @@ describe('Test for LegendModel', function() {
     });
 
     describe('_setData()', function() {
-        it('chartTypes 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
+        it('seriesNames 파라미터에 값이 없으면 labelInfos과 theme으로  _makeLabelInfoAppliedTheme 을 실행하여 바로 반환합니다.', function() {
             var legendData = [{}, {}],
                 theme = {
                     colors: ['red', 'blue'],
@@ -151,9 +151,9 @@ describe('Test for LegendModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('chartTypes값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
+        it('seriesNames값이 있으면 각 chartType에 해당하는 theme정보를 labelInfo 정보에 설정하여 반환합니다. index는 chartType 별로 구분되서 설정됩니다.', function() {
             var legendData = [{}, {}],
-                chartTypes = ['column', 'line'],
+                seriesNames = ['column', 'line'],
                 labelMap = {
                     column: ['legend1'],
                     line: ['lgend2']
@@ -170,7 +170,7 @@ describe('Test for LegendModel', function() {
 
             legendModel.legendData = legendData;
             legendModel.theme = theme;
-            legendModel.chartTypes = chartTypes;
+            legendModel.seriesNames = seriesNames;
             legendModel.labels = labelMap;
 
             legendModel._setData();

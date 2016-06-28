@@ -41,6 +41,7 @@ var axisTypeMixer = {
             var axisParams = {
                 aligned: aligned,
                 isLabel: !!axis.isLabel,
+                isVertical: !!axis.isVertical,
                 chartType: axis.chartType
             };
 
@@ -77,7 +78,7 @@ var axisTypeMixer = {
     },
 
     /**
-     * Add tooltip component
+     * Add tooltip component.
      * @private
      */
     _addTooltipComponent: function() {
@@ -87,13 +88,14 @@ var axisTypeMixer = {
 
     /**
      * Add legend component.
-     * @param {Array.<string>} chartTypes series chart types
+     * @param {null | object} LegendClass - Legend type class
+     * @param {Array.<string>} seriesNames - series names
      * @param {string} chartType chartType
      * @private
      */
-    _addLegendComponent: function(chartTypes, chartType) {
-        this.componentManager.register('legend', Legend, {
-            chartTypes: chartTypes,
+    _addLegendComponent: function(LegendClass, seriesNames, chartType) {
+        this.componentManager.register('legend', LegendClass || Legend, {
+            seriesNames: seriesNames,
             chartType: chartType,
             userEvent: this.userEvent
         });
@@ -110,13 +112,20 @@ var axisTypeMixer = {
     _addComponentsForAxisType: function(params) {
         var options = this.options;
         var aligned = !!params.aligned;
+        var LegendClass;
 
-        this.componentManager.register('plot', Plot);
-        this._addAxisComponents(params.axes, aligned);
-        if (options.legend.visible) {
-            this._addLegendComponent(params.seriesNames, params.chartType);
+        if (params.plot) {
+            this.componentManager.register('plot', Plot);
         }
-        this._addSeriesComponents(params.serieses, options);
+
+        this._addAxisComponents(params.axis, aligned);
+
+        if (options.legend.visible) {
+            LegendClass = tui.util.isObject(params.legend) ? params.legend.LegendClass : null;
+            this._addLegendComponent(LegendClass, params.seriesNames, params.chartType);
+        }
+
+        this._addSeriesComponents(params.series, options);
         this._addTooltipComponent();
         this._addCustomEventComponent();
     },
@@ -166,6 +175,7 @@ var axisTypeMixer = {
     _makeAxisData: function(axisScaleMaker, options, isVertical, isPositionRight) {
         var aligned = predicate.isLineTypeChart(this.chartType);
         var axisData;
+
         if (axisScaleMaker) {
             axisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
@@ -390,16 +400,6 @@ var axisTypeMixer = {
         }
 
         this._attachCustomEventForSeriesSelection(customEvent, serieses);
-    },
-
-    /**
-     * Override for initializing to axisScaleMakerMap.
-     * @private
-     * @override
-     */
-    _rerender: function() {
-        this.axisScaleMakerMap = null;
-        ChartBase.prototype._rerender.apply(this, arguments);
     },
 
     /**

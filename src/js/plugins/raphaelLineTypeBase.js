@@ -31,7 +31,14 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _renderLeftBar: function(height, chartBackground) {
-        return this.paper.rect(0, 0, LEFT_BAR_WIDTH, height).attr({
+        var bound = {
+            left: 0,
+            top: 0,
+            width: LEFT_BAR_WIDTH,
+            height: height
+        };
+
+        raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: chartBackground,
             stroke: 'none'
         });

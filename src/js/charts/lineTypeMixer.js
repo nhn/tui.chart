@@ -90,22 +90,24 @@ var lineTypeMixer = {
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis',
                     isLabel: true
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: this.options.chartType + 'Series',
                     SeriesClass: this.Series
                 }
-            ]
+            ],
+            plot: true
         });
     },
 

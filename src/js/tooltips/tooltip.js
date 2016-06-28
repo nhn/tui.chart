@@ -150,7 +150,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
-        var legend = legendLabels[chartType][index];
+        var legend = legendLabels[chartType][index] || '';
 
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.label ? labelPrefix + seriesItem.label : '';

@@ -100,21 +100,23 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis'
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: 'bubbleSeries',
                     SeriesClass: Series
                 }
-            ]
+            ],
+            plot: true
         });
 
         if (this.options.circleLegend.visible) {

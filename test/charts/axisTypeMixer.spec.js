@@ -166,9 +166,9 @@ describe('Test for ComboChart', function() {
             };
 
             axisTypeMixer._addComponentsForAxisType({
-                axes: ['xAxis', 'yAxis'],
+                axis: ['xAxis', 'yAxis'],
                 processedData: {},
-                serieses: [
+                seires: [
                     {
                         name: 'columnSreies',
                         data: {},
@@ -178,7 +178,8 @@ describe('Test for ComboChart', function() {
                         data: {},
                         SeriesClass: ''
                     }
-                ]
+                ],
+                plot: true
             });
 
             expect(componentMap.plot).toBeDefined();

@@ -69,21 +69,23 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis'
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: 'scatterSeries',
                     SeriesClass: Series
                 }
-            ]
+            ],
+            plot: true
         });
     }
 });
