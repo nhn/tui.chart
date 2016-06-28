@@ -292,8 +292,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this._addCssClasses(axisContainer);
 
         if (this.options.divided) {
+            this.containerWidth = dimension.width + this.boundsMaker.getDimension('yAxis').width;
             this._renderDividedAxis(axisContainer, dimension.width);
-            dimension.width += this.boundsMaker.getDimension('yAxis').width;
+            dimension.width = this.containerWidth;
         } else {
             this._renderNotDividedAxis(axisContainer, dimension);
             dimension.width += this.options.isCenter ? 2 : 0;
@@ -588,6 +589,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makePercentagePositions: function(positions, areaSize) {
+        areaSize = this.containerWidth || areaSize;
         return tui.util.map(positions, function(position) {
             return calculator.makePercentageValue(position, areaSize);
         });
@@ -607,18 +609,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
         var positions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
+        var containerWidth = this.containerWidth || size;
         var template, html;
 
         positions.length = this.data.labels.length;
 
-        additionalSize = calculator.makePercentageValue(additionalSize, size);
+        additionalSize = calculator.makePercentageValue(additionalSize, containerWidth);
         positions = this._makePercentagePositions(positions, size);
 
         template = axisTemplate.tplAxisTick;
         html = tui.util.map(positions, function(position, index) {
             var tickHtml, cssTexts;
 
-            position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, size) : 0;
+            position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
@@ -757,13 +760,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var tickPixelPositions = calculator.makeTickPixelPositions((size * sizeRatio), tickCount);
         var labelSize = tickPixelPositions[1] - tickPixelPositions[0];
         var options = this.options;
+        var containerWidth = this.containerWidth || size;
         var labelsHtml;
 
         if (predicate.isValidLabelInterval(options.labelInterval, options.tickInterval)) {
             labelSize *= options.labelInterval;
         }
 
-        additionalSize = additionalSize ? calculator.makePercentageValue(additionalSize, size) : 0;
+        additionalSize = additionalSize ? calculator.makePercentageValue(additionalSize, containerWidth) : 0;
         labelsHtml = this._makeLabelsHtml(size, tickPixelPositions, categories, labelSize, additionalSize);
         labelContainer.innerHTML = labelsHtml;
 
@@ -818,8 +822,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _calculateRotationMovingPosition: function(params) {
-        var moveLeft = params.moveLeft,
-            degree = this.boundsMaker.xAxisDegree;
+        var moveLeft = params.moveLeft;
+        var degree = this.boundsMaker.xAxisDegree;
+        var containerWidth = this.containerWidth || params.size;
 
         if (degree === chartConst.ANGLE_85) {
             moveLeft += calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
@@ -827,7 +832,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         return {
             top: params.top,
-            left: params.left - calculator.makePercentageValue(moveLeft, params.size)
+            left: params.left - calculator.makePercentageValue(moveLeft, containerWidth)
         };
     },
 
@@ -843,12 +848,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _calculateRotationMovingPositionForOldBrowser: function(params) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme),
-            degree = this.boundsMaker.xAxisDegree,
-            smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2),
-            newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2,
-            changedWidth = renderUtil.isIE7() ? 0 : (labelWidth - newLabelWidth),
-            moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
+        var labelWidth = renderUtil.getRenderedLabelWidth(params.label, params.theme);
+        var degree = this.boundsMaker.xAxisDegree;
+        var smallAreaWidth = calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, params.labelHeight / 2);
+        var newLabelWidth = (calculator.calculateAdjacent(degree, labelWidth / 2) + smallAreaWidth) * 2;
+        var changedWidth = renderUtil.isIE7() ? 0 : (labelWidth - newLabelWidth);
+        var moveLeft = (params.labelWidth / 2) - (smallAreaWidth * 2);
+        var containerWidth = this.containerWidth || params.size;
 
         if (degree === chartConst.ANGLE_85) {
             moveLeft += smallAreaWidth;
@@ -856,7 +862,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         return {
             top: chartConst.XAXIS_LABEL_TOP_MARGIN,
-            left: params.left + calculator.makePercentageValue(changedWidth - moveLeft, params.size)
+            left: params.left + calculator.makePercentageValue(changedWidth - moveLeft, containerWidth)
         };
     },
 
