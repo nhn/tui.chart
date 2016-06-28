@@ -472,7 +472,6 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {object} options.tooltip.position - relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -570,7 +569,6 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {object} options.tooltip.position - relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
