@@ -1234,7 +1234,7 @@ describe('Test for Axis', function() {
         it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var labelContainer = dom.create('DIV');
 
-            axis.data.isLabelAxis = true;
+            axis.isLabel = true;
             axis._changeLabelAreaPosition(labelContainer);
 
             // 레이블이 타입의 경우 기본 설정이 가운데 배치되기 때문에 위치 이동 필요 없습니다.

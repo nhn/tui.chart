@@ -28,10 +28,10 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         var step = 0;
         var dimension, seriesDataModel, size, len;
 
-        if (this.dataProcessor.hasCategories()) {
+        if (this.dataProcessor.hasCategories(false)) {
             dimension = this.boundsMaker.getDimension('series');
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
-            len = this.dataProcessor.getCategories().length;
+            len = this.dataProcessor.getCategories(false).length;
 
             if (seriesDataModel.isXCountGreaterThanYCount()) {
                 size = dimension.height;

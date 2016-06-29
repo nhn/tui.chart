@@ -182,7 +182,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * categories
          * @type {Array.<string>}
          */
-        this.categories = null;
+        this.categoriesMap = null;
 
         /**
          * stacks
@@ -251,43 +251,112 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Process categories
-     * @returns {Array.<string>} processed categories
+     * Escape categories
+     * @param {Array.<string, number>} categories - cetegories
+     * @returns {*|Array.<Object>|Array}
      * @private
      */
-    _processCategories: function() {
-        return tui.util.map(this.rawData.categories, function(category) {
+    _escapeCategories: function(categories) {
+        return tui.util.map(categories, function(category) {
             return tui.util.encodeHTMLEntity(String(category));
         });
     },
 
     /**
-     * Get Categories
-     * @returns {Array.<string>}}
+     * Process categories
+     * @param {string} type - category type (x or y)
+     * @returns {Array.<string>} processed categories
+     * @private
      */
-    getCategories: function() {
-        if (!this.categories) {
-            this.categories = this._processCategories();
+    _processCategories: function(type) {
+        var rawCategories = this.rawData.categories;
+        var categoriesMap = {};
+
+        if (tui.util.isArray(rawCategories)) {
+            categoriesMap[type] = this._escapeCategories(rawCategories);
+        } else {
+            if (rawCategories.x) {
+                categoriesMap.x = this._escapeCategories(rawCategories.x);
+            }
+
+            if (rawCategories.y) {
+                categoriesMap.y = this._escapeCategories(rawCategories.y).reverse();
+            }
         }
 
-        return this.categories;
+        return categoriesMap;
+    },
+
+    /**
+     * Get Categories
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {Array.<string>}}
+     */
+    getCategories: function(isVertical) {
+        var type = isVertical ? 'y' : 'x';
+        var foundCategories;
+
+        if (!this.categoriesMap) {
+            this.categoriesMap = this._processCategories(type);
+        }
+
+        if (tui.util.isExisty(isVertical)) {
+            foundCategories = this.categoriesMap[type] || [];
+        } else {
+            tui.util.forEach(this.categoriesMap, function(categories) {
+                foundCategories = categories;
+                return false;
+            });
+        }
+
+        return foundCategories;
+    },
+
+    /**
+     * Get category count.
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {*}
+     */
+    getCategoryCount: function(isVertical) {
+        return this.getCategories(isVertical).length;
     },
 
     /**
      * Whether has categories or not.
+     * @param {boolean} isVertical - whether vertical or not
      * @returns {boolean}
      */
-    hasCategories: function() {
-        return !!this.getCategories().length;
+    hasCategories: function(isVertical) {
+        return !!this.getCategories(isVertical).length;
     },
 
     /**
      * Get category.
      * @param {number} index index
+     * @param {boolean} isVertical - whether vertical or not
      * @returns {string} category
      */
-    getCategory: function(index) {
-        return this.getCategories()[index];
+    getCategory: function(index, isVertical) {
+        return this.getCategories(isVertical)[index];
+    },
+
+    /**
+     * Get category for tooltip.
+     * @param {number} firstIndex - index
+     * @param {number} oppositeIndex - opposite index
+     * @param {boolean} isVerticalChart - whether vertical chart or not
+     * @returns {*|string}
+     */
+    getTooltipCategory: function(firstIndex, oppositeIndex, isVerticalChart) {
+        var isHorizontal = !isVerticalChart;
+        var category = this.getCategory(firstIndex, isHorizontal);
+        var categoryCount = this.getCategoryCount(!isHorizontal);
+
+        if (categoryCount) {
+            category += ', ' + this.getCategory(categoryCount - oppositeIndex - 1, isVerticalChart);
+        }
+
+        return category;
     },
 
     /**
@@ -647,7 +716,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pickLegendLabel: function(item) {
-        return tui.util.encodeHTMLEntity(item.name);
+        return item.name ? tui.util.encodeHTMLEntity(item.name) : null;
     },
 
     /**
@@ -655,19 +724,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} labels
      */
     _pickLegendLabels: function() {
-        var self = this,
-            seriesData = this.rawData.series,
-            result;
+        var self = this;
+        var seriesData = this.rawData.series;
+        var legendLabels;
+
         if (tui.util.isArray(seriesData)) {
-            result = tui.util.map(seriesData, this._pickLegendLabel);
+            legendLabels = tui.util.map(seriesData, this._pickLegendLabel);
         } else {
-            result = {};
+            legendLabels = {};
             tui.util.forEach(seriesData, function(seriesDatum, type) {
-                result[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
+                legendLabels[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
             });
         }
 
-        return result;
+        legendLabels = tui.util.filter(legendLabels, function(label) {
+            return tui.util.isExisty(label);
+        });
+
+        return legendLabels;
     },
 
     /**

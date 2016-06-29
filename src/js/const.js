@@ -47,6 +47,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_SCATTER: 'scatter',
     /** @type {string} */
+    CHART_TYPE_HEATMAP: 'heatmap',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,

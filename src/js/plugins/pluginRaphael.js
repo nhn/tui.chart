@@ -11,6 +11,7 @@ var LineChart = require('./raphaelLineChart');
 var AreaChart = require('./raphaelAreaChart');
 var PieChart = require('./raphaelPieChart');
 var CoordinateTypeChart = require('./raphaelCoordinateTypeChart');
+var BoxTypeChart = require('./raphaelBoxTypeChart');
 var MapChart = require('./raphaelMapChart');
 var MapLegend = require('./raphaelMapLegend');
 var CircleLegend = require('./raphaelCircleLegend');
@@ -24,6 +25,7 @@ var pluginRaphael = {
     pie: PieChart,
     bubble: CoordinateTypeChart,
     scatter: CoordinateTypeChart,
+    heatmap: BoxTypeChart,
     map: MapChart,
     mapLegend: MapLegend,
     circleLegend: CircleLegend

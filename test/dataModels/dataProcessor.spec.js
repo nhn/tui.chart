@@ -48,31 +48,154 @@ describe('Test for DataProcessor', function() {
         });
     });
 
-    describe('_processCategories()', function() {
+    describe('_escapeCategories()', function() {
         it('카테고리에 대해 escaping 처리를 합니다.', function() {
-            var actual, expected;
-
-            dataProcessor.rawData = {
-                categories: ['<div>ABC</div>', 'EFG']
-            };
-
-            actual = dataProcessor._processCategories();
-            expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
+            var actual = dataProcessor._escapeCategories(['<div>ABC</div>', 'EFG']);
+            var expected = ['&lt;div&gt;ABC&lt;/div&gt;', 'EFG'];
 
             expect(actual).toEqual(expected);
         });
 
         it('숫자형인 경우, 문자형으로 변환하여 처리 합니다.', function() {
-            var actual, expected;
+            var actual = dataProcessor._escapeCategories([1, 2]);
+            var expected = ['1', '2'];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_processCategories()', function() {
+        it('rawData.categories가 배열 형태이면 전달받은 type을 키로하는 map으로 생성하여 반환합니다.', function() {
+           var actual;
 
             dataProcessor.rawData = {
-                categories: [1, 2]
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor._processCategories('y');
+
+            expect(actual).toEqual({
+                y: ['cate1', 'cate2', 'cate3']
+            });
+        });
+
+        it('rawData.categories가 객체 형태이면 y값에 대해 역순으로 정렬하여 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: {
+                    x: ['ABC', 'EFG'],
+                    y: [1, 2]
+                }
             };
 
             actual = dataProcessor._processCategories();
-            expected = ['1', '2'];
 
-            expect(actual).toEqual(expected);
+            expect(actual.y).toEqual(['2', '1']);
+        });
+
+        it('rawData.categories가 객체 형태이면서 x, y이외의 key값을 갖고 있다면 무시합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: {
+                    z: ['ABC', 'EFG']
+                }
+            };
+
+            actual = dataProcessor._processCategories();
+
+            expect(actual.z).toBeUndefined();
+        });
+    });
+
+    describe('getCategories()', function() {
+        it('세로형 카테고리의 경우 y를 key로하여 categories map을 생성하고 categories를 반환합니다.', function() {
+            var isVertical = true;
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getCategories(isVertical);
+
+            expect(dataProcessor.categoriesMap.y).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(dataProcessor.categoriesMap.x).toBeUndefined();
+            expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
+        });
+
+        it('가로형 카테고리의 경우 x를 key로하여 categories map을 생성하고 categories를 반환합니다.', function() {
+            var isVertical = false;
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getCategories(isVertical);
+
+            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(dataProcessor.categoriesMap.y).toBeUndefined();
+            expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
+        });
+
+        it('isVertical 값이 없다면 categoriesMap에서 한가지 카테고리를 추출하여 반환합니다(hasCategories에서 존재 여부 체크에 사용).', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getCategories();
+
+            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(dataProcessor.categoriesMap.y).toBeUndefined();
+            expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
+        });
+    });
+
+    describe('getTooltipCategory()', function() {
+        it('가로형 차트의 경우 세로형 카테고리를 기본 값으로 합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getTooltipCategory(0, null, false);
+
+            expect(dataProcessor.categoriesMap.y).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(actual).toBe('cate1');
+        });
+
+        it('세로형 차트의 경우 가로형 카테고리를 기본 값으로 합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getTooltipCategory(0, null, true);
+
+            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(actual).toBe('cate1');
+        });
+
+        it('세로형 차트의 경우 세로형 카테고리도 존재하면 가로형 카테고리와 ","연결하여 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {
+                categories: {
+                    x: ['cate1', 'cate2', 'cate3'],
+                    y: [1, 2, 3]
+                }
+            };
+
+            actual = dataProcessor.getTooltipCategory(0, 2, true);
+
+            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(actual).toBe('cate1, 3');
         });
     });
 
