@@ -14,7 +14,7 @@ var ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/mapChartSeries'),
     Zoom = require('../series/zoom'),
-    Legend = require('../legends/mapChartLegend'),
+    Legend = require('../legends/spectrumLegend'),
     MapChartTooltip = require('../tooltips/mapChartTooltip'),
     mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 

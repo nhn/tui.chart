@@ -13,7 +13,7 @@ var Series = require('../series/heatmapChartSeries');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
 var axisDataMaker = require('../helpers/axisDataMaker');
-var Legend = require('../legends/mapChartLegend');
+var Legend = require('../legends/spectrumLegend');
 
 var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.prototype */ {
     /**
