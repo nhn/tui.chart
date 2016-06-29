@@ -54,7 +54,7 @@ var addingDynamicDataMixer = {
 
         this._render(function() {
             var xAxisWidth = boundsMaker.getDimension('xAxis').width * beforeSizeRatio;
-            var tickSize = (xAxisWidth / (self.dataProcessor.getCategories(false).length - 1));
+            var tickSize = (xAxisWidth / (self.dataProcessor.getCategoryCount(false) - 1));
 
             self._renderComponents({
                 tickSize: tickSize + chartConst.OVERLAPPING_WIDTH,

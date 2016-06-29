@@ -265,7 +265,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Process categories
      * @param {string} type - category type (x or y)
-     * @returns {Array.<string>} processed categories
+     * @returns {null | Array.<string>} processed categories
      * @private
      */
     _processCategories: function(type) {
@@ -274,7 +274,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (tui.util.isArray(rawCategories)) {
             categoriesMap[type] = this._escapeCategories(rawCategories);
-        } else {
+        } else if (rawCategories) {
             if (rawCategories.x) {
                 categoriesMap.x = this._escapeCategories(rawCategories.x);
             }
@@ -294,7 +294,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getCategories: function(isVertical) {
         var type = isVertical ? 'y' : 'x';
-        var foundCategories;
+        var foundCategories = [];
 
         if (!this.categoriesMap) {
             this.categoriesMap = this._processCategories(type);
@@ -318,7 +318,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {*}
      */
     getCategoryCount: function(isVertical) {
-        return this.getCategories(isVertical).length;
+        var categories = this.getCategories(isVertical);
+        return categories ? categories.length : 0;
     },
 
     /**
@@ -327,7 +328,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {boolean}
      */
     hasCategories: function(isVertical) {
-        return !!this.getCategories(isVertical).length;
+        return !!this.getCategoryCount(isVertical);
     },
 
     /**

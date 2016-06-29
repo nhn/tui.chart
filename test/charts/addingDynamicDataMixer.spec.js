@@ -12,7 +12,7 @@ describe('Test for addingDynamicDataMixer', function() {
     var dataProcessor, boundsMaker;
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories', 'shiftData', 'addDataFromDynamicData']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategoryCount', 'shiftData', 'addDataFromDynamicData']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getAxesData', 'getDimension']);
 
         mixer.dataProcessor = dataProcessor;
@@ -29,7 +29,7 @@ describe('Test for addingDynamicDataMixer', function() {
 
     describe('_animateForAddingData()', function() {
         beforeEach(function() {
-            dataProcessor.getCategories.and.returnValue(['cate1', 'cate2', 'cate3', 'cate4', 'cate5']);
+            dataProcessor.getCategoryCount.and.returnValue(5);
             boundsMaker.getAxesData.and.returnValue({
                 xAxis: {}
             });

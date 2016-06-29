@@ -107,6 +107,16 @@ describe('Test for DataProcessor', function() {
 
             expect(actual.z).toBeUndefined();
         });
+
+        it('rawData.categories가 없다면 빈 객체를 반환합니다.', function() {
+            var actual;
+
+            dataProcessor.rawData = {};
+
+            actual = dataProcessor._processCategories();
+
+            expect(actual).toEqual({});
+        });
     });
 
     describe('getCategories()', function() {
