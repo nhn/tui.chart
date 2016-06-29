@@ -21,16 +21,15 @@
         <textarea id="data">
 {
    "categories": {
-        "x": [10, 20, 30, 40, 50],
-        "y": [1, 2, 3, 4, 5, 6]
+        "x": ["Jan", "Feb", "Mar","Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "y": ["Seoul", "Seattle", "Sydney", "Moskva", "Jungfrau"]
     },
     "series": [
-        [10, 20, 30, 40, 50],
-        [1, 4, 6, 7, 8],
-        [20, 4, 5, 70, 8],
-        [100, 40, 30, 80, 30],
-        [20, 10, 60, 90, 20],
-        [50, 40, 30, 20, 10]
+        [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
+        [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.4, 3.7],
+        [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
+        [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
+        [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9]
     ]
 }
 
@@ -43,16 +42,19 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "Heatmap chart sample"
+        "title": "24-hr Average Temperature"
     },
     "yAxis": {
-        "title": "sample"
+        "title": "City"
     },
     "xAxis": {
-        "title": "sample"
+        "title": "Monthly"
     },
     "series": {
         "showLabel": true
+    },
+    "tooltip": {
+        "suffix": "°C"
     },
     "theme": "newTheme"
 }
@@ -68,7 +70,8 @@
     "series": {
             "startColor": "#ffefef",
             "endColor": "#ac4142",
-            "overColor": "#75b5aa"
+            "overColor": "#75b5aa",
+            "borderColor": "#F4511E"
     }
 }
         </textarea>
@@ -86,32 +89,34 @@
     var container = document.getElementById('chart-area'),
             data = {
                 categories: {
-                    x: [10, 20, 30, 40, 50],
-                    y: [1, 2, 3, 4, 5, 6]
+                    x: ['Jan', 'Feb', 'Mar','Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    y: ['Seoul', 'Seattle', 'Sydney', 'Moskva', 'Jungfrau']
                 },
                 series: [
-                    [10, 20, 30, 40, 50],
-                    [1, 4, 6, 7, 8],
-                    [20, 4, 5, 70, 8],
-                    [100, 40, 30, 80, 30],
-                    [20, 10, 60, 90, 20],
-                    [50, 40, 30, 20, 10]
+                    [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
+                    [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.4, 3.7],
+                    [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
+                    [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
+                    [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9]
                 ]
             },
             options = {
                 chart: {
                     width: 700,
                     height: 400,
-                    title: 'Heatmap chart sample'
+                    title: '24-hr Average Temperature'
                 },
                 yAxis: {
-                    title: 'sample'
+                    title: 'City'
                 },
                 xAxis: {
-                    title: 'sample'
+                    title: 'Monthly'
                 },
                 series: {
                     showLabel: true
+                },
+                tooltip: {
+                    suffix: '°C'
                 }
             };
     tui.chart.heatmapChart(container, data, options);

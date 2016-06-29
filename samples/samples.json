@@ -47,6 +47,9 @@
   "sample04-03-range-area-chart": {
     "title": "[Area Chart] range data"
   },
+  "sample04-04-area-autotick-zoomable-chart": {
+    "title": "[Area Chart] auto tick and zoomable"
+  },
   "sample05-01-bubble-chart": {
     "title": "[Bubble Chart] basic"
   },
@@ -97,5 +100,11 @@
   },
   "sample09-08-taiwan-map-chart": {
     "title": "[Map chart] taiwan map"
+  },
+  "sample10-01-heatmap-chart": {
+    "title": "[Heatmap chart] basic"
+  },
+  "sample11-01-dynamic-data-shifting-chart": {
+    "title": "[Heatmap chart] dynamic data and spline"
   }
 }

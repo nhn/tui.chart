@@ -3,7 +3,7 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>[Area Chart] spline dynamic data</title>
+    <title>[Area Chart] auto tick and zoomable</title>
     <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
     <link rel="stylesheet" type="text/css" href="css/sample.css" />
 </head>
@@ -20,8 +20,8 @@
 
     var seriesData = tui.util.map(tui.util.range(1), function(value) {
         var name = 'Legend' + value;
-        var data = tui.util.map(tui.util.range(20), function(value, index) {
-            return getRandom(0, 90);
+        var data = tui.util.map(tui.util.range(200), function(value, index) {
+            return getRandom(30, 50);
         });
         return {
             name: name,
@@ -29,7 +29,7 @@
         };
     });
     var categories = tui.util.map(seriesData[0].data, function(value, index) {
-        return 'cate' + index;
+        return 'cate' + (index + 1);
     });
     var container = document.getElementById('chart-area');
     var data = {
@@ -40,33 +40,19 @@
         chart: {
             width: 700,
             height: 400,
-            title: 'test data'
+            title: 'Auto tick and Zoomable'
         },
         yAxis: {
-            title: 'test data'
+            min: 0
         },
         xAxis: {
-            title: 'test data',
             tickInterval: 'auto'
         },
         series: {
-            spline: true,
-            zoomable: true,
-            showDot: true
+            zoomable: true
         }
     };
     var chart = tui.chart.areaChart(container, data, options);
-
-    chart.on('load', function() {
-        var index = categories.length;
-        setInterval(function() {
-            var category = 'cate' + index;
-            var values = [getRandom(0, 90), getRandom(0, 90)];
-
-            chart.addData(category, values);
-            index += 1;
-        }, 1000);
-    });
 </script>
 </body>
 </html>
