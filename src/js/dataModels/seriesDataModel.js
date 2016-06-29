@@ -139,6 +139,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
             var values;
+
             if (tui.util.isArray(rawDatum)) {
                 values = rawDatum;
             } else {

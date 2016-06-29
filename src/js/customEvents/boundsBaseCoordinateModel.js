@@ -62,6 +62,8 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      * @private
      */
     _makeRectTypeCoordinateData: function(groupBounds, chartType) {
+        var allowNegativeTooltip = !predicate.isHeatmapChart(chartType);
+
         return tui.util.map(groupBounds, function(bounds, groupIndex) {
             return tui.util.map(bounds, function(_bound, index) {
                 var bound;
@@ -78,7 +80,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
                             groupIndex: groupIndex,
                             index: index
                         },
-                        allowNegativeTooltip: true,
+                        allowNegativeTooltip: allowNegativeTooltip,
                         bound: bound
                     },
                     bound: {

@@ -378,7 +378,7 @@ var renderUtil = {
      * @returns {string} formatted value
      */
     formatValue: function(value, formatFunctions, areaType, valueType) {
-        var fns = [value].concat(formatFunctions || []);
+        var fns = [String(value)].concat(formatFunctions || []);
 
         valueType = valueType || 'value';
 

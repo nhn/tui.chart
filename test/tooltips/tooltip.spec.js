@@ -77,9 +77,9 @@ describe('Tooltip', function() {
                 category: 'category1',
                 legend: 'legend1',
                 label: ':&nbsp;label1',
-                x: 10,
-                y: 20,
-                r: 30
+                x: '10',
+                y: '20',
+                r: '30'
             };
 
             expect(actual).toEqual(expected);

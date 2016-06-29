@@ -182,7 +182,7 @@ describe('BarTypeSeriesBase', function() {
     describe('_makeSumValues()', function() {
         it('[10, 20, 30] values의 합은 60입니다.', function() {
             var actual = series._makeSumValues([10, 20, 30]);
-            expect(actual).toBe(60);
+            expect(actual).toBe('60');
         });
 
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {

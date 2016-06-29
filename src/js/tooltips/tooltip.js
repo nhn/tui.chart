@@ -113,6 +113,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (!legendData) {
             return null;
         }
+
         params = tui.util.extend({
             chartType: legendData.chartType,
             legend: legendData.label,

@@ -118,6 +118,16 @@ var predicate = {
     },
 
     /**
+     * Whether heatmap chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isHeatmapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_HEATMAP;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - chart type
@@ -174,7 +184,8 @@ var predicate = {
      * @returns {boolean}
      */
     allowMinusPointRender: function(chartType) {
-        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType);
+        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
+            predicate.isHeatmapChart(chartType);
     },
 
     /**
