@@ -111,9 +111,10 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     /**
      * Show tooltip.
      * @param {{indexes: {groupIndex: number}}} foundData - data
+     * @param {boolean} [isMoving] - whether moving or not
      * @private
      */
-    _showTooltip: function(foundData) {
+    _showTooltip: function(foundData, isMoving) {
         var index = foundData.indexes.groupIndex;
 
         this.prevIndex = index;
@@ -121,7 +122,8 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
             index: index,
             range: this.tickBaseCoordinateModel.makeRange(index, this.chartType),
             size: this.dimension[this.sizeType],
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            isMoving: isMoving
         });
     },
 

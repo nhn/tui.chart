@@ -265,11 +265,16 @@
     }
   }
 
+  &.tui-line-chart, &.tui-area-chart {
+    .tui-chart-series-area {
+      overflow-x: hidden;
+      overflow-y: visible;
+    }
+  }
+
   .tui-chart-series-area {
     z-index: 200;
     position: absolute;
-    overflow-x: hidden;
-    overflow-y: visible;
     &:first-child {
       overflow: visible;
     }

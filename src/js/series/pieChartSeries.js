@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Series = require('./series'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil');
+var Series = require('./series');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -478,6 +478,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
             return html;
         });
+
         seriesLabelContainer.innerHTML = htmls.join('');
     },
 

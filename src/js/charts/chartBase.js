@@ -295,7 +295,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _render: function(onRender) {
-        var labelAxisOptions = this.isVertical ? this.options.xAxis : this.options.yAxis;
+        var labelAxisOptions = (this.isVertical ? this.options.xAxis : this.options.yAxis) || {};
         var renderingData;
 
         this._executeComponentFunc('registerDimension');
@@ -303,7 +303,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this._executeComponentFunc('registerAdditionalDimension');
         this.boundsMaker.registerSeriesDimension();
 
-        if (predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
+        if (this.hasAxes && predicate.isAutoTickInterval(labelAxisOptions.tickInterval)) {
             this._updateAxesData();
         }
 

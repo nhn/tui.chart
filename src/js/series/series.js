@@ -159,9 +159,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var extendedDimension;
 
         if (!seriesLabelContainer) {
-            extendedDimension = this.boundsMaker.getDimension('extendedSeries');
             seriesLabelContainer = dom.create('div', 'tui-chart-series-label-area');
-            renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
+            if (!predicate.isMousePositionChart(this.chartType)) {
+                extendedDimension = this.boundsMaker.getDimension('extendedSeries');
+                renderUtil.renderDimension(seriesLabelContainer, extendedDimension);
+            }
         }
 
         this._renderSeriesLabel(seriesLabelContainer);

@@ -92,7 +92,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                         allowNegativeTooltip: true
                     }
                 }
-            ]
+            ],
+            plot: true
         });
     }
 });

@@ -303,9 +303,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
      * @param {{start: number, end:number}} range range
      * @param {boolean} isVertical whether vertical or not
      * @param {number} index index
+     * @param {boolean} [isMoving] whether moving or not
      * @private
      */
-    _showTooltipSector: function(size, range, isVertical, index) {
+    _showTooltipSector: function(size, range, isVertical, index, isMoving) {
         var groupTooltipSector = this._getTooltipSectorElement(),
             isLine = (range.start === range.end),
             bound = this._makeTooltipSectorBound(size, range, isVertical, isLine);
@@ -316,6 +317,10 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
             renderUtil.renderDimension(groupTooltipSector, bound.dimension);
             renderUtil.renderPosition(groupTooltipSector, bound.position);
             dom.addClass(groupTooltipSector, 'show');
+        }
+
+        if (isMoving) {
+            index -= 1;
         }
 
         this.fire('showGroupAnimation', index);
@@ -356,7 +361,7 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         dom.addClass(elTooltip, 'show');
 
-        this._showTooltipSector(params.size, params.range, params.isVertical, params.index);
+        this._showTooltipSector(params.size, params.range, params.isVertical, params.index, params.isMoving);
 
         dimension = this.getTooltipDimension(elTooltip);
         position = this.positionModel.calculatePosition(dimension, params.range);

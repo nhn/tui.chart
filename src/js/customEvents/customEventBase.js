@@ -58,9 +58,15 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
         /**
          * previous client position of mouse event (clientX, clientY)
-         * @type {null}
+         * @type {null | object}
          */
         this.prevClientPosition = null;
+
+        /**
+         * previous found data.
+         * @type {null | object}
+         */
+        this.prevFoundData = null;
     },
 
     /**
@@ -177,7 +183,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * Animate for adding data.
      */
     animateForAddingData: function() {
-        var foundData;
+        var foundData, isMoving;
 
         if (!this.prevClientPosition) {
             return;
@@ -186,8 +192,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
 
         if (foundData) {
-            this._showTooltip(foundData);
+            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+            this._showTooltip(foundData, isMoving);
         }
+
+        this.prevFoundData = foundData;
     },
 
     /**
@@ -259,6 +268,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      */
     _onMouseout: function() {
         this.prevClientPosition = null;
+        this.prevFoundData = null;
     },
 
     /**
