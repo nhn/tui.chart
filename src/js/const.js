@@ -47,6 +47,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_SCATTER: 'scatter',
     /** @type {string} */
+    CHART_TYPE_HEATMAP: 'heatmap',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
@@ -116,8 +118,8 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATIO: 0.8,
     /** small ratio for pie graph */
     PIE_GRAPH_SMALL_RATIO: 0.65,
-    /** tick count for map chart legend */
-    MAP_CHART_LEGEND_TICK_COUNT: 4,
+    /** tick count for spectrum legend */
+    SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
      * @type {object}
      */

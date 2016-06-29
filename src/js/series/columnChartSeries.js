@@ -139,33 +139,6 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
     },
 
     /**
-     * Make series rendering position
-     * @param {{left: number, top: number, width:number, height: number}} bound - bound
-     * @param {number} labelHeight - label height
-     * @param {number} value - value
-     * @param {string} label - label of seriesItem
-     * @param {?boolean} isStart - whether start or not
-     * @returns {{left: number, top: number}} rendering position
-     * @private
-     */
-    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
-            top = bound.top,
-            left = bound.left + (bound.width - labelWidth) / 2;
-
-        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
-            top -= labelHeight + chartConst.SERIES_LABEL_PADDING;
-        } else {
-            top += bound.height + chartConst.SERIES_LABEL_PADDING;
-        }
-
-        return {
-            left: left,
-            top: top
-        };
-    },
-
-    /**
      * Calculate left position of sum label.
      * @param {{left: number, top: number}} bound bound
      * @param {string} formattedSum formatted sum.

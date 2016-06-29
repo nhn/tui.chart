@@ -186,7 +186,7 @@ var axisTypeMixer = {
             });
         } else {
             axisData = axisDataMaker.makeLabelAxisData({
-                labels: this.dataProcessor.getCategories(),
+                labels: this.dataProcessor.getCategories(isVertical),
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,

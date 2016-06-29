@@ -155,15 +155,17 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                chartType: chartTypesMap.chartTypes[1]
+                chartType: chartTypesMap.chartTypes[1],
+                isVertical: true
             });
         }
 
         this._addComponentsForAxisType({
-            axes: axes,
-            seriesNames: chartTypesMap.seriesNames,
             chartType: this.options.chartType,
-            serieses: serieses
+            seriesNames: chartTypesMap.seriesNames,
+            axis: axes,
+            series: serieses,
+            plot: true
         });
     },
 

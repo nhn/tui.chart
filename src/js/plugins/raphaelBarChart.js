@@ -9,10 +9,10 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var ANIMATION_TIME = 700,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3,
-    DEFAULT_LUMINANC = 0.2;
+var ANIMATION_DURATION = 700;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
+var DEFAULT_LUMINANC = 0.2;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -341,7 +341,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             y: bound.top,
             width: bound.width,
             height: bound.height
-        }, ANIMATION_TIME);
+        }, ANIMATION_DURATION);
     },
 
     /**
@@ -356,7 +356,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
-            line.animate({path: paths[name]}, ANIMATION_TIME);
+            line.animate({path: paths[name]}, ANIMATION_DURATION);
         });
     },
 
@@ -387,7 +387,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             this.callbackTimeout = setTimeout(function() {
                 onFinish();
                 delete self.callbackTimeout;
-            }, ANIMATION_TIME);
+            }, ANIMATION_DURATION);
         }
     },
 

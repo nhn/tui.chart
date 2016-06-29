@@ -138,6 +138,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     registerDimension: function() {
         var dimension = {};
+        var categories;
 
         if (!this._isValidAxis()) {
             return;
@@ -147,7 +148,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             dimension.height = this._makeXAxisHeight();
             this.boundsMaker.registerBaseDimension(this.componentName, dimension);
         } else if (this.isLabel) {
-            dimension.width = this._makeYAxisWidth(this.dataProcessor.getCategories(), this.options);
+            categories = this.dataProcessor.getCategories(this.isVertical);
+            dimension.width = this._makeYAxisWidth(categories, this.options);
             this.boundsMaker.registerBaseDimension(this.componentName, dimension);
         }
     },

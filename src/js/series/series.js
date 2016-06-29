@@ -6,7 +6,7 @@
 
 'use strict';
 
-var seriesTemplate = require('./seriesTemplate');
+var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var predicate = require('../helpers/predicate');
@@ -194,7 +194,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             paper = funcRenderGraph(extendedBound.dimension, seriesData, data.paper);
         }
 
-        if (predicate.isShowLabel(this.options) && !this.seriesLabelContainer) {
+        if (predicate.isShowLabel(this.options)) {
             seriesLabelContainer = this._renderSeriesLabelArea(this.seriesLabelContainer);
             this.seriesLabelContainer = seriesLabelContainer;
             dom.append(seriesContainer, seriesLabelContainer);
@@ -481,26 +481,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Make opacity cssText.
-     * @param {number} opacity opacity
-     * @returns {string} cssText
-     * @private
-     */
-    _makeOpacityCssText: (function() {
-        var funcMakeOpacityCssText;
-        if (renderUtil.isOldBrowser()) {
-            funcMakeOpacityCssText = function(opacity) {
-                return ';filter: alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
-            };
-        } else {
-            funcMakeOpacityCssText = function(_opacity) {
-                return ';opacity: ' + _opacity;
-            };
-        }
-        return funcMakeOpacityCssText;
-    })(),
-
-    /**
      * Make html about series label.
      * @param {{left: number, top: number}} position - position for rendering
      * @param {string} label - label of SeriesItem
@@ -510,19 +490,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeSeriesLabelHtml: function(position, label, index, tplCssText) {
-        var cssObj = tui.util.extend(position, this.theme.label);
+        var labelTheme = this.theme.label;
+        var selectedIndex = this.selectedLegendIndex;
 
-        tplCssText = tplCssText || seriesTemplate.tplCssText;
-
-        if (!tui.util.isNull(this.selectedLegendIndex) && (this.selectedLegendIndex !== index)) {
-            cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
-        } else {
-            cssObj.opacity = '';
-        }
-        return seriesTemplate.tplSeriesLabel({
-            cssText: tplCssText(cssObj),
-            label: label
-        });
+        return labelHelper.makeSeriesLabelHtml(position, label, labelTheme, index, selectedIndex, tplCssText);
     },
 
     /**
