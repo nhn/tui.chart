@@ -73,6 +73,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * Render rect
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} color series color
+     * @param {object} [attributes] - attributes
      * @returns {object} bar rect
      * @private
      */

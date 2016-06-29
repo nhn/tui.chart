@@ -27,7 +27,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * Render left bar for hiding overflow graph.
      * @param {number} height - area height
      * @param {string} chartBackground - background style of chart
-     * @returns {object}
      * @private
      */
     _renderLeftBar: function(height, chartBackground) {
