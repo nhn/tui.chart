@@ -66,7 +66,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     },
 
     /**
-     * Add components
+     * Add components.
      * @param {string} chartType chart type
      * @private
      */
@@ -101,7 +101,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
 axisTypeMixer.mixin(HeatmapChart);
 
 /**
- * Add data ratios.
+ * Add data ratios for rendering graph.
  * @private
  * @override
  */
@@ -112,7 +112,7 @@ HeatmapChart.prototype._addDataRatios = function() {
 };
 
 /**
- * Make rendering data.
+ * Make rendering data for delivery to each component.
  * @returns {object}
  * @private
  * @override
@@ -135,7 +135,7 @@ HeatmapChart.prototype._makeRenderingData = function() {
 };
 
 /**
- * Add custom event component for normal tooltip.
+ * Attach custom event between components.
  * @private
  * @override
  */

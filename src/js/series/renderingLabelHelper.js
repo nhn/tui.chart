@@ -183,25 +183,6 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make opacity cssText.
-     * @returns {string} cssText
-     * @private
-     */
-    _makeOpacityCssText: (function() {
-        var funcMakeOpacityCssText;
-        if (renderUtil.isOldBrowser()) {
-            funcMakeOpacityCssText = function(opacity) {
-                return ';filter: alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
-            };
-        } else {
-            funcMakeOpacityCssText = function(opacity) {
-                return ';opacity: ' + opacity;
-            };
-        }
-        return funcMakeOpacityCssText;
-    })(),
-
-    /**
      * Make css text for series label.
      * @param {{left: number, top: number}} position - position for rendering label
      * @param {object} theme - theme for series label
@@ -217,7 +198,7 @@ var renderingLabelHelper = {
         tplCssText = tplCssText || seriesTemplate.tplCssText;
 
         if (!tui.util.isNull(selectedIndex) && (selectedIndex !== index)) {
-            cssObj.opacity = this._makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
+            cssObj.opacity = renderUtil.makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
         }

@@ -577,19 +577,46 @@ function setOpacity(elements, iteratee) {
     tui.util.forEachArray(elements, iteratee);
 }
 
+/**
+ * Make fillter css string.
+ * @param {number} opacity - opacity
+ * @returns {string}
+ */
+function makeCssFilterString(opacity) {
+    return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
+}
+
 if (isOldBrowser) {
+    /**
+     * Make opacity css text for old browser(IE7, IE8).
+     * @param {number} opacity - opacity
+     * @returns {string}
+     */
+    renderUtil.makeOpacityCssText = function(opacity) {
+        return ';filter: ' + makeCssFilterString(opacity);
+    };
+
     /**
      * Set css opacity for old browser(IE7, IE8).
      * @param {HTMLElement | Array.<HTMLElement>} elements - elements
      * @param {number} opacity - opacity
      */
     renderUtil.setOpacity = function(elements, opacity) {
-        var filter = 'alpha(opacity=' + (opacity * 100) + ')';
+        var filter = makeCssFilterString(opacity);
         setOpacity(elements, function(element) {
             element.style.filter = filter;
         });
     };
 } else {
+    /**
+     * Make opacity css text for browser supporting opacity property of CSS3.
+     * @param {number} opacity - opacity
+     * @returns {string}
+     */
+    renderUtil.makeOpacityCssText = function(opacity) {
+        return ';opacity: ' + opacity;
+    };
+
     /**
      * Set css opacity for browser supporting opacity property of CSS3.
      * @param {HTMLElement | Array.<HTMLElement>} elements - elements
