@@ -550,8 +550,8 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeExportationSeriesData: function(seriesData) {
-        var legendIndex = seriesData.indexes.index,
-            legendData = this.dataProcessor.getLegendItem(legendIndex);
+        var legendIndex = seriesData.indexes.index;
+        var legendData = this.dataProcessor.getLegendItem(legendIndex);
 
         return {
             chartType: legendData.chartType,
@@ -596,7 +596,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     onSelectSeries: function(seriesData) {
         this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
-        if (this.options.allowSelect) {
+        if (this.options.allowSelect && this.graphRenderer.selectSeries) {
             this.graphRenderer.selectSeries(seriesData.indexes);
         }
     },
@@ -607,7 +607,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     onUnselectSeries: function(seriesData) {
         this.userEvent.fire('unselectSeries', this._makeExportationSeriesData(seriesData));
-        if (this.options.allowSelect) {
+        if (this.options.allowSelect && this.graphRenderer.unselectSeries) {
             this.graphRenderer.unselectSeries(seriesData.indexes);
         }
     },

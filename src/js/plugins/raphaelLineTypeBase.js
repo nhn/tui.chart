@@ -332,8 +332,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _showGroupDots: function(index) {
-        var self = this,
-            groupDots = this._getPivotGroupDots();
+        var self = this;
+        var groupDots = this._getPivotGroupDots();
+
+        if (!groupDots[index]) {
+            return;
+        }
 
         tui.util.forEachArray(groupDots[index], function(item) {
             self._showDot(item.endDot.dot);
@@ -442,12 +446,16 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _hideGroupDots: function(index) {
-        var self = this,
-            dots = this._getPivotGroupDots(),
-            hasSelectedIndex = !tui.util.isNull(this.selectedLegendIndex),
-            baseOpacity = this.dotOpacity;
+        var self = this;
+        var groupDots = this._getPivotGroupDots();
+        var hasSelectedIndex = !tui.util.isNull(this.selectedLegendIndex);
+        var baseOpacity = this.dotOpacity;
 
-        tui.util.forEachArray(dots[index], function(item, groupIndex) {
+        if (!groupDots[index]) {
+            return;
+        }
+
+        tui.util.forEachArray(groupDots[index], function(item, groupIndex) {
             var opacity = baseOpacity;
 
             if (opacity && hasSelectedIndex && self.selectedLegendIndex !== groupIndex) {

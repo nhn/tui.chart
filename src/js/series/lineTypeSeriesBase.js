@@ -232,7 +232,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var changedLimit = this._isChangedLimit();
 
         this.movingAnimation = renderUtil.startAnimation(300, function(ratio) {
-            if (changedLimit) {
+            if (changedLimit && self.seriesLabelContainer) {
                 self.seriesLabelContainer.innerHTML = '';
             }
             callback(ratio);
