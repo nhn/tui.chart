@@ -2,7 +2,7 @@
  * @fileoverview axisTypeMixer is mixer for help to axis types charts like bar, column, line, area,
  *                  bubble, column&line combo.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

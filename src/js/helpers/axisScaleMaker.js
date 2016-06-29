@@ -1,7 +1,7 @@
 /**
  * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
- *       FE Development Team <dl_javascript@nhnent.com>
+ *       FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

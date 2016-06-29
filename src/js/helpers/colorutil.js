@@ -1,6 +1,6 @@
 /**
  * @fileoverview Utility methods to manipulate colors
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
 

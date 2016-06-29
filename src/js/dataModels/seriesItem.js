@@ -2,7 +2,7 @@
  * @fileoverview SeriesItem is a element of SeriesGroup.items.
  * SeriesItem has processed terminal data like value, ratio, etc.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

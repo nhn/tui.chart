@@ -2,7 +2,7 @@
  * @fileoverview SeriesItemForCoordinateType is a element of SeriesGroup.items.
  * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

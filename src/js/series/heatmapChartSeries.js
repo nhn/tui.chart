@@ -1,7 +1,7 @@
 /**
  * @fileoverview Series component for rendering graph of heatmap chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

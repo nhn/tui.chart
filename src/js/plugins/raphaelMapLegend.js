@@ -1,7 +1,7 @@
 /**
  * @fileoverview RaphaelMapLegend is graph renderer for map chart legend.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

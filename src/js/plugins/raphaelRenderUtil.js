@@ -1,7 +1,7 @@
 /**
  * @fileoverview Util for raphael rendering.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

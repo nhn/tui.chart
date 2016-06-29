@@ -1,7 +1,7 @@
 /**
  * @fileoverview AreaTypeCustomEvent is event handle layer for line type chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

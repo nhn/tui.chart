@@ -1,7 +1,7 @@
 /**
  * @fileoverview AreaTypeDataModel is data model for custom event of area type.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

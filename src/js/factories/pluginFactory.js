@@ -2,7 +2,7 @@
  * @fileoverview  Plugin factory play role register rendering plugin.
  *                Also, you can get plugin from this factory.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

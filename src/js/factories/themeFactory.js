@@ -2,7 +2,7 @@
  * @fileoverview  Theme factory play role register theme.
  *                Also, you can get theme from this factory.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

@@ -2,7 +2,7 @@
  * @fileoverview Heatmap chart is a graphical representation of data where the individual values contained
  *                      in a matrix are represented as colors.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';

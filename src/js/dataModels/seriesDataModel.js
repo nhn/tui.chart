@@ -3,7 +3,7 @@
  *                  and create from rawSeriesData by user,
  * SeriesDataModel.groups has SeriesGroups.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
