@@ -1,5 +1,5 @@
 /**
- * @fileoverview Heatmap chart series component.
+ * @fileoverview Series component for rendering graph of heatmap chart.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
@@ -12,7 +12,7 @@ var chartConst = require('../const');
 
 var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSeries.prototype */ {
     /**
-     * Heatmap chart series component.
+     * Series component for rendering graph of heatmap chart.
      * @constructs HeatmapChartSeries
      * @extends Series
      */

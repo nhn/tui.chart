@@ -593,7 +593,7 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';filter: ' + makeCssFilterString(opacity);
+        return ';filter:' + makeCssFilterString(opacity);
     };
 
     /**
@@ -614,7 +614,7 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';opacity: ' + opacity;
+        return ';opacity:' + opacity;
     };
 
     /**

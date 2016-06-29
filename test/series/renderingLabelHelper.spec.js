@@ -7,8 +7,8 @@
 'use strict';
 
 var labelHelper = require('../../src/js/series/renderingLabelHelper');
+var seriesTemplate = require('../../src/js/series/seriesTemplate');
 var renderUtil = require('../../src/js/helpers/renderUtil');
-var SeriesDataModel = require('../../src/js/dataModels/SeriesDataModel');
 
 describe('Test for renderingLabelHelper', function() {
     beforeAll(function() {
@@ -98,6 +98,81 @@ describe('Test for renderingLabelHelper', function() {
                 left: -25,
                 top: 36
             });
+        });
+    });
+
+    describe('_makeCssText()', function() {
+        it('레이블 렌더링을 위한 cssText를 생성합니다.', function() {
+            var position = {
+                left: 10,
+                top: 10
+            };
+            var theme = {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            };
+            var actual = labelHelper._makeCssText(position, theme);
+
+            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px');
+        });
+
+        it('선택된 index(selectedIndex)가 있으면서 전달된 index와 같지 않으면 opacity 속성을 추가합니다.', function() {
+            var position = {
+                left: 10,
+                top: 10
+            };
+            var theme = {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            };
+            var index = 0;
+            var selectedIndex = 1;
+            var actual;
+
+            spyOn(renderUtil, 'makeOpacityCssText').and.returnValue(';opacity:0.3');
+
+            actual = labelHelper._makeCssText(position, theme, index, selectedIndex);
+
+            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;opacity:0.3');
+        });
+
+        it('cssText template을 전달하면 해당 template으로 cssText를 생성합니다.', function() {
+            var position = {
+                left: 10,
+                top: 10
+            };
+            var theme = {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            };
+            var actual = labelHelper._makeCssText(position, theme, null, null, seriesTemplate.tplCssTextForLineType);
+
+            expect(actual).toBe('left:10%;top:10%;font-family:Verdana;font-size:12px');
+        });
+    });
+
+    describe('makeSeriesLabelHtml()', function() {
+        it('series label html을 생성합니다.', function() {
+            var position = {
+                left: 10,
+                top: 10
+            };
+            var theme = {
+                fontFamily: 'Verdana',
+                fontSize: 12
+            };
+            var label = 'label';
+            var index = 0;
+            var selectedIndex = 1;
+            var actual, expected;
+
+            spyOn(renderUtil, 'makeOpacityCssText').and.returnValue(';opacity:0.3');
+
+            actual = labelHelper.makeSeriesLabelHtml(position, label, theme, index, selectedIndex);
+            expected = '<div class="tui-chart-series-label"' +
+                        ' style="left:10px;top:10px;font-family:Verdana;font-size:12px;opacity:0.3">label</div>';
+
+            expect(actual).toBe(expected);
         });
     });
 });
