@@ -85,7 +85,7 @@ var renderingLabelHelper = {
      * @param {Array.<Array.<{left: number, top: number, width: number, height: number}>>} boundsSet - bounds set
      * @param {object} theme - theme for series label
      * @param {function} [makePosition] - function for making position of label
-     * @returns {*|Array.<Object>|Array}
+     * @returns {Array.<Object>}
      */
     boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition) {
         var self = this;
@@ -192,7 +192,7 @@ var renderingLabelHelper = {
      * @returns {*}
      * @private
      */
-    _makeCssText: function(position, theme, index, selectedIndex, tplCssText) {
+    _makeLabelCssText: function(position, theme, index, selectedIndex, tplCssText) {
         var cssObj = tui.util.extend(position, theme);
 
         tplCssText = tplCssText || seriesTemplate.tplCssText;
@@ -218,7 +218,7 @@ var renderingLabelHelper = {
      */
     makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText) {
         /*eslint max-params: [2, 6]*/
-        var cssText = this._makeCssText(position, theme, index, selectedIndex, tplCssText);
+        var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
 
         return seriesTemplate.tplSeriesLabel({
             label: label,

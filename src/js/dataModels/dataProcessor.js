@@ -345,7 +345,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {number} firstIndex - index
      * @param {number} oppositeIndex - opposite index
      * @param {boolean} isVerticalChart - whether vertical chart or not
-     * @returns {*|string}
+     * @returns {string}
      */
     getTooltipCategory: function(firstIndex, oppositeIndex, isVerticalChart) {
         var isHorizontal = !isVerticalChart;

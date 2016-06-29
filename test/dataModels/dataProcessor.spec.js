@@ -110,18 +110,42 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('getCategories()', function() {
-        it('세로형 카테고리의 경우 y를 key로하여 categories map을 생성하고 categories를 반환합니다.', function() {
+        it('캐싱된 categoriesMap이 없는 세로형 카테고리의 경우 y를 key로하는 categories map을 캐싱합니다.', function() {
             var isVertical = true;
-            var actual;
 
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
 
-            actual = dataProcessor.getCategories(isVertical);
+            dataProcessor.getCategories(isVertical);
 
             expect(dataProcessor.categoriesMap.y).toEqual(['cate1', 'cate2', 'cate3']);
             expect(dataProcessor.categoriesMap.x).toBeUndefined();
+        });
+
+        it('캐싱된 categoriesMap이 없는 가로형 카테고리의 경우 x를 key로하는 categories map을 캐싱합니다.', function() {
+            var isVertical = false;
+
+            dataProcessor.rawData = {
+                categories: ['cate1', 'cate2', 'cate3']
+            };
+
+            dataProcessor.getCategories(isVertical);
+
+            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
+            expect(dataProcessor.categoriesMap.y).toBeUndefined();
+        });
+
+        it('세로형 카테고리의 경우 캐싱된 categorieMap에서 y에 해당하는 categories를 반환합니다.', function() {
+            var isVertical = true;
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                y: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.getCategories(isVertical);
+
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
@@ -129,28 +153,24 @@ describe('Test for DataProcessor', function() {
             var isVertical = false;
             var actual;
 
-            dataProcessor.rawData = {
-                categories: ['cate1', 'cate2', 'cate3']
+            dataProcessor.categoriesMap = {
+                x: ['cate1', 'cate2', 'cate3']
             };
 
             actual = dataProcessor.getCategories(isVertical);
 
-            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
-            expect(dataProcessor.categoriesMap.y).toBeUndefined();
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
 
         it('isVertical 값이 없다면 categoriesMap에서 한가지 카테고리를 추출하여 반환합니다(hasCategories에서 존재 여부 체크에 사용).', function() {
             var actual;
 
-            dataProcessor.rawData = {
-                categories: ['cate1', 'cate2', 'cate3']
+            dataProcessor.categoriesMap = {
+                y: ['cate1', 'cate2', 'cate3']
             };
 
             actual = dataProcessor.getCategories();
 
-            expect(dataProcessor.categoriesMap.x).toEqual(['cate1', 'cate2', 'cate3']);
-            expect(dataProcessor.categoriesMap.y).toBeUndefined();
             expect(actual).toEqual(['cate1', 'cate2', 'cate3']);
         });
     });

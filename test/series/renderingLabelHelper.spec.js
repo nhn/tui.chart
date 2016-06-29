@@ -101,7 +101,7 @@ describe('Test for renderingLabelHelper', function() {
         });
     });
 
-    describe('_makeCssText()', function() {
+    describe('_makeLabelCssText()', function() {
         it('레이블 렌더링을 위한 cssText를 생성합니다.', function() {
             var position = {
                 left: 10,
@@ -111,7 +111,7 @@ describe('Test for renderingLabelHelper', function() {
                 fontFamily: 'Verdana',
                 fontSize: 12
             };
-            var actual = labelHelper._makeCssText(position, theme);
+            var actual = labelHelper._makeLabelCssText(position, theme);
 
             expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px');
         });
@@ -131,7 +131,7 @@ describe('Test for renderingLabelHelper', function() {
 
             spyOn(renderUtil, 'makeOpacityCssText').and.returnValue(';opacity:0.3');
 
-            actual = labelHelper._makeCssText(position, theme, index, selectedIndex);
+            actual = labelHelper._makeLabelCssText(position, theme, index, selectedIndex);
 
             expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;opacity:0.3');
         });
@@ -145,7 +145,7 @@ describe('Test for renderingLabelHelper', function() {
                 fontFamily: 'Verdana',
                 fontSize: 12
             };
-            var actual = labelHelper._makeCssText(position, theme, null, null, seriesTemplate.tplCssTextForLineType);
+            var actual = labelHelper._makeLabelCssText(position, theme, null, null, seriesTemplate.tplCssTextForLineType);
 
             expect(actual).toBe('left:10%;top:10%;font-family:Verdana;font-size:12px');
         });

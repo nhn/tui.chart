@@ -60,7 +60,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     _makeAxisScaleMakerMap: function() {
         return {
             legend: this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-                valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
+                valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
             })
         };
     },

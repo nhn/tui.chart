@@ -8,12 +8,12 @@
 
 var raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var ANIMATION_TIME = 700;
+var ANIMATION_DURATION = 700;
 var DEFAULT_DOT_RADIUS = 3;
 var HOVER_DOT_RADIUS = 4;
 var SELECTION_DOT_RADIUS = 7;
 var DE_EMPHASIS_OPACITY = 0.3;
-var MOVING_ANIMATION_TIME = 300;
+var MOVING_ANIMATION_DURATION = 300;
 var LEFT_BAR_WIDTH = 10;
 
 var concat = Array.prototype.concat;
@@ -506,7 +506,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         tui.chart.renderUtil.cancelAnimation(this.animation);
 
-        this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_TIME, function(ratio) {
+        this.animation = tui.chart.renderUtil.startAnimation(ANIMATION_DURATION, function(ratio) {
             var width = Math.min(seriesWidth * ratio, seriesWidth);
 
             self.paper.setSize(width, seriesHeight);
@@ -606,7 +606,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         raphaelObj.animate({
             cx: position.left,
             cy: position.top
-        }, MOVING_ANIMATION_TIME);
+        }, MOVING_ANIMATION_DURATION);
     },
 
     /**
@@ -618,7 +618,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     _animateByPath: function(raphaelObj, paths) {
         raphaelObj.animate({
             path: paths.join(' ')
-        }, MOVING_ANIMATION_TIME);
+        }, MOVING_ANIMATION_DURATION);
     },
 
     /**

@@ -9,7 +9,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var ANIMATION_TIME = 700;
+var ANIMATION_DURATION = 700;
 var CIRCLE_OPACITY = 0.5;
 var STROKE_OPACITY = 0.3;
 var EMPHASIS_OPACITY = 0.5;
@@ -188,7 +188,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         circle.animate({
             r: radius,
             opacity: CIRCLE_OPACITY
-        }, ANIMATION_TIME);
+        }, ANIMATION_DURATION);
     },
 
     /**
@@ -214,7 +214,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
             this.animationTimeoutId = setTimeout(function() {
                 onFinish();
                 this.animationTimeoutId = null;
-            }, ANIMATION_TIME);
+            }, ANIMATION_DURATION);
         }
     },
 

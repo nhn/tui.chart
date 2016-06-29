@@ -578,11 +578,11 @@ function setOpacity(elements, iteratee) {
 }
 
 /**
- * Make fillter css string.
+ * Make filter opacity css string.
  * @param {number} opacity - opacity
  * @returns {string}
  */
-function makeCssFilterString(opacity) {
+function makeCssFilterOpacityString(opacity) {
     return 'alpha(opacity=' + (opacity * chartConst.OLD_BROWSER_OPACITY_100) + ')';
 }
 
@@ -593,7 +593,7 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';filter:' + makeCssFilterString(opacity);
+        return ';filter:' + makeCssFilterOpacityString(opacity);
     };
 
     /**
@@ -602,7 +602,7 @@ if (isOldBrowser) {
      * @param {number} opacity - opacity
      */
     renderUtil.setOpacity = function(elements, opacity) {
-        var filter = makeCssFilterString(opacity);
+        var filter = makeCssFilterOpacityString(opacity);
         setOpacity(elements, function(element) {
             element.style.filter = filter;
         });

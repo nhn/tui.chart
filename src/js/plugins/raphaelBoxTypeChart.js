@@ -9,7 +9,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var ANIMATION_TIME = 100;
+var ANIMATION_DURATION = 100;
 
 /**
  * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
@@ -67,15 +67,27 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     },
 
     /**
+     * Animate changing color of box.
+     * @param {{groupIndex: number, index:number}} indexes - index info
+     * @param {string} [color] - fill color
+     * @private
+     */
+    _animateChangingColor: function(indexes, color) {
+        var box = this.boxesSet[indexes.groupIndex][indexes.index];
+
+        color = color || box.color;
+
+        box.rect.animate({
+            fill: color
+        }, ANIMATION_DURATION);
+    },
+
+    /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
      */
     showAnimation: function(indexes) {
-        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-
-        box.rect.animate({
-            fill: this.theme.overColor
-        }, ANIMATION_TIME);
+        this._animateChangingColor(indexes, this.theme.overColor);
     },
 
     /**
@@ -83,11 +95,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @param {{groupIndex: number, index:number}} indexes - index info
      */
     hideAnimation: function(indexes) {
-        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-
-        box.rect.animate({
-            fill: box.color
-        }, ANIMATION_TIME);
+        this._animateChangingColor(indexes);
     }
 });
 

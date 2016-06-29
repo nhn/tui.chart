@@ -8,7 +8,6 @@
 'use strict';
 
 var renderUtil = require('../helpers/renderUtil');
-var labelHelper = require('./renderingLabelHelper');
 
 var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSeriesBase.prototype */ {
     /**
@@ -91,7 +90,7 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
             top: basePosition.top - (labelHeight / 2)
         };
 
-        return labelHelper._makeSeriesLabelHtml(position, label, index);
+        return this._makeSeriesLabelHtml(position, label, index);
     },
 
     /**

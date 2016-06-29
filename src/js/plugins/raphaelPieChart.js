@@ -14,7 +14,7 @@ var DEGREE_180 = 180;
 var DEGREE_360 = 360;
 var MIN_DEGREE = 0.01;
 var RAD = Math.PI / DEGREE_180;
-var LOADING_ANIMATION_TIME = 700;
+var LOADING_ANIMATION_DURATION = 700;
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var DEFAULT_LUMINANC = 0.2;
@@ -411,7 +411,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             var attrMap = {
                 fill: sectorInfo.color
             };
-            var animationTime = LOADING_ANIMATION_TIME * sectorInfo.ratio;
+            var animationTime = LOADING_ANIMATION_DURATION * sectorInfo.ratio;
             var anim;
 
             if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
