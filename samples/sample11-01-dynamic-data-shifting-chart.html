@@ -45,7 +45,7 @@
     var legends = ['SiteA', 'SiteB'];
     var seriesData = tui.util.map(tui.util.range(2), function(value, index) {
         var name = legends[index];
-        var data = tui.util.map(tui.util.range(10), function() {
+        var data = tui.util.map(tui.util.range(20), function() {
             return getRandom(150, 200);
         });
         return {
@@ -91,7 +91,7 @@
         series: {
             spline: true,
             showDot: true,
-//            shifting: true
+            shifting: true
         },
         tooltip: {
             grouped: true
