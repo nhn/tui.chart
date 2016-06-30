@@ -18,18 +18,56 @@
         return start + (Math.floor(Math.random() * (end - start + 1)));
     }
 
-    var seriesData = tui.util.map(tui.util.range(2), function(value) {
-        var name = 'Legend' + value;
-        var data = tui.util.map(tui.util.range(20), function(value, index) {
-            return getRandom(-30, 30);
+    function zeroFill(number) {
+        var filledNumber;
+
+        if (number < 10) {
+            filledNumber = '0' + number;
+        } else {
+            filledNumber = number;
+        }
+
+        return filledNumber;
+    }
+
+    function adjustTime(time, addTime) {
+        addTime = addTime || 60;
+        if (time < 0) {
+            time += addTime;
+        }
+        return time;
+    }
+
+    function makeDate(hour, minute, second) {
+        return zeroFill(adjustTime(hour, 24)) + ':' + zeroFill(adjustTime(minute)) + ':' + zeroFill(adjustTime(second));
+    }
+
+    var legends = ['SiteA', 'SiteB'];
+    var seriesData = tui.util.map(tui.util.range(2), function(value, index) {
+        var name = legends[index];
+        var data = tui.util.map(tui.util.range(20), function() {
+            return getRandom(150, 200);
         });
         return {
             name: name,
             data: data
         };
     });
+    var baseNow = new Date();
+    var startSecond = baseNow.getSeconds() - seriesData[0].data.length - 1;
     var categories = tui.util.map(seriesData[0].data, function(value, index) {
-        return 'cate' + index;
+        var hour = baseNow.getHours();
+        var minute = baseNow.getMinutes();
+        var second = startSecond + index;
+
+        if (second < 0) {
+            minute -= 1;
+        }
+
+        if (minute < 0) {
+            hour -= 1;
+        }
+        return makeDate(hour, minute, (startSecond + index));
     });
     var container = document.getElementById('chart-area');
     var data = {
@@ -40,15 +78,20 @@
         chart: {
             width: 700,
             height: 400,
-            title: 'Dynamic data'
+            title: 'Concurrent users'
         },
         xAxis: {
-            labelInterval: 2
+            title: 'seconds',
+            labelInterval: 3,
+            tickInterval: 'auto'
+        },
+        yAxis: {
+            title: 'users'
         },
         series: {
             spline: true,
-            shifting: true,
-            showDot: true
+            showDot: true,
+            shifting: true
         },
         tooltip: {
             grouped: true
@@ -59,8 +102,9 @@
     chart.on('load', function() {
         var index = categories.length;
         setInterval(function() {
-            var category = 'cate' + index;
-            var values = [getRandom(-30, 30), getRandom(-30, 30)];
+            var now = new Date();
+            var category = makeDate(now.getHours(), now.getMinutes(), now.getSeconds());
+            var values = [getRandom(150, 200), getRandom(150, 200)];
 
             chart.addData(category, values);
             index += 1;

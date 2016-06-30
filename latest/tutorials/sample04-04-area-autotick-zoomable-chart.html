@@ -18,18 +18,68 @@
         return start + (Math.floor(Math.random() * (end - start + 1)));
     }
 
-    var seriesData = tui.util.map(tui.util.range(1), function(value) {
-        var name = 'Legend' + value;
-        var data = tui.util.map(tui.util.range(200), function(value, index) {
-            return getRandom(30, 50);
+    function zeroFill(number) {
+        var filledNumber;
+
+        if (number < 10) {
+            filledNumber = '0' + number;
+        } else {
+            filledNumber = number;
+        }
+
+        return filledNumber;
+    }
+
+    function adjustTime(time, addTime) {
+        addTime = addTime || 60;
+        if (time < 0) {
+            time += addTime;
+        }
+        return time;
+    }
+
+    function makeDate(hour, minute, second) {
+        return zeroFill(adjustTime(hour, 24)) + ':' + zeroFill(adjustTime(minute)) + ':' + zeroFill(adjustTime(second));
+    }
+
+    function makeDivisionTime(time) {
+        time = Math.abs(time);
+        var share = parseInt(time / 60, 10) || 1;
+
+        if (time % 60 === 0) {
+            share += 1;
+        }
+
+        return share;
+    }
+
+    var legends = ['SiteA', 'SiteB'];
+    var seriesData = tui.util.map(tui.util.range(1), function(value, index) {
+        var name = legends[index];
+        var data = tui.util.map(tui.util.range(100), function() {
+            return getRandom(150, 200);
         });
         return {
             name: name,
             data: data
         };
     });
+    var baseNow = new Date();
+    var startSecond = baseNow.getSeconds() - seriesData[0].data.length - 1;
     var categories = tui.util.map(seriesData[0].data, function(value, index) {
-        return 'cate' + (index + 1);
+        var hour = baseNow.getHours();
+        var minute = baseNow.getMinutes();
+        var second = startSecond + index;
+
+        if (second < 0) {
+            minute -= makeDivisionTime(second);
+            second = second % 60;
+        }
+
+        if (minute < 0) {
+            hour -= makeDivisionTime(minute);
+        }
+        return makeDate(hour, minute, second);
     });
     var container = document.getElementById('chart-area');
     var data = {
@@ -40,15 +90,17 @@
         chart: {
             width: 700,
             height: 400,
-            title: 'Auto tick and Zoomable'
-        },
-        yAxis: {
-            min: 0
+            title: 'Concurrent users'
         },
         xAxis: {
+            title: 'seconds',
             tickInterval: 'auto'
         },
+        yAxis: {
+            title: 'users'
+        },
         series: {
+            spline: true,
             zoomable: true
         }
     };
