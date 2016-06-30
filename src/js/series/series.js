@@ -488,6 +488,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {string} label - label of SeriesItem
      * @param {number} index - index of legend
      * @param {object} [tplCssText] - cssText template object
+     * @param {boolean} [isStart] - whether start label or not
      * @returns {string}
      * @private
      */

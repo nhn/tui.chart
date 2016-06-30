@@ -421,7 +421,9 @@ describe('Test for BoundsMaker', function() {
                 }
             };
             boundsMaker.axesData = {
-                xAxis: {}
+                xAxis: {
+                    labels: []
+                }
             };
 
             boundsMaker._updateDimensionsAndDegree();

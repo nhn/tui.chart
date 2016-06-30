@@ -264,7 +264,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return ((parseInt(index, 10) + 1) % itemCount) === 1;
         });
 
-        firstLabelElements = tui.util.map(filteredElements, function(element, index) {
+        firstLabelElements = tui.util.map(filteredElements, function(element) {
             var nextElement = element.nextSibling;
             var elements = [element];
             if (nextElement && nextElement.getAttribute('data-range')) {

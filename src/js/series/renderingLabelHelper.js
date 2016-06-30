@@ -214,10 +214,11 @@ var renderingLabelHelper = {
      * @param {number} index - index of legends
      * @param {number} selectedIndex - selected index of legends
      * @param {object} [tplCssText] - cssText template object
+     * @param {boolean} [isStart] - whether start label or not
      * @returns {string}
      */
     makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText, isStart) {
-        /*eslint max-params: [2, 6]*/
+        /*eslint max-params: [2, 7]*/
         var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
         var rangeLabelAttribute = '';
 
