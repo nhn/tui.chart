@@ -282,12 +282,15 @@ tui.chart.columnChart = function(container, rawData, options) {
  *      @param {object} options.xAxis - options for x axis component
  *          @param {string} options.xAxis.title - title for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
+ *          @param {string} options.xAxis.tickInterval - tick interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline - whether spline or not
+ *          @param {boolean} options.series.zoomable - whether zoomable or not
+ *          @param {boolean} options.series.shifting - whether shifting or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
@@ -373,11 +376,14 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {string} options.xAxis.title - title for x axis
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {string} options.xAxis.tickInterval - tick interval for x axis
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {boolean} options.series.allowSelect - whether allow select or not
  *          @param {boolean} options.series.spline - whether spline or not
+ *          @param {boolean} options.series.zoomable - whether zoomable or not
+ *          @param {boolean} options.series.shifting - whether shifting or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
