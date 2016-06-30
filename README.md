@@ -78,3 +78,4 @@ This application supports drawing a chart on web browser.<br>
 
 ## License
 This software is licensed under the [MIT License](https://github.com/nhnent/tui.chart/blob/master/LICENSE).
+
