@@ -375,11 +375,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _renderPosition: function(el, position) {
-        var hiddenWidth = renderUtil.isOldBrowser() ? 0 : 0;
+        var hiddenWidth = renderUtil.isOldBrowser() ? 1 : 0;
 
         renderUtil.renderPosition(el, {
-            top: position.top - (hiddenWidth * 2),
-            left: position.left - hiddenWidth
+            top: position.top - (hiddenWidth),
+            left: position.left - (hiddenWidth * 2)
         });
     },
 
@@ -491,11 +491,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @returns {string}
      * @private
      */
-    _makeSeriesLabelHtml: function(position, label, index, tplCssText) {
+    _makeSeriesLabelHtml: function(position, label, index, tplCssText, isStart) {
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
 
-        return labelHelper.makeSeriesLabelHtml(position, label, labelTheme, index, selectedIndex, tplCssText);
+        return labelHelper.makeSeriesLabelHtml(position, label, labelTheme, index, selectedIndex, tplCssText, isStart);
     },
 
     /**

@@ -9,7 +9,7 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var htmls = {
-    HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}">{{ label }}</div>',
+    HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>{{ label }}</div>',
     TEXT_CSS_TEXT: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};' +
         'font-size:{{ fontSize }}px{{opacity}}',
     TEXT_CSS_TEXT_FOR_LINE_TYPE: 'left:{{ left }}%;top:{{ top }}%;font-family:{{ fontFamily }};' +

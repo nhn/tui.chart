@@ -163,7 +163,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      * Rerender.
      */
     rerender: function() {
-        this.container.innerHTML = null;
+        this.container.innerHTML = '';
         this._render();
     },
 

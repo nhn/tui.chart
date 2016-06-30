@@ -23,7 +23,7 @@ module.exports = {
             var result = html;
             tui.util.forEach(data, function(value, key) {
                 var regExp = new RegExp('{{\\s*' + key + '\\s*}}', 'g');
-                result = result.replace(regExp, value);
+                result = result.replace(regExp, String(value).replace('$0', '<span>$</span>0'));
             });
             return result;
         };

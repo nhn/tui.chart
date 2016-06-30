@@ -11,6 +11,8 @@ var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 
+var concat = Array.prototype.concat;
+
 /**
  * @classdesc LineTypeSeriesBase is base class for line type series.
  * @class LineTypeSeriesBase
@@ -122,7 +124,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value, isStart);
 
-        return this._makeSeriesLabelHtml(position, label, groupIndex, seriesTemplate.tplCssTextForLineType);
+        return this._makeSeriesLabelHtml(position, label, groupIndex, seriesTemplate.tplCssTextForLineType, isStart);
     },
 
     /**
@@ -242,6 +244,57 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
+     * Pick first label elements.
+     * @returns {Array.<HTMLElement>}
+     * @private
+     */
+    _pickFirstLabelElements: function() {
+        var itemCount = this.dataProcessor.getCategoryCount() - 1;
+        var seriesLabelContainer = this.seriesLabelContainer;
+        var labelElements = seriesLabelContainer.childNodes;
+        var filteredElements = [];
+        var firstLabelElements;
+
+        tui.util.forEachArray(labelElements, function(element) {
+            if (!element.getAttribute('data-range')) {
+                filteredElements.push(element);
+            }
+        });
+        filteredElements = tui.util.filter(filteredElements, function(element, index) {
+            return ((parseInt(index, 10) + 1) % itemCount) === 1;
+        });
+
+        firstLabelElements = tui.util.map(filteredElements, function(element, index) {
+            var nextElement = element.nextSibling;
+            var elements = [element];
+            if (nextElement && nextElement.getAttribute('data-range')) {
+                elements.push(nextElement);
+            }
+            return elements;
+        });
+
+        return concat.apply([], firstLabelElements);
+    },
+
+    /**
+     * Hide first labels.
+     * @private
+     */
+    _hideFirstLabels: function() {
+        var seriesLabelContainer = this.seriesLabelContainer;
+        var firsLabelElements;
+
+        if (!seriesLabelContainer) {
+            return;
+        }
+
+        firsLabelElements = this._pickFirstLabelElements();
+        tui.util.forEachArray(firsLabelElements, function(element) {
+            seriesLabelContainer.removeChild(element);
+        });
+    },
+
+    /**
      * Animate for moving of graph container.
      * @param {number} interval - interval for moving
      * @private
@@ -252,12 +305,14 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         var beforeLeft = parseInt(childrenForMoving[0].style.left, 10) || 0;
         var areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
 
+        this._hideFirstLabels();
         this._animate(function(ratio) {
             var left = interval * ratio;
 
             tui.util.forEachArray(childrenForMoving, function(child) {
                 child.style.left = (beforeLeft - left) + 'px';
             });
+
             graphRenderer.setSize(areaWidth + left);
         });
     },

@@ -265,13 +265,6 @@
     }
   }
 
-  &.tui-line-chart, &.tui-area-chart {
-    .tui-chart-series-area {
-      overflow-x: hidden;
-      overflow-y: visible;
-    }
-  }
-
   .tui-chart-series-area {
     z-index: 200;
     position: absolute;
@@ -367,6 +360,8 @@
     position: absolute;
     left: 0;
     top: 0;
+    background-color:rgba(0, 0, 0, 0);
+
     &.hide {
       display: none;
     }

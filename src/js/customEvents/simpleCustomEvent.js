@@ -6,8 +6,8 @@
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase'),
-    renderUtil = require('../helpers/renderUtil');
+var CustomEventBase = require('./customEventBase');
+var renderUtil = require('../helpers/renderUtil');
 
 var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleCustomEvent.prototype */ {
     /**

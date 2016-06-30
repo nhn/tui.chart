@@ -459,10 +459,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _updateDimensionsAndDegree: function() {
-        var xAxisOptions = this.options.xAxis || {},
-            limitWidth = this._calculateXAxisLabelLimitWidth(),
-            labels = this.axesData.xAxis.labels,
-            rotationInfo, overflowLeft, diffHeight;
+        var xAxisOptions = this.options.xAxis || {};
+        var limitWidth = this._calculateXAxisLabelLimitWidth();
+        var labels = tui.util.filter(this.axesData.xAxis.labels, function(label) {
+            return !!label;
+        });
+        var rotationInfo, overflowLeft, diffHeight;
 
         if (xAxisOptions.rotateLabel !== false) {
             rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);

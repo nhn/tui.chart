@@ -216,13 +216,18 @@ var renderingLabelHelper = {
      * @param {object} [tplCssText] - cssText template object
      * @returns {string}
      */
-    makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText) {
+    makeSeriesLabelHtml: function(position, label, theme, index, selectedIndex, tplCssText, isStart) {
         /*eslint max-params: [2, 6]*/
         var cssText = this._makeLabelCssText(position, theme, index, selectedIndex, tplCssText);
+        var rangeLabelAttribute = '';
 
+        if (isStart) {
+            rangeLabelAttribute = ' data-range="true"';
+        }
         return seriesTemplate.tplSeriesLabel({
             label: label,
-            cssText: cssText
+            cssText: cssText,
+            rangeLabelAttribute: rangeLabelAttribute
         });
     },
 
