@@ -64,6 +64,7 @@ describe('Test for ComboChart', function() {
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
             dataProcessor.getCategories.and.returnValue(['cate1', 'cate2']);
+            axisTypeMixer.options = {};
 
             actual = axisTypeMixer._makeAxisData(null, 'options');
             expected = 'label type';
@@ -73,7 +74,8 @@ describe('Test for ComboChart', function() {
                 options: 'options',
                 isVertical: false,
                 isPositionRight: false,
-                aligned: false
+                aligned: false,
+                addedDataCount: 0
             });
             expect(actual).toBe(expected);
         });
@@ -119,6 +121,10 @@ describe('Test for ComboChart', function() {
 
     describe('_addSeriesComponents', function() {
         it('series 컴포넌트들을 추가합니다..', function() {
+            axisTypeMixer.theme = {
+                chart: {}
+            };
+
             axisTypeMixer._addSeriesComponents(
                 [
                     {
@@ -160,9 +166,9 @@ describe('Test for ComboChart', function() {
             };
 
             axisTypeMixer._addComponentsForAxisType({
-                axes: ['xAxis', 'yAxis'],
+                axis: ['xAxis', 'yAxis'],
                 processedData: {},
-                serieses: [
+                seires: [
                     {
                         name: 'columnSreies',
                         data: {},
@@ -172,7 +178,8 @@ describe('Test for ComboChart', function() {
                         data: {},
                         SeriesClass: ''
                     }
-                ]
+                ],
+                plot: true
             });
 
             expect(componentMap.plot).toBeDefined();

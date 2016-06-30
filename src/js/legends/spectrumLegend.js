@@ -1,22 +1,22 @@
 /**
- * @fileoverview  Legend component for map chart.
+ * @fileoverview  Spectrum Legend component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil'),
-    pluginFactory = require('../factories/pluginFactory'),
-    legendTemplate = require('./../legends/legendTemplate');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
+var pluginFactory = require('../factories/pluginFactory');
+var legendTemplate = require('./../legends/legendTemplate');
 
-var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */ {
+var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */ {
     /**
-     * Legend component for map chart.
-     * @constructs MapChartLegend
+     * Spectrum Legend component.
+     * @constructs SpectrumLegend
      * @param {object} params parameters
      *      @param {object} params.theme axis theme
      *      @param {?Array.<string>} params.options legend options
@@ -289,6 +289,6 @@ var MapChartLegend = tui.util.defineClass(/** @lends MapChartLegend.prototype */
     }
 });
 
-tui.util.CustomEvents.mixin(MapChartLegend);
+tui.util.CustomEvents.mixin(SpectrumLegend);
 
-module.exports = MapChartLegend;
+module.exports = SpectrumLegend;

@@ -1,17 +1,17 @@
 /**
  * @fileoverview CustomEventBase is base class for event handle layers.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var eventListener = require('../helpers/eventListener'),
-    TickBaseCoordinateModel = require('./tickBaseCoordinateModel'),
-    BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel'),
-    chartConst = require('../const'),
-    dom = require('../helpers/domHandler'),
-    renderUtil = require('../helpers/renderUtil');
+var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
+var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
+var chartConst = require('../const');
+var eventListener = require('../helpers/eventListener');
+var dom = require('../helpers/domHandler');
+var renderUtil = require('../helpers/renderUtil');
 
 var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype */ {
     /**
@@ -26,11 +26,47 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      *      @param {boolean} params.isVertical whether vertical or not
      */
     init: function(params) {
+        /**
+         * type of chart
+         * @type {string}
+         */
         this.chartType = params.chartType;
+
+        /**
+         * whether vertical or not
+         * @type {boolean}
+         */
         this.isVertical = params.isVertical;
+
+        /**
+         * data processor
+         * @type {DataProcessor}
+         */
         this.dataProcessor = params.dataProcessor;
+
+        /**
+         * bounds maker
+         * @type {BoundsMaker}
+         */
         this.boundsMaker = params.boundsMaker;
+
+        /**
+         * selected series item.
+         * @type {null | object}
+         */
         this.selectedData = null;
+
+        /**
+         * previous client position of mouse event (clientX, clientY)
+         * @type {null | object}
+         */
+        this.prevClientPosition = null;
+
+        /**
+         * previous found data.
+         * @type {null | object}
+         */
+        this.prevFoundData = null;
     },
 
     /**
@@ -109,11 +145,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _findDataFromBoundsCoordinateModel: function(target, clientX, clientY) {
-        var bound = target.getBoundingClientRect(),
-            layerX = clientX - bound.left,
-            layerY = clientY - bound.top,
-            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
-        return this.boundsBaseCoordinateModel.findData(groupIndex, layerX + chartConst.SERIES_EXPAND_SIZE, layerY);
+        var bound = target.getBoundingClientRect();
+        var layerX = clientX - bound.left;
+        var layerY = clientY - bound.top;
+        var groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+
+        layerX += chartConst.SERIES_EXPAND_SIZE;
+        layerY += chartConst.SERIES_EXPAND_SIZE;
+        return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
     },
 
     /**
@@ -124,6 +163,40 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         var eventName = renderUtil.makeCustomEventName('unselect', this.selectedData.chartType, 'series');
         this.fire(eventName, this.selectedData);
         this.selectedData = null;
+    },
+
+    /**
+     * Find data.
+     * @private
+     * @abstract
+     */
+    _findData: function() {},
+
+    /**
+     * Show tooltip
+     * @private
+     * @abstract
+     */
+    _showTooltip: function() {},
+
+    /**
+     * Animate for adding data.
+     */
+    animateForAddingData: function() {
+        var foundData, isMoving;
+
+        if (!this.prevClientPosition) {
+            return;
+        }
+
+        foundData = this._findData(this.prevClientPosition.x, this.prevClientPosition.y);
+
+        if (foundData) {
+            isMoving = this.prevFoundData && (this.prevFoundData.indexes.groupIndex === foundData.indexes.groupIndex);
+            this._showTooltip(foundData, isMoving);
+        }
+
+        this.prevFoundData = foundData;
     },
 
     /**
@@ -179,28 +252,37 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * On mouse move
+     * @param {MouseEvent} e - mouse event
      * @private
-     * @abstract
      */
-    _onMousemove: function() {},
+    _onMousemove: function(e) {
+        this.prevClientPosition = {
+            x: e.clientX,
+            y: e.clientY
+        };
+    },
 
     /**
      * On mouse out
      * @private
-     * @abstract
      */
-    _onMouseout: function() {},
+    _onMouseout: function() {
+        this.prevClientPosition = null;
+        this.prevFoundData = null;
+    },
 
     /**
      * Attach event
      * @param {HTMLElement} target - target element
      */
     attachEvent: function(target) {
-        eventListener.bindEvent('click', target, this._onClick, this);
-        eventListener.bindEvent('mousedown', target, this._onMousedown, this);
-        eventListener.bindEvent('mouseup', target, this._onMouseup, this);
-        eventListener.bindEvent('mousemove', target, this._onMousemove, this);
-        eventListener.bindEvent('mouseout', target, this._onMouseout, this);
+        eventListener.on(target, {
+            click: this._onClick,
+            mousedown: this._onMousedown,
+            mouseup: this._onMouseup,
+            mousemove: this._onMousemove,
+            mouseout: this._onMouseout
+        }, this);
     }
 });
 

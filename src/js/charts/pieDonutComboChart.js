@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pie and Donut Combo chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -83,6 +83,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         this._addLegendComponent(this.chartTypes);
         this._addTooltipComponent();
         this._addSeriesComponents(this._makeDataForAddingSeriesComponent());
+        this._addCustomEventComponent();
     },
 
     /**
@@ -122,7 +123,7 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var rawData = this._filterRawData(this.rawData, checkedLegends);
+        var rawData = this._filterCheckedRawData(this.rawData, checkedLegends);
 
         this.chartTypes = this._pickChartTypes(rawData.series);
 

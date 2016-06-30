@@ -1,7 +1,7 @@
 /**
  * @fileoverview Bubble chart series component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -28,10 +28,10 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
         var step = 0;
         var dimension, seriesDataModel, size, len;
 
-        if (this.dataProcessor.hasCategories()) {
+        if (this.dataProcessor.hasCategories(false)) {
             dimension = this.boundsMaker.getDimension('series');
             seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
-            len = this.dataProcessor.getCategories().length;
+            len = this.dataProcessor.getCategoryCount(false);
 
             if (seriesDataModel.isXCountGreaterThanYCount()) {
                 size = dimension.height;

@@ -1,14 +1,14 @@
 /**
  * @fileoverview AreaTypeCustomEvent is event handle layer for line type chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase'),
-    AreaTypeDataModel = require('./areaTypeDataModel'),
-    chartConst = require('../const');
+var CustomEventBase = require('./customEventBase');
+var zoomMixer = require('./zoomMixer');
+var AreaTypeDataModel = require('./areaTypeDataModel');
 
 var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaTypeCustomEvent.prototype */ {
     /**
@@ -25,6 +25,8 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
          * @type {null | object}
          */
         this.prevFoundData = null;
+
+        this._initForZoom(params.zoomable);
     },
 
     /**
@@ -34,8 +36,62 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      */
     initCustomEventData: function(seriesInfos) {
         var seriesInfo = seriesInfos[0];
+
         this.dataModel = new AreaTypeDataModel(seriesInfo);
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
+
+        this._showTooltipAfterZoom();
+    },
+
+    /**
+     * Find data by client position.
+     * @param {number} clientX - clientX
+     * @param {number} clientY - clientY
+     * @returns {object}
+     * @private
+     */
+    _findData: function(clientX, clientY) {
+        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+        var groupIndex = this.tickBaseCoordinateModel.findIndex(layerPosition.x);
+
+        return this.dataModel.findData(groupIndex, layerPosition.y);
+    },
+
+    /**
+     * Get first model data.
+     * @param {number} index - index
+     * @returns {object}
+     * @private
+     */
+    _getFirstData: function(index) {
+        return this.dataModel.getFirstData(index);
+    },
+
+    /**
+     * Get last model data.
+     * @param {number} index - index
+     * @returns {object}
+     * @private
+     */
+    _getLastData: function(index) {
+        return this.dataModel.getLastData(index);
+    },
+
+    /**
+     * Show tooltip.
+     * @param {object} foundData - model data
+     * @private
+     */
+    _showTooltip: function(foundData) {
+        this.fire('showTooltip', foundData);
+    },
+
+    /**
+     * Hide tooltip.
+     * @private
+     */
+    _hideTooltip: function() {
+        this.fire('hideTooltip', this.prevFoundData);
     },
 
     /**
@@ -45,22 +101,22 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMousemove: function(e) {
-        var target = e.target || e.srcElement,
-            bound = target.getBoundingClientRect(),
-            layerX = e.clientX - chartConst.SERIES_EXPAND_SIZE - bound.left,
-            layerY = e.clientY - bound.top,
-            groupIndex = this.tickBaseCoordinateModel.findIndex(layerX),
-            foundData = this.dataModel.findData(groupIndex, layerY);
+        var foundData;
 
-        if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
+        CustomEventBase.prototype._onMousemove.call(this, e);
+
+        foundData = this._findData(e.clientX, e.clientY);
+
+        if (this._isAfterDragMouseup() || !this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 
         if (foundData) {
-            this.fire('showTooltip', foundData);
+            this._showTooltip(foundData);
         } else if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
         }
+
         this.prevFoundData = foundData;
     },
 
@@ -70,11 +126,15 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMouseout: function() {
+        CustomEventBase.prototype._onMouseout.call(this);
+
         if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
             this.prevFoundData = null;
         }
     }
 });
+
+zoomMixer.mixin(AreaTypeCustomEvent);
 
 module.exports = AreaTypeCustomEvent;

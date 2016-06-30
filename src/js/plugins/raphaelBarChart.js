@@ -1,7 +1,7 @@
 /**
  * @fileoverview Raphael bar chart renderer.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -9,10 +9,10 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var ANIMATION_TIME = 700,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3,
-    DEFAULT_LUMINANC = 0.2;
+var ANIMATION_DURATION = 700;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
+var DEFAULT_LUMINANC = 0.2;
 
 /**
  * @classdesc RaphaelBarChart is graph renderer for bar, column chart.
@@ -56,40 +56,38 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
      * @private
      */
     _renderOverlay: function() {
-        var rect = this._renderBar({
-            bound: {
-                width: 1,
-                height: 1,
-                left: 0,
-                top: 0
-            },
-            color: '#fff'
-        }).attr({
+        var bound = {
+            width: 1,
+            height: 1,
+            left: 0,
+            top: 0
+        };
+        var attributes = {
             'fill-opacity': 0
-        });
+        };
 
-        return rect;
+        return this._renderBar(bound, '#fff', attributes);
     },
 
     /**
      * Render rect
      * @param {{left: number, top: number, width: number, height: number}} bound bound
      * @param {string} color series color
+     * @param {object} [attributes] - attributes
      * @returns {object} bar rect
      * @private
      */
-    _renderBar: function(bound, color) {
+    _renderBar: function(bound, color, attributes) {
         var rect;
 
         if (bound.width < 0 || bound.height < 0) {
             return null;
         }
 
-        rect = this.paper.rect(bound.left, bound.top, bound.width, bound.height);
-        rect.attr({
+        rect = raphaelRenderUtil.renderRect(this.paper, bound, tui.util.extend({
             fill: color,
             stroke: 'none'
-        });
+        }, attributes));
 
         return rect;
     },
@@ -343,7 +341,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             y: bound.top,
             width: bound.width,
             height: bound.height
-        }, ANIMATION_TIME);
+        }, ANIMATION_DURATION);
     },
 
     /**
@@ -358,7 +356,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
         var paths = this._makeBorderLinesPaths(bound, chartType, item);
 
         tui.util.forEach(lines, function(line, name) {
-            line.animate({path: paths[name]}, ANIMATION_TIME);
+            line.animate({path: paths[name]}, ANIMATION_DURATION);
         });
     },
 
@@ -389,7 +387,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             this.callbackTimeout = setTimeout(function() {
                 onFinish();
                 delete self.callbackTimeout;
-            }, ANIMATION_TIME);
+            }, ANIMATION_DURATION);
         }
     },
 

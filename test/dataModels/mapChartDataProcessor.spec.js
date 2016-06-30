@@ -33,11 +33,11 @@ describe('Test for MapChartDataProcessor', function() {
             expected = {
                 KR: {
                     value: 100,
-                    label: 100
+                    label: '100'
                 },
                 JP: {
                     value: 50,
-                    label: 50
+                    label: '50'
                 }
             };
 

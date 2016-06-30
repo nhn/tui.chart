@@ -30,7 +30,9 @@
   .tui-chart-axis-area {
     z-index: 300;
     position: absolute;
-
+    * {
+      .user-select();
+    }
     .tui-chart-title-area {
       position: absolute;
     }
@@ -185,6 +187,12 @@
           background-color: @axis-color;
           position: absolute;
         }
+        .tui-chart-ticks {
+          width: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
         .tui-chart-tick {
           top: 1px;
           width: 1px;
@@ -264,8 +272,19 @@
       overflow: visible;
     }
     .user-select();
+
+    .tui-chart-series-block-area {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      .tui-chart-series-block {
+        position: absolute;
+      }
+    }
+
     .tui-chart-series-label-area {
       position: absolute;
+      overflow: visible;
       left: 0px;
       top: 0px;
       display: none;
@@ -341,14 +360,38 @@
     position: absolute;
     left: 0;
     top: 0;
-    background-color: #fff;
-    .opacity(0);
+    background-color:rgba(0, 0, 0, 0);
+
     &.hide {
       display: none;
     }
 
     &.drag {
       cursor: move;
+    }
+
+    .tui-chart-drag-selection {
+      top: 10px;
+      height: 100%;
+      background-color: gray;
+      .opacity(0.3);
+      position: absolute;
+      display: none;
+      &.show {
+        display: block;
+      }
+    }
+
+    .tui-chart-reset-zoom-btn {
+      position:absolute;
+      left: 20px;
+      top: 20px;
+      font-size: 11px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      background-color: #efefef;
+      cursor: pointer;
+      .user-select();
     }
   }
 
@@ -484,6 +527,9 @@
   .tui-chart-tooltip-area {
     position: absolute;
     z-index: 500;
+    * {
+      .user-select();
+    }
     .tui-chart-tooltip {
       z-index: 100;
       position: absolute;

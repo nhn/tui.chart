@@ -1,7 +1,7 @@
 /**
  * @fileoverview calculator.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -125,14 +125,14 @@ var calculator = {
      * @private
      */
     makeLabelsFromLimit: function(limit, step) {
-        var multipleNum = tui.util.findMultipleNum(step),
-            min = limit.min * multipleNum,
-            max = limit.max * multipleNum,
-            labels = tui.util.range(min, max + 1, step * multipleNum);
-        labels = tui.util.map(labels, function(label) {
+        var multipleNum = tui.util.findMultipleNum(step);
+        var min = Math.round(limit.min * multipleNum);
+        var max = Math.round(limit.max * multipleNum);
+        var labels = tui.util.range(min, max + 1, step * multipleNum);
+
+        return tui.util.map(labels, function(label) {
             return label / multipleNum;
         });
-        return labels;
     },
 
     /**
@@ -201,6 +201,16 @@ var calculator = {
             return value < 0;
         });
         return tui.util.sum(minusValues);
+    },
+
+    /**
+     * Make percentage value.
+     * @param {number} value - value
+     * @param {number} totalValue - total value
+     * @returns {number}
+     */
+    makePercentageValue: function(value, totalValue) {
+        return value / totalValue * 100;
     }
 };
 

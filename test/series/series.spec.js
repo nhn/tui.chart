@@ -6,10 +6,10 @@
 
 'use strict';
 
-var Series = require('../../src/js/series/series'),
-    chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var Series = require('../../src/js/series/series');
+var chartConst = require('../../src/js/const');
+var dom = require('../../src/js/helpers/domHandler');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Series', function() {
     var series, boundsMaker;
@@ -46,13 +46,13 @@ describe('Series', function() {
             });
         });
 
-        it('min, max 모두 양수인 경우에는 toMax, toMin 모두 0을 반환합니다.', function() {
+        it('min, max 모두 0보다 큰 경우에는 toMax는 size를, toMin은 0을 반환합니다.', function() {
             var result = series._getLimitDistanceFromZeroPoint(100, {
                 min: 20,
                 max: 80
             });
             expect(result).toEqual({
-                toMax: 0,
+                toMax: 100,
                 toMin: 0
             });
         });
@@ -72,6 +72,9 @@ describe('Series', function() {
     describe('renderBounds()', function() {
         it('series 영역 너비, 높이, 위치를 렌더링 합니다.', function() {
             var seriesContainer = dom.create('DIV');
+
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
+
             series._renderPosition(seriesContainer, {
                 top: 20,
                 left: 20
@@ -102,6 +105,7 @@ describe('Series', function() {
                 dimension: {width: 220, height: 120},
                 position: {top: 40, left: 40}
             });
+            spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
 
             actual = series.render({});
             seriesContainer = actual.container;

@@ -2,7 +2,7 @@
  * @fileoverview  Circle legend component render a legend in the form of overlapping circles
  *                  by representative radius values.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -163,7 +163,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
      * Rerender.
      */
     rerender: function() {
-        this.container.innerHTML = null;
+        this.container.innerHTML = '';
         this._render();
     },
 

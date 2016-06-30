@@ -1,12 +1,13 @@
 /**
  * @fileoverview BarTypeSeriesBase is base class for bar type series.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var chartConst = require('../const');
+var labelHelper = require('./renderingLabelHelper');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 
@@ -148,47 +149,26 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     },
 
     /**
-     * Make html for series labels
-     * @param {number} groupIndex index of series groups
-     * @param {number} labelHeight label height
-     * @param {SeriesItem} seriesItem series item
-     * @param {number} index index of series group
-     * @returns {string}
+     * Render normal series label.
+     * @param {HTMLElement} labelContainer series label area element
      * @private
      */
-    _makeSeriesLabelsHtml: function(groupIndex, labelHeight, seriesItem, index) {
-        var bound = this.seriesData.groupBounds[groupIndex][index].end,
-            value = seriesItem.value,
-            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.label),
-            labelHtml = this._makeSeriesLabelHtml(position, seriesItem.endLabel, index);
+    _renderNormalSeriesLabel: function(labelContainer) {
+        var sdm = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var boundsSet = this.seriesData.groupBounds;
+        var labelTheme = this.theme.label;
+        var selectedIndex = this.selectedLegendIndex;
+        var positionsSet, html;
 
-        if (seriesItem.isRange) {
-            position = this._makeSeriesRenderingPosition(bound, labelHeight, value, seriesItem.startLabel, true);
-            labelHtml += this._makeSeriesLabelHtml(position, seriesItem.startLabel, index);
+        if (predicate.isBarChart(this.chartType)) {
+            positionsSet = labelHelper.boundsToLabelPositionsForBarChart(sdm, boundsSet, labelTheme);
+        } else {
+            positionsSet = labelHelper.boundsToLabelPositionsForColumnChart(sdm, boundsSet, labelTheme);
         }
 
-        return labelHtml;
-    },
+        html = labelHelper.makeLabelsHtmlForBoundType(labelContainer, sdm, positionsSet, labelTheme, selectedIndex);
 
-    /**
-     * Render normal series label.
-     * @param {HTMLElement} elSeriesLabelArea series label area element
-     * @private
-     */
-    _renderNormalSeriesLabel: function(elSeriesLabelArea) {
-        var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
-            firstLabel = seriesDataModel.getFirstItemLabel(),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
-            html;
-
-        html = seriesDataModel.map(function(seriesGroup, groupIndex) {
-            var makeSeriesLabelsHtml = tui.util.bind(self._makeSeriesLabelsHtml, self, groupIndex, labelHeight);
-
-            return seriesGroup.map(makeSeriesLabelsHtml).join('');
-        }).join('');
-
-        elSeriesLabelArea.innerHTML = html;
+        labelContainer.innerHTML = html;
     },
 
     /**
@@ -271,14 +251,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
-        var self = this,
-            groupBounds = this.seriesData.groupBounds,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
-            firstLabel = seriesDataModel.getFirstItemLabel(this.chartType),
-            labelHeight = renderUtil.getRenderedLabelHeight(firstLabel, this.theme.label),
-            html;
-
-        html = seriesDataModel.map(function(seriesGroup, index) {
+        var self = this;
+        var groupBounds = this.seriesData.groupBounds;
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
+        var html = seriesDataModel.map(function(seriesGroup, index) {
             var labelsHtml = self._makeStackedLabelsHtml({
                 groupIndex: index,
                 seriesGroup: seriesGroup,

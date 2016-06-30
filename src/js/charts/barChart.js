@@ -1,7 +1,7 @@
 /**
  * @fileoverview Bar chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -99,7 +99,8 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         var axes = [
             {
                 name: 'yAxis',
-                isLabel: true
+                isLabel: true,
+                isVertical: true
             },
             {
                 name: 'xAxis'
@@ -109,18 +110,20 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
         if (this.hasRightYAxis) {
             axes.push({
                 name: 'rightYAxis',
-                isLabe: true
+                isLabel: true,
+                isVertical: true
             });
         }
         this._addComponentsForAxisType({
-            axes: axes,
             chartType: chartType,
-            serieses: [
+            axis: axes,
+            series: [
                 {
                     name: 'barSeries',
                     SeriesClass: Series
                 }
-            ]
+            ],
+            plot: true
         });
     },
 

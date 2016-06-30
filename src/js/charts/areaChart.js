@@ -1,16 +1,17 @@
 /**
  * @fileoverview Area chart
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    lineTypeMixer = require('./lineTypeMixer'),
-    axisTypeMixer = require('./axisTypeMixer'),
-    rawDataHandler = require('../helpers/rawDataHandler'),
-    Series = require('../series/areaChartSeries');
+var ChartBase = require('./chartBase');
+var lineTypeMixer = require('./lineTypeMixer');
+var axisTypeMixer = require('./axisTypeMixer');
+var addingDynamicDataMixer = require('./addingDynamicDataMixer');
+var rawDataHandler = require('../helpers/rawDataHandler');
+var Series = require('../series/areaChartSeries');
 
 var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype */ {
     /**
@@ -38,10 +39,12 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
     init: function(rawData, theme, options) {
         rawDataHandler.removeSeriesStack(rawData.series);
         this._lineTypeInit(rawData, theme, options);
+        this._initForAddingData();
     }
 });
 
 axisTypeMixer.mixin(AreaChart);
 lineTypeMixer.mixin(AreaChart);
+addingDynamicDataMixer.mixin(AreaChart);
 
 module.exports = AreaChart;

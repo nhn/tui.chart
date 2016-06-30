@@ -1,12 +1,14 @@
 /**
  * @fileoverview lineTypeMixer is mixer of line type chart(line, area).
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
 var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var axisDataMaker = require('../helpers/axisDataMaker');
 var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
@@ -30,7 +32,32 @@ var lineTypeMixer = {
             isVertical: true
         });
 
+        /**
+         * checked legends.
+         * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
+         */
+        this.checkedLegends = null;
+
+        this._initForAutoTickInterval();
+
         this._addComponents(options.chartType);
+    },
+
+    /**
+     * Initialize for auto tick interval option.
+     * @private
+     */
+    _initForAutoTickInterval: function() {
+        /**
+         * previous updated xAxisData
+         * @type {null | object}
+         */
+        this.prevUpdatedData = null;
+
+        /**
+         * first updated tick count
+         */
+        this.firstTickCount = null;
     },
 
     /**
@@ -51,7 +78,8 @@ var lineTypeMixer = {
     _addCustomEventComponentForNormalTooltip: function() {
         this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            zoomable: tui.util.pick(this.options.series, 'zoomable')
         });
     },
 
@@ -62,31 +90,128 @@ var lineTypeMixer = {
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis',
                     isLabel: true
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: this.options.chartType + 'Series',
                     SeriesClass: this.Series
                 }
-            ]
+            ],
+            plot: true
         });
     },
 
     /**
-     * Render
-     * @returns {HTMLElement} chart element
+     * Update axesData.
+     * @private
+     * @override
      */
-    render: function() {
-        return ChartBase.prototype.render.apply(this, arguments);
+    _updateAxesData: function() {
+        var boundsMaker = this.boundsMaker;
+        var axesData = boundsMaker.getAxesData();
+        var xAxisData = axesData.xAxis;
+        var seriesWidth = boundsMaker.getDimension('series').width;
+        var shiftingOption = tui.util.pick(this.options.series, 'shifting');
+        var prevUpdatedData = this.prevUpdatedData;
+
+        if (shiftingOption || !prevUpdatedData) {
+            axisDataMaker.updateLabelAxisDataForAutoTickInterval(xAxisData, seriesWidth, this.addedDataCount);
+        } else {
+            axisDataMaker.updateLabelAxisDataForStackingDynamicData(xAxisData, prevUpdatedData, this.firstTickCount);
+        }
+
+        this.prevUpdatedData = xAxisData;
+
+        if (!this.firstTickCount) {
+            this.firstTickCount = xAxisData.tickCount;
+        }
+
+        boundsMaker.registerAxesData(axesData);
+    },
+
+    /**
+     * On change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
+     * @override
+     */
+    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        var self = this;
+        var pastPaused = this.paused;
+
+        if (!pastPaused) {
+            this._pauseAnimationForAddingData();
+        }
+
+        this._rerender(checkedLegends, rawData, boundsParams);
+
+        this.checkedLegends = checkedLegends;
+
+        if (!pastPaused) {
+            setTimeout(function() {
+                self._restartAnimationForAddingData();
+            }, chartConst.RERENDER_TIME);
+        }
+    },
+
+    /**
+     * Render for zoom.
+     * @param {boolean} isResetZoom - whether reset zoom or not
+     * @private
+     */
+    _renderForZoom: function(isResetZoom) {
+        var self = this;
+
+        this.boundsMaker.initBoundsData();
+        this._render(function(renderingData) {
+            renderingData.customEvent.isResetZoom = isResetZoom;
+            self._renderComponents(renderingData, 'zoom');
+        });
+    },
+
+    /**
+     * On zoom.
+     * @param {Array.<number>} indexRange - index range for zoom
+     * @override
+     */
+    onZoom: function(indexRange) {
+        this._pauseAnimationForAddingData();
+        this.dataProcessor.updateRawDataForZoom(indexRange);
+        this.axisScaleMakerMap = null;
+        this._renderForZoom(false);
+    },
+
+    /**
+     * On reset zoom.
+     * @override
+     */
+    onResetZoom: function() {
+        var rawData = this.dataProcessor.getOriginalRawData();
+
+        if (this.checkedLegends) {
+            rawData = this._filterCheckedRawData(rawData, this.checkedLegends);
+        }
+
+        this.axisScaleMakerMap = null;
+        this.prevUpdatedData = null;
+        this.firstTickCount = null;
+
+        this.dataProcessor.initData(rawData);
+        this.dataProcessor.initZoomedRawData();
+        this.dataProcessor.addDataFromRemainDynamicData(tui.util.pick(this.options.series, 'shifting'));
+        this._renderForZoom(true);
+        this._restartAnimationForAddingData();
     },
 
     /**

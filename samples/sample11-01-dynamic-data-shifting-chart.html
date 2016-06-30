@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Dynamic Chart] dynamic data and spline</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script>
+    function getRandom(start, end) {
+        return start + (Math.floor(Math.random() * (end - start + 1)));
+    }
+
+    var seriesData = tui.util.map(tui.util.range(2), function(value) {
+        var name = 'Legend' + value;
+        var data = tui.util.map(tui.util.range(20), function(value, index) {
+            return getRandom(-30, 30);
+        });
+        return {
+            name: name,
+            data: data
+        };
+    });
+    var categories = tui.util.map(seriesData[0].data, function(value, index) {
+        return 'cate' + index;
+    });
+    var container = document.getElementById('chart-area');
+    var data = {
+        categories: categories,
+        series: seriesData
+    };
+    var options = {
+        chart: {
+            width: 700,
+            height: 400,
+            title: 'Dynamic data'
+        },
+        xAxis: {
+            labelInterval: 2
+        },
+        series: {
+            spline: true,
+            shifting: true,
+            showDot: true
+        },
+        tooltip: {
+            grouped: true
+        }
+    };
+    var chart = tui.chart.lineChart(container, data, options);
+
+    chart.on('load', function() {
+        var index = categories.length;
+        setInterval(function() {
+            var category = 'cate' + index;
+            var values = [getRandom(-30, 30), getRandom(-30, 30)];
+
+            chart.addData(category, values);
+            index += 1;
+        }, 1000);
+    });
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Tooltip component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -113,6 +113,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         if (!legendData) {
             return null;
         }
+
         params = tui.util.extend({
             chartType: legendData.chartType,
             legend: legendData.label,
@@ -150,7 +151,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
-        var legend = legendLabels[chartType][index];
+        var legend = legendLabels[chartType][index] || '';
 
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.label ? labelPrefix + seriesItem.label : '';
@@ -169,11 +170,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @override
      */
     _makeTooltipData: function() {
-        var self = this,
-            categories = this.dataProcessor.getCategories(),
-            orgLegendLabels = this.dataProcessor.getLegendLabels(),
-            legendLabels = {},
-            tooltipData = {};
+        var self = this;
+        var orgLegendLabels = this.dataProcessor.getLegendLabels();
+        var legendLabels = {};
+        var tooltipData = {};
 
         if (tui.util.isArray(orgLegendLabels)) {
             legendLabels[this.chartType] = orgLegendLabels;
@@ -182,12 +182,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         }
 
         this.dataProcessor.eachBySeriesGroup(function(seriesGroup, groupIndex, chartType) {
-            var category = categories[groupIndex] || '';
             var data;
 
             chartType = chartType || self.chartType;
 
             data = seriesGroup.map(function(seriesItem, index) {
+                var category = self.dataProcessor.getTooltipCategory(groupIndex, index, self.isVertical);
+
                 return seriesItem ? self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index) : null;
             });
 

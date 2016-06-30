@@ -1,7 +1,7 @@
 /**
  * @fileoverview LegendDimensionModel is model for calculating dimension of legend.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -16,15 +16,12 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @constructs LegendDimensionModel
      * @param {object} params parameters
      *      @param {string} params.chartType - type of chart
-     *      @param {?Array.<string>} params.chartTypes - types of chart
      *      @param {object} params.options - legend options
      *      @param {object} params.theme - legend theme
      *      @param {Array.<string | number>} params.legendLabels - legend labels
      */
     init: function(params) {
         this.chartType = params.chartType;
-
-        this.chartTypes = params.chartTypes || [this.chartType];
 
         this.options = params.options;
 

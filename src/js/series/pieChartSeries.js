@@ -1,15 +1,15 @@
 /**
  * @fileoverview Pie chart series component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Series = require('./series'),
-    chartConst = require('../const'),
-    predicate = require('../helpers/predicate'),
-    renderUtil = require('../helpers/renderUtil');
+var Series = require('./series');
+var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prototype */ {
     /**
@@ -27,12 +27,6 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
         this.isCombo = !!params.isCombo;
 
         this.isShowOuterLabel = !!params.isShowOuterLabel || predicate.isShowOuterLabel(this.options);
-
-        /**
-         * chart background.
-         * @type {string}
-         */
-        this.chartBackground = params.chartBackground;
 
         /**
          * range for quadrant.
@@ -484,6 +478,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
 
             return html;
         });
+
         seriesLabelContainer.innerHTML = htmls.join('');
     },
 

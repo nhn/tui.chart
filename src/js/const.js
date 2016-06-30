@@ -1,7 +1,7 @@
 /**
  * @fileoverview Chart const
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -46,6 +46,8 @@ var chartConst = {
     CHART_TYPE_BUBBLE: 'bubble',
     /** @type {string} */
     CHART_TYPE_SCATTER: 'scatter',
+    /** @type {string} */
+    CHART_TYPE_HEATMAP: 'heatmap',
     /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
@@ -99,6 +101,7 @@ var chartConst = {
     ANGLE_360: 360,
     /** radian */
     RAD: Math.PI / 180,
+    RERENDER_TIME: 700,
     /** series label align outer
      * @type {string}
      */
@@ -115,8 +118,8 @@ var chartConst = {
     PIE_GRAPH_DEFAULT_RATIO: 0.8,
     /** small ratio for pie graph */
     PIE_GRAPH_SMALL_RATIO: 0.65,
-    /** tick count for map chart legend */
-    MAP_CHART_LEGEND_TICK_COUNT: 4,
+    /** tick count for spectrum legend */
+    SPECTRUM_LEGEND_TICK_COUNT: 4,
     /** default position ratio of map chart label
      * @type {object}
      */
@@ -225,6 +228,11 @@ var chartConst = {
     AXIS_LABEL_PADDING: 7,
     /** rotations degree candidates */
     DEGREE_CANDIDATES: [25, 45, 65, 85],
+    /**
+     * auto tick interval
+     * @type {string}
+     */
+    TICK_INTERVAL_AUTO: 'auto',
     /** yAxis align option
      * @type {string}
      */

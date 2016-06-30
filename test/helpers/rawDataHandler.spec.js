@@ -56,7 +56,7 @@ describe('Test for rawDataHandler', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('3개 이상인 경우 2개 까지만 반환합니다.', function() {
+        it('divergingOption이 없는 경우 stack 개수에 제한은 없습니다.', function() {
             var rawSeriesData = [{
                     data: [],
                     stack: 'stack1'
@@ -70,7 +70,28 @@ describe('Test for rawDataHandler', function() {
                     stack: 'stack3'
                 }],
                 actual = rawDataHandler.pickStacks(rawSeriesData),
-                expected = ['stack1', 'stack2'];
+                expected = ['stack1', 'stack2', 'stack3'];
+            expect(actual).toEqual(expected);
+        });
+
+        it('divergingOption이 ture이면서 3개 이상인 경우 2개 까지만 반환합니다.', function() {
+            var rawSeriesData = [
+                {
+                    data: [],
+                    stack: 'stack1'
+                },
+                {
+                    data: [],
+                    stack: 'stack2'
+                },
+                {
+                    data: [],
+                    stack: 'stack3'
+                }
+            ];
+            var divergingOption = true;
+            var actual = rawDataHandler.pickStacks(rawSeriesData, divergingOption);
+            var expected = ['stack1', 'stack2'];
             expect(actual).toEqual(expected);
         });
 

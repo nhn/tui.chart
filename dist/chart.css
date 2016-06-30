@@ -20,6 +20,12 @@
   z-index: 300;
   position: absolute;
 }
+.tui-chart .tui-chart-axis-area * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
 .tui-chart .tui-chart-axis-area .tui-chart-title-area {
   position: absolute;
 }
@@ -168,6 +174,12 @@
   background-color: #000;
   position: absolute;
 }
+.tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area .tui-chart-ticks {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 .tui-chart .tui-chart-axis-area.horizontal .tui-chart-tick-area .tui-chart-tick {
   top: 1px;
   width: 1px;
@@ -257,8 +269,17 @@
 .tui-chart .tui-chart-series-area:first-child {
   overflow: visible;
 }
+.tui-chart .tui-chart-series-area .tui-chart-series-block-area {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+.tui-chart .tui-chart-series-area .tui-chart-series-block-area .tui-chart-series-block {
+  position: absolute;
+}
 .tui-chart .tui-chart-series-area .tui-chart-series-label-area {
   position: absolute;
+  overflow: visible;
   left: 0px;
   top: 0px;
   display: none;
@@ -339,16 +360,40 @@
   position: absolute;
   left: 0;
   top: 0;
-  background-color: #fff;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
-  opacity: 0;
+  background-color: rgba(0, 0, 0, 0);
 }
 .tui-chart .tui-chart-series-custom-event-area.hide {
   display: none;
 }
 .tui-chart .tui-chart-series-custom-event-area.drag {
   cursor: move;
+}
+.tui-chart .tui-chart-series-custom-event-area .tui-chart-drag-selection {
+  top: 10px;
+  height: 100%;
+  background-color: gray;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+  filter: alpha(opacity=30);
+  opacity: 0.3;
+  position: absolute;
+  display: none;
+}
+.tui-chart .tui-chart-series-custom-event-area .tui-chart-drag-selection.show {
+  display: block;
+}
+.tui-chart .tui-chart-series-custom-event-area .tui-chart-reset-zoom-btn {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  font-size: 11px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  background-color: #efefef;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 .tui-chart .tui-chart-legend-rect {
   margin-top: 2px;
@@ -479,6 +524,12 @@
 .tui-chart .tui-chart-tooltip-area {
   position: absolute;
   z-index: 500;
+}
+.tui-chart .tui-chart-tooltip-area * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 .tui-chart .tui-chart-tooltip-area .tui-chart-tooltip {
   z-index: 100;

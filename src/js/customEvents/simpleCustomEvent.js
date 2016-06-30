@@ -1,13 +1,13 @@
 /**
  * @fileoverview SimpleCustomEvent is event handle layer for simply sending clientX, clientY.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var CustomEventBase = require('./customEventBase'),
-    renderUtil = require('../helpers/renderUtil');
+var CustomEventBase = require('./customEventBase');
+var renderUtil = require('../helpers/renderUtil');
 
 var SimpleCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends SimpleCustomEvent.prototype */ {
     /**

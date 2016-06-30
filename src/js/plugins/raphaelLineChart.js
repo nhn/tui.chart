@@ -1,7 +1,7 @@
 /**
  * @fileoverview Raphael line chart renderer.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -9,9 +9,11 @@
 var RaphaelLineBase = require('./raphaelLineTypeBase'),
     raphaelRenderUtil = require('./raphaelRenderUtil');
 
-var raphael = window.Raphael,
-    EMPHASIS_OPACITY = 1,
-    DE_EMPHASIS_OPACITY = 0.3;
+var EMPHASIS_OPACITY = 1;
+var DE_EMPHASIS_OPACITY = 0.3;
+var LEFT_BAR_WIDTH = 10;
+
+var raphael = window.Raphael;
 
 var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelLineChart.prototype */ {
     /**
@@ -57,6 +59,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
         this.groupLines = this._renderLines(paper, groupPaths, colors);
         this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
+        this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.allowSelect) {
@@ -85,8 +88,6 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var self = this;
 
         return tui.util.map(groupPositions, function(positions) {
-            positions[0].left -= 1;
-
             return self._makeLinesPath(positions);
         });
     },
@@ -137,7 +138,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
             self.groupLines[groupIndex].attr({path: path.join(' ')});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item, index) {
-                self._moveDot(item.dot.dot, groupPositions[groupIndex][index]);
+                self._moveDot(item.endDot.dot, groupPositions[groupIndex][index]);
             });
         });
     },
@@ -152,18 +153,55 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
 
         this.selectedLegendIndex = legendIndex;
 
-        tui.util.forEachArray(this.groupPaths, function(path, groupIndex) {
+        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
             var opacity = (noneSelected || legendIndex === groupIndex) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
-            self.groupLines[groupIndex].attr({'stroke-opacity': opacity});
+            line.attr({'stroke-opacity': opacity});
 
             tui.util.forEachArray(self.groupDots[groupIndex], function(item) {
                 item.opacity = opacity;
 
                 if (self.dotOpacity) {
-                    item.dot.dot.attr({'fill-opacity': opacity});
+                    item.endDot.dot.attr({'fill-opacity': opacity});
                 }
             });
+        });
+    },
+
+    /**
+     * Animate for adding data.
+     * @param {object} data - data for graph rendering
+     * @param {number} tickSize - tick size
+     * @param {Array.<Array.<object>>} groupPositions - group positions
+     * @param {boolean} [shiftingOption] - shifting option
+     */
+    animateForAddingData: function(data, tickSize, groupPositions, shiftingOption) {
+        var self = this;
+        var isSpline = data.options.spline;
+        var groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
+        var additionalIndex = 0;
+
+        if (shiftingOption) {
+            this.leftBar.animate({
+                width: tickSize + LEFT_BAR_WIDTH
+            }, 300);
+            additionalIndex = 1;
+        }
+
+        tui.util.forEachArray(this.groupLines, function(line, groupIndex) {
+            var dots = self.groupDots[groupIndex];
+            var groupPosition = groupPositions[groupIndex];
+
+            if (shiftingOption) {
+                self._removeFirstDot(dots);
+            }
+
+            tui.util.forEachArray(dots, function(item, index) {
+                var position = groupPosition[index + additionalIndex];
+                self._animateByPosition(item.endDot.dot, position);
+            });
+
+            self._animateByPath(line, groupPaths[groupIndex]);
         });
     }
 });

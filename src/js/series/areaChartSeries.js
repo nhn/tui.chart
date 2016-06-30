@@ -1,7 +1,7 @@
 /**
  * @fileoverview Area chart series component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -17,26 +17,26 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @constructs AreaChartSeries
      * @extends Series
      * @mixes LineTypeSeriesBase
-     * @param {object} params parameters
-     *      @param {object} params.model series model
-     *      @param {object} params.options series options
-     *      @param {object} params.theme series theme
      */
     init: function() {
         Series.apply(this, arguments);
+
+        /**
+         * object for requestAnimationFrame
+         * @type {null | {id: number}}
+         */
+        this.movingAnimation = null;
     },
 
     /**
      * Make position top of zero point.
-     * @param {{height: number}} dimension dimension
      * @returns {number} position top
      * @private
      */
     _makePositionTopOfZeroPoint: function() {
-        var dimension = this.boundsMaker.getDimension('series'),
-            limit = this.data.limit,
-            limitDistance = this._getLimitDistanceFromZeroPoint(dimension.height, limit),
-            top = limitDistance.toMax;
+        var dimension = this.boundsMaker.getDimension('series');
+        var limit = this.boundsMaker.getAxesData().yAxis.limit;
+        var top = this._getLimitDistanceFromZeroPoint(dimension.height, limit).toMax;
 
         if (limit.min >= 0 && !top) {
             top = dimension.height;
@@ -73,11 +73,12 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
 
     /**
      * Make positions.
+     * @param {number} seriesWidth - width of series area
      * @returns {Array.<Array.<{left: number, top: number, startTop: number}>>} stackType positions
      * @private
      */
-    _makePositions: function() {
-        var groupPositions = this._makeBasicPositions();
+    _makePositions: function(seriesWidth) {
+        var groupPositions = this._makeBasicPositions(seriesWidth);
 
         if (predicate.isValidStackOption(this.options.stackType)) {
             groupPositions = this._makeStackedPositions(groupPositions);
@@ -97,10 +98,21 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
             zeroTop = this._getLimitDistanceFromZeroPoint(dimension.height, this.data.limit).toMax;
 
         return {
+            chartBackground: this.chartBackground,
             groupPositions: this._makePositions(),
             hasRangeData: this.dataProcessor.getSeriesDataModel(this.seriesName).hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
+    },
+
+    /**
+     * Rerender.
+     * @param {object} data - data for rerendering
+     * @override
+     */
+    rerender: function(data) {
+        this._cancelMovingAnimation();
+        Series.prototype.rerender.call(this, data);
     }
 });
 

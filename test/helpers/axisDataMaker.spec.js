@@ -10,16 +10,18 @@ var maker = require('../../src/js/helpers/axisDataMaker'),
     chartConst = require('../../src/js/const');
 
 describe('Test for axisDataMaker', function() {
-    describe('_makeLabels()', function() {
-        it('전달받은 labelInterval 옵션 정보가 없으면, labels를 그대로 반환합니다.', function() {
-            var actual = maker._makeLabels(['label1', 'label2', 'label3']),
-                expected = ['label1', 'label2', 'label3'];
+    describe('_makeLabelsByIntervalOption()', function() {
+        it('labelInterval option 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
+            var actual = maker._makeLabelsByIntervalOption(['label1', 'label2', 'label3', 'label4', 'label5'], 2, 0);
+            var expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
+
             expect(actual).toEqual(expected);
         });
 
-        it('labelInterval 옵션이 있을 경우 처음과, 끝, 그리고 interval 위치에 해당하는 label을 제외하고 모두 EMPTY_AXIS_LABEL로 대체합니다.', function() {
-            var actual = maker._makeLabels(['label1', 'label2', 'label3', 'label4', 'label5'], 2),
-                expected = ['label1', chartConst.EMPTY_AXIS_LABEL, 'label3', chartConst.EMPTY_AXIS_LABEL, 'label5'];
+        it('추가된 data가 있으면 추가된 data를 interval로 나눈 나머지 만큼을 건너 띄고 label을 생성합니다.', function() {
+            var actual = maker._makeLabelsByIntervalOption(['label1', 'label2', 'label3', 'label4', 'label5'], 2, 1);
+            var expected = [chartConst.EMPTY_AXIS_LABEL, 'label2', chartConst.EMPTY_AXIS_LABEL, 'label4', chartConst.EMPTY_AXIS_LABEL];
+
             expect(actual).toEqual(expected);
         });
     });
@@ -34,6 +36,28 @@ describe('Test for axisDataMaker', function() {
                 tickCount: 4,
                 validTickCount: 0,
                 options: {},
+                isLabelAxis: true,
+                isVertical: false,
+                isPositionRight: false,
+                aligned: false
+            });
+        });
+
+        it('labelInterval옵션이 있으면 label을 labelInterval옵션으로 필터링 하여 반환합니다.', function() {
+            var result = maker.makeLabelAxisData({
+                labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+                options: {
+                    labelInterval: 2
+                }
+            });
+
+            expect(result).toEqual({
+                labels: ['label1', '', 'label3', '', 'label5'],
+                tickCount: 6,
+                validTickCount: 0,
+                options: {
+                    labelInterval: 2
+                },
                 isLabelAxis: true,
                 isVertical: false,
                 isPositionRight: false,
@@ -85,6 +109,130 @@ describe('Test for axisDataMaker', function() {
             };
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_makeAdjustingIntervalInfo()', function() {
+        it('이전 블럭수와 영역 너비 새로운 block너비 정보를 계산하여 조정된 interval 정보를 반환합니다.', function() {
+            var actual = maker._makeAdjustingIntervalInfo(30, 300, 50);
+
+            expect(actual.blockCount).toBe(6);
+            expect(actual.beforeRemainBlockCount).toBe(0);
+            expect(actual.interval).toBe(5);
+        });
+
+        it('새로 계산된 block수가 이전 블럭수보다 많을 경우 null을 반환합니다.', function() {
+            var actual = maker._makeAdjustingIntervalInfo(4, 300, 50);
+
+            expect(actual).toBeNull();
+        });
+
+        it('interval이 1인 경우 null을 반환합니다.', function() {
+            var actual = maker._makeAdjustingIntervalInfo(7, 300, 50);
+
+            expect(actual).toBeNull();
+        });
+
+        it('남은 이전 block가 계산된 interval 수보다 크다면 새로 계산된 block count를 늘려줍니다.', function() {
+            var actual = maker._makeAdjustingIntervalInfo(15, 300, 50);
+
+            expect(actual.blockCount).toBe(7);
+            expect(actual.beforeRemainBlockCount).toBe(1);
+            expect(actual.interval).toBe(2);
+        });
+    });
+
+    describe('_makeCandidatesForAdjustingInterval()', function() {
+        it('block의 한칸이 90 ~ 120px(90, 95, 100, 105, 110, 115, 120)인 범위에서 tick interval 후보를 생성합니다.', function() {
+            var actual = maker._makeCandidatesForAdjustingInterval(15, 300);
+
+            expect(actual.length).toBe(7);
+        });
+
+        it('후보 모두가 null이라면 빈 배열을 반환합니다.', function() {
+            var actual;
+
+            spyOn(maker, '_makeAdjustingIntervalInfo').and.returnValue(null);
+            actual = maker._makeCandidatesForAdjustingInterval(15, 300);
+
+            expect(actual.length).toBe(0);
+        });
+    });
+
+    describe('_calculateAdjustingIntervalInfo()', function() {
+        it('현재의 블럭 수(tick개수 - 1)와 시리즈 영역의 너비 정보를 이용하여 interval과 블럭 정보 계산하고 그 결과를 반환합니다.', function() {
+            var actual = maker._calculateAdjustingIntervalInfo(73, 400);
+
+            expect(actual.blockCount).toBe(3);
+            expect(actual.beforeRemainBlockCount).toBe(1);
+            expect(actual.interval).toBe(24);
+        });
+
+        it('후보가 없다면 null을 반환합니다.', function() {
+            var actual;
+
+            spyOn(maker, '_makeCandidatesForAdjustingInterval').and.returnValue([]);
+            actual = maker._calculateAdjustingIntervalInfo(73, 400);
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_makeFilteredLabelsByInterval()', function() {
+        it('inteval에 해당하는 label만 걸러냅니다.', function() {
+            var actual = maker._makeFilteredLabelsByInterval(['label1', 'label2', 'label3', 'label4'], 0, 2);
+
+            expect(actual).toEqual(['label1', 'label3']);
+        });
+
+        it('startIndex 지점부터 inteval에 해당하는 label만 걸러냅니다.', function() {
+            var actual = maker._makeFilteredLabelsByInterval(['label1', 'label2', 'label3', 'label4'], 1, 2);
+
+            expect(actual).toEqual(['label2', 'label4']);
+        });
+    });
+
+    describe('updateLabelAxisDataForAutoTickInterval()', function() {
+        it('보기좋은 tick inertval을 계산하여 axisData 정보의 tick interval관련 부분을 추가 갱신 합니다.', function() {
+            var axisData = {
+                tickCount: 20,
+                labels: tui.util.range(10, 201, 10)
+            };
+            maker.updateLabelAxisDataForAutoTickInterval(axisData, 400, 0);
+
+            expect(axisData.tickCount).toBe(4);
+            expect(axisData.eventTickCount).toBe(20);
+            expect(axisData.labels).toEqual([20, 80, 140, 200]);
+            expect(axisData.startIndex).toBe(1);
+            expect(axisData.positionRatio).toBe(0.05263157894736842);
+            expect(axisData.sizeRatio).toBe(0.9473684210526316);
+            expect(axisData.lineWidth).toBe(401);
+            expect(axisData.interval).toBe(6);
+        });
+    });
+
+    describe('updateLabelAxisDataForStackingDynamicData()', function() {
+        it('이전에 갱신된 prevUpdatedData 정보와 새로 생성된 axisData를 이용하여 axisData의 tick interval관련 부분을 갱신합니다.', function() {
+            var axisData = {
+                tickCount: 21,
+                labels: tui.util.range(10, 211, 10)
+            };
+            var prevUpdatedData = {
+                interval: 6,
+                startIndex: 1,
+                lineWidth: 401
+            };
+
+            maker.updateLabelAxisDataForStackingDynamicData(axisData, prevUpdatedData, 4);
+
+            expect(axisData.tickCount).toBe(4);
+            expect(axisData.eventTickCount).toBe(21);
+            expect(axisData.labels).toEqual([20, 80, 140, 200]);
+            expect(axisData.startIndex).toBe(1);
+            expect(axisData.positionRatio).toBe(0.05);
+            expect(axisData.sizeRatio).toBe(0.9);
+            expect(axisData.lineWidth).toBe(401);
+            expect(axisData.interval).toBe(6);
         });
     });
 });

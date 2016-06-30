@@ -1,7 +1,7 @@
 /**
  * @fileoverview Raw data handler.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -15,17 +15,22 @@ var chartConst = require('../const');
 var rawDataHandler = {
     /**
      * Pick stacks.
-     * @param {Array.<{stack: string}>} seriesData raw series data
+     * @param {Array.<{stack: string}>} seriesData - raw series data
+     * @param {boolean} [divergingOption] - diverging option
      * @returns {Array.<string>} stacks
      */
-    pickStacks: function(seriesData) {
+    pickStacks: function(seriesData, divergingOption) {
         var stacks, uniqStacks, filteredStack;
 
         stacks = tui.util.map(seriesData, function(seriesDatum) {
             return seriesDatum.stack;
         });
 
-        uniqStacks = tui.util.unique(stacks).slice(0, 2);
+        uniqStacks = tui.util.unique(stacks);
+
+        if (divergingOption) {
+            uniqStacks = uniqStacks.slice(0, 2);
+        }
 
         filteredStack = tui.util.filter(uniqStacks, function(stack) {
             return !!stack;

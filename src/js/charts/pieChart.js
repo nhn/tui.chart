@@ -1,7 +1,7 @@
 /**
  * @fileoverview Pie chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -43,8 +43,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
 
     /**
      * Add components
-     * @param {object} chartBackground chart background
-     * @param {object} options chart options
      * @private
      */
     _addComponents: function() {
@@ -56,6 +54,7 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
                 chartType: this.chartType
             }
         }]);
+        this._addCustomEventComponent();
     },
 
     /**

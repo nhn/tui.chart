@@ -1,15 +1,15 @@
 /**
  * @fileoverview Bounds maker.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var chartConst = require('../const'),
-    calculator = require('./calculator'),
-    predicate = require('./predicate'),
-    renderUtil = require('./renderUtil');
+var chartConst = require('../const');
+var calculator = require('./calculator');
+var predicate = require('./predicate');
+var renderUtil = require('./renderUtil');
 
 /**
  * Dimension.
@@ -269,13 +269,21 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Calculate limit width of x axis.
+     * @param {number} labelCount - label count
      * @returns {number} limit width
      * @private
      */
-    _calculateXAxisLabelLimitWidth: function() {
-        var seriesWidth = this.getDimension('series').width,
-            labelCount = this.axesData.xAxis.labels.length,
-            isAlign = predicate.isLineTypeChart(this.chartType);
+    _calculateXAxisLabelLimitWidth: function(labelCount) {
+        var seriesWidth = this.getDimension('series').width;
+        var isAlign = predicate.isLineTypeChart(this.chartType);
+        var xAxisOptions = this.options.xAxis || {};
+
+        labelCount = labelCount || this.axesData.xAxis.labels.length;
+
+        if (predicate.isValidLabelInterval(xAxisOptions.labelInterval, xAxisOptions.tickInterval)) {
+            seriesWidth *= xAxisOptions.labelInterval;
+        }
+
         return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
 
@@ -284,7 +292,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @param {number} limitWidth limit width
      * @param {number} labelWidth label width
      * @param {number} labelHeight label height
-     * @param {number} index candidates index
      * @returns {number} rotation degree
      * @private
      */
@@ -373,15 +380,15 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
 
     /**
      * Update degree of rotationInfo.
-     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo rotation info
-     * @param {number} labelLength labelLength
-     * @param {number} overflowLeft overflow left
+     * @param {{degree: number, maxLabelWidth: number, labelHeight: number}} rotationInfo - rotation info
+     * @param {number} labelCount - label count
+     * @param {number} overflowLeft - overflow left
      * @private
      */
-    _updateDegree: function(rotationInfo, labelLength, overflowLeft) {
+    _updateDegree: function(rotationInfo, labelCount, overflowLeft) {
         var limitWidth, newDegree;
         if (overflowLeft > 0) {
-            limitWidth = this.getDimension('series').width / labelLength + chartConst.XAXIS_LABEL_GUTTER;
+            limitWidth = this._calculateXAxisLabelLimitWidth(labelCount) + chartConst.XAXIS_LABEL_GUTTER;
             newDegree = this._findRotationDegree(limitWidth, rotationInfo.maxLabelWidth, rotationInfo.labelHeight);
             rotationInfo.degree = newDegree;
         }
@@ -452,10 +459,12 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _updateDimensionsAndDegree: function() {
-        var xAxisOptions = this.options.xAxis || {},
-            limitWidth = this._calculateXAxisLabelLimitWidth(),
-            labels = this.axesData.xAxis.labels,
-            rotationInfo, overflowLeft, diffHeight;
+        var xAxisOptions = this.options.xAxis || {};
+        var limitWidth = this._calculateXAxisLabelLimitWidth();
+        var labels = tui.util.filter(this.axesData.xAxis.labels, function(label) {
+            return !!label;
+        });
+        var rotationInfo, overflowLeft, diffHeight;
 
         if (xAxisOptions.rotateLabel !== false) {
             rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);

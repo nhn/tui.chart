@@ -3,7 +3,7 @@
  *                  and create from rawSeriesData by user,
  * SeriesDataModel.groups has SeriesGroups.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -138,7 +138,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            return tui.util.map(concat.apply(rawDatum.data), function(value) {
+            var values;
+
+            if (tui.util.isArray(rawDatum)) {
+                values = rawDatum;
+            } else {
+                values = concat.apply(rawDatum.data);
+            }
+            return tui.util.map(values, function(value) {
                 return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions);
             });
         });

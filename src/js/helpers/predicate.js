@@ -1,7 +1,7 @@
 /**
  * @fileoverview Predicate.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -118,6 +118,16 @@ var predicate = {
     },
 
     /**
+     * Whether heatmap chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isHeatmapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_HEATMAP;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - chart type
@@ -174,7 +184,8 @@ var predicate = {
      * @returns {boolean}
      */
     allowMinusPointRender: function(chartType) {
-        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType);
+        return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
+            predicate.isHeatmapChart(chartType);
     },
 
     /**
@@ -337,6 +348,25 @@ var predicate = {
      */
     isMinusLimit: function(limit) {
         return limit.min <= 0 && limit.max <= 0;
+    },
+
+    /**
+     * Whether auto tick interval or not.
+     * @param {string} [tickInterval] - tick interval option
+     * @returns {boolean}
+     */
+    isAutoTickInterval: function(tickInterval) {
+        return tickInterval === chartConst.TICK_INTERVAL_AUTO;
+    },
+
+    /**
+     * Whether valid label interval or not.
+     * @param {number} [labelInterval] - label interval option
+     * @param {string} [tickInterval] - tick interval option
+     * @returns {*|boolean}
+     */
+    isValidLabelInterval: function(labelInterval, tickInterval) {
+        return labelInterval && labelInterval > 1 && !tickInterval;
     }
 };
 

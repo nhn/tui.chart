@@ -144,66 +144,6 @@ describe('BarTypeSeriesBase', function() {
         });
     });
 
-    describe('_makeSeriesLabelsHtml()', function() {
-        it('position을 계산하고 _makeSeriesLabelHtml을 호출하여 하나의 seriesItem에 대한 레이블 html을 생성합니다.', function() {
-            var groupIndex = 0,
-                labelHeight = 20,
-                seriesItem = {
-                    value: 40,
-                    endLabel: '40'
-                },
-                index = 0;
-
-            series.seriesData = {
-                groupBounds: [
-                    [
-                        {
-                            end: {}
-                        }
-                    ]
-                ]
-            };
-            series._makeSeriesLabelsHtml(groupIndex, labelHeight, seriesItem, index);
-
-            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
-                left: 0,
-                top: 0
-            }, '40', 0);
-        });
-
-        it('range seriesItem의 경우에는 _makeSeriesLabelHtml를 두번 호출하여 양쪽 두개의 레이블 html을 생성합니다.', function() {
-            var groupIndex = 0,
-                labelHeight = 20,
-                seriesItem = {
-                    value: 40,
-                    endLabel: '40',
-                    startLabel: '10',
-                    isRange: true
-                },
-                index = 0;
-
-            series.seriesData = {
-                groupBounds: [
-                    [
-                        {
-                            end: {}
-                        }
-                    ]
-                ]
-            };
-            series._makeSeriesLabelsHtml(groupIndex, labelHeight, seriesItem, index);
-
-            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
-                left: 0,
-                top: 0
-            }, '40', 0);
-            expect(series._makeSeriesLabelHtml).toHaveBeenCalledWith({
-                left: 0,
-                top: 0
-            }, '10', 0);
-        });
-    });
-
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
             var labelContainer = dom.create('div'),
@@ -242,7 +182,7 @@ describe('BarTypeSeriesBase', function() {
     describe('_makeSumValues()', function() {
         it('[10, 20, 30] values의 합은 60입니다.', function() {
             var actual = series._makeSumValues([10, 20, 30]);
-            expect(actual).toBe(60);
+            expect(actual).toBe('60');
         });
 
         it('두번째 인자에 포맷팅 함수 배열을 넘기면 합한 결과를 전달한 함수 배열들로 포맷팅 하여 반환합니다.', function() {

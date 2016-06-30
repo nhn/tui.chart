@@ -174,44 +174,6 @@ describe('ColumnChartSeries', function() {
         });
     });
 
-    describe('_makeSeriesRenderingPosition()', function() {
-        it('series label의 렌더링 포지션을 구합니다.', function() {
-            var bound = {
-                    left: 10,
-                    top: 30,
-                    width: 40,
-                    height: 20
-                },
-                labelHeight = 20,
-                value = 10,
-                label = '10',
-                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
-                expected = {
-                    left: 10,
-                    top: 5
-                };
-            expect(actual).toEqual(expected);
-        });
-
-        it('value가 음수일 경우의 series label 렌더링 포지션을 구합니다.', function() {
-            var bound = {
-                    left: 10,
-                    top: 30,
-                    width: 40,
-                    height: 20
-                },
-                labelHeight = 20,
-                value = -10,
-                label = '-10',
-                actual = series._makeSeriesRenderingPosition(bound, labelHeight, value, label),
-                expected = {
-                    left: 10,
-                    top: 55
-                };
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('_calculateLeftPositionOfSumLabel()', function() {
         it('합계 레이블의 left position값을 계산합니다.', function() {
             var actual = series._calculateLeftPositionOfSumLabel({

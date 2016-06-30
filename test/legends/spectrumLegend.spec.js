@@ -1,15 +1,15 @@
 /**
- * @fileoverview Test for MapChartLegend.
+ * @fileoverview Test for SpectrumLegend.
  * @author NHN Ent.
  *         FE Development Team <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var MapChartLegend = require('../../src/js/legends/mapChartLegend'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var SpectrumLegend = require('../../src/js/legends/spectrumLegend');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
-describe('Test for MapChartLegend', function() {
+describe('Test for SpectrumLegend', function() {
     var legend, boundsMaker;
 
     beforeAll(function() {
@@ -17,7 +17,7 @@ describe('Test for MapChartLegend', function() {
     });
 
     beforeEach(function() {
-        legend = new MapChartLegend({
+        legend = new SpectrumLegend({
             theme: {},
             boundsMaker: boundsMaker
         });

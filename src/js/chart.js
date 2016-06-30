@@ -1,7 +1,7 @@
 /**
  * @fileoverview chart.js is entry point of Toast UI Chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
 
@@ -472,7 +472,6 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {object} options.tooltip.position - relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -570,7 +569,6 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {object} options.tooltip.position - relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
  *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
@@ -623,6 +621,75 @@ tui.chart.bubbleChart = function(container, rawData, options) {
 tui.chart.scatterChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_SCATTER;
+    return _createChart(container, rawData, options);
+};
+
+/**
+ * Heatmap chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {{x: Array.<string | number>, y: Array.<string | number>}} rawData.categories - categories
+ *      @param {Array.<Array.<number>>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.yAxis - options for y axis component
+ *          @param {string} options.yAxis.title - title for y axis
+ *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *      @param {object} options.xAxis - options for x axis component
+ *          @param {string} options.xAxis.title - title for x axis
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {string} options.tooltip.align - align option for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
+ * @returns {object} scatter chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     rawData = {
+ *       categories: {
+ *           x: [10, 20, 30, 40, 50],
+ *           y: [1, 2, 3, 4, 5, 6]
+ *       },
+ *       series: [
+ *           [10, 20, 30, 40, 50],
+ *           [1, 4, 6, 7, 8],
+ *           [20, 4, 5, 70, 8],
+ *           [100, 40, 30, 80, 30],
+ *           [20, 10, 60, 90, 20],
+ *           [50, 40, 30, 20, 10]
+ *       ]
+ *     },
+ *     options = {
+ *       chart: {
+ *         title: 'Heatmap Chart'
+ *       },
+ *       yAxis: {
+ *         title: 'Y Axis'
+ *       },
+ *       xAxis: {
+ *         title: 'X Axis'
+ *       }
+ *     };
+ * tui.chart.heatmapChart(container, rawData, options);
+ */
+tui.chart.heatmapChart = function(container, rawData, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_HEATMAP;
     return _createChart(container, rawData, options);
 };
 

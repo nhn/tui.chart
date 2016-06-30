@@ -3,7 +3,7 @@
  * rawData.categories --> categories
  * rawData.series --> SeriesDataModel, legendLabels, legendData
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -62,7 +62,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = rawData;
+        this.originalRawData = JSON.parse(JSON.stringify(rawData));
 
         /**
          * chart type
@@ -94,7 +94,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          */
         this.originalLegendData = null;
 
+        /**
+         * dynamic data array for adding data.
+         * @type {Array.<{category: string | number, values: Array.<number>}>}
+         */
+        this.dynamicData = [];
+
         this.initData(rawData);
+        this.initZoomedRawData();
     },
 
     /**
@@ -102,7 +109,62 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return this.originalRawData;
+        return JSON.parse(JSON.stringify(this.originalRawData));
+    },
+
+    /**
+     * Get zoomed raw data.
+     * @returns {*|null}
+     */
+    getZoomedRawData: function() {
+        var zoomedRawData = this.zoomedRawData;
+        if (zoomedRawData) {
+            zoomedRawData = JSON.parse(JSON.stringify(zoomedRawData));
+        } else {
+            zoomedRawData = this.getOriginalRawData();
+        }
+
+        return zoomedRawData;
+    },
+
+    /**
+     * Filter raw data by index range.
+     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
+     * @param {Array.<number>} indexRange - index range for zoom
+     * @returns {*}
+     * @private
+     */
+    _filterRawDataByIndexRange: function(rawData, indexRange) {
+        var startIndex = indexRange[0];
+        var endIndex = indexRange[1];
+
+        rawData.series = tui.util.map(rawData.series, function(seriesData) {
+            seriesData.data = seriesData.data.slice(startIndex, endIndex + 1);
+            return seriesData;
+        });
+        rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+
+        return rawData;
+    },
+
+    /**
+     * Update raw data for zoom
+     * @param {Array.<number>} indexRange - index range for zoom
+     */
+    updateRawDataForZoom: function(indexRange) {
+        var rawData = this.getRawData();
+        var zoomedRawData = this.getZoomedRawData();
+
+        this.zoomedRawData = this._filterRawDataByIndexRange(zoomedRawData, indexRange);
+        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+        this.initData(rawData);
+    },
+
+    /**
+     * Init zoomed raw data.
+     */
+    initZoomedRawData: function() {
+        this.zoomedRawData = null;
     },
 
     /**
@@ -120,7 +182,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * categories
          * @type {Array.<string>}
          */
-        this.categories = null;
+        this.categoriesMap = null;
 
         /**
          * stacks
@@ -172,6 +234,14 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Get raw data.
+     * @returns {rawData}
+     */
+    getRawData: function() {
+        return this.rawData;
+    },
+
+    /**
      * Find chart type from series name.
      * @param {string} seriesName - series name
      * @returns {*}
@@ -181,43 +251,113 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Process categories
-     * @returns {Array.<string>} processed categories
+     * Escape categories
+     * @param {Array.<string, number>} categories - cetegories
+     * @returns {*|Array.<Object>|Array}
      * @private
      */
-    _processCategories: function() {
-        return tui.util.map(this.rawData.categories, function(category) {
+    _escapeCategories: function(categories) {
+        return tui.util.map(categories, function(category) {
             return tui.util.encodeHTMLEntity(String(category));
         });
     },
 
     /**
-     * Get Categories
-     * @returns {Array.<string>}}
+     * Process categories
+     * @param {string} type - category type (x or y)
+     * @returns {null | Array.<string>} processed categories
+     * @private
      */
-    getCategories: function() {
-        if (!this.categories) {
-            this.categories = this._processCategories();
+    _processCategories: function(type) {
+        var rawCategories = this.rawData.categories;
+        var categoriesMap = {};
+
+        if (tui.util.isArray(rawCategories)) {
+            categoriesMap[type] = this._escapeCategories(rawCategories);
+        } else if (rawCategories) {
+            if (rawCategories.x) {
+                categoriesMap.x = this._escapeCategories(rawCategories.x);
+            }
+
+            if (rawCategories.y) {
+                categoriesMap.y = this._escapeCategories(rawCategories.y).reverse();
+            }
         }
 
-        return this.categories;
+        return categoriesMap;
+    },
+
+    /**
+     * Get Categories
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {Array.<string>}}
+     */
+    getCategories: function(isVertical) {
+        var type = isVertical ? 'y' : 'x';
+        var foundCategories = [];
+
+        if (!this.categoriesMap) {
+            this.categoriesMap = this._processCategories(type);
+        }
+
+        if (tui.util.isExisty(isVertical)) {
+            foundCategories = this.categoriesMap[type] || [];
+        } else {
+            tui.util.forEach(this.categoriesMap, function(categories) {
+                foundCategories = categories;
+                return false;
+            });
+        }
+
+        return foundCategories;
+    },
+
+    /**
+     * Get category count.
+     * @param {boolean} isVertical - whether vertical or not
+     * @returns {*}
+     */
+    getCategoryCount: function(isVertical) {
+        var categories = this.getCategories(isVertical);
+        return categories ? categories.length : 0;
     },
 
     /**
      * Whether has categories or not.
+     * @param {boolean} isVertical - whether vertical or not
      * @returns {boolean}
      */
-    hasCategories: function() {
-        return !!this.getCategories().length;
+    hasCategories: function(isVertical) {
+        return !!this.getCategoryCount(isVertical);
     },
 
     /**
      * Get category.
      * @param {number} index index
+     * @param {boolean} isVertical - whether vertical or not
      * @returns {string} category
      */
-    getCategory: function(index) {
-        return this.getCategories()[index];
+    getCategory: function(index, isVertical) {
+        return this.getCategories(isVertical)[index];
+    },
+
+    /**
+     * Get category for tooltip.
+     * @param {number} firstIndex - index
+     * @param {number} oppositeIndex - opposite index
+     * @param {boolean} isVerticalChart - whether vertical chart or not
+     * @returns {string}
+     */
+    getTooltipCategory: function(firstIndex, oppositeIndex, isVerticalChart) {
+        var isHorizontal = !isVerticalChart;
+        var category = this.getCategory(firstIndex, isHorizontal);
+        var categoryCount = this.getCategoryCount(!isHorizontal);
+
+        if (categoryCount) {
+            category += ', ' + this.getCategory(categoryCount - oppositeIndex - 1, isVerticalChart);
+        }
+
+        return category;
     },
 
     /**
@@ -274,6 +414,146 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getGroupCount: function(chartType) {
         return this.getSeriesDataModel(chartType).getGroupCount();
+    },
+
+    /**
+     * Push category.
+     * @param {string} category - category
+     * @private
+     */
+    _pushCategory: function(category) {
+        this.rawData.categories.push(category);
+        this.originalRawData.categories.push(category);
+    },
+
+    /**
+     * Shift category.
+     * @private
+     */
+    _shiftCategory: function() {
+        this.rawData.categories.shift();
+        this.originalRawData.categories.shift();
+    },
+
+    /**
+     * Find raw serise datum by name.
+     * @param {string} name - name
+     * @returns {null | object}
+     * @private
+     */
+    _findRawSeriesDatumByName: function(name) {
+        var foundSeriesDatum = null;
+
+        tui.util.forEachArray(this.rawData.series, function(seriesDatum) {
+            var isEqual = seriesDatum.name === name;
+
+            if (isEqual) {
+                foundSeriesDatum = seriesDatum;
+            }
+
+            return !isEqual;
+        });
+
+        return foundSeriesDatum;
+    },
+
+    /**
+     * Push series data.
+     * @param {Array.<number>} values - values
+     * @private
+     */
+    _pushSeriesData: function(values) {
+        var self = this;
+
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum, index) {
+            var value = values[index];
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+
+            seriesDatum.data.push(value);
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.push(value);
+            }
+        });
+    },
+
+    /**
+     * Shift series data.
+     * @private
+     */
+    _shiftSeriesData: function() {
+        var self = this;
+
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+
+            seriesDatum.data.shift();
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.shift();
+            }
+        });
+    },
+
+    /**
+     * Add dynamic data.
+     * @param {string} category - category
+     * @param {Array.<number>} values - values
+     */
+    addDynamicData: function(category, values) {
+        this.dynamicData.push({
+            category: category,
+            values: values
+        });
+    },
+
+    /**
+     * Add data from dynapmic data.
+     * @returns {boolean}
+     */
+    addDataFromDynamicData: function() {
+        var datum = this.dynamicData.shift();
+
+        if (!datum) {
+            return false;
+        }
+
+        this._pushCategory(datum.category);
+        this._pushSeriesData(datum.values);
+
+        this.initData(this.rawData);
+
+        return true;
+    },
+
+    /**
+     * Shift data.
+     */
+    shiftData: function() {
+        this._shiftCategory();
+        this._shiftSeriesData();
+
+        this.initData(this.rawData);
+    },
+
+    /**
+     * Add data from remain dynamic data.
+     * @param {boolean} shiftingOption - whether has shifting option or not.
+     */
+    addDataFromRemainDynamicData: function(shiftingOption) {
+        var self = this;
+        var dynamicData = this.dynamicData;
+
+        this.dynamicData = [];
+
+        tui.util.forEach(dynamicData, function(datum) {
+            self._pushCategory(datum.category);
+            self._pushSeriesData(datum.values);
+            if (shiftingOption) {
+                self._shiftCategory();
+                self._shiftSeriesData();
+            }
+        });
+
+        this.initData(this.rawData);
     },
 
     /**
@@ -437,7 +717,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pickLegendLabel: function(item) {
-        return tui.util.encodeHTMLEntity(item.name);
+        return item.name ? tui.util.encodeHTMLEntity(item.name) : null;
     },
 
     /**
@@ -445,19 +725,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {string[]} labels
      */
     _pickLegendLabels: function() {
-        var self = this,
-            seriesData = this.rawData.series,
-            result;
+        var self = this;
+        var seriesData = this.rawData.series;
+        var legendLabels;
+
         if (tui.util.isArray(seriesData)) {
-            result = tui.util.map(seriesData, this._pickLegendLabel);
+            legendLabels = tui.util.map(seriesData, this._pickLegendLabel);
         } else {
-            result = {};
+            legendLabels = {};
             tui.util.forEach(seriesData, function(seriesDatum, type) {
-                result[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
+                legendLabels[type] = tui.util.map(seriesDatum, self._pickLegendLabel);
             });
         }
 
-        return result;
+        legendLabels = tui.util.filter(legendLabels, function(label) {
+            return tui.util.isExisty(label);
+        });
+
+        return legendLabels;
     },
 
     /**

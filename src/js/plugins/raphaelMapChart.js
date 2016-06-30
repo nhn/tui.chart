@@ -1,7 +1,7 @@
 /**
  * @fileoverview RaphaelPieCharts is graph renderer for map chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -10,8 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 
 var raphael = window.Raphael;
 
-var STROKE_COLOR = 'gray',
-    ANIMATION_TIME = 100;
+var STROKE_COLOR = 'gray';
+var ANIMATION_DURATION = 100;
 
 /**
  * @classdesc RaphaelMapCharts is graph renderer for map chart.
@@ -96,7 +96,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: this.overColor
-        }, ANIMATION_TIME);
+        }, ANIMATION_DURATION);
     },
 
     /**
@@ -108,7 +108,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
 
         sector.sector.animate({
             fill: sector.color
-        }, ANIMATION_TIME);
+        }, ANIMATION_DURATION);
     },
 
     /**

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Column chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -73,17 +73,18 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis',
                     isLabel: true
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: 'columnSeries',
                     SeriesClass: Series,
@@ -91,7 +92,8 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
                         allowNegativeTooltip: true
                     }
                 }
-            ]
+            ],
+            plot: true
         });
     }
 });

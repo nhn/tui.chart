@@ -1,7 +1,7 @@
 /**
  * @fileoverview Bar chart series component.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -154,33 +154,6 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
 
             return seriesGroup.map(iteratee);
         });
-    },
-
-    /**
-     * Make series rendering position
-     * @param {{left: number, top: number, width:number, height: number}} bound - bound
-     * @param {number} labelHeight - label height
-     * @param {number} value - value
-     * @param {string} label - label
-     * @param {?boolean} isStart - whether start or not
-     * @returns {{left: number, top: number}} - rendering position
-     * @private
-     */
-    _makeSeriesRenderingPosition: function(bound, labelHeight, value, label, isStart) {
-        var labelWidth = renderUtil.getRenderedLabelWidth(label, this.theme.label),
-            left = bound.left,
-            top = bound.top + (bound.height - labelHeight + chartConst.TEXT_PADDING) / 2;
-
-        if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
-            left += bound.width + chartConst.SERIES_LABEL_PADDING;
-        } else {
-            left -= labelWidth + chartConst.SERIES_LABEL_PADDING;
-        }
-
-        return {
-            left: left,
-            top: top
-        };
     },
 
     /**

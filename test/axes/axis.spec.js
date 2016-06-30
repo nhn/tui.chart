@@ -116,7 +116,7 @@ describe('Test for Axis', function() {
 
     describe('registerDimension()', function() {
         it('_isValidAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            spyOn(axis, '_isValidAxis').and.returnValues(false);
+            spyOn(axis, '_isValidAxis').and.returnValue(false);
             axis.componentName = 'yAxis';
 
             axis.registerDimension();
@@ -167,7 +167,7 @@ describe('Test for Axis', function() {
 
     describe('registerAdditionalDimension()', function() {
         it('_isInvalidRightYAxis()가 false이면 boundsMaker에 등록하지 않습니다.', function() {
-            spyOn(axis, '_isValidAxis').and.returnValues(false);
+            spyOn(axis, '_isValidAxis').and.returnValue(false);
             axis.componentName = 'yAxis';
 
             axis.registerAdditionalDimension();
@@ -223,7 +223,7 @@ describe('Test for Axis', function() {
             var container = dom.create('DIV'),
                 actual, expected;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._addCssClasses(container);
             actual = container.className;
             expected = 'vertical';
@@ -244,7 +244,6 @@ describe('Test for Axis', function() {
 
         it('isPositionRight이 true인 경우에는 container의 css className에 right 값을 설정합니다.', function() {
             var container = dom.create('DIV'),
-                isPositionRight = true,
                 actual, expected;
 
             axis.data.isPositionRight = true;
@@ -287,6 +286,134 @@ describe('Test for Axis', function() {
             expected = 'center';
 
             expect(actual).not.toMatch(expected);
+        });
+    });
+
+    describe('_moveToLeft()', function() {
+        it('tick 영역과 label 영역을 50만큼 좌측으로 이동시킵니다.', function(done) {
+            var ticksElement = dom.create('DIV');
+            var labelContainer = dom.create('DIV');
+
+            axis.ticksElement = ticksElement;
+            axis.labelContainer = labelContainer;
+            axis.ticksElement.style.left = '20px';
+            axis.labelContainer.style.left = '20px';
+            spyOn(renderUtil, 'setOpacity');
+
+            axis._moveToLeft(50);
+
+            setTimeout(function() {
+                expect(ticksElement.style.left).toBe('-30px');
+                expect(labelContainer.style.left).toBe('-30px');
+                done();
+            }, 450);
+
+        });
+
+        it('tick 영역과 label 영역에 left값이 설정되어 있지 않으면 left를 0으로 계산합니다.', function(done) {
+            var ticksElement = dom.create('DIV');
+            var labelContainer = dom.create('DIV');
+
+            axis.ticksElement = ticksElement;
+            axis.labelContainer = labelContainer;
+            spyOn(renderUtil, 'setOpacity');
+
+            axis._moveToLeft(50);
+
+            setTimeout(function() {
+                expect(ticksElement.style.left).toBe('-50px');
+                expect(labelContainer.style.left).toBe('-50px');
+                done();
+            }, 450);
+        });
+
+        it('startIndex가 0이면 첫번째 tick와 첫번째 label의 opacity를 0으로 변경시킵니다.', function(done) {
+            var ticksElement = dom.create('DIV');
+            var firstTickElement = dom.create('DIV');
+            var labelContainer = dom.create('DIV');
+            var firstLabelElement = dom.create('DIV');
+
+            ticksElement.appendChild(firstTickElement);
+            labelContainer.appendChild(firstLabelElement);
+            axis.ticksElement = ticksElement;
+            axis.labelContainer = labelContainer;
+            axis.data.startIndex = 0;
+            spyOn(renderUtil, 'setOpacity');
+
+            axis._moveToLeft(50);
+
+            setTimeout(function() {
+                expect(renderUtil.setOpacity).toHaveBeenCalledWith([firstTickElement, firstLabelElement], 0);
+                done();
+            }, 450);
+        });
+    });
+
+    describe('_resizeByTickSize()', function() {
+        it('tick 영역과 label 영역의 너비를 50만큼 줄입니다.', function(done) {
+            var ticksElement = dom.create('DIV');
+            var labelContainer = dom.create('DIV')
+
+            ticksElement.style.width = '200px';
+            labelContainer.style.width = '200px';
+
+            axis.ticksElement = ticksElement;
+            axis.labelContainer = labelContainer;
+
+            axis._resizeByTickSize(50);
+
+            setTimeout(function() {
+                expect(ticksElement.style.width).toBe('150px');
+                expect(labelContainer.style.width).toBe('150px');
+                done();
+            }, 450);
+        });
+    });
+
+    describe('animateForAddingData()', function() {
+        it('shifting옵션이 있다면 this._moveToLeft를 수행합니다.', function() {
+            spyOn(axis, '_moveToLeft');
+
+            axis.animateForAddingData({
+                shifting: true,
+                tickSize: 50
+            });
+
+            expect(axis._moveToLeft).toHaveBeenCalledWith(50);
+        });
+
+        it('shifting옵션이 없다면 this._resizeByTickSize를 수행합니다.', function() {
+            spyOn(axis, '_resizeByTickSize');
+
+            axis.animateForAddingData({
+                tickSize: 50
+            });
+
+            expect(axis._resizeByTickSize).toHaveBeenCalledWith(50);
+        });
+
+        it('세로 형 축에서는 동작하지 않습니다.', function() {
+            spyOn(axis, '_moveToLeft');
+            spyOn(axis, '_resizeByTickSize');
+
+            axis.isVertical = true;
+            axis.animateForAddingData();
+
+            expect(axis._moveToLeft).not.toHaveBeenCalled();
+            expect(axis._resizeByTickSize).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_makeCssTextFromPositionMap()', function() {
+        it('position이나 dimension 정보를 전달하여 value에 px를 추가해 renderUtil.makeCssTextFromMap를 호출합니다.', function() {
+            var actual = axis._makeCssTextFromPositionMap({
+                left: 10,
+                top: 20,
+                width: 100,
+                height: 100
+            });
+
+            expect(actual).toBe('left:10px;top:20px;width:100px;height:100px');
         });
     });
 
@@ -520,7 +647,7 @@ describe('Test for Axis', function() {
 
             axis.options.title = 'Axis Title';
             axis.theme.fontSize = 12;
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle.innerHTML).toBe('Axis Title');
@@ -531,54 +658,167 @@ describe('Test for Axis', function() {
 
             axis.options.title = '';
             axis.theme.fontSize = 12;
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             elTitle = axis._renderTitleArea(200);
 
             expect(elTitle).toBeNull();
         });
     });
 
+    describe('_makeTickLineHtml()', function() {
+        it('세로 axis의 tick line의 html을 생성합니다.', function() {
+            var actual, expected;
 
-    describe('_renderTickArea()', function() {
-        it('axis 영역의 너비가 300이고 tick count가 5인 x축(레이블 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 좌측에서 부터 렌더링 됩니다.', function() {
-            var size = 300,
-                tickCount = 5,
-                categories = [],
-                elTickArea, childNodes;
+            axis.isVertical = true;
 
-            axis.data.isVertical = false;
+            actual = axis._makeTickLineHtml(100, 'top', true, 0);
+            expected = '<div class="tui-chart-tick-line" style="top:-1px;height:101px"></div>';
 
-            elTickArea = axis._renderTickArea(size, tickCount, categories);
-            childNodes = elTickArea.childNodes;
-
-            expect(childNodes.length).toBe(6);
-            expect(childNodes[0].className).toBe('tui-chart-tick-line');
-            expect(childNodes[1].style.left).toBe('-1px');
-            expect(childNodes[2].style.left).toBe('75px');
-            expect(childNodes[3].style.left).toBe('150px');
-            expect(childNodes[4].style.left).toBe('224px');
-            expect(childNodes[5].style.left).toBe('299px');
+            expect(actual).toBe(expected);
         });
 
-        it('axis 영역의 높이가 300이고 tick count가 5인 y축(벨류 타입) tick 영역에는 5개의 tick이 75px(or 74px) 간격으로 밑에서 부터 렌더링 됩니다.', function() {
-            var size = 300,
-                tickCount = 5,
-                categories = [],
-                elTickArea, childNodes;
+        it('가로 axis의 tick line의 html을 생성합니다.', function() {
+            var actual, expected;
 
-            axis.data.isLabelAxis = false;
-            axis.data.isVertical = true;
+            axis.isVertical = false;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 0);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:101px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.isVertical = false;
+            axis.data.positionRatio = 0.2;
+            axis.data.lineWidth = 100;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 20);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.isVertical = false;
+            axis.data.positionRatio = 0.2;
+            axis.data.lineWidth = 100;
+
+            actual = axis._makeTickLineHtml(100, 'left', true, 20);
+            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_makeTickHtml()', function() {
+        it('tick html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
+
+            actual = axis._makeTickHtml(100, 5, true, 0);
+            expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 74%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 99%"></div>';
+
+            expect(actual).toBe(expected);
+        });
+
+        it('label숫자가 tickCount보다 작을 경우에는 label 숫자에 맞춰 tick html을 생성합니다.', function() {
+            var actual, expected;
+
+            axis.data.labels = ['label1', 'label2', 'label3', 'label4'];
+
+            actual = axis._makeTickHtml(100, 5, true, 0);
+            expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 74%"></div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
+
+    describe('_renderTickLine()', function() {
+        it('가로 축 tick line 엘리먼트를 생성합니다.', function() {
+            var actual = axis._renderTickLine(200, true, 0);
+
+            expect(actual.className).toBe('tui-chart-tick-line');
+            expect(actual.style.width).toBe('201px');
+            expect(actual.style.left).toBe('-1px');
+        });
+
+        it('나눠진 가로 축 tick line 엘리먼트를 생성합니다.', function() {
+            var actual = axis._renderTickLine(200, false, 0);
+
+            expect(actual.className).toBe('tui-chart-tick-line');
+            expect(actual.style.width).toBe('200px');
+            expect(actual.style.left).toBe('0px');
+        });
+
+        it('세로 축 tick line 엘리먼트를 생성합니다.', function() {
+            var actual;
+
+            axis.isVertical = true;
+
+            actual = axis._renderTickLine(200, false, 0);
+
+            expect(actual.className).toBe('tui-chart-tick-line');
+            expect(actual.style.height).toBe('200px');
+            expect(actual.style.bottom).toBe('0px');
+        });
+
+        it('additionalSize 있을 때에는 left값에 additional을 더하여 tick line left 값을 설정합니다.', function() {
+            var actual = axis._renderTickLine(200, false, 10);
+
+            expect(actual.style.left).toBe('10px');
+        });
+
+        it('data.lineWidth가 있을 때에는 line size(width or height)를 lineWidth로 설정합니다.', function() {
+            var actual;
+
+            axis.data.lineWidth = 300;
+            actual = axis._renderTickLine(200, true, 0);
+
+            expect(actual.style.width).toBe('300px');
+        });
+    });
+
+    describe('_renderTicks()', function() {
+        it('tick 엘리먼트들이 포함된 ticks엘리먼트를 생성합니다.', function() {
+            var actual;
+
+            axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
+
+            actual = axis._renderTicks(200, 5, true, 0);
+
+            expect(actual.childNodes.length).toBe(5);
+        });
+    });
+
+    describe('_renderTickArea()', function() {
+        it('tick line과 ticks 영역을 렌더링 합니다.', function() {
+            var size = 300;
+            var tickCount = 5;
+            var categories = [];
+            var elTickArea, childNodes;
+
+            axis.data.isVertical = false;
+            axis.data.labels = ['label1', 'label2', 'label3', 'label4', 'label5'];
 
             elTickArea = axis._renderTickArea(size, tickCount, categories);
             childNodes = elTickArea.childNodes;
 
-            expect(childNodes.length).toBe(6);
+            expect(childNodes.length).toBe(2);
             expect(childNodes[0].className).toBe('tui-chart-tick-line');
-            expect(childNodes[1].style.bottom).toBe('0px');
-            expect(childNodes[2].style.bottom).toBe('75px');
-            expect(childNodes[3].style.bottom).toBe('150px');
-            expect(childNodes[4].style.bottom).toBe('224px');
-            expect(childNodes[5].style.bottom).toBe('299px');
+            expect(childNodes[1].className).toBe('tui-chart-ticks');
         });
     });
 
@@ -609,7 +849,7 @@ describe('Test for Axis', function() {
         it('세로차트(isVertical=true)인 경우에는 너비값(width)도 설정합니다.', function() {
             var labelContainer = dom.create('DIV');
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._applyLabelAreaStyle(labelContainer, 50);
 
             expect(labelContainer.style.width).toBe('20px');
@@ -617,65 +857,65 @@ describe('Test for Axis', function() {
     });
 
     describe('_renderLabelArea()', function() {
-        it('axis 영역의 너비가 300인 레이블 타입 x축 레이블 영역은 너비 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
-            var size = 300,
-                axisWidth = 0,
-                tickCount = 4,
-                categories = ['label1', 'label2', 'label3'],
-                elLabelArea, childNodes;
+        it('axis 영역의 너비가 400인 레이블 타입 x축 레이블 영역은 너비 133px과 간격 33.25%로 레이블값을 포함하여 렌더링 됩니다.', function() {
+            var size = 400;
+            var axisWidth = 0;
+            var tickCount = 4;
+            var categories = ['label1', 'label2', 'label3'];
+            var elLabelArea, childNodes;
 
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = false;
-
-            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
-            childNodes = elLabelArea.childNodes;
-
-            expect(childNodes.length).toBe(3);
-            expect(childNodes[0].style.left).toBe('0px');
-            expect(childNodes[1].style.left).toBe('100px');
-            expect(childNodes[2].style.left).toBe('199px');
-            expect(childNodes[0].style.width).toBe('100px');
-            expect(childNodes[1].style.width).toBe('100px');
-            expect(childNodes[2].style.width).toBe('100px');
-            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
-            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
-            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
-        });
-
-        it('axis 영역의 높이가 300인 레이블 타입 y축 레이블 영역은 높이 100px과 간격 100px(or 99px)로 레이블값을 포함하여 렌더링 됩니다.', function() {
-            var size = 300,
-                axisWidth = 100,
-                tickCount = 4,
-                categories = ['label1', 'label2', 'label3'],
-                elLabelArea, childNodes;
-
-            axis.data.isLabelAxis = true;
-            axis.data.isVertical = true;
+            axis.isLabel = true;
+            axis.isVertical = false;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
-            expect(childNodes[0].style.top).toBe('0px');
-            expect(childNodes[1].style.top).toBe('100px');
-            expect(childNodes[2].style.top).toBe('199px');
-            expect(childNodes[0].style.height).toBe('100px');
-            expect(childNodes[1].style.height).toBe('100px');
-            expect(childNodes[2].style.height).toBe('100px');
-            expect(childNodes[0].style.lineHeight).toBe('100px');
-            expect(childNodes[1].style.lineHeight).toBe('100px');
-            expect(childNodes[2].style.lineHeight).toBe('100px');
+            expect(childNodes[0].style.left).toBe('0%');
+            expect(childNodes[1].style.left).toBe('33.25%');
+            expect(childNodes[2].style.left).toBe('66.5%');
+            expect(childNodes[0].style.width).toBe('133px');
+            expect(childNodes[1].style.width).toBe('133px');
+            expect(childNodes[2].style.width).toBe('133px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
         });
 
-        it('axis 영역의 너비가 300인 벨류 타입 x축 레이블 영역은 너비 150px과 간격 150px(or 149px)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
-            var size = 300,
-                axisWidth = 0,
-                tickCount = 3,
-                categories = ['0.00', '30.00', '60.00'],
-                elLabelArea, childNodes;
+        it('axis 영역의 높이가 400인 레이블 타입 y축 레이블 영역은 높이 133px과 간격 33.25%로 레이블값을 포함하여 렌더링 됩니다.', function() {
+            var size = 400;
+            var axisWidth = 100;
+            var tickCount = 4;
+            var categories = ['label1', 'label2', 'label3'];
+            var elLabelArea, childNodes;
+
+            axis.isLabel = true;
+            axis.isVertical = true;
+
+            elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
+            childNodes = elLabelArea.childNodes;
+
+            expect(childNodes.length).toBe(3);
+            expect(childNodes[0].style.top).toBe('0%');
+            expect(childNodes[1].style.top).toBe('33.25%');
+            expect(childNodes[2].style.top).toBe('66.5%');
+            expect(childNodes[0].style.height).toBe('133px');
+            expect(childNodes[1].style.height).toBe('133px');
+            expect(childNodes[2].style.height).toBe('133px');
+            expect(childNodes[0].style.lineHeight).toBe('133px');
+            expect(childNodes[1].style.lineHeight).toBe('133px');
+            expect(childNodes[2].style.lineHeight).toBe('133px');
+            expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
+            expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
+            expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
+        });
+
+        it('axis 영역의 너비가 400인 벨류 타입 x축 레이블 영역은 너비 200px과 간격 50%(or 49.75%)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
+            var size = 400;
+            var axisWidth = 0;
+            var tickCount = 3;
+            var categories = ['0.00', '30.00', '60.00'];
+            var elLabelArea, childNodes;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
@@ -683,33 +923,33 @@ describe('Test for Axis', function() {
             expect(childNodes.length).toBe(3);
 
             // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
-            expect(childNodes[0].style.left).toBe('0px');
-            expect(childNodes[1].style.left).toBe('150px');
-            expect(childNodes[2].style.left).toBe('299px');
-            expect(childNodes[0].style.width).toBe('150px');
-            expect(childNodes[1].style.width).toBe('150px');
-            expect(childNodes[2].style.width).toBe('150px');
+            expect(childNodes[0].style.left).toBe('0%');
+            expect(childNodes[1].style.left).toBe('50%');
+            expect(childNodes[2].style.left).toBe('99.75%');
+            expect(childNodes[0].style.width).toBe('200px');
+            expect(childNodes[1].style.width).toBe('200px');
+            expect(childNodes[2].style.width).toBe('200px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
         });
 
-        it('axis 영역의 높이가 300인 벨류 타입 y축 레이블 영역은 150px(or 149px)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
-            var size = 300,
-                axisWidth = 100,
-                tickCount = 3,
-                categories = ['0.00', '30.00', '60.00'],
-                elLabelArea, childNodes;
+        it('axis 영역의 높이가 400인 벨류 타입 y축 레이블 영역은 50%(or 49.75%)의 간격으로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
+            var size = 400;
+            var axisWidth = 100;
+            var tickCount = 3;
+            var categories = ['0.00', '30.00', '60.00'];
+            var elLabelArea, childNodes;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
 
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
             expect(childNodes.length).toBe(3);
-            expect(childNodes[0].style.bottom).toBe('0px');
-            expect(childNodes[1].style.bottom).toBe('150px');
-            expect(childNodes[2].style.bottom).toBe('299px');
+            expect(childNodes[0].style.bottom).toBe('0%');
+            expect(childNodes[1].style.bottom).toBe('50%');
+            expect(childNodes[2].style.bottom).toBe('99.75%');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
@@ -728,8 +968,8 @@ describe('Test for Axis', function() {
         it('레이블 높이가 100인 레이블 타입 y축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = true;
-            axis.data.isLabelAxis = true;
+            axis.isVertical = true;
+            axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'height:100px;line-height:100px;';
 
@@ -739,8 +979,8 @@ describe('Test for Axis', function() {
         it('레이블 너비가 100인 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = false;
-            axis.data.isLabelAxis = true;
+            axis.isVertical = false;
+            axis.isLabel = true;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
 
@@ -750,8 +990,8 @@ describe('Test for Axis', function() {
         it('벨류 타입 y축의 경우는 빈 cssText가 생성됩니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = true;
-            axis.data.isLabelAxis = false;
+            axis.isVertical = true;
+            axis.isLabel = false;
             actual = axis._makeLabelCssText();
             expected = '';
 
@@ -761,8 +1001,8 @@ describe('Test for Axis', function() {
         it('너비가 100인 벨류 타입 x축의 cssText를 생성합니다.', function() {
             var actual, expected;;
 
-            axis.data.isVertical = false;
-            axis.data.isLabelAxis = false;
+            axis.isVertical = false;
+            axis.isLabel = false;
             actual = axis._makeLabelCssText(100);
             expected = 'width:100px;';
 
@@ -778,7 +1018,8 @@ describe('Test for Axis', function() {
             actual = axis._calculateRotationMovingPosition({
                 left: 40,
                 moveLeft: 20,
-                top: 30
+                top: 30,
+                size: 100
             });
             expected = {
                 top: 30,
@@ -795,7 +1036,8 @@ describe('Test for Axis', function() {
                 labelHeight: 20,
                 left: 40,
                 moveLeft: 20,
-                top: 30
+                top: 30,
+                size: 100
             });
             expected = {
                 top: 30,
@@ -816,6 +1058,7 @@ describe('Test for Axis', function() {
                 labelWidth: 40,
                 labelHeight: 20,
                 left: 40,
+                size: 100,
                 label: 'label1',
                 theme: {}
             });
@@ -836,6 +1079,7 @@ describe('Test for Axis', function() {
                 labelWidth: 20,
                 labelHeight: 20,
                 left: 40,
+                size: 100,
                 label: 'label1',
                 theme: {}
             });
@@ -855,6 +1099,7 @@ describe('Test for Axis', function() {
                 labelWidth: 40,
                 labelHeight: 20,
                 left: 40,
+                size: 100,
                 label: 'label1',
                 theme: {}
             });
@@ -872,7 +1117,7 @@ describe('Test for Axis', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             spyOn(axis, '_calculateRotationMovingPosition').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
-            expected = 'left:10px;top:10px';
+            expected = 'left:10%;top:10px';
             expect(actual).toEqual(expected);
         });
 
@@ -881,22 +1126,22 @@ describe('Test for Axis', function() {
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
             spyOn(axis, '_calculateRotationMovingPositionForOldBrowser').and.returnValue({left: 10, top: 10});
             actual = axis._makeCssTextForRotationMoving();
-            expected = 'left:10px;top:10px';
+            expected = 'left:10%;top:10px';
             expect(actual).toEqual(expected);
         });
     });
 
     describe('_makeNormalLabelsHtml()', function() {
         it('간격이 50px인 회전없는 레이블 영역 html을 생성합니다.', function() {
-            var positions = [30, 80, 130],
-                categories = ['label1', 'label2', 'label3'],
-                labelSize = 50,
-                actual, expected;
+            var positions = [20, 50, 80];
+            var categories = ['label1', 'label2', 'label3'];
+            var labelSize = 50;
+            var actual, expected;
 
-            actual = axis._makeNormalLabelsHtml(positions, categories, labelSize);
-            expected = '<div class="tui-chart-label" style="width:50px;left:30px"><span>label1</span></div>' +
-                '<div class="tui-chart-label" style="width:50px;left:80px"><span>label2</span></div>' +
-                '<div class="tui-chart-label" style="width:50px;left:130px"><span>label3</span></div>';
+            actual = axis._makeNormalLabelsHtml(positions, categories, labelSize, 0);
+            expected = '<div class="tui-chart-label" style="width:50px;left:20%"><span>label1</span></div>' +
+                '<div class="tui-chart-label" style="width:50px;left:50%"><span>label2</span></div>' +
+                '<div class="tui-chart-label" style="width:50px;left:80%"><span>label3</span></div>';
 
             expect(actual).toBe(expected);
         });
@@ -904,15 +1149,16 @@ describe('Test for Axis', function() {
 
     describe('_makeRotationLabelsHtml()', function() {
         it('45도로 회전된 레이블 영역 html을 생성합니다.', function() {
-            var positions = [30, 80, 130],
-                categories = ['label1', 'label2', 'label3'],
-                labelSize = 80,
-                actual, expected;
+            var areaSize = 100;
+            var positions = [20, 50, 80];
+            var categories = ['label1', 'label2', 'label3'];
+            var labelSize = 80;
+            var actual, expected;
 
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
             boundsMaker.xAxisDegree = 45;
-            actual = axis._makeRotationLabelsHtml(positions, categories, labelSize);
+            actual = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize, 0);
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label1</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label2</span></div>' +
                 '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px"><span>label3</span></div>';
@@ -921,15 +1167,16 @@ describe('Test for Axis', function() {
         });
 
         it('IE7일 경우의 45도로 회전된 레이블 영역 html을 생성합니다.', function() {
-            var positions = [30],
-                categories = ['label1'],
-                labelSize = 80,
-                actual, expected;
+            var areaSize = 100;
+            var positions = [30];
+            var categories = ['label1'];
+            var labelSize = 80;
+            var actual, expected;
 
             spyOn(axis, '_makeCssTextForRotationMoving').and.returnValue('left:10px;top:10px');
             spyOn(renderUtil, 'isIE7').and.returnValue(true);
             boundsMaker.xAxisDegree = 45;
-            actual = axis._makeRotationLabelsHtml(positions, categories, labelSize);
+            actual = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize);
             expected = '<div class="tui-chart-label tui-chart-xaxis-rotation tui-chart-xaxis-rotation45" style="width:80px;left:10px;top:10px">' +
                     '<span style="filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod=\'auto expand\',' +
                     ' M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)">label1</span>' +
@@ -941,43 +1188,43 @@ describe('Test for Axis', function() {
 
     describe('_makeLabelsHtml()', function() {
         it('degree 정보가 없을 경우에는 _makeNormalLabelsHtml()을 실행합니다.', function() {
-            var positions = [30, 80, 130],
-                categories = ['label1', 'label2', 'label3'],
-                labelSize = 50,
-                actual, expected;
+            var areaSize = 100;
+            var positions = [30, 80, 130];
+            var categories = ['label1', 'label2', 'label3'];
+            var labelSize = 50;
+            var actual, expected;
 
-            actual = axis._makeLabelsHtml(positions, categories, labelSize);
-            expected = axis._makeNormalLabelsHtml(positions, categories, labelSize);
+            actual = axis._makeLabelsHtml(areaSize, positions, categories, labelSize, 0);
+            expected = axis._makeNormalLabelsHtml(positions, categories, labelSize, 0);
 
             expect(actual).toBe(expected);
         });
 
         it('degree 정보가 있을 경우에는 _makeRotationLabelsHtml()을 실행합니다.', function() {
-            var positions = [30, 80, 130],
-                categories = ['label1', 'label2', 'label3'],
-                labelSize = 50,
-                actual, expected;
+            var areaSize = 100;
+            var positions = [30, 80, 130];
+            var categories = ['label1', 'label2', 'label3'];
+            var labelSize = 50;
+            var actual, expected;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
             boundsMaker.xAxisDegree = 45;
             axis.componentName = 'xAxis';
-            actual = axis._makeLabelsHtml(positions, categories, labelSize);
-            expected = axis._makeRotationLabelsHtml(positions, categories, labelSize);
+            actual = axis._makeLabelsHtml(areaSize, positions, categories, labelSize);
+            expected = axis._makeRotationLabelsHtml(areaSize, positions, categories, labelSize);
 
             expect(actual).toBe(expected);
         });
 
         it('가로차트의 라벨 타입 axis의 roation 옵션이 false이면 dataProcessor.getMultilineCategories() 를 호출하여 categories를 덮어씌웁니다.', function() {
-            axis.data = {
-                isVertical: false,
-                isLabelAxis: true
-            };
+            axis.isVertical = false;
+            axis.isLabel = true;
             axis.options.rotateLabel = false;
             dataProcessor.getMultilineCategories.and.returnValue([]);
             spyOn(axis, '_makeRotationLabelsHtml');
             spyOn(axis, '_makeNormalLabelsHtml');
 
-            axis._makeLabelsHtml([]);
+            axis._makeLabelsHtml(100, []);
 
             expect(dataProcessor.getMultilineCategories).toHaveBeenCalled();
         });
@@ -986,8 +1233,8 @@ describe('Test for Axis', function() {
     describe('_changeLabelAreaPosition()', function() {
         it('레이블 타입 축(x,y 모두 포함)의 경우에는 레이블 영역 위치 이동은 없습니다.', function() {
             var labelContainer = dom.create('DIV');
-            
-            axis.data.isLabelAxis = true;
+
+            axis.isLabel = true;
             axis._changeLabelAreaPosition(labelContainer);
 
             // 레이블이 타입의 경우 기본 설정이 가운데 배치되기 때문에 위치 이동 필요 없습니다.
@@ -999,7 +1246,7 @@ describe('Test for Axis', function() {
             var labelContainer = dom.create('DIV'),
                 actual, expected;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis._changeLabelAreaPosition(labelContainer);
 
             actual = labelContainer.style.top;
@@ -1023,11 +1270,15 @@ describe('Test for Axis', function() {
 
     describe('_renderChildContainers()', function() {
         it('axis의 제목, 레이블, 틱 영역을 렌더링 합니다.', function() {
-            var size = 300,
-                axisWidth = 300,
-                tickCount = 4,
-                categories = ['label1', 'label2', 'label3'],
-                actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
+            var size = 300;
+            var axisWidth = 300;
+            var tickCount = 4;
+            var categories = ['label1', 'label2', 'label3'];
+            var actual;
+
+            axis.data.labels = categories;
+
+            actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
 
             expect(actual.length).toBe(4);
             expect(actual[0].className).toBe('tui-chart-title-area rotation');
@@ -1038,13 +1289,13 @@ describe('Test for Axis', function() {
         });
 
         it('line type(isVertical=true, aligned=true)의 경우 틱 영역은 제외합니다.', function() {
-            var size = 300,
-                axisWidth = 300,
-                tickCount = 4,
-                categories = ['label1', 'label2', 'label3'],
-                actual;
+            var size = 300;
+            var axisWidth = 300;
+            var tickCount = 4;
+            var categories = ['label1', 'label2', 'label3'];
+            var actual;
 
-            axis.data.isVertical = true;
+            axis.isVertical = true;
             axis.data.aligned = true;
 
             actual = axis._renderChildContainers(size, axisWidth, tickCount, categories);
@@ -1055,7 +1306,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderDivisionAxisArea()', function() {
+    describe('_renderDividedAxis()', function() {
         it('분할 axis영역을 렌더링 합니다.', function() {
             var container = dom.create('DIV');
 
@@ -1068,7 +1319,7 @@ describe('Test for Axis', function() {
                 width: 50
             });
 
-            axis._renderDivisionAxisArea(container, 300);
+            axis._renderDividedAxis(container, 300);
 
             expect(container.childNodes[0].className).toBe('tui-chart-title-area rotation');
             expect(container.childNodes[1].className).toBe('tui-chart-label-area');
@@ -1081,7 +1332,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderSingleAxisArea()', function() {
+    describe('_renderNotDividedAxis()', function() {
         it('단독 axis영역을 렌더링 합니다.', function() {
             var container = dom.create('DIV');
 
@@ -1090,7 +1341,7 @@ describe('Test for Axis', function() {
                 tickCount: 4
             };
 
-            axis._renderSingleAxisArea(container, {
+            axis._renderNotDividedAxis(container, {
                 width: 300,
                 height: 50
             });
@@ -1127,12 +1378,12 @@ describe('Test for Axis', function() {
             expect(dom.hasClass(container, 'horizontal')).toBe(true);
         });
 
-        it('divided이 true이면 _renderDivisionAxisArea()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
+        it('divided이 true이면 _renderDividedAxis()를 수행하고 너비를 yAxis 너비만큼 늘려줍니다.', function() {
             var container = dom.create('DIV');
 
 
-            spyOn(axis, '_renderSingleAxisArea');
-            spyOn(axis, '_renderDivisionAxisArea');
+            spyOn(axis, '_renderNotDividedAxis');
+            spyOn(axis, '_renderDividedAxis');
             boundsMaker.getDimension.and.callFake(function(type) {
                 if (type === 'yAxis') {
                     return {
@@ -1160,16 +1411,16 @@ describe('Test for Axis', function() {
             axis._renderAxisArea(container);
 
             expect(container.style.width).toBe('380px');
-            expect(axis._renderSingleAxisArea).not.toHaveBeenCalled();
-            expect(axis._renderDivisionAxisArea).toHaveBeenCalled();
+            expect(axis._renderNotDividedAxis).not.toHaveBeenCalled();
+            expect(axis._renderDividedAxis).toHaveBeenCalled();
         });
 
-        it('divided이 true가 아니면 _renderSingleAxisArea()를 수행합니다.', function() {
+        it('divided이 true가 아니면 _renderNotDividedAxis()를 수행합니다.', function() {
             var container = dom.create('DIV');
 
 
-            spyOn(axis, '_renderSingleAxisArea');
-            spyOn(axis, '_renderDivisionAxisArea');
+            spyOn(axis, '_renderNotDividedAxis');
+            spyOn(axis, '_renderDividedAxis');
             boundsMaker.getDimension.and.callFake(function(type) {
                 if (type === 'yAxis') {
                     return {
@@ -1196,8 +1447,8 @@ describe('Test for Axis', function() {
             axis._renderAxisArea(container);
 
             expect(container.style.width).toBe('300px');
-            expect(axis._renderSingleAxisArea).toHaveBeenCalled();
-            expect(axis._renderDivisionAxisArea).not.toHaveBeenCalled();
+            expect(axis._renderNotDividedAxis).toHaveBeenCalled();
+            expect(axis._renderDividedAxis).not.toHaveBeenCalled();
         });
     });
 
@@ -1215,8 +1466,8 @@ describe('Test for Axis', function() {
 
         it('_isInvalidRightYAxis()가 false이서 this.options가 있을 경우 options의 내용을 갱신하면서 _renderAxisArea()를 수행합니다.', function() {
             var options = {
-                    title: 'ABC'
-                };
+                title: 'ABC'
+            };
 
             spyOn(axis, '_renderAxisArea');
 

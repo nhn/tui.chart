@@ -13,7 +13,7 @@ describe('AreaChartSeries', function() {
     var series, boundsMaker;
 
     beforeAll(function() {
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getAxesData']);
     });
 
     beforeEach(function() {
@@ -28,18 +28,20 @@ describe('AreaChartSeries', function() {
     describe('_makePositionTopOfZeroPoint', function() {
         it('min이 음수이고 max가 양수일 경우에는 0점에서 max까지의 거리(_getLimitDistanceFromZeroPoint)를 top position 정보에 확장 사이트를 더하여 반환합니다.', function() {
             var limit = {
-                    min: -10,
-                    max: 10
-                },
-                height = 100,
-                actual, expected;
-
-            series.data = {
-                limit: limit
+                min: -10,
+                max: 10
             };
+            var height = 100;
+            var actual, expected;
+
 
             boundsMaker.getDimension.and.returnValue({
                 height: height
+            });
+            boundsMaker.getAxesData.and.returnValue({
+                yAxis: {
+                    limit: limit
+                }
             });
 
             actual = series._makePositionTopOfZeroPoint();
@@ -56,12 +58,13 @@ describe('AreaChartSeries', function() {
                 height = 100,
                 actual, expected;
 
-            series.data = {
-                limit: limit
-            };
-
             boundsMaker.getDimension.and.returnValue({
                 height: height
+            });
+            boundsMaker.getAxesData.and.returnValue({
+                yAxis: {
+                    limit: limit
+                }
             });
 
             actual = series._makePositionTopOfZeroPoint();
@@ -78,12 +81,13 @@ describe('AreaChartSeries', function() {
                 height = 100,
                 actual, expected;
 
-            series.data = {
-                limit: limit
-            };
-
             boundsMaker.getDimension.and.returnValue({
                 height: height
+            });
+            boundsMaker.getAxesData.and.returnValue({
+                yAxis: {
+                    limit: limit
+                }
             });
 
             actual = series._makePositionTopOfZeroPoint();

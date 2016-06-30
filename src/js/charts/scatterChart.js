@@ -2,7 +2,7 @@
  * @fileoverview Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
  *                  to display values for typically two variables for a set of data.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -69,21 +69,23 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
      */
     _addComponents: function(chartType) {
         this._addComponentsForAxisType({
-            axes: [
+            chartType: chartType,
+            axis: [
                 {
-                    name: 'yAxis'
+                    name: 'yAxis',
+                    isVertical: true
                 },
                 {
                     name: 'xAxis'
                 }
             ],
-            chartType: chartType,
-            serieses: [
+            series: [
                 {
                     name: 'scatterSeries',
                     SeriesClass: Series
                 }
-            ]
+            ],
+            plot: true
         });
     }
 });

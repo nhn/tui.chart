@@ -1,7 +1,7 @@
 /**
  * @fileoverview Column and Line Combo chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -142,7 +142,8 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         var axes = [
             {
                 name: 'yAxis',
-                chartType: chartTypesMap.chartTypes[0]
+                chartType: chartTypesMap.chartTypes[0],
+                isVertical: true
             },
             {
                 name: 'xAxis',
@@ -154,15 +155,17 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
         if (chartTypesMap.optionChartTypes.length) {
             axes.push({
                 name: 'rightYAxis',
-                chartType: chartTypesMap.chartTypes[1]
+                chartType: chartTypesMap.chartTypes[1],
+                isVertical: true
             });
         }
 
         this._addComponentsForAxisType({
-            axes: axes,
-            seriesNames: chartTypesMap.seriesNames,
             chartType: this.options.chartType,
-            serieses: serieses
+            seriesNames: chartTypesMap.seriesNames,
+            axis: axes,
+            series: serieses,
+            plot: true
         });
     },
 
@@ -273,8 +276,8 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var rawData = this._filterRawData(this.rawData, checkedLegends),
-            chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
+        var rawData = this._filterCheckedRawData(this.rawData, checkedLegends);
+        var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);
 

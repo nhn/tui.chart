@@ -1,7 +1,7 @@
 /**
  * @fileoverview Map chart.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -14,7 +14,7 @@ var ChartBase = require('./chartBase'),
     axisDataMaker = require('../helpers/axisDataMaker'),
     Series = require('../series/mapChartSeries'),
     Zoom = require('../series/zoom'),
-    Legend = require('../legends/mapChartLegend'),
+    Legend = require('../legends/spectrumLegend'),
     MapChartTooltip = require('../tooltips/mapChartTooltip'),
     mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 
@@ -65,14 +65,9 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
             componentType: 'series',
             userEvent: this.userEvent
         });
-        this.componentManager.register('zoom', Zoom);
-    },
 
-    /**
-     * Add custom event component.
-     * @private
-     */
-    _addCustomEventComponent: function() {
+        this.componentManager.register('zoom', Zoom);
+
         this.componentManager.register('customEvent', mapChartCustomEvent, {
             chartType: this.chartType
         });
@@ -85,7 +80,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
      */
     _makeAxesData: function() {
         var axisScaleMaker = this._createAxisScaleMaker({}, 'legend', null, this.chartType, {
-            valueCount: chartConst.MAP_CHART_LEGEND_TICK_COUNT
+            valueCount: chartConst.SPECTRUM_LEGEND_TICK_COUNT
         });
 
         return axisDataMaker.makeValueAxisData({
