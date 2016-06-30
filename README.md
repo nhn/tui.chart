@@ -22,6 +22,8 @@ This application supports drawing a chart on web browser.<br>
   * A combo chart is a visualization that combines the features of two kinds of charts.
 * Map Chart<br>
   * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
+* Heatmap Chart <br>
+  * A heatmap chart is a graphical representation of data where the individual values contained in a matrix are represented as colors.
 
 ## Sample Images
 
@@ -42,6 +44,8 @@ This application supports drawing a chart on web browser.<br>
 ![combo chart](https://cloud.githubusercontent.com/assets/2888775/15598911/e6273be6-2419-11e6-8671-7e45a6fc3203.png)
 
 ![map chart](https://cloud.githubusercontent.com/assets/2888775/14169302/e228221a-f761-11e5-88ed-20e9a2aba45c.png)
+
+![heatmap chart](https://cloud.githubusercontent.com/assets/2888775/16477485/fa47bbc8-3ecc-11e6-937b-8f7ff3f8e3e3.png)
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
