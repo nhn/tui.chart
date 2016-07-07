@@ -1,4 +1,5 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
+// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
 if (!window.JSON) {
     window.JSON = {
         parse: function(sJSON) { return eval('(' + sJSON + ')'); },
@@ -38,11 +39,33 @@ if (!window.JSON) {
     };
 }
 
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
+// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
+if (typeof Object.create != 'function') {
+    Object.create = (function(undefined) {
+        var Temp = function() {};
+        return function (prototype, propertiesObject) {
+            if(prototype !== Object(prototype) && prototype !== null) {
+                throw TypeError('Argument must be an object, or null');
+            }
+            Temp.prototype = prototype || {};
+            if (propertiesObject !== undefined) {
+                Object.defineProperties(Temp.prototype, propertiesObject);
+            }
+            var result = new Temp();
+            Temp.prototype = null;
+            // to imitate the case of Object.create(null)
+            if(prototype === null) {
+                result.__proto__ = null;
+            }
+            return result;
+        };
+    })();
+}
+
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-
 // requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-
 // MIT license
 
 (function () {
