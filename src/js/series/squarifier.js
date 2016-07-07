@@ -244,7 +244,7 @@ var Squarifier = {
     },
 
     /**
-     * Squarify.
+     * Create squarified bounds for graph rendering.
      */
     squarify: function() {
         var self = this;
