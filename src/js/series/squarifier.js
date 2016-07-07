@@ -152,7 +152,6 @@ var Squarifier = {
         return sum / baseSize;
     },
 
-
     /**
      * Add bounds.
      * @param {number} startPosition - start position
