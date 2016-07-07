@@ -134,23 +134,6 @@ var Squarifier = {
     },
 
     /**
-     * Add bound.
-     * @param {number} left - left position
-     * @param {number} top - top position
-     * @param {number} width - width
-     * @param {number} height - height
-     * @private
-     */
-    _addBound: function(left, top, width, height) {
-        this.bounds.push({
-            left: left,
-            top: top,
-            width: width,
-            height: height
-        });
-    },
-
-    /**
      * Calculate fixed size.
      * @param {number} baseSize - base size
      * @param {number} sum - sum for weights
@@ -183,6 +166,23 @@ var Squarifier = {
             var dynamicSize = rowDatum.weight / fixedSize;
             callback(dynamicSize, storedPosition);
             return storedPosition + dynamicSize;
+        });
+    },
+
+    /**
+     * Add bound.
+     * @param {number} left - left position
+     * @param {number} top - top position
+     * @param {number} width - width
+     * @param {number} height - height
+     * @private
+     */
+    _addBound: function(left, top, width, height) {
+        this.bounds.push({
+            left: left,
+            top: top,
+            width: width,
+            height: height
         });
     },
 

@@ -152,7 +152,7 @@ describe('test for squarifier', function() {
     });
 
     describe('_addBounds()', function() {
-        it('call a callback function as much as a row length', function() {
+        it('call a callback function like a row length', function() {
             var row = [
                 {
                     weight: 60000
@@ -198,7 +198,7 @@ describe('test for squarifier', function() {
             spyOn(squarifier, '_addBound');
         });
 
-        it('call a _addBound function as much as a row length', function() {
+        it('call a _addBound function times like a row length', function() {
             var row = [
                 {
                     weight: 60000
@@ -250,7 +250,7 @@ describe('test for squarifier', function() {
             spyOn(squarifier, '_addBound');
         });
 
-        it('call a _addBound function as much as a row length', function() {
+        it('call a _addBound function like a row length', function() {
             var row = [
                 {
                     weight: 60000
