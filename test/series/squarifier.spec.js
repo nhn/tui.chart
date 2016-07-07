@@ -1,5 +1,5 @@
 /**
- * @fileoverview test for squarifier.js 
+ * @fileoverview test for squarifier.js
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
