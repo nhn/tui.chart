@@ -198,7 +198,7 @@ describe('test for squarifier', function() {
             spyOn(squarifier, '_addBound');
         });
 
-        it('call a _addBound function times like a row length', function() {
+        it('call a _addBound function like a row length', function() {
             var row = [
                 {
                     weight: 60000
@@ -322,7 +322,7 @@ describe('test for squarifier', function() {
     });
 
     describe('squarify', function() {
-        it('if executing squerify function, creating squerified bounds', function() {
+        it('if executing squarify function, creating squarified bounds', function() {
             var actual, expected;
 
             squarifier.initialize([
