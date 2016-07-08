@@ -289,7 +289,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    xdescribe('_moveToLeft()', function() {
+    describe('_moveToLeft()', function() {
         it('tick 영역과 label 영역을 50만큼 좌측으로 이동시킵니다.', function(done) {
             var ticksElement = dom.create('DIV');
             var labelContainer = dom.create('DIV');
@@ -348,7 +348,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    xdescribe('_resizeByTickSize()', function() {
+    describe('_resizeByTickSize()', function() {
         it('tick 영역과 label 영역의 너비를 50만큼 줄입니다.', function(done) {
             var ticksElement = dom.create('DIV');
             var labelContainer = dom.create('DIV')
