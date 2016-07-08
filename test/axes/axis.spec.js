@@ -289,7 +289,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_moveToLeft()', function() {
+    xdescribe('_moveToLeft()', function() {
         it('tick 영역과 label 영역을 50만큼 좌측으로 이동시킵니다.', function(done) {
             var ticksElement = dom.create('DIV');
             var labelContainer = dom.create('DIV');
@@ -307,7 +307,6 @@ describe('Test for Axis', function() {
                 expect(labelContainer.style.left).toBe('-30px');
                 done();
             }, 450);
-
         });
 
         it('tick 영역과 label 영역에 left값이 설정되어 있지 않으면 left를 0으로 계산합니다.', function(done) {
@@ -349,7 +348,7 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_resizeByTickSize()', function() {
+    xdescribe('_resizeByTickSize()', function() {
         it('tick 영역과 label 영역의 너비를 50만큼 줄입니다.', function(done) {
             var ticksElement = dom.create('DIV');
             var labelContainer = dom.create('DIV')
