@@ -119,7 +119,7 @@ describe('test for squarifier', function() {
             expect(actual).toBe(400);
         });
 
-        it('if height is width or over, returns height', function() {
+        it('if height is greater than or equal to width, returns height', function() {
             var actual = squarifier._selectBaseSize({
                 width: 400,
                 height: 600
