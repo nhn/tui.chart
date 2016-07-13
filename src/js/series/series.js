@@ -487,7 +487,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     animateComponent: function(isRerendering) {
         if (this.graphRenderer.animate) {
-            this.graphRenderer.animate(tui.util.bind(this.animateShowingAboutSeriesLabelArea, this, isRerendering));
+            this.graphRenderer.animate(tui.util.bind(this.animateSeriesLabelArea, this, isRerendering));
+        } else {
+            this.animateSeriesLabelArea(isRerendering);
         }
     },
 
@@ -520,10 +522,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
-     * Animate showing about series label area.
+     * Animate series label area.
      * @param {boolean} [isRerendering] - whether rerendering or not
      */
-    animateShowingAboutSeriesLabelArea: function(isRerendering) {
+    animateSeriesLabelArea: function(isRerendering) {
         var self = this;
 
         if (!this._useLabel()) {

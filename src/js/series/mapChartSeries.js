@@ -485,13 +485,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         }
 
         this.userEvent.fire('zoom', newMagn);
-    },
-
-    /**
-     * Animate component.
-     */
-    animateComponent: function() {
-        this.animateShowingAboutSeriesLabelArea();
     }
 });
 
