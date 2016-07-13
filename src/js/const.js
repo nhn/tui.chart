@@ -91,7 +91,13 @@ var chartConst = {
     NORMAL_STACK_TYPE: 'normal',
     /** @type {string} */
     PERCENT_STACK_TYPE: 'percent',
+    /** default stack
+     * @type {string}
+     */
     DEFAULT_STACK: '___DEFAULT___STACK___',
+    /** dummy key
+     * @type {string}
+     */
     DUMMY_KEY: '___DUMMY___KEY___',
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',

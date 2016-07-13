@@ -229,7 +229,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Traverse items and returns to picked result at item.
+     * Traverse items, and returns to picked result at item.
      * @param {string} key key for pick
      * @returns {Array}
      */
