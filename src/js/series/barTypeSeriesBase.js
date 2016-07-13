@@ -23,7 +23,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.seriesName)
+            seriesDataModel: this._getSeriesDataModel()
         };
     },
 
@@ -111,7 +111,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
         var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
         var firstAdditionalPosition = 0;
         var itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
@@ -154,7 +154,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderNormalSeriesLabel: function(labelContainer) {
-        var sdm = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var sdm = this._getSeriesDataModel();
         var boundsSet = this.seriesData.groupBounds;
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
@@ -253,7 +253,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
         var self = this;
         var groupBounds = this.seriesData.groupBounds;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
         var html = seriesDataModel.map(function(seriesGroup, index) {
             var labelsHtml = self._makeStackedLabelsHtml({

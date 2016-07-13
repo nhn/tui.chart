@@ -128,6 +128,15 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Get seriesDataModel.
+     * @returns {SeriesDataModel}
+     * @private
+     */
+    _getSeriesDataModel: function() {
+        return this.dataProcessor.getSeriesDataModel(this.seriesName);
+    },
+
+    /**
      * Make series data.
      * @private
      * @abstract
@@ -627,7 +636,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         this.selectedLegendIndex = legendIndex;
 
-        if (this.dataProcessor.getSeriesDataModel(this.seriesName).getGroupCount()) {
+        if (this._getSeriesDataModel().getGroupCount()) {
             this._renderSeriesArea(this.seriesContainer, this.data);
             this.graphRenderer.selectLegend(legendIndex);
         }

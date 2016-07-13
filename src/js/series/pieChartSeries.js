@@ -115,7 +115,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _makeSectorData: function(circleBound) {
         var self = this;
-        var seriesGroup = this.dataProcessor.getSeriesDataModel(this.seriesName).getFirstSeriesGroup();
+        var seriesGroup = this._getSeriesDataModel().getFirstSeriesGroup();
         var cx = circleBound.cx;
         var cy = circleBound.cy;
         var r = circleBound.r;
@@ -460,7 +460,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     _renderLegendLabel: function(params, seriesLabelContainer) {
         var self = this;
         var dataProcessor = this.dataProcessor;
-        var seriesDataModel = dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var positions = params.positions;
         var htmls = tui.util.map(dataProcessor.getLegendLabels(this.seriesName), function(legend, index) {
             var html = '',
