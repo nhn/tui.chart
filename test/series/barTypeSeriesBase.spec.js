@@ -8,7 +8,7 @@
 
 var BarTypeSeriesBase = require('../../src/js/series/barTypeSeriesBase.js'),
     SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
+    SeriesGroup = require('../../src/js/dataModels/seriesGroup'),
     dom = require('../../src/js/helpers/domHandler.js'),
     renderUtil = require('../../src/js/helpers/renderUtil.js');
 
@@ -31,7 +31,7 @@ describe('BarTypeSeriesBase', function() {
         };
 
         dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getFormatFunctions', 'getFirstItemLabel', 'getSeriesDataModel', 'getFormattedValue']);
+            ['getFormatFunctions', 'getFirstItemLabel', 'getFormattedValue']);
 
         dataProcessor.getFormatFunctions.and.returnValue([]);
 
@@ -43,6 +43,7 @@ describe('BarTypeSeriesBase', function() {
         series._makeSeriesLabelHtml = jasmine.createSpy('_makeSeriesLabelHtml').and.returnValue('<div></div>');;
         series._makePlusSumLabelHtml = jasmine.createSpy('_makePlusSumLabelHtml').and.returnValue('<div></div>');;
         series._makeMinusSumLabelHtml = jasmine.createSpy('_makeMinusSumLabelHtml').and.returnValue('<div></div>');;
+        series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
     describe('_makeBarGutter()', function() {
@@ -89,28 +90,30 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_calculateAdditionalPosition()', function() {
         it('시리즈 양쪽 사이드 영역의 추가적인 position값을 구합니다. 옵션이 없을 경우에는 0을 반환합니다.', function() {
-            var actual = series._calculateAdditionalPosition(14),
-                expected = 0;
+            var actual = series._calculateAdditionalPosition(14);
+            var expected = 0;
+
             expect(actual).toBe(expected);
         });
 
         it('optionsSize(두번째인자) 값이 있으면서 barSize보다 작으면 barSize(첫번째인자)을 반으로 나눈 값에 barSize와의 차를 itemCount(세번째인자)로 곱하고 2로 나눈 값을 더하여 반환합니다.', function() {
-            var actual = series._calculateAdditionalPosition(14, 10, 4),
-                expected = 15;
+            var actual = series._calculateAdditionalPosition(14, 10, 4);
+            var expected = 15;
             expect(actual).toBe(expected);
         });
     });
 
     describe('_makeBaseDataForMakingBound()', function() {
         it('바, 컬럼 차트의 bound를 계산하기 위한 baseData를 생성합니다.', function() {
-            var baseGroupSize = 100,
-                baseBarSize = 100,
-                seriesDataModel = new SeriesDataModel(),
-                actual, expected;
+            var baseGroupSize = 100;
+            var baseBarSize = 100;
+            var seriesDataModel = new SeriesDataModel();
+            var actual, expected;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 10
                 }, {
                     value: 20
@@ -146,13 +149,13 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderNormalSeriesLabel()', function() {
         it('bar type(bar, column) 일반(normal) 차트의 series label을 전달하는 values의 수만큼 랜더링 합니다.', function() {
-            var labelContainer = dom.create('div'),
-                seriesDataModel = new SeriesDataModel();
+            var labelContainer = dom.create('div');
+            var seriesDataModel = new SeriesDataModel();
 
             dataProcessor.getFirstItemLabel.and.returnValue('1.5');
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 1.5,
                     endLabel: '1.5'
                 }, {
@@ -197,14 +200,14 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_makeStackedLabelsHtml()', function() {
         it('bar type(bar, column) stack 차트의 series label html을 전달하는 values의 수 만큼 생성합니다.', function() {
-            var container = dom.create('div'),
-                html;
+            var container = dom.create('div');
+            var html;
             series.options = {
                 stackType: 'percent'
             };
 
             html = series._makeStackedLabelsHtml({
-                seriesGroup: new seriesGroup([{
+                seriesGroup: new SeriesGroup([{
                     value: 1.5,
                     label: '1.5'
                 }, {
@@ -226,15 +229,15 @@ describe('BarTypeSeriesBase', function() {
         });
 
         it('stackType옵션이 normal일 경우에는 series label html을 전달하는 values + 1(sum)만큼 생성합니다.', function() {
-            var container = dom.create('div'),
-                html;
+            var container = dom.create('div');
+            var html;
 
             series.options = {
                 stackType: 'normal'
             };
 
             html = series._makeStackedLabelsHtml({
-                seriesGroup: new seriesGroup([{
+                seriesGroup: new SeriesGroup([{
                     value: 1.5,
                     label: '1.5'
                 }, {
@@ -258,13 +261,13 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderStackedSeriesLabel()', function() {
         it('bar type(bar, column) stackType=normal 차트의 series label을 전달하는 values의 수 + 1(sum)만큼 랜더링 합니다.', function() {
-            var elLabelArea = dom.create('div'),
-                seriesDataModel = new SeriesDataModel();
+            var elLabelArea = dom.create('div');
+            var seriesDataModel = new SeriesDataModel();
 
             dataProcessor.getFirstItemLabel.and.returnValue('1.5');
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: 1.5
                 }, {
                     value: 2.2
@@ -294,13 +297,13 @@ describe('BarTypeSeriesBase', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('stackType 옵션이 없으면 _renderNormalSeriesLabel()이 수행됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                elExpected = dom.create('div'),
-                seriesDataModel = new SeriesDataModel();
+            var elLabelArea = dom.create('div');
+            var elExpected = dom.create('div');
+            var seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: -1.5,
                     label: '-1.5'
                 }, {
@@ -331,13 +334,13 @@ describe('BarTypeSeriesBase', function() {
         });
 
         it('stackType 옵션이 있으면 _renderStackedSeriesLabel()이 수행됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                elExpected = dom.create('div'),
-                seriesDataModel = new SeriesDataModel();
+            var elLabelArea = dom.create('div');
+            var elExpected = dom.create('div');
+            var seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.groups = [
-                new seriesGroup([{
+                new SeriesGroup([{
                     value: -1.5,
                     label: '-1.5'
                 }, {

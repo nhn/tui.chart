@@ -22,20 +22,21 @@ describe('LineTypeSeriesBase', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getSeriesDataModel', 'getFirstItemLabel']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series.dataProcessor = dataProcessor;
         series.boundsMaker = boundsMaker;
+        series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
     describe('_makeBasicPositions()', function() {
         it('라인차트의 position 정보를 생성합니다.', function() {
-            var seriesDataModel = new SeriesDataModel(),
-                actual;
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
                 new SeriesGroup([{
                     ratio: 0.25
@@ -74,10 +75,10 @@ describe('LineTypeSeriesBase', function() {
         });
 
         it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function() {
-            var seriesDataModel = new SeriesDataModel(),
-                actual;
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             seriesDataModel.pivotGroups = [
                 new SeriesGroup([{
                     ratio: 0.25
@@ -291,10 +292,10 @@ describe('LineTypeSeriesBase', function() {
 
     describe('_renderSeriesLabel()', function() {
         it('라인차트에서 series label은 seriesItem 숫자 만큼 렌더링 됩니다.', function() {
-            var elLabelArea = dom.create('div'),
-                seriesDataModel = new SeriesDataModel();
+            var elLabelArea = dom.create('div');
+            var seriesDataModel = new SeriesDataModel();
 
-            dataProcessor.getSeriesDataModel.and.returnValue(seriesDataModel);
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
             spyOn(seriesDataModel, 'getFirstItemLabel').and.returnValue('1.5');
             seriesDataModel.pivotGroups = [
                 new SeriesGroup([{
