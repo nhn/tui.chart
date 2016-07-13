@@ -117,6 +117,20 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Update rect bound
+     * @param {object} rect raphael object
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     */
+    updateRectBound: function(rect, bound) {
+        rect.attr({
+            x: bound.left,
+            y: bound.top,
+            width: bound.width,
+            height: bound.height
+        });
+    },
+
+    /**
      * Render items of line type chart.
      * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
