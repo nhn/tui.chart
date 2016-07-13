@@ -30,7 +30,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var dimension = seriesData.dimension;
 
         this.paper = raphael(container, dimension.width, dimension.height);
-        this.theme = seriesData.theme;
+        this.theme = seriesData.theme || {};
         this.boxesSet = this._renderBoxes(seriesData);
 
         return this.paper;

@@ -154,8 +154,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     /**
      * Get base groups.
      * @returns {Array.Array.<SeriesItem>}
+     * @private
      */
-    getBaseGroups: function() {
+    _getBaseGroups: function() {
         if (!this.baseGroups) {
             this.baseGroups = this._createBaseGroups();
         }
@@ -170,7 +171,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createSeriesGroupsFromRawData: function(isPivot) {
-        var baseGroups = this.getBaseGroups();
+        var baseGroups = this._getBaseGroups();
 
         if (isPivot) {
             baseGroups = tui.util.pivot(baseGroups);
@@ -219,16 +220,16 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @param {number} index - index
      * @returns {SeriesGroup}
      */
-    getSeriesGroup: function(index) {
-        return this._getSeriesGroups()[index];
+    getSeriesGroup: function(index, isPivot) {
+        return isPivot ? this._getPivotGroups()[index] : this._getSeriesGroups()[index];
     },
 
     /**
      * Get first SeriesGroup.
      * @returns {SeriesGroup}
      */
-    getFirstSeriesGroup: function() {
-        return this.getSeriesGroup(0);
+    getFirstSeriesGroup: function(isPivot) {
+        return this.getSeriesGroup(0, isPivot);
     },
 
     /**
