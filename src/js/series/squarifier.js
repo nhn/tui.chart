@@ -1,47 +1,29 @@
 /**
- * @fileoverview Squarifier create squarified bounds for rendering graph of treemap chart.
+ * @fileoverview squarifier create squarified bounds for rendering graph of treemap chart.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var Squarifier = {
+var squarifier = {
     /**
-     * Initialize.
-     * @param {Array.<SeriesItem>} seriesItems - seriesItems
-     * @param {{width: number, height: number}} dimension - dimension of series area
+     * bound map
+     * @type {object.<string, {width: number, height: number, left: number, top: number}>}
      */
-    initialize: function(seriesItems, dimension) {
-        /**
-         * SeriesItems
-         * @type {Array.<SeriesItem>}
-         */
-        this.seriesItems = seriesItems;
-
-        /**
-         * dimension of series area
-         * @type {{width: number, height: number}}
-         */
-        this.dimension = dimension;
-
-        /**
-         * squarified bounds for rendering graph
-         * @type {Array}
-         */
-        this.bounds = [];
-    },
+    boundMap: {},
 
     /**
      * Make base bound for calculating bounds.
-     * @returns {Object}
+     * @param {{width: number, height: number}} dimension - dimension
+     * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _makeBaseBound: function() {
+    _makeBaseBound: function(dimension) {
         return tui.util.extend({
             left: 0,
             top: 0
-        }, this.dimension);
+        }, dimension);
     },
 
     /**
@@ -68,7 +50,7 @@ var Squarifier = {
         var scale = this._calculateScale(tui.util.pluck(seriesItems, 'value'), width, height);
         var data = tui.util.map(seriesItems, function(seriesItem) {
             return {
-                item: seriesItem,
+                id: seriesItem.id,
                 weight: seriesItem.value * scale
             };
         }).sort(function(a, b) {
@@ -163,7 +145,8 @@ var Squarifier = {
     _addBounds: function(startPosition, row, fixedSize, callback) {
         tui.util.reduce([startPosition].concat(row), function(storedPosition, rowDatum) {
             var dynamicSize = rowDatum.weight / fixedSize;
-            callback(dynamicSize, storedPosition);
+
+            callback(dynamicSize, storedPosition, rowDatum.id);
             return storedPosition + dynamicSize;
         });
     },
@@ -174,15 +157,16 @@ var Squarifier = {
      * @param {number} top - top position
      * @param {number} width - width
      * @param {number} height - height
+     * @param {string | number} id - id of seriesItem
      * @private
      */
-    _addBound: function(left, top, width, height) {
-        this.bounds.push({
+    _addBound: function(left, top, width, height, id) {
+        this.boundMap[id] = {
             left: left,
             top: top,
             width: width,
             height: height
-        });
+        };
     },
 
     /**
@@ -197,8 +181,8 @@ var Squarifier = {
         var self = this;
         var fixedWidth = this._calculateFixedSize(baseSize, sum, row);
 
-        this._addBounds(baseBound.top, row, fixedWidth, function(dynamicHeight, storedTop) {
-            self._addBound(baseBound.left, storedTop, fixedWidth, dynamicHeight);
+        this._addBounds(baseBound.top, row, fixedWidth, function(dynamicHeight, storedTop, id) {
+            self._addBound(baseBound.left, storedTop, fixedWidth, dynamicHeight, id);
         });
 
         baseBound.left += fixedWidth;
@@ -217,8 +201,8 @@ var Squarifier = {
         var self = this;
         var fixedHeight = this._calculateFixedSize(baseSize, sum, row);
 
-        this._addBounds(baseBound.left, row, fixedHeight, function(dynamicWidth, storedLeft) {
-            self._addBound(storedLeft, baseBound.top, dynamicWidth, fixedHeight);
+        this._addBounds(baseBound.left, row, fixedHeight, function(dynamicWidth, storedLeft, id) {
+            self._addBound(storedLeft, baseBound.top, dynamicWidth, fixedHeight, id);
         });
 
         baseBound.top += fixedHeight;
@@ -244,16 +228,19 @@ var Squarifier = {
     },
 
     /**
-     * Create squarified bounds for graph rendering.
+     * Create squarified bound map for graph rendering.
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {Array.<SeriesItem>} seriesItems - seriesItems
+     * @returns {object.<string, {width: number, height: number, left: number, top: number}>}
      */
-    squarify: function() {
+    squarify: function(dimension, seriesItems) {
         var self = this;
-        var baseBound = this._makeBaseBound();
-        var baseData = this._makeBaseData(this.seriesItems, baseBound.width, baseBound.height);
+        var baseBound = this._makeBaseBound(dimension);
+        var baseData = this._makeBaseData(seriesItems, baseBound.width, baseBound.height);
         var row = [];
         var baseSize, addBounds;
 
-        this.bounds = [];
+        this.boundMap = {};
 
         tui.util.forEachArray(baseData, function(datum) {
             var weights = tui.util.pluck(row, 'weight');
@@ -275,15 +262,9 @@ var Squarifier = {
         if (row.length) {
             addBounds(row, baseBound, baseSize);
         }
-    },
 
-    /**
-     * Get squarified bounds.
-     * @returns {Array}
-     */
-    getBounds: function() {
-        return this.bounds;
+        return this.boundMap;
     }
 };
 
-module.exports = Squarifier;
+module.exports = squarifier;

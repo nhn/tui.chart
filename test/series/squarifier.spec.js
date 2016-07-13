@@ -6,15 +6,9 @@
 
 'use strict';
 
-var Squarifier = require('../../src/js/series/squarifier');
+var squarifier = require('../../src/js/series/squarifier');
 
 describe('test for squarifier', function() {
-    var squarifier;
-
-    beforeEach(function() {
-        squarifier = Object.create(Squarifier);
-    });
-
     describe('_calculateScale()', function() {
         it('calculate scale for calculating weight', function() {
             var actual = squarifier._calculateScale([6, 6, 4, 3, 2, 2, 1], 600, 400);
@@ -27,22 +21,20 @@ describe('test for squarifier', function() {
         it('make base data for creating squarified bounds', function() {
             var seriesItems = [
                 {
+                    id: 'id_0',
                     value: 4
                 },
                 {
+                    id: 'id_1',
                     value: 2
                 }
             ];
             var actual = squarifier._makeBaseData(seriesItems, 600, 200);
             var expected = [{
-                item: {
-                    value: 4
-                },
+                id: 'id_0',
                 weight: 80000
             }, {
-                item: {
-                    value: 2
-                },
+                id: 'id_1',
                 weight: 40000
             }];
 
@@ -52,22 +44,20 @@ describe('test for squarifier', function() {
         it('base data is sorted weight desc', function() {
             var seriesItems = [
                 {
+                    id: 'id_0',
                     value: 2
                 },
                 {
+                    id: 'id_1',
                     value: 4
                 }
             ];
             var actual = squarifier._makeBaseData(seriesItems, 600, 200);
             var expected = [{
-                item: {
-                    value: 4
-                },
+                id: 'id_1',
                 weight: 80000
             }, {
-                item: {
-                    value: 2
-                },
+                id: 'id_0',
                 weight: 40000
             }];
 
@@ -155,12 +145,15 @@ describe('test for squarifier', function() {
         it('call a callback function like a row length', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -174,12 +167,15 @@ describe('test for squarifier', function() {
         it('passes calculated dynamic size and stored position to callback function when call the callback', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -187,9 +183,9 @@ describe('test for squarifier', function() {
 
             squarifier._addBounds(0, row, 400, callback);
 
-            expect(callback).toHaveBeenCalledWith(150, 0);
-            expect(callback).toHaveBeenCalledWith(150, 150);
-            expect(callback).toHaveBeenCalledWith(100, 300);
+            expect(callback).toHaveBeenCalledWith(150, 0, 'id_0');
+            expect(callback).toHaveBeenCalledWith(150, 150, 'id_1');
+            expect(callback).toHaveBeenCalledWith(100, 300, 'id_2');
         });
     });
 
@@ -201,12 +197,15 @@ describe('test for squarifier', function() {
         it('call a _addBound function like a row length', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -223,12 +222,15 @@ describe('test for squarifier', function() {
         it('passes calculated bound(left, top, width, height) to _addBound function when call the _addBound', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -239,9 +241,9 @@ describe('test for squarifier', function() {
 
             squarifier._addBoundsForVerticalStack(row, baseBound, 400, 160000);
 
-            expect(squarifier._addBound).toHaveBeenCalledWith(0, 0, 400, 150);
-            expect(squarifier._addBound).toHaveBeenCalledWith(0, 150, 400, 150);
-            expect(squarifier._addBound).toHaveBeenCalledWith(0, 300, 400, 100);
+            expect(squarifier._addBound).toHaveBeenCalledWith(0, 0, 400, 150, 'id_0');
+            expect(squarifier._addBound).toHaveBeenCalledWith(0, 150, 400, 150, 'id_1');
+            expect(squarifier._addBound).toHaveBeenCalledWith(0, 300, 400, 100, 'id_2');
         });
     });
 
@@ -253,12 +255,15 @@ describe('test for squarifier', function() {
         it('call a _addBound function like a row length', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -275,12 +280,15 @@ describe('test for squarifier', function() {
         it('passes calculated bound(left, top, width, height) to _addBound function when call the _addBound', function() {
             var row = [
                 {
+                    id: 'id_0',
                     weight: 60000
                 },
                 {
+                    id: 'id_1',
                     weight: 60000
                 },
                 {
+                    id: 'id_2',
                     weight: 40000
                 }
             ];
@@ -291,9 +299,9 @@ describe('test for squarifier', function() {
 
             squarifier._addBoundsForHorizontalStack(row, baseBound, 400, 160000);
 
-            expect(squarifier._addBound).toHaveBeenCalledWith(0, 0, 150, 400);
-            expect(squarifier._addBound).toHaveBeenCalledWith(150, 0, 150, 400);
-            expect(squarifier._addBound).toHaveBeenCalledWith(300, 0, 100, 400);
+            expect(squarifier._addBound).toHaveBeenCalledWith(0, 0, 150, 400, 'id_0');
+            expect(squarifier._addBound).toHaveBeenCalledWith(150, 0, 150, 400, 'id_1');
+            expect(squarifier._addBound).toHaveBeenCalledWith(300, 0, 100, 400, 'id_2');
         });
     });
 
@@ -325,44 +333,49 @@ describe('test for squarifier', function() {
         it('if executing squarify function, creating squarified bounds', function() {
             var actual, expected;
 
-            squarifier.initialize([
+            actual = squarifier.squarify({
+                width: 600,
+                height: 400
+            }, [
                 {
+                    id: 'id_0',
                     value: 6
                 },
                 {
+                    id: 'id_1',
                     value: 6
                 },
                 {
+                    id: 'id_2',
                     value: 4
                 },
                 {
+                    id: 'id_3',
                     value: 3
                 },
                 {
+                    id: 'id_4',
                     value: 2
                 },
                 {
+                    id: 'id_5',
                     value: 2
                 },
                 {
+                    id: 'id_6',
                     value: 1
                 }
-            ], {
-                width: 600,
-                height: 400
-            });
-            squarifier.squarify();
+            ]);
 
-            actual = squarifier.getBounds();
-            expected = [
-                {left: 0, top: 0, width: 300, height: 200},
-                {left: 0, top: 200, width: 300, height: 200},
-                {left: 300, top: 0, width: 171.42857142857142, height: 233.33333333333334},
-                {left: 471.42857142857144, top: 0, width: 128.57142857142856, height: 233.33333333333334},
-                {left: 300, top: 233.33333333333334, width: 120, height: 166.66666666666666},
-                {left: 420, top: 233.33333333333334, width: 120, height: 166.66666666666666},
-                {left: 540, top: 233.33333333333334, width: 60, height: 166.66666666666666}
-            ];
+            expected = {
+                'id_0': {left: 0, top: 0, width: 300, height: 200},
+                'id_1': {left: 0, top: 200, width: 300, height: 200},
+                'id_2': {left: 300, top: 0, width: 171.42857142857142, height: 233.33333333333334},
+                'id_3': {left: 471.42857142857144, top: 0, width: 128.57142857142856, height: 233.33333333333334},
+                'id_4': {left: 300, top: 233.33333333333334, width: 120, height: 166.66666666666666},
+                'id_5': {left: 420, top: 233.33333333333334, width: 120, height: 166.66666666666666},
+                'id_6': {left: 540, top: 233.33333333333334, width: 60, height: 166.66666666666666}
+            };
 
             expect(actual).toEqual(expected);
         });
