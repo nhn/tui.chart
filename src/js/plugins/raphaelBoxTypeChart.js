@@ -55,10 +55,6 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          */
         this.groupBounds = seriesData.groupBounds;
 
-        if (!tui.util.isArray(this.groupBounds)) {
-            this._getBound = this._getBoundFromBoundMap;
-        }
-
         if (!this.colorModel) {
             this._getColor = this._getColorFromColors;
         }
@@ -70,26 +66,6 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this.boxesSet = this._renderBoxes(seriesData.seriesDataModel);
 
         return this.paper;
-    },
-
-    /**
-     * Get bound from groupBounds by indexes(groupIndex, index) of seriesItem.
-     * @param {SeriesItem} seriesItem - seriesItem
-     * @returns {{width: number, height: number, left: number, top: number}}
-     * @private
-     */
-    _getBound: function(seriesItem) {
-        return this.groupBounds[seriesItem.groupIndex][seriesItem.index].end;
-    },
-
-    /**
-     * Get bound from groupBounds(boundMap) by id of seriesItem.
-     * @param {SeriesItem} seriesItem - seriesItem
-     * @returns {{width: number, height: number, left: number, top: number}}
-     * @private
-     */
-    _getBoundFromBoundMap: function(seriesItem) {
-        return this.groupBounds[seriesItem.id];
     },
 
     /**
@@ -138,11 +114,8 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
-                var bound, color;
-
-                seriesItem.groupIndex = groupIndex;
-                seriesItem.index = index;
-                bound = self._getBound(seriesItem);
+                var bound = self.groupBounds[groupIndex][index].end;
+                var color;
 
                 if (bound) {
                     color = self._getColor(seriesItem);
@@ -204,7 +177,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                 return;
             }
 
-            bound = self._getBound(box.seriesItem, groupIndex, index);
+            bound = self.groupBounds[groupIndex][index].end;
 
             if (bound) {
                 raphaelRenderUtil.updateRectBound(box.rect, bound);
