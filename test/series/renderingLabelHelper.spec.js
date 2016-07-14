@@ -152,7 +152,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('makeSeriesLabelHtml()', function() {
-        it('series label html을 생성합니다.', function() {
+        it('make html for series label', function() {
             var position = {
                 left: 10,
                 top: 10
