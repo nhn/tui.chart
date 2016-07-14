@@ -83,28 +83,28 @@ describe('Test for SeriesDataModelForTreemap', function() {
         });
     });
 
-    describe('_setTreeData()', function() {
-        it('set tree data(depth, group, value) for first and second depth', function() {
+    describe('_setTreeProperties()', function() {
+        it('set tree properties(depth, group, value) for first and second depth', function() {
             var rawSeriesData = [
                 {parent: rootId, id: 'id_0'},
                 {parent: 'id_0', id: 'id_0_0', value: 1},
                 {parent: 'id_0', id: 'id_0_1', value: 2}
             ];
-            var actual = seriesDataModel._setTreeData(rawSeriesData, 1, rootId);
+            var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 3, group: 0});
             expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0});
             expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 2, group: 0});
         });
 
-        it('set tree data(depth, group, value) for first, second and third depth', function() {
+        it('set tree properties(depth, group, value) for first, second and third depth', function() {
             var rawSeriesData = [
                 {parent: rootId, id: 'id_0'},
                 {parent: 'id_0', id: 'id_0_0'},
                 {parent: 'id_0_0', id: 'id_0_0_0', value: 4},
                 {parent: 'id_0', id: 'id_0_1', value: 5}
             ];
-            var actual = seriesDataModel._setTreeData(rawSeriesData, 1, rootId);
+            var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 9, group: 0});
             expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 4, group: 0});
@@ -119,7 +119,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 {parent: rootId, id: 'id_1'},
                 {parent: 'id_1', id: 'id_1_0', value: 5}
             ];
-            var actual = seriesDataModel._setTreeData(rawSeriesData, 1, rootId);
+            var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual[0].id).toBe('id_0');
             expect(actual[0].group).toBe(0);
@@ -137,7 +137,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 {parent: 'id_0', id: 'id_0_0', value: 1},
                 {parent: 'aaa', id: 'bbb'}
             ];
-            var actual = seriesDataModel._setTreeData(rawSeriesData, 1, rootId);
+            var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
             expect(actual.length).toBe(2);
             expect(actual).toEqual([

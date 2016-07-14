@@ -65,7 +65,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
-     * Set tree data in raw series data.
+     * Set tree properties like depth, group in raw series data.
      * @param {Array.<object>} rawSeriesData - raw series data
      * @param {number} depth - tree depth
      * @param {number} parent - parent id
@@ -73,7 +73,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @returns {Array.<object>}
      * @private
      */
-    _setTreeData: function(rawSeriesData, depth, parent, group) {
+    _setTreeProperties: function(rawSeriesData, depth, parent, group) {
         var self = this;
         var parted = this._partitionRawSeriesDataByParent(rawSeriesData, parent);
         var filtered = parted[0];
@@ -86,7 +86,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             datum.depth = depth;
             datum.group = tui.util.isUndefined(group) ? index : group;
 
-            descendant = self._setTreeData(rejected, childDepth, datum.id, datum.group);
+            descendant = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
             children = tui.util.filter(descendant, function(child) {
                 return child.depth === childDepth;
             });
@@ -110,7 +110,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     _createBaseGroups: function() {
         var rawSeriesData = this._addParentToRootId(this.rawSeriesData);
 
-        rawSeriesData = this._setTreeData(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
+        rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
 
         return [tui.util.map(rawSeriesData, function(rawDatum) {
             return new SeriesItem(rawDatum);
