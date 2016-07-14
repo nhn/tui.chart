@@ -19,8 +19,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
         seriesGroup = new SeriesGroup([]);
     });
 
-    describe('_addParentToRootId()', function() {
-        it('add parent property to root id, when datum of rawSeriesData has not parent property', function() {
+    describe('_setParentToRootId()', function() {
+        it('set parent property to root id, when datum of rawSeriesData has not parent property', function() {
             var rawSeriesData = [
                 {id: 'id_0'},
                 {parent: 'id_0', id: 'id_0_0', value: 1},
@@ -28,7 +28,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 {id: 'id_1', value: 3}
             ];
 
-            seriesDataModel._addParentToRootId(rawSeriesData);
+            seriesDataModel._setParentToRootId(rawSeriesData);
 
             expect(rawSeriesData[0].parent).toBe(rootId);
             expect(rawSeriesData[1].parent).toBe('id_0');

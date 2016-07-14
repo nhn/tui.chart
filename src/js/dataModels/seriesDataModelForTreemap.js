@@ -27,12 +27,12 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
-     * Add parent property to root id, when datum of rawSeriesData has not parent property.
+     * Set parent property to root id, when datum of rawSeriesData has not parent property.
      * @param {Array.<object>} rawSeriesData - raw series data
      * @returns {Array.<object>}
      * @private
      */
-    _addParentToRootId: function(rawSeriesData) {
+    _setParentToRootId: function(rawSeriesData) {
         return tui.util.map(rawSeriesData, function(datum) {
             if (!datum.parent) {
                 datum.parent = chartConst.TREEMAP_ROOT_ID;
@@ -108,7 +108,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @override
      */
     _createBaseGroups: function() {
-        var rawSeriesData = this._addParentToRootId(this.rawSeriesData);
+        var rawSeriesData = this._setParentToRootId(this.rawSeriesData);
 
         rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
 
