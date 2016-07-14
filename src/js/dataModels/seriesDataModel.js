@@ -218,6 +218,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     /**
      * Get SeriesGroup.
      * @param {number} index - index
+     * @param {boolean} [isPivot] - whether pivot or not
      * @returns {SeriesGroup}
      */
     getSeriesGroup: function(index, isPivot) {
@@ -226,6 +227,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
     /**
      * Get first SeriesGroup.
+     * @param {boolean} [isPivot] - whether pivot or not
      * @returns {SeriesGroup}
      */
     getFirstSeriesGroup: function(isPivot) {
