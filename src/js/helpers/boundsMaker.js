@@ -684,7 +684,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _isNeedExpansionSeries: function() {
         var chartType = this.chartType;
 
-        return !predicate.isMousePositionChart(chartType)
+        return !predicate.isMousePositionChart(chartType) && !predicate.isTreemapChart(chartType)
             && !predicate.isPieDonutComboChart(chartType, this.chartTypes);
     },
 

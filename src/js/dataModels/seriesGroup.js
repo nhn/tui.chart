@@ -253,6 +253,15 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         });
 
         return foundItem || null;
+    },
+
+    /**
+     * Traverse items, and returns to filter SeriesItems by condition function.
+     * @param {function} condition - condition function
+     * @returns {Array}
+     */
+    filter: function(condition) {
+        return tui.util.filter(this.items, condition);
     }
 });
 

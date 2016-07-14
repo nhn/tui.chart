@@ -49,6 +49,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_HEATMAP: 'heatmap',
     /** @type {string} */
+    CHART_TYPE_TREEMAP: 'treemap',
+    /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
     CHART_PADDING: 10,
@@ -99,6 +101,20 @@ var chartConst = {
      * @type {string}
      */
     DUMMY_KEY: '___DUMMY___KEY___',
+    /** root id of treemap
+     * @type {string}
+     */
+    TREEMAP_ROOT_ID: '___TUI_TREEMAP_ROOT___',
+    /** prefix for caching seriesItems
+     * @type {string}
+     */
+    TREEMAP_DEPTH_KEY_PREFIX: '___TUI_TREEMAP_DEPTH___',
+    /** @type {string} */
+    TREEMAP_PARENT_KEY_PREFIX: '___TUI_TREEMAP_PARENT___',
+    /** default border color for treemap chart
+     * @type {string}
+     */
+    TREEMAP_DEFAULT_BORDER: '#ccc',
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */

@@ -10,6 +10,7 @@
 
 var chartConst = require('../const');
 var SeriesDataModel = require('../dataModels/seriesDataModel');
+var SeriesDataModelForTreemap = require('../dataModels/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
 var rawDataHandler = require('../helpers/rawDataHandler');
 var predicate = require('../helpers/predicate');
@@ -395,12 +396,19 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {SeriesDataModel}
      */
     getSeriesDataModel: function(seriesName) {
-        var rawSeriesData, chartType;
+        var rawSeriesData, chartType, SeriesDataModelClass;
 
         if (!this.seriesDataModelMap[seriesName]) {
             chartType = this.findChartType(seriesName);
             rawSeriesData = this.rawData.series[seriesName] || this.rawData.series;
-            this.seriesDataModelMap[seriesName] = new SeriesDataModel(rawSeriesData, chartType,
+
+            if (predicate.isTreemapChart(this.chartType)) {
+                SeriesDataModelClass = SeriesDataModelForTreemap;
+            } else {
+                SeriesDataModelClass = SeriesDataModel;
+            }
+
+            this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
                 this.options, this.getFormatFunctions());
         }
 
