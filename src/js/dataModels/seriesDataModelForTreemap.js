@@ -12,9 +12,17 @@ var SeriesItem = require('./seriesItemForTreemap');
 var chartConst = require('../const');
 
 var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
+    /**
+     * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
+     * @constructs SeriesDataModelForTreemap
+     */
     init: function() {
         SeriesDataModel.apply(this, arguments);
 
+        /**
+         * seriesItems map
+         * @type {object.<string, Array.<SeriesItem>>}
+         */
         this.seriesItemsMap = {};
     },
 

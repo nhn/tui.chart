@@ -7,14 +7,16 @@
 'use strict';
 
 var SeriesDataModel = require('../../src/js/dataModels/seriesDataModelForTreemap');
+var SeriesGroup = require('../../src/js/dataModels/seriesGroup');
 var chartConst = require('../../src/js/const');
 
 describe('Test for SeriesDataModelForTreemap', function() {
     var rootId = chartConst.TREEMAP_ROOT_ID;
-    var seriesDataModel;
+    var seriesDataModel, seriesGroup;
 
     beforeEach(function() {
         seriesDataModel = new SeriesDataModel([]);
+        seriesGroup = new SeriesGroup([]);
     });
 
     describe('_addParentToRootId()', function() {
@@ -127,7 +129,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
             expect(actual[2].group).toBe(0);
             expect(actual[3].id).toBe('id_1_0');
             expect(actual[3].group).toBe(1);
-        })
+        });
 
         it('reject item when has wrong parent id', function() {
             var rawSeriesData = [
@@ -147,7 +149,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
 
     describe('findSeriesItemsByDepth()', function() {
         beforeEach(function() {
-            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue([
+            seriesGroup.items = [
                 {
                     depth: 1,
                     id: 'id_0',
@@ -168,7 +170,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
                     id: 'id_1_0',
                     group: 1
                 }
-            ]);
+            ];
+            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue(seriesGroup);
         });
 
         it('find seriesItems by depth', function() {
@@ -207,7 +210,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
         it('find seriesItems by parent', function() {
             var actual;
 
-            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue([
+            seriesGroup.items = [
                 {
                     depth: 1,
                     id: 'id_0',
@@ -228,7 +231,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
                     id: 'id_1_0',
                     parent: 'id_1'
                 }
-            ]);
+            ];
+            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue(seriesGroup);
 
             actual = seriesDataModel.findSeriesItemsByParent('root');
 
@@ -248,7 +252,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
 
     describe('findSeriesItem()', function() {
         beforeEach(function() {
-            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue([
+            seriesGroup.items = [
                 {
                     depth: 1,
                     id: 'id_0',
@@ -273,7 +277,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
                     parent: 'id_1',
                     group: 1
                 }
-            ]);
+            ];
+            spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue(seriesGroup);
         });
 
         it('find seriesItem by depth and dected index', function() {
@@ -289,7 +294,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
             });
         });
 
-        it('If exist group, find seriesItem by depth, group and dected index', function() {
+        it('if exist group, find seriesItem by depth, group and dected index', function() {
             var actual;
 
             actual = seriesDataModel.findSeriesItem(2, 1, 0);
