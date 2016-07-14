@@ -166,7 +166,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             positionsSet = labelHelper.boundsToLabelPositionsForColumnChart(sdm, boundsSet, labelTheme);
         }
 
-        html = labelHelper.makeLabelsHtmlForBoundType(labelContainer, sdm, positionsSet, labelTheme, selectedIndex);
+        html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
 
         labelContainer.innerHTML = html;
     },

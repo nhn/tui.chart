@@ -104,7 +104,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
         var positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        var html = labelHelper.makeLabelsHtmlForBoundType(labelContainer, sdm, positionsSet, labelTheme, selectedIndex);
+        var html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
 
         labelContainer.innerHTML = html;
     },

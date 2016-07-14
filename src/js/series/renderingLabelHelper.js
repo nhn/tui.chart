@@ -197,7 +197,7 @@ var renderingLabelHelper = {
 
         tplCssText = tplCssText || seriesTemplate.tplCssText;
 
-        if (!tui.util.isNull(selectedIndex) && (selectedIndex !== index)) {
+        if (tui.util.isExisty(selectedIndex) && (selectedIndex !== index)) {
             cssObj.opacity = renderUtil.makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
@@ -234,14 +234,13 @@ var renderingLabelHelper = {
 
     /**
      * Make
-     * @param {HTMLElement} container - container of label area
      * @param {SeriesDataModel} seriesDataModel - series data model
      * @param {Array.<Array.<{left: number, top: number}>>} positionsSet - positions set
      * @param {object} theme - theme for series label
      * @param {number} selectedIndex - selected index of legends
      * @returns {*}
      */
-    makeLabelsHtmlForBoundType: function(container, seriesDataModel, positionsSet, theme, selectedIndex) {
+    makeLabelsHtmlForBoundType: function(seriesDataModel, positionsSet, theme, selectedIndex) {
         var makeSeriesLabelHtml = tui.util.bind(this.makeSeriesLabelHtml, this);
         var labelsHtml = seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
