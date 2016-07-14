@@ -55,6 +55,11 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          */
         this.groupBounds = seriesData.groupBounds;
 
+        if (seriesData.boundMap) {
+            this.boundMap = seriesData.boundMap;
+            this._getBound = this._getBoundFromBoundMap;
+        }
+
         if (!this.colorModel) {
             this._getColor = this._getColorFromColors;
         }
@@ -63,9 +68,29 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          * boxes set
          * @type {Array.<Array.<{rect: Object, color: string}>>}
          */
-        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel);
+        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, !!seriesData.isPivot);
 
         return this.paper;
+    },
+
+    /**
+     * Get bound from groupBounds by indexes(groupIndex, index) of seriesItem.
+     * @param {SeriesItem} seriesItem - seriesItem
+     * @returns {{width: number, height: number, left: number, top: number}}
+     * @private
+     */
+    _getBound: function(seriesItem) {
+        return this.groupBounds[seriesItem.groupIndex][seriesItem.index].end;
+    },
+
+    /**
+     * Get bound from boundMap by id of seriesItem.
+     * @param {SeriesItem} seriesItem - seriesItem
+     * @returns {{width: number, height: number, left: number, top: number}}
+     * @private
+     */
+    _getBoundFromBoundMap: function(seriesItem) {
+        return this.boundMap[seriesItem.id];
     },
 
     /**
@@ -108,14 +133,17 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @returns {Array.<Array.<{rect: object, color: string}>>}
      * @private
      */
-    _renderBoxes: function(seriesDataModel) {
+    _renderBoxes: function(seriesDataModel, isPivot) {
         var self = this;
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
-                var bound = self.groupBounds[groupIndex][index].end;
-                var color;
+                var bound, color;
+
+                seriesItem.groupIndex = groupIndex;
+                seriesItem.index = index;
+                bound = self._getBound(seriesItem);
 
                 if (bound) {
                     color = self._getColor(seriesItem);
@@ -127,8 +155,8 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                 }
 
                 return result;
-            }, true);
-        });
+            });
+        }, isPivot);
     },
 
     /**
@@ -177,7 +205,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                 return;
             }
 
-            bound = self.groupBounds[groupIndex][index].end;
+            bound = self._getBound(box.seriesItem, groupIndex, index);
 
             if (bound) {
                 raphaelRenderUtil.updateRectBound(box.rect, bound);

@@ -51,9 +51,13 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @override
      */
     _makeSeriesData: function() {
+        var boundMap = this._getBoundMap();
+
         return {
-            groupBounds: this._makeBounds(),
-            seriesDataModel: this._getSeriesDataModel()
+            boundMap: boundMap,
+            groupBounds: this._makeBounds(boundMap),
+            seriesDataModel: this._getSeriesDataModel(),
+            isPivot: true
         };
     },
 
@@ -86,21 +90,27 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
     /**
      * Make bounds for rendering graph.
-     * @returns {*|Array}
+     * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
+     * @returns {Array.<Array.<{left: number, top: number, width: number, height: number}>>}
      * @private
      */
-    _makeBounds: function() {
-        var boundMap = this._getBoundMap();
+    _makeBounds: function(boundMap) {
+        var startDepth = this.startDepth;
         var seriesDataModel = this._getSeriesDataModel();
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem) {
                 var bound = boundMap[seriesItem.id];
-                return bound ? {
-                    end: bound
-                } : null;
+                var result = null;
+
+                if (seriesItem.depth === startDepth && bound) {
+                    result = {
+                        end: bound
+                    };
+                }
+                return result;
             }, true);
-        });
+        }, true);
     },
 
     /**
