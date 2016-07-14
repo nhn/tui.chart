@@ -207,7 +207,7 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make html about series label.
+     * Make html for series label.
      * @param {{left: number, top: number}} position - position for rendering label
      * @param {string} label - label of SeriesItem
      * @param {object} theme - theme for series label
@@ -233,7 +233,7 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make
+     * Make labels html for bound type chart.
      * @param {SeriesDataModel} seriesDataModel - series data model
      * @param {Array.<Array.<{left: number, top: number}>>} positionsSet - positions set
      * @param {object} theme - theme for series label
