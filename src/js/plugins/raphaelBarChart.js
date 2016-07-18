@@ -118,7 +118,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                item = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
+                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
                 color = singleColor || colors[index];
                 rect = self._renderBar(bound.start, color);
@@ -320,7 +320,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
+                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
                 return self._renderBorderLines(bound.start, borderColor, self.chartType, seriesItem);
             });

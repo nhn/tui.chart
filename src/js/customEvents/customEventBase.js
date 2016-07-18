@@ -67,6 +67,25 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {null | object}
          */
         this.prevFoundData = null;
+
+
+        /**
+         * whether expanded or not.
+         * @type {boolean}
+         */
+        this.isExpanded = predicate.isLineTypeChart(this.chartType);
+    },
+
+    /**
+     * Get bound for rendering.
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }}
+     * @private
+     */
+    _getRenderingBound: function() {
+        return this.boundsMaker.getBound('customEvent');
     },
 
     /**
@@ -76,14 +95,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _renderCustomEventArea: function(customEventContainer, data) {
-        var expandedBound, tbcm;
+        var renderingBound, tbcm;
 
         this.dimension = this.boundsMaker.getDimension('customEvent');
         tbcm = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
         this.tickBaseCoordinateModel = tbcm;
-        expandedBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
-        renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
-        renderUtil.renderPosition(customEventContainer, expandedBound.position);
+        renderingBound = this._getRenderingBound();
+        renderUtil.renderDimension(customEventContainer, renderingBound.dimension);
+        renderUtil.renderPosition(customEventContainer, renderingBound.position);
     },
 
     /**
@@ -223,7 +242,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      */
     _onClick: function(e) {
         var target = e.target || e.srcElement,
-            clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
+            clientX = e.clientX - (this.isExpanded ? chartConst.SERIES_EXPAND_SIZE : 0),
             foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();

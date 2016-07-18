@@ -21,10 +21,10 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             actual = zoomMixer._calculateLayerPosition(150);
 
-            expect(actual.x).toBe(90);
+            expect(actual.x).toBe(100);
         });
 
-        it('전달하는 clientX가 container의 bound.left 보다 작을 경우의 x는 0을 반환합니다.', function() {
+        it('전달하는 clientX가 container의 bound.left 보다 작을 경우의 x는 10(확장 크기)만큼을 반환합니다.', function() {
             var actual;
 
             spyOn(zoomMixer, '_getContainerBound').and.returnValue({
@@ -34,7 +34,7 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             actual = zoomMixer._calculateLayerPosition(30);
 
-            expect(actual.x).toBe(0);
+            expect(actual.x).toBe(10);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 작더라도 그대로 반환합니다.', function() {
@@ -49,7 +49,7 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             actual = zoomMixer._calculateLayerPosition(clientX, clientY, checkLimit);
 
-            expect(actual.x).toBe(-30);
+            expect(actual.x).toBe(-20);
         });
 
         it('전달하는 clientX가 container의 bound.right 보다 클 경우의 x를 구합니다.', function() {
@@ -62,7 +62,7 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             actual = zoomMixer._calculateLayerPosition(480);
 
-            expect(actual.x).toBe(380);
+            expect(actual.x).toBe(390);
         });
 
         it('세번째 인자인 checkLimit에 false를 전달하면 clientX가 container의 x가 bound.left 보다 크더라도 그대로 반환합니다.', function() {
@@ -77,7 +77,7 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             actual = zoomMixer._calculateLayerPosition(clientX, clientY, checkLimit);
 
-            expect(actual.x).toBe(420);
+            expect(actual.x).toBe(430);
         });
 
         it('clientY값이 있는 경우 y값을 계산하여 반환합니다.', function() {
@@ -120,8 +120,8 @@ describe('Test for AreaTypeCustomEvent', function() {
 
             zoomMixer._showDragSelection(50);
 
-            expect(zoomMixer.dragSelectionElement.style.left).toBe('10px');
-            expect(zoomMixer.dragSelectionElement.style.width).toBe('100px');
+            expect(zoomMixer.dragSelectionElement.style.left).toBe('20px');
+            expect(zoomMixer.dragSelectionElement.style.width).toBe('90px');
         });
 
         it('layerX가 startLayerX보다 클 경우에는 left값을 startLayerX로 설정합니다.', function() {
@@ -135,7 +135,7 @@ describe('Test for AreaTypeCustomEvent', function() {
             zoomMixer._showDragSelection(130);
 
             expect(zoomMixer.dragSelectionElement.style.left).toBe('40px');
-            expect(zoomMixer.dragSelectionElement.style.width).toBe('40px');
+            expect(zoomMixer.dragSelectionElement.style.width).toBe('50px');
         });
 
         it('_showLayerSelection을 수행하면 dragSelectionElement에 show 스타일 클래스가 설정됩니다.', function() {

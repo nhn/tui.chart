@@ -59,6 +59,8 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         if (seriesData.boundMap) {
             this.boundMap = seriesData.boundMap;
             this._getBound = this._getBoundFromBoundMap;
+        } else {
+            this._getBound = this._getBoundFromGroupBounds;
         }
 
         if (!this.colorModel) {
@@ -80,7 +82,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @returns {{width: number, height: number, left: number, top: number}}
      * @private
      */
-    _getBound: function(seriesItem) {
+    _getBoundFromGroupBounds: function(seriesItem) {
         return this.groupBounds[seriesItem.groupIndex][seriesItem.index].end;
     },
 

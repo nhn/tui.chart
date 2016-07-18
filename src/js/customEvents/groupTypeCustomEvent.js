@@ -9,6 +9,7 @@
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
@@ -54,7 +55,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @private
      */
     _findData: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+        var layerPosition = this._calculateLayerPosition(clientX, clientY, true, this.isExpanded);
         var pointValue;
 
         if (this.isVertical) {
@@ -170,7 +171,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
         CustomEventBase.prototype._onMouseout.call(this);
 
-        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
+        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false, this.isExpanded);
 
         if (this._isOutPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
             this._hideTooltip();

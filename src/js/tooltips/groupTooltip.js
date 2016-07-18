@@ -22,13 +22,11 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
-     * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
-     *      @param {object} params.theme axis theme
+     * @override
      */
-    init: function(params) {
+    init: function() {
         this.prevIndex = null;
-        TooltipBase.call(this, params);
+        TooltipBase.apply(this, arguments);
     },
 
     /**

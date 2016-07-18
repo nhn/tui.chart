@@ -33,9 +33,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onMousemove: function(e) {
         var target = e.target || e.srcElement;
-        var clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE;
-        var clientY = e.clientY - chartConst.SERIES_EXPAND_SIZE;
-        var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, clientY);
+        var foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;

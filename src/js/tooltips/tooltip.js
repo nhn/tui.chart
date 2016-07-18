@@ -21,12 +21,10 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
     /**
      * Tooltip component.
      * @constructs Tooltip
-     * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
-     *      @param {object} params.theme axis theme
+     * @override
      */
     init: function(params) {
-        TooltipBase.call(this, params);
+        TooltipBase.apply(this, arguments);
     },
 
     /**
