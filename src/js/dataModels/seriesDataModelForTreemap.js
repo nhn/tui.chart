@@ -81,21 +81,21 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         var childDepth = depth + 1;
 
         tui.util.forEachArray(filtered, function(datum, index) {
-            var descendant, children;
+            var descendants, children;
 
             datum.depth = depth;
             datum.group = tui.util.isUndefined(group) ? index : group;
 
-            descendant = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
-            children = tui.util.filter(descendant, function(child) {
-                return child.depth === childDepth;
+            descendants = self._setTreeProperties(rejected, childDepth, datum.id, datum.group);
+            children = tui.util.filter(descendants, function(descendant) {
+                return descendant.depth === childDepth;
             });
 
             if (children.length) {
                 datum.value = tui.util.sum(tui.util.pluck(children, 'value'));
             }
 
-            filtered = filtered.concat(descendant);
+            filtered = filtered.concat(descendants);
         });
 
         return filtered;
@@ -139,14 +139,15 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @returns {Array.<SeriesItem>}
      */
     findSeriesItemsByDepth: function(depth, group) {
-        var key = chartConst.TREEMAP_DEPTH_KEY_PREFIX + depth;
+        var key = chartConst.TREEMAP_DEPTH_KEY_PREFIX + depth + '_' + (group || '');
 
         return this._findSeriesItems(key, function(seriesItem) {
             return seriesItem.depth === depth && (!tui.util.isExisty(group) || (seriesItem.group === group));
         });
     },
+
     /**
-     * FInd SeriesItems by parent id.
+     * Find SeriesItems by parent id.
      * @param {string | number} parent - parent id
      * @returns {Array.<SeriesItem>}
      */

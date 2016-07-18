@@ -23,8 +23,9 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      *      dimension: {width: number, height: number},
      *      colorModel: object,
      *      seriesDataModel: SeriesDataModel,
+     *      groupBounds: (Array.<Array.<object>>|object.<string, object>),
      *      theme: object
- *      }} seriesData - data for graph rendering
+     * }} seriesData - data for graph rendering
      * @returns {object}
      */
     render: function(container, seriesData) {
@@ -191,6 +192,13 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this._animateChangingColor(indexes);
     },
 
+    /**
+     * Resize.
+     * @param {{
+     *      dimension: {width: number, height: number},
+     *      groupBounds: (Array.<Array.<object>>|object.<string, object>)
+     * }} seriesData - data for graph rendering
+     */
     resize: function(seriesData) {
         var self = this;
         var dimension = seriesData.dimension;

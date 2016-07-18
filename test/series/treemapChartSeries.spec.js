@@ -53,51 +53,27 @@ describe('TreemapChartSeries', function() {
                     group: 1
                 },
                 {
-                    id: 'id_2',
-                    parent: rootId,
-                    value: 4,
-                    depth: 1,
-                    group: 2
-                },
-                {
                     id: 'id_3',
                     parent: rootId,
                     value: 3,
                     depth: 1,
-                    group: 3
+                    group: 2
                 },
                 {
                     id: 'id_4',
                     parent: rootId,
-                    value: 2,
+                    value: 3,
                     depth: 1,
-                    group: 4
-                },
-                {
-                    id: 'id_5',
-                    parent: rootId,
-                    value: 2,
-                    depth: 1,
-                    group: 5
-                },
-                {
-                    id: 'id_6',
-                    parent: rootId,
-                    value: 1,
-                    depth: 1,
-                    group: 6
+                    group: 3
                 }
             ];
 
             actual = series._makeBoundMap(rootId);
             expected = {
-                'id_0': {left: 0, top: 0, width: 300, height: 200},
-                'id_1': {left: 0, top: 200, width: 300, height: 200},
-                'id_2': {left: 300, top: 0, width: 171.42857142857142, height: 233.33333333333334},
-                'id_3': {left: 471.42857142857144, top: 0, width: 128.57142857142856, height: 233.33333333333334},
-                'id_4': {left: 300, top: 233.33333333333334, width: 120, height: 166.66666666666666},
-                'id_5': {left: 420, top: 233.33333333333334, width: 120, height: 166.66666666666666},
-                'id_6': {left: 540, top: 233.33333333333334, width: 60, height: 166.66666666666666}
+                'id_0': {left: 0, top: 0, width: 200, height: 400},
+                'id_1': {left: 200, top: 0, width: 400, height: 200},
+                'id_3': {left: 200, top: 200, width: 200, height: 200},
+                'id_4': {left: 400, top: 200, width: 200, height: 200}
             };
 
             expect(actual).toEqual(expected);
