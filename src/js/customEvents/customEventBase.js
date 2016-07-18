@@ -10,6 +10,7 @@ var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
 var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
 var chartConst = require('../const');
 var eventListener = require('../helpers/eventListener');
+var predicate = require('../helpers/predicate');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 
