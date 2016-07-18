@@ -175,4 +175,32 @@ describe('Test for renderingLabelHelper', function() {
             expect(actual).toBe(expected);
         });
     });
+
+    describe('makeLabelsHtmlForTreemap', function() {
+        it('make labels html for treemap', function() {
+            var seriesItems = [
+                {
+                    id: 'id_0',
+                    label: 'label1'
+                },
+                {
+                    id: 'id_1',
+                    label: 'label2'
+                }
+            ];
+            var boundMap = {
+                'id_0': {left: 0, top: 0, width: 300, height: 200},
+                'id_1': {left: 0, top: 200, width: 300, height: 200}
+            };
+            var theme = {
+                fontFamily: 'Verdana',
+                fontSize: 10
+            };
+            var actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, theme);
+            var expected = '<div class="tui-chart-series-label" style="left:125px;top:91px;font-family:Verdana;font-size:10px">label1</div>' +
+                '<div class="tui-chart-series-label" style="left:125px;top:291px;font-family:Verdana;font-size:10px">label2</div>';
+
+            expect(actual).toBe(expected);
+        });
+    });
 });

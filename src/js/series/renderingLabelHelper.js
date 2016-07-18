@@ -68,7 +68,7 @@ var renderingLabelHelper = {
         var value = seriesItem.value;
         var isOppositeSide = value >= 0;
         var positionMap = {
-            end: makePosition(bound, labelHeight, seriesItem.endLabel, theme, isOppositeSide)
+            end: makePosition(bound, labelHeight, seriesItem.endLabel || seriesItem.label, theme, isOppositeSide)
         };
 
         if (seriesItem.isRange) {
@@ -253,6 +253,29 @@ var renderingLabelHelper = {
 
                 return html;
             }).join('');
+        }).join('');
+
+        return labelsHtml;
+    },
+
+    /**
+     * Make labels html for treemap chart.
+     * @param {Array.<SeriesItem>} seriesItems - seriesItems
+     * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
+     * @param {object} theme - theme for series label
+     * @returns {string}
+     */
+    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme) {
+        var self = this;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+        var makePosition = tui.util.bind(this._makePositionForBoundType, this);
+
+        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+            var bound = boundMap[seriesItem.id];
+            var position = self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition).end;
+            var html = self.makeSeriesLabelHtml(position, seriesItem.label, theme, index);
+
+            return html;
         }).join('');
 
         return labelsHtml;

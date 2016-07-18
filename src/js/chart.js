@@ -700,6 +700,70 @@ tui.chart.heatmapChart = function(container, rawData, options) {
 };
 
 /**
+ * Treemap chart creator.
+ * @memberOf tui.chart
+ * @param {HTMLElement} container - chart container
+ * @param {rawData} rawData - raw data
+ *      @param {Array.<Array.<object>>} rawData.series - series data
+ * @param {object} options - chart options
+ *      @param {object} options.chart - base options for chart
+ *          @param {number} options.chart.width - chart width
+ *          @param {number} options.chart.height - chart height
+ *          @param {string} options.chart.title - chart title
+ *          @param {string | function} options.chart.format - formatter for value
+ *      @param {object} options.series - options for series component
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *      @param {string} options.theme - theme name
+ *      @param {string} options.libType - type of graph library
+ * @returns {object} scatter chart
+ * @api
+ * @example
+ * var container = document.getElementById('container-id'),
+ *     rawData = {
+ *       series: [
+ *          {
+ *              id: 'id_0',
+ *              value: 6
+ *          },
+ *          {
+ *              id: 'id_1',
+ *              value: 6
+ *          },
+ *          {
+ *              id: 'id_2',
+ *              value: 4
+ *          },
+ *          {
+ *              id: 'id_3',
+ *              value: 3
+ *          },
+ *          {
+ *              id: 'id_4',
+ *              value: 2
+ *          },
+ *          {
+ *              id: 'id_5',
+ *              value: 2
+ *          },
+ *          {
+ *              id: 'id_6',
+ *              value: 1
+ *          }
+ *     ],
+ *     options = {
+ *       chart: {
+ *         title: 'Treemap Chart'
+ *       }
+ *     };
+ * tui.chart.treemapChart(container, rawData, options);
+ */
+tui.chart.treemapChart = function(container, rawData, options) {
+    options = options || {};
+    options.chartType = chartConst.CHART_TYPE_TREEMAP;
+    return _createChart(container, rawData, options);
+};
+
+/**
  * Combo chart creator.
  * @memberOf tui.chart
  * @param {HTMLElement} container - chart container

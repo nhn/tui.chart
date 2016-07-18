@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Treemap Chart] basic</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="treemapChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "series": [
+        {
+            "id": "id_0"
+        }, {
+            "id": "id_0_0",
+            "parent": "id_0",
+            "value": 6
+        }, {
+            "id": "id_0_1",
+            "parent": "id_0"
+        }, {
+            "id": "id_0_1_0",
+            "parent": "id_0_1"
+        }, {
+            "id": "id_0_1_0_0",
+            "parent": "id_0_1_0",
+            "value": 1
+        }, {
+            "id": "id_0_1_0_1",
+            "parent": "id_0_1_0",
+            "value": 1
+        }, {
+            "id": "id_0_1_1",
+            "parent": "id_0_1",
+            "value": 4
+        }, {
+            "id": "id_0_2",
+            "parent": "id_0",
+            "value": 6
+        }, {
+            "id": "id_0_3",
+            "parent": "id_0",
+            "value": 6
+        }, {
+            "id": "id_0_4",
+            "parent": "id_0",
+            "value": 6
+        }, {
+            "id": "id_1"
+        }, {
+            "id": "id_1_0",
+            "parent": "id_1",
+            "value": 6
+        }, {
+            "id": "id_1_1",
+            "parent": "id_1",
+            "value": 6
+        }, {
+            "id": "id_2"
+        }, {
+            "id": "id_2_0",
+            "parent": "id_2",
+            "value": 3
+        }, {
+            "id": "id_2_1",
+            "parent": "id_2",
+            "value": 3
+        }
+    ]
+}
+
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 500,
+        "height": 400,
+        "title": "Treemap chart"
+    },
+    "series": {
+        "showLabel": true
+    },
+    "theme": "newTheme"
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+            "colors": ["#63A69F", "#F2E1AC", "#F2836B"],
+            "borderColor": "#F4511E"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area');
+    var data = {
+        series: [
+            {
+                id: 'id_0',
+                label: 'label1'
+            }, {
+                id: 'id_0_0',
+                parent: 'id_0',
+                value: 6
+            }, {
+                id: 'id_0_1',
+                parent: 'id_0'
+            }, {
+                id: 'id_0_1_0',
+                parent: 'id_0_1'
+            }, {
+                id: 'id_0_1_0_0',
+                parent: 'id_0_1_0',
+                value: 1
+            }, {
+                id: 'id_0_1_0_1',
+                parent: 'id_0_1_0',
+                value: 1
+            }, {
+                id: 'id_0_1_1',
+                parent: 'id_0_1',
+                value: 4
+            }, {
+                id: 'id_0_2',
+                parent: 'id_0',
+                value: 6
+            }, {
+                id: 'id_0_3',
+                parent: 'id_0',
+                value: 6
+            }, {
+                id: 'id_0_4',
+                parent: 'id_0',
+                value: 6
+            }, {
+                id: 'id_1',
+                label: 'label2'
+            }, {
+                id: 'id_1_0',
+                parent: 'id_1',
+                value: 6
+            }, {
+                id: 'id_1_1',
+                parent: 'id_1',
+                value: 6
+            }, {
+                id: 'id_2',
+                label: 'label3'
+            }, {
+                id: 'id_2_0',
+                parent: 'id_2',
+                value: 3
+            }, {
+                id: 'id_2_1',
+                parent: 'id_2',
+                value: 3
+            }
+        ]
+    };
+    var options = {
+        chart: {
+            width: 500,
+            height: 400,
+            title: 'Treemap chart'
+        },
+        series: {
+            showLabel: true
+        }
+    };
+    tui.chart.treemapChart(container, data, options);
+</script>
+</body>
+</html>

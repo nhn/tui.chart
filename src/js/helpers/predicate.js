@@ -128,6 +128,16 @@ var predicate = {
     },
 
     /**
+     * Whether treemap chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isTreemapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_TREEMAP;
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - chart type

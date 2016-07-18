@@ -12,6 +12,7 @@ var PieChart = require('./charts/pieChart');
 var BubbleChart = require('./charts/bubbleChart');
 var ScatterChart = require('./charts/scatterChart');
 var HeatmapChart = require('./charts/heatmapChart');
+var TreemapChart = require('./charts/treemapChart');
 var MapChart = require('./charts/mapChart');
 
 chartFactory.register(chartConst.CHART_TYPE_BAR, BarChart);
@@ -24,4 +25,5 @@ chartFactory.register(chartConst.CHART_TYPE_PIE, PieChart);
 chartFactory.register(chartConst.CHART_TYPE_BUBBLE, BubbleChart);
 chartFactory.register(chartConst.CHART_TYPE_SCATTER, ScatterChart);
 chartFactory.register(chartConst.CHART_TYPE_HEATMAP, HeatmapChart);
+chartFactory.register(chartConst.CHART_TYPE_TREEMAP, TreemapChart);
 chartFactory.register(chartConst.CHART_TYPE_MAP, MapChart);
