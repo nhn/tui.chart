@@ -23,7 +23,48 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     init: function(params) {
         var isPieChart = predicate.isPieChart(params.chartType);
 
-        tui.util.extend(this, params);
+        /**
+         * Chart type
+         * @type {string}
+         */
+        this.chartType = params.chartType;
+
+        /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
+         * Bounds maker
+         * @type {BoundsMaker}
+         */
+        this.boundsMaker = params.boundsMaker;
+
+        /**
+         * Options
+         * @type {object}
+         */
+        this.options = params.options;
+
+        /**
+         * whether vertical or not
+         * @type {boolean}
+         */
+        this.isVertical = params.isVertical;
+
+        /**
+         * User event listener
+         * @type {UserEventListener}
+         */
+        this.userEvent = params.userEvent;
+
+        /**
+         * label theme
+         * @type {object}
+         */
+        this.labelTheme = params.labelTheme;
+
         /**
          * className
          * @type {string}
@@ -53,8 +94,6 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
          * @type {number}
          */
         this.animationTime = isPieChart ? chartConst.TOOLTIP_PIE_ANIMATION_TIME : chartConst.TOOLTIP_ANIMATION_TIME;
-
-        this.chartType = params.chartType;
 
         /**
          * TooltipBase base data.
