@@ -141,7 +141,7 @@ var singleTooltipMixer = {
     },
 
     /**
-     * Make tooltip position of not bar chart.
+     * Make tooltip position for not bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -149,7 +149,7 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPositionOfNotBarChart: function(params) {
+    _makeTooltipPositionForNotBarChart: function(params) {
         var bound = params.bound,
             positionOption = params.positionOption,
             minusWidth = params.dimension.width - (bound.width || 0),
@@ -176,18 +176,18 @@ var singleTooltipMixer = {
     _makeTooltipPositionToMousePosition: function(params) {
         params.bound = params.bound || {};
         tui.util.extend(params.bound, params.mousePosition);
-        return this._makeTooltipPositionOfNotBarChart(params);
+        return this._makeTooltipPositionForNotBarChart(params);
     },
 
     /**
-     * Make left position of bar chart.
+     * Make left position for bar chart.
      * @param {number} baseLeft base left
      * @param {string} alignOption align option
      * @param {number} tooltipWidth tooltip width
      * @returns {number} left position value
      * @private
      */
-    _makeLeftPositionOfBarChart: function(baseLeft, alignOption, tooltipWidth) {
+    _makeLeftPositionForBarChart: function(baseLeft, alignOption, tooltipWidth) {
         var left = baseLeft;
 
         if (alignOption.indexOf('left') > -1) {
@@ -202,14 +202,14 @@ var singleTooltipMixer = {
     },
 
     /**
-     * Make top position of bar chart.
+     * Make top position for bar chart.
      * @param {number} baseTop base top
      * @param {string} alignOption align option
      * @param {number} minusHeight minus width
      * @returns {number} top position value
      * @private
      */
-    _makeTopPositionOfBarChart: function(baseTop, alignOption, minusHeight) {
+    _makeTopPositionForBarChart: function(baseTop, alignOption, minusHeight) {
         var top = baseTop;
 
         if (alignOption.indexOf('top') > -1) {
@@ -222,7 +222,7 @@ var singleTooltipMixer = {
     },
 
     /**
-     * Make tooltip position of bar chart.
+     * Make tooltip position for bar chart.
      * @param {object} params parameters
      *      @param {{bound: object}} params.data graph information
      *      @param {{width: number, height: number}} params.dimension tooltip dimension
@@ -230,7 +230,7 @@ var singleTooltipMixer = {
      * @returns {{top: number, left: number}} position
      * @private
      */
-    _makeTooltipPositionOfBarChart: function(params) {
+    _makeTooltipPositionForBarChart: function(params) {
         var bound = params.bound,
             positionOption = params.positionOption,
             minusHeight = params.dimension.height - (bound.height || 0),
@@ -240,8 +240,8 @@ var singleTooltipMixer = {
             baseTop = bound.top + positionOption.top;
 
         return {
-            left: this._makeLeftPositionOfBarChart(baseLeft, alignOption, tooltipWidth),
-            top: this._makeTopPositionOfBarChart(baseTop, alignOption, minusHeight)
+            left: this._makeLeftPositionForBarChart(baseLeft, alignOption, tooltipWidth),
+            top: this._makeTopPositionForBarChart(baseTop, alignOption, minusHeight)
         };
     },
 
@@ -282,12 +282,12 @@ var singleTooltipMixer = {
             position = this._makeTooltipPositionToMousePosition(params);
         } else {
             if (predicate.isBarChart(params.chartType)) {
-                position = this._makeTooltipPositionOfBarChart(params);
+                position = this._makeTooltipPositionForBarChart(params);
                 sizeType = 'width';
                 positionType = 'left';
                 addPadding = 1;
             } else {
-                position = this._makeTooltipPositionOfNotBarChart(params);
+                position = this._makeTooltipPositionForNotBarChart(params);
                 sizeType = 'height';
                 positionType = 'top';
                 addPadding = -1;

@@ -111,15 +111,14 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
 
     /**
      * Make exportation data for series type userEvent.
-     * @param {object} seriesData series data
-     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
+     * @param {object} seriesData - series data
+     * @returns {{x: number, y: number}}
      * @private
      */
     _makeExportationSeriesData: function(seriesData) {
         return {
             x: seriesData.indexes.groupIndex,
-            y: seriesData.indexes.index,
-            chartType: this.chartType
+            y: seriesData.indexes.index
         };
     }
 });

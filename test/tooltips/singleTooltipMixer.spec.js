@@ -111,9 +111,9 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeTooltipPositionOfNotBarChart()', function() {
+    describe('makeTooltipPositionForNotBarChart()', function() {
         it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
-            var actual = tooltip._makeTooltipPositionOfNotBarChart({
+            var actual = tooltip._makeTooltipPositionForNotBarChart({
                     bound: {
                         width: 25,
                         height: 50,
@@ -173,43 +173,43 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeLeftPositionOfBarChart()', function() {
+    describe('_makeLeftPositionForBarChart()', function() {
         it('Bar차트의 align옵션에 "left"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'left', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'left', 30),
                 expected = 20;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "center"가 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'center', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'center', 30),
                 expected = 35;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "right"가 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'right', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'right', 30),
                 expected = 55;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeTopPositionOfBarChart()', function() {
+    describe('_makeTopPositionForBarChart()', function() {
         it('Bar차트의 align옵션에 "top"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeTopPositionOfBarChart(50, 'top', -30),
+            var actual = tooltip._makeTopPositionForBarChart(50, 'top', -30),
                 expected = 80;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "middle"이나 "bottom"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeTopPositionOfBarChart(50, 'middle', -30),
+            var actual = tooltip._makeTopPositionForBarChart(50, 'middle', -30),
                 expected = 65;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeTooltipPositionOfBarChart()', function() {
+    describe('_makeTooltipPositionForBarChart()', function() {
         it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
-            var acutal = tooltip._makeTooltipPositionOfBarChart({
+            var acutal = tooltip._makeTooltipPositionForBarChart({
                     bound: {
                         width: 50,
                         height: 25,
