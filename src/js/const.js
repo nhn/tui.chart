@@ -24,6 +24,8 @@ var chartConst = {
     CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
     /** @type {string} */
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
+    /** @type {string} */
+    CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
     /** chart types
      * @type {string}
      */
