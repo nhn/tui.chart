@@ -22,61 +22,68 @@
 {
     "series": [
         {
-            "id": "id_0"
+            "label": "label1",
+            "children": [
+                {
+                    "label": "label2",
+                    "value": 3
+                }, {
+                    "label": "label3",
+                    "children": [
+                        {
+                            "label": "label3-1",
+                            "children": [
+                                {
+                                    "label": "label3-1-1",
+                                    "value": 1
+                                },
+                                {
+                                    "label": "label3-1-2",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        {
+                            "label": "label3-2",
+                            "value": 1
+                        }
+                    ]
+                }
+            ]
         }, {
-            "id": "id_0_0",
-            "parent": "id_0",
-            "value": 6
+            "label": "label4",
+            "children": [
+                {
+                    "label": "label5",
+                    "children": [
+                        {
+                            "label": "label6",
+                            "value": 3
+                        }, {
+                            "label": "label7",
+                            "value": 1
+                        }
+                    ]
+                }, {
+                    "label": "label8",
+                    "value": 2
+                }
+            ]
         }, {
-            "id": "id_0_1",
-            "parent": "id_0"
-        }, {
-            "id": "id_0_1_0",
-            "parent": "id_0_1"
-        }, {
-            "id": "id_0_1_0_0",
-            "parent": "id_0_1_0",
-            "value": 1
-        }, {
-            "id": "id_0_1_0_1",
-            "parent": "id_0_1_0",
-            "value": 1
-        }, {
-            "id": "id_0_1_1",
-            "parent": "id_0_1",
+            "label": "label9",
             "value": 4
         }, {
-            "id": "id_0_2",
-            "parent": "id_0",
-            "value": 6
-        }, {
-            "id": "id_0_3",
-            "parent": "id_0",
-            "value": 6
-        }, {
-            "id": "id_0_4",
-            "parent": "id_0",
-            "value": 6
-        }, {
-            "id": "id_1"
-        }, {
-            "id": "id_1_0",
-            "parent": "id_1",
-            "value": 6
-        }, {
-            "id": "id_1_1",
-            "parent": "id_1",
-            "value": 6
-        }, {
-            "id": "id_2"
-        }, {
-            "id": "id_2_0",
-            "parent": "id_2",
+            "label": "label10",
             "value": 3
         }, {
-            "id": "id_2_1",
-            "parent": "id_2",
-            "value": 3
+            "label": "label11",
+            "value": 2
+        }, {
+            "label": "label12",
+            "value": 2
+        }, {
+            "label": "label13",
+            "value": 1
         }
     ]
 }
@@ -93,7 +100,9 @@
         "title": "Treemap chart"
     },
     "series": {
-        "showLabel": true
+        "showLabel": true,
+        "labelLevel": "bottom",
+        "renderingDepth": 2
     },
     "theme": "newTheme"
 }
@@ -127,64 +136,68 @@
     var data = {
         series: [
             {
-                id: 'id_0',
-                label: 'label1'
+                label: 'label1',
+                children: [
+                    {
+                        label: 'label2',
+                        value: 3
+                    }, {
+                        label: 'label3',
+                        children: [
+                            {
+                                label: 'label3-1',
+                                children: [
+                                    {
+                                        label: 'label3-1-1',
+                                        value: 1
+                                    },
+                                    {
+                                        label: 'label3-1-2',
+                                        value: 1
+                                    }
+                                ]
+                            },
+                            {
+                                label: 'label3-2',
+                                value: 1
+                            }
+                        ]
+                    }
+                ]
             }, {
-                id: 'id_0_0',
-                parent: 'id_0',
-                value: 6
+                label: 'label4',
+                children: [
+                    {
+                        label: 'label5',
+                        children: [
+                            {
+                                label: 'label6',
+                                value: 3
+                            }, {
+                                label: 'label7',
+                                value: 1
+                            }
+                        ]
+                    }, {
+                        label: 'label8',
+                        value: 2
+                    }
+                ]
             }, {
-                id: 'id_0_1',
-                parent: 'id_0'
-            }, {
-                id: 'id_0_1_0',
-                parent: 'id_0_1'
-            }, {
-                id: 'id_0_1_0_0',
-                parent: 'id_0_1_0',
-                value: 1
-            }, {
-                id: 'id_0_1_0_1',
-                parent: 'id_0_1_0',
-                value: 1
-            }, {
-                id: 'id_0_1_1',
-                parent: 'id_0_1',
+                label: 'label9',
                 value: 4
             }, {
-                id: 'id_0_2',
-                parent: 'id_0',
-                value: 6
-            }, {
-                id: 'id_0_3',
-                parent: 'id_0',
-                value: 6
-            }, {
-                id: 'id_0_4',
-                parent: 'id_0',
-                value: 6
-            }, {
-                id: 'id_1',
-                label: 'label2'
-            }, {
-                id: 'id_1_0',
-                parent: 'id_1',
-                value: 6
-            }, {
-                id: 'id_1_1',
-                parent: 'id_1',
-                value: 6
-            }, {
-                id: 'id_2',
-                label: 'label3'
-            }, {
-                id: 'id_2_0',
-                parent: 'id_2',
+                label: 'label10',
                 value: 3
             }, {
-                id: 'id_2_1',
-                parent: 'id_2',
-                value: 3
+                label: 'label11',
+                value: 2
+            }, {
+                label: 'label12',
+                value: 2
+            }, {
+                label: 'label13',
+                value: 1
             }
         ]
     };
