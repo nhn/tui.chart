@@ -479,6 +479,8 @@ describe('Tooltip', function() {
             spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
                 return position;
             });
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
             actual = tooltip._makeTooltipPosition({
                 bound: {
                     width: 50,
@@ -490,7 +492,7 @@ describe('Tooltip', function() {
                 id: 'id-0-0',
                 dimension: {
                     width: 50,
-                    height: 30
+                    height: 40
                 },
                 alignOption: '',
                 positionOption: {
@@ -501,7 +503,7 @@ describe('Tooltip', function() {
 
             expect(actual).toEqual({
                 left: 0,
-                top: 25
+                top: 12.5
             });
         });
     });
