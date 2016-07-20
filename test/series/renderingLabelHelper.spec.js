@@ -196,7 +196,7 @@ describe('Test for renderingLabelHelper', function() {
                     }
                 }
             });
-            var makeCompareIndex, seriesItems, boundMap, actual, expected;
+            var isShouldTransparent, seriesItems, boundMap, actual, expected;
 
             boundsMaker.getDimension.and.returnValue({
                 width: 600,
@@ -240,11 +240,11 @@ describe('Test for renderingLabelHelper', function() {
             ];
 
             spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);
-            makeCompareIndex = tui.util.bind(series._makeCompareIndex, series, seriesDataModel, hoverSeriesItem);;
+            isShouldTransparent = tui.util.bind(series._isShouldTransparent, series, seriesDataModel, hoverSeriesItem);
             seriesItems = seriesDataModel.findLeafSeriesItems(0);
             boundMap = series._getBoundMap();
 
-            actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, series.theme.label, makeCompareIndex);
+            actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, series.theme.label, isShouldTransparent);
             expected = '<div class="tui-chart-series-label"' +
                 ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px">label1-1</div>' +
             '<div class="tui-chart-series-label"' +

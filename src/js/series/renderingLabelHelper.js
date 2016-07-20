@@ -266,10 +266,10 @@ var renderingLabelHelper = {
      * @param {Array.<SeriesItem>} seriesItems - seriesItems
      * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
      * @param {object} theme - theme for series label
-     * @param {function} makeCompareIndex - function for making compare index
+     * @param {function} isShouldTransparent - returns whether should transparent or not
      * @returns {string}
      */
-    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, makeCompareIndex) {
+    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, isShouldTransparent) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
         var makePosition = tui.util.bind(this._makePositionForBoundType, this);
@@ -281,7 +281,7 @@ var renderingLabelHelper = {
 
             if (bound) {
                 position = self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition).end;
-                compareIndex = makeCompareIndex(seriesItem);
+                compareIndex = isShouldTransparent(seriesItem) ? -1 : null;
 
                 html = self.makeSeriesLabelHtml(position, seriesItem.label, theme, index, compareIndex);
             }

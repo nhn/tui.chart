@@ -149,26 +149,26 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     },
 
     /**
-     * Make compare index for setting opacity property.
+     * Whether should transparent or not.
      * @param {SeriesDataModel} seriesDataModel - SeriesDataModel for treemap
      * @param {SeriesItem} hoverSeriesItem - hover SeriesItem
      * @param {SeriesItem} seriesItem - target SeriesItem
-     * @returns {*}
+     * @returns {boolean}
      * @private
      */
-    _makeCompareIndex: function(seriesDataModel, hoverSeriesItem, seriesItem) {
-        var compareIndex = null;
+    _isShouldTransparent: function(seriesDataModel, hoverSeriesItem, seriesItem) {
+        var shouldTransparent = false;
         var parent;
 
         if (hoverSeriesItem && seriesItem.id !== hoverSeriesItem.id && seriesItem.group === hoverSeriesItem.group) {
             parent = seriesDataModel.findParentByDepth(seriesItem.id, hoverSeriesItem.depth + 1);
 
             if (parent && parent.parent === hoverSeriesItem.id) {
-                compareIndex = -1;
+                shouldTransparent = true;
             }
         }
 
-        return compareIndex;
+        return shouldTransparent;
     },
 
     /**
@@ -180,7 +180,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     _renderSeriesLabel: function(labelContainer, hoverSeriesItem) {
         var seriesDataModel = this._getSeriesDataModel();
         var boundMap = this._getBoundMap();
-        var seriesItems, makeCompareIndex, html;
+        var seriesItems, isShouldTransparent, html;
 
         if (this.labelLevel === 'top') {
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
@@ -190,8 +190,8 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
         }
 
-        makeCompareIndex = tui.util.bind(this._makeCompareIndex, this, seriesDataModel, hoverSeriesItem);
-        html = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, this.theme.label, makeCompareIndex);
+        isShouldTransparent = tui.util.bind(this._isShouldTransparent, this, seriesDataModel, hoverSeriesItem);
+        html = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, this.theme.label, isShouldTransparent);
 
         labelContainer.innerHTML = html;
     },
