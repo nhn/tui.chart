@@ -23,7 +23,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @constructs Tooltip
      * @override
      */
-    init: function(params) {
+    init: function() {
         TooltipBase.apply(this, arguments);
     },
 

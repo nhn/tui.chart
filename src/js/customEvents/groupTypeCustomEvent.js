@@ -9,7 +9,6 @@
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
 var chartConst = require('../const');
-var predicate = require('../helpers/predicate');
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
