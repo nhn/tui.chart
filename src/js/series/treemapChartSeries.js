@@ -149,14 +149,14 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     },
 
     /**
-     * Whether should transparent or not.
+     * Whether should dimmed or not.
      * @param {SeriesDataModel} seriesDataModel - SeriesDataModel for treemap
      * @param {SeriesItem} hoverSeriesItem - hover SeriesItem
      * @param {SeriesItem} seriesItem - target SeriesItem
      * @returns {boolean}
      * @private
      */
-    _isShouldTransparent: function(seriesDataModel, hoverSeriesItem, seriesItem) {
+    _shouldDimmed: function(seriesDataModel, hoverSeriesItem, seriesItem) {
         var shouldTransparent = false;
         var parent;
 
@@ -180,7 +180,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     _renderSeriesLabel: function(labelContainer, hoverSeriesItem) {
         var seriesDataModel = this._getSeriesDataModel();
         var boundMap = this._getBoundMap();
-        var seriesItems, isShouldTransparent, html;
+        var seriesItems, shouldDimmed, html;
 
         if (this.labelLevel === 'top') {
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
@@ -190,8 +190,8 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
         }
 
-        isShouldTransparent = tui.util.bind(this._isShouldTransparent, this, seriesDataModel, hoverSeriesItem);
-        html = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, this.theme.label, isShouldTransparent);
+        shouldDimmed = tui.util.bind(this._shouldDimmed, this, seriesDataModel, hoverSeriesItem);
+        html = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, this.theme.label, shouldDimmed);
 
         labelContainer.innerHTML = html;
     },
