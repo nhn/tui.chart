@@ -7,6 +7,8 @@
 'use strict';
 
 var labelHelper = require('../../src/js/series/renderingLabelHelper');
+var TreemapChartSeries = require('../../src/js/series/treemapChartSeries');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModelForTreemap');
 var seriesTemplate = require('../../src/js/series/seriesTemplate');
 var renderUtil = require('../../src/js/helpers/renderUtil');
 
@@ -177,30 +179,83 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('makeLabelsHtmlForTreemap', function() {
-        it('make labels html for treemap', function() {
-            var seriesItems = [
+        it('make labels html for treemap, when make', function() {
+            var boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+            var seriesDataModel = new SeriesDataModel([], 'treemap');
+            var hoverSeriesItem = {
+                id: 'id_0',
+                depth: 1
+            };
+            var series = new TreemapChartSeries({
+                boundsMaker: boundsMaker,
+                chartType: 'treemap',
+                theme: {
+                    label: {
+                        fontSize: 12,
+                        fontFamily: 'Verdana'
+                    }
+                }
+            });
+            var makeCompareIndex, seriesItems, boundMap, actual, expected;
+
+            boundsMaker.getDimension.and.returnValue({
+                width: 600,
+                height: 400
+            });
+            seriesDataModel.rawSeriesData = [
                 {
-                    id: 'id_0',
-                    label: 'label1'
+                    label: 'label1',
+                    children: [
+                        {
+                            label: 'label1-1',
+                            value: 6
+                        }, {
+                            label: 'label1-2',
+                            children: [
+                                {
+                                    label: 'label1-2-1',
+                                    children: [
+                                        {
+                                            label: 'label1-2-1-1',
+                                            value: 2
+                                        },
+                                        {
+                                            label: 'label1-2-1-2',
+                                            value: 1
+                                        }
+                                    ]
+                                },
+                                {
+                                    label: 'label3-2',
+                                    value: 3
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
-                    id: 'id_1',
-                    label: 'label2'
+                    label: 'lable2',
+                    value: 4
                 }
             ];
-            var boundMap = {
-                'id_0': {left: 0, top: 0, width: 300, height: 200},
-                'id_1': {left: 0, top: 200, width: 300, height: 200}
-            };
-            var theme = {
-                fontFamily: 'Verdana',
-                fontSize: 10
-            };
-            var actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, theme);
-            var expected = '<div class="tui-chart-series-label" style="left:125px;top:91px;font-family:Verdana;font-size:10px">label1</div>' +
-                '<div class="tui-chart-series-label" style="left:125px;top:291px;font-family:Verdana;font-size:10px">label2</div>';
+
+            spyOn(series, '_getSeriesDataModel').and.returnValue(seriesDataModel);
+            makeCompareIndex = tui.util.bind(series._makeCompareIndex, series, seriesDataModel, hoverSeriesItem);;
+            seriesItems = seriesDataModel.findLeafSeriesItems(0);
+            boundMap = series._getBoundMap();
+
+            actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, series.theme.label, makeCompareIndex);
+            expected = '<div class="tui-chart-series-label"' +
+                ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px">label1-1</div>' +
+            '<div class="tui-chart-series-label"' +
+                ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px">label3-2</div>' +
+            '<div class="tui-chart-series-label"' +
+                ' style="left:275px;top:91px;font-family:Verdana;font-size:12px">label1-2-1-1</div>' +
+            '<div class="tui-chart-series-label"' +
+                ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px">label1-2-1-2</div>';
 
             expect(actual).toBe(expected);
+
         });
     });
 });

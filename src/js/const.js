@@ -107,12 +107,20 @@ var chartConst = {
      * @type {string}
      */
     TREEMAP_ROOT_ID: '___TUI_TREEMAP_ROOT___',
+    /** id prefix of treemap
+     * @type {string}
+     */
+    TREEMAP_ID_PREFIX: '___TUI_TREEMAP_ID___',
     /** prefix for caching seriesItems
      * @type {string}
      */
     TREEMAP_DEPTH_KEY_PREFIX: '___TUI_TREEMAP_DEPTH___',
     /** @type {string} */
     TREEMAP_PARENT_KEY_PREFIX: '___TUI_TREEMAP_PARENT___',
+    /** @type {string} */
+    TREEMAP_LEAF_KEY_PREFIX: '___TUI_TREEMAP_LEAF___',
+    /** @type {string} */
+    TREEMAP_LIMIT_DEPTH_KEY_PREFIX: '___TUI_TREEMAP_LIMIT_DEPTH___',
     /** default border color for treemap chart
      * @type {string}
      */

@@ -71,7 +71,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          * boxes set
          * @type {Array.<Array.<{rect: Object, color: string}>>}
          */
-        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, !!seriesData.isPivot);
+        this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot);
 
         return this.paper;
     },
@@ -109,49 +109,67 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     /**
      * Get color from colors theme by group property of seriesItem.
      * @param {SeriesItem} seriesItem - seriesItem
+     * @param {number} startDepth - start depth
      * @returns {string}
      * @private
      */
-    _getColorFromColors: function(seriesItem) {
-        return this.theme.colors[seriesItem.group];
+    _getColorFromColors: function(seriesItem, startDepth) {
+        var color;
+
+        if (seriesItem.depth === startDepth) {
+            color = this.theme.colors[seriesItem.group];
+        } else {
+            color = 'none';
+        }
+
+        return color;
     },
 
     /**
      * Render rect.
      * @param {{width: number, height: number, left: number, top: number}} bound - bound
      * @param {string} color - color
+     * @param {number} strokeWidth - stroke width
      * @returns {object}
      * @private
      */
-    _renderRect: function(bound, color) {
+    _renderRect: function(bound, color, strokeWidth) {
         return raphaelRenderUtil.renderRect(this.paper, bound, {
             fill: color,
-            stroke: this.borderColor
+            stroke: this.borderColor,
+            'stroke-width': strokeWidth
         });
     },
 
     /**
      * Render boxes.
      * @param {SeriesDataModel} seriesDataModel - seriesDataModel
+     * @param {number} startDepth - start depth
+     * @param {boolean} isPivot - whether pivot or not
      * @returns {Array.<Array.<{rect: object, color: string}>>}
      * @private
      */
-    _renderBoxes: function(seriesDataModel, isPivot) {
+    _renderBoxes: function(seriesDataModel, startDepth, isPivot) {
         var self = this;
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
+                var strokeWidth = 1;
                 var bound, color;
+
+                if (seriesItem.depth === startDepth) {
+                    strokeWidth = 3;
+                }
 
                 seriesItem.groupIndex = groupIndex;
                 seriesItem.index = index;
                 bound = self._getBound(seriesItem);
 
                 if (bound) {
-                    color = self._getColor(seriesItem);
+                    color = self._getColor(seriesItem, startDepth);
                     result = {
-                        rect: self._renderRect(bound, color),
+                        rect: self._renderRect(bound, color, strokeWidth),
                         seriesItem: seriesItem,
                         color: color
                     };
@@ -164,26 +182,42 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
     /**
      * Animate changing color of box.
-     * @param {{groupIndex: number, index:number}} indexes - index info
+     * @param {object} rect - raphael object
      * @param {string} [color] - fill color
+     * @param {number} [opacity] - fill opacity
      * @private
      */
-    _animateChangingColor: function(indexes, color) {
-        var box = this.boxesSet[indexes.groupIndex][indexes.index];
-
-        color = color || box.color;
-
-        box.rect.animate({
-            fill: color
+    _animateChangingColor: function(rect, color, opacity) {
+        rect.animate({
+            fill: color,
+            'fill-opacity': opacity || 1
         }, ANIMATION_DURATION);
     },
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
+     * @param {boolean} hasOpacity - whether has opacity property or not
      */
-    showAnimation: function(indexes) {
-        this._animateChangingColor(indexes, this.theme.overColor);
+    showAnimation: function(indexes, hasOpacity) {
+        var box = this.boxesSet[indexes.groupIndex][indexes.index];
+        var color, opacity;
+
+        if (!box) {
+            return;
+        }
+
+        box.rect.toFront();
+
+        if (hasOpacity) {
+            color = box.color;
+            opacity = 0.7;
+        } else {
+            color = this.theme.overColor;
+            opacity = 1;
+        }
+
+        this._animateChangingColor(box.rect, color, opacity);
     },
 
     /**
@@ -191,7 +225,14 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @param {{groupIndex: number, index:number}} indexes - index info
      */
     hideAnimation: function(indexes) {
-        this._animateChangingColor(indexes);
+        var box = this.boxesSet[indexes.groupIndex][indexes.index];
+
+        if (!box) {
+            return;
+        }
+
+        this._animateChangingColor(box.rect, box.color);
+        box.rect.toBack();
     },
 
     /**

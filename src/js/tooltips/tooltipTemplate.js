@@ -10,7 +10,7 @@ var templateMaker = require('../helpers/templateMaker');
 
 var htmls = {
     HTML_DEFAULT_TEMPLATE: '<div class="tui-chart-default-tooltip">' +
-        '<div>{{ category }}</div>' +
+        '<div class="{{ categoryVisible }}">{{ category }}</div>' +
         '<div>' +
             '<span>{{ legend }}</span>' +
             '<span>{{ label }}</span>' +
