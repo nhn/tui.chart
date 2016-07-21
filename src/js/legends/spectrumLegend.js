@@ -231,7 +231,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             dimension = this._makeVerticalGraphDimension();
         }
 
-        this.graphRenderer.render(container, dimension, this.colorModel, this.isHorizontal);
+        this.graphRenderer.render(container, dimension, this.colorSpectrum, this.isHorizontal);
     },
 
     /**
@@ -252,14 +252,14 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
 
     /**
      * Render legend component.
-     * @param {{colorModel: MapChartColorModel, axesData: object}} data rendering data
+     * @param {{colorSpectrum: ColorSpectrum, axesData: object}} data rendering data
      * @returns {HTMLElement} legend element
      */
     render: function(data) {
         var container = dom.create('DIV', this.className);
 
         this.legendContainer = container;
-        this.colorModel = data.colorModel;
+        this.colorSpectrum = data.colorSpectrum;
         this.axesData = data.axesData;
         this._renderLegendArea(container);
 

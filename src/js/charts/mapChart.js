@@ -6,17 +6,17 @@
 
 'use strict';
 
-var ChartBase = require('./chartBase'),
-    chartConst = require('../const'),
-    MapChartMapModel = require('./mapChartMapModel'),
-    MapChartColorModel = require('./mapChartColorModel'),
-    MapChartDataProcessor = require('../dataModels/mapChartDataProcessor'),
-    axisDataMaker = require('../helpers/axisDataMaker'),
-    Series = require('../series/mapChartSeries'),
-    Zoom = require('../series/zoom'),
-    Legend = require('../legends/spectrumLegend'),
-    MapChartTooltip = require('../tooltips/mapChartTooltip'),
-    mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
+var ChartBase = require('./chartBase');
+var chartConst = require('../const');
+var MapChartMapModel = require('./mapChartMapModel');
+var ColorSpectrum = require('./colorSpectrum');
+var MapChartDataProcessor = require('../dataModels/mapChartDataProcessor');
+var axisDataMaker = require('../helpers/axisDataMaker');
+var Series = require('../series/mapChartSeries');
+var Zoom = require('../series/zoom');
+var Legend = require('../legends/spectrumLegend');
+var MapChartTooltip = require('../tooltips/mapChartTooltip');
+var mapChartCustomEvent = require('../customEvents/mapChartCustomEvent');
 
 var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ {
     /**
@@ -109,17 +109,17 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
     _makeRenderingData: function() {
         var axesData = this.boundsMaker.getAxesData();
         var seriesTheme = this.theme.series;
-        var colorModel = new MapChartColorModel(seriesTheme.startColor, seriesTheme.endColor);
+        var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
         var mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
         return {
             legend: {
-                colorModel: colorModel,
+                colorSpectrum: colorSpectrum,
                 axesData: axesData
             },
             mapSeries: {
                 mapModel: mapModel,
-                colorModel: colorModel
+                colorSpectrum: colorSpectrum
             },
             tooltip: {
                 mapModel: mapModel

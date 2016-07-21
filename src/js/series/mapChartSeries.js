@@ -162,7 +162,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
 
         this.graphRenderer.render(this.graphContainer, {
-            colorModel: this.data.colorModel,
+            colorSpectrum: this.data.colorSpectrum,
             mapModel: this.mapModel,
             dimension: this.graphDimension,
             theme: this.theme

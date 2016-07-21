@@ -33,7 +33,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var boundsSet = this._makeBounds();
 
         return {
-            colorModel: this.data.colorModel,
+            colorSpectrum: this.data.colorSpectrum,
             groupBounds: boundsSet,
             seriesDataModel: this._getSeriesDataModel()
         };

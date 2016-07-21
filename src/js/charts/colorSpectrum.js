@@ -1,5 +1,5 @@
 /**
- * @fileoverview MapChartColorModel is color model for map chart.
+ * @fileoverview ColorSpectrum create a color spectrum and provide color value.
  * @author NHN Ent.
  *         FE Development Lab <dl_javascript@nhnent.com>
  */
@@ -8,10 +8,10 @@
 
 var colorutil = require('../helpers/colorutil');
 
-var MapChartColorModel = tui.util.defineClass(/** @lends MapChartColorModel.prototype */ {
+var ColorSpectrum = tui.util.defineClass(/** @lends ColorSpectrum.prototype */ {
     /**
-     * MapChartColorModel is legend model.
-     * @constructs MapChartColorModel
+     * ColorSpectrum create a color spectrum and provide color value.
+     * @constructs ColorSpectrum
      * @param {string} startColor hex color
      * @param {string} endColor hex color
      */
@@ -46,8 +46,8 @@ var MapChartColorModel = tui.util.defineClass(/** @lends MapChartColorModel.prot
      * @returns {string} hex color
      */
     getColor: function(ratio) {
-        var hexColor = this.colorMap[ratio],
-            distances, rgbColor;
+        var hexColor = this.colorMap[ratio];
+        var distances, rgbColor;
 
         if (!hexColor) {
             distances = this.distances;
@@ -57,8 +57,8 @@ var MapChartColorModel = tui.util.defineClass(/** @lends MapChartColorModel.prot
             hexColor = colorutil.rgbToHEX.apply(null, rgbColor);
         }
 
-        return hexColor;
+        return hexColor || null;
     }
 });
 
-module.exports = MapChartColorModel;
+module.exports = ColorSpectrum;

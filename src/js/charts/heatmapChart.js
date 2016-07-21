@@ -8,7 +8,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var ColorModel = require('./mapChartColorModel');
+var ColorSpectrum = require('./colorSpectrum');
 var Series = require('../series/heatmapChartSeries');
 var chartConst = require('../const');
 var axisTypeMixer = require('./axisTypeMixer');
@@ -120,16 +120,16 @@ HeatmapChart.prototype._addDataRatios = function() {
 HeatmapChart.prototype._makeRenderingData = function() {
     var data = axisTypeMixer._makeRenderingData.call(this);
     var seriesTheme = this.theme.series;
-    var colorModel = new ColorModel(seriesTheme.startColor, seriesTheme.endColor);
+    var colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
 
     data.legend = {
-        colorModel: colorModel,
+        colorSpectrum: colorSpectrum,
         axesData: axisDataMaker.makeValueAxisData({
             axisScaleMaker: this._getAxisScaleMakerMap().legend,
             isVertical: true
         })
     };
-    data.heatmapSeries.colorModel = colorModel;
+    data.heatmapSeries.colorSpectrum = colorSpectrum;
 
     return data;
 };
