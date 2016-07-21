@@ -297,7 +297,7 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_moveToSymmetry', function() {
+    describe('_moveToSymmetry()', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var actual;
 
@@ -472,7 +472,7 @@ describe('Tooltip', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('make tooltip posiiton for treemap chart', function() {
+        it('make tooltip position for treemap chart', function() {
             var actual;
 
             tooltip.bound = {};

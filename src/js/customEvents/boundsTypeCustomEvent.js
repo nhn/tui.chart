@@ -30,13 +30,22 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
          * history array for treemap chart.
          * @type {number}
          */
-        this.history = [-1];
+        this.zoomHistory = [-1];
 
         /**
-         * button for history back
+         * button for zoom history back
          * @type {null | HTMLElement}
          */
         this.historyBackBtn = null;
+    },
+
+    /**
+     * Hide tooltip.
+     * @private
+     */
+    _hideTooltip: function() {
+        this.fire('hideTooltip', this.prevFoundData);
+        this.prevFoundData = null;
     },
 
     /**
@@ -46,15 +55,14 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMousemove: function(e) {
-        var target = e.target || e.srcElement;
-        var foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
+        var foundData = this._findDataFromBoundsCoordinateModel(this.customEventContainer, e.clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 
         if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
         }
 
         if (foundData) {
@@ -65,16 +73,16 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
     },
 
     /**
-     * History back.
+     * Zoom history back.
      * @private
      */
-    _historyBack: function() {
-        var index = this.history[this.history.length - 2];
+    _zoomHistoryBack: function() {
+        var index = this.zoomHistory[this.zoomHistory.length - 2];
 
-        this.history.pop();
+        this.zoomHistory.pop();
         this.fire('zoom', index);
 
-        if (this.history.length === 1) {
+        if (this.zoomHistory.length === 1) {
             this.customEventContainer.removeChild(this.historyBackBtn);
             this.historyBackBtn = null;
         }
@@ -88,21 +96,28 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onClick: function(e) {
         var target = e.target || e.srcElement;
-        var foundData;
+        var foundData, seriesItem;
 
         if (!predicate.isTreemapChart(this.chartType)) {
             return;
         }
 
         if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-            this._historyBack();
-            this.fire('hideTooltip', this.prevFoundData);
+            this._hideTooltip();
+            this._zoomHistoryBack();
             return;
         }
 
         foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
 
         if (foundData) {
+            seriesItem = this.dataProcessor.getSeriesDataModel('treemap').getSeriesItem(foundData.indexes.groupIndex, foundData.indexes.index, true);
+
+            if (seriesItem.isLeaf) {
+                return;
+            }
+
+            this._hideTooltip();
             this.fire('zoom', foundData.indexes.index);
         }
     },
@@ -111,10 +126,13 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * On mouseout.
      * @override
      */
-    _onMouseout: function() {
+    _onMouseout: function(e) {
+        var bound = this.customEventContainer.getBoundingClientRect();
+        if ((bound.left <= e.clientX) && (bound.top <= e.clientY)) {
+            return;
+        }
         if (this.prevFoundData) {
-            this.fire('hideTooltip', this.prevFoundData);
-            this.prevFoundData = null;
+            this._hideTooltip();
         }
     },
 
@@ -123,16 +141,14 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @param {number} index - index of target seriesItem
      */
     onAfterZoom: function(index) {
-        this.fire('hideTooltip', this.prevFoundData);
-
         if (!this.historyBackBtn) {
             this.historyBackBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
             this.historyBackBtn.innerHTML = '< Back';
             dom.append(this.customEventContainer, this.historyBackBtn);
         }
 
-        if (this.history[this.history.length - 1] !== index) {
-            this.history.push(index);
+        if (this.zoomHistory[this.zoomHistory.length - 1] !== index) {
+            this.zoomHistory.push(index);
         }
     }
 });

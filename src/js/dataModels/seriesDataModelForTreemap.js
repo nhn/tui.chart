@@ -191,13 +191,14 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
-     * If comparing group is undefined or group and comparing group are equal, returns true.
+     * Whether valid group or not.
+     * If comparingGroup is undefined or group and comparingGroup are equal, this group is valid.
      * @param {number} group - group
      * @param {number} [comparingGroup] - comparing group
      * @returns {boolean}
      * @private
      */
-    _equalGroup: function(group, comparingGroup) {
+    _isValidGroup: function(group, comparingGroup) {
         return !tui.util.isExisty(comparingGroup) || (group === comparingGroup);
     },
 
@@ -212,7 +213,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         var key = this._makeCacheKey(chartConst.TREEMAP_DEPTH_KEY_PREFIX, depth, group);
 
         return this._findSeriesItems(key, function(seriesItem) {
-            return (seriesItem.depth === depth) && self._equalGroup(seriesItem.group, group);
+            return (seriesItem.depth === depth) && self._isValidGroup(seriesItem.group, group);
         });
     },
 
@@ -239,7 +240,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         var key = this._makeCacheKey(chartConst.TREEMAP_LEAF_KEY_PREFIX, group);
 
         return this._findSeriesItems(key, function(seriesItem) {
-            return seriesItem.isLeaf && self._equalGroup(seriesItem.group, group);
+            return seriesItem.isLeaf && self._isValidGroup(seriesItem.group, group);
         });
     },
 
@@ -258,7 +259,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             var depth = seriesItem.depth;
 
             return ((seriesItem.isLeaf && depth < endDepth) || (depth > startDepth && depth === endDepth))
-                && self._equalGroup(seriesItem.group, group);
+                && self._isValidGroup(seriesItem.group, group);
         });
     },
 
