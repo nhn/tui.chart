@@ -168,10 +168,16 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         var bound = target.getBoundingClientRect();
         var layerX = clientX - bound.left;
         var layerY = clientY - bound.top;
-        var groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+        var groupIndex;
 
-        layerX += chartConst.SERIES_EXPAND_SIZE;
-        layerY += chartConst.SERIES_EXPAND_SIZE;
+        if (predicate.isTreemapChart(this.chartType)) {
+            groupIndex = 0;
+        } else {
+            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+            layerX += chartConst.SERIES_EXPAND_SIZE;
+            layerY += chartConst.SERIES_EXPAND_SIZE;
+        }
+
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
     },
 

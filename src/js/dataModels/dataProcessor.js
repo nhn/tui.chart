@@ -709,12 +709,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     /**
      * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
+     * @param {boolean} [isPivot] - whether pivot or not
      */
-    eachBySeriesGroup: function(iteratee) {
+    eachBySeriesGroup: function(iteratee, isPivot) {
         this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
             seriesDataModel.each(function(seriesGroup, groupIndex) {
                 iteratee(seriesGroup, groupIndex, chartType);
-            });
+            }, isPivot);
         });
     },
 

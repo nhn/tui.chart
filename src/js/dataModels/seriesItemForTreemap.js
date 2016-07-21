@@ -17,8 +17,20 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.parent = rawSeriesDatum.parent;
         this.value = rawSeriesDatum.value;
         this.depth = rawSeriesDatum.depth;
-        this.label = rawSeriesDatum.label || this.id;
+        this.label = rawSeriesDatum.label || '';
         this.group = rawSeriesDatum.group;
+        this.isLeaf = !!rawSeriesDatum.isLeaf;
+    },
+
+    /**
+     * Pick value map.
+     * @returns {{value: number, label: string}}
+     */
+    pickValueMap: function() {
+        return {
+            value: this.value,
+            label: (this.label ? this.label + ': ' : '') + this.value
+        };
     }
 });
 

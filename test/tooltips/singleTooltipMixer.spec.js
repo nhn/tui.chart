@@ -6,9 +6,10 @@
 
 'use strict';
 
-var singleTooltipMixer = require('../../src/js/tooltips/singleTooltipMixer'),
-    chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler');
+var singleTooltipMixer = require('../../src/js/tooltips/singleTooltipMixer');
+var chartConst = require('../../src/js/const');
+var dom = require('../../src/js/helpers/domHandler');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Tooltip', function() {
     var tooltip, dataProcessor, boundsMaker;
@@ -236,7 +237,67 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_moveToSymmetry', function() {
+    describe('_makeTooltipPositionForTreemapChart()', function() {
+        it('make tooltip position for treemap chart', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPositionForTreemapChart({
+                bound: {
+                    width: 80,
+                    height: 60,
+                    top: 40,
+                    left: 50
+                },
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                positionOption: {
+                    left: 0,
+                    top: 0
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 65,
+                top: 20
+            });
+        });
+
+        it('make tooltip position for treemap chart, when position option', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPositionForTreemapChart({
+                bound: {
+                    width: 80,
+                    height: 60,
+                    top: 40,
+                    left: 50
+                },
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                positionOption: {
+                    left: 20,
+                    top: -20
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 85,
+                top: 0
+            });
+        });
+    });
+
+    describe('_moveToSymmetry()', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var actual;
 
@@ -409,6 +470,41 @@ describe('Tooltip', function() {
                 top: 10
             };
             expect(actual).toEqual(expected);
+        });
+
+        it('make tooltip position for treemap chart', function() {
+            var actual;
+
+            tooltip.bound = {};
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
+                return position;
+            });
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPosition({
+                bound: {
+                    width: 50,
+                    height: 25,
+                    top: 50,
+                    left: 0
+                },
+                chartType: chartConst.CHART_TYPE_TREEMAP,
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                alignOption: '',
+                positionOption: {
+                    left: 0,
+                    top: 0
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 0,
+                top: 12.5
+            });
         });
     });
 });

@@ -211,6 +211,19 @@ var calculator = {
      */
     makePercentageValue: function(value, totalValue) {
         return value / totalValue * 100;
+    },
+
+    /**
+     *
+     * @param value
+     * @param divNumber
+     * @param subNumber
+     * @param baseRatio
+     * @returns {number}
+     * @private
+     */
+    _calculateRatio: function(value, divNumber, subNumber, baseRatio) {
+        return ((value - subNumber) / divNumber) * baseRatio;
     }
 };
 

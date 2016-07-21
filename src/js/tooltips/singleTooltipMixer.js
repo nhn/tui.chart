@@ -246,6 +246,25 @@ var singleTooltipMixer = {
     },
 
     /**
+     * Make tooltip position for treemap chart.
+     * @param {object} params parameters
+     *      @param {{bound: object}} params.data - graph information
+     *      @param {{width: number, height: number}} params.dimension - tooltip dimension
+     * @returns {{left: number, top: number}}
+     * @private
+     */
+    _makeTooltipPositionForTreemapChart: function(params) {
+        var bound = params.bound;
+        var positionOption = params.positionOption;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.labelTheme);
+
+        return {
+            left: bound.left + ((bound.width - params.dimension.width) / 2) + positionOption.left,
+            top: bound.top + ((bound.height - labelHeight) / 2) - params.dimension.height + positionOption.top
+        };
+    },
+
+    /**
      * Adjust position.
      * @param {{width: number, height: number}} tooltipDimension tooltip dimension
      * @param {{left: number, top: number}} position position
@@ -286,6 +305,8 @@ var singleTooltipMixer = {
                 sizeType = 'width';
                 positionType = 'left';
                 addPadding = 1;
+            } else if (predicate.isTreemapChart(params.chartType)) {
+                position = this._makeTooltipPositionForTreemapChart(params);
             } else {
                 position = this._makeTooltipPositionForNotBarChart(params);
                 sizeType = 'height';

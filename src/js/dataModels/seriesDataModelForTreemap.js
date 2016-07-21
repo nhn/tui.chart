@@ -11,6 +11,8 @@ var SeriesDataModel = require('./seriesDataModel');
 var SeriesItem = require('./seriesItemForTreemap');
 var chartConst = require('../const');
 
+var aps = Array.prototype.slice;
+
 var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     /**
      * SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
@@ -20,26 +22,58 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         SeriesDataModel.apply(this, arguments);
 
         /**
-         * seriesItems map
+         * cached found seriesItems map
          * @type {object.<string, Array.<SeriesItem>>}
          */
-        this.seriesItemsMap = {};
+        this.foundSeriesItemsMap = {};
+
+        /**
+         * cached seriesItem map
+         * @type {object<string, SeriesItem>}
+         */
+        this.seriesItemMap = {};
     },
 
     /**
-     * Set parent property to root id, when datum of rawSeriesData has not parent property.
+     * Flatten hierarchical data.
      * @param {Array.<object>} rawSeriesData - raw series data
+     * @param {string | number} parent - parent id
      * @returns {Array.<object>}
      * @private
      */
-    _setParentToRootId: function(rawSeriesData) {
-        return tui.util.map(rawSeriesData, function(datum) {
-            if (!datum.parent) {
-                datum.parent = chartConst.TREEMAP_ROOT_ID;
+    _flattenHierarchicalData: function(rawSeriesData, parent) {
+        var self = this;
+        var flatData = [];
+        var idPrefix;
+
+        if (parent) {
+            idPrefix = parent + '_';
+        } else {
+            idPrefix = chartConst.TREEMAP_ID_PREFIX;
+            parent = chartConst.TREEMAP_ROOT_ID;
+        }
+
+        tui.util.forEachArray(rawSeriesData, function(datum, index) {
+            var id = idPrefix + index;
+            var children = datum.children;
+
+            flatData.push(datum);
+
+            if (!datum.id) {
+                datum.id = id;
             }
 
-            return datum;
+            if (!datum.parent) {
+                datum.parent = parent;
+            }
+
+            if (children) {
+                flatData = flatData.concat(self._flattenHierarchicalData(children, id));
+                delete datum.children;
+            }
         });
+
+        return flatData;
     },
 
     /**
@@ -93,6 +127,8 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
 
             if (children.length) {
                 datum.value = tui.util.sum(tui.util.pluck(children, 'value'));
+            } else {
+                datum.isLeaf = true;
             }
 
             filtered = filtered.concat(descendants);
@@ -108,12 +144,18 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @override
      */
     _createBaseGroups: function() {
-        var rawSeriesData = this._setParentToRootId(this.rawSeriesData);
+        var rawSeriesData = this.rawSeriesData;
+        var seriesItemMap = this.seriesItemMap;
 
+        rawSeriesData = this._flattenHierarchicalData(rawSeriesData);
         rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
 
         return [tui.util.map(rawSeriesData, function(rawDatum) {
-            return new SeriesItem(rawDatum);
+            var seriesItem = new SeriesItem(rawDatum);
+
+            seriesItemMap[seriesItem.id] = seriesItem;
+
+            return seriesItem;
         })];
     },
 
@@ -125,11 +167,39 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @private
      */
     _findSeriesItems: function(key, condition) {
-        if (!this.seriesItemsMap[key]) {
-            this.seriesItemsMap[key] = this.getFirstSeriesGroup(true).filter(condition);
+        if (!this.foundSeriesItemsMap[key]) {
+            this.foundSeriesItemsMap[key] = this.getFirstSeriesGroup(true).filter(condition);
         }
 
-        return this.seriesItemsMap[key];
+        return this.foundSeriesItemsMap[key];
+    },
+
+    /**
+     * Make cache key for caching found SeriesItems.
+     * @param {string} prefix - prefix
+     * @returns {string}
+     * @private
+     */
+    _makeCacheKey: function(prefix) {
+        var key = prefix;
+
+        if (arguments.length > 1) {
+            key += aps.call(arguments, 1).join('_');
+        }
+
+        return key;
+    },
+
+    /**
+     * Whether valid group or not.
+     * If comparingGroup is undefined or group and comparingGroup are equal, this group is valid.
+     * @param {number} group - group
+     * @param {number} [comparingGroup] - comparing group
+     * @returns {boolean}
+     * @private
+     */
+    _isValidGroup: function(group, comparingGroup) {
+        return !tui.util.isExisty(comparingGroup) || (group === comparingGroup);
     },
 
     /**
@@ -139,10 +209,11 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @returns {Array.<SeriesItem>}
      */
     findSeriesItemsByDepth: function(depth, group) {
-        var key = chartConst.TREEMAP_DEPTH_KEY_PREFIX + depth + '_' + (group || '');
+        var self = this;
+        var key = this._makeCacheKey(chartConst.TREEMAP_DEPTH_KEY_PREFIX, depth, group);
 
         return this._findSeriesItems(key, function(seriesItem) {
-            return seriesItem.depth === depth && (!tui.util.isExisty(group) || (seriesItem.group === group));
+            return (seriesItem.depth === depth) && self._isValidGroup(seriesItem.group, group);
         });
     },
 
@@ -152,7 +223,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * @returns {Array.<SeriesItem>}
      */
     findSeriesItemsByParent: function(parent) {
-        var key = chartConst.TREEMAP_PARENT_KEY_PREFIX + parent;
+        var key = this._makeCacheKey(chartConst.TREEMAP_PARENT_KEY_PREFIX, parent);
 
         return this._findSeriesItems(key, function(seriesItem) {
             return seriesItem.parent === parent;
@@ -160,26 +231,68 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
-     * Find SeriesItem by depth, group and detected index.
-     * @param {number} depth - tree depth
-     * @param {number} group - tree group
-     * @param {number} detectedIndex - detected index on custom event area
-     * @returns {number}
+     * Find leaf SeriesItems.
+     * @param {number} [group] - tree group
+     * @returns {Array.<SeriesItem>}
      */
-    findSeriesItem: function(depth, group, detectedIndex) {
-        var seriesItems = this.findSeriesItemsByDepth(depth, group);
-        var foundSeriesItem = null;
+    findLeafSeriesItems: function(group) {
+        var self = this;
+        var key = this._makeCacheKey(chartConst.TREEMAP_LEAF_KEY_PREFIX, group);
 
-        tui.util.forEachArray(seriesItems, function(seriesItem, index) {
-            if (index === detectedIndex) {
-                foundSeriesItem = seriesItem;
-                return false;
-            }
-
-            return true;
+        return this._findSeriesItems(key, function(seriesItem) {
+            return seriesItem.isLeaf && self._isValidGroup(seriesItem.group, group);
         });
+    },
 
-        return foundSeriesItem;
+    /**
+     * Find SeriesItems by end depth
+     * @param {number} [group] - tree group
+     * @param {number} startDepth - start depth
+     * @param {number} endDepth - last depth
+     * @returns {*|Array.<SeriesItem>}
+     */
+    findSeriesItemsByEndDepth: function(group, startDepth, endDepth) {
+        var self = this;
+        var key = this._makeCacheKey(chartConst.TREEMAP_LIMIT_DEPTH_KEY_PREFIX, group, startDepth, endDepth);
+
+        return this._findSeriesItems(key, function(seriesItem) {
+            var depth = seriesItem.depth;
+
+            return ((seriesItem.isLeaf && depth < endDepth) || (depth > startDepth && depth === endDepth))
+                && self._isValidGroup(seriesItem.group, group);
+        });
+    },
+
+    /**
+     * Find parent by depth.
+     * @param {string} id - id
+     * @param {number} depth - depth
+     * @returns {SeriesItem|null}
+     */
+    findParentByDepth: function(id, depth) {
+        var seriesItem = this.seriesItemMap[id] || null;
+
+        if (seriesItem && seriesItem.depth !== depth) {
+            seriesItem = this.findParentByDepth(seriesItem.parent, depth);
+        }
+
+        return seriesItem;
+    },
+
+    /**
+     * Initialize foundSeriesItemsMap.
+     */
+    initSeriesItemsMap: function() {
+        this.foundSeriesItemsMap = null;
+    },
+
+    /**
+     * Has child.
+     * @param {string} id - id
+     * @returns {boolean}
+     */
+    hasChild: function(id) {
+        return !!this.findSeriesItemsByParent(id).length;
     }
 });
 
