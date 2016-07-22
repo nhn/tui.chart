@@ -10,7 +10,6 @@ var Series = require('./series');
 var squarifier = require('./squarifier');
 var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../const');
-var dom = require('../helpers/domHandler');
 
 var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**
