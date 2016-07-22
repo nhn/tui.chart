@@ -127,10 +127,15 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMouseout: function(e) {
-        var bound = this.customEventContainer.getBoundingClientRect();
-        if ((bound.left <= e.clientX) && (bound.top <= e.clientY)) {
+        var bound = this._getContainerBound();
+        var clientX = e.clientX;
+        var clientY = e.clientY;
+
+        if ((bound.left <= clientX) && (bound.top <= clientY) &&
+            (bound.right >= clientX) && (bound.bottom >= clientY)) {
             return;
         }
+
         if (this.prevFoundData) {
             this._hideTooltip();
         }

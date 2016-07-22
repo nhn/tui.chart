@@ -75,6 +75,12 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {boolean}
          */
         this.isExpanded = predicate.isLineTypeChart(this.chartType);
+
+        /**
+         * container bound
+         * @type {null | {left: number, top: number, right: number, bottom: number}}
+         */
+        this.containerBound = null;
     },
 
     /**
@@ -121,6 +127,19 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Get container bound.
+     * @returns {ClientRect}
+     * @private
+     */
+    _getContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.customEventContainer.getBoundingClientRect();
+        }
+
+        return this.containerBound;
+    },
+
+    /**
      * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
      * @param {Array.<object>} seriesBounds - series bounds
      */
@@ -141,6 +160,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data - data for resizing
      */
     resize: function(data) {
+        this.containerBound = null;
         this.rerender(data);
     },
 

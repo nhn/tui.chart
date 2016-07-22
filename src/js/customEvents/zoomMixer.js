@@ -154,19 +154,6 @@ var zoomMixer = {
     },
 
     /**
-     * Get container bound.
-     * @returns {ClientRect}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.customEventContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Calculate layer position by client position.
      * @param {number} clientX - clientX
      * @param {number} [clientY] - clientY
