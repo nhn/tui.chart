@@ -173,8 +173,6 @@ describe('Test for AxisScaleMaker', function() {
 
             expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith();
         });
-
-        });
     });
 
     describe('_getBaseSize()', function() {
