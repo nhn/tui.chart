@@ -130,4 +130,13 @@ describe('Test for calculator', function() {
             expect(actual).toBeCloseTo(expected, 15); //소수점 16째 자리가 다름
         });
     });
+
+    describe('calculateRatio()', function() {
+        it('입력 value에 subNumber를 빼고 divNumber로 나눈뒤 baseRatio로 곱하여 반환합니다.', function() {
+            var actual = calculator.calculateRatio(10, 2, 2, 0.5);
+            var expected = 2;
+
+            expect(actual).toEqual(expected);
+        });
+    });
 });
