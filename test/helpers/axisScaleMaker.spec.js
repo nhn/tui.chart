@@ -6,10 +6,10 @@
 
 'use strict';
 
-var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js'),
-    chartConst = require('../../src/js/const'),
-    DataProcessor = require('../../src/js/dataModels/dataProcessor.js'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var AxisScaleMaker = require('../../src/js/helpers/axisScaleMaker.js');
+var chartConst = require('../../src/js/const');
+var DataProcessor = require('../../src/js/dataModels/dataProcessor.js');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
 
 describe('Test for AxisScaleMaker', function() {
     var axisScaleMaker, boundsMaker;
@@ -74,7 +74,7 @@ describe('Test for AxisScaleMaker', function() {
                 },
                 step: 25
             });
-            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
             axisScaleMaker.options.diverging = true;
             actual = axisScaleMaker._getScaleValues();
             expected = [50, 25, 0, 25, 50];
@@ -98,7 +98,7 @@ describe('Test for AxisScaleMaker', function() {
             axisScaleMaker.dataProcessor.seriesDataModelMap.bar.groups = [
                 seriesGroup
             ];
-            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
 
             actual = axisScaleMaker._makeBaseValuesForNormalStackedChart();
             expected = [30, -60, 100, -20];
@@ -107,8 +107,8 @@ describe('Test for AxisScaleMaker', function() {
         });
     });
 
-    describe('_makeBaseValues()', function() {
-        it('baseValues를 생성합니다.', function() {
+    fdescribe('_makeBaseValues()', function() {
+        it('Make base values for making axis scale.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
@@ -117,7 +117,7 @@ describe('Test for AxisScaleMaker', function() {
             axisScaleMaker.dataProcessor.seriesDataModelMap.bar.valuesMap = {
                 value: [70, 10, 20, 20, 80, 30]
             };
-            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30];
@@ -125,7 +125,7 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('comboChart에서 yAxis가 하나 있을 경우의 baseValues를 생성합니다.', function() {
+        it('Make base values, when single yAxis in comboChart.', function() {
             var actual, expected;
 
             axisScaleMaker.dataProcessor.seriesDataModelMap = {
@@ -142,7 +142,7 @@ describe('Test for AxisScaleMaker', function() {
             };
 
             axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.chartType = 'bar';
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
@@ -150,14 +150,14 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('stackType 옵션이 normal인 경우에는 _makeBaseValuesOfNormalStackedChart()를 수행하여 baseValues를 생성합니다.', function() {
+        it('Make base values, when stackType is normal.', function() {
             var actual, expected;
 
             spyOn(axisScaleMaker, '_makeBaseValuesForNormalStackedChart').and.returnValue([
                 80, -10, 20, -30, 80, -40
             ]);
 
-            axisScaleMaker.chartType = 'column';
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
             axisScaleMaker.options.stackType = 'normal';
             actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
@@ -165,16 +165,15 @@ describe('Test for AxisScaleMaker', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('map 차트의 baseValues를 생성합니다.', function() {
-            var actual, expected;
+        it('Make base values by calling dataProcessor.getValues without arguments, when chartType is map.', function() {
+            spyOn(axisScaleMaker.dataProcessor, 'getValues');
 
-            spyOn(axisScaleMaker.dataProcessor, 'getValues').and.returnValue([20, 30, 40, 50]);
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_MAP;
+            axisScaleMaker._makeBaseValues();
 
-            axisScaleMaker.chartType = 'map';
-            actual = axisScaleMaker._makeBaseValues();
-            expected = [20, 30, 40, 50];
+            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith();
+        });
 
-            expect(actual).toEqual(expected);
         });
     });
 
