@@ -173,6 +173,16 @@ describe('Test for AxisScaleMaker', function() {
 
             expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith();
         });
+
+        it('Make base values by calling dataProcessor.getValues with arguments(chartType, valueType),' +
+            ' when chartType is treemap.', function() {
+            spyOn(axisScaleMaker.dataProcessor, 'getValues');
+
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_TREEMAP;
+            axisScaleMaker._makeBaseValues();
+
+            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'density');
+        });
     });
 
     describe('_getBaseSize()', function() {

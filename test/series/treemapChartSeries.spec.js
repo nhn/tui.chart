@@ -89,53 +89,83 @@ describe('TreemapChartSeries', function() {
     });
 
     describe('_makeBounds()', function() {
-        it('make bounds for rendering graph', function() {
-            var boundMap, actual;
-
+        beforeEach(function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 600,
                 height: 400
             });
             seriesDataModel.rawSeriesData = [
                 {
-                    id: 'id_0',
-                    parent: rootId,
-                    value: 6,
-                    depth: 1,
-                    group: 0
-                },
-                {
-                    id: 'id_1',
-                    parent: rootId,
-                    value: 6,
-                    depth: 1,
-                    group: 1
-                },
-                {
-                    id: 'id_3',
-                    parent: rootId,
-                    value: 3,
-                    depth: 1,
-                    group: 2
-                },
-                {
-                    id: 'id_4',
-                    parent: rootId,
-                    value: 3,
-                    depth: 1,
-                    group: 3
+                    label: 'label1',
+                    children: [
+                        {
+                            label: 'label1-1',
+                            value: 6
+                        }, {
+                            label: 'label1-2',
+                            children: [
+                                {
+                                    label: 'label1-2-1',
+                                    children: [
+                                        {
+                                            label: 'label1-2-1-1',
+                                            value: 2
+                                        },
+                                        {
+                                            label: 'label1-2-1-2',
+                                            value: 1
+                                        }
+                                    ]
+                                },
+                                {
+                                    label: 'label1-2-2',
+                                    value: 3
+                                }
+                            ]
+                        }
+                    ]
                 }
             ];
+        });
+
+        it('make bounds for rendering graph, when zoomable', function() {
+            var boundMap, actual;
+
             boundMap = series._makeBoundMap(rootId);
+            series.options.zoomable = true;
+            series.startDepth = 1;
 
             actual = series._makeBounds(boundMap);
 
             expect(actual.length).toBe(1);
-            expect(actual[0].length).toBe(4);
-            expect(actual[0][0]).toEqual({end: {left: 0, top: 0, width: 200, height: 400}});
-            expect(actual[0][1]).toEqual({end: {left: 200, top: 0, width: 400, height: 200}});
-            expect(actual[0][2]).toEqual({end: {left: 200, top: 200, width: 200, height: 200}});
-            expect(actual[0][3]).toEqual({end: {left: 400, top: 200, width: 200, height: 200}});
+            expect(actual[0].length).toBe(7);
+            expect(actual[0][0]).toEqual({end: {left: 0, top: 0, width: 600, height: 400}});
+            expect(actual[0][1]).toBeNull();
+            expect(actual[0][2]).toBeNull();
+            expect(actual[0][3]).toBeNull();
+            expect(actual[0][4]).toBeNull();
+            expect(actual[0][5]).toBeNull();
+            expect(actual[0][6]).toBeNull();
+        });
+
+        it('make bounds for rendering graph, when not zoomable', function() {
+            var boundMap, actual;
+
+            boundMap = series._makeBoundMap(rootId);
+            series.options.zoomable = false;
+            series.startDepth = 1;
+
+            actual = series._makeBounds(boundMap);
+
+            expect(actual.length).toBe(1);
+            expect(actual[0].length).toBe(7);
+            expect(actual[0][0]).toBeNull();
+            expect(actual[0][1]).toEqual({end: {left: 0, top: 0, width: 300, height: 400}});
+            expect(actual[0][2]).toBeNull();
+            expect(actual[0][3]).toBeNull();
+            expect(actual[0][4]).toEqual({end: {left: 300, top: 200, width: 300, height: 200}});
+            expect(actual[0][5]).toEqual({end: {left: 300, top: 0, width: 200, height: 200}});
+            expect(actual[0][6]).toEqual({end: {left: 500, top: 0, width: 100, height: 200}});
         });
     });
 
@@ -183,7 +213,7 @@ describe('TreemapChartSeries', function() {
             var labelContainer = dom.create('DIV');
             var expectedElement = dom.create('DIV');
 
-            series.labelLevel = 'top';
+            series.options.labelLevel = 'top';
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
@@ -196,7 +226,7 @@ describe('TreemapChartSeries', function() {
             var labelContainer = dom.create('DIV');
             var expectedElement = dom.create('DIV');
 
-            series.labelLevel = 'bottom';
+            series.options.labelLevel = 'bottom';
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +

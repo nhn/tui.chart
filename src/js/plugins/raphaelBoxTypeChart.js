@@ -10,6 +10,8 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var raphael = window.Raphael;
 
 var ANIMATION_DURATION = 100;
+var MIN_BORDER_WIDTH = 1;
+var MAX_BORDER_WIDTH = 3;
 
 /**
  * @classdesc RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
@@ -21,7 +23,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @param {HTMLElement} container container element
      * @param {{
      *      dimension: {width: number, height: number},
-     *      colorModel: object,
+     *      colorSpectrum: object,
      *      seriesDataModel: SeriesDataModel,
      *      groupBounds: (Array.<Array.<object>>|object.<string, object>),
      *      theme: object
@@ -39,10 +41,20 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this.theme = seriesData.theme || {};
 
         /**
-         * color model
+         * color spectrum
          * @type {Object}
          */
-        this.colorModel = seriesData.colorModel;
+        this.colorSpectrum = seriesData.colorSpectrum;
+
+        /**
+         *
+         */
+        this.chartBackground = seriesData.chartBackground;
+
+        /**
+         * zoomable option
+         */
+        this.zoomable = seriesData.zoomable;
 
         /**
          * border color for rendering box
@@ -56,16 +68,14 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
          */
         this.groupBounds = seriesData.groupBounds;
 
-        if (seriesData.boundMap) {
-            this.boundMap = seriesData.boundMap;
-            this._getBound = this._getBoundFromBoundMap;
-        } else {
-            this._getBound = this._getBoundFromGroupBounds;
-        }
+        /**
+         * bound map
+         * @type {object.<string, {left: number, top: number, width: number, height: number}>}
+         */
+        this.boundMap = seriesData.boundMap;
 
-        if (!this.colorModel) {
-            this._getColor = this._getColorFromColors;
-        }
+        this._bindGetBoundFunction();
+        this._bindGetColorFunction();
 
         /**
          * boxes set
@@ -74,6 +84,32 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this.boxesSet = this._renderBoxes(seriesData.seriesDataModel, seriesData.startDepth, !!seriesData.isPivot);
 
         return this.paper;
+    },
+
+    /**
+     * Bind _getBound private function.
+     * @private
+     */
+    _bindGetBoundFunction: function() {
+        if (this.boundMap) {
+            this._getBound = this._getBoundFromBoundMap;
+        } else {
+            this._getBound = this._getBoundFromGroupBounds;
+        }
+    },
+
+    /**
+     * Bind _bindGetColorFunction private function.
+     * @private
+     */
+    _bindGetColorFunction: function() {
+        if (this.colorSpectrum) {
+            this._getColor = this._getColorFromSpectrum;
+        } else if (this.zoomable) {
+            this._getColor = this._getColorFromColorsWhenZoomable;
+        } else {
+            this._getColor = this._getColorFromColors;
+        }
     },
 
     /**
@@ -97,32 +133,42 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     },
 
     /**
-     * Get color from colorModel by ratio of seriesItem.
+     * Get color from colorSpectrum by ratio of seriesItem.
      * @param {SeriesItem} seriesItem - seriesItem
      * @returns {string}
      * @private
      */
-    _getColor: function(seriesItem) {
-        return this.colorModel.getColor(seriesItem.ratio);
-    },
-
-    /**
-     * Get color from colors theme by group property of seriesItem.
-     * @param {SeriesItem} seriesItem - seriesItem
-     * @param {number} startDepth - start depth
-     * @returns {string}
-     * @private
-     */
-    _getColorFromColors: function(seriesItem, startDepth) {
+    _getColorFromSpectrum: function(seriesItem) {
         var color;
 
-        if (seriesItem.depth === startDepth) {
-            color = this.theme.colors[seriesItem.group];
+        if (!seriesItem.hasChild) {
+            color = this.colorSpectrum.getColor(seriesItem.ratio) || this.chartBackground;
         } else {
             color = 'none';
         }
 
         return color;
+    },
+
+    /**
+     * Get color from colors theme by group property of seriesItem.
+     * @param {SeriesItem} seriesItem - seriesItem
+     * @returns {string}
+     * @private
+     */
+    _getColorFromColors: function(seriesItem) {
+        return seriesItem.hasChild ? 'none' : this.theme.colors[seriesItem.group];
+    },
+
+    /**
+     * Get color from colors theme, when zoomable option.
+     * @param {SeriesItem} seriesItem - seriesItem
+     * @param {number} startDepth - start depth
+     * @returns {string}
+     * @private
+     */
+    _getColorFromColorsWhenZoomable: function(seriesItem, startDepth) {
+        return (seriesItem.depth === startDepth) ? this.theme.colors[seriesItem.group] : 'none';
     },
 
     /**
@@ -151,15 +197,24 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      */
     _renderBoxes: function(seriesDataModel, startDepth, isPivot) {
         var self = this;
+        var rectToBack;
+
+        if (this.colorSpectrum || !this.zoomable) {
+            rectToBack = function(rect) {
+                rect.toBack();
+            };
+        } else {
+            rectToBack = function() {};
+        }
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
                 var result = null;
-                var strokeWidth = 1;
+                var strokeWidth = MIN_BORDER_WIDTH;
                 var bound, color;
 
-                if (seriesItem.depth === startDepth) {
-                    strokeWidth = 3;
+                if (tui.util.isExisty(seriesItem.depth)) {
+                    strokeWidth = Math.max(MIN_BORDER_WIDTH, MAX_BORDER_WIDTH - (seriesItem.depth - startDepth));
                 }
 
                 seriesItem.groupIndex = groupIndex;
@@ -173,6 +228,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
                         seriesItem: seriesItem,
                         color: color
                     };
+                    rectToBack(result.rect);
                 }
 
                 return result;
@@ -188,33 +244,39 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @private
      */
     _animateChangingColor: function(rect, color, opacity) {
-        rect.animate({
-            fill: color,
-            'fill-opacity': opacity || 1
-        }, ANIMATION_DURATION);
+        var properties = {
+            'fill-opacity': tui.util.isExisty(opacity) ? opacity : 1
+        };
+
+        if (color) {
+            properties.fill = color;
+        }
+
+        rect.animate(properties, ANIMATION_DURATION);
     },
 
     /**
      * Show animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
-     * @param {boolean} hasOpacity - whether has opacity property or not
+     * @param {boolean} [useSpectrum] - whether use spectrum legend or not
+     * @param {number} [opacity] - fill opacity
      */
-    showAnimation: function(indexes, hasOpacity) {
+    showAnimation: function(indexes, useSpectrum, opacity) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
-        var color, opacity;
+        var color;
 
         if (!box) {
             return;
         }
 
-        box.rect.toFront();
+        useSpectrum = tui.util.isUndefined(useSpectrum) ? true : useSpectrum;
+        color = useSpectrum ? this.theme.overColor : box.color;
 
-        if (hasOpacity) {
-            color = box.color;
-            opacity = 0.7;
-        } else {
-            color = this.theme.overColor;
-            opacity = 1;
+        if (box.seriesItem.hasChild) {
+            if (useSpectrum) {
+                box.rect.attr({'fill-opacity': 0});
+            }
+            box.rect.toFront();
         }
 
         this._animateChangingColor(box.rect, color, opacity);
@@ -223,16 +285,33 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     /**
      * Hide animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
+     * @param {boolean} [useDensity] - whether use density or not
      */
-    hideAnimation: function(indexes) {
+    hideAnimation: function(indexes, useDensity) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
+        var opacity = 1;
+        var color;
 
         if (!box) {
             return;
         }
 
-        this._animateChangingColor(box.rect, box.color);
-        box.rect.toBack();
+        if (box.seriesItem.hasChild) {
+            color = null;
+            if (useDensity) {
+                opacity = 0;
+            }
+        } else {
+            color = box.color;
+        }
+
+        this._animateChangingColor(box.rect, color, opacity);
+
+        setTimeout(function() {
+            if (box.seriesItem.hasChild) {
+                box.rect.toBack();
+            }
+        }, ANIMATION_DURATION);
     },
 
     /**
@@ -246,6 +325,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         var self = this;
         var dimension = seriesData.dimension;
 
+        this.boundMap = seriesData.boundMap;
         this.groupBounds = seriesData.groupBounds;
         this.paper.setSize(dimension.width, dimension.height);
 

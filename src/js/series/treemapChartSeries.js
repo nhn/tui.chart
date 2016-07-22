@@ -10,6 +10,7 @@ var Series = require('./series');
 var squarifier = require('./squarifier');
 var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../const');
+var dom = require('../helpers/domHandler');
 
 var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**
@@ -46,12 +47,22 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
          */
         this.boundMap = null;
 
-        /**
-         * level for rendering label (top or bottom)
-         * @type {string}
-         */
-        this.labelLevel = this.options.labelLevel || 'top';
+        this._initOptions();
+    },
 
+    /**
+     * Initialize options.
+     * @private
+     */
+    _initOptions: function() {
+        this.options.useDensity = !!this.options.useDensity;
+
+        if (tui.util.isUndefined(this.options.zoomable)) {
+            this.options.zoomable = !this.options.useDensity;
+        }
+        if (!this.options.labelLevel) {
+            this.options.labelLevel = this.options.zoomable ? 'top' : 'bottom';
+        }
     },
 
     /**
@@ -71,7 +82,10 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             groupBounds: this._makeBounds(boundMap),
             seriesDataModel: this._getSeriesDataModel(),
             startDepth: this.startDepth,
-            isPivot: true
+            isPivot: true,
+            colorSpectrum: this.options.useDensity ? this.data.colorSpectrum : null,
+            chartBackground: this.chartBackground,
+            zoomable: this.options.zoomable
         };
     },
 
@@ -88,12 +102,9 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var seriesDataModel = this._getSeriesDataModel();
         var seriesItems;
 
-        boundMap = boundMap || {};
-
         dimension = dimension || this.boundsMaker.getDimension('series');
         seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
-
-        boundMap = tui.util.extend(boundMap, squarifier.squarify(dimension, seriesItems));
+        boundMap = tui.util.extend(boundMap || {}, squarifier.squarify(dimension, seriesItems));
 
         tui.util.forEachArray(seriesItems, function(seriesItem) {
             boundMap = self._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
@@ -111,13 +122,24 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     _makeBounds: function(boundMap) {
         var startDepth = this.startDepth;
         var seriesDataModel = this._getSeriesDataModel();
+        var isValid;
+
+        if (this.options.zoomable) {
+            isValid = function(seriesItem) {
+                return seriesItem.depth === startDepth;
+            };
+        } else {
+            isValid = function(seriesItem) {
+                return !seriesItem.hasChild;
+            };
+        }
 
         return seriesDataModel.map(function(seriesGroup) {
             return seriesGroup.map(function(seriesItem) {
                 var bound = boundMap[seriesItem.id];
                 var result = null;
 
-                if (seriesItem.depth === startDepth && bound) {
+                if (bound && isValid(seriesItem)) {
                     result = {
                         end: bound
                     };
@@ -175,7 +197,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var boundMap = this._getBoundMap();
         var seriesItems, shouldDimmed, html;
 
-        if (this.labelLevel === 'top') {
+        if (this.options.labelLevel === 'top') {
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
         } else {
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
@@ -229,7 +251,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         seriesDataModel = this._getSeriesDataModel();
         seriesItem = seriesDataModel.getSeriesItem(0, detectedIndex, true);
 
-        if (!seriesItem || !seriesDataModel.hasChild(seriesItem.id)) {
+        if (!seriesItem || !seriesItem.hasChild) {
             return;
         }
 
@@ -245,7 +267,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 
         this._renderSeriesLabel(this.seriesLabelContainer, seriesItem);
-        this.graphRenderer.showAnimation(indexes, true);
+        this.graphRenderer.showAnimation(indexes, this.options.useDensity, 0.6);
     },
 
     /**
@@ -253,8 +275,26 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
     onHideAnimation: function(indexes) {
+        if (!indexes) {
+            return;
+        }
+
         this._renderSeriesLabel(this.seriesLabelContainer);
-        this.graphRenderer.hideAnimation(indexes);
+        this.graphRenderer.hideAnimation(indexes, this.options.useDensity);
+    },
+
+    /**
+     * On show tooltip for calling showWedge.
+     * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
+     */
+    onShowTooltip: function(params) {
+        var seriesDataModel = this._getSeriesDataModel();
+        var indexes = params.indexes;
+        var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true).ratio;
+
+        if (ratio > -1) {
+            this.fire('showWedge', ratio);
+        }
     }
 });
 

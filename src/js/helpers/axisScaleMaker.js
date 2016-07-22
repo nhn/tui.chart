@@ -218,7 +218,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Make base values.
+     * Make base values for making axis scale.
      * @returns {Array.<number>} base values
      * @private
      */
@@ -227,6 +227,8 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
+        } else if (predicate.isTreemapChart(this.chartType)) {
+            baseValues = this.dataProcessor.getValues(this.chartType, 'density');
         } else if (this.isSingleYAxis) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
