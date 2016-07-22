@@ -7,8 +7,9 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../const');
+var renderUtil = require('../helpers/renderUtil');
+var calculator = require('../helpers/calculator');
 
 var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**
@@ -163,19 +164,6 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     },
 
     /**
-     * Calculate ratio for making bound.
-     * @param {number} value - value
-     * @param {number} divNumber - number for division
-     * @param {number} subNumber - number for subtraction
-     * @param {number} baseRatio - base ratio
-     * @returns {number}
-     * @private
-     */
-    _calculateRatio: function(value, divNumber, subNumber, baseRatio) {
-        return ((value - subNumber) / divNumber) * baseRatio;
-    },
-
-    /**
      * Add ratio.
      * @param {number} divNumber - number for division
      * @param {?number} subNumber - number for subtraction
@@ -186,10 +174,10 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         baseRatio = baseRatio || 1;
         subNumber = subNumber || 0;
 
-        this.ratio = this.endRatio = this._calculateRatio(this.value, divNumber, subNumber, baseRatio);
+        this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
         if (!tui.util.isNull(this.start)) {
-            this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
+            this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
     },

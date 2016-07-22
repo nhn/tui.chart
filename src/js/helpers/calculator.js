@@ -214,15 +214,14 @@ var calculator = {
     },
 
     /**
-     *
-     * @param value
-     * @param divNumber
-     * @param subNumber
-     * @param baseRatio
+     * Calculate ratio for making bound.
+     * @param {number} value - value
+     * @param {number} divNumber - number for division
+     * @param {number} subNumber - number for subtraction
+     * @param {number} baseRatio - base ratio
      * @returns {number}
-     * @private
      */
-    _calculateRatio: function(value, divNumber, subNumber, baseRatio) {
+    calculateRatio: function(value, divNumber, subNumber, baseRatio) {
         return ((value - subNumber) / divNumber) * baseRatio;
     }
 };
