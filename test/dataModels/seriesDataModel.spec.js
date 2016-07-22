@@ -165,7 +165,7 @@ describe('Test for SeriesDataModel', function() {
     });
 
     describe('_createValues()', function() {
-        it('groups에 포함된 seriesItem들의 value들을 1차원 배열로 추출하여 반환합니다.', function() {
+        it('create values that picked value from SeriesItems of SeriesGroups.', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
@@ -185,7 +185,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('coordinate type의 차트의 경우 x 정보를 반환할 수 있습니다.', function() {
+        it('if valueType is x, returns x values', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
@@ -205,7 +205,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('coordinate type의 차트의 경우 y 정보를 반환할 수 있습니다.', function() {
+        it('if valueType is y, returns y values', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
@@ -225,7 +225,7 @@ describe('Test for SeriesDataModel', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('coordinate type의 차트의 경우 r(radius) 정보를 반환할 수 있습니다.', function() {
+        it('if valueType is r, returns r values.', function() {
             var actual, expected;
 
             seriesDataModel.groups = [
