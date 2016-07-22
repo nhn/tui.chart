@@ -122,6 +122,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
                         end: bound
                     };
                 }
+
                 return result;
             }, true);
         }, true);
@@ -134,7 +135,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      */
     _getBoundMap: function() {
         if (!this.boundMap) {
-            this.boundMap = this._makeBoundMap(this.rootId, this.endDepth);
+            this.boundMap = this._makeBoundMap(this.rootId);
         }
 
         return this.boundMap;
@@ -208,9 +209,8 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.rootId = rootId;
         this.startDepth = startDepth;
         this.selectedGroup = group;
-
-        this._renderSeriesArea(this.seriesContainer, {}, tui.util.bind(this._renderGraph, this));
-        this.animateComponent();
+        this._renderSeriesArea(this.seriesContainer, this.data, tui.util.bind(this._renderGraph, this));
+        this._showSeriesLabelWithoutAnimation();
     },
 
     /**
