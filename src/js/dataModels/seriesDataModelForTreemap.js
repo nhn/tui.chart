@@ -245,25 +245,6 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     },
 
     /**
-     * Find SeriesItems by end depth
-     * @param {number} [group] - tree group
-     * @param {number} startDepth - start depth
-     * @param {number} endDepth - last depth
-     * @returns {*|Array.<SeriesItem>}
-     */
-    findSeriesItemsByEndDepth: function(group, startDepth, endDepth) {
-        var self = this;
-        var key = this._makeCacheKey(chartConst.TREEMAP_LIMIT_DEPTH_KEY_PREFIX, group, startDepth, endDepth);
-
-        return this._findSeriesItems(key, function(seriesItem) {
-            var depth = seriesItem.depth;
-
-            return ((seriesItem.isLeaf && depth < endDepth) || (depth > startDepth && depth === endDepth))
-                && self._isValidGroup(seriesItem.group, group);
-        });
-    },
-
-    /**
      * Find parent by depth.
      * @param {string} id - id
      * @param {number} depth - depth

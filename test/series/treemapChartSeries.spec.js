@@ -210,59 +210,5 @@ describe('TreemapChartSeries', function() {
 
             expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
         });
-
-        it('render series label, when labelLevel is bottom and endDepth is 2', function() {
-            var labelContainer = dom.create('DIV');
-            var expectedElement = dom.create('DIV');
-
-            series.labelLevel = 'bottom';
-            series.endDepth = 2;
-            series._renderSeriesLabel(labelContainer);
-
-            expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
-                    ' style="left:125px;top:186px;font-family:Verdana;font-size:12px">label2</div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:425px;top:186px;font-family:Verdana;font-size:12px">label3</div>';
-
-            expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
-        });
-
-        it('render series label, when labelLevel is bottom and endDepth is 3', function() {
-            var labelContainer = dom.create('DIV');
-            var expectedElement = dom.create('DIV');
-
-            series.labelLevel = 'bottom';
-            series.endDepth = 3;
-            series._renderSeriesLabel(labelContainer);
-
-            expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
-                    ' style="left:125px;top:186px;font-family:Verdana;font-size:12px">label2</div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:425px;top:86px;font-family:Verdana;font-size:12px">label3-1</div>' +
-                '<div class="tui-chart-series-label"' +
-                    ' style="left:425px;top:286px;font-family:Verdana;font-size:12px">label3-2</div>';
-
-            expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
-        });
-
-        it('render series label, when labelLevel is bottom and endDepth is 4', function() {
-            var labelContainer = dom.create('DIV');
-            var expectedElement = dom.create('DIV');
-
-            series.labelLevel = 'bottom';
-            series.endDepth = 4;
-            series._renderSeriesLabel(labelContainer);
-
-            expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
-                ' style="left:125px;top:186px;font-family:Verdana;font-size:12px">label2</div>' +
-                '<div class="tui-chart-series-label"' +
-                ' style="left:425px;top:286px;font-family:Verdana;font-size:12px">label3-2</div>' +
-                '<div class="tui-chart-series-label"' +
-                ' style="left:375px;top:86px;font-family:Verdana;font-size:12px">label3-1-1</div>' +
-                '<div class="tui-chart-series-label"' +
-                ' style="left:525px;top:86px;font-family:Verdana;font-size:12px">label3-1-2</div>';
-
-            expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
-        });
     });
 });

@@ -52,11 +52,6 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
          */
         this.labelLevel = this.options.labelLevel || 'top';
 
-        /**
-         * end depth of seriesItem for rendering graph
-         * @type {null}
-         */
-        this.endDepth = this.options.renderingDepth ? (this.startDepth + this.options.renderingDepth) : null;
     },
 
     /**
@@ -83,13 +78,12 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     /**
      * Make bound map by dimension.
      * @param {string | number} parent - parent id
-     * @param {number} endDepth - end depth
      * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
      * @param {{width: number, height: number}} dimension - dimension
      * @returns {object.<string, {left: number, top: number, width: number, height: number}>}
      * @private
      */
-    _makeBoundMap: function(parent, endDepth, boundMap, dimension) {
+    _makeBoundMap: function(parent, boundMap, dimension) {
         var self = this;
         var seriesDataModel = this._getSeriesDataModel();
         var seriesItems;
@@ -101,11 +95,9 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
         boundMap = tui.util.extend(boundMap, squarifier.squarify(dimension, seriesItems));
 
-        if (!endDepth || (seriesItems[0] && seriesItems[0].depth < endDepth)) {
-            tui.util.forEachArray(seriesItems, function(seriesItem) {
-                boundMap = self._makeBoundMap(seriesItem.id, endDepth, boundMap, boundMap[seriesItem.id]);
-            });
-        }
+        tui.util.forEachArray(seriesItems, function(seriesItem) {
+            boundMap = self._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
+        });
 
         return boundMap;
     },
@@ -184,8 +176,6 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
         if (this.labelLevel === 'top') {
             seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
-        } else if (this.endDepth) {
-            seriesItems = seriesDataModel.findSeriesItemsByEndDepth(this.selectedGroup, this.startDepth, this.endDepth);
         } else {
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
         }
@@ -217,7 +207,6 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.boundMap = null;
         this.rootId = rootId;
         this.startDepth = startDepth;
-        this.endDepth = this.options.renderingDepth ? (this.startDepth + this.options.renderingDepth) : null;
         this.selectedGroup = group;
 
         this._renderSeriesArea(this.seriesContainer, {}, tui.util.bind(this._renderGraph, this));
