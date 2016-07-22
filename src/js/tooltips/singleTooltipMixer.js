@@ -443,17 +443,29 @@ var singleTooltipMixer = {
     },
 
     /**
+     * Execute hiding tooltip.
+     * @param {HTMLElement} tooltipElement tooltip element
+     * @private
+     */
+    _executeHidingTooltip: function(tooltipElement) {
+        dom.removeClass(tooltipElement, 'show');
+        tooltipElement.removeAttribute('data-groupIndex');
+        tooltipElement.removeAttribute('data-index');
+        tooltipElement.style.cssText = '';
+    },
+
+    /**
      * Hide tooltip.
      * @param {HTMLElement} tooltipElement tooltip element
      * @private
      */
     _hideTooltip: function(tooltipElement) {
-        var self = this,
-            indexes = this._getIndexesCustomAttribute(tooltipElement),
-            chartType = tooltipElement.getAttribute('data-chart-type');
+        var self = this;
+        var indexes = this._getIndexesCustomAttribute(tooltipElement);
+        var chartType = tooltipElement.getAttribute('data-chart-type');
 
         if (predicate.isMousePositionChart(chartType)) {
-            dom.removeClass(tooltipElement, 'show');
+            this._executeHidingTooltip(tooltipElement);
         } else if (chartType) {
             this._setShowedCustomAttribute(tooltipElement, false);
             this._fireHideAnimation(indexes, chartType);
@@ -467,10 +479,7 @@ var singleTooltipMixer = {
                     return;
                 }
 
-                dom.removeClass(tooltipElement, 'show');
-                tooltipElement.style.cssText = '';
-
-                indexes = null;
+                self._executeHidingTooltip(tooltipElement);
             }, chartConst.HIDE_DELAY);
         }
     },
