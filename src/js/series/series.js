@@ -343,6 +343,16 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     },
 
     /**
+     * Show series label without animation.
+     * @private
+     */
+    _showSeriesLabelWithoutAnimation: function() {
+        dom.addClass(this.seriesLabelContainer, 'show');
+        this.seriesLabelContainer.style.filter = '';
+        this.seriesLabelContainer.style.opacity = 1;
+    },
+
+    /**
      * Show graph without animation.
      * @private
      */
@@ -350,9 +360,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         this.graphRenderer.showGraph();
 
         if (this._useLabel()) {
-            dom.addClass(this.seriesLabelContainer, 'show');
-            this.seriesLabelContainer.style.filter = '';
-            this.seriesLabelContainer.style.opacity = 1;
+            this._showSeriesLabelWithoutAnimation();
         }
     },
 
@@ -453,7 +461,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {{groupIndex: number, index: number}} data data
      */
     onHideAnimation: function(data) {
-        if (!this.graphRenderer.hideAnimation) {
+        if (!this.graphRenderer.hideAnimation || !data) {
             return;
         }
         this.graphRenderer.hideAnimation(data);

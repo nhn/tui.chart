@@ -107,7 +107,7 @@ describe('Test for AxisScaleMaker', function() {
         });
     });
 
-    fdescribe('_makeBaseValues()', function() {
+    describe('_makeBaseValues()', function() {
         it('Make base values for making axis scale.', function() {
             var actual, expected;
 
