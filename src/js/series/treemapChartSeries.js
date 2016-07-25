@@ -55,10 +55,10 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @private
      */
     _initOptions: function() {
-        this.options.useDensity = !!this.options.useDensity;
+        this.options.useColorValue = !!this.options.useColorValue;
 
         if (tui.util.isUndefined(this.options.zoomable)) {
-            this.options.zoomable = !this.options.useDensity;
+            this.options.zoomable = !this.options.useColorValue;
         }
         if (!this.options.labelLevel) {
             this.options.labelLevel = this.options.zoomable ? 'top' : 'bottom';
@@ -83,7 +83,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
             seriesDataModel: this._getSeriesDataModel(),
             startDepth: this.startDepth,
             isPivot: true,
-            colorSpectrum: this.options.useDensity ? this.data.colorSpectrum : null,
+            colorSpectrum: this.options.useColorValue ? this.data.colorSpectrum : null,
             chartBackground: this.chartBackground,
             zoomable: this.options.zoomable
         };
@@ -276,7 +276,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 
         this._renderSeriesLabel(this.seriesLabelContainer, seriesItem);
-        this.graphRenderer.showAnimation(indexes, this.options.useDensity, 0.6);
+        this.graphRenderer.showAnimation(indexes, this.options.useColorValue, 0.6);
     },
 
     /**
@@ -289,7 +289,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         }
 
         this._renderSeriesLabel(this.seriesLabelContainer);
-        this.graphRenderer.hideAnimation(indexes, this.options.useDensity);
+        this.graphRenderer.hideAnimation(indexes, this.options.useColorValue);
     },
 
     /**

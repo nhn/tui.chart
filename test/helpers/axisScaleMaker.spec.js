@@ -181,7 +181,7 @@ describe('Test for AxisScaleMaker', function() {
             axisScaleMaker.chartType = chartConst.CHART_TYPE_TREEMAP;
             axisScaleMaker._makeBaseValues();
 
-            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'density');
+            expect(axisScaleMaker.dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_TREEMAP, 'colorValue');
         });
     });
 
