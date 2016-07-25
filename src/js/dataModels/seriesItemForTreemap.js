@@ -18,7 +18,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.id = rawSeriesDatum.id;
         this.parent = rawSeriesDatum.parent;
         this.value = rawSeriesDatum.value;
-        this.density = rawSeriesDatum.density;
+        this.colorValue = rawSeriesDatum.colorValue;
         this.depth = rawSeriesDatum.depth;
         this.label = rawSeriesDatum.label || '';
         this.group = rawSeriesDatum.group;
@@ -34,7 +34,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         divNumber = divNumber || 1;
         subNumber = subNumber || 0;
 
-        this.ratio = calculator.calculateRatio(this.density, divNumber, subNumber, 1) || -1;
+        this.ratio = calculator.calculateRatio(this.colorValue, divNumber, subNumber, 1) || -1;
     },
 
     /**
