@@ -228,7 +228,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (predicate.isTreemapChart(this.chartType)) {
-            baseValues = this.dataProcessor.getValues(this.chartType, 'density');
+            baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
         } else if (this.isSingleYAxis) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
