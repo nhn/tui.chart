@@ -285,9 +285,9 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
     /**
      * Hide animation.
      * @param {{groupIndex: number, index:number}} indexes - index info
-     * @param {boolean} [useDensity] - whether use density or not
+     * @param {boolean} [useColorValue] - whether use colorValue or not
      */
-    hideAnimation: function(indexes, useDensity) {
+    hideAnimation: function(indexes, useColorValue) {
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
         var opacity = 1;
         var color;
@@ -298,7 +298,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
 
         if (box.seriesItem.hasChild) {
             color = null;
-            if (useDensity) {
+            if (useColorValue) {
                 opacity = 0;
             }
         } else {
