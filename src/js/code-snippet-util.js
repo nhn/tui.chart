@@ -82,7 +82,7 @@ var any = function(collection, condition, context) {
  * @returns {boolean} result boolean
  */
 var all = function(collection, condition, context) {
-    var result = true;
+    var result = !!(collection || []).length;
     tui.util.forEach(collection, function(item, key) {
         if (!condition.call(context, item, key, collection)) {
             result = false;
