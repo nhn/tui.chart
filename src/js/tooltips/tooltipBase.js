@@ -48,6 +48,12 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.options = params.options;
 
         /**
+         * Theme
+         * @type {object}
+         */
+        this.theme = params.theme;
+
+        /**
          * whether vertical or not
          * @type {boolean}
          */
