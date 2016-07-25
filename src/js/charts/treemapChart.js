@@ -56,7 +56,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
      * @private
      */
     _addComponents: function() {
-        var useDensity = tui.util.pick(this.options, 'series', 'useDensity');
+        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
 
         this.componentManager.register('series', Series, {
             chartBackground: this.theme.chart.background,
@@ -68,7 +68,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
             labelTheme: tui.util.pick(this.theme, 'series', 'label')
         }, this._makeTooltipData()));
 
-        if (useDensity) {
+        if (useColorValue) {
             this.componentManager.register('legend', Legend, {
                 chartType: this.chartType,
                 userEvent: this.userEvent
@@ -116,8 +116,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
     _makeRenderingData: function() {
         var data = {};
         var seriesTheme = this.theme.series;
-        var useDensity = tui.util.pick(this.options, 'series', 'useDensity');
-        var colorSpectrum = useDensity ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
+        var useColorValue = tui.util.pick(this.options, 'series', 'useColorValue');
+        var colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
 
         data.legend = {
             colorSpectrum: colorSpectrum,
