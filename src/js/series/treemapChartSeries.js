@@ -10,6 +10,7 @@ var Series = require('./series');
 var squarifier = require('./squarifier');
 var labelHelper = require('./renderingLabelHelper');
 var chartConst = require('../const');
+var predicate = require('../helpers/predicate');
 
 var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSeries.prototype */ {
     /**
@@ -231,7 +232,10 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         this.startDepth = startDepth;
         this.selectedGroup = group;
         this._renderSeriesArea(this.seriesContainer, this.data, tui.util.bind(this._renderGraph, this));
-        this._showSeriesLabelWithoutAnimation();
+
+        if (predicate.isShowLabel(this.options)) {
+            this._showSeriesLabelWithoutAnimation();
+        }
     },
 
     /**
@@ -263,7 +267,13 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
     onShowAnimation: function(indexes) {
-        var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+        var seriesItem;
+
+        if (!predicate.isShowLabel(this.options)) {
+            return;
+        }
+
+        seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 
         this._renderSeriesLabel(this.seriesLabelContainer, seriesItem);
         this.graphRenderer.showAnimation(indexes, this.options.useDensity, 0.6);
@@ -274,7 +284,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */
     onHideAnimation: function(indexes) {
-        if (!indexes) {
+        if (!predicate.isShowLabel(this.options) || !indexes) {
             return;
         }
 
