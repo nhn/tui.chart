@@ -244,6 +244,26 @@ describe('Test for SeriesDataModel', function() {
 
             expect(actual).toEqual(expected);
         });
+
+        it('if values contain NaN, returns filtered values.', function() {
+            var actual, expected;
+
+            seriesDataModel.groups = [
+                new SeriesGroup([
+                    new SeriesItem(10),
+                    new SeriesItem(NaN)
+                ]),
+                new SeriesGroup([
+                    new SeriesItem(30),
+                    new SeriesItem(40)
+                ])
+            ];
+
+            actual = seriesDataModel._createValues('value');
+            expected = [10, 30, 40];
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_addRatiosWhenNormalStacked()', function() {

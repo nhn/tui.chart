@@ -1067,6 +1067,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         this._addStartValueToAllSeriesItem(limit, chartType);
         seriesDataModel.addDataRatios(limit, stackType);
+    },
+
+    /**
+     * Add data ratios for treemap chart.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {string} chartType - chart type
+     */
+    addDataRatiosForTreemapChart: function(limit, chartType) {
+        this.getSeriesDataModel(chartType).addDataRatios(limit);
     }
 });
 

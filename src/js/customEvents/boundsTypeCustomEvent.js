@@ -46,6 +46,20 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
     _hideTooltip: function() {
         this.fire('hideTooltip', this.prevFoundData);
         this.prevFoundData = null;
+        this.styleCursor(false);
+    },
+
+    /**
+     * Style css cursor.
+     * @param {boolean} hasChild - whether has child or not
+     */
+    styleCursor: function(hasChild) {
+        var container = this.customEventContainer;
+        if (hasChild) {
+            container.style.cursor = 'pointer';
+        } else {
+            container.style.cursor = 'default';
+        }
     },
 
     /**
@@ -56,6 +70,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onMousemove: function(e) {
         var foundData = this._findDataFromBoundsCoordinateModel(this.customEventContainer, e.clientX, e.clientY);
+        var seriesItem;
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
@@ -66,6 +81,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         }
 
         if (foundData) {
+            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
+            this.styleCursor(seriesItem.hasChild);
             this.fire('showTooltip', foundData);
         }
 
@@ -86,6 +103,18 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             this.customEventContainer.removeChild(this.historyBackBtn);
             this.historyBackBtn = null;
         }
+    },
+
+    /**
+     * Get seriesItem by indexes
+     * @param {{groupIndex: number, index: number}} indexes - indexes
+     * @returns {SeriesItem}
+     * @private
+     */
+    _getSeriesItemByIndexes: function(indexes) {
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel('treemap');
+
+        return seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true);
     },
 
     /**
@@ -111,9 +140,9 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
 
         if (foundData) {
-            seriesItem = this.dataProcessor.getSeriesDataModel('treemap').getSeriesItem(foundData.indexes.groupIndex, foundData.indexes.index, true);
+            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
 
-            if (seriesItem.isLeaf) {
+            if (!seriesItem.hasChild) {
                 return;
             }
 

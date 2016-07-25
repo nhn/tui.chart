@@ -131,9 +131,9 @@ describe('Test for SeriesDataModelForTreemap', function() {
             ];
             var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
-            expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 3, group: 0});
-            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, isLeaf: true});
-            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 2, group: 0, isLeaf: true});
+            expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 3, group: 0, hasChild: true});
+            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, hasChild: false});
+            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 2, group: 0, hasChild: false});
         });
 
         it('set tree properties(depth, group, value) for first, second and third depth', function() {
@@ -145,10 +145,10 @@ describe('Test for SeriesDataModelForTreemap', function() {
             ];
             var actual = seriesDataModel._setTreeProperties(rawSeriesData, 1, rootId);
 
-            expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 9, group: 0});
-            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 4, group: 0});
-            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 5, group: 0, isLeaf: true});
-            expect(actual[3]).toEqual({parent: 'id_0_0', id: 'id_0_0_0', depth: 3, value: 4, group: 0, isLeaf: true});
+            expect(actual[0]).toEqual({parent: rootId, id: 'id_0', depth: 1, value: 9, group: 0, hasChild: true});
+            expect(actual[1]).toEqual({parent: 'id_0', id: 'id_0_0', depth: 2, value: 4, group: 0, hasChild: true});
+            expect(actual[2]).toEqual({parent: 'id_0', id: 'id_0_1', depth: 2, value: 5, group: 0, hasChild: false});
+            expect(actual[3]).toEqual({parent: 'id_0_0', id: 'id_0_0_0', depth: 3, value: 4, group: 0, hasChild: false});
         });
 
         it('group property is index of first depth', function() {
@@ -180,8 +180,8 @@ describe('Test for SeriesDataModelForTreemap', function() {
 
             expect(actual.length).toBe(2);
             expect(actual).toEqual([
-                {parent: rootId, id: 'id_0', depth: 1, value: 1, group: 0},
-                {parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, isLeaf: true}
+                {parent: rootId, id: 'id_0', depth: 1, value: 1, group: 0, hasChild: true},
+                {parent: 'id_0', id: 'id_0_0', depth: 2, value: 1, group: 0, hasChild: false}
             ]);
         });
     });
@@ -304,27 +304,29 @@ describe('Test for SeriesDataModelForTreemap', function() {
                     depth: 1,
                     id: 'id_0',
                     parent: 'root',
-                    group: 0
+                    group: 0,
+                    hasChild: true
                 },
                 {
                     depth: 2,
                     id: 'id_0_0',
                     parent: 'id_0',
                     group: 0,
-                    isLeaf: true
+                    hasChild: false
                 },
                 {
                     depth: 1,
                     id: 'id_1',
                     parent: 'root',
-                    group: 1
+                    group: 1,
+                    hasChild: true
                 },
                 {
                     depth: 2,
                     id: 'id_1_0',
                     parent: 'id_1',
                     group: 1,
-                    isLeaf: true
+                    hasChild: false
                 }
             ];
             spyOn(seriesDataModel, 'getFirstSeriesGroup').and.returnValue(seriesGroup);
@@ -339,14 +341,14 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 id: 'id_0_0',
                 parent: 'id_0',
                 group: 0,
-                isLeaf: true
+                hasChild: false
             });
             expect(actual[1]).toEqual({
                 depth: 2,
                 id: 'id_1_0',
                 parent: 'id_1',
                 group: 1,
-                isLeaf: true
+                hasChild: false
             });
         });
 
@@ -360,7 +362,7 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 id: 'id_1_0',
                 parent: 'id_1',
                 group: 1,
-                isLeaf: true
+                hasChild: false
             });
         });
     });

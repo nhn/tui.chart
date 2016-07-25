@@ -360,7 +360,11 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             return seriesGroup.getValues(valueType);
         });
 
-        return concat.apply([], values);
+        values = concat.apply([], values);
+
+        return tui.util.filter(values, function(value) {
+            return !isNaN(value);
+        });
     },
 
     /**

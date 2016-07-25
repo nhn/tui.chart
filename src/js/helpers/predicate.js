@@ -138,6 +138,16 @@ var predicate = {
     },
 
     /**
+     * Whether box type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isBoxTypeChart: function(chartType) {
+        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
+    },
+
+    /**
      * Whether pie chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - chart type
@@ -195,7 +205,7 @@ var predicate = {
      */
     allowMinusPointRender: function(chartType) {
         return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-            predicate.isHeatmapChart(chartType);
+            predicate.isBoxTypeChart(chartType);
     },
 
     /**

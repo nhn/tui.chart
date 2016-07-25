@@ -127,8 +127,9 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
 
             if (children.length) {
                 datum.value = tui.util.sum(tui.util.pluck(children, 'value'));
+                datum.hasChild = true;
             } else {
-                datum.isLeaf = true;
+                datum.hasChild = false;
             }
 
             filtered = filtered.concat(descendants);
@@ -240,7 +241,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
         var key = this._makeCacheKey(chartConst.TREEMAP_LEAF_KEY_PREFIX, group);
 
         return this._findSeriesItems(key, function(seriesItem) {
-            return seriesItem.isLeaf && self._isValidGroup(seriesItem.group, group);
+            return !seriesItem.hasChild && self._isValidGroup(seriesItem.group, group);
         });
     },
 
@@ -265,15 +266,6 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      */
     initSeriesItemsMap: function() {
         this.foundSeriesItemsMap = null;
-    },
-
-    /**
-     * Has child.
-     * @param {string} id - id
-     * @returns {boolean}
-     */
-    hasChild: function(id) {
-        return !!this.findSeriesItemsByParent(id).length;
     }
 });
 
