@@ -268,9 +268,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement,
-            clientX = e.clientX - (this.isExpanded ? chartConst.SERIES_EXPAND_SIZE : 0),
-            foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+        var target = e.target || e.srcElement;
+        var clientX = e.clientX - (this.isExpanded ? chartConst.SERIES_EXPAND_SIZE : 0);
+        var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
         } else if (foundData) {

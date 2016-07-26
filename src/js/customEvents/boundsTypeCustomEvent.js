@@ -80,13 +80,18 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             this._hideTooltip();
         }
 
-        if (foundData) {
-            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
-            this.styleCursor(seriesItem.hasChild);
-            this.fire('showTooltip', foundData);
+        this.prevFoundData = foundData;
+
+        if (!foundData) {
+            return;
         }
 
-        this.prevFoundData = foundData;
+        if (predicate.isTreemapChart(this.chartType)) {
+            seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
+            this.styleCursor(seriesItem.hasChild);
+        }
+
+        this.fire('showTooltip', foundData);
     },
 
     /**
@@ -112,7 +117,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @private
      */
     _getSeriesItemByIndexes: function(indexes) {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel('treemap');
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(chartConst.CHART_TYPE_TREEMAP);
 
         return seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index, true);
     },

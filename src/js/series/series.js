@@ -199,6 +199,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         if (!data.paper) {
             renderUtil.renderDimension(seriesContainer, extendedBound.dimension);
         }
+
         this._renderPosition(seriesContainer, extendedBound.position);
 
         if (funcRenderGraph) {
@@ -235,7 +236,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @param {{width: number, height: number}} dimension - dimension
      * @param {object} seriesData - series data
      * @param {object} [paper] - raphael paper
-     * @retruns {object}
+     * @returns {object}
      * @private
      */
     _renderGraph: function(dimension, seriesData, paper) {

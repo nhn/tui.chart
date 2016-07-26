@@ -39,27 +39,29 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
      * Render function of line chart.
      * @param {HTMLElement} container container
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
+     * @param {object} [paper] - raphael paper
      * @returns {object} paper raphael paper
      */
-    render: function(container, data) {
-        var dimension = data.dimension,
-            groupPositions = data.groupPositions,
-            theme = data.theme,
-            colors = theme.colors,
-            opacity = data.options.showDot ? 1 : 0,
-            isSpline = data.options.spline,
-            groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions),
-            borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
-            outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper;
+    render: function(container, data, paper) {
+        var dimension = data.dimension;
+        var groupPositions = data.groupPositions;
+        var theme = data.theme;
+        var colors = theme.colors;
+        var opacity = data.options.showDot ? 1 : 0;
+        var isSpline = data.options.spline;
+        var groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
+        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
+        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 
-        this.paper = paper = raphael(container, 1, dimension.height);
+        paper = paper || raphael(container, 1, dimension.height);
+
+        this.paper = paper;
         this.isSpline = isSpline;
         this.dimension = dimension;
 
         this.groupLines = this._renderLines(paper, groupPaths, colors);
-        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.allowSelect) {

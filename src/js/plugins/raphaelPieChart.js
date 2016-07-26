@@ -136,6 +136,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Clear paper.
      */
     clear: function() {
+        this.legendLines = null;
         this.paper.clear();
     },
 

@@ -42,17 +42,18 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
      * @param {{groupPositions: Array.<Array>, dimension: object, theme: object, options: object}} data render data
      * @returns {object} paper raphael paper
      */
-    render: function(container, data) {
-        var dimension = data.dimension,
-            groupPositions = data.groupPositions,
-            theme = data.theme,
-            colors = theme.colors,
-            opacity = data.options.showDot ? 1 : 0,
-            borderStyle = this.makeBorderStyle(theme.borderColor, opacity),
-            outDotStyle = this.makeOutDotStyle(opacity, borderStyle),
-            paper;
+    render: function(container, data, paper) {
+        var dimension = data.dimension;
+        var groupPositions = data.groupPositions;
+        var theme = data.theme;
+        var colors = theme.colors;
+        var opacity = data.options.showDot ? 1 : 0;
+        var borderStyle = this.makeBorderStyle(theme.borderColor, opacity);
+        var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 
-        this.paper = paper = raphael(container, 1, dimension.height);
+        paper = paper || raphael(container, 1, dimension.height);
+
+        this.paper = paper;
         this.isSpline = data.options.spline;
         this.dimension = dimension;
         this.zeroTop = data.zeroTop;
@@ -60,8 +61,8 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
 
         this.groupPaths = this._getAreaChartPath(groupPositions);
         this.groupAreas = this._renderAreas(paper, this.groupPaths, colors);
-        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.leftBar = this._renderLeftBar(dimension.height, data.chartBackground);
+        this.tooltipLine = this._renderTooltipLine(paper, dimension.height);
         this.groupDots = this._renderDots(paper, groupPositions, colors, opacity);
 
         if (data.options.allowSelect) {

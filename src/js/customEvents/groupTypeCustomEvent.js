@@ -120,7 +120,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         this.prevIndex = index;
         this.fire('showGroupTooltip', {
             index: index,
-            range: this.tickBaseCoordinateModel.makeRange(index, this.chartType),
+            range: this.tickBaseCoordinateModel.makeRange(index),
             size: this.dimension[this.sizeType],
             isVertical: this.isVertical,
             isMoving: isMoving
