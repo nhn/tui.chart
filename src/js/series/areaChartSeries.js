@@ -111,8 +111,13 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @override
      */
     rerender: function(data) {
+        var paper;
+
         this._cancelMovingAnimation();
-        Series.prototype.rerender.call(this, data);
+
+        paper = Series.prototype.rerender.call(this, data);
+
+        return paper;
     }
 });
 

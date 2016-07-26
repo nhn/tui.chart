@@ -232,14 +232,18 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Render raphael graph.
-     * @param {{width: number, height: number}} dimension dimension
-     * @param {object} seriesData series data
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {object} seriesData - series data
+     * @param {object} [paper] - raphael paper
+     * @retruns {object}
      * @private
      */
-    _renderGraph: function(dimension, seriesData) {
+    _renderGraph: function(dimension, seriesData, paper) {
         var params = this._makeParamsForGraphRendering(dimension, seriesData);
 
-        this.graphRenderer.render(this.seriesContainer, params);
+        paper = this.graphRenderer.render(this.seriesContainer, params, paper);
+
+        return paper;
     },
 
     /**
@@ -252,7 +256,6 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
         var paper;
 
         this.seriesContainer = container;
-
         paper = this._renderSeriesArea(container, data, tui.util.bind(this._renderGraph, this));
 
         return {
@@ -311,7 +314,9 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             if (data.checkedLegends) {
                 this.theme = this._updateTheme(this.orgTheme, data.checkedLegends);
             }
+
             paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+
             if (this.labelShowEffector) {
                 clearInterval(this.labelShowEffector.timerId);
             }
