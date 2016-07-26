@@ -35,6 +35,12 @@ var addingDynamicDataMixer = {
          * @type {number}
          */
         this.addedDataCount = 0;
+
+        /**
+         * checked legends.
+         * @type {null | Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}}
+         */
+        this.checkedLegends = null;
     },
 
     /**
@@ -163,13 +169,31 @@ var addingDynamicDataMixer = {
         this._startLookup();
     },
 
+
     /**
-     * Mix in.
-     * @param {function} func - target function
-     * @ignore
+     * Change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
+     * @override
      */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
+    _changeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        var self = this;
+        var pastPaused = this.paused;
+
+        if (!pastPaused) {
+            this._pauseAnimationForAddingData();
+        }
+
+        this.checkedLegends = checkedLegends;
+        this._rerender(checkedLegends, rawData, boundsParams);
+
+
+        if (!pastPaused) {
+            setTimeout(function() {
+                self._restartAnimationForAddingData();
+            }, chartConst.RERENDER_TIME);
+        }
     }
 };
 

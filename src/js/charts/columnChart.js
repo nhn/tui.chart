@@ -98,7 +98,6 @@ var ColumnChart = tui.util.defineClass(ChartBase, /** @lends ColumnChart.prototy
     }
 });
 
-axisTypeMixer.mixin(ColumnChart);
-barTypeMixer.mixin(ColumnChart);
+tui.util.extend(ColumnChart.prototype, axisTypeMixer, barTypeMixer);
 
 module.exports = ColumnChart;

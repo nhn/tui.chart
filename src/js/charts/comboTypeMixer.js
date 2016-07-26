@@ -50,17 +50,17 @@ var comboTypeMixer = {
 
     /**
      * Make theme map
-     * @param {object} chartTypes chart types
+     * @param {object} seriesNames - series names
      * @returns {object} theme map
      * @private
      */
-    _makeThemeMap: function(chartTypes) {
+    _makeThemeMap: function(seriesNames) {
         var dataProcessor = this.dataProcessor;
         var theme = this.theme;
         var themeMap = {};
         var colorCount = 0;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(seriesNames, function(chartType) {
             var chartTheme = JSON.parse(JSON.stringify(theme));
             var removedColors;
 
@@ -78,15 +78,6 @@ var comboTypeMixer = {
         });
 
         return themeMap;
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

@@ -98,7 +98,7 @@ var HeatmapChart = tui.util.defineClass(ChartBase, /** @lends HeatmapChart.proto
     }
 });
 
-axisTypeMixer.mixin(HeatmapChart);
+tui.util.extend(HeatmapChart.prototype, axisTypeMixer);
 
 /**
  * Add data ratios for rendering graph.

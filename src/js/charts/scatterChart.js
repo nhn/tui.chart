@@ -90,7 +90,7 @@ var ScatterChart = tui.util.defineClass(ChartBase, /** @lends ScatterChart.proto
     }
 });
 
-axisTypeMixer.mixin(ScatterChart);
+tui.util.extend(ScatterChart.prototype, axisTypeMixer);
 
 /**
  * Add data ratios.

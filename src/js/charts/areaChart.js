@@ -8,6 +8,8 @@
 
 var ChartBase = require('./chartBase');
 var lineTypeMixer = require('./lineTypeMixer');
+var autoTickMixer = require('./autoTickMixer');
+var zoomMixer = require('./zoomMixer');
 var axisTypeMixer = require('./axisTypeMixer');
 var addingDynamicDataMixer = require('./addingDynamicDataMixer');
 var rawDataHandler = require('../helpers/rawDataHandler');
@@ -39,12 +41,23 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
     init: function(rawData, theme, options) {
         rawDataHandler.removeSeriesStack(rawData.series);
         this._lineTypeInit(rawData, theme, options);
+        this._initForAutoTickInterval();
         this._initForAddingData();
+    },
+
+    /**
+     * On change checked legend.
+     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+     * @param {?object} rawData rawData
+     * @param {?object} boundsParams addition params for calculating bounds
+     * @override
+     */
+    onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
+        this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
     }
 });
 
-axisTypeMixer.mixin(AreaChart);
-lineTypeMixer.mixin(AreaChart);
-addingDynamicDataMixer.mixin(AreaChart);
+tui.util.extend(AreaChart.prototype,
+    axisTypeMixer, lineTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer);
 
 module.exports = AreaChart;

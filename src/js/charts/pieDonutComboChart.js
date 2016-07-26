@@ -126,15 +126,12 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
         var originalRawData = this.dataProcessor.getOriginalRawData();
         var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
 
-        this.chartTypes = this._pickChartTypes(rawData.series);
-
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
             seriesNames: this.chartTypes
         });
     }
 });
 
-pieTypeMixer.mixin(PieDonutComboChart);
-comboTypeMixer.mixin(PieDonutComboChart);
+tui.util.extend(PieDonutComboChart.prototype, pieTypeMixer, comboTypeMixer);
 
 module.exports = PieDonutComboChart;
