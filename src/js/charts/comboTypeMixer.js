@@ -14,17 +14,35 @@ var defaultTheme = require('../themes/defaultTheme');
  */
 var comboTypeMixer = {
     /**
+     * Get base series options.
+     * @param {object.<string, object>} seriesOptions - series options
+     * @param {Array.<string>} chartTypes - chart types
+     * @returns {object}
+     * @private
+     */
+    _getBaseSeriesOptions: function(seriesOptions, chartTypes) {
+        var baseSeriesOptions = tui.util.extend({}, seriesOptions);
+
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            delete baseSeriesOptions[chartType];
+        });
+
+        return baseSeriesOptions;
+    },
+
+    /**
      * Make options map
-     * @param {object} chartTypes chart types
-     * @returns {object} options map
+     * @param {Array.<string>} chartTypes - chart types
+     * @returns {object}
      * @private
      */
     _makeOptionsMap: function(chartTypes) {
-        var seriesOptions = this.options.series || {};
+        var seriesOptions = this.options.series;
+        var baseSeriesOptions = this._getBaseSeriesOptions(seriesOptions, chartTypes);
         var optionsMap = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = seriesOptions[chartType] || seriesOptions;
+            optionsMap[chartType] = tui.util.extend({}, baseSeriesOptions, seriesOptions[chartType]);
         });
 
         return optionsMap;
