@@ -267,14 +267,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _fireLegendSelectionEvent: function(data) {
         var self = this;
-        var seriesNames = this.seriesNames || [data.chartType];
+        var seriesNames = this.seriesNames;
         var index = this.legendModel.getSelectedIndex();
         var legendIndex = !tui.util.isNull(index) ? data.seriesIndex : index;
 
         tui.util.forEachArray(seriesNames, function(seriesName) {
             var chartType = self.dataProcessor.findChartType(seriesName);
-            var activeChartType = self.dataProcessor.findChartType(data.chartType);
-            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), activeChartType, legendIndex);
+            self.fire(renderUtil.makeCustomEventName('select', chartType, 'legend'), data.chartType, legendIndex);
         });
     },
 

@@ -181,6 +181,10 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         var groupPaths = isSpline ? this._getSplineLinesPath(groupPositions) : this._getLinesPath(groupPositions);
         var additionalIndex = 0;
 
+        if (!groupPositions.length) {
+            return;
+        }
+
         if (shiftingOption) {
             this.leftBar.animate({
                 width: tickSize + LEFT_BAR_WIDTH

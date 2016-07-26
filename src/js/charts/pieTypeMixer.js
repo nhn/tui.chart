@@ -27,7 +27,7 @@ var pieTypeMixer = {
 
         if (legendOption.visible) {
             this.componentManager.register('legend', Legend, {
-                chartTypes: chartTypes,
+                seriesNames: chartTypes,
                 chartType: this.chartType,
                 userEvent: this.userEvent
             });

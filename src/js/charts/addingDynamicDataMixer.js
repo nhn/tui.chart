@@ -78,6 +78,8 @@ var addingDynamicDataMixer = {
             this.boundsMaker.initBoundsData();
         }
 
+        this.axisScaleMakerMap = null;
+
         this._render(function(renderingData) {
             renderingData.animatable = false;
             self._renderComponents(renderingData, 'rerender');

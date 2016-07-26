@@ -641,11 +641,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      *On select legend.
-     * @param {string} chartType chart type
-     * @param {?number} legendIndex legend index
+     * @param {string} seriesName - series name
+     * @param {?number} legendIndex - legend index
      */
-    onSelectLegend: function(chartType, legendIndex) {
-        if (this.chartType !== chartType && !tui.util.isNull(legendIndex)) {
+    onSelectLegend: function(seriesName, legendIndex) {
+        if ((this.seriesName !== seriesName) && !tui.util.isNull(legendIndex)) {
             legendIndex = -1;
         }
 

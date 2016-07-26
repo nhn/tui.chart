@@ -276,7 +276,8 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var rawData = this._filterCheckedRawData(this.rawData, checkedLegends);
+        var originalRawData = this.dataProcessor.getOriginalRawData();
+        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
         var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);
