@@ -286,7 +286,7 @@ var ColumnLineComboChart = tui.util.defineClass(ChartBase, /** @lends ColumnLine
     }
 });
 
-tui.util.extend(ColumnLineComboChart.prototype, axisTypeMixer, comboTypeMixer, verticalTypeComboMixer);
+tui.util.extend(ColumnLineComboChart.prototype, axisTypeMixer, comboTypeMixer);
 
 /**
  * Make axes data, used in a axis component like yAxis, xAxis, rightYAxis.
