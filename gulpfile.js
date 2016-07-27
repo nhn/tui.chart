@@ -1,18 +1,19 @@
 'use strict';
 
-var gulp = require('gulp'),
-    source = require('vinyl-source-stream'),
-    sync = require('browser-sync'),
-    browserify = require('browserify'),
-    stringify = require('stringify'),
-    less = require('gulp-less'),
-    minifiyCss = require('gulp-minify-css'),
-    uglify = require('gulp-uglify'),
-    rename = require('gulp-rename'),
-    del = require('del'),
-    header = require('gulp-header'),
-    pkg = require('./package.json'),
-    merge = require('merge-stream');
+var gulp = require('gulp');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var stringify = require('stringify');
+var less = require('gulp-less');
+var minifiyCss = require('gulp-minify-css');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var del = require('del');
+var header = require('gulp-header');
+var merge = require('merge-stream');
+var eslint = require('gulp-eslint');
+var gulpsync = require('gulp-sync')(gulp);
+var pkg = require('./package.json');
 
 var banner = [
     '/**',
@@ -35,6 +36,18 @@ gulp.task('browserify', function() {
         .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('compile-less', function() {
+    return gulp.src('src/less/style.less')
+        .pipe(less())
+        .pipe(rename('chart.css'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('watch', ['browserify', 'compile-less'], function() {
+    gulp.watch('src/js/**/*', ['browserify']);
+    gulp.watch('src/less/**/*', ['compile-less']);
+});
+
 gulp.task('compress-js', ['browserify'], function() {
     return gulp.src('dist/chart.js')
         .pipe(uglify())
@@ -43,13 +56,6 @@ gulp.task('compress-js', ['browserify'], function() {
         }))
         .pipe(header(banner, pkg))
         .pipe(gulp.dest('dist'));
-});
-
-gulp.task('compile-less', function() {
-    return gulp.src('src/less/style.less')
-        .pipe(less())
-        .pipe(rename('chart.css'))
-        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('minify-css', ['compile-less'], function() {
@@ -61,21 +67,6 @@ gulp.task('minify-css', ['compile-less'], function() {
         .pipe(header(banner, pkg))
         .pipe(gulp.dest('./dist'));
 });
-
-gulp.task('reload-js', ['browserify'], function() {
-    sync.reload();
-});
-
-gulp.task('reload-less', ['compile-less'], function() {
-    sync.reload();
-});
-
-gulp.task('watch', ['browserify', 'compile-less'], function() {
-    gulp.watch('src/js/**/*', ['reload-js']);
-    gulp.watch('src/less/**/*', ['reload-less']);
-});
-
-gulp.task('default', ['watch']);
 
 gulp.task('clean-samples', function(callback) {
     del([
@@ -98,6 +89,14 @@ gulp.task('copy-samples', ['clean-samples', 'compress-js', 'minify-css'], functi
     );
 });
 
-gulp.task('deploy', ['copy-samples'], function() {
+gulp.task('lint', function() {
+    return gulp.src(['src/js/**/*.js'])
+        .pipe(eslint())
+        .pipe(eslint.failOnError());
+});
+
+gulp.task('deploy', gulpsync.sync(['lint', 'copy-samples']), function() {
     process.exit(0);
 });
+
+gulp.task('default', ['watch']);
