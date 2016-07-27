@@ -39,8 +39,8 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
      * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var originalRawData = this.dataProcessor.getOriginalRawData();
-        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
+        var zoomedRawData = this.dataProcessor.getZoomedRawData();
+        var rawData = this._filterCheckedRawData(zoomedRawData, checkedLegends);
         var chartTypesMap = this._makeChartTypesMap(rawData.series, this.options.yAxis);
 
         tui.util.extend(this, chartTypesMap);
