@@ -15,14 +15,15 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @param {number} tickCount tick count
      * @param {string} chartType chart type
      * @param {boolean} isVertical whether vertical or not
+     * @param {Array.<string>} [chartTypes] - chart types of combo chart
      * @constructs TickBaseDataModel
      */
-    init: function(dimension, tickCount, chartType, isVertical) {
+    init: function(dimension, tickCount, chartType, isVertical, chartTypes) {
         /**
          * whether line type or not
          * @type {boolean}
          */
-        this.isLineType = predicate.isLineTypeChart(chartType);
+        this.isLineType = predicate.isLineTypeChart(chartType, chartTypes);
 
         this.data = this._makeData(dimension, tickCount, isVertical);
     },

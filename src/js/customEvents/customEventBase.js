@@ -34,6 +34,12 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.chartType = params.chartType;
 
         /**
+         * chartTypes is available in combo chart
+         * @type {Array.<string>}
+         */
+        this.chartTypes = params.chartTypes;
+
+        /**
          * whether vertical or not
          * @type {boolean}
          */
@@ -74,7 +80,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * whether expanded or not.
          * @type {boolean}
          */
-        this.isExpanded = predicate.isLineTypeChart(this.chartType);
+        this.isExpanded = predicate.isLineTypeChart(this.chartType, this.chartTypes);
 
         /**
          * container bound
@@ -102,10 +108,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _renderCustomEventArea: function(customEventContainer, data) {
+        var dimension = this.boundsMaker.getDimension('customEvent');
         var renderingBound, tbcm;
 
-        this.dimension = this.boundsMaker.getDimension('customEvent');
-        tbcm = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        this.dimension = dimension;
+        tbcm = new TickBaseCoordinateModel(dimension, data.tickCount, this.chartType, this.isVertical, this.chartTypes);
         this.tickBaseCoordinateModel = tbcm;
         renderingBound = this._getRenderingBound();
         renderUtil.renderDimension(customEventContainer, renderingBound.dimension);

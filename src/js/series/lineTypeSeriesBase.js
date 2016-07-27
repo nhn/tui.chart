@@ -199,17 +199,24 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     /**
      * Zoom by mouse drag.
      * @param {object} data - data
+     * @returns {{container: HTMLElement, paper: object}}
      */
     zoom: function(data) {
-        this._cancelMovingAnimation();
-        this._clearContainer();
-        this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
+        var paper;
 
+        this._cancelMovingAnimation();
+        this._clearContainer(data.paper);
+        paper = this._renderSeriesArea(this.seriesContainer, data, tui.util.bind(this._renderGraph, this));
         this._showGraphWithoutAnimation();
 
         if (!tui.util.isNull(this.selectedLegendIndex)) {
             this.graphRenderer.selectLegend(this.selectedLegendIndex);
         }
+
+        return {
+            container: this.seriesContainer,
+            paper: paper
+        };
     },
 
     /**
@@ -302,10 +309,15 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     _animateForMoving: function(interval) {
         var graphRenderer = this.graphRenderer;
         var childrenForMoving = this.seriesContainer.childNodes;
-        var beforeLeft = parseInt(childrenForMoving[0].style.left, 10) || 0;
         var areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
+        var beforeLeft = 0;
 
         this._hideFirstLabels();
+
+        if (childrenForMoving.length) {
+            beforeLeft = parseInt(childrenForMoving[0].style.left, 10) || 0;
+        }
+
         this._animate(function(ratio) {
             var left = interval * ratio;
 

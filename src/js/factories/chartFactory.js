@@ -28,6 +28,8 @@ var factory = {
 
             if (chartTypeMap[chartConst.CHART_TYPE_COLUMN] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
                 key = chartConst.CHART_TYPE_COLUMN_LINE_COMBO;
+            } else if (chartTypeMap[chartConst.CHART_TYPE_AREA] && chartTypeMap[chartConst.CHART_TYPE_LINE]) {
+                key = chartConst.CHART_TYPE_LINE_AREA_COMBO;
             } else if (chartTypeMap[chartConst.CHART_TYPE_PIE]) {
                 key = chartConst.CHART_TYPE_PIE_DONUT_COMBO;
             }
