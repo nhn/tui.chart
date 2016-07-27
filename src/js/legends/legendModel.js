@@ -162,6 +162,7 @@ var LegendModel = tui.util.defineClass(/** @lends LegendModel.prototype */ {
                 checkedIndexes = self.checkedIndexesMap[seriesName];
                 datum = self._makeLabelInfoAppliedTheme(slicedLegendData, chartTheme, checkedIndexes);
                 startIndex = endIndex;
+
                 return datum;
             }));
         }

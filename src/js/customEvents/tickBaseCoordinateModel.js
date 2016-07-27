@@ -45,6 +45,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
                 };
             });
         ranges[tickCount - 1].max -= 1;
+
         return ranges;
     },
 
@@ -56,16 +57,18 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
      * @private
      */
     _makeNormalData: function(size, tickCount) {
-        var len = tickCount - 1,
-            tickInterval = size / len,
-            prev = 0;
+        var len = tickCount - 1;
+        var tickInterval = size / len;
+        var prev = 0;
+
         return tui.util.map(tui.util.range(0, len), function(index) {
-            var max = tui.util.min([size, (index + 1) * tickInterval]),
-                limit = {
-                    min: prev,
-                    max: max
-                };
+            var max = tui.util.min([size, (index + 1) * tickInterval]);
+            var limit = {
+                min: prev,
+                max: max
+            };
             prev = max;
+
             return limit;
         });
     },
@@ -102,6 +105,7 @@ var TickBaseDataModel = tui.util.defineClass(/** @lends TickBaseDataModel.protot
         tui.util.forEachArray(this.data, function(limit, index) {
             if (limit.min < pointValue && limit.max >= pointValue) {
                 foundIndex = index;
+
                 return false;
             }
 

@@ -127,6 +127,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setMapRatio();
 
         container = Series.prototype.render.call(this, data);
+
         return container;
     },
 
@@ -348,6 +349,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         if (!this.containerBound) {
             this.containerBound = this.seriesContainer.getBoundingClientRect();
         }
+
         return this.containerBound;
     },
 

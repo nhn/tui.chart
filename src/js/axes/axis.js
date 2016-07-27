@@ -317,6 +317,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this.data = data;
         this._renderAxisArea(container);
         this.axisContainer = container;
+
         return container;
     },
 
@@ -592,6 +593,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makePercentagePositions: function(positions, areaSize) {
         areaSize = this.containerWidth || areaSize;
+
         return tui.util.map(positions, function(position) {
             return calculator.makePercentageValue(position, areaSize);
         });
@@ -777,6 +779,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         this._changeLabelAreaPosition(labelContainer, labelSize);
 
         this.labelContainer = labelContainer;
+
         return labelContainer;
     },
 
@@ -963,6 +966,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
         labelsHtml = tui.util.map(positions, function(position, index) {
             var addCssText = renderUtil.concatStr(posType, ':', (position + additionalSize), '%');
+
             return template({
                 additionalClass: '',
                 cssText: labelCssText + addCssText,

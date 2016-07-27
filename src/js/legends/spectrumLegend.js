@@ -171,6 +171,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
             });
 
             positionValue += baseData.step;
+
             return html;
         });
 
@@ -190,6 +191,7 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
         if (this.isHorizontal) {
             dom.addClass(tickContainer, 'horizontal');
         }
+
         return tickContainer;
     },
 

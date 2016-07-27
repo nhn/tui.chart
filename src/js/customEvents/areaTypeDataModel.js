@@ -25,6 +25,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      */
     _makeData: function(groupPositions, chartType) {
         groupPositions = tui.util.pivot(groupPositions);
+
         return tui.util.map(groupPositions, function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
                 return {
@@ -55,6 +56,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
                 result = data;
             }
         });
+
         return result;
     },
 

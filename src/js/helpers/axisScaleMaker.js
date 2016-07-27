@@ -411,6 +411,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         } else {
             normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
         }
+
         return normalized;
     },
 
@@ -434,6 +435,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             divideDiff = Math.floor(maxDiff / step);
             normalizedMax += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
         }
+
         return normalizedMax;
     },
 
@@ -448,6 +450,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _normalizeLimit: function(limit, step, valueCount) {
         limit.min = this._normalizeMin(limit.min, step);
         limit.max = this._makeNormalizedMax(limit, step, valueCount);
+
         return limit;
     },
 
@@ -516,6 +519,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (isEvenStep && diffTwice <= diffOrg) {
             step = step / 2;
         }
+
         return step;
     },
 

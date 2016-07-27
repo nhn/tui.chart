@@ -105,9 +105,9 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _makeShowTooltipParams: function(indexes, additionParams) {
-        var legendIndex = indexes.index,
-            legendData = this.dataProcessor.getLegendItem(legendIndex),
-            params;
+        var legendIndex = indexes.index;
+        var legendData = this.dataProcessor.getLegendItem(legendIndex);
+        var params;
 
         if (!legendData) {
             return null;
@@ -119,6 +119,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             legendIndex: legendIndex,
             index: indexes.groupIndex
         }, additionParams);
+
         return params;
     },
 

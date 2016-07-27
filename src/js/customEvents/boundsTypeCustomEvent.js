@@ -139,6 +139,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
             this._hideTooltip();
             this._zoomHistoryBack();
+
             return;
         }
 

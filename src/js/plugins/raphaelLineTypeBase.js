@@ -103,18 +103,20 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _makeSplineLinesPath: function(positions) {
-        var self = this,
-            firstPos = positions[0],
-            positionsLen = positions.length,
-            fromPos = firstPos,
-            lastPos = positions[positionsLen - 1],
-            middlePositions = positions.slice(1).slice(0, positionsLen - 2),
-            path = tui.util.map(middlePositions, function(position, index) {
-                var nextPos = positions[index + 2],
-                    anchor = self._getAnchor(fromPos, position, nextPos);
-                fromPos = position;
-                return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
-            });
+        var self = this;
+        var firstPos = positions[0];
+        var positionsLen = positions.length;
+        var fromPos = firstPos;
+        var lastPos = positions[positionsLen - 1];
+        var middlePositions = positions.slice(1).slice(0, positionsLen - 2);
+        var path = tui.util.map(middlePositions, function(position, index) {
+            var nextPos = positions[index + 2];
+            var anchor = self._getAnchor(fromPos, position, nextPos);
+
+            fromPos = position;
+
+            return [anchor.x1, anchor.y1, position.left, position.top, anchor.x2, anchor.y2];
+        });
 
         path.push([lastPos.left, lastPos.top, lastPos.left, lastPos.top]);
         path.unshift(['M', firstPos.left, firstPos.top, 'C', firstPos.left, firstPos.top]);
@@ -239,6 +241,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         dots = tui.util.map(groupPositions, function(positions, groupIndex) {
             var color = colors[groupIndex];
+
             return tui.util.map(positions, function(position) {
                 var dotMap = {
                     endDot: self.renderDot(paper, position, color, opacity)
@@ -576,6 +579,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             'stroke-opacity': 0,
             'stroke-width': 2
         });
+
         return selectionDot;
     },
 

@@ -110,6 +110,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
             var diameter = maxRadius * ratio * 2;
             var label = self._formatLabel(maxValueRadius * ratio, decimalLength);
             var labelWidth = renderUtil.getRenderedLabelWidth(label, self.labelTheme);
+
             return legendTemplate.tplCircleLegendLabel({
                 left: halfWidth - (labelWidth / 2),
                 top: dimension.height - diameter - labelHeight,
@@ -156,6 +157,7 @@ var CircleLegend = tui.util.defineClass(/** @lends CircleLegend.prototype */ {
 
         this.container = container;
         this._render();
+
         return container;
     },
 

@@ -43,6 +43,7 @@ var calculator = {
         } else {
             limit.min = min - iodValue + saveMin;
         }
+
         return limit;
     },
 
@@ -70,6 +71,7 @@ var calculator = {
                 if (num > 1) {
                     standard = num;
                 }
+
                 return false;
             } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
                 standard = num;
@@ -188,6 +190,7 @@ var calculator = {
         var plusValues = tui.util.filter(values, function(value) {
             return value > 0;
         });
+
         return tui.util.sum(plusValues);
     },
 
@@ -200,6 +203,7 @@ var calculator = {
         var minusValues = tui.util.filter(values, function(value) {
             return value < 0;
         });
+
         return tui.util.sum(minusValues);
     },
 

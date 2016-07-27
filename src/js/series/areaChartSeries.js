@@ -66,6 +66,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
                 position.top = top;
 
                 prevPositionTops[index] = top;
+
                 return position;
             });
         });

@@ -102,6 +102,7 @@ var addingDynamicDataMixer = {
 
         if (!added) {
             this.lookupping = false;
+
             return;
         }
 

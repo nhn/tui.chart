@@ -162,13 +162,16 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         return tui.util.map(tui.util.pluck(legendLabels, 'chartType'), function(chartType) {
             var color;
+
             if (prevChartType !== chartType) {
                 colors = theme[chartType] ? theme[chartType].colors : defaultColors;
                 colorIndex = 0;
             }
+
             prevChartType = chartType;
             color = colors[colorIndex];
             colorIndex += 1;
+
             return color;
         });
     },

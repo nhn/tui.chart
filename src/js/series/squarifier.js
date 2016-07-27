@@ -147,6 +147,7 @@ var squarifier = {
             var dynamicSize = rowDatum.weight / fixedSize;
 
             callback(dynamicSize, storedPosition, rowDatum.id);
+
             return storedPosition + dynamicSize;
         });
     },

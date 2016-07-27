@@ -248,6 +248,7 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
         if (detectedIndex === -1) {
             this._zoom(chartConst.TREEMAP_ROOT_ID, 1, null);
+
             return;
         }
 

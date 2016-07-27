@@ -35,9 +35,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeBarGutter: function(groupSize, itemCount) {
-        var baseSize = groupSize / (itemCount + 1) / 2,
-            standardSize = 6,
-            gutter;
+        var baseSize = groupSize / (itemCount + 1) / 2;
+        var standardSize = 6;
+        var gutter;
 
         if (baseSize <= 2) {
             gutter = 0;
@@ -46,6 +46,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         } else {
             gutter = 4;
         }
+
         return gutter;
     },
 
@@ -70,9 +71,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeOptionSize: function(barSize, optionBarWidth) {
         var optionsSize = 0;
+
         if (optionBarWidth) {
             optionsSize = Math.min(barSize, optionBarWidth);
         }
+
         return optionsSize;
     },
 
@@ -262,6 +265,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 bounds: groupBounds[index],
                 labelHeight: labelHeight
             });
+
             return labelsHtml;
         }).join('');
 

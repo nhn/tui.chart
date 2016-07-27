@@ -166,8 +166,10 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             } else {
                 result = self._makeRectTypeCoordinateData(info.data.groupBounds, info.chartType);
             }
+
             return result;
         });
+
         return this._joinData(coordinateData);
     },
 

@@ -147,6 +147,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      */
     _calculateLeftPositionOfSumLabel: function(bound, formattedSum) {
         var labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
+
         return bound.left + ((bound.width - labelWidth + chartConst.TEXT_PADDING) / 2);
     },
 

@@ -105,6 +105,7 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      */
     _isOutPosition: function(layerX, layerY) {
         var dimension = this.dimension;
+
         return layerX < 0 || layerX > dimension.width || layerY < 0 || layerY > dimension.height;
     },
 

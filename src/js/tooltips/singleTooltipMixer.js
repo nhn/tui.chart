@@ -59,9 +59,9 @@ var singleTooltipMixer = {
      * @private
      */
     _getIndexesCustomAttribute: function(elTooltip) {
-        var groupIndex = elTooltip.getAttribute('data-groupIndex'),
-            index = elTooltip.getAttribute('data-index'),
-            indexes = null;
+        var groupIndex = elTooltip.getAttribute('data-groupIndex');
+        var index = elTooltip.getAttribute('data-index');
+        var indexes = null;
 
         if (!tui.util.isNull(groupIndex) && !tui.util.isNull(index)) {
             indexes = {
@@ -69,6 +69,7 @@ var singleTooltipMixer = {
                 index: parseInt(index, 10)
             };
         }
+
         return indexes;
     },
 
@@ -176,6 +177,7 @@ var singleTooltipMixer = {
     _makeTooltipPositionToMousePosition: function(params) {
         params.bound = params.bound || {};
         tui.util.extend(params.bound, params.mousePosition);
+
         return this._makeTooltipPositionForNotBarChart(params);
     },
 
@@ -279,6 +281,7 @@ var singleTooltipMixer = {
         position.left = Math.min(position.left, chartDimension.width - areaPosition.left - tooltipDimension.width);
         position.top = Math.max(position.top, -areaPosition.top);
         position.top = Math.min(position.top, chartDimension.height - areaPosition.top - tooltipDimension.height);
+
         return position;
     },
 

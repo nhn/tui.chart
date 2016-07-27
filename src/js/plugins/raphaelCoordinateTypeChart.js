@@ -283,6 +283,7 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
         if (!this.containerBound) {
             this.containerBound = this.container.getBoundingClientRect();
         }
+
         return this.containerBound;
     },
 

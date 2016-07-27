@@ -82,6 +82,7 @@ var barTypeMixer = {
                 result.push(seriesDatum);
             }
         });
+
         return result;
     },
 

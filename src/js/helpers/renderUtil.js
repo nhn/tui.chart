@@ -173,6 +173,7 @@ var renderUtil = {
      */
     getRenderedLabelWidth: function(label, theme) {
         var labelWidth = this._getRenderedLabelSize(label, theme, 'offsetWidth');
+
         return labelWidth;
     },
 
@@ -185,6 +186,7 @@ var renderUtil = {
      */
     getRenderedLabelHeight: function(label, theme) {
         var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
+
         return labelHeight;
     },
 
@@ -220,8 +222,9 @@ var renderUtil = {
      * @private
      */
     getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this),
-            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this);
+        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
         return maxWidth;
     },
 
@@ -233,8 +236,9 @@ var renderUtil = {
      * @returns {number} max height
      */
     getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this),
-            maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this);
+        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
         return maxHeight;
     },
 
@@ -344,8 +348,9 @@ var renderUtil = {
      * }} expended bound
      */
     expandBound: function(bound) {
-        var dimension = bound.dimension,
-            position = bound.position;
+        var dimension = bound.dimension;
+        var position = bound.position;
+
         return {
             dimension: {
                 width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
@@ -397,12 +402,14 @@ var renderUtil = {
      */
     formatValues: function(values, formatFunctions, areaType, valueType) {
         var formatedValues;
+
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
         formatedValues = tui.util.map(values, function(label) {
             return renderUtil.formatValue(label, formatFunctions, areaType, valueType);
         });
+
         return formatedValues;
     },
 
@@ -547,6 +554,7 @@ var renderUtil = {
                 if (index < lastIndex && (index + 1) % betweenLen === 0) {
                     result.push(comma);
                 }
+
                 return result;
             });
             formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;

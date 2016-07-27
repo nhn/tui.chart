@@ -127,17 +127,18 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @returns {HTMLElement} legend element
      */
     render: function() {
-        var el = dom.create('DIV', this.className);
+        var container = dom.create('DIV', this.className);
 
-        this.legendContainer = el;
+        this.legendContainer = container;
 
         if (predicate.isHorizontalLegend(this.options.align)) {
-            dom.addClass(el, 'horizontal');
+            dom.addClass(container, 'horizontal');
         }
 
-        this._renderLegendArea(el);
-        this._attachEvent(el);
-        return el;
+        this._renderLegendArea(container);
+        this._attachEvent(container);
+
+        return container;
     },
 
     /**
@@ -191,6 +192,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         return tui.util.map(legendData, function(item) {
             var labelWidth = renderUtil.getRenderedLabelWidth(item.label, self.theme.label);
+
             return labelWidth + chartConst.LEGEND_AREA_PADDING;
         });
     },
@@ -202,35 +204,35 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      * @private
      */
     _makeLegendHtml: function(legendData) {
-        var self = this,
-            template = legendTemplate.tplLegend,
-            checkBoxTemplate = legendTemplate.tplCheckbox,
-            labelsWidth = this._makeLabelsWidth(legendData),
-            labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme),
-            isHorizontalLegend = predicate.isHorizontalLegend(this.options.align),
-            height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2),
-            baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1,
-            html = tui.util.map(legendData, function(legendDatum, index) {
-                var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop),
-                    checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
-                        index: index,
-                        checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
-                    }),
-                    data;
+        var self = this;
+        var template = legendTemplate.tplLegend;
+        var checkBoxTemplate = legendTemplate.tplCheckbox;
+        var labelsWidth = this._makeLabelsWidth(legendData);
+        var labelHeight = renderUtil.getRenderedLabelHeight(legendData[0].label, legendData[0].theme);
+        var isHorizontalLegend = predicate.isHorizontalLegend(this.options.align);
+        var height = labelHeight + (chartConst.LABEL_PADDING_TOP * 2);
+        var baseMarginTop = parseInt((height - chartConst.LEGEND_RECT_WIDTH) / 2, 10) - 1;
+        var html = tui.util.map(legendData, function(legendDatum, index) {
+            var rectCssText = self._makeLegendRectCssText(legendDatum, baseMarginTop);
+            var checkbox = self.options.showCheckbox === false ? '' : checkBoxTemplate({
+                index: index,
+                checked: self.legendModel.isCheckedIndex(index) ? ' checked' : ''
+            });
+            var data = {
+                rectCssText: rectCssText,
+                height: height,
+                labelHeight: labelHeight,
+                unselected: self.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
+                labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
+                iconType: legendDatum.chartType || 'rect',
+                label: legendDatum.label,
+                checkbox: checkbox,
+                index: index
+            };
 
-                data = {
-                    rectCssText: rectCssText,
-                    height: height,
-                    labelHeight: labelHeight,
-                    unselected: self.legendModel.isUnselectedIndex(index) ? ' unselected' : '',
-                    labelWidth: isHorizontalLegend ? ';width:' + labelsWidth[index] + 'px' : '',
-                    iconType: legendDatum.chartType || 'rect',
-                    label: legendDatum.label,
-                    checkbox: checkbox,
-                    index: index
-                };
-                return template(data);
-            }).join('');
+            return template(data);
+        }).join('');
+
         return html;
     },
 
@@ -318,11 +320,13 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
      */
     _getCheckedIndexes: function() {
         var checkedIndexes = [];
+
         tui.util.forEachArray(this.legendContainer.getElementsByTagName('input'), function(checkbox, index) {
             if (checkbox.checked) {
                 checkedIndexes.push(index);
             }
         });
+
         return checkedIndexes;
     },
 
@@ -368,6 +372,7 @@ var Legend = tui.util.defineClass(/** @lends Legend.prototype */ {
 
         if (dom.hasClass(elTarget, chartConst.CLASS_NAME_LEGEND_CHECKBOX)) {
             this._checkLegend();
+
             return;
         }
 

@@ -64,8 +64,10 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      */
     _transformRadiusRange: function(radiusRange) {
         radiusRange = radiusRange || ['0%', '100%'];
+
         return tui.util.map(radiusRange, function(percent) {
             var ratio = parseInt(percent, 10) * 0.01;
+
             return Math.max(Math.min(ratio, 1), 0);
         });
     },

@@ -81,6 +81,7 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
         if (!this.valueMap) {
             this.valueMap = this._makeValueMap();
         }
+
         return this.valueMap;
     },
 

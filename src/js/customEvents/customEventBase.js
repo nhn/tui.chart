@@ -130,6 +130,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this._renderCustomEventArea(container, data);
         this.attachEvent(container);
         this.customEventContainer = container;
+
         return container;
     },
 

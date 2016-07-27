@@ -95,6 +95,7 @@ module.exports = {
         result = tui.util.filter(target, function(item, name) {
             return tui.util.inArray(name, rejectionProps) === -1;
         });
+
         return result;
     },
 
@@ -251,6 +252,7 @@ module.exports = {
                 items.push(chatTypeTheme.label);
             });
         }
+
         return items;
     },
 

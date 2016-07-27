@@ -30,6 +30,7 @@ var raphaelRenderUtil = {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }
         });
+
         return ['M'].concat(fromPoint).concat('L').concat(toPoint);
     },
 
@@ -161,6 +162,7 @@ var raphaelRenderUtil = {
             var newHd = hd + (hd * lum);
 
             newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
+
             return tui.chart.renderUtil.formatToZeroFill(newHd, 2);
         }).join('');
 

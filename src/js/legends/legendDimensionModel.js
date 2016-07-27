@@ -173,8 +173,9 @@ var LegendDimensionModel = tui.util.defineClass(/** @lends LegendDimensionModel.
      * @private
      */
     _makeVerticalDimension: function() {
-        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(this.legendLabels, this.theme.label),
-            legendWidth = this._makeLegendWidth(maxLabelWidth);
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(this.legendLabels, this.theme.label);
+        var legendWidth = this._makeLegendWidth(maxLabelWidth);
+
         return {
             width: legendWidth,
             height: 0

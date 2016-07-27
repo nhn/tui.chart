@@ -270,13 +270,14 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         filteredElements = tui.util.filter(filteredElements, function(element, index) {
             return ((parseInt(index, 10) + 1) % itemCount) === 1;
         });
-
         firstLabelElements = tui.util.map(filteredElements, function(element) {
             var nextElement = element.nextSibling;
             var elements = [element];
+
             if (nextElement && nextElement.getAttribute('data-range')) {
                 elements.push(nextElement);
             }
+
             return elements;
         });
 

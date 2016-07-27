@@ -227,6 +227,7 @@ var renderingLabelHelper = {
         if (isStart) {
             rangeLabelAttribute = ' data-range="true"';
         }
+
         return seriesTemplate.tplSeriesLabel({
             label: label,
             cssText: cssText,

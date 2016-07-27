@@ -52,6 +52,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var height = this.boundsMaker.getDimension('series').height;
         var left = (blockWidth * x) + chartConst.SERIES_EXPAND_SIZE;
         var top = height - (blockHeight * (y + 1)) + chartConst.SERIES_EXPAND_SIZE;
+
         return {
             end: {
                 left: left,

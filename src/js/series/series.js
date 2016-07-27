@@ -543,6 +543,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
         if (!this._useLabel()) {
             this._fireLoadEvent(isRerendering);
+
             return;
         }
 

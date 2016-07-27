@@ -23,7 +23,7 @@
     "no-dupe-keys": 2,
     "no-duplicate-case": 2,
     "no-empty-character-class": 2,
-    "no-empty": 2,
+    "no-empty": [2, {"allowEmptyCatch": false}],
     "no-ex-assign": 2,
     "no-extra-boolean-cast": 2,
     "no-extra-parens": [2, "functions"],
@@ -77,10 +77,6 @@
     "no-labels": 2,
     "no-lone-blocks": 2,
     "no-loop-func": 2,
-    "no-magic-numbers": [1, {
-      "ignoreArrayIndexes": true,
-      "ignore": [-1, 0, 0.5, 1, 2, 10, 100]
-    }],
     "no-multi-spaces": 2,
     "no-multi-str": 2,
     "no-native-reassign": 2,
@@ -98,6 +94,7 @@
     "no-self-compare": 2,
     "no-sequences": 2,
     "no-throw-literal": 2,
+    "no-unsafe-finally": 2,
     "no-unused-expressions": 2,
     "no-useless-call": 2,
     "no-useless-concat": 2,
@@ -108,6 +105,7 @@
     "vars-on-top": 2,
     "wrap-iife": [2, "inside"],
     "yoda": 2,
+    "no-useless-escape": 2,
 
     // Strict Mode
     "strict": [2, "global"],
@@ -124,6 +122,7 @@
     "no-undefined": 2,
     "no-unused-vars": 2,
     "no-use-before-define": [2, "nofunc"],
+    "no-restricted-globals": [1, "event", "fdescribe", "fit"],
 
     // Node.js and CommonJS
     "global-require": 2,
@@ -185,7 +184,7 @@
     "operator-linebreak": 0,
     "padded-blocks": [2, "never"],
     "quote-props": 0,
-    "quotes": [2, "single"],
+    "quotes": [2, "single", {"avoidEscape": true, "allowTemplateLiterals": true}],
     "require-jsdoc": 1,
     "semi-spacing": [2, {"before": false, "after": true}],
     "semi": 2,
@@ -196,6 +195,8 @@
     "space-infix-ops": 2,
     "space-unary-ops": [2, {"words": true, "nonwords": false}],
     "spaced-comment": 0,
-    "wrap-regex": 0
+    "wrap-regex": 0,
+    "newline-before-return": 1,
+    "max-statements-per-line": [2, {"max": 1}]
   }
 }

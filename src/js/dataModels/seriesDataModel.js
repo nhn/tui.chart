@@ -145,6 +145,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             } else {
                 values = concat.apply(rawDatum.data);
             }
+
             return tui.util.map(values, function(value) {
                 return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions);
             });
@@ -561,6 +562,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
 
         this.each(function(seriesGroup) {
             hasRangeData = seriesGroup.hasRangeData();
+
             return !hasRangeData;
         });
 

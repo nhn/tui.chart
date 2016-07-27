@@ -327,6 +327,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else {
             tui.util.forEach(this.categoriesMap, function(categories) {
                 foundCategories = categories;
+
                 return false;
             });
         }
@@ -341,6 +342,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getCategoryCount: function(isVertical) {
         var categories = this.getCategories(isVertical);
+
         return categories ? categories.length : 0;
     },
 
@@ -687,6 +689,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         if (!this.seriesGroups) {
             this.seriesGroups = this._makeSeriesGroups();
         }
+
         return this.seriesGroups;
     },
 
@@ -719,6 +722,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else {
             values = this.getSeriesDataModel(chartType).getValues(valueType);
         }
+
         return values;
     },
 
@@ -823,6 +827,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         if (!this.legendLabels) {
             this.legendLabels = this._pickLegendLabels();
         }
+
         return this.legendLabels[chartType] || this.legendLabels;
     },
 
@@ -1002,6 +1007,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (this._isZeroFill(format)) {
             len = format.length;
             funcs = [tui.util.bind(this._formatToZeroFill, this, len)];
+
             return funcs;
         }
 

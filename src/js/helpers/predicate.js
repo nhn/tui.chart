@@ -64,6 +64,7 @@ var predicate = {
         var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
             return predicate.isPieTypeChart(subChartType);
         });
+
         return predicate.isComboChart(chartType) && isAllPieType;
     },
 
