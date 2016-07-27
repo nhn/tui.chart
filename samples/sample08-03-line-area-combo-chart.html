@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Combo Chart] line and area</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="comboChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["Apr", "May", "June", "July", "Aug", "Sep", "Oct"],
+    "series": {
+        "area": [
+            {
+                "name": "Range",
+                "data": [[10, 12], [14, 16], [16, 18], [18, 20], [18, 20], [15, 17], [11, 13]]
+            }
+        ],
+        "line": [
+            {
+                "name": "Average",
+                "data": [11, 15, 17, 19, 19, 16, 12]
+            }
+        ]
+    }
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "24-hr Average Temperature"
+    },
+    "yAxis": {
+        "title": "Temperature (Celsius)"
+    },
+    "xAxis": {
+        "title": "Month"
+    },
+    "series": {
+        "zoomable": true,
+        "line": {
+            "showDot": true
+        }
+    },
+    "tooltip": {
+        "grouped": true,
+        "suffix": "°C"
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "area": {
+            "colors": ["#5EA393", "#A4E2C5", "#F7A655"]
+        },
+        "line": {
+            "colors": ["#E05D64"]
+        }
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#combo-chart-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area');
+    var data = {
+        categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+        series: {
+            area: [
+                {
+                    name: 'Range',
+                    data: [[10, 12], [14, 16], [16, 18], [18, 20], [18, 20], [15, 17], [11, 13]]
+                }
+            ],
+            line: [
+                {
+                    name: 'Average',
+                    data: [11, 15, 17, 19, 19, 16, 12]
+                }
+            ]
+        }
+    };
+    var options = {
+        chart: {
+            width: 700,
+            height: 400,
+            title: '24-hr Average Temperature'
+        },
+        yAxis: {
+            title: 'Temperature (Celsius)'
+        },
+        xAxis: {
+            title: 'Month'
+        },
+        series: {
+            zoomable: true,
+            shifting: true,
+            line: {
+                showDot: true
+            }
+        },
+        tooltip: {
+            grouped: true,
+            suffix: '°C'
+        }
+    };
+    var chart = tui.chart.comboChart(container, data, options);
+</script>
+</body>
+</html>
