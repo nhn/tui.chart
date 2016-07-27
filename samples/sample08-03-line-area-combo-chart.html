@@ -20,18 +20,18 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Apr", "May", "June", "July", "Aug", "Sep", "Oct"],
+    "categories": ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
     "series": {
         "area": [
             {
                 "name": "Range",
-                "data": [[10, 12], [14, 16], [16, 18], [18, 20], [18, 20], [15, 17], [11, 13]]
+                "data": [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.9, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
             }
         ],
         "line": [
             {
                 "name": "Average",
-                "data": [11, 15, 17, 19, 19, 16, 12]
+                "data": [-4.0, -1.4, 3.9, 11, 16.5, 21.1, 24.5, 25.3, 20.2, 13.5, 6.1, -1.0]
             }
         ]
     }
@@ -45,7 +45,7 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "24-hr Average Temperature"
+        "title": "24-hr Seoul Temperature"
     },
     "yAxis": {
         "title": "Temperature (Celsius)"
@@ -96,18 +96,18 @@
 <script>
     var container = document.getElementById('chart-area');
     var data = {
-        categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         series: {
             area: [
                 {
                     name: 'Range',
-                    data: [[10, 12], [14, 16], [16, 18], [18, 20], [18, 20], [15, 17], [11, 13]]
+                    data: [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.9, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
                 }
             ],
             line: [
                 {
                     name: 'Average',
-                    data: [11, 15, 17, 19, 19, 16, 12]
+                    data: [-4.0, -1.4, 3.9, 11, 16.5, 21.1, 24.5, 25.3, 20.2, 13.5, 6.1, -1.0]
                 }
             ]
         }
@@ -116,7 +116,7 @@
         chart: {
             width: 700,
             height: 400,
-            title: '24-hr Average Temperature'
+            title: '24-hr Seoul Temperature'
         },
         yAxis: {
             title: 'Temperature (Celsius)'
@@ -126,7 +126,6 @@
         },
         series: {
             zoomable: true,
-            shifting: true,
             line: {
                 showDot: true
             }

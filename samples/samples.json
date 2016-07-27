@@ -47,7 +47,7 @@
   "sample04-03-range-area-chart": {
     "title": "[Area Chart] range data"
   },
-  "sample04-04-area-autotick-zoomable-chart": {
+  "sample04-04-autotick-zoomable-area-chart": {
     "title": "[Area Chart] auto tick and zoomable"
   },
   "sample05-01-bubble-chart": {
@@ -77,6 +77,9 @@
   "sample08-02-pie-donut-combo-chart": {
     "title": "[Combo Chart] pie and donut"
   },
+  "sample08-03-line-area-combo-chart": {
+    "title": "[Combo Chart] line and area"
+  },
   "sample09-01-world-map-chart": {
     "title": "[Map chart] world map"
   },
@@ -104,7 +107,13 @@
   "sample10-01-heatmap-chart": {
     "title": "[Heatmap chart] basic"
   },
-  "sample11-01-dynamic-data-shifting-chart": {
+  "sample11-01-treemap-chart": {
+    "title": "[Treemap chart] basic"
+  },
+  "sample11-02-color-value-treemap-chart": {
+    "title": "[Treemap chart] useColorValue option"
+  },
+  "sample12-01-dynamic-data-shifting-chart": {
     "title": "[Dynamic chart] dynamic data and spline"
   }
 }
