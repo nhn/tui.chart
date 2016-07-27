@@ -7,7 +7,6 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
-var chartConst = require('../const');
 var AreaTypeCustomEvent = require('../customEvents/areaTypeCustomEvent');
 
 /**
