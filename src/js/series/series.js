@@ -354,9 +354,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _showSeriesLabelWithoutAnimation: function() {
-        dom.addClass(this.seriesLabelContainer, 'show');
-        this.seriesLabelContainer.style.filter = '';
-        this.seriesLabelContainer.style.opacity = 1;
+        dom.addClass(this.seriesLabelContainer, 'show opacity');
     },
 
     /**
@@ -548,12 +546,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             return;
         }
 
-        dom.addClass(this.seriesLabelContainer, 'show');
-
         if (renderUtil.isIE7()) {
-            this.seriesLabelContainer.style.filter = '';
+            this._showSeriesLabelWithoutAnimation();
             this._fireLoadEvent(isRerendering);
         } else {
+            dom.addClass(this.seriesLabelContainer, 'show');
             this.labelShowEffector = new tui.component.Effects.Fade({
                 element: this.seriesLabelContainer,
                 duration: 300
@@ -566,6 +563,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
                         clearInterval(self.labelShowEffector.timerId);
                     }
                     self.labelShowEffector = null;
+                    dom.addClass(self.seriesLabelContainer, 'opacity');
                     self._fireLoadEvent(isRerendering);
                 }
             });
@@ -664,7 +662,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     showLabel: function() {
         this.options.showLabel = true;
-        dom.addClass(this.seriesLabelContainer, 'show opacity');
+        this._showSeriesLabelWithoutAnimation();
     },
 
     /**
@@ -673,6 +671,7 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
     hideLabel: function() {
         this.options.showLabel = false;
         dom.removeClass(this.seriesLabelContainer, 'show');
+        dom.removeClass(this.seriesLabelContainer, 'opacity');
     }
 });
 
