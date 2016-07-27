@@ -247,7 +247,7 @@ var sum = function(values) {
     var copyArr = values.slice();
     copyArr.unshift(0);
     return tui.util.reduce(copyArr, function(base, add) {
-        return parseFloat(base) + parseFloat(add);
+        return tui.util.addition(parseFloat(base), parseFloat(add));
     });
 };
 
