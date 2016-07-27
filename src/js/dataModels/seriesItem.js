@@ -112,7 +112,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
             hasStart = values.length > 1;
 
         this.value = this.end = values[0];
-        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions, 'series');
+        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions, 'makingSeriesLabel');
 
         if (hasStart) {
             this.addStart(values[1], true);

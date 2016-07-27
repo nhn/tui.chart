@@ -7,14 +7,21 @@
 'use strict';
 
 var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
 
 var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.prototype */{
     /**
      * SeriesItem for treemap.
      * @constructs SeriesItemForTreemap
      * @param {object} rawSeriesDatum - value
+     * @param {?Array.<function>} formatFunctions - format functions
      */
-    init: function(rawSeriesDatum) {
+    init: function(rawSeriesDatum, formatFunctions) {
+        /**
+         * format functions
+         * @type {Array.<function>}
+         */
+        this.formatFunctions = formatFunctions;
         this.id = rawSeriesDatum.id;
         this.parent = rawSeriesDatum.parent;
         this.value = rawSeriesDatum.value;
@@ -42,7 +49,8 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
      * @returns {{value: number, label: string}}
      */
     pickValueMap: function() {
-        var label = (this.label ? this.label + ': ' : '') + this.value;
+        var formattedValue = renderUtil.formatValue(this.value, this.formatFunctions, 'makingTooltipLabel');
+        var label = (this.label ? this.label + ': ' : '') + formattedValue;
 
         return {
             value: this.value,

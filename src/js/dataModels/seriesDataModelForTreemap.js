@@ -147,12 +147,13 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
     _createBaseGroups: function() {
         var rawSeriesData = this.rawSeriesData;
         var seriesItemMap = this.seriesItemMap;
+        var formatFunctions = this.formatFunctions;
 
         rawSeriesData = this._flattenHierarchicalData(rawSeriesData);
         rawSeriesData = this._setTreeProperties(rawSeriesData, 1, chartConst.TREEMAP_ROOT_ID);
 
         return [tui.util.map(rawSeriesData, function(rawDatum) {
-            var seriesItem = new SeriesItem(rawDatum);
+            var seriesItem = new SeriesItem(rawDatum, formatFunctions);
 
             seriesItemMap[seriesItem.id] = seriesItem;
 
