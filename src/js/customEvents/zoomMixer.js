@@ -385,11 +385,12 @@ var zoomMixer = {
         var target;
 
         this._unbindDragEvent();
-
+        
         if (tui.util.isNull(this.dragStartIndexes)) {
             target = e.target || e.srcElement;
             if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 this._hideTooltip();
+                this.prevDistanceOfRange = null;
                 this.fire('resetZoom');
             } else {
                 CustomEventBase.prototype._onClick.call(this, e);
