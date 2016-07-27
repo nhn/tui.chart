@@ -289,10 +289,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * Clear container.
+     * @param {object} paper - raphael object
      * @private
      */
-    _clearContainer: function() {
-        if (this.graphRenderer.clear) {
+    _clearContainer: function(paper) {
+        if (this.graphRenderer.clear && !paper) {
             this.graphRenderer.clear();
         }
 

@@ -206,6 +206,20 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
     },
 
     /**
+     * Move dots to front.
+     * @param {Array.<{startDot: [{dot: object}], endDot: {dot: object}}>} dots - dots
+     * @private
+     */
+    _moveDotsToFront: function(dots) {
+        raphaelRenderUtil.forEach2dArray(dots, function(dotInfo) {
+            dotInfo.endDot.dot.toFront();
+            if (dotInfo.startDot) {
+                dotInfo.startDot.dot.toFront();
+            }
+        });
+    },
+
+    /**
      * Render dots.
      * @param {object} paper raphael paper
      * @param {Array.<Array.<object>>} groupPositions positions
@@ -215,24 +229,38 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * @private
      */
     _renderDots: function(paper, groupPositions, colors, opacity) {
-        var self = this,
-            dots = tui.util.map(groupPositions, function(positions, groupIndex) {
-                var color = colors[groupIndex];
-                return tui.util.map(positions, function(position) {
-                    var dotMap = {
-                        endDot: self.renderDot(paper, position, color, opacity)
-                    };
-                    var startPosition;
+        var self = this;
+        var dots;
 
-                    if (self.hasRangeData) {
-                        startPosition = tui.util.extend({}, position);
-                        startPosition.top = startPosition.startTop;
-                        dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
-                    }
+        // 기존에 캐싱된 dot을 다른 도형에 의해 가려지지 않게 하기 위해 제일 앞으로 이동시킴
+        if (paper.dots) {
+            this._moveDotsToFront(paper.dots);
+        }
 
-                    return dotMap;
-                });
+        dots = tui.util.map(groupPositions, function(positions, groupIndex) {
+            var color = colors[groupIndex];
+            return tui.util.map(positions, function(position) {
+                var dotMap = {
+                    endDot: self.renderDot(paper, position, color, opacity)
+                };
+                var startPosition;
+
+                if (self.hasRangeData) {
+                    startPosition = tui.util.extend({}, position);
+                    startPosition.top = startPosition.startTop;
+                    dotMap.startDot = self.renderDot(paper, startPosition, color, opacity);
+                }
+
+                return dotMap;
             });
+        });
+
+        if (!paper.dots) {
+            paper.dots = [];
+        }
+
+        // 다른 그래프 렌더링 시 앞으로 이동시키기 위해 paper에 캐싱함
+        paper.dots = paper.dots.concat(dots);
 
         return dots;
     },
@@ -341,6 +369,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
         tui.util.forEachArray(groupDots[index], function(item) {
             self._showDot(item.endDot.dot);
+
+            if (item.startDot) {
+                self._showDot(item.startDot.dot);
+            }
         });
     },
 
@@ -463,6 +495,10 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             }
 
             self._hideDot(item.endDot.dot, opacity);
+
+            if (item.startDot) {
+                self._hideDot(item.startDot.dot, opacity);
+            }
         });
     },
 
@@ -648,6 +684,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * Clear paper.
      */
     clear: function() {
+        delete this.paper.dots;
         this.paper.clear();
     }
 });
