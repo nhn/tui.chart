@@ -385,7 +385,7 @@ var zoomMixer = {
         var target;
 
         this._unbindDragEvent();
-        
+
         if (tui.util.isNull(this.dragStartIndexes)) {
             target = e.target || e.srcElement;
             if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
