@@ -137,10 +137,11 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _filterSeriesDataByIndexRange: function(seriesData, startIndex, endIndex) {
-        return tui.util.map(seriesData, function(seriesDatum) {
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
             seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
-            return seriesDatum;
         });
+
+        return seriesData;
     },
 
     /**
