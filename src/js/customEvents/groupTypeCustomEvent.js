@@ -54,11 +54,11 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @private
      */
     _findData: function(clientX, clientY) {
-        var layerPosition = this._calculateLayerPosition(clientX, clientY, true, this.isExpanded);
+        var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
         var pointValue;
 
         if (this.isVertical) {
-            pointValue = layerPosition.x;
+            pointValue = layerPosition.x - this.expandSize;
         } else {
             pointValue = layerPosition.y - chartConst.SERIES_EXPAND_SIZE;
         }
@@ -169,13 +169,13 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     _onMouseout: function(e) {
         var layerPosition;
 
-        CustomEventBase.prototype._onMouseout.call(this);
-
-        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false, this.isExpanded);
+        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
         if (this._isOutPosition(layerPosition.x, layerPosition.y) && !tui.util.isNull(this.prevIndex)) {
             this._hideTooltip();
         }
+
+        CustomEventBase.prototype._onMouseout.call(this);
     }
 });
 

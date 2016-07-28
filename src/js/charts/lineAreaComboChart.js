@@ -52,5 +52,4 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
 tui.util.extend(LineAreaComboChart.prototype,
     axisTypeMixer, autoTickMixer, zoomMixer, addingDynamicDataMixer, comboTypeMixer, verticalTypeComboMixer);
 
-
 module.exports = LineAreaComboChart;

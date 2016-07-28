@@ -158,14 +158,13 @@ var zoomMixer = {
      * @param {number} clientX - clientX
      * @param {number} [clientY] - clientY
      * @param {boolean} [checkLimit] - whether check limit or not
-     * @param {boolean} [isExpanded] - whether expanded or not
      * @returns {{x: number, y: ?number}}
      * @private
      */
-    _calculateLayerPosition: function(clientX, clientY, checkLimit, isExpanded) {
+    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
         var bound = this._getContainerBound();
         var layerPosition = {};
-        var expandSize = (isExpanded === false) ? 0 : chartConst.SERIES_EXPAND_SIZE;
+        var expandSize = this.expandSize;
         var maxLeft, minLeft;
 
         checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;

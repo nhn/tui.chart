@@ -174,6 +174,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         if (this.prevFoundData) {
             this._hideTooltip();
         }
+
+        CustomEventBase.prototype._onMouseout.call(this);
     },
 
     /**

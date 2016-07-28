@@ -9,7 +9,6 @@
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
 var AreaTypeDataModel = require('./areaTypeDataModel');
-var renderUtil = require('../helpers/renderUtil');
 
 var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaTypeCustomEvent.prototype */ {
     /**
@@ -42,19 +41,6 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
 
         this._showTooltipAfterZoom();
-    },
-
-    /**
-     * Get bound for rendering.
-     * @returns {{
-     *      dimension: {width: number, height: number},
-     *      position: {left: number, top: number}
-     * }}
-     * @private
-     * @override
-     */
-    _getRenderingBound: function() {
-        return renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
     },
 
     /**
@@ -140,12 +126,11 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMouseout: function() {
-        CustomEventBase.prototype._onMouseout.call(this);
-
         if (this.prevFoundData) {
             this._hideTooltip();
-            this.prevFoundData = null;
         }
+
+        CustomEventBase.prototype._onMouseout.call(this);
     }
 });
 

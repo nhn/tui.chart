@@ -27,6 +27,8 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      *      @param {boolean} params.isVertical whether vertical or not
      */
     init: function(params) {
+        var isLineTypeChart;
+
         /**
          * type of chart
          * @type {string}
@@ -70,17 +72,19 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.prevClientPosition = null;
 
         /**
-         * previous found data.
+         * previous found data
          * @type {null | object}
          */
         this.prevFoundData = null;
 
 
+        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
+
         /**
-         * whether expanded or not.
-         * @type {boolean}
+         * expand size
+         * @type {number}
          */
-        this.isExpanded = predicate.isLineTypeChart(this.chartType, this.chartTypes);
+        this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
 
         /**
          * container bound
@@ -98,7 +102,15 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _getRenderingBound: function() {
-        return this.boundsMaker.getBound('customEvent');
+        var renderingBound;
+
+        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
+            renderingBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
+        } else {
+            renderingBound = this.boundsMaker.getBound('customEvent');
+        }
+
+        return renderingBound;
     },
 
     /**
@@ -277,7 +289,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      */
     _onClick: function(e) {
         var target = e.target || e.srcElement;
-        var clientX = e.clientX - (this.isExpanded ? chartConst.SERIES_EXPAND_SIZE : 0);
+        var clientX = e.clientX - this.expandSize;
         var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.selectedData, foundData)) {

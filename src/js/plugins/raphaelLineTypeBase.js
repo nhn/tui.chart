@@ -209,7 +209,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
 
     /**
      * Move dots to front.
-     * @param {Array.<{?startDot: {dot: object}, endDot: {dot: object}}>} dots - dots
+     * @param {Array.<{startDot: {dot: object}, endDot: {dot: object}}>} dots - dots
      * @private
      */
     _moveDotsToFront: function(dots) {
