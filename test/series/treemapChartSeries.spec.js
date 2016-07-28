@@ -209,11 +209,11 @@ describe('TreemapChartSeries', function() {
             ];
         });
 
-        it('render series label, when labelLevel is top', function() {
+        it('render series label, when useLeafLabel option is false', function() {
             var labelContainer = dom.create('DIV');
             var expectedElement = dom.create('DIV');
 
-            series.options.labelLevel = 'top';
+            series.options.useLeafLabel = false;
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
@@ -222,11 +222,11 @@ describe('TreemapChartSeries', function() {
             expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
         });
 
-        it('render series label, when labelLevel is bottom', function() {
+        it('render series label, when useLeafLabel option is true', function() {
             var labelContainer = dom.create('DIV');
             var expectedElement = dom.create('DIV');
 
-            series.options.labelLevel = 'bottom';
+            series.options.useLeafLabel = true;
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +

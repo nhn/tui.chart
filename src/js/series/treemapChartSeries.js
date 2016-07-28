@@ -60,8 +60,9 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         if (tui.util.isUndefined(this.options.zoomable)) {
             this.options.zoomable = !this.options.useColorValue;
         }
-        if (!this.options.labelLevel) {
-            this.options.labelLevel = this.options.zoomable ? 'top' : 'bottom';
+
+        if (tui.util.isUndefined(this.options.useLeafLabel)) {
+            this.options.useLeafLabel = !this.options.zoomable;
         }
     },
 
@@ -197,10 +198,10 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
         var boundMap = this._getBoundMap();
         var seriesItems, shouldDimmed, html;
 
-        if (this.options.labelLevel === 'top') {
-            seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
-        } else {
+        if (this.options.useLeafLabel) {
             seriesItems = seriesDataModel.findLeafSeriesItems(this.selectedGroup);
+        } else {
+            seriesItems = seriesDataModel.findSeriesItemsByDepth(this.startDepth, this.selectedGroup);
         }
 
         shouldDimmed = tui.util.bind(this._shouldDimmed, this, seriesDataModel, hoverSeriesItem);

@@ -714,6 +714,9 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.useColorValue - whether use colorValue or not
+ *          @param {boolean} options.series.zoomable - whether zoomable or not
+ *          @param {boolean} options.series.useLeafLabel - whether use leaf label or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
