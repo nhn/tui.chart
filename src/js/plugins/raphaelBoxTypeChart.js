@@ -288,6 +288,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
      * @param {boolean} [useColorValue] - whether use colorValue or not
      */
     hideAnimation: function(indexes, useColorValue) {
+        var colorSpectrum = this.colorSpectrum;
         var box = this.boxesSet[indexes.groupIndex][indexes.index];
         var opacity = 1;
         var color;
@@ -308,7 +309,7 @@ var RaphaelBoxTypeChart = tui.util.defineClass(/** @lends RaphaelBoxTypeChart.pr
         this._animateChangingColor(box.rect, color, opacity);
 
         setTimeout(function() {
-            if (box.seriesItem.hasChild) {
+            if (!colorSpectrum && box.seriesItem.hasChild) {
                 box.rect.toBack();
             }
         }, ANIMATION_DURATION);
