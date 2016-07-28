@@ -714,6 +714,15 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
+ *      @param {object} options.tooltip - options for tooltip component
+ *          @param {string} options.tooltip.suffix - suffix for tooltip
+ *          @param {function} [options.tooltip.template] - template for tooltip
+ *          @param {object} options.tooltip.position - relative position
+ *              @param {number} options.tooltip.position.left - position left
+ *              @param {number} options.tooltip.position.top - position top
+ *      @param {object} options.legend - options for legend component
+ *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+ *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
  * @returns {object} scatter chart
@@ -723,31 +732,31 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *     rawData = {
  *       series: [
  *          {
- *              id: 'id_0',
+ *              label: 'label1',
  *              value: 6
  *          },
  *          {
- *              id: 'id_1',
+ *              label: 'label2',
  *              value: 6
  *          },
  *          {
- *              id: 'id_2',
+ *              label: 'label3',
  *              value: 4
  *          },
  *          {
- *              id: 'id_3',
+ *              label: 'label4',
  *              value: 3
  *          },
  *          {
- *              id: 'id_4',
+ *              label: 'label5',
  *              value: 2
  *          },
  *          {
- *              id: 'id_5',
+ *              label: 'label6',
  *              value: 2
  *          },
  *          {
- *              id: 'id_6',
+ *              label: 'label7',
  *              value: 1
  *          }
  *     ],
@@ -797,12 +806,23 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {boolean} options.series.line.showLabel - whether show label or not
  *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline - whether spline or not
+ *          @param {?object} options.series.area - options for line series component
+ *              @param {boolean} options.series.area.showDot - whether show dot or not
+ *              @param {boolean} options.series.area.showLabel - whether show label or not
+ *              @param {boolean} options.series.area.allowSelect - whether allow select or not
+ *              @param {boolean} options.series.area.spline - whether spline or not
  *          @param {?object} options.series.pie - options for pie series component
  *              @param {boolean} options.series.pie.showLabel - whether show label or not
  *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
  *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
  *              @param {boolean} options.series.pie.startAngle - start angle
  *              @param {boolean} options.series.pie.endAngle - end angle
+ *          @param {boolean} options.series.showDot - whether show dot or not
+ *          @param {boolean} options.series.showLabel - whether show label or not
+ *          @param {boolean} options.series.allowSelect - whether allow select or not
+ *          @param {boolean} options.series.spline - whether spline or not
+ *          @param {boolean} options.series.zoomable - whether zoomable or not
+ *          @param {boolean} options.series.shifting - whether shifting or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {object} options.tooltip.column - options for column tooltip
  *              @param {string} options.tooltip.column.suffix - suffix for tooltip
