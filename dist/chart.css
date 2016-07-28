@@ -580,6 +580,9 @@
   padding-bottom: 6px;
   text-align: center;
 }
+.tui-chart .tui-chart-tooltip-area .tui-chart-tooltip .tui-chart-default-tooltip .hide {
+  display: none;
+}
 .tui-chart .tui-chart-tooltip-area .tui-chart-group-tooltip-sector {
   z-index: 50;
   position: absolute;
