@@ -7,11 +7,16 @@
 'use strict';
 
 var zoomMixer = require('../../src/js/customEvents/zoomMixer');
+var chartConst = require('../../src/js/const');
 var dom = require('../../src/js/helpers/domHandler');
 
 describe('Test for AreaTypeCustomEvent', function() {
     beforeAll(function() {
         zoomMixer._getContainerBound = jasmine.createSpy('_getContainerBound');
+    });
+
+    beforeEach(function() {
+        zoomMixer.expandSize = 0;
     });
 
     describe('_calculateLayerPosition()', function() {
@@ -35,6 +40,7 @@ describe('Test for AreaTypeCustomEvent', function() {
                 left: 50,
                 right: 450
             });
+            zoomMixer.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
             actual = zoomMixer._calculateLayerPosition(30);
 
@@ -63,6 +69,7 @@ describe('Test for AreaTypeCustomEvent', function() {
                 left: 50,
                 right: 450
             });
+            zoomMixer.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
             actual = zoomMixer._calculateLayerPosition(480);
 
@@ -121,6 +128,7 @@ describe('Test for AreaTypeCustomEvent', function() {
                 left: 50,
                 right: 150
             });
+            zoomMixer.expandSize = chartConst.SERIES_EXPAND_SIZE;
 
             zoomMixer._showDragSelection(50);
 
