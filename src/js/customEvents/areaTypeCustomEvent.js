@@ -126,12 +126,11 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMouseout: function() {
-        CustomEventBase.prototype._onMouseout.call(this);
-
         if (this.prevFoundData) {
             this._hideTooltip();
-            this.prevFoundData = null;
         }
+
+        CustomEventBase.prototype._onMouseout.call(this);
     }
 });
 

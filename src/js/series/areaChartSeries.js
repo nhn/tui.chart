@@ -66,6 +66,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
                 position.top = top;
 
                 prevPositionTops[index] = top;
+
                 return position;
             });
         });
@@ -100,7 +101,7 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
         return {
             chartBackground: this.chartBackground,
             groupPositions: this._makePositions(),
-            hasRangeData: this.dataProcessor.getSeriesDataModel(this.seriesName).hasRangeData(),
+            hasRangeData: this._getSeriesDataModel().hasRangeData(),
             zeroTop: zeroTop + chartConst.SERIES_EXPAND_SIZE
         };
     },
@@ -111,8 +112,13 @@ var AreaChartSeries = tui.util.defineClass(Series, /** @lends AreaChartSeries.pr
      * @override
      */
     rerender: function(data) {
+        var paper;
+
         this._cancelMovingAnimation();
-        Series.prototype.rerender.call(this, data);
+
+        paper = Series.prototype.rerender.call(this, data);
+
+        return paper;
     }
 });
 

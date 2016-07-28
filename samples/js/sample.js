@@ -23,7 +23,7 @@
         }
 
         container.innerHTML = '';
-        chart[type](container, data, options);
+        root.chart = chart[type](container, data, options);
     };
 
     var onCheckboxClick = function(elTarget) {

@@ -14,17 +14,35 @@ var defaultTheme = require('../themes/defaultTheme');
  */
 var comboTypeMixer = {
     /**
+     * Get base series options.
+     * @param {object.<string, object>} seriesOptions - series options
+     * @param {Array.<string>} chartTypes - chart types
+     * @returns {object}
+     * @private
+     */
+    _getBaseSeriesOptions: function(seriesOptions, chartTypes) {
+        var baseSeriesOptions = tui.util.extend({}, seriesOptions);
+
+        tui.util.forEachArray(chartTypes, function(chartType) {
+            delete baseSeriesOptions[chartType];
+        });
+
+        return baseSeriesOptions;
+    },
+
+    /**
      * Make options map
-     * @param {object} chartTypes chart types
-     * @returns {object} options map
+     * @param {Array.<string>} chartTypes - chart types
+     * @returns {object}
      * @private
      */
     _makeOptionsMap: function(chartTypes) {
-        var seriesOptions = this.options.series || {};
+        var seriesOptions = this.options.series;
+        var baseSeriesOptions = this._getBaseSeriesOptions(seriesOptions, chartTypes);
         var optionsMap = {};
 
         tui.util.forEachArray(chartTypes, function(chartType) {
-            optionsMap[chartType] = seriesOptions[chartType] || seriesOptions;
+            optionsMap[chartType] = tui.util.extend({}, baseSeriesOptions, seriesOptions[chartType]);
         });
 
         return optionsMap;
@@ -32,17 +50,17 @@ var comboTypeMixer = {
 
     /**
      * Make theme map
-     * @param {object} chartTypes chart types
+     * @param {object} seriesNames - series names
      * @returns {object} theme map
      * @private
      */
-    _makeThemeMap: function(chartTypes) {
+    _makeThemeMap: function(seriesNames) {
         var dataProcessor = this.dataProcessor;
         var theme = this.theme;
         var themeMap = {};
         var colorCount = 0;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
+        tui.util.forEachArray(seriesNames, function(chartType) {
             var chartTheme = JSON.parse(JSON.stringify(theme));
             var removedColors;
 
@@ -60,15 +78,6 @@ var comboTypeMixer = {
         });
 
         return themeMap;
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

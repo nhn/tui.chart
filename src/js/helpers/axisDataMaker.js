@@ -28,6 +28,7 @@ var axisDataMaker = {
             if (((index + addedDataCount) % labelInterval) !== 0) {
                 label = chartConst.EMPTY_AXIS_LABEL;
             }
+
             return label;
         });
 

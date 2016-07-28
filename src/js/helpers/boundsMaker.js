@@ -352,13 +352,14 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _calculateOverflowLeft: function(rotationInfo, firstLabel) {
-        var degree = rotationInfo.degree,
-            labelHeight = rotationInfo.labelHeight,
-            firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, this.theme.xAxis.label),
-            newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
-                + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2,
-            yAxisWidth = this.options.yAxis.isCenter ? 0 : this.getDimension('yAxis').width,
-            diffLeft = newLabelWidth - yAxisWidth;
+        var degree = rotationInfo.degree;
+        var labelHeight = rotationInfo.labelHeight;
+        var firstLabelWidth = renderUtil.getRenderedLabelWidth(firstLabel, this.theme.xAxis.label);
+        var newLabelWidth = (calculator.calculateAdjacent(degree, firstLabelWidth / 2)
+                + calculator.calculateAdjacent(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
+        var yAxisWidth = this.options.yAxis.isCenter ? 0 : this.getDimension('yAxis').width;
+        var diffLeft = newLabelWidth - yAxisWidth;
+
         return diffLeft;
     },
 
@@ -401,10 +402,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @private
      */
     _calculateXAxisRotatedHeight: function(rotationInfo) {
-        var degree = rotationInfo.degree,
-            maxLabelWidth = rotationInfo.maxLabelWidth,
-            labelHeight = rotationInfo.labelHeight,
-            axisHeight = (calculator.calculateOpposite(degree, maxLabelWidth / 2) +
+        var degree = rotationInfo.degree;
+        var maxLabelWidth = rotationInfo.maxLabelWidth;
+        var labelHeight = rotationInfo.labelHeight;
+        var axisHeight = (calculator.calculateOpposite(degree, maxLabelWidth / 2) +
                 calculator.calculateOpposite(chartConst.ANGLE_90 - degree, labelHeight / 2)) * 2;
 
         return axisHeight;
@@ -418,6 +419,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _calculateDiffWithRotatedHeight: function(rotationInfo) {
         var rotatedHeight = this._calculateXAxisRotatedHeight(rotationInfo);
+
         return rotatedHeight - rotationInfo.labelHeight;
     },
 
@@ -490,6 +492,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _makePlotDimension: function() {
         var seriesDimension = this.getDimension('series');
+
         return {
             width: seriesDimension.width,
             height: seriesDimension.height + chartConst.OVERLAPPING_WIDTH
@@ -684,7 +687,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _isNeedExpansionSeries: function() {
         var chartType = this.chartType;
 
-        return !predicate.isMousePositionChart(chartType)
+        return !predicate.isMousePositionChart(chartType) && !predicate.isTreemapChart(chartType)
             && !predicate.isPieDonutComboChart(chartType, this.chartTypes);
     },
 

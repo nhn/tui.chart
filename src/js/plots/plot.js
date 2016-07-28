@@ -77,10 +77,11 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @returns {HTMLElement} plot element
      */
     render: function(data) {
-        var el = dom.create('DIV', this.className);
-        this._renderPlotArea(el, data);
-        this.plotContainer = el;
-        return el;
+        var container = dom.create('DIV', this.className);
+        this._renderPlotArea(container, data);
+        this.plotContainer = container;
+
+        return container;
     },
 
     /**
@@ -147,20 +148,22 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeLineHtml: function(params) {
-        var template = plotTemplate.tplPlotLine,
-            lineHtml = tui.util.map(params.positions, function(position) {
-                var cssTexts = [
-                        renderUtil.concatStr(params.positionType, ':', position, 'px'),
-                        renderUtil.concatStr(params.sizeType, ':', params.size, 'px')
-                    ], data;
+        var template = plotTemplate.tplPlotLine;
+        var lineHtml = tui.util.map(params.positions, function(position) {
+            var cssTexts = [
+                    renderUtil.concatStr(params.positionType, ':', position, 'px'),
+                    renderUtil.concatStr(params.sizeType, ':', params.size, 'px')
+                ], data;
 
-                if (params.lineColor) {
-                    cssTexts.push(renderUtil.concatStr('background-color:', params.lineColor));
-                }
+            if (params.lineColor) {
+                cssTexts.push(renderUtil.concatStr('background-color:', params.lineColor));
+            }
 
-                data = {className: params.className, cssText: cssTexts.join(';')};
-                return template(data);
-            }).join('');
+            data = {className: params.className, cssText: cssTexts.join(';')};
+
+            return template(data);
+        }).join('');
+
         return lineHtml;
     },
 
@@ -172,7 +175,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeVerticalPixelPositions: function(height) {
         var positions = calculator.makeTickPixelPositions(height, this.data.vTickCount);
+
         positions.shift();
+
         return positions;
     },
 
@@ -215,6 +220,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
             positions.shift();
         }
+
         return positions;
     }
 });

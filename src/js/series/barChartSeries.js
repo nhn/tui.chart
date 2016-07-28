@@ -135,7 +135,7 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      */
     _makeBounds: function() {
         var self = this,
-            seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName),
+            seriesDataModel = this._getSeriesDataModel(),
             isStacked = predicate.isValidStackOption(this.options.stackType),
             dimension = this.boundsMaker.getDimension('series'),
             baseData = this._makeBaseDataForMakingBound(dimension.height, dimension.width);
@@ -176,12 +176,13 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makePlusSumLabelHtml: function(values, bound, labelHeight) {
-        var sum, formattedSum,
-            html = '';
+        var html = '';
+        var sum, formatFunctions, formattedSum;
 
         if (bound) {
             sum = calculator.sumPlusValues(values);
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
+            formatFunctions = this.dataProcessor.getFormatFunctions();
+            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
             html = this._makeSeriesLabelHtml({
                 left: bound.left + bound.width + chartConst.SERIES_LABEL_PADDING,
                 top: this._calculateTopPositionOfSumLabel(bound, labelHeight)
@@ -200,8 +201,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
      * @private
      */
     _makeMinusSumLabelHtml: function(values, bound, labelHeight) {
-        var sum, formattedSum, labelWidth,
-            html = '';
+        var html = '';
+        var sum, formatFunctions, formattedSum, labelWidth;
 
         if (bound) {
             sum = calculator.sumMinusValues(values);
@@ -210,7 +211,8 @@ var BarChartSeries = tui.util.defineClass(Series, /** @lends BarChartSeries.prot
                 sum = Math.abs(sum);
             }
 
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
+            formatFunctions = this.dataProcessor.getFormatFunctions();
+            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
             labelWidth = renderUtil.getRenderedLabelWidth(formattedSum, this.theme.label);
             html = this._makeSeriesLabelHtml({
                 left: bound.left - labelWidth - chartConst.SERIES_LABEL_PADDING,

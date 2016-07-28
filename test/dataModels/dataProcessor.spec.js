@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for DataProcessor.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -18,8 +18,32 @@ describe('Test for DataProcessor', function() {
         dataProcessor = new DataProcessor({}, '', {});
     });
 
+    describe('_filterSeriesDataByIndexRange()', function() {
+        it('filter seriesData by index range', function() {
+            var seriesData =  [
+                {
+                    data: [1, 2, 3, 4, 5]
+                },
+                {
+                    data: [11, 12, 13, 14, 15]
+                }
+            ];
+            var actual = dataProcessor._filterSeriesDataByIndexRange(seriesData, 1, 3);
+            var expected = [
+                {
+                    data: [2, 3, 4]
+                },
+                {
+                    data: [12, 13, 14]
+                }
+            ];
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('_filterRawDataByIndexRange()', function() {
-        it('전달하는 raw data를 전달하는 index 범위(indexRange)로 필터링하여 반환합니다.', function() {
+        it('filter raw data(category and series) by index range, when single chart', function() {
             var rawData = {
                 categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
                 series: [
@@ -27,7 +51,7 @@ describe('Test for DataProcessor', function() {
                         data: [1, 2, 3, 4, 5]
                     },
                     {
-                        data: [11, 12, 13, 14 ,15]
+                        data: [11, 12, 13, 14, 15]
                     }
                 ]
             };
@@ -42,6 +66,42 @@ describe('Test for DataProcessor', function() {
                         data: [12, 13, 14]
                     }
                 ]
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('filter raw data(category and series) by index range, when combo chart', function() {
+            var rawData = {
+                categories: ['cate1', 'cate2', 'cate3', 'cate4', 'cate5'],
+                series: {
+                    line: [
+                        {
+                            data: [1, 2, 3, 4, 5]
+                        }
+                    ],
+                    area: [
+                        {
+                            data: [11, 12, 13, 14, 15]
+                        }
+                    ]
+                }
+            };
+            var actual = dataProcessor._filterRawDataByIndexRange(rawData, [1, 3]);
+            var expected = {
+                categories: ['cate2', 'cate3', 'cate4'],
+                series: {
+                    line: [
+                        {
+                            data: [2, 3, 4]
+                        }
+                    ],
+                    area: [
+                        {
+                            data: [12, 13, 14]
+                        }
+                    ]
+                }
             };
 
             expect(actual).toEqual(expected);
@@ -254,7 +314,7 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('_findRawSeriesDatumByName()', function() {
-        it('rawData의 series 하위 항목의 data에서 전달된 name과 같은 항목을 반환합니다.', function() {
+        it('find raw series datum by legend name, when single chart', function() {
             var actual;
 
             dataProcessor.rawData.series = [
@@ -276,10 +336,59 @@ describe('Test for DataProcessor', function() {
             });
         });
 
-        it('rawData의 series 하위 항목의 data에 전달된 name과 같은 항목이 없으면 null을 반환합니다.', function() {
+        it('find raw series datum by legend name, when combo chart', function() {
             var actual;
 
-            dataProcessor.rawData.series = [
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ],
+                area: [
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+
+            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'area');
+
+            expect(actual).toEqual({
+                name: 'legend2',
+                data: [3, 4]
+            });
+        });
+
+        it('if not found data, returns null', function() {
+            var actual;
+
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ],
+                area: [
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+
+            actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
+
+            expect(actual).toBeNull();
+        });
+    });
+
+    describe('_pushValues()', function() {
+        it('push values to series of originalRawData and series of rawData', function() {
+            var originalRawSeriesData = [
                 {
                     name: 'legend1',
                     data: [1, 2]
@@ -289,10 +398,51 @@ describe('Test for DataProcessor', function() {
                     data: [3, 4]
                 }
             ];
+            var values = [5, 6];
 
-            actual = dataProcessor._findRawSeriesDatumByName('legend3');
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                }
+            ];
 
-            expect(actual).toBeNull();
+            dataProcessor._pushValues(originalRawSeriesData, values);
+
+            expect(originalRawSeriesData[0].data).toEqual([1, 2, 5]);
+            expect(originalRawSeriesData[1].data).toEqual([3, 4, 6]);
+            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
+        });
+
+        it('push values to series of originalRawData and series of rawData, when combo chart', function() {
+            var originalRawSeriesData = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                }
+            ];
+            var values = [5];
+
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ],
+                area: [
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+
+            dataProcessor._pushValues(originalRawSeriesData, values, 'line');
+
+            expect(originalRawSeriesData[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.area[0].data).toEqual([3, 4]);
         });
     });
 
@@ -350,6 +500,68 @@ describe('Test for DataProcessor', function() {
             expect(dataProcessor.rawData.series[0].data).toEqual([3, 4, 6]);
             expect(dataProcessor.originalRawData.series[0].data).toEqual([1, 2, 5]);
             expect(dataProcessor.originalRawData.series[1].data).toEqual([3, 4, 6]);
+        });
+    });
+
+    describe('_shiftValues()', function() {
+        it('shift value of series data, when single chart', function() {
+            var originalRawSeriesData = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                },
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                },
+                {
+                    name: 'legend2',
+                    data: [4, 5, 6]
+                }
+            ];
+            dataProcessor._shiftValues(originalRawSeriesData);
+
+            expect(originalRawSeriesData[0].data).toEqual([2, 3]);
+            expect(originalRawSeriesData[1].data).toEqual([5, 6]);
+            expect(dataProcessor.rawData.series[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series[1].data).toEqual([5, 6]);
+        });
+
+        it('shift value of series data, when combo chart', function() {
+            var originalRawSeriesData = [
+                {
+                    name: 'legend1',
+                    data: [1, 2, 3]
+                }
+            ];
+
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2, 3]
+                    }
+                ],
+                area: [
+                    {
+                        name: 'legend2',
+                        data: [4, 5, 6]
+                    }
+                ]
+            };
+
+            dataProcessor._shiftValues(originalRawSeriesData, 'line');
+
+            expect(originalRawSeriesData[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([2, 3]);
+            expect(dataProcessor.rawData.series.area[0].data).toEqual([4, 5, 6]);
         });
     });
 

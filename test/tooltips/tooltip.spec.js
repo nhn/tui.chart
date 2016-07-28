@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for Tooltip.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -139,7 +139,7 @@ describe('Tooltip', function() {
                 index: 1
             });
             expected = '<div class="tui-chart-default-tooltip">' +
-                '<div>Silver</div>' +
+                '<div class="show">Silver</div>' +
                 '<div><span>Density2</span><span>20</span><span>suffix</span></div>' +
                 '</div>';
             expect(actual).toBe(expected);

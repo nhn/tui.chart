@@ -29,12 +29,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     init: function(params) {
         /**
-         * raw data.
-         * @type {object}
-         */
-        this.rawData = params.rawData;
-
-        /**
          * theme
          * @type {object}
          */
@@ -380,8 +374,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _makeRerenderingData: function(renderingData, checkedLegends) {
-        var tooltipData = this._makeTooltipData(),
-            serieses = this.componentManager.where({componentType: 'series'});
+        var tooltipData = this._makeTooltipData();
+        var serieses = this.componentManager.where({componentType: 'series'});
 
         renderingData.tooltip = tui.util.extend({
             checkedLegends: checkedLegends
@@ -389,7 +383,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
         tui.util.forEach(serieses, function(series) {
             renderingData[series.componentName] = tui.util.extend({
-                checkedLegends: checkedLegends[series.chartType] || checkedLegends
+                checkedLegends: checkedLegends[series.seriesName] || checkedLegends
             }, renderingData[series.componentName]);
         });
 

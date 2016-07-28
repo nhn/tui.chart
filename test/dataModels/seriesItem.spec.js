@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for SeriesItem.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -56,15 +56,6 @@ describe('Test for SeriesItem', function() {
         it('음수가 포함된 경우도 문제없이 내림차순 정렬하여 반환합니다.', function() {
             var actual = seriesItem._createValues([3, 1, -2, 10]),
                 expected = [10, 3, 1, -2];
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
-    describe('_calculateRatio()', function() {
-        it('입력 value에 subNumber를 빼고 divNumber로 나눈뒤 baseRatio로 곱하여 반환합니다.', function() {
-            var actual = seriesItem._calculateRatio(10, 2, 2, 0.5),
-                expected = 2;
 
             expect(actual).toEqual(expected);
         });

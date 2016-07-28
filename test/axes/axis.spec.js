@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for Axis.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -307,7 +307,6 @@ describe('Test for Axis', function() {
                 expect(labelContainer.style.left).toBe('-30px');
                 done();
             }, 450);
-
         });
 
         it('tick 영역과 label 영역에 left값이 설정되어 있지 않으면 left를 0으로 계산합니다.', function(done) {

@@ -1,14 +1,15 @@
 /**
  * @fileoverview Test for singleTooltipMixer.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var singleTooltipMixer = require('../../src/js/tooltips/singleTooltipMixer'),
-    chartConst = require('../../src/js/const'),
-    dom = require('../../src/js/helpers/domHandler');
+var singleTooltipMixer = require('../../src/js/tooltips/singleTooltipMixer');
+var chartConst = require('../../src/js/const');
+var dom = require('../../src/js/helpers/domHandler');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('Tooltip', function() {
     var tooltip, dataProcessor, boundsMaker;
@@ -111,9 +112,9 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeTooltipPositionOfNotBarChart()', function() {
+    describe('makeTooltipPositionForNotBarChart()', function() {
         it('Bar차트가 아닌 차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
-            var actual = tooltip._makeTooltipPositionOfNotBarChart({
+            var actual = tooltip._makeTooltipPositionForNotBarChart({
                     bound: {
                         width: 25,
                         height: 50,
@@ -173,43 +174,43 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_makeLeftPositionOfBarChart()', function() {
+    describe('_makeLeftPositionForBarChart()', function() {
         it('Bar차트의 align옵션에 "left"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'left', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'left', 30),
                 expected = 20;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "center"가 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'center', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'center', 30),
                 expected = 35;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "right"가 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeLeftPositionOfBarChart(50, 'right', 30),
+            var actual = tooltip._makeLeftPositionForBarChart(50, 'right', 30),
                 expected = 55;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeTopPositionOfBarChart()', function() {
+    describe('_makeTopPositionForBarChart()', function() {
         it('Bar차트의 align옵션에 "top"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeTopPositionOfBarChart(50, 'top', -30),
+            var actual = tooltip._makeTopPositionForBarChart(50, 'top', -30),
                 expected = 80;
             expect(actual).toBe(expected);
         });
 
         it('Bar차트의 align옵션에 "middle"이나 "bottom"이 포함된 경우의 left position 정보를 계산합니다.', function() {
-            var actual = tooltip._makeTopPositionOfBarChart(50, 'middle', -30),
+            var actual = tooltip._makeTopPositionForBarChart(50, 'middle', -30),
                 expected = 65;
             expect(actual).toBe(expected);
         });
     });
 
-    describe('_makeTooltipPositionOfBarChart()', function() {
+    describe('_makeTooltipPositionForBarChart()', function() {
         it('Bar차트의 포지션 정보를 툴팁의 포지션 정보로 계산하여 반환합니다.', function() {
-            var acutal = tooltip._makeTooltipPositionOfBarChart({
+            var acutal = tooltip._makeTooltipPositionForBarChart({
                     bound: {
                         width: 50,
                         height: 25,
@@ -236,7 +237,67 @@ describe('Tooltip', function() {
         });
     });
 
-    describe('_moveToSymmetry', function() {
+    describe('_makeTooltipPositionForTreemapChart()', function() {
+        it('make tooltip position for treemap chart', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPositionForTreemapChart({
+                bound: {
+                    width: 80,
+                    height: 60,
+                    top: 40,
+                    left: 50
+                },
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                positionOption: {
+                    left: 0,
+                    top: 0
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 65,
+                top: 20
+            });
+        });
+
+        it('make tooltip position for treemap chart, when position option', function() {
+            var actual;
+
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPositionForTreemapChart({
+                bound: {
+                    width: 80,
+                    height: 60,
+                    top: 40,
+                    left: 50
+                },
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                positionOption: {
+                    left: 20,
+                    top: -20
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 85,
+                top: 0
+            });
+        });
+    });
+
+    describe('_moveToSymmetry()', function() {
         it('id를 통해서 얻은 value가 음수일 경우 position을 기준점(axis상에 0이 위치하는 좌표값) 대칭 이동 시킵니다.', function() {
             var actual;
 
@@ -409,6 +470,41 @@ describe('Tooltip', function() {
                 top: 10
             };
             expect(actual).toEqual(expected);
+        });
+
+        it('make tooltip position for treemap chart', function() {
+            var actual;
+
+            tooltip.bound = {};
+            spyOn(tooltip, '_adjustPosition').and.callFake(function(tooltimDimension, position) {
+                return position;
+            });
+            spyOn(renderUtil, 'getRenderedLabelHeight').and.returnValue(20);
+
+            actual = tooltip._makeTooltipPosition({
+                bound: {
+                    width: 50,
+                    height: 25,
+                    top: 50,
+                    left: 0
+                },
+                chartType: chartConst.CHART_TYPE_TREEMAP,
+                id: 'id-0-0',
+                dimension: {
+                    width: 50,
+                    height: 40
+                },
+                alignOption: '',
+                positionOption: {
+                    left: 0,
+                    top: 0
+                }
+            });
+
+            expect(actual).toEqual({
+                left: 0,
+                top: 12.5
+            });
         });
     });
 });

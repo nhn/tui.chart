@@ -22,13 +22,11 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
     /**
      * Group tooltip component.
      * @constructs GroupTooltip
-     * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
-     *      @param {object} params.theme axis theme
+     * @override
      */
-    init: function(params) {
+    init: function() {
         this.prevIndex = null;
-        TooltipBase.call(this, params);
+        TooltipBase.apply(this, arguments);
     },
 
     /**
@@ -164,13 +162,16 @@ var GroupTooltip = tui.util.defineClass(TooltipBase, /** @lends GroupTooltip.pro
 
         return tui.util.map(tui.util.pluck(legendLabels, 'chartType'), function(chartType) {
             var color;
+
             if (prevChartType !== chartType) {
                 colors = theme[chartType] ? theme[chartType].colors : defaultColors;
                 colorIndex = 0;
             }
+
             prevChartType = chartType;
             color = colors[colorIndex];
             colorIndex += 1;
+
             return color;
         });
     },

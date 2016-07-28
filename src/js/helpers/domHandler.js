@@ -100,8 +100,9 @@ var domHandler = {
      * @returns {boolean} has class
      */
     hasClass: function(el, findClass) {
-        var classNames = this._getClassNames(el),
-            index = tui.util.inArray(findClass, classNames);
+        var classNames = this._getClassNames(el);
+        var index = tui.util.inArray(findClass, classNames);
+
         return index > -1;
     },
 

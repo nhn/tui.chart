@@ -24,6 +24,8 @@ This application supports drawing a chart on web browser.<br>
   * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
 * Heatmap Chart <br>
   * A heatmap chart is a graphical representation of data where the individual values contained in a matrix are represented as colors.
+* Treemap Chart <br>
+  * A treemap chart is graphical representation of hierarchical data by using rectangles.
 
 ## Sample Images
 
@@ -41,11 +43,13 @@ This application supports drawing a chart on web browser.<br>
 
 ![pie chart](https://cloud.githubusercontent.com/assets/2888775/15598910/e6268796-2419-11e6-9c6d-1b95719e59f7.png)
 
-![combo chart](https://cloud.githubusercontent.com/assets/2888775/15598911/e6273be6-2419-11e6-8671-7e45a6fc3203.png)
+![combo chart](https://cloud.githubusercontent.com/assets/2888775/17202538/d4344e4c-54d4-11e6-9889-350d30599866.png)
 
 ![map chart](https://cloud.githubusercontent.com/assets/2888775/14169302/e228221a-f761-11e5-88ed-20e9a2aba45c.png)
 
 ![heatmap chart](https://cloud.githubusercontent.com/assets/2888775/16477485/fa47bbc8-3ecc-11e6-937b-8f7ff3f8e3e3.png)
+
+![treemap chart](https://cloud.githubusercontent.com/assets/2888775/17202722/e6a2b66c-54d5-11e6-98af-be113c589a3f.png)
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
@@ -63,7 +67,7 @@ This application supports drawing a chart on web browser.<br>
 
 ## Test environment
 * PC
-	* IE7~11
+	* IE8~11
 	* Chrome
 	* Firefox
 

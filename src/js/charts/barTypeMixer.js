@@ -82,6 +82,7 @@ var barTypeMixer = {
                 result.push(seriesDatum);
             }
         });
+
         return result;
     },
 
@@ -112,15 +113,6 @@ var barTypeMixer = {
         var stacks = rawDataHandler.pickStacks(rawSeriesData);
 
         return rawDataHandler.sortSeriesData(rawSeriesData, stacks);
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

@@ -30,6 +30,7 @@ var raphaelRenderUtil = {
                 fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
             }
         });
+
         return ['M'].concat(fromPoint).concat('L').concat(toPoint);
     },
 
@@ -117,6 +118,20 @@ var raphaelRenderUtil = {
     },
 
     /**
+     * Update rect bound
+     * @param {object} rect raphael object
+     * @param {{left: number, top: number, width: number, height: number}} bound bound
+     */
+    updateRectBound: function(rect, bound) {
+        rect.attr({
+            x: bound.left,
+            y: bound.top,
+            width: bound.width,
+            height: bound.height
+        });
+    },
+
+    /**
      * Render items of line type chart.
      * @param {Array.<Array.<object>>} groupItems group items
      * @param {function} funcRenderItem function
@@ -147,6 +162,7 @@ var raphaelRenderUtil = {
             var newHd = hd + (hd * lum);
 
             newHd = Math.round(Math.min(Math.max(0, newHd), 255)).toString(16);
+
             return tui.chart.renderUtil.formatToZeroFill(newHd, 2);
         }).join('');
 

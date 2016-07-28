@@ -24,6 +24,8 @@ var chartConst = {
     CLASS_NAME_SERIES_LABEL: 'tui-chart-series-label',
     /** @type {string} */
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
+    /** @type {string} */
+    CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
     /** chart types
      * @type {string}
      */
@@ -39,6 +41,8 @@ var chartConst = {
     /** @type {string} */
     CHART_TYPE_COLUMN_LINE_COMBO: 'columnLineCombo',
     /** @type {string} */
+    CHART_TYPE_LINE_AREA_COMBO: 'lineAreaCombo',
+    /** @type {string} */
     CHART_TYPE_PIE_DONUT_COMBO: 'pieDonutCombo',
     /** @type {string} */
     CHART_TYPE_PIE: 'pie',
@@ -48,6 +52,8 @@ var chartConst = {
     CHART_TYPE_SCATTER: 'scatter',
     /** @type {string} */
     CHART_TYPE_HEATMAP: 'heatmap',
+    /** @type {string} */
+    CHART_TYPE_TREEMAP: 'treemap',
     /** @type {string} */
     CHART_TYPE_MAP: 'map',
     /** chart padding */
@@ -91,8 +97,36 @@ var chartConst = {
     NORMAL_STACK_TYPE: 'normal',
     /** @type {string} */
     PERCENT_STACK_TYPE: 'percent',
+    /** default stack
+     * @type {string}
+     */
     DEFAULT_STACK: '___DEFAULT___STACK___',
+    /** dummy key
+     * @type {string}
+     */
     DUMMY_KEY: '___DUMMY___KEY___',
+    /** root id of treemap
+     * @type {string}
+     */
+    TREEMAP_ROOT_ID: '___TUI_TREEMAP_ROOT___',
+    /** id prefix of treemap
+     * @type {string}
+     */
+    TREEMAP_ID_PREFIX: '___TUI_TREEMAP_ID___',
+    /** prefix for caching seriesItems
+     * @type {string}
+     */
+    TREEMAP_DEPTH_KEY_PREFIX: '___TUI_TREEMAP_DEPTH___',
+    /** @type {string} */
+    TREEMAP_PARENT_KEY_PREFIX: '___TUI_TREEMAP_PARENT___',
+    /** @type {string} */
+    TREEMAP_LEAF_KEY_PREFIX: '___TUI_TREEMAP_LEAF___',
+    /** @type {string} */
+    TREEMAP_LIMIT_DEPTH_KEY_PREFIX: '___TUI_TREEMAP_LIMIT_DEPTH___',
+    /** default border color for treemap chart
+     * @type {string}
+     */
+    TREEMAP_DEFAULT_BORDER: '#ccc',
     /** empty axis label */
     EMPTY_AXIS_LABEL: '',
     /** angel */

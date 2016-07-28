@@ -43,6 +43,7 @@ var calculator = {
         } else {
             limit.min = min - iodValue + saveMin;
         }
+
         return limit;
     },
 
@@ -70,6 +71,7 @@ var calculator = {
                 if (num > 1) {
                     standard = num;
                 }
+
                 return false;
             } else if (num === chartConst.AXIS_LAST_STANDARD_MULTIPLE_NUM) {
                 standard = num;
@@ -188,6 +190,7 @@ var calculator = {
         var plusValues = tui.util.filter(values, function(value) {
             return value > 0;
         });
+
         return tui.util.sum(plusValues);
     },
 
@@ -200,6 +203,7 @@ var calculator = {
         var minusValues = tui.util.filter(values, function(value) {
             return value < 0;
         });
+
         return tui.util.sum(minusValues);
     },
 
@@ -211,6 +215,18 @@ var calculator = {
      */
     makePercentageValue: function(value, totalValue) {
         return value / totalValue * 100;
+    },
+
+    /**
+     * Calculate ratio for making bound.
+     * @param {number} value - value
+     * @param {number} divNumber - number for division
+     * @param {number} subNumber - number for subtraction
+     * @param {number} baseRatio - base ratio
+     * @returns {number}
+     */
+    calculateRatio: function(value, divNumber, subNumber, baseRatio) {
+        return ((value - subNumber) / divNumber) * baseRatio;
     }
 };
 

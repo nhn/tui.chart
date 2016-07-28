@@ -23,7 +23,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
 
         return {
             groupBounds: this.groupBounds,
-            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.seriesName)
+            seriesDataModel: this._getSeriesDataModel()
         };
     },
 
@@ -35,9 +35,9 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _makeBarGutter: function(groupSize, itemCount) {
-        var baseSize = groupSize / (itemCount + 1) / 2,
-            standardSize = 6,
-            gutter;
+        var baseSize = groupSize / (itemCount + 1) / 2;
+        var standardSize = 6;
+        var gutter;
 
         if (baseSize <= 2) {
             gutter = 0;
@@ -46,6 +46,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
         } else {
             gutter = 4;
         }
+
         return gutter;
     },
 
@@ -70,9 +71,11 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeOptionSize: function(barSize, optionBarWidth) {
         var optionsSize = 0;
+
         if (optionBarWidth) {
             optionsSize = Math.min(barSize, optionBarWidth);
         }
+
         return optionsSize;
     },
 
@@ -111,7 +114,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      */
     _makeBaseDataForMakingBound: function(baseGroupSize, baseBarSize) {
         var isStackType = predicate.isValidStackOption(this.options.stackType);
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var groupSize = baseGroupSize / seriesDataModel.getGroupCount();
         var firstAdditionalPosition = 0;
         var itemCount, barGutter, barSize, optionSize, additionalPosition, basePosition;
@@ -154,7 +157,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
      * @private
      */
     _renderNormalSeriesLabel: function(labelContainer) {
-        var sdm = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var sdm = this._getSeriesDataModel();
         var boundsSet = this.seriesData.groupBounds;
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
@@ -166,7 +169,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             positionsSet = labelHelper.boundsToLabelPositionsForColumnChart(sdm, boundsSet, labelTheme);
         }
 
-        html = labelHelper.makeLabelsHtmlForBoundType(labelContainer, sdm, positionsSet, labelTheme, selectedIndex);
+        html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
 
         labelContainer.innerHTML = html;
     },
@@ -179,7 +182,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _makeSumValues: function(values) {
         var sum = tui.util.sum(values);
 
-        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'seires');
+        return renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), this.chartType, 'seires');
     },
 
     /**
@@ -253,7 +256,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
     _renderStackedSeriesLabel: function(elSeriesLabelArea) {
         var self = this;
         var groupBounds = this.seriesData.groupBounds;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, this.theme.label);
         var html = seriesDataModel.map(function(seriesGroup, index) {
             var labelsHtml = self._makeStackedLabelsHtml({
@@ -262,6 +265,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
                 bounds: groupBounds[index],
                 labelHeight: labelHeight
             });
+
             return labelsHtml;
         }).join('');
 

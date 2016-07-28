@@ -19,18 +19,16 @@ var MapChartTooltip = tui.util.defineClass(TooltipBase, /** @lends MapChartToolt
     /**
      * Map chart tooltip component.
      * @constructs MapChartTooltip
-     * @param {object} params parameters
-     *      @param {BoundsMaker} params.boundsMaker bounds maker
-     *      @param {object} params.theme axis theme
+     * @override
      */
-    init: function(params) {
+    init: function() {
         /**
          * Map model
          * @type {MapChartMapModel}
          */
         this.mapModel = null;
 
-        TooltipBase.call(this, params);
+        TooltipBase.apply(this, arguments);
     },
 
     /**

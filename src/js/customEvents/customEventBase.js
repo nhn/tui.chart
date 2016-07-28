@@ -10,6 +10,7 @@ var TickBaseCoordinateModel = require('./tickBaseCoordinateModel');
 var BoundsBaseCoordinateModel = require('./boundsBaseCoordinateModel');
 var chartConst = require('../const');
 var eventListener = require('../helpers/eventListener');
+var predicate = require('../helpers/predicate');
 var dom = require('../helpers/domHandler');
 var renderUtil = require('../helpers/renderUtil');
 
@@ -26,11 +27,19 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      *      @param {boolean} params.isVertical whether vertical or not
      */
     init: function(params) {
+        var isLineTypeChart;
+
         /**
          * type of chart
          * @type {string}
          */
         this.chartType = params.chartType;
+
+        /**
+         * chartTypes is available in combo chart
+         * @type {Array.<string>}
+         */
+        this.chartTypes = params.chartTypes;
 
         /**
          * whether vertical or not
@@ -63,10 +72,45 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.prevClientPosition = null;
 
         /**
-         * previous found data.
+         * previous found data
          * @type {null | object}
          */
         this.prevFoundData = null;
+
+
+        isLineTypeChart = predicate.isLineTypeChart(this.chartType, this.chartTypes);
+
+        /**
+         * expand size
+         * @type {number}
+         */
+        this.expandSize = isLineTypeChart ? chartConst.SERIES_EXPAND_SIZE : 0;
+
+        /**
+         * container bound
+         * @type {null | {left: number, top: number, right: number, bottom: number}}
+         */
+        this.containerBound = null;
+    },
+
+    /**
+     * Get bound for rendering.
+     * @returns {{
+     *      dimension: {width: number, height: number},
+     *      position: {left: number, top: number}
+     * }}
+     * @private
+     */
+    _getRenderingBound: function() {
+        var renderingBound;
+
+        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
+            renderingBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
+        } else {
+            renderingBound = this.boundsMaker.getBound('customEvent');
+        }
+
+        return renderingBound;
     },
 
     /**
@@ -76,14 +120,15 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _renderCustomEventArea: function(customEventContainer, data) {
-        var expandedBound, tbcm;
+        var dimension = this.boundsMaker.getDimension('customEvent');
+        var renderingBound, tbcm;
 
-        this.dimension = this.boundsMaker.getDimension('customEvent');
-        tbcm = new TickBaseCoordinateModel(this.dimension, data.tickCount, this.chartType, this.isVertical);
+        this.dimension = dimension;
+        tbcm = new TickBaseCoordinateModel(dimension, data.tickCount, this.chartType, this.isVertical, this.chartTypes);
         this.tickBaseCoordinateModel = tbcm;
-        expandedBound = renderUtil.expandBound(this.boundsMaker.getBound('customEvent'));
-        renderUtil.renderDimension(customEventContainer, expandedBound.dimension);
-        renderUtil.renderPosition(customEventContainer, expandedBound.position);
+        renderingBound = this._getRenderingBound();
+        renderUtil.renderDimension(customEventContainer, renderingBound.dimension);
+        renderUtil.renderPosition(customEventContainer, renderingBound.position);
     },
 
     /**
@@ -97,7 +142,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this._renderCustomEventArea(container, data);
         this.attachEvent(container);
         this.customEventContainer = container;
+
         return container;
+    },
+
+    /**
+     * Get container bound.
+     * @returns {ClientRect}
+     * @private
+     */
+    _getContainerBound: function() {
+        if (!this.containerBound) {
+            this.containerBound = this.customEventContainer.getBoundingClientRect();
+        }
+
+        return this.containerBound;
     },
 
     /**
@@ -121,6 +180,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data - data for resizing
      */
     resize: function(data) {
+        this.containerBound = null;
         this.rerender(data);
     },
 
@@ -148,10 +208,16 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         var bound = target.getBoundingClientRect();
         var layerX = clientX - bound.left;
         var layerY = clientY - bound.top;
-        var groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+        var groupIndex;
 
-        layerX += chartConst.SERIES_EXPAND_SIZE;
-        layerY += chartConst.SERIES_EXPAND_SIZE;
+        if (predicate.isTreemapChart(this.chartType)) {
+            groupIndex = 0;
+        } else {
+            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
+            layerX += chartConst.SERIES_EXPAND_SIZE;
+            layerY += chartConst.SERIES_EXPAND_SIZE;
+        }
+
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
     },
 
@@ -222,9 +288,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement,
-            clientX = e.clientX - chartConst.SERIES_EXPAND_SIZE,
-            foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+        var target = e.target || e.srcElement;
+        var clientX = e.clientX - this.expandSize;
+        var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
         } else if (foundData) {

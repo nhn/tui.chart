@@ -26,6 +26,7 @@ var pluginRaphael = {
     bubble: CoordinateTypeChart,
     scatter: CoordinateTypeChart,
     heatmap: BoxTypeChart,
+    treemap: BoxTypeChart,
     map: MapChart,
     mapLegend: MapLegend,
     circleLegend: CircleLegend

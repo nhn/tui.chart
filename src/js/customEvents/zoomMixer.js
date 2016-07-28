@@ -154,19 +154,6 @@ var zoomMixer = {
     },
 
     /**
-     * Get container bound.
-     * @returns {ClientRect}
-     * @private
-     */
-    _getContainerBound: function() {
-        if (!this.containerBound) {
-            this.containerBound = this.customEventContainer.getBoundingClientRect();
-        }
-
-        return this.containerBound;
-    },
-
-    /**
      * Calculate layer position by client position.
      * @param {number} clientX - clientX
      * @param {number} [clientY] - clientY
@@ -177,17 +164,18 @@ var zoomMixer = {
     _calculateLayerPosition: function(clientX, clientY, checkLimit) {
         var bound = this._getContainerBound();
         var layerPosition = {};
+        var expandSize = this.expandSize;
         var maxLeft, minLeft;
 
         checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
 
         if (checkLimit) {
-            maxLeft = bound.right - chartConst.SERIES_EXPAND_SIZE;
-            minLeft = bound.left + chartConst.SERIES_EXPAND_SIZE;
+            maxLeft = bound.right - expandSize;
+            minLeft = bound.left + expandSize;
             clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
         }
 
-        layerPosition.x = clientX - chartConst.SERIES_EXPAND_SIZE - bound.left;
+        layerPosition.x = clientX - bound.left;
 
         if (!tui.util.isUndefined(clientY)) {
             layerPosition.y = clientY - bound.top;
@@ -399,8 +387,9 @@ var zoomMixer = {
 
         if (tui.util.isNull(this.dragStartIndexes)) {
             target = e.target || e.srcElement;
-            if (dom.hasClass(target, 'tui-chart-reset-zoom-btn')) {
+            if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
                 this._hideTooltip();
+                this.prevDistanceOfRange = null;
                 this.fire('resetZoom');
             } else {
                 CustomEventBase.prototype._onClick.call(this, e);
@@ -424,7 +413,7 @@ var zoomMixer = {
      * @private
      */
     _renderResetZoomBtn: function() {
-        var resetBtn = dom.create('DIV', 'tui-chart-reset-zoom-btn');
+        var resetBtn = dom.create('DIV', chartConst.CLASS_NAME_RESET_ZOOM_BTN);
         resetBtn.innerHTML = 'Reset Zoom';
 
         return resetBtn;

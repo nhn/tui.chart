@@ -10,6 +10,7 @@
 
 var chartConst = require('../const');
 var SeriesDataModel = require('../dataModels/seriesDataModel');
+var SeriesDataModelForTreemap = require('../dataModels/seriesDataModelForTreemap');
 var SeriesGroup = require('./seriesGroup');
 var rawDataHandler = require('../helpers/rawDataHandler');
 var predicate = require('../helpers/predicate');
@@ -128,6 +129,22 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Filter seriesData by index range.
+     * @param {Array.<{data: Array}>} seriesData - series data
+     * @param {number} startIndex - start index
+     * @param {number} endIndex - end index
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _filterSeriesDataByIndexRange: function(seriesData, startIndex, endIndex) {
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
+            seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
+        });
+
+        return seriesData;
+    },
+
+    /**
      * Filter raw data by index range.
      * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
      * @param {Array.<number>} indexRange - index range for zoom
@@ -135,13 +152,18 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _filterRawDataByIndexRange: function(rawData, indexRange) {
+        var self = this;
         var startIndex = indexRange[0];
         var endIndex = indexRange[1];
 
-        rawData.series = tui.util.map(rawData.series, function(seriesData) {
-            seriesData.data = seriesData.data.slice(startIndex, endIndex + 1);
-            return seriesData;
-        });
+        if (tui.util.isArray(rawData.series)) {
+            rawData.series = this._filterSeriesDataByIndexRange(rawData.series, startIndex, endIndex);
+        } else {
+            tui.util.forEach(rawData.series, function(seriesDataSet, seriesName) {
+                rawData.series[seriesName] = self._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+            });
+        }
+
         rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
 
         return rawData;
@@ -305,6 +327,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else {
             tui.util.forEach(this.categoriesMap, function(categories) {
                 foundCategories = categories;
+
                 return false;
             });
         }
@@ -319,6 +342,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      */
     getCategoryCount: function(isVertical) {
         var categories = this.getCategories(isVertical);
+
         return categories ? categories.length : 0;
     },
 
@@ -395,12 +419,19 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {SeriesDataModel}
      */
     getSeriesDataModel: function(seriesName) {
-        var rawSeriesData, chartType;
+        var rawSeriesData, chartType, SeriesDataModelClass;
 
         if (!this.seriesDataModelMap[seriesName]) {
             chartType = this.findChartType(seriesName);
             rawSeriesData = this.rawData.series[seriesName] || this.rawData.series;
-            this.seriesDataModelMap[seriesName] = new SeriesDataModel(rawSeriesData, chartType,
+
+            if (predicate.isTreemapChart(this.chartType)) {
+                SeriesDataModelClass = SeriesDataModelForTreemap;
+            } else {
+                SeriesDataModelClass = SeriesDataModel;
+            }
+
+            this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
                 this.options, this.getFormatFunctions());
         }
 
@@ -436,15 +467,17 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Find raw serise datum by name.
-     * @param {string} name - name
-     * @returns {null | object}
+     * Find raw series datum by name.
+     * @param {string} name - legend name
+     * @param {string} [seriesName] - series name
+     * @returns {object}
      * @private
      */
-    _findRawSeriesDatumByName: function(name) {
+    _findRawSeriesDatumByName: function(name, seriesName) {
         var foundSeriesDatum = null;
+        var seriesData = seriesName ? this.rawData.series[seriesName] : this.rawData.series;
 
-        tui.util.forEachArray(this.rawData.series, function(seriesDatum) {
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
             var isEqual = seriesDatum.name === name;
 
             if (isEqual) {
@@ -458,6 +491,27 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Push values to series of originalRawData and series of rawData.
+     * @param {Array.<{name: string, data: Array}>} seriesData - series data
+     * @param {Array} values - values
+     * @param {string} [seriesName] - series name
+     * @private
+     */
+    _pushValues: function(seriesData, values, seriesName) {
+        var self = this;
+
+        tui.util.forEachArray(seriesData, function(seriesDatum, index) {
+            var value = values[index];
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+            seriesDatum.data.push(value);
+            if (rawSeriesDatum) {
+                rawSeriesDatum.data.push(value);
+            }
+        });
+    },
+
+    /**
      * Push series data.
      * @param {Array.<number>} values - values
      * @private
@@ -465,13 +519,30 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _pushSeriesData: function(values) {
         var self = this;
 
-        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum, index) {
-            var value = values[index];
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
+        if (tui.util.isArray(this.originalRawData.series)) {
+            this._pushValues(this.originalRawData.series, values);
+        } else {
+            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+                self._pushValues(seriesData, values[seriesName], seriesName);
+            });
+        }
+    },
 
-            seriesDatum.data.push(value);
+    /**
+     * Shift values.
+     * @param {Array.<{name: string, data: Array}>} seriesData - series data
+     * @param {string} seriesName - series name
+     * @private
+     */
+    _shiftValues: function(seriesData, seriesName) {
+        var self = this;
+
+        tui.util.forEachArray(seriesData, function(seriesDatum) {
+            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+            seriesDatum.data.shift();
             if (rawSeriesDatum) {
-                rawSeriesDatum.data.push(value);
+                rawSeriesDatum.data.shift();
             }
         });
     },
@@ -483,14 +554,13 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     _shiftSeriesData: function() {
         var self = this;
 
-        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name);
-
-            seriesDatum.data.shift();
-            if (rawSeriesDatum) {
-                rawSeriesDatum.data.shift();
-            }
-        });
+        if (tui.util.isArray(this.originalRawData.series)) {
+            this._shiftValues(this.originalRawData.series);
+        } else {
+            tui.util.forEach(this.originalRawData.series, function(seriesData, seriesName) {
+                self._shiftValues(seriesData, seriesName);
+            });
+        }
     },
 
     /**
@@ -619,6 +689,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         if (!this.seriesGroups) {
             this.seriesGroups = this._makeSeriesGroups();
         }
+
         return this.seriesGroups;
     },
 
@@ -651,6 +722,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else {
             values = this.getSeriesDataModel(chartType).getValues(valueType);
         }
+
         return values;
     },
 
@@ -695,18 +767,19 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var maxValue = this.getMaxValue(chartType, valueType);
         var formatFunctions = this.getFormatFunctions();
 
-        return renderUtil.formatValue(maxValue, formatFunctions, areaType, valueType);
+        return renderUtil.formatValue(maxValue, formatFunctions, chartType, areaType, valueType);
     },
 
     /**
      * Traverse SeriesGroup of all SeriesDataModel, and executes iteratee function.
      * @param {function} iteratee iteratee function
+     * @param {boolean} [isPivot] - whether pivot or not
      */
-    eachBySeriesGroup: function(iteratee) {
+    eachBySeriesGroup: function(iteratee, isPivot) {
         this._eachByAllSeriesDataModel(function(seriesDataModel, chartType) {
             seriesDataModel.each(function(seriesGroup, groupIndex) {
                 iteratee(seriesGroup, groupIndex, chartType);
-            });
+            }, isPivot);
         });
     },
 
@@ -754,6 +827,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         if (!this.legendLabels) {
             this.legendLabels = this._pickLegendLabels();
         }
+
         return this.legendLabels[chartType] || this.legendLabels;
     },
 
@@ -933,6 +1007,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         } else if (this._isZeroFill(format)) {
             len = format.length;
             funcs = [tui.util.bind(this._formatToZeroFill, this, len)];
+
             return funcs;
         }
 
@@ -1058,6 +1133,15 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         this._addStartValueToAllSeriesItem(limit, chartType);
         seriesDataModel.addDataRatios(limit, stackType);
+    },
+
+    /**
+     * Add data ratios for treemap chart.
+     * @param {{min: number, max: number}} limit - limit
+     * @param {string} chartType - chart type
+     */
+    addDataRatiosForTreemapChart: function(limit, chartType) {
+        this.getSeriesDataModel(chartType).addDataRatios(limit);
     }
 });
 

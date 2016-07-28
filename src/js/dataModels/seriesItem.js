@@ -7,8 +7,9 @@
 
 'use strict';
 
-var chartConst = require('../const'),
-    renderUtil = require('../helpers/renderUtil');
+var chartConst = require('../const');
+var renderUtil = require('../helpers/renderUtil');
+var calculator = require('../helpers/calculator');
 
 var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
     /**
@@ -18,8 +19,15 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @param {number} value - value
      * @param {?string} stack - stack
      * @param {?Array.<function>} formatFunctions - format functions
+     * @param {string} chartType - type of chart
      */
-    init: function(value, stack, formatFunctions) {
+    init: function(value, stack, formatFunctions, chartType) {
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = chartType;
+
         /**
          * for group stack option.
          * @type {string}
@@ -107,11 +115,13 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _initValues: function(value) {
-        var values = this._createValues(value),
-            hasStart = values.length > 1;
+        var values = this._createValues(value);
+        var areaType = 'makingSeriesLabel';
+        var hasStart = values.length > 1;
 
         this.value = this.end = values[0];
-        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions, 'series');
+        this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
+        this.endLabel = this.label;
 
         if (hasStart) {
             this.addStart(values[1], true);
@@ -151,7 +161,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         }
 
         this.start = value;
-        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, 'series');
+        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'series');
     },
 
     /**
@@ -160,19 +170,6 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      */
     _updateFormattedValueforRange: function() {
         this.label = this.startLabel + ' ~ ' + this.endLabel;
-    },
-
-    /**
-     * Calculate ratio for making bound.
-     * @param {number} value - value
-     * @param {number} divNumber - number for division
-     * @param {number} subNumber - number for subtraction
-     * @param {number} baseRatio - base ratio
-     * @returns {number}
-     * @private
-     */
-    _calculateRatio: function(value, divNumber, subNumber, baseRatio) {
-        return ((value - subNumber) / divNumber) * baseRatio;
     },
 
     /**
@@ -186,10 +183,10 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         baseRatio = baseRatio || 1;
         subNumber = subNumber || 0;
 
-        this.ratio = this.endRatio = this._calculateRatio(this.value, divNumber, subNumber, baseRatio);
+        this.ratio = this.endRatio = calculator.calculateRatio(this.value, divNumber, subNumber, baseRatio);
 
         if (!tui.util.isNull(this.start)) {
-            this.startRatio = this._calculateRatio(this.start, divNumber, subNumber, baseRatio);
+            this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
             this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
         }
     },

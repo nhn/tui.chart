@@ -369,6 +369,7 @@ var MapChartMapModel = tui.util.defineClass(/** @lends MapChartMapModel.prototyp
             bottoms = tui.util.map(mapData, function(datum) {
                 return datum.bound.position.top + datum.bound.dimension.height;
             });
+
         return {
             width: tui.util.max(rights) - tui.util.min(lefts),
             height: tui.util.max(bottoms) - tui.util.min(tops)

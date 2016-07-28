@@ -184,12 +184,15 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @returns {Array.<string|number>|*}
      */
     getFormattedScaleValues: function() {
+        var chartType = this.chartType;
+        var areaType = this.areaType;
+        var valueType = this.valueType;
         var values, formatFunctions;
 
         if (!this.formattedValues) {
             values = this._getScaleValues();
             formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions, this.areaType, this.valueType);
+            this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
         }
 
         return this.formattedValues;
@@ -218,16 +221,16 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Make base values.
+     * Make base values for making axis scale.
      * @returns {Array.<number>} base values
      * @private
      */
     _makeBaseValues: function() {
         var baseValues;
 
-        if (predicate.isMapChart(this.chartType)) {
-            baseValues = this.dataProcessor.getValues();
-        } else if (this.isSingleYAxis) {
+        if (predicate.isTreemapChart(this.chartType)) {
+            baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
+        } else if (predicate.isMapChart(this.chartType) || this.isSingleYAxis) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
@@ -411,6 +414,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         } else {
             normalized = tui.util.subtraction(min, (min >= 0 ? mod : step + mod));
         }
+
         return normalized;
     },
 
@@ -434,6 +438,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             divideDiff = Math.floor(maxDiff / step);
             normalizedMax += step * (modDiff > 0 ? divideDiff + 1 : divideDiff);
         }
+
         return normalizedMax;
     },
 
@@ -448,6 +453,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _normalizeLimit: function(limit, step, valueCount) {
         limit.min = this._normalizeMin(limit.min, step);
         limit.max = this._makeNormalizedMax(limit, step, valueCount);
+
         return limit;
     },
 
@@ -516,6 +522,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (isEvenStep && diffTwice <= diffOrg) {
             step = step / 2;
         }
+
         return step;
     },
 

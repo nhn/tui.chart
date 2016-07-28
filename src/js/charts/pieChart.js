@@ -88,6 +88,6 @@ var PieChart = tui.util.defineClass(ChartBase, /** @lends PieChart.prototype */ 
     }
 });
 
-pieTypeMixer.mixin(PieChart);
+tui.util.extend(PieChart.prototype, pieTypeMixer);
 
 module.exports = PieChart;

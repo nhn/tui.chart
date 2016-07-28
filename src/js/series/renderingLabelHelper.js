@@ -68,7 +68,7 @@ var renderingLabelHelper = {
         var value = seriesItem.value;
         var isOppositeSide = value >= 0;
         var positionMap = {
-            end: makePosition(bound, labelHeight, seriesItem.endLabel, theme, isOppositeSide)
+            end: makePosition(bound, labelHeight, seriesItem.endLabel || seriesItem.label, theme, isOppositeSide)
         };
 
         if (seriesItem.isRange) {
@@ -85,13 +85,15 @@ var renderingLabelHelper = {
      * @param {Array.<Array.<{left: number, top: number, width: number, height: number}>>} boundsSet - bounds set
      * @param {object} theme - theme for series label
      * @param {function} [makePosition] - function for making position of label
+     * @param {boolean} [isPivot] - whether pivot or not
      * @returns {Array.<Object>}
      */
-    boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition) {
+    boundsToLabelPositions: function(seriesDataModel, boundsSet, theme, makePosition, isPivot) {
         var self = this;
         var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
 
         makePosition = makePosition || tui.util.bind(this._makePositionForBoundType, this);
+        isPivot = !!isPivot;
 
         return seriesDataModel.map(function(seriesGroup, groupIndex) {
             var bounds = boundsSet[groupIndex];
@@ -101,7 +103,7 @@ var renderingLabelHelper = {
 
                 return self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition);
             });
-        });
+        }, isPivot);
     },
 
     /**
@@ -197,7 +199,7 @@ var renderingLabelHelper = {
 
         tplCssText = tplCssText || seriesTemplate.tplCssText;
 
-        if (!tui.util.isNull(selectedIndex) && (selectedIndex !== index)) {
+        if (tui.util.isExisty(selectedIndex) && (selectedIndex !== index)) {
             cssObj.opacity = renderUtil.makeOpacityCssText(chartConst.SERIES_LABEL_OPACITY);
         } else {
             cssObj.opacity = '';
@@ -207,7 +209,7 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make html about series label.
+     * Make html for series label.
      * @param {{left: number, top: number}} position - position for rendering label
      * @param {string} label - label of SeriesItem
      * @param {object} theme - theme for series label
@@ -225,6 +227,7 @@ var renderingLabelHelper = {
         if (isStart) {
             rangeLabelAttribute = ' data-range="true"';
         }
+
         return seriesTemplate.tplSeriesLabel({
             label: label,
             cssText: cssText,
@@ -233,15 +236,15 @@ var renderingLabelHelper = {
     },
 
     /**
-     * Make
-     * @param {HTMLElement} container - container of label area
+     * Make labels html for bound type chart.
      * @param {SeriesDataModel} seriesDataModel - series data model
      * @param {Array.<Array.<{left: number, top: number}>>} positionsSet - positions set
      * @param {object} theme - theme for series label
      * @param {number} selectedIndex - selected index of legends
+     * @param {boolean} [isPivot] - whether pivot or not
      * @returns {*}
      */
-    makeLabelsHtmlForBoundType: function(container, seriesDataModel, positionsSet, theme, selectedIndex) {
+    makeLabelsHtmlForBoundType: function(seriesDataModel, positionsSet, theme, selectedIndex, isPivot) {
         var makeSeriesLabelHtml = tui.util.bind(this.makeSeriesLabelHtml, this);
         var labelsHtml = seriesDataModel.map(function(seriesGroup, groupIndex) {
             return seriesGroup.map(function(seriesItem, index) {
@@ -254,6 +257,37 @@ var renderingLabelHelper = {
 
                 return html;
             }).join('');
+        }, !!isPivot).join('');
+
+        return labelsHtml;
+    },
+
+    /**
+     * Make labels html for treemap chart.
+     * @param {Array.<SeriesItem>} seriesItems - seriesItems
+     * @param {object.<string, {left: number, top: number, width: number, height: number}>} boundMap - bound map
+     * @param {object} theme - theme for series label
+     * @param {function} shouldDimmed - returns whether should dimmed or not
+     * @returns {string}
+     */
+    makeLabelsHtmlForTreemap: function(seriesItems, boundMap, theme, shouldDimmed) {
+        var self = this;
+        var labelHeight = renderUtil.getRenderedLabelHeight(chartConst.MAX_HEIGHT_WORLD, theme);
+        var makePosition = tui.util.bind(this._makePositionForBoundType, this);
+
+        var labelsHtml = tui.util.map(seriesItems, function(seriesItem, index) {
+            var bound = boundMap[seriesItem.id];
+            var html = '';
+            var position, compareIndex;
+
+            if (bound) {
+                position = self._makePositionMap(seriesItem, bound, labelHeight, theme, makePosition).end;
+                compareIndex = shouldDimmed(seriesItem) ? -1 : null;
+
+                html = self.makeSeriesLabelHtml(position, seriesItem.label, theme, index, compareIndex);
+            }
+
+            return html;
         }).join('');
 
         return labelsHtml;

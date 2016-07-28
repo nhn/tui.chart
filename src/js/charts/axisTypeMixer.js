@@ -173,7 +173,7 @@ var axisTypeMixer = {
      * @private
      */
     _makeAxisData: function(axisScaleMaker, options, isVertical, isPositionRight) {
-        var aligned = predicate.isLineTypeChart(this.chartType);
+        var aligned = predicate.isLineTypeChart(this.chartType, this.chartTypes);
         var axisData;
 
         if (axisScaleMaker) {
@@ -294,6 +294,7 @@ var axisTypeMixer = {
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
+            chartTypes: this.chartTypes,
             zoomable: tui.util.pick(this.options.series, 'zoomable')
         });
     },
@@ -400,15 +401,6 @@ var axisTypeMixer = {
         }
 
         this._attachCustomEventForSeriesSelection(customEvent, serieses);
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

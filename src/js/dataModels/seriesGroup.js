@@ -205,6 +205,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
 
         this.each(function(seriesItem) {
             hasRangeData = seriesItem.isRange;
+
             return !hasRangeData;
         });
 
@@ -229,7 +230,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
     },
 
     /**
-     * Traverse items and returns to picked result at item.
+     * Traverse items, and returns to picked result at item.
      * @param {string} key key for pick
      * @returns {Array}
      */
@@ -249,10 +250,20 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
             if (condition(seriesItem)) {
                 foundItem = seriesItem;
             }
+
             return !foundItem;
         });
 
         return foundItem || null;
+    },
+
+    /**
+     * Traverse items, and returns to filter SeriesItems by condition function.
+     * @param {function} condition - condition function
+     * @returns {Array}
+     */
+    filter: function(condition) {
+        return tui.util.filter(this.items, condition);
     }
 });
 

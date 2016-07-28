@@ -173,6 +173,7 @@ var renderUtil = {
      */
     getRenderedLabelWidth: function(label, theme) {
         var labelWidth = this._getRenderedLabelSize(label, theme, 'offsetWidth');
+
         return labelWidth;
     },
 
@@ -185,6 +186,7 @@ var renderUtil = {
      */
     getRenderedLabelHeight: function(label, theme) {
         var labelHeight = this._getRenderedLabelSize(label, theme, 'offsetHeight');
+
         return labelHeight;
     },
 
@@ -220,8 +222,9 @@ var renderUtil = {
      * @private
      */
     getRenderedLabelsMaxWidth: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this),
-            maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        var iteratee = tui.util.bind(this.getRenderedLabelWidth, this);
+        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
         return maxWidth;
     },
 
@@ -233,8 +236,9 @@ var renderUtil = {
      * @returns {number} max height
      */
     getRenderedLabelsMaxHeight: function(labels, theme) {
-        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this),
-            maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        var iteratee = tui.util.bind(this.getRenderedLabelHeight, this);
+        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+
         return maxHeight;
     },
 
@@ -344,8 +348,9 @@ var renderUtil = {
      * }} expended bound
      */
     expandBound: function(bound) {
-        var dimension = bound.dimension,
-            position = bound.position;
+        var dimension = bound.dimension;
+        var position = bound.position;
+
         return {
             dimension: {
                 width: dimension.width + chartConst.SERIES_EXPAND_SIZE * 2,
@@ -373,17 +378,18 @@ var renderUtil = {
      * Format value.
      * @param {number} value value
      * @param {Array.<function>} formatFunctions - functions for format
+     * @param {string} chartType - type of chart
      * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-     * @param {string} [valueType] - value type
+     * @param {string} [valueType] - type of value
      * @returns {string} formatted value
      */
-    formatValue: function(value, formatFunctions, areaType, valueType) {
+    formatValue: function(value, formatFunctions, chartType, areaType, valueType) {
         var fns = [String(value)].concat(formatFunctions || []);
 
         valueType = valueType || 'value';
 
         return tui.util.reduce(fns, function(stored, fn) {
-            return fn(stored, areaType, valueType);
+            return fn(stored, chartType, areaType, valueType);
         });
     },
 
@@ -391,18 +397,21 @@ var renderUtil = {
      * Format values.
      * @param {Array.<number>} values values
      * @param {Array.<function>} formatFunctions functions for format
+     * @param {string} chartType - type of chart
      * @param {string} areaType - type of area like yAxis, xAxis, series, circleLegend
-     * @param {string} valueType - value type
+     * @param {string} valueType - type of value
      * @returns {Array.<string>}
      */
-    formatValues: function(values, formatFunctions, areaType, valueType) {
+    formatValues: function(values, formatFunctions, chartType, areaType, valueType) {
         var formatedValues;
+
         if (!formatFunctions || !formatFunctions.length) {
             return values;
         }
         formatedValues = tui.util.map(values, function(label) {
-            return renderUtil.formatValue(label, formatFunctions, areaType, valueType);
+            return renderUtil.formatValue(label, formatFunctions, chartType, areaType, valueType);
         });
+
         return formatedValues;
     },
 
@@ -547,6 +556,7 @@ var renderUtil = {
                 if (index < lastIndex && (index + 1) % betweenLen === 0) {
                     result.push(comma);
                 }
+
                 return result;
             });
             formattedValue = sign + concat.apply([], values).reverse().join('') + underPointValue;

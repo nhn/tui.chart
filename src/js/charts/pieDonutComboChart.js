@@ -123,9 +123,8 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
      * @override
      */
     onChangeCheckedLegends: function(checkedLegends) {
-        var rawData = this._filterCheckedRawData(this.rawData, checkedLegends);
-
-        this.chartTypes = this._pickChartTypes(rawData.series);
+        var originalRawData = this.dataProcessor.getOriginalRawData();
+        var rawData = this._filterCheckedRawData(originalRawData, checkedLegends);
 
         ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
             seriesNames: this.chartTypes
@@ -133,7 +132,6 @@ var PieDonutComboChart = tui.util.defineClass(ChartBase, /** @lends PieDonutComb
     }
 });
 
-pieTypeMixer.mixin(PieDonutComboChart);
-comboTypeMixer.mixin(PieDonutComboChart);
+tui.util.extend(PieDonutComboChart.prototype, pieTypeMixer, comboTypeMixer);
 
 module.exports = PieDonutComboChart;

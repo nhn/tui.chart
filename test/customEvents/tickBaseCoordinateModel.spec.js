@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for TickBaseCoordinateModel.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -35,18 +35,28 @@ describe('Test for TickBaseCoordinateModel', function() {
 
     describe('_makeData()', function() {
         it('line type 차트의 경우는 _makeLineTypeData의 실행 결과를 반환합니다.', function() {
-            var actual = coordinateModel._makeData({
-                    width: 200
-                }, 3, 'line', true),
-                expected = coordinateModel._makeLineTypeData(200, 3);
+            var actual, expected;
+
+            coordinateModel.isLineType = true;
+
+            actual = coordinateModel._makeData({
+                width: 200
+            }, 3, 'line', true);
+            expected = coordinateModel._makeLineTypeData(200, 3);
+
             expect(actual).toEqual(expected);
         });
 
         it('line type 차트가 아닌 경우는 _makeNormalData 실행 결과를 반환합니다.', function() {
-            var actual = coordinateModel._makeData({
-                    width: 200
-                }, 3, 'column', true),
-                expected = coordinateModel._makeNormalData(200, 3);
+            var actual, expected;
+
+            coordinateModel.isLineType = false;
+
+            actual = coordinateModel._makeData({
+                width: 200
+            }, 3, 'column', true);
+            expected = coordinateModel._makeNormalData(200, 3);
+
             expect(actual).toEqual(expected);
         });
     });
@@ -80,27 +90,35 @@ describe('Test for TickBaseCoordinateModel', function() {
     describe('makeRange()', function() {
         it('라인타입인 경우에는 index에 해당하는 data(limit)의 중간값을 툴팁 범위로 반환합니다.', function() {
             var actual, expected;
+
+            coordinateModel.isLineType = true;
             coordinateModel.data = [
                 {min: -50, max: 50}, {min: 50, max: 150}, {min: 150, max: 250}
             ];
+
             actual = coordinateModel.makeRange(1, 'line');
             expected = {
                 start: 100,
                 end: 100
             };
+
             expect(actual).toEqual(expected);
         });
 
         it('라인타입이 아닌 경우에는 index에 해당하는 data 그대로 반환합니다.', function() {
             var actual, expected;
+
+            coordinateModel.isLineType = false;
             coordinateModel.data = [
                 {min: 0, max: 100}, {min: 100, max: 200}
             ];
+
             actual = coordinateModel.makeRange(0);
             expected = {
                 start: 0,
                 end: 100
             };
+
             expect(actual).toEqual(expected);
         });
     });

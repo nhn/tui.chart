@@ -23,14 +23,14 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * Render function of map chart legend.
      * @param {HTMLElement} container container
      * @param {{width: number, height: number}} dimension legend dimension
-     * @param {MapChartColorModel} colorModel map chart color model
+     * @param {ColorSpectrum} colorSpectrum map chart color model
      * @param {boolean} isHorizontal whether horizontal legend or not
      * @returns {object} paper raphael paper
      */
-    render: function(container, dimension, colorModel, isHorizontal) {
+    render: function(container, dimension, colorSpectrum, isHorizontal) {
         var paper = raphael(container, dimension.width, dimension.height);
 
-        this._renderGradientBar(paper, dimension, colorModel, isHorizontal);
+        this._renderGradientBar(paper, dimension, colorSpectrum, isHorizontal);
         this.wedge = this._renderWedge(paper);
 
         return paper;
@@ -40,11 +40,11 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
      * Render gradient bar.
      * @param {object} paper raphael object
      * @param {{width: number, height: number}} dimension legend dimension
-     * @param {MapChartColorModel} colorModel map chart color model
+     * @param {ColorSpectrum} colorSpectrum map chart color model
      * @param {boolean} isHorizontal whether horizontal legend or not
      * @private
      */
-    _renderGradientBar: function(paper, dimension, colorModel, isHorizontal) {
+    _renderGradientBar: function(paper, dimension, colorSpectrum, isHorizontal) {
         var rectHeight = dimension.height;
         var left = 0;
         var degree, bound;
@@ -67,7 +67,7 @@ var RaphaelMapLegend = tui.util.defineClass(/** @lends RaphaelMapLegend.prototyp
         };
 
         raphaelRenderUtil.renderRect(paper, bound, {
-            fill: degree + '-' + colorModel.start + '-' + colorModel.end,
+            fill: degree + '-' + colorSpectrum.start + '-' + colorSpectrum.end,
             stroke: 'none'
         });
     },

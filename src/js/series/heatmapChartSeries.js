@@ -33,14 +33,14 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var boundsSet = this._makeBounds();
 
         return {
-            colorModel: this.data.colorModel,
+            colorSpectrum: this.data.colorSpectrum,
             groupBounds: boundsSet,
-            seriesDataModel: this.dataProcessor.getSeriesDataModel(this.seriesName)
+            seriesDataModel: this._getSeriesDataModel()
         };
     },
 
     /**
-     * Make bounds for Heatmap chart.
+     * Make bound for graph rendering.
      * @param {number} blockWidth - block width
      * @param {number} blockHeight - block height
      * @param {number} x - x index
@@ -52,6 +52,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
         var height = this.boundsMaker.getDimension('series').height;
         var left = (blockWidth * x) + chartConst.SERIES_EXPAND_SIZE;
         var top = height - (blockHeight * (y + 1)) + chartConst.SERIES_EXPAND_SIZE;
+
         return {
             end: {
                 left: left,
@@ -63,13 +64,13 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
     },
 
     /**
-     * Make bounds for scatter chart.
+     * Make bounds for graph rendering.
      * @returns {Array.<Array.<{left: number, top: number, radius: number}>>} positions
      * @private
      */
     _makeBounds: function() {
         var self = this;
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var dimension = this.boundsMaker.getDimension('series');
         var blockWidth = dimension.width / this.dataProcessor.getCategoryCount(false);
         var blockHeight = dimension.height / this.dataProcessor.getCategoryCount(true);
@@ -86,7 +87,7 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
      * @param {{indexes: {groupIndex: number, index: number}}} params - parameters
      */
     onShowTooltip: function(params) {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var seriesDataModel = this._getSeriesDataModel();
         var indexes = params.indexes;
         var ratio = seriesDataModel.getSeriesItem(indexes.groupIndex, indexes.index).ratio;
 
@@ -99,35 +100,26 @@ var HeatmapChartSeries = tui.util.defineClass(Series, /** @lends HeatmapChartSer
      * @private
      */
     _renderSeriesLabel: function(labelContainer) {
-        var sdm = this.dataProcessor.getSeriesDataModel(this.seriesName);
+        var sdm = this._getSeriesDataModel();
         var boundsSet = this.seriesData.groupBounds;
         var labelTheme = this.theme.label;
         var selectedIndex = this.selectedLegendIndex;
         var positionsSet = labelHelper.boundsToLabelPositions(sdm, boundsSet, labelTheme);
-        var html = labelHelper.makeLabelsHtmlForBoundType(labelContainer, sdm, positionsSet, labelTheme, selectedIndex);
+        var html = labelHelper.makeLabelsHtmlForBoundType(sdm, positionsSet, labelTheme, selectedIndex);
 
         labelContainer.innerHTML = html;
     },
 
     /**
-     * Animate component.
-     * @param {boolean} [isRerendering] - whether rerendering or not
-     */
-    animateComponent: function(isRerendering) {
-        this.animateShowingAboutSeriesLabelArea(isRerendering);
-    },
-
-    /**
      * Make exportation data for series type userEvent.
-     * @param {object} seriesData series data
-     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
+     * @param {object} seriesData - series data
+     * @returns {{x: number, y: number}}
      * @private
      */
     _makeExportationSeriesData: function(seriesData) {
         return {
             x: seriesData.indexes.groupIndex,
-            y: seriesData.indexes.index,
-            chartType: this.chartType
+            y: seriesData.indexes.index
         };
     }
 });

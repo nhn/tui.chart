@@ -24,7 +24,7 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
-     *      @param {MapChartColorModel} data.colorModel color model
+     *      @param {ColorSpectrum} data.colorSpectrum color model
      * @returns {object} paper raphael paper
      */
     render: function(container, data) {
@@ -46,17 +46,17 @@ var RaphaelMapChart = tui.util.defineClass(/** @lends RaphaelMapChart.prototype 
      * @param {object} data data
      *      @param {{width: number, height: number}} data.dimension series dimension
      *      @param {Array.<{code: string, path: string}>} data.map mapData
-     *      @param {MapChartColorModel} data.colorModel color model
+     *      @param {ColorSpectrum} data.colorSpectrum color model
      * @returns {Array.<{sector: object, color: string, data: object}>} rendered map information
      * @private
      */
     _renderMap: function(data) {
         var paper = this.paper,
-            colorModel = data.colorModel;
+            colorSpectrum = data.colorSpectrum;
 
         return tui.util.map(data.mapModel.getMapData(), function(datum, index) {
             var ratio = datum.ratio || 0,
-                color = colorModel.getColor(ratio),
+                color = colorSpectrum.getColor(ratio),
                 sector = raphaelRenderUtil.renderArea(paper, datum.path, {
                     fill: color,
                     opacity: 1,

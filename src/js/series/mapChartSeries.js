@@ -127,6 +127,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setMapRatio();
 
         container = Series.prototype.render.call(this, data);
+
         return container;
     },
 
@@ -162,7 +163,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         this._setLimitPositionToMoveMap();
 
         this.graphRenderer.render(this.graphContainer, {
-            colorModel: this.data.colorModel,
+            colorSpectrum: this.data.colorSpectrum,
             mapModel: this.mapModel,
             dimension: this.graphDimension,
             theme: this.theme
@@ -348,6 +349,7 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         if (!this.containerBound) {
             this.containerBound = this.seriesContainer.getBoundingClientRect();
         }
+
         return this.containerBound;
     },
 
@@ -485,13 +487,6 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
         }
 
         this.userEvent.fire('zoom', newMagn);
-    },
-
-    /**
-     * Animate component.
-     */
-    animateComponent: function() {
-        this.animateShowingAboutSeriesLabelArea();
     }
 });
 

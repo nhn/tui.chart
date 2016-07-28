@@ -136,6 +136,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      * Clear paper.
      */
     clear: function() {
+        this.legendLines = null;
         this.paper.clear();
     },
 
@@ -162,6 +163,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
             'A', r, r, 0, largeArcFlag, 1, x2, y2,
             'Z'
         ];
+
         // path에 대한 자세한 설명은 아래 링크를 참고
         // http://www.w3schools.com/svg/svg_path.asp
         // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d
@@ -431,20 +433,26 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Animate legend lines.
+     * @param {?number} legendIndex legend index
      */
-    animateLegendLines: function() {
+    animateLegendLines: function(legendIndex) {
+        var isNull;
+
         if (!this.legendLines) {
             return;
         }
 
-        tui.util.forEachArray(this.legendLines, function(line) {
+        isNull = tui.util.isNull(legendIndex);
+
+        tui.util.forEachArray(this.legendLines, function(line, index) {
+            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
             line.animate({
                 'stroke': 'black',
-                'stroke-opacity': 1
+                'stroke-opacity': opacity
             });
         });
     },
-
 
     /**
      * Resize graph of pie chart.
@@ -483,6 +491,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         paths = this._makeLinePaths(outerPositions);
         tui.util.forEachArray(this.legendLines, function(line, index) {
             line.attr({path: paths[index]});
+
             return line;
         });
     },
@@ -546,6 +555,7 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         if (!this.containerBound) {
             this.containerBound = this.container.getBoundingClientRect();
         }
+
         return this.containerBound;
     },
 
@@ -644,15 +654,20 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     selectLegend: function(legendIndex) {
         var isNull = tui.util.isNull(legendIndex);
+        var legendLines = this.legendLines;
 
         tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
-            var opacity;
-
-            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             sectorInfo.sector.attr({
                 'fill-opacity': opacity
             });
+
+            if (legendLines) {
+                legendLines[index].attr({
+                    'stroke-opacity': opacity
+                });
+            }
         });
     }
 });

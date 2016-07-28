@@ -1,15 +1,15 @@
 /**
- * @fileoverview Test for lineTypeMixer.
+ * @fileoverview Test for autoTickMixer.
  * @author NHN Ent.
- *         FE Development Team <dl_javascript@nhnent.com>
+ *         FE Development Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
 
-var mixer = require('../../src/js/charts/lineTypeMixer');
+var mixer = require('../../src/js/charts/autoTickMixer');
 var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
-describe('Test for lineTypeMixer', function() {
+describe('Test for autoTickMixer', function() {
     var boundsMaker;
     beforeAll(function() {
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData', 'getDimension', 'registerAxesData']);
@@ -62,31 +62,6 @@ describe('Test for lineTypeMixer', function() {
 
             expect(axisDataMaker.updateLabelAxisDataForStackingDynamicData).toHaveBeenCalled();
             expect(boundsMaker.registerAxesData).toHaveBeenCalled();
-        });
-    });
-
-    describe('onChangeCheckedLegends()', function() {
-        beforeAll(function() {
-            mixer._pauseAnimationForAddingData = jasmine.createSpy('_pauseAnimationForAddingData');
-            mixer._rerender = jasmine.createSpy('_rerender');
-            mixer._restartAnimationForAddingData = jasmine.createSpy('_restartAnimationForAddingData');
-        });
-
-        it('일시정지 상태가 아니라면 _pauseAnimationForAddingData를 호출하여 동적데이터 추가 애니메이션을 일시 정지하고' +
-            ' rerender를 실행합니다', function() {
-            mixer.onChangeCheckedLegends();
-
-            expect(mixer._pauseAnimationForAddingData).toHaveBeenCalled();
-            expect(mixer._rerender).toHaveBeenCalled();
-        });
-
-        it('일시정지 상태가 아니라면 rerender 후 0.7초 뒤에 _restartAnimationForAddingData를 실행합니다.', function(done) {
-            mixer.onChangeCheckedLegends();
-
-            setTimeout(function() {
-                expect(mixer._restartAnimationForAddingData).toHaveBeenCalled();
-                done();
-            }, 700);
         });
     });
 });

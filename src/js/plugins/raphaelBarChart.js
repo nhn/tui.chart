@@ -118,7 +118,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                item = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
+                item = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
                 color = singleColor || colors[index];
                 rect = self._renderBar(bound.start, color);
@@ -320,7 +320,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
                     return null;
                 }
 
-                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index, self.chartType);
+                seriesItem = self.seriesDataModel.getSeriesItem(groupIndex, index);
 
                 return self._renderBorderLines(bound.start, borderColor, self.chartType, seriesItem);
             });
@@ -436,22 +436,6 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
     },
 
     /**
-     * Update borders attribute
-     * @param {Array.<object>} lines raphael objects
-     * @param {{left: number, top: number, width: number, height: number}} bound bound
-     * @param {string} chartType chart type
-     * @param {Item} item item
-     * @private
-     */
-    _updateBordersPath: function(lines, bound, chartType, item) {
-        var paths = this._makeBorderLinesPaths(bound, chartType, item);
-
-        tui.util.forEach(lines, function(line, name) {
-            line.attr({path: paths[name]});
-        });
-    },
-
-    /**
      * Resize graph of bar type chart.
      * @param {object} params parameters
      *      @param {{width: number, height:number}} params.dimension dimension
@@ -478,7 +462,7 @@ var RaphaelBarChart = tui.util.defineClass(/** @lends RaphaelBarChart.prototype 
             lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             bound = groupBounds[groupIndex][index].end;
             bar.bound = bound;
-            self._updateRectBound(bar.rect, bound);
+            raphaelRenderUtil.updateRectBound(bar.rect, bound);
 
             if (lines) {
                 self._updateBordersPath(lines, bound, self.chartType, bar.item);

@@ -64,6 +64,7 @@ var predicate = {
         var isAllPieType = tui.util.all(subChartTypes, function(subChartType) {
             return predicate.isPieTypeChart(subChartType);
         });
+
         return predicate.isComboChart(chartType) && isAllPieType;
     },
 
@@ -88,13 +89,30 @@ var predicate = {
     },
 
     /**
+     * Whether line and area combo chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - type of chart
+     * @param {Array.<string>} subChartTypes - types of chart
+     * @returns {boolean}
+     */
+    isLineAreaComboChart: function(chartType, subChartTypes) {
+        var isAllLineType = tui.util.all(subChartTypes || [], function(subChartType) {
+            return predicate.isLineChart(subChartType) || predicate.isAreaChart(subChartType);
+        });
+
+        return predicate.isComboChart(chartType) && isAllLineType;
+    },
+
+    /**
      * Whether line type chart or not.
      * @memberOf module:predicate
      * @param {string} chartType - type of chart
+     * @param {Array.<string>} [subChartTypes] - types of chart
      * @returns {boolean}
      */
-    isLineTypeChart: function(chartType) {
-        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType);
+    isLineTypeChart: function(chartType, subChartTypes) {
+        return predicate.isLineChart(chartType) || predicate.isAreaChart(chartType)
+            || predicate.isLineAreaComboChart(chartType, subChartTypes);
     },
 
     /**
@@ -125,6 +143,26 @@ var predicate = {
      */
     isHeatmapChart: function(chartType) {
         return chartType === chartConst.CHART_TYPE_HEATMAP;
+    },
+
+    /**
+     * Whether treemap chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isTreemapChart: function(chartType) {
+        return chartType === chartConst.CHART_TYPE_TREEMAP;
+    },
+
+    /**
+     * Whether box type chart or not.
+     * @memberOf module:predicate
+     * @param {string} chartType - chart type
+     * @returns {boolean}
+     */
+    isBoxTypeChart: function(chartType) {
+        return predicate.isHeatmapChart(chartType) || predicate.isTreemapChart(chartType);
     },
 
     /**
@@ -185,7 +223,7 @@ var predicate = {
      */
     allowMinusPointRender: function(chartType) {
         return predicate.isLineTypeChart(chartType) || predicate.isCoordinateTypeChart(chartType) ||
-            predicate.isHeatmapChart(chartType);
+            predicate.isBoxTypeChart(chartType);
     },
 
     /**

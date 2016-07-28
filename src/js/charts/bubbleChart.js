@@ -188,7 +188,7 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
     }
 });
 
-axisTypeMixer.mixin(BubbleChart);
+tui.util.extend(BubbleChart.prototype, axisTypeMixer);
 
 /**
  * Add data ratios.

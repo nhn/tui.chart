@@ -144,7 +144,6 @@ var BarChart = tui.util.defineClass(ChartBase, /** @lends BarChart.prototype */ 
     }
 });
 
-axisTypeMixer.mixin(BarChart);
-barTypeMixer.mixin(BarChart);
+tui.util.extend(BarChart.prototype, axisTypeMixer, barTypeMixer);
 
 module.exports = BarChart;
