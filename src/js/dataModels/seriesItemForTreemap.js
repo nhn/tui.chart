@@ -15,8 +15,15 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
      * @constructs SeriesItemForTreemap
      * @param {object} rawSeriesDatum - value
      * @param {?Array.<function>} formatFunctions - format functions
+     * @param {string} chartType - type of chart
      */
-    init: function(rawSeriesDatum, formatFunctions) {
+    init: function(rawSeriesDatum, formatFunctions, chartType) {
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = chartType;
+
         /**
          * format functions
          * @type {Array.<function>}
@@ -49,7 +56,8 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
      * @returns {{value: number, label: string}}
      */
     pickValueMap: function() {
-        var formattedValue = renderUtil.formatValue(this.value, this.formatFunctions, 'makingTooltipLabel');
+        var areaType = 'makingTooltipLabel';
+        var formattedValue = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
         var label = (this.label ? this.label + ': ' : '') + formattedValue;
 
         return {

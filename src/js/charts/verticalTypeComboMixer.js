@@ -245,12 +245,12 @@ var verticalTypeComboMixer = {
      * @private
      */
     _increaseYAxisTickCount: function(increaseTickCount, yAxisData) {
-        var formatFunctions = this.dataProcessor.getFormatFunctions(),
-            labels;
+        var formatFunctions = this.dataProcessor.getFormatFunctions();
+        var labels;
 
         yAxisData.limit.max += yAxisData.step * increaseTickCount;
         labels = calculator.makeLabelsFromLimit(yAxisData.limit, yAxisData.step);
-        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions, 'yAxis');
+        yAxisData.labels = renderUtil.formatValues(labels, formatFunctions, this.chartType, 'yAxis');
         yAxisData.tickCount += increaseTickCount;
         yAxisData.validTickCount += increaseTickCount;
     },

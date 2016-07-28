@@ -160,12 +160,13 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makePlusSumLabelHtml: function(values, bound, labelHeight) {
-        var sum, formattedSum,
-            html = '';
+        var html = '';
+        var sum, formatFunctions, formattedSum;
 
         if (bound) {
             sum = calculator.sumPlusValues(values);
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
+            formatFunctions = this.dataProcessor.getFormatFunctions();
+            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
             html = this._makeSeriesLabelHtml({
                 left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top - labelHeight - chartConst.SERIES_LABEL_PADDING
@@ -183,8 +184,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * @private
      */
     _makeMinusSumLabelHtml: function(values, bound) {
-        var sum, formattedSum,
-            html = '';
+        var html = '';
+        var sum, formatFunctions, formattedSum;
 
         if (bound) {
             sum = calculator.sumMinusValues(values);
@@ -193,7 +194,8 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
                 sum = Math.abs(sum);
             }
 
-            formattedSum = renderUtil.formatValue(sum, this.dataProcessor.getFormatFunctions(), 'series');
+            formatFunctions = this.dataProcessor.getFormatFunctions();
+            formattedSum = renderUtil.formatValue(sum, formatFunctions, this.chartType, 'series');
             html = this._makeSeriesLabelHtml({
                 left: this._calculateLeftPositionOfSumLabel(bound, formattedSum),
                 top: bound.top + bound.height + chartConst.SERIES_LABEL_PADDING

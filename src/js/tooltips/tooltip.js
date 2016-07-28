@@ -130,14 +130,15 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      * @private
      */
     _formatValueMap: function(valueMap) {
-        var formattedValueMap = {};
         var formatFunctions = this.dataProcessor.getFormatFunctions();
+        var chartType = this.chartType;
+        var formattedMap = {};
 
         tui.util.forEach(valueMap, function(value, valueType) {
-            formattedValueMap[valueType] = renderUtil.formatValue(value, formatFunctions, 'tooltip', valueType);
+            formattedMap[valueType] = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
         });
 
-        return formattedValueMap;
+        return formattedMap;
     },
 
     /**

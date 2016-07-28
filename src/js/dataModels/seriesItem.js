@@ -19,8 +19,15 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @param {number} value - value
      * @param {?string} stack - stack
      * @param {?Array.<function>} formatFunctions - format functions
+     * @param {string} chartType - type of chart
      */
-    init: function(value, stack, formatFunctions) {
+    init: function(value, stack, formatFunctions, chartType) {
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = chartType;
+
         /**
          * for group stack option.
          * @type {string}
@@ -108,11 +115,13 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * @private
      */
     _initValues: function(value) {
-        var values = this._createValues(value),
-            hasStart = values.length > 1;
+        var values = this._createValues(value);
+        var areaType = 'makingSeriesLabel';
+        var hasStart = values.length > 1;
 
         this.value = this.end = values[0];
-        this.label = this.endLabel = renderUtil.formatValue(this.value, this.formatFunctions, 'makingSeriesLabel');
+        this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
+        this.endLabel = this.label;
 
         if (hasStart) {
             this.addStart(values[1], true);
@@ -152,7 +161,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
         }
 
         this.start = value;
-        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, 'series');
+        this.startLabel = renderUtil.formatValue(value, this.formatFunctions, this.chartType, 'series');
     },
 
     /**

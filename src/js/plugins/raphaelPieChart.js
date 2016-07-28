@@ -433,20 +433,26 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Animate legend lines.
+     * @param {?number} legendIndex legend index
      */
-    animateLegendLines: function() {
+    animateLegendLines: function(legendIndex) {
+        var isNull;
+
         if (!this.legendLines) {
             return;
         }
 
-        tui.util.forEachArray(this.legendLines, function(line) {
+        isNull = tui.util.isNull(legendIndex);
+
+        tui.util.forEachArray(this.legendLines, function(line, index) {
+            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+
             line.animate({
                 'stroke': 'black',
-                'stroke-opacity': 1
+                'stroke-opacity': opacity
             });
         });
     },
-
 
     /**
      * Resize graph of pie chart.
@@ -648,15 +654,20 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
      */
     selectLegend: function(legendIndex) {
         var isNull = tui.util.isNull(legendIndex);
+        var legendLines = this.legendLines;
 
         tui.util.forEachArray(this.sectorInfos, function(sectorInfo, index) {
-            var opacity;
-
-            opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+            var opacity = (isNull || legendIndex === index) ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
             sectorInfo.sector.attr({
                 'fill-opacity': opacity
             });
+
+            if (legendLines) {
+                legendLines[index].attr({
+                    'stroke-opacity': opacity
+                });
+            }
         });
     }
 });

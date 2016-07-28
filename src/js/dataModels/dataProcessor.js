@@ -767,7 +767,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var maxValue = this.getMaxValue(chartType, valueType);
         var formatFunctions = this.getFormatFunctions();
 
-        return renderUtil.formatValue(maxValue, formatFunctions, areaType, valueType);
+        return renderUtil.formatValue(maxValue, formatFunctions, chartType, areaType, valueType);
     },
 
     /**

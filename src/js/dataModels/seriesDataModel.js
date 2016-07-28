@@ -147,7 +147,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
             }
 
             return tui.util.map(values, function(value) {
-                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions);
+                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions, self.chartType);
             });
         });
     },

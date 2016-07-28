@@ -184,12 +184,15 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @returns {Array.<string|number>|*}
      */
     getFormattedScaleValues: function() {
+        var chartType = this.chartType;
+        var areaType = this.areaType;
+        var valueType = this.valueType;
         var values, formatFunctions;
 
         if (!this.formattedValues) {
             values = this._getScaleValues();
             formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions, this.areaType, this.valueType);
+            this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
         }
 
         return this.formattedValues;

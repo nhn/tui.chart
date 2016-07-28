@@ -615,7 +615,7 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
      * @override
      */
     animateSeriesLabelArea: function() {
-        this.graphRenderer.animateLegendLines();
+        this.graphRenderer.animateLegendLines(this.selectedLegendIndex);
         Series.prototype.animateSeriesLabelArea.call(this);
     },
 

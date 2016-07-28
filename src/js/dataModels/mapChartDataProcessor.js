@@ -6,8 +6,8 @@
 
 'use strict';
 
-var DataProcessor = require('./dataProcessor'),
-    renderUtil = require('../helpers/renderUtil');
+var DataProcessor = require('./dataProcessor');
+var renderUtil = require('../helpers/renderUtil');
 
 /**
  * Raw series data.
@@ -49,14 +49,14 @@ var MapChartDataProcessor = tui.util.defineClass(DataProcessor, /** @lends MapCh
      * @private
      */
     _makeValueMap: function() {
-        var rawSeriesData = this.rawData.series,
-            valueMap = {},
-            formatFunctions = this._findFormatFunctions();
+        var rawSeriesData = this.rawData.series;
+        var valueMap = {};
+        var formatFunctions = this._findFormatFunctions();
 
         tui.util.forEachArray(rawSeriesData, function(datum) {
             var result = {
                 value: datum.data,
-                label: renderUtil.formatValue(datum.data, formatFunctions, 'series')
+                label: renderUtil.formatValue(datum.data, formatFunctions, 'map', 'series')
             };
 
             if (datum.name) {

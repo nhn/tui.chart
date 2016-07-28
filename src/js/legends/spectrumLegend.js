@@ -32,6 +32,8 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
          */
         this.className = 'tui-chart-legend-area';
 
+        this.chartType = params.chartType;
+
         /**
          * legend theme
          * @type {Object}
@@ -75,11 +77,11 @@ var SpectrumLegend = tui.util.defineClass(/** @lends SpectrumLegend.prototype */
      * @private
      */
     _makeVerticalDimension: function() {
-        var maxValue = tui.util.max(this.dataProcessor.getValues()),
-            formatFunctions = this.dataProcessor.getFormatFunctions(),
-            valueStr = renderUtil.formatValue(maxValue, formatFunctions, 'legend'),
-            labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label),
-            padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
+        var maxValue = tui.util.max(this.dataProcessor.getValues());
+        var formatFunctions = this.dataProcessor.getFormatFunctions();
+        var valueStr = renderUtil.formatValue(maxValue, formatFunctions, this.chartType, 'legend');
+        var labelWidth = renderUtil.getRenderedLabelWidth(valueStr, this.theme.label);
+        var padding = chartConst.LEGEND_AREA_PADDING + chartConst.MAP_LEGEND_LABEL_PADDING;
 
         return {
             width: chartConst.MAP_LEGEND_GRAPH_SIZE + labelWidth + padding,
