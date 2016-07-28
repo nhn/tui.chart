@@ -24,7 +24,7 @@
     "title": "[Column Chart] negative data"
   },
   "sample02-03-percent-stacked-column-chart": {
-    "title": "[Column Chart] normal stacked"
+    "title": "[Column Chart] percent stacked"
   },
   "sample02-04-group-stacked-column-chart": {
     "title": "[Column Chart] group stack data"

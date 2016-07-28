@@ -20,18 +20,21 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "categories": ["2014.01", "2014.02", "2014.03", "2014.04", "2014.05", "2014.06", "2014.07", "2014.08", "2014.09", "2014.10", "2014.11", "2014.12",
+        "2015.01", "2015.02", "2015.03", "2015.04", "2015.05", "2015.06", "2015.07", "2015.08", "2015.09", "2015.10", "2015.11", "2015.12"],
     "series": {
         "area": [
             {
-                "name": "Range",
-                "data": [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.9, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
+                "name": "Effective Load",
+                "data": [150, 130, 100, 125, 128, 110, 134, 162, 120, 90, 98, 143,
+                    142, 124, 113, 129, 118, 120, 145, 172, 110, 70, 68, 103]
             }
         ],
         "line": [
             {
-                "name": "Average",
-                "data": [-4.0, -1.4, 3.9, 11, 16.5, 21.1, 24.5, 25.3, 20.2, 13.5, 6.1, -1.0]
+                "name": "Power Usage",
+                "data": [72, 80, 110, 107, 126, 134, 148, 152, 130, 120, 114, 127,
+                    90, 72, 130, 117, 129, 137, 134, 160, 121, 110, 114, 117]
             }
         ]
     }
@@ -45,23 +48,21 @@
     "chart": {
         "width": 700,
         "height": 400,
-        "title": "24-hr Seoul Temperature"
+        "title": "Energy Usage"
     },
     "yAxis": {
-        "title": "Temperature (Celsius)"
+        "title": "Energy (kWh)",
+        "min": 0
     },
     "xAxis": {
-        "title": "Month"
+        "title": "Month",
+        "tickInterval": "auto"
     },
     "series": {
-        "zoomable": true,
-        "line": {
-            "showDot": true
-        }
+        "zoomable": true
     },
     "tooltip": {
-        "grouped": true,
-        "suffix": "°C"
+        "suffix": "kWh"
     }
 }
         </textarea>
@@ -75,7 +76,7 @@
 {
     "series": {
         "area": {
-            "colors": ["#5EA393", "#A4E2C5", "#F7A655"]
+            "colors": ["#5EA393", "#A4E2C5"]
         },
         "line": {
             "colors": ["#E05D64"]
@@ -96,18 +97,21 @@
 <script>
     var container = document.getElementById('chart-area');
     var data = {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: ['2014.01', '2014.02', '2014.03', '2014.04', '2014.05', '2014.06', '2014.07', '2014.08', '2014.09', '2014.10', '2014.11', '2014.12',
+            '2015.01', '2015.02', '2015.03', '2015.04', '2015.05', '2015.06', '2015.07', '2015.08', '2015.09', '2015.10', '2015.11', '2015.12'],
         series: {
             area: [
                 {
-                    name: 'Range',
-                    data: [[-8.3, 0.3], [-5.8, 3.1], [-0.6, 9.1], [5.8, 16.9], [11.5, 22.6], [16.6, 26.6], [21.2, 28.8], [21.8, 30.0], [15.9, 25.6], [8.3, 19.6], [1.4, 11.1], [-5.2, 3.2]]
+                    name: 'Effective Load',
+                    data: [150, 130, 100, 125, 128, 110, 134, 162, 120, 90, 98, 143,
+                        142, 124, 113, 129, 118, 120, 145, 172, 110, 70, 68, 103]
                 }
             ],
             line: [
                 {
-                    name: 'Average',
-                    data: [-4.0, -1.4, 3.9, 11, 16.5, 21.1, 24.5, 25.3, 20.2, 13.5, 6.1, -1.0]
+                    name: 'Power Usage',
+                    data: [72, 80, 110, 107, 126, 134, 148, 152, 130, 120, 114, 127,
+                        90, 72, 130, 117, 129, 137, 134, 160, 121, 110, 114, 117]
                 }
             ]
         }
@@ -116,25 +120,34 @@
         chart: {
             width: 700,
             height: 400,
-            title: '24-hr Seoul Temperature'
+            title: 'Energy Usage'
         },
         yAxis: {
-            title: 'Temperature (Celsius)'
+            title: 'Energy (kWh)',
+            min: 0
         },
         xAxis: {
-            title: 'Month'
+            title: 'Month',
+            tickInterval: 'auto'
         },
         series: {
-            zoomable: true,
-            line: {
-                showDot: true
-            }
+            zoomable: true
         },
         tooltip: {
-            grouped: true,
-            suffix: '°C'
-        }
+            suffix: 'kWh'
+        },
+        theme: 'newTheme'
     };
+    tui.chart.registerTheme('newTheme', {
+        series: {
+            area: {
+                colors: ['#5EA393', '#A4E2C5']
+            },
+            line: {
+                colors: ['#E05D64']
+            }
+        }
+    });
     var chart = tui.chart.comboChart(container, data, options);
 </script>
 </body>

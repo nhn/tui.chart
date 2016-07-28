@@ -138,7 +138,7 @@
         "width": 700,
         "height": 400,
         "title": "Life Expectancy per GDP",
-        "format": function(value, areaType, valueType) {
+        "format": function(value, chartType, areaType, valueType) {
             if (valueType === "r" || valueType === "x") {
                 value = tui.chart.renderUtil.formatToComma(value);
                 if (valueType === "x") {
@@ -305,7 +305,7 @@
                     width: 700,
                     height: 400,
                     title: 'Life Expectancy per GDP',
-                    format: function(value, areaType, valueType) {
+                    format: function(value, chartType, areaType, valueType) {
                         if (valueType === 'r' || valueType === 'x') {
                             value = tui.chart.renderUtil.formatToComma(value);
                             if (valueType === 'x') {
