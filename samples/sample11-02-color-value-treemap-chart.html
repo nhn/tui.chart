@@ -11,7 +11,7 @@
 <div id="chart-area"></div>
 <div class="custom-area">
     <div class="apply-btn-area">
-        <input type="checkbox" id="use-theme" checked disabled><label for="use-theme">&nbsp;Theme</label>
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
         &nbsp; &nbsp;
         <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
         <input type="hidden" id="type" value="treemapChart" />
@@ -130,19 +130,19 @@
     "chart": {
         "width": 500,
         "height": 400,
-        title: "Population density of World",
-        "format": function(value, areaType, valueType) {
-            if (areaType === "makingTooltipLabel" && valueType === "value") {
-                value = tui.chart.renderUtil.formatToComma(value) + " ㎢";
-            }
-
-            return value;
-        }
+        "title": "Population density of World",
+        "format": "1,000"
     },
     "series": {
         "showLabel": true,
         "useColorValue": true,
         "zoomable": false
+    },
+    "tooltip": {
+        "suffix": "㎢"
+    },
+    "legend": {
+        "align": "top"
     },
     "theme": "newTheme"
 }
@@ -151,7 +151,7 @@
             <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
         </div>
     </div>
-    <div id="theme-area" style="display:block">
+    <div id="theme-area">
         <div>Chart Theme</div>
         <textarea id="theme">
 {
@@ -281,18 +281,18 @@
             width: 500,
             height: 400,
             title: 'Population density of World',
-            format: function(value, areaType, valueType) {
-                if (areaType === 'makingTooltipLabel' && valueType === 'value') {
-                    value = tui.chart.renderUtil.formatToComma(value) + ' ㎢';
-                }
-
-                return value;
-            }
+            format: '1,000'
         },
         series: {
             showLabel: true,
             useColorValue: true,
             zoomable: false
+        },
+        tooltip: {
+            suffix: '㎢'
+        },
+        legend: {
+            align: 'top'
         }
     };
     tui.chart.treemapChart(container, data, options);
