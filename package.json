@@ -26,6 +26,7 @@
     "gulp-less": "^3.0.3",
     "gulp-minify-css": "^1.2.0",
     "gulp-rename": "^1.2.2",
+    "gulp-streamify": "^1.0.2",
     "gulp-sync": "^0.1.4",
     "gulp-uglify": "^1.2.0",
     "jasmine-core": "latest",
