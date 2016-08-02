@@ -554,37 +554,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Make tick line html.
-     * @param {number} areaSize - area size (width or height)
-     * @param {string} posType - position type
-     * @param {boolean} isNotDividedXAxis - whether not divided xAxis or not
-     * @param {number} additionalSize - additional size
-     * @returns {string}
-     * @private
-     */
-    _makeTickLineHtml: function(areaSize, posType, isNotDividedXAxis, additionalSize) {
-        var tickLineExtend = isNotDividedXAxis ? chartConst.OVERLAPPING_WIDTH : 0;
-        var linePositionValue = -tickLineExtend;
-        var lineSize, html;
-
-        if (this.data.lineWidth) {
-            lineSize = this.data.lineWidth;
-        } else {
-            lineSize = areaSize + tickLineExtend;
-            linePositionValue += additionalSize;
-        }
-
-        html = axisTemplate.tplTickLine({
-            positionType: posType,
-            positionValue: linePositionValue,
-            sizeType: this.isVertical ? 'height' : 'width',
-            size: lineSize
-        });
-
-        return html;
-    },
-
-    /**
      * Make percentage position.
      * @param {Array.<number>} positions - positions
      * @param {number} areaSize - area size
@@ -609,6 +578,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
+        var aligned = this.data.aligned;
         var tickColor = this.theme.tickColor;
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
@@ -626,10 +596,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             var tickHtml, cssTexts;
 
             position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
+            position += additionalSize;
+
+            if (aligned) {
+                position = Math.round(position);
+            }
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
-                renderUtil.concatStr(posType, ': ', additionalSize + position, '%')
+                renderUtil.concatStr(posType, ': ', position, '%')
             ].join(';');
             tickHtml = template({cssText: cssTexts});
 
@@ -705,7 +680,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderTickArea: function(size, tickCount, additionalSize) {
         var tickContainer = dom.create('DIV', 'tui-chart-tick-area');
-        var isNotDividedXAxis = !this.isVertical && !this.options.divided;
+        var isNotDividedXAxis = !this.isVertical && !this.options.divided && !this.data.aligned;
         var tickLineElement, ticksElement;
 
         additionalSize = additionalSize || 0;

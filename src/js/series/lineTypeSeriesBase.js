@@ -183,6 +183,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         if (!this.graphRenderer.showGroupTooltipLine) {
             return;
         }
+        
         this.graphRenderer.showGroupTooltipLine(bound);
     },
 
