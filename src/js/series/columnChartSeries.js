@@ -209,6 +209,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
      * Render series component.
      * @param {object} data data for rendering
      * @returns {HTMLElement} series element
+     * @override
      */
     render: function(data) {
         var result;
