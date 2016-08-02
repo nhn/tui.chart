@@ -203,6 +203,21 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         }
 
         return html;
+    },
+
+    /**
+     * Render series component.
+     * @param {object} data data for rendering
+     * @returns {HTMLElement} series element
+     */
+    render: function(data) {
+        var result;
+
+        delete data.paper;
+        result = Series.prototype.render.call(this, data);
+        delete result.paper
+
+        return result;
     }
 });
 
