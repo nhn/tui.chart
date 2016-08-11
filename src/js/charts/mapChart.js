@@ -7,6 +7,7 @@
 'use strict';
 
 var ChartBase = require('./chartBase');
+var mapFactory = require('../factories/mapFactory');
 var chartConst = require('../const');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
@@ -34,6 +35,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
          */
         this.className = 'tui-map-chart';
 
+        options.map = mapFactory.get(options.map);
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 
