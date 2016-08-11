@@ -16,6 +16,12 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      * @extends Series
      */
     init: function() {
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
+
         Series.apply(this, arguments);
     },
 

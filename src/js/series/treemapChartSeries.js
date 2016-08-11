@@ -265,6 +265,22 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
     },
 
     /**
+     * Make exportation data for series type userEvent.
+     * @param {object} seriesData series data
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
+     * @private
+     */
+    _makeExportationSeriesData: function(seriesData) {
+        var indexes = seriesData.indexes;
+        var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+
+        return tui.util.extend({
+            chartType: this.chartType,
+            indexes: seriesItem.indexes
+        });
+    },
+
+    /**
      * To call showAnimation function of graphRenderer.
      * @param {{groupIndex: number, index: number}} indexes - indexes
      */

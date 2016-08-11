@@ -60,6 +60,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * whether allow select series or not
+         */
+        this.allowSelect = params.allowSelect;
+
+        /**
          * selected series item.
          * @type {null | object}
          */
@@ -299,7 +304,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
                 this._unselectSelectedData();
             }
             this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
-            this.selectedData = foundData;
+
+            if (this.allowSelect) {
+                this.selectedData = foundData;
+            }
         }
     },
 

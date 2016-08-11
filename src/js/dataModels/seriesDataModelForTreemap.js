@@ -38,10 +38,11 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * Flatten hierarchical data.
      * @param {Array.<object>} rawSeriesData - raw series data
      * @param {string | number} parent - parent id
+     * @param {?Array.<number>} ancestorIndexes - ancestor indexes
      * @returns {Array.<object>}
      * @private
      */
-    _flattenHierarchicalData: function(rawSeriesData, parent) {
+    _flattenHierarchicalData: function(rawSeriesData, parent, ancestorIndexes) {
         var self = this;
         var flatData = [];
         var idPrefix;
@@ -53,9 +54,14 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             parent = chartConst.TREEMAP_ROOT_ID;
         }
 
+        ancestorIndexes = ancestorIndexes || [];
+
         tui.util.forEachArray(rawSeriesData, function(datum, index) {
             var id = idPrefix + index;
             var children = datum.children;
+            var indexes = ancestorIndexes.concat(index);
+
+            datum.indexes = indexes;
 
             flatData.push(datum);
 
@@ -68,7 +74,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             }
 
             if (children) {
-                flatData = flatData.concat(self._flattenHierarchicalData(children, id));
+                flatData = flatData.concat(self._flattenHierarchicalData(children, id, indexes));
                 delete datum.children;
             }
         });

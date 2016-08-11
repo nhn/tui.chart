@@ -496,55 +496,19 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         });
     },
 
-    /**
-     * Whether valid sector or not.
-     * @param {object} sector - raphael object
-     * @returns {boolean}
-     * @private
-     */
-    _isValidSector: function(sector) {
-        return sector && sector.data('chartType') === this.chartType;
-    },
-
-    /**
-     * Whether detected label element or not.
-     * @param {{left: number, top: number}} position - mouse position
-     * @returns {boolean}
-     * @private
-     */
-    _isDetectedLabel: function(position) {
-        var labelElement = document.elementFromPoint(position.left, position.top);
-
-        return tui.util.isString(labelElement.className);
-    },
-
-    /**
-     * Click series.
-     * @param {{left: number, top: number}} position mouse position
-     */
-    clickSeries: function(position) {
+    findSectorInfo: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top);
-        var prevSector = this.prevSelectedSector;
-        var sectorIndex;
+        var info = null;
 
-        if ((sector || this._isDetectedLabel(position)) && this.prevSelectedSector) {
-            this._unselectSeries(this.prevSelectedSector.data('index'));
-            this.prevSelectedSector = null;
+        if (sector) {
+            info = {
+                index: tui.util.isExisty(sector.data('index')) ? sector.data('index') : -1,
+                chartType: sector.data('chartType')
+            };
         }
 
-        if (!this._isValidSector(sector)) {
-            return;
-        }
-
-        sectorIndex = sector.data('index');
-        sector = this.sectorInfos[sectorIndex].sector;
-
-        if (sector !== prevSector) {
-            this._selectSeries(sectorIndex);
-            this.prevSelectedSector = sector;
-        }
+        return info;
     },
-
 
     /**
      * Get series container bound.
@@ -586,6 +550,16 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
+     * Whether valid sector or not.
+     * @param {object} sector - raphael object
+     * @returns {boolean}
+     * @private
+     */
+    _isValidSector: function(sector) {
+        return sector && sector.data('chartType') === this.chartType;
+    },
+
+    /**
      * Move mouse on series.
      * @param {{left: number, top: number}} position mouse position
      */
@@ -612,11 +586,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Select series.
-     * @param {number} index index
-     * @private
+     * @param {{index: number}} indexes - index map
      */
-    _selectSeries: function(index) {
-        var sectorInfo = this.sectorInfos[index];
+    selectSeries: function(indexes) {
+        var sectorInfo = this.sectorInfos[indexes.index];
         var objColor, color;
 
         if (!sectorInfo) {
@@ -633,11 +606,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Unelect series.
-     * @param {number} index index
-     * @private
+     * @param {{index: number}} indexes - index map
      */
-    _unselectSeries: function(index) {
-        var sectorInfo = this.sectorInfos[index];
+    unselectSeries: function(indexes) {
+        var sectorInfo = this.sectorInfos[indexes.index];
 
         if (!sectorInfo) {
             return;

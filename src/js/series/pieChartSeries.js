@@ -34,6 +34,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          */
         this.quadrantRange = null;
 
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
+
         this._setDefaultOptions();
     },
 
@@ -636,12 +642,55 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Whether detected label element or not.
+     * @param {{left: number, top: number}} position - mouse position
+     * @returns {boolean}
+     * @private
+     */
+    _isDetectedLabel: function(position) {
+        var labelElement = document.elementFromPoint(position.left, position.top);
+
+        return tui.util.isString(labelElement.className);
+    },
+
+    /**
      * On click series.
      * @param {{left: number, top: number}} position mouse position
      */
     onClickSeries: function(position) {
-        if (this.options.allowSelect) {
-            this._executeGraphRenderer(position, 'clickSeries');
+        var sectorInfo = this._executeGraphRenderer(position, 'findSectorInfo');
+        var prevIndex = this.prevClickedIndex;
+        var allowSelect = this.options.allowSelect;
+        var foundIndex, shouldSelect;
+
+        if ((sectorInfo || this._isDetectedLabel(position)) && tui.util.isExisty(prevIndex) && allowSelect) {
+            this.onUnselectSeries({
+                indexes: {
+                    index: prevIndex
+                }
+            });
+            this.prevClickedIndex = null;
+        }
+
+        if (!sectorInfo || sectorInfo.chartType !== this.chartType) {
+            return;
+        }
+
+        foundIndex = sectorInfo.index;
+        shouldSelect = foundIndex > -1 && (foundIndex !== prevIndex);
+
+        if (allowSelect && !shouldSelect) {
+            return;
+        }
+
+        this.onSelectSeries({
+            indexes: {
+                index: foundIndex
+            }
+        }, shouldSelect);
+
+        if (allowSelect && foundIndex > -1) {
+            this.prevClickedIndex = foundIndex;
         }
     },
 
