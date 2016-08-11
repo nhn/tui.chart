@@ -664,56 +664,6 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_makeTickLineHtml()', function() {
-        it('세로 axis의 tick line의 html을 생성합니다.', function() {
-            var actual, expected;
-
-            axis.isVertical = true;
-
-            actual = axis._makeTickLineHtml(100, 'top', true, 0);
-            expected = '<div class="tui-chart-tick-line" style="top:-1px;height:101px"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('가로 axis의 tick line의 html을 생성합니다.', function() {
-            var actual, expected;
-
-            axis.isVertical = false;
-
-            actual = axis._makeTickLineHtml(100, 'left', true, 0);
-            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:101px"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
-            var actual, expected;
-
-            axis.isVertical = false;
-            axis.data.positionRatio = 0.2;
-            axis.data.lineWidth = 100;
-
-            actual = axis._makeTickLineHtml(100, 'left', true, 20);
-            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
-
-            expect(actual).toBe(expected);
-        });
-
-        it('axis tick을 자동으로 보정할 경우(positionRatio, lineWidth 존재) 있을 경우의 가로 tick line html을 생성합니다.', function() {
-            var actual, expected;
-
-            axis.isVertical = false;
-            axis.data.positionRatio = 0.2;
-            axis.data.lineWidth = 100;
-
-            actual = axis._makeTickLineHtml(100, 'left', true, 20);
-            expected = '<div class="tui-chart-tick-line" style="left:-1px;width:100px"></div>';
-
-            expect(actual).toBe(expected);
-        });
-    });
-
     describe('_makeTickHtml()', function() {
         it('tick html을 생성합니다.', function() {
             var actual, expected;

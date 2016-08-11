@@ -1029,7 +1029,6 @@ tui.chart.pieChart = function(container, rawData, options) {
 tui.chart.mapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_MAP;
-    options.map = mapFactory.get(options.map);
 
     return _createChart(container, rawData, options);
 };

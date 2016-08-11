@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.2.0
+ * @version 2.2.1
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
  */
@@ -562,37 +562,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Make tick line html.
-     * @param {number} areaSize - area size (width or height)
-     * @param {string} posType - position type
-     * @param {boolean} isNotDividedXAxis - whether not divided xAxis or not
-     * @param {number} additionalSize - additional size
-     * @returns {string}
-     * @private
-     */
-    _makeTickLineHtml: function(areaSize, posType, isNotDividedXAxis, additionalSize) {
-        var tickLineExtend = isNotDividedXAxis ? chartConst.OVERLAPPING_WIDTH : 0;
-        var linePositionValue = -tickLineExtend;
-        var lineSize, html;
-
-        if (this.data.lineWidth) {
-            lineSize = this.data.lineWidth;
-        } else {
-            lineSize = areaSize + tickLineExtend;
-            linePositionValue += additionalSize;
-        }
-
-        html = axisTemplate.tplTickLine({
-            positionType: posType,
-            positionValue: linePositionValue,
-            sizeType: this.isVertical ? 'height' : 'width',
-            size: lineSize
-        });
-
-        return html;
-    },
-
-    /**
      * Make percentage position.
      * @param {Array.<number>} positions - positions
      * @param {number} areaSize - area size
@@ -617,6 +586,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
+        var aligned = this.data.aligned;
         var tickColor = this.theme.tickColor;
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
@@ -634,10 +604,15 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             var tickHtml, cssTexts;
 
             position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
+            position += additionalSize;
+
+            if (aligned) {
+                position = Math.round(position);
+            }
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
-                renderUtil.concatStr(posType, ': ', additionalSize + position, '%')
+                renderUtil.concatStr(posType, ': ', position, '%')
             ].join(';');
             tickHtml = template({cssText: cssTexts});
 
@@ -713,7 +688,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _renderTickArea: function(size, tickCount, additionalSize) {
         var tickContainer = dom.create('DIV', 'tui-chart-tick-area');
-        var isNotDividedXAxis = !this.isVertical && !this.options.divided;
+        var isNotDividedXAxis = !this.isVertical && !this.options.divided && !this.data.aligned;
         var tickLineElement, ticksElement;
 
         additionalSize = additionalSize || 0;
@@ -2101,7 +2076,6 @@ tui.chart.pieChart = function(container, rawData, options) {
 tui.chart.mapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_MAP;
-    options.map = mapFactory.get(options.map);
 
     return _createChart(container, rawData, options);
 };
@@ -2868,7 +2842,8 @@ var axisTypeMixer = {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: tui.util.pick(this.options.series, 'zoomable')
+            zoomable: tui.util.pick(this.options.series, 'zoomable'),
+            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
         });
     },
 
@@ -2879,7 +2854,8 @@ var axisTypeMixer = {
     _addCustomEventComponentForNormalTooltip: function() {
         this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
         });
     },
 
@@ -5004,6 +4980,7 @@ module.exports = lineTypeMixer;
 'use strict';
 
 var ChartBase = require('./chartBase');
+var mapFactory = require('../factories/mapFactory');
 var chartConst = require('../const');
 var MapChartMapModel = require('./mapChartMapModel');
 var ColorSpectrum = require('./colorSpectrum');
@@ -5031,6 +5008,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
          */
         this.className = 'tui-map-chart';
 
+        options.map = mapFactory.get(options.map);
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 
@@ -5163,7 +5141,7 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
 
 module.exports = MapChart;
 
-},{"../const":31,"../customEvents/mapChartCustomEvent":38,"../dataModels/mapChartDataProcessor":43,"../helpers/axisDataMaker":54,"../legends/spectrumLegend":71,"../series/mapChartSeries":98,"../series/zoom":106,"../tooltips/mapChartTooltip":110,"./chartBase":11,"./colorSpectrum":12,"./mapChartMapModel":22}],22:[function(require,module,exports){
+},{"../const":31,"../customEvents/mapChartCustomEvent":38,"../dataModels/mapChartDataProcessor":43,"../factories/mapFactory":51,"../helpers/axisDataMaker":54,"../legends/spectrumLegend":71,"../series/mapChartSeries":98,"../series/zoom":106,"../tooltips/mapChartTooltip":110,"./chartBase":11,"./colorSpectrum":12,"./mapChartMapModel":22}],22:[function(require,module,exports){
 /**
  * @fileoverview MapChartMapModel is map model of map chart.
  * @author NHN Ent.
@@ -6192,6 +6170,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
+        customEvent.on('selectTreemapSeries', series.onSelectSeries, series);
         customEvent.on('showTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideTooltip', tooltip.onHide, tooltip);
 
@@ -7836,6 +7815,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         var target = e.target || e.srcElement;
         var foundData, seriesItem;
 
+        CustomEventBase.prototype._onClick.call(this, e);
+
         if (!predicate.isTreemapChart(this.chartType)) {
             return;
         }
@@ -7962,6 +7943,11 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
          * @type {BoundsMaker}
          */
         this.boundsMaker = params.boundsMaker;
+
+        /**
+         * whether allow select series or not
+         */
+        this.allowSelect = params.allowSelect;
 
         /**
          * selected series item.
@@ -8203,7 +8189,10 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
                 this._unselectSelectedData();
             }
             this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
-            this.selectedData = foundData;
+
+            if (this.allowSelect) {
+                this.selectedData = foundData;
+            }
         }
     },
 
@@ -8531,11 +8520,13 @@ var MapChartCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends MapCh
      */
     _onMouseup: function(e) {
         this.isDown = false;
+
         if (this.isDrag) {
             this._dragEnd();
-        } else if (!this.isMove) {
+        } else {
             this._onMouseEvent('click', e);
         }
+
         this.isMove = false;
     },
 
@@ -11217,10 +11208,11 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
      * Flatten hierarchical data.
      * @param {Array.<object>} rawSeriesData - raw series data
      * @param {string | number} parent - parent id
+     * @param {?Array.<number>} ancestorIndexes - ancestor indexes
      * @returns {Array.<object>}
      * @private
      */
-    _flattenHierarchicalData: function(rawSeriesData, parent) {
+    _flattenHierarchicalData: function(rawSeriesData, parent, ancestorIndexes) {
         var self = this;
         var flatData = [];
         var idPrefix;
@@ -11232,9 +11224,14 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             parent = chartConst.TREEMAP_ROOT_ID;
         }
 
+        ancestorIndexes = ancestorIndexes || [];
+
         tui.util.forEachArray(rawSeriesData, function(datum, index) {
             var id = idPrefix + index;
             var children = datum.children;
+            var indexes = ancestorIndexes.concat(index);
+
+            datum.indexes = indexes;
 
             flatData.push(datum);
 
@@ -11247,7 +11244,7 @@ var SeriesDataModelForTreemap = tui.util.defineClass(SeriesDataModel, {
             }
 
             if (children) {
-                flatData = flatData.concat(self._flattenHierarchicalData(children, id));
+                flatData = flatData.concat(self._flattenHierarchicalData(children, id, indexes));
                 delete datum.children;
             }
         });
@@ -12035,6 +12032,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.label = rawSeriesDatum.label || '';
         this.group = rawSeriesDatum.group;
         this.hasChild = !!rawSeriesDatum.hasChild;
+        this.indexes = rawSeriesDatum.indexes;
     },
 
     /**
@@ -19912,23 +19910,22 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Click series.
-     * @param {{left: number, top: number}} position mouse position
+     * Find data indexes of rendered circle by position.
+     * @param {{left: number, top: number}} position - mouse position
+     * @returns {{index: number, groupIndex: number}}
      */
-    clickSeries: function(position) {
+    findIndexes: function(position) {
         var circle = this.paper.getElementByPoint(position.left, position.top);
-        var prevCircle = this.prevCircle;
+        var foundIndexes = null;
 
-        if (circle && prevCircle) {
-            this._unselectSeries(prevCircle.data('groupIndex'), prevCircle.data('index'));
+        if (circle) {
+            foundIndexes = {
+                index: circle.data('index'),
+                groupIndex: circle.data('groupIndex')
+            };
         }
 
-        if (prevCircle === circle) {
-            this.prevCircle = null;
-        } else if (circle) {
-            this._selectSeries(circle.data('groupIndex'), circle.data('index'));
-            this.prevCircle = circle;
-        }
+        return foundIndexes;
     },
 
     /**
@@ -20060,10 +20057,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Select series.
-     * @param {number} groupIndex - index of group
-     * @param {number} index - index
+     * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    _selectSeries: function(groupIndex, index) {
+    selectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
         var circleInfo = this.groupCircleInfos[groupIndex][index];
         var objColor = raphael.color(circleInfo.color);
         var themeColor = this.theme.selectionColor;
@@ -20076,10 +20074,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Unselect series.
-     * @param {number} groupIndex - index of group
-     * @param {number} index - index
+     * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    _unselectSeries: function(groupIndex, index) {
+    unselectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
         var circleInfo = this.groupCircleInfos[groupIndex][index];
 
         circleInfo.circle.attr({
@@ -21811,55 +21810,19 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
         });
     },
 
-    /**
-     * Whether valid sector or not.
-     * @param {object} sector - raphael object
-     * @returns {boolean}
-     * @private
-     */
-    _isValidSector: function(sector) {
-        return sector && sector.data('chartType') === this.chartType;
-    },
-
-    /**
-     * Whether detected label element or not.
-     * @param {{left: number, top: number}} position - mouse position
-     * @returns {boolean}
-     * @private
-     */
-    _isDetectedLabel: function(position) {
-        var labelElement = document.elementFromPoint(position.left, position.top);
-
-        return tui.util.isString(labelElement.className);
-    },
-
-    /**
-     * Click series.
-     * @param {{left: number, top: number}} position mouse position
-     */
-    clickSeries: function(position) {
+    findSectorInfo: function(position) {
         var sector = this.paper.getElementByPoint(position.left, position.top);
-        var prevSector = this.prevSelectedSector;
-        var sectorIndex;
+        var info = null;
 
-        if ((sector || this._isDetectedLabel(position)) && this.prevSelectedSector) {
-            this._unselectSeries(this.prevSelectedSector.data('index'));
-            this.prevSelectedSector = null;
+        if (sector) {
+            info = {
+                index: tui.util.isExisty(sector.data('index')) ? sector.data('index') : -1,
+                chartType: sector.data('chartType')
+            };
         }
 
-        if (!this._isValidSector(sector)) {
-            return;
-        }
-
-        sectorIndex = sector.data('index');
-        sector = this.sectorInfos[sectorIndex].sector;
-
-        if (sector !== prevSector) {
-            this._selectSeries(sectorIndex);
-            this.prevSelectedSector = sector;
-        }
+        return info;
     },
-
 
     /**
      * Get series container bound.
@@ -21901,6 +21864,16 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
     },
 
     /**
+     * Whether valid sector or not.
+     * @param {object} sector - raphael object
+     * @returns {boolean}
+     * @private
+     */
+    _isValidSector: function(sector) {
+        return sector && sector.data('chartType') === this.chartType;
+    },
+
+    /**
      * Move mouse on series.
      * @param {{left: number, top: number}} position mouse position
      */
@@ -21927,11 +21900,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Select series.
-     * @param {number} index index
-     * @private
+     * @param {{index: number}} indexes - index map
      */
-    _selectSeries: function(index) {
-        var sectorInfo = this.sectorInfos[index];
+    selectSeries: function(indexes) {
+        var sectorInfo = this.sectorInfos[indexes.index];
         var objColor, color;
 
         if (!sectorInfo) {
@@ -21948,11 +21920,10 @@ var RaphaelPieChart = tui.util.defineClass(/** @lends RaphaelPieChart.prototype 
 
     /**
      * Unelect series.
-     * @param {number} index index
-     * @private
+     * @param {{index: number}} indexes - index map
      */
-    _unselectSeries: function(index) {
-        var sectorInfo = this.sectorInfos[index];
+    unselectSeries: function(indexes) {
+        var sectorInfo = this.sectorInfos[indexes.index];
 
         if (!sectorInfo) {
             return;
@@ -22980,6 +22951,12 @@ var BubbleChartSeries = tui.util.defineClass(Series, /** @lends BubbleChartSerie
      * @extends Series
      */
     init: function() {
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
+
         Series.apply(this, arguments);
     },
 
@@ -23264,6 +23241,22 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
         }
 
         return html;
+    },
+
+    /**
+     * Render series component.
+     * @param {object} data data for rendering
+     * @returns {HTMLElement} series element
+     * @override
+     */
+    render: function(data) {
+        var result;
+
+        delete data.paper;
+        result = Series.prototype.render.call(this, data);
+        delete result.paper;
+
+        return result;
     }
 });
 
@@ -23388,11 +23381,38 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
 
     /**
      * On click series.
-     * @param {{left: number, top: number}} position mouse position
+     * @param {{left: number, top: number}} position - mouse position
      */
     onClickSeries: function(position) {
-        if (this.options.allowSelect) {
-            this._executeGraphRenderer(position, 'clickSeries');
+        var indexes = this._executeGraphRenderer(position, 'findIndexes');
+        var prevIndexes = this.prevClickedIndexes;
+        var allowSelect = this.options.allowSelect;
+        var shouldSelect;
+
+        if (indexes && prevIndexes) {
+            this.onUnselectSeries({
+                indexes: prevIndexes
+            });
+            this.prevClickedIndexes = null;
+        }
+
+        if (!indexes) {
+            return;
+        }
+
+        shouldSelect = !prevIndexes ||
+            (indexes.index !== prevIndexes.index) || (indexes.groupIndex !== prevIndexes.groupIndex);
+
+        if (allowSelect && !shouldSelect) {
+            return;
+        }
+
+        this.onSelectSeries({
+            indexes: indexes
+        }, shouldSelect);
+
+        if (allowSelect) {
+            this.prevClickedIndexes = indexes;
         }
     },
 
@@ -23806,6 +23826,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         if (!this.graphRenderer.showGroupTooltipLine) {
             return;
         }
+
         this.graphRenderer.showGroupTooltipLine(bound);
     },
 
@@ -24335,8 +24356,19 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * On click series.
+     * @param {{left: number, top: number}} position - mouse position
      */
-    onClickSeries: function() {},
+    onClickSeries: function(position) {
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+
+        if (!tui.util.isNull(foundIndex)) {
+            this.userEvent.fire('selectSeries', {
+                chartType: this.chartType,
+                index: foundIndex,
+                code: this.mapModel.getDatum(foundIndex).code
+            });
+        }
+    },
 
     /**
      * Whether changed or not.
@@ -24568,6 +24600,12 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
          * @type {?number}
          */
         this.quadrantRange = null;
+
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
 
         this._setDefaultOptions();
     },
@@ -25171,12 +25209,55 @@ var PieChartSeries = tui.util.defineClass(Series, /** @lends PieChartSeries.prot
     },
 
     /**
+     * Whether detected label element or not.
+     * @param {{left: number, top: number}} position - mouse position
+     * @returns {boolean}
+     * @private
+     */
+    _isDetectedLabel: function(position) {
+        var labelElement = document.elementFromPoint(position.left, position.top);
+
+        return tui.util.isString(labelElement.className);
+    },
+
+    /**
      * On click series.
      * @param {{left: number, top: number}} position mouse position
      */
     onClickSeries: function(position) {
-        if (this.options.allowSelect) {
-            this._executeGraphRenderer(position, 'clickSeries');
+        var sectorInfo = this._executeGraphRenderer(position, 'findSectorInfo');
+        var prevIndex = this.prevClickedIndex;
+        var allowSelect = this.options.allowSelect;
+        var foundIndex, shouldSelect;
+
+        if ((sectorInfo || this._isDetectedLabel(position)) && tui.util.isExisty(prevIndex) && allowSelect) {
+            this.onUnselectSeries({
+                indexes: {
+                    index: prevIndex
+                }
+            });
+            this.prevClickedIndex = null;
+        }
+
+        if (!sectorInfo || sectorInfo.chartType !== this.chartType) {
+            return;
+        }
+
+        foundIndex = sectorInfo.index;
+        shouldSelect = foundIndex > -1 && (foundIndex !== prevIndex);
+
+        if (allowSelect && !shouldSelect) {
+            return;
+        }
+
+        this.onSelectSeries({
+            indexes: {
+                index: foundIndex
+            }
+        }, shouldSelect);
+
+        if (allowSelect && foundIndex > -1) {
+            this.prevClickedIndex = foundIndex;
         }
     },
 
@@ -25512,6 +25593,11 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
      * @extends Series
      */
     init: function() {
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
         Series.apply(this, arguments);
     },
 
@@ -26137,14 +26223,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index;
+        var index = seriesData.indexes.groupIndex;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
-
-        return {
+        var result = {
             chartType: legendData.chartType,
             legend: legendData.label,
-            legendIndex: legendIndex,
-            index: seriesData.indexes.groupIndex
+            legendIndex: legendIndex
         };
+
+        if (tui.util.isExisty(index)) {
+            result.index = index;
+        }
+
+        return result;
     },
 
     /**
@@ -26178,11 +26269,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call selectSeries callback of userEvent.
-     * @param {object} seriesData series data
+     * @param {object} seriesData - series data
+     * @param {?boolean} shouldSelect - whether should select or not
      */
-    onSelectSeries: function(seriesData) {
+    onSelectSeries: function(seriesData, shouldSelect) {
         this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
-        if (this.options.allowSelect && this.graphRenderer.selectSeries) {
+        shouldSelect = tui.util.isEmpty(shouldSelect) ? true : shouldSelect;
+        if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
             this.graphRenderer.selectSeries(seriesData.indexes);
         }
     },
@@ -26806,6 +26899,22 @@ var TreemapChartSeries = tui.util.defineClass(Series, /** @lends TreemapChartSer
 
         this._zoom(seriesItem.id, seriesItem.depth + 1, seriesItem.group);
         this.fire('afterZoom', detectedIndex);
+    },
+
+    /**
+     * Make exportation data for series type userEvent.
+     * @param {object} seriesData series data
+     * @returns {{chartType: string, legend: string, legendIndex: number, index: number}} export data
+     * @private
+     */
+    _makeExportationSeriesData: function(seriesData) {
+        var indexes = seriesData.indexes;
+        var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
+
+        return tui.util.extend({
+            chartType: this.chartType,
+            indexes: seriesItem.indexes
+        });
     },
 
     /**

@@ -146,6 +146,7 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
 
         ChartBase.prototype._attachCustomEvent.call(this);
 
+        customEvent.on('selectTreemapSeries', series.onSelectSeries, series);
         customEvent.on('showTooltip', tooltip.onShow, tooltip);
         customEvent.on('hideTooltip', tooltip.onHide, tooltip);
 

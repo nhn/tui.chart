@@ -295,7 +295,8 @@ var axisTypeMixer = {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: tui.util.pick(this.options.series, 'zoomable')
+            zoomable: tui.util.pick(this.options.series, 'zoomable'),
+            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
         });
     },
 
@@ -306,7 +307,8 @@ var axisTypeMixer = {
     _addCustomEventComponentForNormalTooltip: function() {
         this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
-            isVertical: this.isVertical
+            isVertical: this.isVertical,
+            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
         });
     },
 

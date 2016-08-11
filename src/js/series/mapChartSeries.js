@@ -297,8 +297,19 @@ var MapChartSeries = tui.util.defineClass(Series, /** @lends MapChartSeries.prot
 
     /**
      * On click series.
+     * @param {{left: number, top: number}} position - mouse position
      */
-    onClickSeries: function() {},
+    onClickSeries: function(position) {
+        var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
+
+        if (!tui.util.isNull(foundIndex)) {
+            this.userEvent.fire('selectSeries', {
+                chartType: this.chartType,
+                index: foundIndex,
+                code: this.mapModel.getDatum(foundIndex).code
+            });
+        }
+    },
 
     /**
      * Whether changed or not.

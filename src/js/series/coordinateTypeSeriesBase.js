@@ -114,11 +114,38 @@ var CoordinateTypeSeriesBase = tui.util.defineClass(/** @lends CoordinateTypeSer
 
     /**
      * On click series.
-     * @param {{left: number, top: number}} position mouse position
+     * @param {{left: number, top: number}} position - mouse position
      */
     onClickSeries: function(position) {
-        if (this.options.allowSelect) {
-            this._executeGraphRenderer(position, 'clickSeries');
+        var indexes = this._executeGraphRenderer(position, 'findIndexes');
+        var prevIndexes = this.prevClickedIndexes;
+        var allowSelect = this.options.allowSelect;
+        var shouldSelect;
+
+        if (indexes && prevIndexes) {
+            this.onUnselectSeries({
+                indexes: prevIndexes
+            });
+            this.prevClickedIndexes = null;
+        }
+
+        if (!indexes) {
+            return;
+        }
+
+        shouldSelect = !prevIndexes ||
+            (indexes.index !== prevIndexes.index) || (indexes.groupIndex !== prevIndexes.groupIndex);
+
+        if (allowSelect && !shouldSelect) {
+            return;
+        }
+
+        this.onSelectSeries({
+            indexes: indexes
+        }, shouldSelect);
+
+        if (allowSelect) {
+            this.prevClickedIndexes = indexes;
         }
     },
 

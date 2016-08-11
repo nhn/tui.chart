@@ -17,6 +17,11 @@ var ScatterChartSeries = tui.util.defineClass(Series, /** @lends ScatterChartSer
      * @extends Series
      */
     init: function() {
+        /**
+         * previous clicked index.
+         * @type {?number}
+         */
+        this.prevClickedIndex = null;
         Series.apply(this, arguments);
     },
 
