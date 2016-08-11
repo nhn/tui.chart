@@ -37,6 +37,7 @@ var SeriesItemForTreemap = tui.util.defineClass(/** @lends SeriesItemForTreemap.
         this.label = rawSeriesDatum.label || '';
         this.group = rawSeriesDatum.group;
         this.hasChild = !!rawSeriesDatum.hasChild;
+        this.indexes = rawSeriesDatum.indexes;
     },
 
     /**

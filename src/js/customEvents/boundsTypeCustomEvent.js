@@ -132,6 +132,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
         var target = e.target || e.srcElement;
         var foundData, seriesItem;
 
+        CustomEventBase.prototype._onClick.call(this, e);
+
         if (!predicate.isTreemapChart(this.chartType)) {
             return;
         }

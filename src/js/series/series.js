@@ -579,14 +579,19 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      */
     _makeExportationSeriesData: function(seriesData) {
         var legendIndex = seriesData.indexes.index;
+        var index = seriesData.indexes.groupIndex;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
-
-        return {
+        var result = {
             chartType: legendData.chartType,
             legend: legendData.label,
-            legendIndex: legendIndex,
-            index: seriesData.indexes.groupIndex
+            legendIndex: legendIndex
         };
+
+        if (tui.util.isExisty(index)) {
+            result.index = index;
+        }
+
+        return result;
     },
 
     /**
@@ -620,11 +625,13 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
 
     /**
      * To call selectSeries callback of userEvent.
-     * @param {object} seriesData series data
+     * @param {object} seriesData - series data
+     * @param {?boolean} shouldSelect - whether should select or not
      */
-    onSelectSeries: function(seriesData) {
+    onSelectSeries: function(seriesData, shouldSelect) {
         this.userEvent.fire('selectSeries', this._makeExportationSeriesData(seriesData));
-        if (this.options.allowSelect && this.graphRenderer.selectSeries) {
+        shouldSelect = tui.util.isEmpty(shouldSelect) ? true : shouldSelect;
+        if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
             this.graphRenderer.selectSeries(seriesData.indexes);
         }
     },

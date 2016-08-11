@@ -216,7 +216,7 @@ var ColumnChartSeries = tui.util.defineClass(Series, /** @lends ColumnChartSerie
 
         delete data.paper;
         result = Series.prototype.render.call(this, data);
-        delete result.paper
+        delete result.paper;
 
         return result;
     }

@@ -49,26 +49,31 @@ describe('Test for SeriesDataModelForTreemap', function() {
                 {
                     id: idPrefix + '0',
                     parent: rootId,
-                    label: 'label1'
+                    label: 'label1',
+                    indexes: [0]
                 }, {
                     id: idPrefix + '0_0',
                     parent: idPrefix + '0',
-                    label: 'label1-1'
+                    label: 'label1-1',
+                    indexes: [0, 0]
                 }, {
                     id: idPrefix + '0_0_0',
                     parent: idPrefix + '0_0',
                     label: 'label1-1-1',
-                    value: 5
+                    value: 5,
+                    indexes: [0, 0, 0]
                 }, {
                     id: idPrefix + '0_0_1',
                     parent: idPrefix + '0_0',
                     label: 'label1-1-2',
-                    value: 7
+                    value: 7,
+                    indexes: [0, 0, 1]
                 }, {
                     id: idPrefix + '0_1',
                     parent: idPrefix + '0',
                     label: 'label1-2',
-                    value: 3
+                    value: 3,
+                    indexes: [0, 1]
                 }
             ];
 

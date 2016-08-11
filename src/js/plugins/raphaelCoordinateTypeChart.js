@@ -255,23 +255,22 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
     },
 
     /**
-     * Click series.
-     * @param {{left: number, top: number}} position mouse position
+     * Find data indexes of rendered circle by position.
+     * @param {{left: number, top: number}} position - mouse position
+     * @returns {{index: number, groupIndex: number}}
      */
-    clickSeries: function(position) {
+    findIndexes: function(position) {
         var circle = this.paper.getElementByPoint(position.left, position.top);
-        var prevCircle = this.prevCircle;
+        var foundIndexes = null;
 
-        if (circle && prevCircle) {
-            this._unselectSeries(prevCircle.data('groupIndex'), prevCircle.data('index'));
+        if (circle) {
+            foundIndexes = {
+                index: circle.data('index'),
+                groupIndex: circle.data('groupIndex')
+            };
         }
 
-        if (prevCircle === circle) {
-            this.prevCircle = null;
-        } else if (circle) {
-            this._selectSeries(circle.data('groupIndex'), circle.data('index'));
-            this.prevCircle = circle;
-        }
+        return foundIndexes;
     },
 
     /**
@@ -403,10 +402,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Select series.
-     * @param {number} groupIndex - index of group
-     * @param {number} index - index
+     * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    _selectSeries: function(groupIndex, index) {
+    selectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
         var circleInfo = this.groupCircleInfos[groupIndex][index];
         var objColor = raphael.color(circleInfo.color);
         var themeColor = this.theme.selectionColor;
@@ -419,10 +419,11 @@ var RaphaelBubbleChart = tui.util.defineClass(/** @lends RaphaelBubbleChart.prot
 
     /**
      * Unselect series.
-     * @param {number} groupIndex - index of group
-     * @param {number} index - index
+     * @param {{index: number, groupIndex: number}} indexes - index map
      */
-    _unselectSeries: function(groupIndex, index) {
+    unselectSeries: function(indexes) {
+        var groupIndex = indexes.groupIndex;
+        var index = indexes.index;
         var circleInfo = this.groupCircleInfos[groupIndex][index];
 
         circleInfo.circle.attr({
