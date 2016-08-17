@@ -180,7 +180,7 @@ describe('Test for Plot', function() {
                 hTickCount: 5
             };
             positions = plot._makeHorizontalPixelPositions(200);
-            expect(actual).toEqual([49.75, 99.5, 149.25, 199]);
+            expect(positions).toEqual([49.75, 99.5, 149.25, 199]);
         });
 
         it('hTickCount=0일 경우에는 빈 배열을 반환합니다.', function() {
