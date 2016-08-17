@@ -206,7 +206,7 @@ describe('Test for axisDataMaker', function() {
             expect(axisData.startIndex).toBe(1);
             expect(axisData.positionRatio).toBe(0.05263157894736842);
             expect(axisData.sizeRatio).toBe(0.9473684210526316);
-            expect(axisData.lineWidth).toBe(401);
+            expect(axisData.lineWidth).toBe(400);
             expect(axisData.interval).toBe(6);
         });
     });

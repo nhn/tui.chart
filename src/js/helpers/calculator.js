@@ -110,9 +110,9 @@ var calculator = {
             pxLimit = {min: 0, max: size - 1};
             pxStep = this.calculateStepFromLimit(pxLimit, count);
             positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
-                return Math.round(position + additionalPosition);
+                return position + additionalPosition;
             });
-            positions[positions.length - 1] = Math.round(size - 1 + additionalPosition);
+            positions[positions.length - 1] = size - 1 + additionalPosition;
         }
 
         return positions;
@@ -145,7 +145,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return (limit.max - limit.min) / (count - 1);
+        return tui.util.division(tui.util.subtraction(limit.max, limit.min), (count - 1));
     },
 
     /**

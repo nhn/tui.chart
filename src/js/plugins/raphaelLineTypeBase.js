@@ -387,11 +387,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * }} bound bound
      */
     showGroupTooltipLine: function(bound) {
+        var left = Math.max(bound.position.left, 11);
         var linePath = raphaelRenderUtil.makeLinePath({
-            left: bound.position.left,
+            left: left,
             top: bound.position.top + bound.dimension.height
         }, {
-            left: bound.position.left,
+            left: left,
             top: bound.position.top
         });
 

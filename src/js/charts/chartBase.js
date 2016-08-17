@@ -273,6 +273,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _registerAxesData: function() {
         var axesData = this._makeAxesData();
+
         this.boundsMaker.registerAxesData(axesData);
     },
 

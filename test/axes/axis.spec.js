@@ -672,9 +672,9 @@ describe('Test for Axis', function() {
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 74%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 24.75%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 49.5%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 74.25%"></div>' +
                 '<div class="tui-chart-tick" style="background-color:black;left: 99%"></div>';
 
             expect(actual).toBe(expected);
@@ -687,9 +687,9 @@ describe('Test for Axis', function() {
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 74%"></div>';
+                '<div class="tui-chart-tick" style="background-color:black;left: 24.75%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 49.5%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 74.25%"></div>';
 
             expect(actual).toBe(expected);
         });
@@ -873,11 +873,11 @@ describe('Test for Axis', function() {
 
             // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
             expect(childNodes[0].style.left).toBe('0%');
-            expect(childNodes[1].style.left).toBe('50%');
+            expect(childNodes[1].style.left).toBe('49.875%');
             expect(childNodes[2].style.left).toBe('99.75%');
-            expect(childNodes[0].style.width).toBe('200px');
-            expect(childNodes[1].style.width).toBe('200px');
-            expect(childNodes[2].style.width).toBe('200px');
+            expect(childNodes[0].style.width).toBe('199.5px');
+            expect(childNodes[1].style.width).toBe('199.5px');
+            expect(childNodes[2].style.width).toBe('199.5px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
@@ -897,7 +897,7 @@ describe('Test for Axis', function() {
 
             expect(childNodes.length).toBe(3);
             expect(childNodes[0].style.bottom).toBe('0%');
-            expect(childNodes[1].style.bottom).toBe('50%');
+            expect(childNodes[1].style.bottom).toBe('49.875%');
             expect(childNodes[2].style.bottom).toBe('99.75%');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');

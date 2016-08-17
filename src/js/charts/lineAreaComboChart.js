@@ -46,6 +46,18 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
         tui.util.extend(this, chartTypesMap);
 
         this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
+    },
+
+    /**
+     * Resize.
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     * @override
+     */
+    resize: function(dimension) {
+        this._initForAutoTickInterval();
+        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 

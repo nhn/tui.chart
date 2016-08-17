@@ -130,16 +130,11 @@ describe('Test for BoundsMaker', function() {
         it('x축 label이 렌더링 될 수있는 영역의 너비를 계산합니다.', function() {
             var actual, expected;
 
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: ['cate1', 'cate2', 'cate3']
-                }
-            };
             boundsMaker.dimensions.series = {
                 width: 300
             };
 
-            actual = boundsMaker._calculateXAxisLabelLimitWidth();
+            actual = boundsMaker._calculateXAxisLabelLimitWidth(3);
             expected = 100;
 
             expect(actual).toBe(expected);
@@ -149,16 +144,11 @@ describe('Test for BoundsMaker', function() {
             var actual, expected;
 
             boundsMaker.chartType = chartConst.CHART_TYPE_LINE;
-            boundsMaker.axesData = {
-                xAxis: {
-                    labels: ['cate1', 'cate2', 'cate3']
-                }
-            };
             boundsMaker.dimensions.series = {
                 width: 300
             };
 
-            actual = boundsMaker._calculateXAxisLabelLimitWidth();
+            actual = boundsMaker._calculateXAxisLabelLimitWidth(3);
             expected = 150;
 
             expect(actual).toBe(expected);
@@ -181,7 +171,7 @@ describe('Test for BoundsMaker', function() {
 
     describe('_makeHorizontalLabelRotationInfo', function() {
         beforeEach(function() {
-            renderUtil.getRenderedLabelHeight.and.returnValue(20);
+            spyOn(renderUtil, 'getRenderedLabelsMaxHeight').and.returnValue(20);
         });
 
         it('레이블 중 가장 긴 레이블이 제한 너비를 초과하지 않는 적절한 회전각을 반환합니다.', function() {
@@ -196,12 +186,14 @@ describe('Test for BoundsMaker', function() {
             boundsMaker.theme = {
                 xAxis: {}
             };
+
             actual = boundsMaker._makeHorizontalLabelRotationInfo(100);
             expected = {
                 maxLabelWidth: 120,
                 labelHeight: 20,
                 degree: 25
             };
+
             expect(actual).toEqual(expected);
         });
 

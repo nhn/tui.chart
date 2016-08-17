@@ -70,7 +70,27 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          */
         this.dataProcessor = params.dataProcessor;
 
+        /**
+         * adding data mode
+         * @type {boolean}
+         */
+        this.addingDataMode = false;
+
         this.initBoundsData();
+    },
+
+    /**
+     * On adding data mode.
+     */
+    onAddingDataMode: function() {
+        this.addingDataMode = true;
+    },
+
+    /**
+     * Off adding data mode.
+     */
+    offAddingDataMode: function() {
+        this.addingDataMode = false;
     },
 
     /**
@@ -151,7 +171,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {{xAxis: object, yAxis: object, rightYAxis: object}}
      */
     getAxesData: function() {
-        return this.axesData;
+        return tui.util.extend(this.axesData);
     },
 
     /**
@@ -276,13 +296,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _calculateXAxisLabelLimitWidth: function(labelCount) {
         var seriesWidth = this.getDimension('series').width;
         var isAlign = predicate.isLineTypeChart(this.chartType);
-        var xAxisOptions = this.options.xAxis || {};
-
-        labelCount = labelCount || this.axesData.xAxis.labels.length;
-
-        if (predicate.isValidLabelInterval(xAxisOptions.labelInterval, xAxisOptions.tickInterval)) {
-            seriesWidth *= xAxisOptions.labelInterval;
-        }
 
         return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
@@ -323,11 +336,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {?object} rotation info
      * @private
      */
-    _makeHorizontalLabelRotationInfo: function(limitWidth) {
-        var labels = this.axesData.xAxis.labels,
-            theme = this.theme.xAxis.label,
-            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            degree, labelHeight;
+    _makeHorizontalLabelRotationInfo: function(limitWidth, labels) {
+        var theme = this.theme.xAxis.label;
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme);
+        var degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
             return null;
@@ -462,21 +474,28 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _updateDimensionsAndDegree: function() {
         var xAxisOptions = this.options.xAxis || {};
-        var limitWidth = this._calculateXAxisLabelLimitWidth();
-        var labels = tui.util.filter(this.axesData.xAxis.labels, function(label) {
+        var labels = this.axesData.xAxis.labels;
+        var labelCount, limitWidth, rotationInfo, overflowLeft, diffHeight;
+
+        if (this.addingDataMode) {
+            labels = labels.slice(0, labels.length - 1);
+        }
+
+        labels = tui.util.filter(labels, function(label) {
             return !!label;
         });
-        var rotationInfo, overflowLeft, diffHeight;
+        labelCount = labels.length;
+        limitWidth = this._calculateXAxisLabelLimitWidth(labelCount);
 
         if (xAxisOptions.rotateLabel !== false) {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);
+            rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, labels);
         }
 
         if (rotationInfo) {
             overflowLeft = this._calculateOverflowLeft(rotationInfo, labels[0]);
             this.xAxisDegree = rotationInfo.degree;
             this._updateDimensionsWidth(overflowLeft);
-            this._updateDegree(rotationInfo, labels.length, overflowLeft);
+            this._updateDegree(rotationInfo, labelCount, overflowLeft);
             diffHeight = this._calculateDiffWithRotatedHeight(rotationInfo);
         } else {
             diffHeight = this._calculateDiffWithMultilineHeight(labels, limitWidth);

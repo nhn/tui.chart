@@ -238,7 +238,7 @@ var axisDataMaker = {
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            lineWidth: seriesWidth + chartConst.OVERLAPPING_WIDTH,
+            lineWidth: seriesWidth,
             interval: interval
         });
     },

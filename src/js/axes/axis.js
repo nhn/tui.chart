@@ -578,7 +578,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
-        var aligned = this.data.aligned;
         var tickColor = this.theme.tickColor;
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
@@ -587,7 +586,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template, html;
 
         positions.length = this.data.labels.length;
-
         additionalSize = calculator.makePercentageValue(additionalSize, containerWidth);
         positions = this._makePercentagePositions(positions, size);
 
@@ -597,10 +595,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
             position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
             position += additionalSize;
-
-            if (aligned) {
-                position = Math.round(position);
-            }
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
@@ -641,7 +635,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             lineSize = this.data.lineWidth;
         } else {
             lineSize = areaSize + tickLineExtend;
-            positionValue += additionalSize;
+            if (!this.data.sizeRatio) {
+                positionValue += additionalSize;
+            }
         }
 
         cssMap[posType] = positionValue;

@@ -59,11 +59,18 @@ var addingDynamicDataMixer = {
         boundsMaker.initBoundsData();
 
         this._render(function() {
-            var xAxisWidth = boundsMaker.getDimension('xAxis').width * beforeSizeRatio;
-            var tickSize = (xAxisWidth / (self.dataProcessor.getCategoryCount(false) - 1));
+            var xAxisWidth = boundsMaker.getDimension('xAxis').width;
+            var tickCount = self.dataProcessor.getCategoryCount(false) - 1;
+            var tickSize;
+
+            if (shiftingOption) {
+                tickCount -= 1;
+            }
+
+            tickSize = (xAxisWidth / tickCount);
 
             self._renderComponents({
-                tickSize: tickSize + chartConst.OVERLAPPING_WIDTH,
+                tickSize: tickSize,
                 shifting: shiftingOption
             }, 'animateForAddingData');
         }, beforeAxesData);
@@ -110,9 +117,11 @@ var addingDynamicDataMixer = {
             return;
         }
 
+        this.boundsMaker.onAddingDataMode();
         this._animateForAddingData();
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
+            self.boundsMaker.offAddingDataMode();
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);

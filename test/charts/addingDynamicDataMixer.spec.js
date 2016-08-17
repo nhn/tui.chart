@@ -69,7 +69,7 @@ describe('Test for addingDynamicDataMixer', function() {
             mixer._animateForAddingData();
 
             expect(mixer._renderComponents).toHaveBeenCalledWith({
-                tickSize: 51,
+                tickSize: 50,
                 shifting: false
             }, 'animateForAddingData');
         });
