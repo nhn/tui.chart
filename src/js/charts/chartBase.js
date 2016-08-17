@@ -174,12 +174,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return new AxisScaleMaker(tui.util.extend({
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
-            options: {
-                stackType: seriesOptions.stackType,
-                diverging: seriesOptions.diverging,
-                limit: limit
-            },
-            isVertical: this.isVertical,
+            stackType: seriesOptions.stackType,
+            diverging: seriesOptions.diverging,
+            limitOption: limit,
+            isVertical: areaType !== 'xAxis',
             areaType: areaType,
             valueType: valueType,
             chartType: chartType

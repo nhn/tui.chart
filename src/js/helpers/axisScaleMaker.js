@@ -33,10 +33,22 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.boundsMaker = params.boundsMaker;
 
         /**
-         * Options
-         * @type {object}
+         * stackType option
+         * @type {?string}
          */
-        this.options = params.options || {};
+        this.stackType = params.stackType;
+
+        /**
+         * diverging option
+         * @type {?boolean}
+         */
+        this.diverging = params.diverging;
+
+        /**
+         * limit option
+         * @type {?{min: number, max: number}}
+         */
+        this.limitOption = params.limitOption;
 
         /**
          * Chart type
@@ -122,7 +134,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isPercentStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isPercentStack = predicate.isPercentStack(this.options.stackType);
+            isPercentStack = predicate.isPercentStack(this.stackType);
 
         return isAllowedStackOption && isPercentStack;
     },
@@ -134,7 +146,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isNormalStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isNormalStack = predicate.isNormalStack(this.options.stackType);
+            isNormalStack = predicate.isNormalStack(this.stackType);
 
         return isAllowedStackOption && isNormalStack;
     },
@@ -145,7 +157,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _isDivergingChart: function() {
-        return this.options.diverging && predicate.isBarTypeChart(this.chartType);
+        return this.diverging && predicate.isBarTypeChart(this.chartType);
     },
 
     /**
@@ -204,15 +216,15 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            baseValues = [];
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var baseValues = [];
 
         seriesDataModel.each(function(seriesGroup) {
             var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
-                var plusSum = calculator.sumPlusValues(values),
-                    minusSum = calculator.sumMinusValues(values);
+                var plusSum = calculator.sumPlusValues(values);
+                var minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
         });
@@ -228,9 +240,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _makeBaseValues: function() {
         var baseValues;
 
-        if (predicate.isTreemapChart(this.chartType)) {
+        if (this.isSingleYAxis) {
+            baseValues = this.dataProcessor.getValues();
+            if (this._isNormalStackChart()) {
+                baseValues = baseValues.concat(this._makeBaseValuesForNormalStackedChart());
+            }
+        } else if (predicate.isTreemapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
-        } else if (predicate.isMapChart(this.chartType) || this.isSingleYAxis) {
+        } else if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
@@ -303,7 +320,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeIntegerTypeScale: function(limit) {
-        var options = this.options.limit || {},
+        var options = this.limitOption || {},
             min = limit.min,
             max = limit.max,
             multipleNum, changedOptions;

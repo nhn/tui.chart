@@ -6,6 +6,7 @@
 
 'use strict';
 
+var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
 var ChartBase = require('./chartBase');
@@ -213,9 +214,25 @@ var verticalTypeComboMixer = {
     _createYAxisScaleMaker: function(index, isSingleYAxis) {
         var chartType = this.chartTypes[index];
         var yAxisOption = this.yAxisOptionsMap[chartType];
+        var dataProcessor = this.dataProcessor;
         var additionalParams = {
             isSingleYAxis: !!isSingleYAxis
         };
+
+        if (isSingleYAxis && this.options.series) {
+            tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
+                var _chartType = dataProcessor.findChartType(seriesName);
+
+                if (!predicate.isAllowedStackOption(_chartType)) {
+                    return;
+                }
+
+                additionalParams.chartType = _chartType;
+                if (seriesOption.stackType) {
+                    additionalParams.stackType = seriesOption.stackType;
+                }
+            });
+        }
 
         return this._createAxisScaleMaker(yAxisOption, 'yAxis', null, chartType, additionalParams);
     },

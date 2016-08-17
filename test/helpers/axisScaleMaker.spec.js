@@ -75,7 +75,7 @@ describe('Test for AxisScaleMaker', function() {
                 step: 25
             });
             axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
-            axisScaleMaker.options.diverging = true;
+            axisScaleMaker.diverging = true;
             actual = axisScaleMaker._getScaleValues();
             expected = [50, 25, 0, 25, 50];
 
@@ -142,10 +142,43 @@ describe('Test for AxisScaleMaker', function() {
             };
 
             axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
+            var seriesGroup, actual, expected;
+
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.groups = [
+                seriesGroup
+            ];
+            seriesGroup._makeValuesMapPerStack.and.returnValue({
+                st1: [70, 10, 20, 20, 80, 30],
+            });
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
+
+            axisScaleMaker.isSingleYAxis = true;
+            axisScaleMaker.stackType = chartConst.NORMAL_STACK_TYPE;
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
+
+            actual = axisScaleMaker._makeBaseValues();
+            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
             expect(actual).toEqual(expected);
         });
@@ -158,7 +191,7 @@ describe('Test for AxisScaleMaker', function() {
             ]);
 
             axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
-            axisScaleMaker.options.stackType = 'normal';
+            axisScaleMaker.stackType = 'normal';
             actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
 
@@ -287,7 +320,7 @@ describe('Test for AxisScaleMaker', function() {
         it('min, max가 소수이고 옵션이 있을 경우에는 옵션값 까지 변환 작업된 결과값을 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.options.limit = {
+            axisScaleMaker.limitOption = {
                 min: 0.2,
                 max: 0.8
             };
@@ -949,7 +982,7 @@ describe('Test for AxisScaleMaker', function() {
             spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
             spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
             axisScaleMaker.chartType = 'bar';
-            axisScaleMaker.options.diverging = true;
+            axisScaleMaker.diverging = true;
 
             actual = axisScaleMaker._getPercentStackedScale();
             expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;

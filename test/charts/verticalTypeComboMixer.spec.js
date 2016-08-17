@@ -7,16 +7,12 @@
 'use strict';
 
 var ColumnLineComboChart = require('../../src/js/charts/columnLineComboChart.js');
-var DataProcessor = require('../../src/js/dataModels/dataProcessor');
+var chartConst = require('../../src/js/const');
 var defaultTheme = require('../../src/js/themes/defaultTheme.js');
 var axisDataMaker = require('../../src/js/helpers/axisDataMaker');
 
 describe('Test for ColumnLineComboChart', function() {
     var verticalTypeComboChart;
-
-    beforeAll(function() {
-        spyOn(DataProcessor.prototype, 'init').and.returnValue();
-    });
 
     beforeEach(function() {
         verticalTypeComboChart = new ColumnLineComboChart(
@@ -101,6 +97,59 @@ describe('Test for ColumnLineComboChart', function() {
                 title: 'test'
             }]);
             expect(result).toEqual([]);
+        });
+    });
+
+    describe('_createYAxisScaleMaker()', function() {
+        it('create AxisScaleMake for y axis, when single y axis', function() {
+            var actual;
+
+            spyOn(verticalTypeComboChart, '_createAxisScaleMaker').and.returnValue('instance of AxisScaleMaker');
+
+            verticalTypeComboChart.chartTypes = ['column', 'line'];
+            verticalTypeComboChart.yAxisOptionsMap = {
+                column: {
+                    title: 'yAxis'
+                }
+            };
+            verticalTypeComboChart.options.series = {
+                column: {
+                    stackType: chartConst.NORMAL_STACK_TYPE
+                }
+            };
+
+            actual = verticalTypeComboChart._createYAxisScaleMaker(0, true);
+
+            expect(actual).toBe('instance of AxisScaleMaker');
+            expect(verticalTypeComboChart._createAxisScaleMaker).toHaveBeenCalledWith({
+                title: 'yAxis'
+            }, 'yAxis', null, 'column', {
+                isSingleYAxis: true,
+                chartType: 'column',
+                stackType: chartConst.NORMAL_STACK_TYPE
+            });
+        });
+
+        it('create AxisScaleMake for y axis, when not single y axis', function() {
+            var actual;
+
+            spyOn(verticalTypeComboChart, '_createAxisScaleMaker').and.returnValue('instance of AxisScaleMaker');
+
+            verticalTypeComboChart.chartTypes = ['line'];
+            verticalTypeComboChart.yAxisOptionsMap = {
+                line: {
+                    title: 'yAxis'
+                }
+            };
+
+            actual = verticalTypeComboChart._createYAxisScaleMaker(0);
+
+            expect(actual).toBe('instance of AxisScaleMaker');
+            expect(verticalTypeComboChart._createAxisScaleMaker).toHaveBeenCalledWith({
+                title: 'yAxis'
+            }, 'yAxis', null, 'line', {
+                isSingleYAxis: false
+            });
         });
     });
 
