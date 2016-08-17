@@ -873,7 +873,13 @@ describe('Test for Axis', function() {
 
             // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
             expect(childNodes[0].style.left).toBe('0%');
-            expect(childNodes[1].style.left).toBe('49.875%');
+
+            if (tui.util.browser.msie) {
+                expect(childNodes[1].style.left).toBe('49.87%');
+            } else {
+                expect(childNodes[1].style.left).toBe('49.875%');
+            }
+
             expect(childNodes[2].style.left).toBe('99.75%');
             expect(childNodes[0].style.width).toBe('199.5px');
             expect(childNodes[1].style.width).toBe('199.5px');
@@ -897,7 +903,13 @@ describe('Test for Axis', function() {
 
             expect(childNodes.length).toBe(3);
             expect(childNodes[0].style.bottom).toBe('0%');
-            expect(childNodes[1].style.bottom).toBe('49.875%');
+
+            if (tui.util.browser.msie) {
+                expect(childNodes[1].style.bottom).toBe('49.87%');
+            } else {
+                expect(childNodes[1].style.bottom).toBe('49.875%');
+            }
+
             expect(childNodes[2].style.bottom).toBe('99.75%');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
