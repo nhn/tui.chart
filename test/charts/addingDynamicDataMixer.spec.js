@@ -13,7 +13,8 @@ describe('Test for addingDynamicDataMixer', function() {
 
     beforeEach(function() {
         dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategoryCount', 'shiftData', 'addDataFromDynamicData']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getAxesData', 'getDimension']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker',
+                                ['initBoundsData', 'getAxesData', 'getDimension', 'onAddingDataMode', 'offAddingDataMode']);
 
         mixer.dataProcessor = dataProcessor;
         mixer.boundsMaker = boundsMaker;

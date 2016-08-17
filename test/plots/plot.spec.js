@@ -106,10 +106,10 @@ describe('Test for Plot', function() {
             expect(childNodes.length).toBe(4);
             expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
             expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toBe('50px');
-            expect(childNodes[1].style.bottom).toBe('100px');
-            expect(childNodes[2].style.bottom).toBe('149px');
             expect(childNodes[3].style.bottom).toBe('199px');
+            expect(childNodes[0].style.bottom).toBe('49.75px');
+            expect(childNodes[1].style.bottom).toBe('99.5px');
+            expect(childNodes[2].style.bottom).toBe('149.25px');
             expect(childNodes[0].style.width).toBe('400px');
             expect(childNodes[3].style.width).toBe('400px');
         });
@@ -144,7 +144,7 @@ describe('Test for Plot', function() {
                 vTickCount: 5
             };
             positions = plot._makeVerticalPixelPositions(200);
-            expect(positions).toEqual([50, 100, 149, 199]);
+            expect(positions).toEqual([49.75, 99.5, 149.25, 199]);
         });
 
         it('vTickCount=0일 경우에는 빈 배열을 반환합니다.', function() {
@@ -164,9 +164,10 @@ describe('Test for Plot', function() {
             boundsMaker.getDimension.and.returnValue({
                 width: 50
             });
-            plot.data.hTickCount = 7;
-            actual = plot._makeDividedPlotPositions(350);
-            expected = [0, 50, 99, 250, 299, 349];
+            plot.data.hTickCount = 8;
+
+            actual = plot._makeDividedPlotPositions(400);
+            expected = [0, 43.5, 87, 130.5, 268.5, 312, 355.5, 399];
 
             expect(actual).toEqual(expected);
         });
@@ -179,7 +180,7 @@ describe('Test for Plot', function() {
                 hTickCount: 5
             };
             positions = plot._makeHorizontalPixelPositions(200);
-            expect(positions).toEqual([50, 100, 149, 199]);
+            expect(actual).toEqual([49.75, 99.5, 149.25, 199]);
         });
 
         it('hTickCount=0일 경우에는 빈 배열을 반환합니다.', function() {
@@ -233,10 +234,10 @@ describe('Test for Plot', function() {
             expect(childNodes.length).toBe(4);
             expect(dom.hasClass(childNodes[0], 'horizontal')).toBe(true);
             expect(dom.hasClass(childNodes[3], 'horizontal')).toBe(true);
-            expect(childNodes[0].style.bottom).toBe('50px');
-            expect(childNodes[1].style.bottom).toBe('100px');
-            expect(childNodes[2].style.bottom).toBe('149px');
             expect(childNodes[3].style.bottom).toBe('199px');
+            expect(childNodes[0].style.bottom).toBe('49.75px');
+            expect(childNodes[1].style.bottom).toBe('99.5px');
+            expect(childNodes[2].style.bottom).toBe('149.25px');
             expect(childNodes[0].style.width).toBe('400px');
             expect(childNodes[3].style.width).toBe('400px');
         });
