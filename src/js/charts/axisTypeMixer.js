@@ -179,10 +179,12 @@ var axisTypeMixer = {
         if (axisScaleMaker) {
             axisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                dataProcessor: this.dataProcessor,
+                chartType: this.chartType,
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned
+                aligned: aligned
             });
         } else {
             axisData = axisDataMaker.makeLabelAxisData({
@@ -190,7 +192,7 @@ var axisTypeMixer = {
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned,
+                aligned: aligned,
                 addedDataCount: tui.util.pick(this.options.series, 'shifting') ? this.addedDataCount : 0
             });
         }
@@ -245,20 +247,45 @@ var axisTypeMixer = {
     },
 
     /**
+     * Get limit map for coordinate type.
+     * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
+     * @private
+     */
+    _getLimitMapForCoordinateType: function() {
+        var scaleMakerMap = this._getAxisScaleMakerMap();
+        return {
+            x: scaleMakerMap.xAxis.getLimit(),
+            y: scaleMakerMap.yAxis.getLimit()
+        };
+    },
+
+    /**
      * Add data ratios.
      * @private
      * @override
      */
     _addDataRatios: function() {
         var self = this;
-        var axesData = this.boundsMaker.getAxesData();
         var chartTypes = this.chartTypes || [this.chartType];
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var stackType = tui.util.pick(this.options.series, 'stackType');
+        var seriesOption = this.options.series || {};
+        var limitMap, axesData, addDataRatio;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
-        });
+        if (this.dataProcessor.isCoordinateType()) {
+            limitMap = this._getLimitMapForCoordinateType();
+            addDataRatio = function(chartType) {
+                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+            };
+        } else {
+            axesData = this.boundsMaker.getAxesData();
+            limitMap = this._getLimitMap(axesData, chartTypes);
+
+            addDataRatio = function(chartType) {
+                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            };
+        }
+
+        tui.util.forEachArray(chartTypes, addDataRatio);
     },
 
     /**

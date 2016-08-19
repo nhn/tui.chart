@@ -20,7 +20,8 @@ describe('Test for Axis', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['isValidAllSeriesDataModel', 'getCategories', 'getMultilineCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+            ['isValidAllSeriesDataModel', 'getCategories', 'getMultilineCategories', 'isCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['registerBaseDimension', 'getDimension', 'getPosition']);
         axis = new Axis({
             theme: {
@@ -370,8 +371,9 @@ describe('Test for Axis', function() {
     });
 
     describe('animateForAddingData()', function() {
-        it('shifting옵션이 있다면 this._moveToLeft를 수행합니다.', function() {
+        it('if has shifting option, execute this._moveToLeft function', function() {
             spyOn(axis, '_moveToLeft');
+            dataProcessor.isCoordinateType.and.returnValue(false);
 
             axis.animateForAddingData({
                 shifting: true,
@@ -381,8 +383,9 @@ describe('Test for Axis', function() {
             expect(axis._moveToLeft).toHaveBeenCalledWith(50);
         });
 
-        it('shifting옵션이 없다면 this._resizeByTickSize를 수행합니다.', function() {
+        it('if has not shifting option, execute this._resizeByTickSize function', function() {
             spyOn(axis, '_resizeByTickSize');
+            dataProcessor.isCoordinateType.and.returnValue(false);
 
             axis.animateForAddingData({
                 tickSize: 50
@@ -391,11 +394,25 @@ describe('Test for Axis', function() {
             expect(axis._resizeByTickSize).toHaveBeenCalledWith(50);
         });
 
-        it('세로 형 축에서는 동작하지 않습니다.', function() {
+        it('if axis is vertical type, this function is not working', function() {
             spyOn(axis, '_moveToLeft');
             spyOn(axis, '_resizeByTickSize');
 
             axis.isVertical = true;
+
+            axis.animateForAddingData();
+
+            expect(axis._moveToLeft).not.toHaveBeenCalled();
+            expect(axis._resizeByTickSize).not.toHaveBeenCalled();
+        });
+
+        it('if data type is coordinateType, this functions is not working', function() {
+            spyOn(axis, '_moveToLeft');
+            spyOn(axis, '_resizeByTickSize');
+
+            axis.isVertical = false;
+            dataProcessor.isCoordinateType.and.returnValue(true);
+
             axis.animateForAddingData();
 
             expect(axis._moveToLeft).not.toHaveBeenCalled();

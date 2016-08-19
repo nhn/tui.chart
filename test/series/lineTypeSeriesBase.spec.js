@@ -22,8 +22,8 @@ describe('LineTypeSeriesBase', function() {
     });
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getFirstItemLabel', 'isCoordinateType']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker', ['getDimension', 'getAxesData']);
         series = new LineTypeSeriesBase();
         series._makeSeriesLabelHtml = makeSeriesLabelHtml;
         series.dataProcessor = dataProcessor;
@@ -31,8 +31,8 @@ describe('LineTypeSeriesBase', function() {
         series._getSeriesDataModel = jasmine.createSpy('_getSeriesDataModel');
     });
 
-    describe('_makeBasicPositions()', function() {
-        it('라인차트의 position 정보를 생성합니다.', function() {
+    describe('_makePositionsForDefaultType()', function() {
+        it('make positions for default data type, when not aligned.', function() {
             var seriesDataModel = new SeriesDataModel();
             var actual;
 
@@ -51,10 +51,13 @@ describe('LineTypeSeriesBase', function() {
                 width: 300,
                 height: 200
             });
+            boundsMaker.getAxesData.and.returnValue({
+                xAxis: {}
+            });
             series.data = {
                 aligned: false
             };
-            actual = series._makeBasicPositions();
+            actual = series._makePositionsForDefaultType();
 
             expect(actual).toEqual([
                 [
@@ -74,7 +77,7 @@ describe('LineTypeSeriesBase', function() {
             ]);
         });
 
-        it('aligned 옵션이 true이면 tick라인에 맞춰 시작 left와 step이 변경됩니다.', function() {
+        it('make positions for default data type, when aligned', function() {
             var seriesDataModel = new SeriesDataModel();
             var actual;
 
@@ -96,6 +99,9 @@ describe('LineTypeSeriesBase', function() {
                 width: 300,
                 height: 200
             });
+            boundsMaker.getAxesData.and.returnValue({
+                xAxis: {}
+            });
             actual = series._makeBasicPositions();
 
             expect(actual).toEqual([
@@ -111,6 +117,61 @@ describe('LineTypeSeriesBase', function() {
                     {
                         top: 130,
                         left: 310
+                    }
+                ]
+            ]);
+        });
+    });
+
+    describe('_makePositionForCoordinateType()', function() {
+        it('make positions for coordinate data type', function() {
+            var seriesDataModel = new SeriesDataModel();
+            var actual;
+
+            series._getSeriesDataModel.and.returnValue(seriesDataModel);
+            seriesDataModel.pivotGroups = [
+                new SeriesGroup([{
+                    ratioMap: {
+                        x: 0,
+                        y: 0.2
+                    }
+                }, {
+                    ratioMap: {
+                        x: 0.5,
+                        y: 0.7
+                    }
+                }, {
+                    ratioMap: {
+                        x: 1,
+                        y: 0.4
+                    }
+                }])
+            ];
+            boundsMaker.getDimension.and.returnValue({
+                width: 300,
+                height: 200
+            });
+            boundsMaker.getAxesData.and.returnValue({
+                xAxis: {
+                    sizeRatio: 0.8,
+                    positionRatio: 0.08
+                }
+            });
+            actual = series._makePositionForCoordinateType();
+
+            expect(actual).toEqual([
+                [
+                    {
+                        top: 170,
+                        left: 34
+                    },
+                    {
+                        top: 70,
+                        left: 154
+                    },
+                    {
+                        top: 130,
+                        left: 274
                     }
                 ]
             ]);

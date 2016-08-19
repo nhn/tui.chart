@@ -403,7 +403,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {{tickSize: number}} data - data for animate
      */
     animateForAddingData: function(data) {
-        if (this.isVertical) {
+        if (this.isVertical || this.dataProcessor.isCoordinateType()) {
             return;
         }
 

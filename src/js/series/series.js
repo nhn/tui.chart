@@ -587,9 +587,11 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
             legend: legendData.label,
             legendIndex: legendIndex
         };
+        var seriesItem;
 
         if (tui.util.isExisty(index)) {
-            result.index = index;
+            seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
+            result.index = seriesItem.index;
         }
 
         return result;

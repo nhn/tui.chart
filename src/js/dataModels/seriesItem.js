@@ -17,11 +17,12 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
      * @param {number} value - value
-     * @param {?string} stack - stack
-     * @param {?Array.<function>} formatFunctions - format functions
      * @param {string} chartType - type of chart
+     * @param {?Array.<function>} formatFunctions - format functions
+     * @param {number} index - raw data index
+     * @param {?string} stack - stack
      */
-    init: function(value, stack, formatFunctions, chartType) {
+    init: function(value, chartType, formatFunctions, index, stack) {
         /**
          * type of chart
          * @type {string}
@@ -106,20 +107,22 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
-        this._initValues(value);
+        this._initValues(value, index);
     },
 
     /**
      * Initialize values of item.
      * @param {number} value - value
+     * @param {number} index - raw data index
      * @private
      */
-    _initValues: function(value) {
+    _initValues: function(value, index) {
         var values = this._createValues(value);
         var areaType = 'makingSeriesLabel';
         var hasStart = values.length > 1;
 
         this.value = this.end = values[0];
+        this.index = index;
         this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
         this.endLabel = this.label;
 

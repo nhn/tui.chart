@@ -53,10 +53,10 @@ describe('Test for seriesGroup', function() {
             var actual, expected;
 
             seriesGroup.items = [
-                new SeriesItem(10, 'st1', []),
-                new SeriesItem(20, 'st2', []),
-                new SeriesItem(30, 'st1', []),
-                new SeriesItem(40, 'st2', [])
+                new SeriesItem(10, 'bar', [], 0, 'st1'),
+                new SeriesItem(20, 'bar', [], 1, 'st2'),
+                new SeriesItem(30, 'bar', [], 2, 'st1'),
+                new SeriesItem(40, 'bar', [], 3, 'st2')
             ];
 
             actual = seriesGroup._makeValuesMapPerStack();
@@ -74,10 +74,10 @@ describe('Test for seriesGroup', function() {
             var actual, expected;
 
             seriesGroup.items = [
-                new SeriesItem(10, 'st1', []),
-                new SeriesItem(20, 'st2', []),
-                new SeriesItem(30, 'st1', []),
-                new SeriesItem(40, 'st2', [])
+                new SeriesItem(10, 'bar', [], 0, 'st1'),
+                new SeriesItem(20, 'bar', [], 1, 'st2'),
+                new SeriesItem(30, 'bar', [], 2, 'st1'),
+                new SeriesItem(40, 'bar', [], 3, 'st2')
             ];
 
             actual = seriesGroup._makeSumMapPerStack();
