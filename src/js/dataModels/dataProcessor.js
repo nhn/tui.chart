@@ -453,8 +453,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pushCategory: function(category) {
-        this.rawData.categories.push(category);
-        this.originalRawData.categories.push(category);
+        if (this.rawData.categories) {
+            this.rawData.categories.push(category);
+            this.originalRawData.categories.push(category);
+        }
     },
 
     /**
@@ -462,8 +464,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _shiftCategory: function() {
-        this.rawData.categories.shift();
-        this.originalRawData.categories.shift();
+        if (this.rawData.categories) {
+            this.rawData.categories.shift();
+            this.originalRawData.categories.shift();
+        }
     },
 
     /**

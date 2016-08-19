@@ -8,7 +8,6 @@
 
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
-var chartConst = require('../const');
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
@@ -27,12 +26,21 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         this.prevIndex = null;
 
         /**
+         * whether zoomable or not
+         * @type {boolean}
+         */
+        this.zoomable = params.zoomable;
+
+        /**
          * type of size
          * @type {string}
          */
         this.sizeType = this.isVertical ? 'height' : 'width';
 
-        this._initForZoom(params.zoomable);
+        if (this.zoomable) {
+            tui.util.extend(this, zoomMixer);
+            this._initForZoom(params.zoomable);
+        }
     },
 
     /**
@@ -43,7 +51,9 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     initCustomEventData: function(seriesInfos) {
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
 
-        this._showTooltipAfterZoom();
+        if (this.zoomable) {
+            this._showTooltipAfterZoom();
+        }
     },
 
     /**
@@ -53,14 +63,14 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @returns {object}
      * @private
      */
-    _findData: function(clientX, clientY) {
+    _findGroupData: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
         var pointValue;
 
         if (this.isVertical) {
-            pointValue = layerPosition.x - this.expandSize;
+            pointValue = layerPosition.x;
         } else {
-            pointValue = layerPosition.y - chartConst.SERIES_EXPAND_SIZE;
+            pointValue = layerPosition.y;
         }
 
         return {
@@ -148,11 +158,12 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
         CustomEventBase.prototype._onMousemove.call(this, e);
 
-        if (this._isAfterDragMouseup()) {
+        if (this.zoomable && this._isAfterDragMouseup()) {
             return;
         }
 
-        foundData = this._findData(e.clientX, e.clientY);
+        foundData = this._findGroupData(e.clientX, e.clientY);
+
         index = foundData.indexes.groupIndex;
 
         if (index === -1) {
@@ -178,7 +189,5 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         CustomEventBase.prototype._onMouseout.call(this);
     }
 });
-
-zoomMixer.mixin(GroupTypeCustomEvent);
 
 module.exports = GroupTypeCustomEvent;

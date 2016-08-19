@@ -154,37 +154,6 @@ var zoomMixer = {
     },
 
     /**
-     * Calculate layer position by client position.
-     * @param {number} clientX - clientX
-     * @param {number} [clientY] - clientY
-     * @param {boolean} [checkLimit] - whether check limit or not
-     * @returns {{x: number, y: ?number}}
-     * @private
-     */
-    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this._getContainerBound();
-        var layerPosition = {};
-        var expandSize = this.expandSize;
-        var maxLeft, minLeft;
-
-        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
-
-        if (checkLimit) {
-            maxLeft = bound.right - expandSize;
-            minLeft = bound.left + expandSize;
-            clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
-        }
-
-        layerPosition.x = clientX - bound.left;
-
-        if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top;
-        }
-
-        return layerPosition;
-    },
-
-    /**
      * Resize.
      * @param {{tickCount: number}} data - data for resizing
      * @override
@@ -435,15 +404,6 @@ var zoomMixer = {
             this.customEventContainer.removeChild(this.resetZoomBtn);
             this.resetZoomBtn = null;
         }
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

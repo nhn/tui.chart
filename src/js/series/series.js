@@ -578,9 +578,10 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeExportationSeriesData: function(seriesData) {
-        var legendIndex = seriesData.indexes.index;
-        var index = seriesData.indexes.groupIndex;
+        var indexes = seriesData.indexes;
+        var legendIndex = tui.util.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
+        var index = indexes.groupIndex;
         var result = {
             chartType: legendData.chartType,
             legend: legendData.label,

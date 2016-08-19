@@ -239,7 +239,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return labelHtml;
         });
 
-        if (this.options.stackType === 'normal') {
+        if (predicate.isNormalStack(this.options.stackType)) {
             values = seriesGroup.pluck('value');
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
             htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));

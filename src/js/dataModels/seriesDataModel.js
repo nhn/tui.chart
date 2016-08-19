@@ -116,7 +116,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 return;
             }
             tui.util.forEachArray(rawItem.data, function(value, index) {
-                rawItem.data[index] = concat.apply(value)[0];
+                if (tui.util.isExisty(value)) {
+                    rawItem.data[index] = concat.apply(value)[0];
+                }
             });
         });
     },
@@ -536,6 +538,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 if (!item) {
                     return;
                 }
+
                 item.addRatio('x', xDistance, xSubValue);
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);

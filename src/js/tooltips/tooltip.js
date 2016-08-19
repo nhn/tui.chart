@@ -135,7 +135,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var formattedMap = {};
 
         tui.util.forEach(valueMap, function(value, valueType) {
-            formattedMap[valueType] = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
+            if (tui.util.isNumber(value)) {
+                formattedMap[valueType] = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
+            } else {
+                formattedMap[valueType] = value;
+            }
         });
 
         return formattedMap;

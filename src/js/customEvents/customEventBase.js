@@ -165,6 +165,37 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Calculate layer position by client position.
+     * @param {number} clientX - clientX
+     * @param {number} [clientY] - clientY
+     * @param {boolean} [checkLimit] - whether check limit or not
+     * @returns {{x: number, y: ?number}}
+     * @private
+     */
+    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
+        var bound = this._getContainerBound();
+        var layerPosition = {};
+        var expandSize = this.expandSize;
+        var maxLeft, minLeft;
+
+        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
+
+        if (checkLimit) {
+            maxLeft = bound.right - expandSize;
+            minLeft = bound.left + expandSize;
+            clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
+        }
+
+        layerPosition.x = clientX - bound.left;
+
+        if (!tui.util.isUndefined(clientY)) {
+            layerPosition.y = clientY - bound.top;
+        }
+
+        return layerPosition;
+    },
+
+    /**
      * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
      * @param {Array.<object>} seriesBounds - series bounds
      */
@@ -203,24 +234,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Find coordinate data from boundsCoordinateModel.
-     * @param {HTMLElement} target - target element
-     * @param {number} clientX mouse - position x
-     * @param {number} clientY mouse - position y
+     * @param {{x: number, y: number}} layerPosition - layer position
      * @returns {object}
      * @private
      */
-    _findDataFromBoundsCoordinateModel: function(target, clientX, clientY) {
-        var bound = target.getBoundingClientRect();
-        var layerX = clientX - bound.left;
-        var layerY = clientY - bound.top;
+    _findDataFromBoundsCoordinateModel: function(layerPosition) {
+        var layerX = layerPosition.x;
+        var layerY = layerPosition.y;
         var groupIndex;
 
         if (predicate.isTreemapChart(this.chartType)) {
             groupIndex = 0;
         } else {
-            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
             layerX += chartConst.SERIES_EXPAND_SIZE;
             layerY += chartConst.SERIES_EXPAND_SIZE;
+            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
         }
 
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
@@ -238,10 +266,13 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Find data.
+     * @param {{x: number, y: number}} layerPosition - layer position
+     * @returns {object}
      * @private
-     * @abstract
      */
-    _findData: function() {},
+    _findData: function(layerPosition) {
+        return this._findDataFromBoundsCoordinateModel(layerPosition);
+    },
 
     /**
      * Show tooltip
@@ -293,9 +324,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement;
-        var clientX = e.clientX - this.expandSize;
-        var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+        var foundData = this._findData(e.clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
@@ -303,6 +332,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
             if (this.selectedData) {
                 this._unselectSelectedData();
             }
+
             this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
 
             if (this.allowSelect) {

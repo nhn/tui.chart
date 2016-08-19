@@ -82,7 +82,7 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function() {
-        var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
+        var TooltipClass = this.options.tooltip.grouped ? GroupTooltip : Tooltip;
         this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
     },
 
@@ -317,7 +317,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponent: function() {
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._addCustomEventComponentForGroupTooltip();
         } else {
             this._addCustomEventComponentForNormalTooltip();
@@ -396,7 +396,7 @@ var axisTypeMixer = {
 
         ChartBase.prototype._attachCustomEvent.call(this, serieses);
 
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
         } else {
             this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);

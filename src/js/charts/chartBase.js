@@ -60,12 +60,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         this.isVertical = !!params.isVertical;
 
         /**
-         * whether chart has group tooltip or not
-         * @type {boolean}
-         */
-        this.hasGroupTooltip = !!tui.util.pick(this.options, 'tooltip', 'grouped');
-
-        /**
          * data processor
          * @type {DataProcessor}
          */
@@ -110,11 +104,16 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _setDefaultOptions: function(options) {
+        options.xAxis = options.xAxis || {};
+        options.series = options.series || {};
+        options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 
         if (tui.util.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
         }
+
+        options.tooltip.grouped = !!options.tooltip.grouped;
 
         this.options = options;
     },

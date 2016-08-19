@@ -108,6 +108,9 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
 
         return tui.util.map(tui.util.pivot(groupPositions), function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
+                if (!position) {
+                    return null;
+                }
                 return {
                     sendData: {
                         chartType: chartType,
@@ -138,10 +141,17 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         var results = [];
         tui.util.forEachArray(groupData, function(coordData) {
             tui.util.forEachArray(coordData, function(data, index) {
+                var addtionalIndex;
+
                 if (!results[index]) {
-                    results[index] = [];
+                    results[index] = data;
+                } else {
+                    addtionalIndex = results[index].length;
+                    tui.util.forEachArray(data, function(datum) {
+                        datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + addtionalIndex;
+                    });
+                    results[index] = results[index].concat(data);
                 }
-                results[index] = results[index].concat(data);
             });
         });
 
@@ -155,11 +165,8 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      * @private
      */
     _makeData: function(seriesInfos) {
-        var self = this,
-            coordinateData;
-
-        seriesInfos.reverse();
-        coordinateData = tui.util.map(seriesInfos, function(info) {
+        var self = this;
+        var coordinateData = tui.util.map(seriesInfos, function(info) {
             var result;
             if (predicate.isLineTypeChart(info.chartType)) {
                 result = self._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
@@ -216,6 +223,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
             tui.util.forEachArray(candidates, function(data) {
                 var diff = Math.abs(layerY - data.sendData.bound.top);
+
                 if (min > diff) {
                     min = diff;
                     result = data.sendData;
