@@ -154,6 +154,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addStart(start);
         });
     },
