@@ -424,11 +424,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {boolean}
      */
     isCoordinateType: function() {
+        var chartType = this.chartType;
         var coordinateType = this.coordinateType;
 
         if (!tui.util.isExisty(coordinateType)) {
-            coordinateType = predicate.isCoordinateTypeChart(this.chartType);
-            coordinateType = coordinateType || (!this.hasCategories() && predicate.isLineTypeChart(this.chartType));
+            coordinateType = predicate.isCoordinateTypeChart(chartType);
+            coordinateType = coordinateType || (!this.hasCategories() && predicate.isLineTypeChart(chartType));
             this.coordinateType = coordinateType;
         }
 

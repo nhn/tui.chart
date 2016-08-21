@@ -45,16 +45,17 @@ var lineTypeMixer = {
      * @private
      */
     _makeAxisScaleMakerMap: function() {
+        var options = this.options;
         var scaleMap;
 
         if (this.dataProcessor.isCoordinateType()) {
             scaleMap = {
-                xAxis: this._createAxisScaleMaker(this.options.xAxis, 'xAxis', 'x'),
-                yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis', 'y')
+                xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
             };
         } else {
             scaleMap = {
-                yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis')
             };
         }
 

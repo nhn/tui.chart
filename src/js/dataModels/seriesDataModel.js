@@ -138,8 +138,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createBaseGroups: function() {
-        var self = this;
         var isCoordinateType = this.isCoordinateType;
+        var chartType = this.chartType;
+        var formatFunctions = this.formatFunctions;
         var sortValues, SeriesItemClass;
 
         if (isCoordinateType) {
@@ -155,22 +156,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var values, items;
+            var values = tui.util.isArray(rawDatum) ? rawDatum : concat.apply(rawDatum.data);
+            var items;
 
-            if (tui.util.isArray(rawDatum)) {
-                values = rawDatum;
-            } else {
-                values = concat.apply(rawDatum.data);
-            }
-
-            values = tui.util.filter(values, function(value) {
-                return tui.util.isExisty(value);
-            });
-
+            values = tui.util.filter(values, tui.util.isExisty);
             items = tui.util.map(values, function(value, index) {
-                return new SeriesItemClass(value, self.chartType, self.formatFunctions, index, rawDatum.stack);
+                return new SeriesItemClass(value, chartType, formatFunctions, index, rawDatum.stack);
             });
-
             sortValues(items);
 
             return items;
