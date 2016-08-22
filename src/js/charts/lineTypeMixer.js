@@ -30,6 +30,12 @@ var lineTypeMixer = {
             isVertical: true
         });
 
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
+
         this._addComponents(options.chartType);
     },
 
@@ -39,9 +45,21 @@ var lineTypeMixer = {
      * @private
      */
     _makeAxisScaleMakerMap: function() {
-        return {
-            yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
-        };
+        var options = this.options;
+        var scaleMap;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            scaleMap = {
+                xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
+            };
+        } else {
+            scaleMap = {
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis')
+            };
+        }
+
+        return scaleMap;
     },
 
     /**

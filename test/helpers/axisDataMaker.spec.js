@@ -74,10 +74,64 @@ describe('Test for axisDataMaker', function() {
         });
     });
 
+    describe('_makeAdditionalDataForCoordinateLineType()', function() {
+        it('make additional axis data for coordinate line type chart', function() {
+            var labels = [5, 10, 15, 20, 25, 30, 35];
+            var values = [8, 20, 33, 23, 15];
+            var limit = {
+                min: 5,
+                max: 35
+            };
+            var step = 5;
+            var tickCount = 7;
+            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var expected = {
+                labels: [10, 15, 20, 25, 30],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 10,
+                    max: 30
+                },
+                positionRatio: 0.08,
+                sizeRatio: 0.8
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('make additional axis data, when included minus value', function() {
+            var labels = [-5, 0, 5, 10, 15, 20, 25];
+            var values = [-2, 20, 5, 23, 15];
+            var limit = {
+                min: -5,
+                max: 25
+            };
+            var step = 5;
+            var tickCount = 7;
+            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var expected = {
+                labels: [0, 5, 10, 15, 20],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 0,
+                    max: 20
+                },
+                positionRatio: 0.08,
+                sizeRatio: 0.8
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('makeValueAxisData()', function() {
-        it('axisScaleMaker를 전달하여 value 타입 axis data를 생성합니다..', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit', 'getStep']),
-                actual, expected;
+        it('make data for value type axis.', function() {
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
+                            ['getFormattedScaleValues', 'getLimit', 'getStep']);
+            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories']);
+            var actual, expected;
 
             axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
             axisScaleMaker.getLimit.and.returnValue({
@@ -88,6 +142,7 @@ describe('Test for axisDataMaker', function() {
 
             actual = maker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                dataProcessor: dataProcessor,
                 options: 'options',
                 isVertical: true,
                 isPositionRight: true,
@@ -106,6 +161,50 @@ describe('Test for axisDataMaker', function() {
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('make data for value type axis, when coordinate data and line type chart', function() {
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
+                ['getFormattedScaleValues', 'getLimit', 'getStep']);
+            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getValues']);
+            var actual, expected;
+
+            axisScaleMaker.getFormattedScaleValues.and.returnValue([5, 10, 15, 20, 25, 30, 35]);
+            axisScaleMaker.getLimit.and.returnValue({
+                min: 5,
+                max: 35
+            });
+            axisScaleMaker.getStep.and.returnValue(5);
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getValues.and.returnValue([8, 20, 33, 23, 15]);
+
+            actual = maker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker,
+                dataProcessor: dataProcessor,
+                chartType: 'line',
+                options: 'options',
+                isVertical: false,
+                isPositionRight: true,
+                aligned: true
+            });
+            expected = {
+                labels: [10, 15, 20, 25, 30],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 10,
+                    max: 30
+                },
+                step: 5,
+                options: 'options',
+                isVertical: false,
+                isPositionRight: true,
+                aligned: true,
+                positionRatio: 0.08,
+                sizeRatio: 0.8
             };
 
             expect(actual).toEqual(expected);

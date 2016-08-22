@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Line Chart] Coordinate data</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" onclick="onCheckboxClick(this);"><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="lineChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "series": [
+        {
+            "name": "Legend1",
+            "data": [
+                [8, 30],
+                [20, 40],
+                [15, 20],
+                [33, 30]
+            ]
+        },
+        {
+            "name": "Legend2",
+            "data": [
+                [10, 20],
+                [20, 10],
+                [30, 40]
+            ]
+
+        }
+    ]
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 700,
+        "height": 400,
+        "title": "Demo"
+    },
+    "yAxis": {
+        "title": "Demo Y"
+    },
+    "xAxis": {
+        "title": "Demo X"
+    },
+    "series": {
+        "showDot": true
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "colors": [ "#D95576", "#00628C", "#00A8DA", "#1EA399", "#F7A655"]
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area');
+    var data = {
+        series: [
+            {
+                name: 'Legend1',
+                data: [
+                    [8, 30],
+                    [20, 40],
+                    [15, 20],
+                    [33, 30]
+                ]
+            },
+            {
+                name: 'Legend2',
+                data: [
+                    [10, 20],
+                    [20, 10],
+                    [30, 40]
+                ]
+
+            }
+        ]
+    };
+    var options = {
+        chart: {
+            width: 700,
+            height: 400,
+            title: 'Demo'
+        },
+        yAxis: {
+            title: 'Demo Y'
+        },
+        xAxis: {
+            title: 'Demo X'
+        },
+        series: {
+            showDot: true
+        }
+    };
+    var chart = tui.chart.lineChart(container, data, options);
+</script>
+</body>
+</html>

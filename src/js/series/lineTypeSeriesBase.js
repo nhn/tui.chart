@@ -20,19 +20,19 @@ var concat = Array.prototype.concat;
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
-     * Make basic positions for rendering line graph.
-     * @param {number} [seriesWidth] - width of series area
+     * Make positions for default data type.
+     * @param {?number} seriesWidth - width of series area
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makeBasicPositions: function(seriesWidth) {
-        var dimension = this.boundsMaker.getDimension('series'),
-            seriesDataModel = this._getSeriesDataModel(),
-            width = seriesWidth || dimension.width || 0,
-            height = dimension.height,
-            len = seriesDataModel.getGroupCount(),
-            start = chartConst.SERIES_EXPAND_SIZE,
-            step;
+    _makePositionsForDefaultType: function(seriesWidth) {
+        var dimension = this.boundsMaker.getDimension('series');
+        var seriesDataModel = this._getSeriesDataModel();
+        var width = seriesWidth || dimension.width || 0;
+        var height = dimension.height;
+        var len = seriesDataModel.getGroupCount();
+        var start = chartConst.SERIES_EXPAND_SIZE;
+        var step;
 
         if (this.data.aligned) {
             step = width / (len - 1);
@@ -55,6 +55,59 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                 return position;
             });
         }, true);
+    },
+
+    /**
+     * Make positions for coordinate data type.
+     * @param {?number} seriesWidth - width of series area
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _makePositionForCoordinateType: function(seriesWidth) {
+        var dimension = this.boundsMaker.getDimension('series');
+        var seriesDataModel = this._getSeriesDataModel();
+        var width = seriesWidth || dimension.width || 0;
+        var height = dimension.height;
+        var xAxis = this.boundsMaker.getAxesData().xAxis;
+        var additionalLeft = 0;
+
+        if (xAxis.sizeRatio) {
+            additionalLeft = tui.util.multiplication(width, xAxis.positionRatio);
+            width = tui.util.multiplication(width, xAxis.sizeRatio);
+        }
+
+        return seriesDataModel.map(function(seriesGroup) {
+            return seriesGroup.map(function(seriesItem) {
+                var position = {
+                    left: (seriesItem.ratioMap.x * width) + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
+                    top: height - (seriesItem.ratioMap.y * height) + chartConst.SERIES_EXPAND_SIZE
+                };
+
+                if (tui.util.isExisty(seriesItem.ratioMap.start)) {
+                    position.startTop = height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
+                }
+
+                return position;
+            });
+        }, true);
+    },
+
+    /**
+     * Make basic positions for rendering line graph.
+     * @param {?number} seriesWidth - width of series area
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _makeBasicPositions: function(seriesWidth) {
+        var positions;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            positions = this._makePositionForCoordinateType(seriesWidth);
+        } else {
+            positions = this._makePositionsForDefaultType(seriesWidth);
+        }
+
+        return positions;
     },
 
     /**
@@ -119,10 +172,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             label = seriesItem.startLabel;
             basePosition.top = basePosition.startTop;
         } else {
-            label = seriesItem.endLabel;
+            label = seriesItem.endLabel || seriesItem.label;
         }
 
-        position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value, isStart);
+        position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value || seriesItem.y, isStart);
 
         return this._makeSeriesLabelHtml(position, label, groupIndex, seriesTemplate.tplCssTextForLineType, isStart);
     },
@@ -152,24 +205,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         }, true);
 
         elSeriesLabelArea.innerHTML = htmls.join('');
-    },
-
-    /**
-     * Whether changed or not.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {boolean} whether changed or not
-     * @private
-     */
-    _isChanged: function(groupIndex, index) {
-        var prevIndexes = this.prevIndexes;
-
-        this.prevIndexes = {
-            groupIndex: groupIndex,
-            index: index
-        };
-
-        return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
     },
 
     /**
@@ -221,15 +256,37 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * Whether changed limit(min, max) or not.
+     * Whether changed or not.
+     * @param {{min: number, max: number}} before - before limit
+     * @param {{min: number, max: number}} after - after limit
      * @returns {boolean}
      * @private
      */
-    _isChangedLimit: function() {
-        var beforeLimit = this.data.limit;
-        var afterLimit = this.boundsMaker.getAxesData().yAxis.limit;
+    _isChangedLimit: function(before, after) {
+        return before.min !== after.min || before.max !== after.max;
+    },
 
-        return beforeLimit.min !== afterLimit.min || beforeLimit.max !== afterLimit.max;
+    /**
+     * Whether changed axis limit(min, max) or not.
+     * @returns {boolean}
+     * @private
+     */
+    _isChangedAxisLimit: function() {
+        var beforeAxes = this.beforeAxes;
+        var axesData = this.boundsMaker.getAxesData();
+        var changed = true;
+
+        this.beforeAxes = axesData;
+
+        if (beforeAxes) {
+            changed = this._isChangedLimit(beforeAxes.yAxis.limit, axesData.yAxis.limit);
+
+            if (axesData.xAxis.limit) {
+                changed = changed || this._isChangedLimit(beforeAxes.xAxis.limit, axesData.xAxis.limit);
+            }
+        }
+
+        return changed;
     },
 
     /**
@@ -239,14 +296,17 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animate: function(callback) {
         var self = this;
-        var changedLimit = this._isChangedLimit();
+        var changedLimit = this._isChangedAxisLimit();
 
-        this.movingAnimation = renderUtil.startAnimation(300, function(ratio) {
-            if (changedLimit && self.seriesLabelContainer) {
-                self.seriesLabelContainer.innerHTML = '';
-            }
-            callback(ratio);
-        }, function() {
+        if (changedLimit && self.seriesLabelContainer) {
+            self.seriesLabelContainer.innerHTML = '';
+        }
+
+        if (!callback) {
+            return;
+        }
+
+        this.movingAnimation = renderUtil.startAnimation(300, callback, function() {
             self.movingAnimation = null;
         });
     },
@@ -338,7 +398,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animateForResizing: function(interval) {
         var seriesLabelContainer = this.seriesLabelContainer;
-        var areaWidth;
+        var animateLabel, areaWidth;
 
         if (!seriesLabelContainer) {
             return;
@@ -346,11 +406,15 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
 
-        this._animate(function(ratio) {
-            var left = interval * ratio;
+        if (!this.dataProcessor.isCoordinateType()) {
+            animateLabel = function(ratio) {
+                var left = interval * ratio;
 
-            seriesLabelContainer.style.width = (areaWidth - left) + 'px';
-        });
+                seriesLabelContainer.style.width = (areaWidth - left) + 'px';
+            };
+        }
+
+        this._animate(animateLabel);
     },
 
     /**

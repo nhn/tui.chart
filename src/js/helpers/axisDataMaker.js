@@ -78,7 +78,58 @@ var axisDataMaker = {
     },
 
     /**
-     * Make data about value axis.
+     * Make additional data for coordinate line type chart.
+     * @param {Array.<string>} labels - labels
+     * @param {Array.<number>} values - values
+     * @param {{min: number, max: number}} limit - limit
+     * @param {number} step - step
+     * @param {number} tickCount = tickCount
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      limit: {min: number, max: number},
+     *      positionRatio: number,
+     *      sizeRatio: number
+     * }}
+     * @private
+     */
+    _makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
+        var sizeRatio = 1;
+        var positionRatio = 0;
+        var min = tui.util.min(values);
+        var max = tui.util.max(values);
+        var minDiff, maxDiff, distance;
+
+        limit.min += step;
+        limit.max -= step;
+        minDiff = limit.min - min;
+        maxDiff = max - limit.max;
+        distance = max - min;
+
+        if (minDiff > 0) {
+            positionRatio = minDiff / distance;
+            sizeRatio -= positionRatio;
+        }
+
+        if (maxDiff > 0) {
+            sizeRatio -= maxDiff / distance;
+        }
+
+        tickCount -= 2;
+
+        return {
+            labels: labels.slice(1, labels.length - 1),
+            tickCount: tickCount,
+            validTickCount: tickCount,
+            limit: limit,
+            positionRatio: positionRatio,
+            sizeRatio: sizeRatio
+        };
+    },
+
+    /**
+     * Make data for value type axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {AxisScaleMaker} params.axisScaleMaker chart values
@@ -93,21 +144,36 @@ var axisDataMaker = {
      * }} axis data
      */
     makeValueAxisData: function(params) {
-        var axisScaleMaker = params.axisScaleMaker,
-            rangeValues = axisScaleMaker.getFormattedScaleValues(),
-            tickCount = rangeValues.length;
-
-        return {
-            labels: rangeValues,
+        var axisScaleMaker = params.axisScaleMaker;
+        var labels = axisScaleMaker.getFormattedScaleValues();
+        var tickCount = labels.length;
+        var limit = axisScaleMaker.getLimit();
+        var step = axisScaleMaker.getStep();
+        var dataProcessor = params.dataProcessor;
+        var chartType = params.chartType;
+        var axisData = {
+            labels: labels,
             tickCount: tickCount,
             validTickCount: tickCount,
-            limit: axisScaleMaker.getLimit(),
-            step: axisScaleMaker.getStep(),
+            limit: limit,
+            step: step,
             options: params.options,
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
+        var isVertical = params.isVertical;
+        var hasCategories = dataProcessor.hasCategories();
+        var isCoordinateLineType = !isVertical && !hasCategories && predicate.isLineTypeChart(chartType);
+        var values, additionalData;
+
+        if (isCoordinateLineType) {
+            values = dataProcessor.getValues(chartType, 'x');
+            additionalData = this._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            tui.util.extend(axisData, additionalData);
+        }
+
+        return axisData;
     },
 
     /**

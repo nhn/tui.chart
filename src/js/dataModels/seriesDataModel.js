@@ -47,12 +47,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      *      and create from rawSeriesData by user.
      * SeriesDataModel.groups has SeriesGroups.
      * @constructs SeriesDataModel
-     * @param {rawSeriesData} rawSeriesData raw series data
-     * @param {string} chartType chart type
-     * @param {object} options options
-     * @param {Array.<function>} formatFunctions format functions
+     * @param {rawSeriesData} rawSeriesData - raw series data
+     * @param {string} chartType - chart type
+     * @param {object} options - options
+     * @param {Array.<function>} formatFunctions - format functions
+     * @param {boolean} isCoordinateType - whether coordinate type or not
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
+    init: function(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
         /**
          * chart type
          * @type {string}
@@ -76,6 +77,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          * @type {rawSeriesData}
          */
         this.rawSeriesData = rawSeriesData || [];
+
+        /**
+         * whether coordinate type or not
+         * @type {boolean}
+         */
+        this.isCoordinateType = isCoordinateType;
 
         /**
          * baseGroups is base data for making SeriesGroups.
@@ -105,9 +112,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _removeRangeValue: function() {
         var seriesOption = tui.util.pick(this.options, 'series') || {};
+        var allowRange = predicate.isAllowRangeData(this.chartType) &&
+                !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 
-        if (predicate.isAllowRangeData(this.chartType) &&
-            !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline) {
+        if (allowRange || this.isCoordinateType) {
             return;
         }
 
@@ -130,27 +138,34 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createBaseGroups: function() {
-        var self = this;
-        var SeriesItemClass;
+        var isCoordinateType = this.isCoordinateType;
+        var chartType = this.chartType;
+        var formatFunctions = this.formatFunctions;
+        var sortValues, SeriesItemClass;
 
-        if (predicate.isCoordinateTypeChart(this.chartType)) {
+        if (isCoordinateType) {
             SeriesItemClass = SeriesItemForCoordinateType;
+            sortValues = function(items) {
+                items.sort(function(a, b) {
+                    return a.x - b.x;
+                });
+            };
         } else {
             SeriesItemClass = SeriesItem;
+            sortValues = function() {};
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var values;
+            var values = tui.util.isArray(rawDatum) ? rawDatum : concat.apply(rawDatum.data);
+            var items;
 
-            if (tui.util.isArray(rawDatum)) {
-                values = rawDatum;
-            } else {
-                values = concat.apply(rawDatum.data);
-            }
-
-            return tui.util.map(values, function(value) {
-                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions, self.chartType);
+            values = tui.util.filter(values, tui.util.isExisty);
+            items = tui.util.map(values, function(value, index) {
+                return new SeriesItemClass(value, chartType, formatFunctions, index, rawDatum.stack);
             });
+            sortValues(items);
+
+            return items;
         });
     },
 
@@ -542,6 +557,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 item.addRatio('x', xDistance, xSubValue);
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);
+
+                if (tui.util.isExisty(item.start)) {
+                    item.addRatio('start', yDistance, ySubValue);
+                }
             });
         });
     },

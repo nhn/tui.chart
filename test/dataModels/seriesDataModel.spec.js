@@ -106,9 +106,10 @@ describe('Test for SeriesDataModel', function() {
             expect(actual[1][0].value).toBe(20);
         });
 
-        it('bubble차트의 경우 SeriesItemForCoordinateType으로 seriesItem을 생성합니다.', function() {
+        it('if coordinate type chart, create seriesItem by SeriesItemForCoordinateType class', function() {
             var actual;
 
+            seriesDataModel.isCoordinateType = true;
             seriesDataModel.rawSeriesData = [{
                 data: [{
                     x: 10,
@@ -117,14 +118,37 @@ describe('Test for SeriesDataModel', function() {
                     label: 'Label'
                 }]
             }];
-            seriesDataModel.chartType = 'bubble';
 
             actual = seriesDataModel._createBaseGroups();
+
             expect(actual[0][0].x).toBe(10);
             expect(actual[0][0].y).toBe(20);
             expect(actual[0][0].r).toBe(30);
             expect(actual[0][0].label).toBe('Label');
+        });
 
+        it('if coordinate type chart, sort data by x value ascending', function() {
+            var actual;
+
+            seriesDataModel.isCoordinateType = true;
+            seriesDataModel.rawSeriesData = [{
+                data: [{
+                    x: 20,
+                    y: 1
+                }, {
+                    x: 10,
+                    y: 2
+                }, {
+                    x: 30,
+                    y: 3
+                }]
+            }];
+
+            actual = seriesDataModel._createBaseGroups();
+
+            expect(actual[0][0].x).toBe(10);
+            expect(actual[0][1].x).toBe(20);
+            expect(actual[0][2].x).toBe(30);
         });
     });
 
