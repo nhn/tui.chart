@@ -767,7 +767,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
-        scale = this._restoreNumberState(scale, integerTypeScale.divideNum);
+        scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
 
         return scale;
     },
