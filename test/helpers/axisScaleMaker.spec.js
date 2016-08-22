@@ -294,7 +294,7 @@ describe('Test for AxisScaleMaker', function() {
                         max: 100
                     },
                     options: {},
-                    divideNum: 1
+                    divisionNumber: 1
                 };
 
             expect(actual).toEqual(expected);
@@ -311,7 +311,7 @@ describe('Test for AxisScaleMaker', function() {
                         max: 9
                     },
                     options: {},
-                    divideNum: 10
+                    divisionNumber: 10
                 };
 
             expect(actual).toEqual(expected);
@@ -337,7 +337,7 @@ describe('Test for AxisScaleMaker', function() {
                     min: 2,
                     max: 8
                 },
-                divideNum: 10
+                divisionNumber: 10
             };
 
             expect(actual).toEqual(expected);

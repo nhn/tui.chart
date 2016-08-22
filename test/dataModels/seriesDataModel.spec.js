@@ -81,6 +81,7 @@ describe('Test for SeriesDataModel', function() {
                 data: [40, 50, 60],
                 stack: 'st2'
             }];
+
             actual = seriesDataModel._createBaseGroups();
 
             expect(actual.length).toBe(2);
@@ -194,12 +195,20 @@ describe('Test for SeriesDataModel', function() {
 
             seriesDataModel.groups = [
                 new SeriesGroup([
-                    new SeriesItem(10),
-                    new SeriesItem(20)
+                    new SeriesItem({
+                        datum: 10
+                    }),
+                    new SeriesItem({
+                        datum: 20
+                    })
                 ]),
                 new SeriesGroup([
-                    new SeriesItem(30),
-                    new SeriesItem(40)
+                    new SeriesItem({
+                        datum: 30
+                    }),
+                    new SeriesItem({
+                        datum: 40
+                    })
                 ])
             ];
 
@@ -215,10 +224,14 @@ describe('Test for SeriesDataModel', function() {
             seriesDataModel.groups = [
                 new SeriesGroup([
                     new SeriesItemForCoordinateType({
-                        x: 10
+                        datum: {
+                            x: 10
+                        }
                     }),
                     new SeriesItemForCoordinateType({
-                        x: 20
+                        datum: {
+                            x: 20
+                        }
                     })
                 ])
             ];
@@ -235,10 +248,14 @@ describe('Test for SeriesDataModel', function() {
             seriesDataModel.groups = [
                 new SeriesGroup([
                     new SeriesItemForCoordinateType({
-                        y: 10
+                        datum: {
+                            y: 10
+                        }
                     }),
                     new SeriesItemForCoordinateType({
-                        y: 20
+                        datum: {
+                            y: 20
+                        }
                     })
                 ])
             ];
@@ -255,10 +272,14 @@ describe('Test for SeriesDataModel', function() {
             seriesDataModel.groups = [
                 new SeriesGroup([
                     new SeriesItemForCoordinateType({
-                        r: 10
+                        datum: {
+                            r: 10
+                        }
                     }),
                     new SeriesItemForCoordinateType({
-                        r: 20
+                        datum: {
+                            r: 20
+                        }
                     })
                 ])
             ];
@@ -274,12 +295,18 @@ describe('Test for SeriesDataModel', function() {
 
             seriesDataModel.groups = [
                 new SeriesGroup([
-                    new SeriesItem(10),
-                    new SeriesItem(NaN)
+                    new SeriesItem({
+                        datum: 10
+                    }),
+                    new SeriesItem({})
                 ]),
                 new SeriesGroup([
-                    new SeriesItem(30),
-                    new SeriesItem(40)
+                    new SeriesItem({
+                        datum: 30
+                    }),
+                    new SeriesItem({
+                        datum: 40
+                    })
                 ])
             ];
 

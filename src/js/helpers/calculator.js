@@ -39,7 +39,7 @@ var calculator = {
         limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
-            limit.min = 0 + saveMin;
+            limit.min = saveMin;
         } else {
             limit.min = min - iodValue + saveMin;
         }

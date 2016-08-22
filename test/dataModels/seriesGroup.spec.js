@@ -20,10 +20,18 @@ describe('Test for seriesGroup', function() {
         it('seriesItem들에서 values를 추출합니다.', function() {
             var actual, expected;
             seriesGroup.items = [
-                new SeriesItem(10),
-                new SeriesItem(20),
-                new SeriesItem(30),
-                new SeriesItem(40)
+                new SeriesItem({
+                    datum: 10
+                }),
+                new SeriesItem({
+                    datum: 20
+                }),
+                new SeriesItem({
+                    datum: 30
+                }),
+                new SeriesItem({
+                    datum: 40
+                })
             ];
 
             actual = seriesGroup._createValues('value');
@@ -35,10 +43,18 @@ describe('Test for seriesGroup', function() {
         it('seriesItem이 range 타입일 경우 start값을 포함하여 추출합니다.', function() {
             var actual, expected;
             seriesGroup.items = [
-                new SeriesItem([10, 20]),
-                new SeriesItem([20, 30]),
-                new SeriesItem([30, 40]),
-                new SeriesItem([40, 50])
+                new SeriesItem({
+                    datum: [10, 20]
+                }),
+                new SeriesItem({
+                    datum: [20, 30]
+                }),
+                new SeriesItem({
+                    datum: [30, 40]
+                }),
+                new SeriesItem({
+                    datum: [40, 50]
+                })
             ];
 
             actual = seriesGroup._createValues('value');
@@ -53,10 +69,37 @@ describe('Test for seriesGroup', function() {
             var actual, expected;
 
             seriesGroup.items = [
-                new SeriesItem(10, 'bar', [], 0, 'st1'),
-                new SeriesItem(20, 'bar', [], 1, 'st2'),
-                new SeriesItem(30, 'bar', [], 2, 'st1'),
-                new SeriesItem(40, 'bar', [], 3, 'st2')
+                new SeriesItem({
+                    datum: 10,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 0,
+                    stack: 'st1'
+
+                }),
+                new SeriesItem({
+                    datum: 20,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 1,
+                    stack: 'st2'
+
+                }),
+                new SeriesItem({
+                    datum: 30,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 2,
+                    stack: 'st1'
+
+                }),
+                new SeriesItem({
+                    datum: 40,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 3,
+                    stack: 'st2'
+                })
             ];
 
             actual = seriesGroup._makeValuesMapPerStack();
@@ -74,10 +117,37 @@ describe('Test for seriesGroup', function() {
             var actual, expected;
 
             seriesGroup.items = [
-                new SeriesItem(10, 'bar', [], 0, 'st1'),
-                new SeriesItem(20, 'bar', [], 1, 'st2'),
-                new SeriesItem(30, 'bar', [], 2, 'st1'),
-                new SeriesItem(40, 'bar', [], 3, 'st2')
+                new SeriesItem({
+                    datum: 10,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 0,
+                    stack: 'st1'
+
+                }),
+                new SeriesItem({
+                    datum: 20,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 1,
+                    stack: 'st2'
+
+                }),
+                new SeriesItem({
+                    datum: 30,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 2,
+                    stack: 'st1'
+
+                }),
+                new SeriesItem({
+                    datum: 40,
+                    chartType: 'bar',
+                    formatFunctions: [],
+                    index: 3,
+                    stack: 'st2'
+                })
             ];
 
             actual = seriesGroup._makeSumMapPerStack();

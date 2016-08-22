@@ -144,7 +144,7 @@ var addingDynamicDataMixer = {
             clearTimeout(this.rerenderingDelayTimerId);
             this.rerenderingDelayTimerId = null;
 
-            if (tui.util.pick(this.options.series, 'shifting')) {
+            if (this.options.series.shifting) {
                 this.dataProcessor.shiftData();
             }
         }

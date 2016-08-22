@@ -15,25 +15,26 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
      * @constructs SeriesItemForCoordinateType
-     * @param {Array.<number>|{x: number, y:number, r: ?number, label: ?string}} rawSeriesDatum - raw series datum
-     * @param {string} chartType - type of chart
-     * @param {?Array.<function>} formatFunctions - format functions
-     * @param {number} index - raw data index
+     * @param {object} params - parameters
+     *      @param {Array.<number>|{x: number, y:number, r: ?number, label: ?string}} params.datum - raw series datum
+     *      @param {string} params.chartType - type of chart
+     *      @param {?Array.<function>} params.formatFunctions - format functions
+     *      @param {number} params.index - raw data index
      */
-    init: function(rawSeriesDatum, chartType, formatFunctions, index) {
+    init: function(params) {
         /**
          * type of chart
          * @type {string}
          */
-        this.chartType = chartType;
+        this.chartType = params.chartType;
 
         /**
          * format functions
          * @type {Array.<function>}
          */
-        this.formatFunctions = formatFunctions;
+        this.formatFunctions = params.formatFunctions;
 
-        this._initData(rawSeriesDatum, index);
+        this._initData(params.datum, params.index);
     },
 
     /**

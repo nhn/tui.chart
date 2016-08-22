@@ -165,7 +165,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
         var limit = this._pickLimitFromOptions(axisOptions);
-        var seriesOptions = this.options.series || {};
+        var seriesOptions = this.options.series;
 
         chartType = chartType || this.chartType;
         seriesOptions = seriesOptions[chartType] || seriesOptions;

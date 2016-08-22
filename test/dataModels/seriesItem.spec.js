@@ -12,7 +12,7 @@ describe('Test for SeriesItem', function() {
     var seriesItem;
 
     beforeEach(function() {
-        seriesItem = new SeriesItem();
+        seriesItem = new SeriesItem({});
     });
 
     describe('_initValues()', function() {

@@ -207,7 +207,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var hasRangeData = false;
 
         this.each(function(seriesItem) {
-            hasRangeData = seriesItem.isRange;
+            hasRangeData = seriesItem && seriesItem.isRange;
 
             return !hasRangeData;
         });

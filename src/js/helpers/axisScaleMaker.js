@@ -329,7 +329,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             return {
                 limit: limit,
                 options: options,
-                divideNum: 1
+                divisionNumber: 1
             };
         }
 
@@ -350,7 +350,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                 max: max * multipleNum
             },
             options: changedOptions,
-            divideNum: multipleNum
+            divisionNumber: multipleNum
         };
     },
 
@@ -485,10 +485,10 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _decreaseMinByStep: function(min, dataMin, step, optionMin) {
-        var isLineChart = predicate.isLineChart(this.chartType),
-            isMinusDataMin = dataMin < 0,
-            isUndefinedMinOption = tui.util.isUndefined(optionMin),
-            isSame = (min === dataMin);
+        var isLineChart = predicate.isLineChart(this.chartType);
+        var isMinusDataMin = dataMin < 0;
+        var isUndefinedMinOption = tui.util.isUndefined(optionMin);
+        var isSame = (min === dataMin);
 
         if ((isLineChart || isMinusDataMin) && isUndefinedMinOption && isSame) {
             min -= step;
@@ -661,17 +661,17 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @param {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
-     *      divideNum: number
+     *      divisionNumber: number
      * }} integerTypeScale - integer type axis scale
      * @param {Array.<number>} valueCounts - candidate counts of value
      * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
      * @private
      */
     _makeCandidateScales: function(integerTypeScale, valueCounts) {
-        var self = this,
-            dataLimit = integerTypeScale.limit,
-            options = integerTypeScale.options,
-            baseLimit = this._makeBaseLimit(dataLimit, options);
+        var self = this;
+        var dataLimit = integerTypeScale.limit;
+        var options = integerTypeScale.options;
+        var baseLimit = this._makeBaseLimit(dataLimit, options);
 
         return tui.util.map(valueCounts, function(valueCount) {
             return self._makeCandidateScale(baseLimit, dataLimit, valueCount, options);
@@ -717,18 +717,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * Restore number state of scale.
      * @memberOf module:axisDataMaker
      * @param {{limit: {min: number, max: number}, step: number}} scale scale
-     * @param {number} divideNum divide num
+     * @param {number} divisionNumber divide num
      * @returns {{limit: {min: number, max: number}, step: number}} restored scale
      * @private
      */
-    _restoreNumberState: function(scale, divideNum) {
-        if (divideNum === 1) {
+    _restoreNumberState: function(scale, divisionNumber) {
+        if (divisionNumber === 1) {
             return scale;
         }
 
-        scale.step = tui.util.division(scale.step, divideNum);
-        scale.limit.min = tui.util.division(scale.limit.min, divideNum);
-        scale.limit.max = tui.util.division(scale.limit.max, divideNum);
+        scale.step = tui.util.division(scale.step, divisionNumber);
+        scale.limit.min = tui.util.division(scale.limit.min, divisionNumber);
+        scale.limit.max = tui.util.division(scale.limit.max, divisionNumber);
 
         return scale;
     },

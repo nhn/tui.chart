@@ -16,30 +16,31 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
-     * @param {number} value - value
-     * @param {string} chartType - type of chart
-     * @param {?Array.<function>} formatFunctions - format functions
-     * @param {number} index - raw data index
-     * @param {?string} stack - stack
+     * @param {object} params - parameters
+     *      @param {number} params.datum - value
+     *      @param {string} params.chartType - type of chart
+     *      @param {?Array.<function>} params.formatFunctions - format functions
+     *      @param {number} params.index - raw data index
+     *      @param {?string} params.stack - stack
      */
-    init: function(value, chartType, formatFunctions, index, stack) {
+    init: function(params) {
         /**
          * type of chart
          * @type {string}
          */
-        this.chartType = chartType;
+        this.chartType = params.chartType;
 
         /**
          * for group stack option.
          * @type {string}
          */
-        this.stack = stack || chartConst.DEFAULT_STACK;
+        this.stack = params.stack || chartConst.DEFAULT_STACK;
 
         /**
          * format functions
          * @type {Array.<function>}
          */
-        this.formatFunctions = formatFunctions;
+        this.formatFunctions = params.formatFunctions;
 
         /**
          * whether range item or not
@@ -107,7 +108,7 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
-        this._initValues(value, index);
+        this._initValues(params.datum, params.index);
     },
 
     /**
