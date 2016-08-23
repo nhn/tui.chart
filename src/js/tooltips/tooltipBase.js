@@ -72,6 +72,18 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.labelTheme = params.labelTheme;
 
         /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
+
+        /**
+         * dateFormat option for xAxis
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
          * className
          * @type {string}
          */

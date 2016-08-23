@@ -195,6 +195,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addRatios: function(divNumber, subValue) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addRatio(divNumber, subValue);
         });
     },

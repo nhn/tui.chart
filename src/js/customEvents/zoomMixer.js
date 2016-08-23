@@ -9,6 +9,7 @@
 var CustomEventBase = require('./customEventBase');
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var eventListener = require('../helpers/eventListener');
 
@@ -274,7 +275,11 @@ var zoomMixer = {
         var clientPos = this.startClientPosition;
 
         if (tui.util.isNull(this.dragStartIndexes)) {
-            this.dragStartIndexes = this._findData(clientPos.x, clientPos.y).indexes;
+            if (predicate.isComboChart(this.chartType)) {
+                this.dragStartIndexes = this._findGroupData(clientPos.x, clientPos.y).indexes;
+            } else {
+                this.dragStartIndexes = this._findData(clientPos.x, clientPos.y).indexes;
+            }
         } else {
             this._showDragSelection(e.clientX);
         }
@@ -364,7 +369,11 @@ var zoomMixer = {
                 CustomEventBase.prototype._onClick.call(this, e);
             }
         } else {
-            this.dragEndIndexes = this._findData(e.clientX, e.clientY).indexes;
+            if (predicate.isComboChart(this.chartType)) {
+                this.dragEndIndexes = this._findGroupData(e.clientX, e.clientY).indexes;
+            } else {
+                this.dragEndIndexes = this._findData(e.clientX, e.clientY).indexes;
+            }
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);

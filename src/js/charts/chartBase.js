@@ -194,7 +194,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return {
             isVertical: this.isVertical,
             userEvent: this.userEvent,
-            chartType: this.chartType
+            chartType: this.chartType,
+            xAxisType: this.options.xAxis.type,
+            dateFormat: this.options.xAxis.dateFormat
         };
     },
 
@@ -487,9 +489,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function(chartType) {
-        var self = this,
-            customEvent = this.componentManager.get('customEvent'),
-            seriesInfos, chartTypes;
+        var self = this;
+        var customEvent = this.componentManager.get('customEvent');
+        var seriesInfos, chartTypes;
 
         if (!customEvent) {
             return;

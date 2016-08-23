@@ -101,18 +101,17 @@ var calculator = {
      * @returns {Array.<number>} positions
      */
     makeTickPixelPositions: function(size, count, additionalPosition) {
-        var positions = [],
-            pxLimit, pxStep;
+        var positions = [];
 
         additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
-            pxLimit = {min: 0, max: size - 1};
-            pxStep = this.calculateStepFromLimit(pxLimit, count);
-            positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
-                return position + additionalPosition;
+            positions = tui.util.map(tui.util.range(0, count), function(index) {
+                var ratio = index === 0 ? 0 : (index / (count - 1));
+
+                return ratio * size + additionalPosition;
             });
-            positions[positions.length - 1] = size - 1 + additionalPosition;
+            positions[positions.length - 1] -= 1;
         }
 
         return positions;

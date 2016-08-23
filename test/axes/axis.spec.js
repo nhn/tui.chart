@@ -689,9 +689,9 @@ describe('Test for Axis', function() {
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 24.75%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 49.5%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 74.25%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 75%"></div>' +
                 '<div class="tui-chart-tick" style="background-color:black;left: 99%"></div>';
 
             expect(actual).toBe(expected);
@@ -704,9 +704,9 @@ describe('Test for Axis', function() {
 
             actual = axis._makeTickHtml(100, 5, true, 0);
             expected = '<div class="tui-chart-tick" style="background-color:black;left: -1%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 24.75%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 49.5%"></div>' +
-                '<div class="tui-chart-tick" style="background-color:black;left: 74.25%"></div>';
+                '<div class="tui-chart-tick" style="background-color:black;left: 25%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 50%"></div>' +
+                '<div class="tui-chart-tick" style="background-color:black;left: 75%"></div>';
 
             expect(actual).toBe(expected);
         });
@@ -823,11 +823,11 @@ describe('Test for Axis', function() {
     });
 
     describe('_renderLabelArea()', function() {
-        it('axis 영역의 너비가 400인 레이블 타입 x축 레이블 영역은 너비 133px과 간격 33.25%로 레이블값을 포함하여 렌더링 됩니다.', function() {
+        it('render label area, when axis is label & horizontal type', function() {
             var size = 400;
             var axisWidth = 0;
-            var tickCount = 4;
-            var categories = ['label1', 'label2', 'label3'];
+            var tickCount = 5;
+            var categories = ['label1', 'label2', 'label3', 'label4'];
             var elLabelArea, childNodes;
 
             axis.isLabel = true;
@@ -836,23 +836,26 @@ describe('Test for Axis', function() {
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toBe(3);
+            expect(childNodes.length).toBe(4);
             expect(childNodes[0].style.left).toBe('0%');
-            expect(childNodes[1].style.left).toBe('33.25%');
-            expect(childNodes[2].style.left).toBe('66.5%');
-            expect(childNodes[0].style.width).toBe('133px');
-            expect(childNodes[1].style.width).toBe('133px');
-            expect(childNodes[2].style.width).toBe('133px');
+            expect(childNodes[1].style.left).toBe('25%');
+            expect(childNodes[2].style.left).toBe('50%');
+            expect(childNodes[3].style.left).toBe('75%');
+            expect(childNodes[0].style.width).toBe('100px');
+            expect(childNodes[1].style.width).toBe('100px');
+            expect(childNodes[2].style.width).toBe('100px');
+            expect(childNodes[3].style.width).toBe('100px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
+            expect(childNodes[3].innerHTML.toLowerCase()).toBe('<span>label4</span>');
         });
 
-        it('axis 영역의 높이가 400인 레이블 타입 y축 레이블 영역은 높이 133px과 간격 33.25%로 레이블값을 포함하여 렌더링 됩니다.', function() {
+        it('render label area, when axis is label & vertical type', function() {
             var size = 400;
             var axisWidth = 100;
-            var tickCount = 4;
-            var categories = ['label1', 'label2', 'label3'];
+            var tickCount = 5;
+            var categories = ['label1', 'label2', 'label3', 'label4'];
             var elLabelArea, childNodes;
 
             axis.isLabel = true;
@@ -861,19 +864,23 @@ describe('Test for Axis', function() {
             elLabelArea = axis._renderLabelArea(size, axisWidth, tickCount, categories);
             childNodes = elLabelArea.childNodes;
 
-            expect(childNodes.length).toBe(3);
+            expect(childNodes.length).toBe(4);
             expect(childNodes[0].style.top).toBe('0%');
-            expect(childNodes[1].style.top).toBe('33.25%');
-            expect(childNodes[2].style.top).toBe('66.5%');
-            expect(childNodes[0].style.height).toBe('133px');
-            expect(childNodes[1].style.height).toBe('133px');
-            expect(childNodes[2].style.height).toBe('133px');
-            expect(childNodes[0].style.lineHeight).toBe('133px');
-            expect(childNodes[1].style.lineHeight).toBe('133px');
-            expect(childNodes[2].style.lineHeight).toBe('133px');
+            expect(childNodes[1].style.top).toBe('25%');
+            expect(childNodes[2].style.top).toBe('50%');
+            expect(childNodes[3].style.top).toBe('75%');
+            expect(childNodes[0].style.height).toBe('100px');
+            expect(childNodes[1].style.height).toBe('100px');
+            expect(childNodes[2].style.height).toBe('100px');
+            expect(childNodes[3].style.height).toBe('100px');
+            expect(childNodes[0].style.lineHeight).toBe('100px');
+            expect(childNodes[1].style.lineHeight).toBe('100px');
+            expect(childNodes[2].style.lineHeight).toBe('100px');
+            expect(childNodes[3].style.lineHeight).toBe('100px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>label1</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>label2</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>label3</span>');
+            expect(childNodes[3].innerHTML.toLowerCase()).toBe('<span>label4</span>');
         });
 
         it('axis 영역의 너비가 400인 벨류 타입 x축 레이블 영역은 너비 200px과 간격 50%(or 49.75%)로 벨류형태의 레이블 값을 포함하여 렌더링 됩니다.', function() {
@@ -890,17 +897,11 @@ describe('Test for Axis', function() {
 
             // 벨류 타입의 경우는 tick 옆에 배치되기 때문에 레이블 타입과는 다른 간격으로 놓이게 됩니다.
             expect(childNodes[0].style.left).toBe('0%');
-
-            if (tui.util.browser.msie) {
-                expect(childNodes[1].style.left).toBe('49.87%');
-            } else {
-                expect(childNodes[1].style.left).toBe('49.875%');
-            }
-
+            expect(childNodes[1].style.left).toBe('50%');
             expect(childNodes[2].style.left).toBe('99.75%');
-            expect(childNodes[0].style.width).toBe('199.5px');
-            expect(childNodes[1].style.width).toBe('199.5px');
-            expect(childNodes[2].style.width).toBe('199.5px');
+            expect(childNodes[0].style.width).toBe('200px');
+            expect(childNodes[1].style.width).toBe('200px');
+            expect(childNodes[2].style.width).toBe('200px');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
             expect(childNodes[2].innerHTML.toLowerCase()).toBe('<span>60.00</span>');
@@ -920,13 +921,7 @@ describe('Test for Axis', function() {
 
             expect(childNodes.length).toBe(3);
             expect(childNodes[0].style.bottom).toBe('0%');
-
-            if (tui.util.browser.msie) {
-                expect(childNodes[1].style.bottom).toBe('49.87%');
-            } else {
-                expect(childNodes[1].style.bottom).toBe('49.875%');
-            }
-
+            expect(childNodes[1].style.bottom).toBe('50%');
             expect(childNodes[2].style.bottom).toBe('99.75%');
             expect(childNodes[0].innerHTML.toLowerCase()).toBe('<span>0.00</span>');
             expect(childNodes[1].innerHTML.toLowerCase()).toBe('<span>30.00</span>');
