@@ -1061,7 +1061,7 @@ describe('Test for AxisScaleMaker', function() {
                 (new Date('01/01/2016')).getTime(),
                 (new Date('01/03/2016')).getTime(),
                 (new Date('01/06/2016')).getTime(),
-                (new Date('01/09/2016')).getTime()
+                (new Date('01/10/2016')).getTime()
             ]);
             axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
 
