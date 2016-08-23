@@ -840,7 +840,7 @@ describe('Test for AxisScaleMaker', function() {
     });
 
     describe('_calculateScale()', function() {
-        it('입력 data에 가장 적절한 tick info를 계산하여 반환합니다.', function() {
+        it('calculate scale.', function() {
             var actual, expected;
 
             boundsMaker.makeSeriesWidth.and.returnValue(400);

@@ -486,11 +486,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _decreaseMinByStep: function(min, dataMin, step, optionMin) {
         var isLineChart = predicate.isLineChart(this.chartType);
+        var isAreaChartX = predicate.isAreaChart(this.chartType) && !this.isVertical;
         var isMinusDataMin = dataMin < 0;
         var isUndefinedMinOption = tui.util.isUndefined(optionMin);
         var isSame = (min === dataMin);
 
-        if ((isLineChart || isMinusDataMin) && isUndefinedMinOption && isSame) {
+        if ((isLineChart || isAreaChartX || isMinusDataMin) && isUndefinedMinOption && isSame) {
             min -= step;
         }
 

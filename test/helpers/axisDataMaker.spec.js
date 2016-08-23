@@ -6,8 +6,8 @@
 
 'use strict';
 
-var maker = require('../../src/js/helpers/axisDataMaker'),
-    chartConst = require('../../src/js/const');
+var maker = require('../../src/js/helpers/axisDataMaker');
+var chartConst = require('../../src/js/const');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {
@@ -27,11 +27,11 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('makeLabelAxisData()', function() {
-        it('레이블 타입의 axis data를 생성합니다.', function() {
-            var result = maker.makeLabelAxisData({
+        it('make axis data for label type', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3']
             });
-            expect(result).toEqual({
+            expect(actual).toEqual({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 validTickCount: 0,
@@ -43,34 +43,23 @@ describe('Test for axisDataMaker', function() {
             });
         });
 
-        it('labelInterval옵션이 있으면 label을 labelInterval옵션으로 필터링 하여 반환합니다.', function() {
-            var result = maker.makeLabelAxisData({
+        it('if has labelInterval option, returns filtered label by labelInterval option', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
                 options: {
                     labelInterval: 2
                 }
             });
 
-            expect(result).toEqual({
-                labels: ['label1', '', 'label3', '', 'label5'],
-                tickCount: 6,
-                validTickCount: 0,
-                options: {
-                    labelInterval: 2
-                },
-                isLabelAxis: true,
-                isVertical: false,
-                isPositionRight: false,
-                aligned: false
-            });
+            expect(actual.labels).toEqual(['label1', '', 'label3', '', 'label5']);
         });
 
-        it('aligned옵션이 true이면 tick label과 tick의 수가 동일하기 때문에 tickCount는 레이블 수 만큼만 설정된다. ', function() {
-            var result = maker.makeLabelAxisData({
+        it('if has aligned option, tickCount is label length', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3'],
                 aligned: true
             });
-            expect(result.tickCount).toBe(3);
+            expect(actual.tickCount).toBe(3);
         });
     });
 
