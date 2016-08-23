@@ -181,7 +181,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             isVertical: areaType !== 'xAxis',
             areaType: areaType,
             valueType: valueType,
-            chartType: chartType,
+            chartType: chartType
         }, additionalParams));
     },
 
