@@ -89,6 +89,19 @@ var zoomMixer = {
          * @type {null | HTMLElement}
          */
         this.resetZoomBtn = null;
+
+        /**
+         * Find data for zoomable
+         * @param {number} clientX - clientX
+         * @param {number} clientY - clientY
+         * @returns {object}
+         * @private
+         */
+        if (predicate.isComboChart(this.chartType)) {
+            this._findDataForZoomable = this._findGroupData;
+        } else {
+            this._findDataForZoomable = this._findData;
+        }
     },
 
     /**
@@ -275,11 +288,7 @@ var zoomMixer = {
         var clientPos = this.startClientPosition;
 
         if (tui.util.isNull(this.dragStartIndexes)) {
-            if (predicate.isComboChart(this.chartType)) {
-                this.dragStartIndexes = this._findGroupData(clientPos.x, clientPos.y).indexes;
-            } else {
-                this.dragStartIndexes = this._findData(clientPos.x, clientPos.y).indexes;
-            }
+            this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
         } else {
             this._showDragSelection(e.clientX);
         }
@@ -369,11 +378,7 @@ var zoomMixer = {
                 CustomEventBase.prototype._onClick.call(this, e);
             }
         } else {
-            if (predicate.isComboChart(this.chartType)) {
-                this.dragEndIndexes = this._findGroupData(e.clientX, e.clientY).indexes;
-            } else {
-                this.dragEndIndexes = this._findData(e.clientX, e.clientY).indexes;
-            }
+            this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
