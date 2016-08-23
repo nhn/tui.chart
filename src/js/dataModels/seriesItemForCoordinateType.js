@@ -35,6 +35,18 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         this.formatFunctions = params.formatFunctions;
 
         /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
+
+        /**
+         * date format
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
          * ratio map
          * @type {object}
          */
@@ -50,6 +62,8 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @private
      */
     _initData: function(rawSeriesDatum, index) {
+        var date;
+
         if (tui.util.isArray(rawSeriesDatum)) {
             this.x = rawSeriesDatum[0] || 0;
             this.y = rawSeriesDatum[1] || 0;
@@ -58,6 +72,11 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
             this.x = rawSeriesDatum.x;
             this.y = rawSeriesDatum.y;
             this.r = rawSeriesDatum.r;
+        }
+
+        if (predicate.isDatetimeType(this.xAxisType)) {
+            date = tui.util.isDate(this.x) ? this.x : (new Date(this.x));
+            this.x = date.getTime() || 0;
         }
 
         this.index = index;
@@ -104,7 +123,11 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         };
 
         if (predicate.isLineTypeChart(this.chartType)) {
-            valueMap.category = renderUtil.formatValue(this.x, formatFunctions, chartType, 'category');
+            if (predicate.isDatetimeType(this.xAxisType)) {
+                valueMap.category = renderUtil.formatDate(this.x, this.dateFormat);
+            } else {
+                valueMap.category = renderUtil.formatValue(this.x, formatFunctions, chartType, 'category');
+            }
         }
 
         return valueMap;

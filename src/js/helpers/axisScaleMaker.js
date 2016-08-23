@@ -51,6 +51,18 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.limitOption = params.limitOption;
 
         /**
+         * axis type
+         * @type {?string}
+         */
+        this.type = params.type;
+
+        /**
+         * date format
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
          * Chart type
          * @type {string}
          */
@@ -203,8 +215,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         if (!this.formattedValues) {
             values = this._getScaleValues();
-            formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+
+            if (predicate.isDatetimeType(this.type)) {
+                this.formattedValues = renderUtil.formatDates(values, this.dateFormat);
+            } else {
+                formatFunctions = this._getFormatFunctions();
+                this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+            }
         }
 
         return this.formattedValues;
@@ -735,6 +752,99 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
+     * millisecond map
+     */
+    millisecondMap: {
+        year: 31536000000,
+        month: 2678400000,
+        date: 86400000,
+        hour: 3600000,
+        minute: 60000,
+        second: 1000
+    },
+
+    /**
+     * millisecond types
+     */
+    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+
+    /**
+     * Find date type.
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {string}
+     * @private
+     */
+    _findDateType: function(dataLimit, count) {
+        var diff = dataLimit.max - dataLimit.min;
+        var millisecondTypes = this.millisecondTypes;
+        var millisecondMap = this.millisecondMap;
+        var lastTypeIndex = millisecondTypes.length - 1;
+        var foundType;
+
+        if (diff) {
+            tui.util.forEachArray(millisecondTypes, function(type, index) {
+                var millisecond = millisecondMap[type];
+                var dividedCount = Math.floor(diff / millisecond);
+                var foundIndex;
+
+                if (dividedCount) {
+                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+                    foundType = millisecondTypes[foundIndex];
+                }
+
+                return !tui.util.isExisty(foundIndex);
+            });
+        } else {
+            foundType = chartConst.DATE_TYPE_SECOND;
+        }
+
+        return foundType;
+    },
+
+    /**
+     * Make datetime information
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {{divisionNumber: number, minDate: number, dataLimit: {min: number, max: number}}}
+     * @private
+     */
+    _makeDatetimeInfo: function(dataLimit, count) {
+        var dateType = this._findDateType(dataLimit, count);
+        var divisionNumber = this.millisecondMap[dateType];
+        var minDate = tui.util.division(dataLimit.min, divisionNumber);
+        var maxDate = tui.util.division(dataLimit.max, divisionNumber);
+        var max = maxDate - minDate;
+
+        return {
+            divisionNumber: divisionNumber,
+            minDate: minDate,
+            dataLimit: {
+                min: 0,
+                max: max
+            }
+        };
+    },
+
+    /**
+     * Restore scale to datetime type.
+     * @param {{scale: number, limit:{min: number, max: number}}} scale - scale
+     * @param {number} minDate - minimum date
+     * @param {number} divisionNumber - division number
+     * @returns {{step: number, limit: {min: number, max: number}}}
+     * @private
+     */
+    _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
+        var limit = scale.limit;
+
+        scale.step = tui.util.multiplication(scale.step, divisionNumber);
+        limit.min = tui.util.multiplication(tui.util.addition(limit.min, minDate), divisionNumber);
+        limit.max = tui.util.multiplication(tui.util.addition(limit.max, minDate), divisionNumber);
+
+        return scale;
+    },
+
+    /**
      * Calculate scale.
      * @returns {{limit: {min: number, max: number}, step: number}}
      * @private
@@ -745,7 +855,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             min: tui.util.min(baseValues),
             max: tui.util.max(baseValues)
         };
-        var integerTypeScale, valueCounts, candidates, scale;
+        var datetimeInfo, integerTypeScale, valueCounts, candidates, scale;
+
+        if (predicate.isDatetimeType(this.type)) {
+            datetimeInfo = this._makeDatetimeInfo(dataLimit, baseValues.length);
+            dataLimit = datetimeInfo.dataLimit;
+        }
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -769,6 +884,10 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
+
+        if (predicate.isDatetimeType(this.type)) {
+            scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
+        }
 
         return scale;
     },

@@ -140,6 +140,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
     _createBaseGroups: function() {
         var chartType = this.chartType;
         var formatFunctions = this.formatFunctions;
+        var xAxisOption = this.options.xAxis;
         var sortValues, SeriesItemClass;
 
         if (this.isCoordinateType) {
@@ -166,7 +167,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                     chartType: chartType,
                     formatFunctions: formatFunctions,
                     index: index,
-                    stack: stack
+                    stack: stack,
+                    xAxisType: xAxisOption.type,
+                    dateFormat: xAxisOption.dateFormat
                 });
             });
             sortValues(items);

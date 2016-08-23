@@ -176,6 +176,8 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
             stackType: seriesOptions.stackType,
             diverging: seriesOptions.diverging,
             limitOption: limit,
+            type: axisOptions.type,
+            dateFormat: axisOptions.dateFormat,
             isVertical: areaType !== 'xAxis',
             areaType: areaType,
             valueType: valueType,

@@ -8,6 +8,7 @@
 
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 /**
  * Axis data maker.
@@ -61,6 +62,10 @@ var axisDataMaker = {
             labels = this._makeLabelsByIntervalOption(params.labels, options.labelInterval, params.addedDataCount);
         }
 
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
         if (!params.aligned) {
             tickCount += 1;
         }
@@ -99,27 +104,27 @@ var axisDataMaker = {
         var positionRatio = 0;
         var min = tui.util.min(values);
         var max = tui.util.max(values);
-        var minDiff, maxDiff, distance;
+        var distance;
 
-        limit.min += step;
-        limit.max -= step;
-        minDiff = limit.min - min;
-        maxDiff = max - limit.max;
         distance = max - min;
 
-        if (minDiff > 0) {
-            positionRatio = minDiff / distance;
+        if (limit.min < min) {
+            limit.min += step;
+            positionRatio = (limit.min - min) / distance;
             sizeRatio -= positionRatio;
+            tickCount -= 1;
+            labels.shift();
         }
 
-        if (maxDiff > 0) {
-            sizeRatio -= maxDiff / distance;
+        if (limit.max > max) {
+            limit.max -= step;
+            sizeRatio -= (max - limit.max) / distance;
+            tickCount -= 1;
+            labels.pop();
         }
-
-        tickCount -= 2;
 
         return {
-            labels: labels.slice(1, labels.length - 1),
+            labels: labels,
             tickCount: tickCount,
             validTickCount: tickCount,
             limit: limit,

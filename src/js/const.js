@@ -238,6 +238,26 @@ var chartConst = {
         step: 25,
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
+    /**
+     * datetime axis type
+     * @type {string}
+     */
+    AXIS_TYPE_DATETIME: 'datetime',
+    /**
+     * default dateFormat
+     * @type {string}
+     */
+    DEFAULT_DATE_FORMAT: 'YYYY.MM.DD hh:mm:dd',
+    /**
+     * date type
+     * @type {string}
+     */
+    DATE_TYPE_YEAR: 'year',
+    DATE_TYPE_MONTH: 'month',
+    DATE_TYPE_DATE: 'date',
+    DATE_TYPE_HOUR: 'hour',
+    DATE_TYPE_MINUTE: 'minute',
+    DATE_TYPE_SECOND: 'second',
     /** title add padding */
     TITLE_PADDING: 10,
     /** legend area padding */

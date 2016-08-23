@@ -20,7 +20,7 @@
         <div>Chart Data</div>
         <textarea id="data">
 {
-    "categories": ["Jan", "Feb", "Mar","Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    "categories": ["01/01/2016", "02/01/2016", "03/01/2016", "04/01/2016", "05/01/2016", "06/01/2016", "07/01/2016", "08/01/2016", "09/01/2016", "10/01/2016", "11/01/2016", "12/01/2016"],
     "series": [
         {
             "name": "Seoul",
@@ -60,7 +60,9 @@
         "title": "Temperature (Celsius)"
     },
     "xAxis": {
-        "title": "Month"
+        "title": "Month",
+        "type": "datetime",
+        "dateFormat": "MMM"
     },
     "series": {
         "showDot": true
@@ -97,7 +99,7 @@
 <script>
     var container = document.getElementById('chart-area'),
         data = {
-            categories: ['Jan', 'Feb', 'Mar','Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            categories: ['01/01/2016', '02/01/2016', '03/01/2016', '04/01/2016', '05/01/2016', '06/01/2016', '07/01/2016', '08/01/2016', '09/01/2016', '10/01/2016', '11/01/2016', '12/01/2016'],
             series: [
                 {
                     name: 'Seoul',
@@ -132,7 +134,9 @@
                 title: 'Temperature (Celsius)'
             },
             xAxis: {
-                title: 'Month'
+                title: 'Month',
+                type: 'datetime',
+                dateFormat: 'MMM'
             },
             series: {
                 showDot: true
@@ -141,7 +145,7 @@
                 suffix: '°C'
             }
         };
-    tui.chart.lineChart(container, data, options);
+    chart = tui.chart.lineChart(container, data, options);
 </script>
 </body>
 </html>
