@@ -145,11 +145,7 @@
                 suffix: '°C'
             }
         };
-    var chart = tui.chart.lineChart(container, data, options);
-
-    chart.on("selectSeries", function(info) {
-        console.log(info);
-    })
+    chart = tui.chart.lineChart(container, data, options);
 </script>
 </body>
 </html>
