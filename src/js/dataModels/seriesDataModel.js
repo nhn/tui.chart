@@ -168,6 +168,7 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                     formatFunctions: formatFunctions,
                     index: index,
                     stack: stack,
+                    xAxisType: xAxisOption.type,
                     dateFormat: xAxisOption.dateFormat
                 });
             });
