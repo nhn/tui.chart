@@ -124,13 +124,50 @@ describe('Test for DataProcessor', function() {
         });
     });
 
+    describe('_mapCategories()', function() {
+        it('if x axis is datetime type, return mapped categories by Date object', function() {
+            var actual;
+
+            dataProcessor.options = {
+                xAxis: {
+                    type: chartConst.AXIS_TYPE_DATETIME
+                }
+            };
+
+            actual = dataProcessor._mapCategories([
+                '01/02/2016',
+                '01/04/2016',
+                '01/07/2016'
+            ]);
+
+            expect(actual).toEqual([
+                (new Date('01/02/2016')).getTime(),
+                (new Date('01/04/2016')).getTime(),
+                (new Date('01/07/2016')).getTime()
+            ]);
+        });
+
+        it('if x axis is not datetime type, return escaped categories', function() {
+            var actual;
+
+            dataProcessor.options = {
+                xAxis: {}
+            };
+
+            actual = dataProcessor._mapCategories(['<div>ABC</div>', 'EFG']);
+
+            expect(actual).toEqual(['&lt;div&gt;ABC&lt;/div&gt;', 'EFG']);
+        });
+    });
+
     describe('_processCategories()', function() {
         it('rawData.categories가 배열 형태이면 전달받은 type을 키로하는 map으로 생성하여 반환합니다.', function() {
-           var actual;
+            var actual;
 
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor._processCategories('y');
 
@@ -148,6 +185,7 @@ describe('Test for DataProcessor', function() {
                     y: [1, 2]
                 }
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor._processCategories();
 
@@ -186,6 +224,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             dataProcessor.getCategories(isVertical);
 
@@ -199,6 +238,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             dataProcessor.getCategories(isVertical);
 
@@ -252,6 +292,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, null, false);
 
@@ -265,6 +306,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, null, true);
 
@@ -281,6 +323,7 @@ describe('Test for DataProcessor', function() {
                     y: [1, 2, 3]
                 }
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, 2, true);
 

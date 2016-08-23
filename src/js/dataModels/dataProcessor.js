@@ -291,6 +291,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Map categories.
+     * @param {Array.<string | number>} categories - categories
+     * @returns {Array.<string | number>}
+     * @private
+     */
+    _mapCategories: function(categories) {
+        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+            categories = tui.util.map(categories, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        } else {
+            categories = this._escapeCategories(categories);
+        }
+
+        return categories;
+    },
+
+    /**
      * Process categories
      * @param {string} type - category type (x or y)
      * @returns {null | Array.<string>} processed categories
@@ -301,10 +321,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var categoriesMap = {};
 
         if (tui.util.isArray(rawCategories)) {
-            categoriesMap[type] = this._escapeCategories(rawCategories);
+            categoriesMap[type] = this._mapCategories(rawCategories);
         } else if (rawCategories) {
             if (rawCategories.x) {
-                categoriesMap.x = this._escapeCategories(rawCategories.x);
+                categoriesMap.x = this._mapCategories(rawCategories.x);
             }
 
             if (rawCategories.y) {
