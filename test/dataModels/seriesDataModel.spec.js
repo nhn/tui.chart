@@ -16,6 +16,9 @@ describe('Test for SeriesDataModel', function() {
 
     beforeEach(function() {
         seriesDataModel = new SeriesDataModel([]);
+        seriesDataModel.options = {
+            xAxis: {}
+        };
     });
 
     describe('_removeRangeValue()', function() {

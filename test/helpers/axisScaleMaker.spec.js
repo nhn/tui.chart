@@ -83,6 +83,65 @@ describe('Test for AxisScaleMaker', function() {
         });
     });
 
+    describe('getFormattedScaleValues()', function() {
+        it('get formatted scale values, when axis type is datetime', function() {
+            var actual;
+
+            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([
+                (new Date('01/01/2016')),
+                (new Date('04/01/2016')),
+                (new Date('08/01/2016'))
+            ]);
+            axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
+            axisScaleMaker.dateFormat = 'YYYY.MM';
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                '2016.01',
+                '2016.04',
+                '2016.08'
+            ]);
+        });
+
+        it('get formatted scale values, when axis type is not datetime', function() {
+            var actual;
+
+            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([10, 20, 30]);
+            spyOn(axisScaleMaker, '_getFormatFunctions').and.returnValue([
+                function(value) {
+                    return 'formatted:' + value;
+                }
+            ]);
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                'formatted:10',
+                'formatted:20',
+                'formatted:30'
+            ]);
+        });
+
+        it('get cached formatted scale values, when has cached formatted values', function() {
+            var actual;
+
+            axisScaleMaker.formattedValues = [
+                'cached:10',
+                'cached:20',
+                'cached:30'
+            ];
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                'cached:10',
+                'cached:20',
+                'cached:30'
+            ]);
+        });
+    });
+
     describe('_makeBaseValuesForNormalStackedChart()', function() {
         it('normal stack 차트의 baes values를 생성합니다.', function() {
             var seriesGroup, actual, expected;

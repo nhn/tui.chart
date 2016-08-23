@@ -405,6 +405,15 @@ var predicate = {
      */
     isValidLabelInterval: function(labelInterval, tickInterval) {
         return labelInterval && labelInterval > 1 && !tickInterval;
+    },
+
+    /**
+     * Whether datetime type or not.
+     * @param {string} type - type
+     * @returns {boolean}
+     */
+    isDatetime: function(type) {
+        return type === chartConst.AXIS_TYPE_DATETIME;
     }
 };
 

@@ -61,6 +61,20 @@ describe('Test for axisDataMaker', function() {
             });
             expect(actual.tickCount).toBe(3);
         });
+
+        it('if axis type is datetime, returns formatted label by dateFormat', function() {
+            var actual;
+
+            actual = maker.makeLabelAxisData({
+                labels: ['01/01/2016', '02/01/2016', '03/01/2016'],
+                options: {
+                    type: chartConst.AXIS_TYPE_DATETIME,
+                    dateFormat: 'YYYY.MM'
+                }
+            });
+
+            expect(actual.labels).toEqual(['2016.01', '2016.02', '2016.03']);
+        });
     });
 
     describe('_makeAdditionalDataForCoordinateLineType()', function() {

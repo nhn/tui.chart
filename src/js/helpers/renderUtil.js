@@ -416,6 +416,35 @@ var renderUtil = {
     },
 
     /**
+     * Format date.
+     * @param {string | number | date} value - value
+     * @param {string} format - date format
+     * @returns {boolean|string|*}
+     */
+    formatDate: function(value, format) {
+        var date = tui.util.isDate(value) ? value : (new Date(value));
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.formatDate(format, date) || value;
+    },
+
+    /**
+     * Format dates.
+     * @param {Array.<string | number | date>} values - values
+     * @param {string} format - date format
+     * @returns {Array}
+     */
+    formatDates: function(values, format) {
+        var formatDate = this.formatDate;
+
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.map(values, function(value) {
+            return formatDate(value, format);
+        });
+    },
+
+    /**
      * Cancel animation
      * @param {{id: number}} animation animaion object
      */
