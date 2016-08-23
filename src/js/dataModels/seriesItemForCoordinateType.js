@@ -34,6 +34,12 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
          */
         this.formatFunctions = params.formatFunctions;
 
+        /**
+         * ratio map
+         * @type {object}
+         */
+        this.ratioMap = {};
+
         this._initData(params.datum, params.index);
     },
 
@@ -61,8 +67,6 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         } else {
             this.label = rawSeriesDatum.label || '';
         }
-
-        this.ratioMap = {};
     },
 
     /**
