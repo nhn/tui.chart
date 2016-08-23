@@ -74,7 +74,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
             this.r = rawSeriesDatum.r;
         }
 
-        if (predicate.isDatetime(this.xAxisType)) {
+        if (predicate.isDatetimeType(this.xAxisType)) {
             date = tui.util.isDate(this.x) ? this.x : (new Date(this.x));
             this.x = date.getTime() || 0;
         }
@@ -123,7 +123,7 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
         };
 
         if (predicate.isLineTypeChart(this.chartType)) {
-            if (predicate.isDatetime(this.xAxisType)) {
+            if (predicate.isDatetimeType(this.xAxisType)) {
                 valueMap.category = renderUtil.formatDate(this.x, this.dateFormat);
             } else {
                 valueMap.category = renderUtil.formatValue(this.x, formatFunctions, chartType, 'category');

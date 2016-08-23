@@ -62,7 +62,7 @@ var axisDataMaker = {
             labels = this._makeLabelsByIntervalOption(params.labels, options.labelInterval, params.addedDataCount);
         }
 
-        if (predicate.isDatetime(options.type)) {
+        if (predicate.isDatetimeType(options.type)) {
             labels = renderUtil.formatDates(labels, options.dateFormat);
         }
 

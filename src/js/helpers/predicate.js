@@ -412,7 +412,7 @@ var predicate = {
      * @param {string} type - type
      * @returns {boolean}
      */
-    isDatetime: function(type) {
+    isDatetimeType: function(type) {
         return type === chartConst.AXIS_TYPE_DATETIME;
     }
 };

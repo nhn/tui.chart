@@ -419,7 +419,7 @@ var renderUtil = {
      * Format date.
      * @param {string | number | date} value - value
      * @param {string} format - date format
-     * @returns {boolean|string|*}
+     * @returns {string}
      */
     formatDate: function(value, format) {
         var date = tui.util.isDate(value) ? value : (new Date(value));

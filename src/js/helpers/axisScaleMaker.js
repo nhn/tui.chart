@@ -216,7 +216,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         if (!this.formattedValues) {
             values = this._getScaleValues();
 
-            if (predicate.isDatetime(this.type)) {
+            if (predicate.isDatetimeType(this.type)) {
                 this.formattedValues = renderUtil.formatDates(values, this.dateFormat);
             } else {
                 formatFunctions = this._getFormatFunctions();
@@ -752,40 +752,6 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     },
 
     /**
-     * Find date type.
-     * @param {{min: number, max: number}} dataLimit - data limit
-     * @param {number} count - data count
-     * @returns {string}
-     * @private
-     */
-    _findDateType: function(dataLimit, count) {
-        var diff = dataLimit.max - dataLimit.min;
-        var diffDate = new Date(diff);
-        var diffYear = diffDate.getUTCFullYear() - (new Date(1970, 1, 1)).getUTCFullYear();
-        var type;
-
-        if (diffYear) {
-            type = (diffYear < count) ? chartConst.DATE_TYPE_MONTH : chartConst.DATE_TYPE_YEAR;
-        } else if (diffDate.getUTCMonth()) {
-            type = (diffDate.getUTCMonth() < count) ? chartConst.DATE_TYPE_DATE : chartConst.DATE_TYPE_MONTH;
-        } else if (diffDate.getUTCDate()) {
-            type = (diffDate.getUTCDate() < count) ? chartConst.DATE_TYPE_HOUR : chartConst.DATE_TYPE_DATE;
-        }
-
-        if (type === chartConst.DATE_TYPE_HOUR) {
-            if (diffDate.getUTCHours()) {
-                type = (diffDate.getUTCHours() < count) ? chartConst.DATE_TYPE_MINUTE : chartConst.DATE_TYPE_HOUR;
-            } else if (diffDate.getUTCMinutes()) {
-                type = (diffDate.getUTCMinutes() < count) ? chartConst.DATE_TYPE_SECOND : chartConst.DATE_TYPE_MINUTE;
-            } else if (diffDate.getUTCSeconds() || diff === 0) {
-                type = chartConst.DATE_TYPE_SECOND;
-            }
-        }
-
-        return type;
-    },
-
-    /**
      * millisecond map
      */
     millisecondMap: {
@@ -795,6 +761,45 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         hour: 3600000,
         minute: 60000,
         second: 1000
+    },
+
+    /**
+     * millisecond types
+     */
+    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+
+    /**
+     * Find date type.
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {string}
+     * @private
+     */
+    _findDateType: function(dataLimit, count) {
+        var diff = dataLimit.max - dataLimit.min;
+        var millisecondTypes = this.millisecondTypes;
+        var millisecondMap = this.millisecondMap;
+        var lastTypeIndex = millisecondTypes.length - 1;
+        var foundType;
+
+        if (diff) {
+            tui.util.forEachArray(millisecondTypes, function(type, index) {
+                var millisecond = millisecondMap[type];
+                var dividedCount = Math.floor(diff / millisecond);
+                var foundIndex;
+
+                if (dividedCount) {
+                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+                    foundType = millisecondTypes[foundIndex];
+                }
+
+                return !tui.util.isExisty(foundIndex);
+            });
+        } else {
+            foundType = chartConst.DATE_TYPE_SECOND;
+        }
+
+        return foundType;
     },
 
     /**
@@ -852,7 +857,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         };
         var datetimeInfo, integerTypeScale, valueCounts, candidates, scale;
 
-        if (predicate.isDatetime(this.type)) {
+        if (predicate.isDatetimeType(this.type)) {
             datetimeInfo = this._makeDatetimeInfo(dataLimit, baseValues.length);
             dataLimit = datetimeInfo.dataLimit;
         }
@@ -880,7 +885,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
         scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
 
-        if (predicate.isDatetime(this.type)) {
+        if (predicate.isDatetimeType(this.type)) {
             scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
         }
 

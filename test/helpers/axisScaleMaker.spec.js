@@ -995,7 +995,7 @@ describe('Test for AxisScaleMaker', function() {
             ' returns chartConst.DATE_TYPE_MINUTE', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1, 1, 1).getTime(),
-                max: new Date(2010, 1, 1, 1, 30).getTime()
+                max: new Date(2010, 1, 1, 1, 12).getTime()
             };
             var actual = axisScaleMaker._findDateType(baseLimit, 6);
 
@@ -1018,9 +1018,21 @@ describe('Test for AxisScaleMaker', function() {
             ' returns chartConst.DATE_TYPE_SECOND', function() {
             var baseLimit = {
                 min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
-                max: new Date(2010, 1, 1, 1, 1, 3).getTime()
+                max: new Date(2010, 1, 1, 1, 1, 12).getTime()
             };
             var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
+        });
+
+        it('if difference between minimum and maximum value is over second value and' +
+            ' it divided by millisecond of second value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_SECOND', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 1, 6).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
 
             expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
         });
