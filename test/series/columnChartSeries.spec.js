@@ -175,7 +175,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_calculateLeftPositionOfSumLabel()', function() {
-        it('합계 레이블의 left position값을 계산합니다.', function() {
+        it('calculate left position of sum label', function() {
             var actual = series._calculateLeftPositionOfSumLabel({
                     left: 10,
                     width: 30
@@ -186,7 +186,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makePlusSumLabelHtml()', function() {
-        it('양수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for plus sum', function() {
             var values = [10, 20, 30],
                 bound = {
                     left: 10,
@@ -202,7 +202,7 @@ describe('ColumnChartSeries', function() {
     });
 
     describe('_makeMinusSumLabelHtml()', function() {
-        it('음수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for minus sum', function() {
             var values = [-10, -20, -30],
                 bound = {
                     left: 10,

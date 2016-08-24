@@ -104,7 +104,7 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_makeLabelCssText()', function() {
-        it('레이블 렌더링을 위한 cssText를 생성합니다.', function() {
+        it('make cssText for label', function() {
             var position = {
                 left: 10,
                 top: 10
@@ -118,7 +118,7 @@ describe('Test for renderingLabelHelper', function() {
             expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px');
         });
 
-        it('선택된 index(selectedIndex)가 있으면서 전달된 index와 같지 않으면 opacity 속성을 추가합니다.', function() {
+        it('make cssText for label, when selectedIndex exist and not equal as index', function() {
             var position = {
                 left: 10,
                 top: 10

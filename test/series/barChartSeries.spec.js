@@ -213,7 +213,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_calculateTopPositionOfSumLabel()', function() {
-        it('합계 레이블의 top position값을 계산합니다.', function() {
+        it('alculate top position of sum label', function() {
             var actual = series._calculateTopPositionOfSumLabel({
                     top: 10,
                     height: 30
@@ -224,7 +224,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makePlusSumLabelHtml()', function() {
-        it('양수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for plus sum', function() {
             var values = [10, 20, 30],
                 bound = {
                     left: 10,
@@ -240,7 +240,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makeMinusSumLabelHtml()', function() {
-        it('음수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for minus sum', function() {
             var values = [-10, -20, -30],
                 bound = {
                     left: 80,

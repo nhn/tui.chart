@@ -434,7 +434,7 @@ describe('Test for Axis', function() {
     });
 
     describe('_makePositionMapForCenterAlign()', function() {
-        it('y축이 중앙 정렬을 위해 제목 높이와 y축 너비 x축 높이를 이용하여 postion(left, bottom)정보를 생성합니다.', function() {
+        it('make position map for center align option of y axis', function() {
             var actual;
 
             boundsMaker.getDimension.and.callFake(function(componentType) {
@@ -456,7 +456,7 @@ describe('Test for Axis', function() {
     });
 
     describe('_makeRightPosition', function() {
-        it('IE7에서는 0을 반환합니다.', function() {
+        it('make right position, when browser is IE7', function() {
             var actual;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(true);
@@ -466,7 +466,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('rotateTitle옵션이 false인 경우에도 0을 반환합니다.', function() {
+        it('make right position, when rotateTitle option is false', function() {
             var actual;
 
             axis.options.rotateTitle = false;
@@ -476,7 +476,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('IE7도 아니고 rotateTitle옵션도 없다면 전달하는 size를 음수로 변경하여 반환합니다.', function() {
+        it('make right position, when browser is not IE7 and rotateTitle option is not false', function() {
             var actual;
 
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
@@ -488,7 +488,7 @@ describe('Test for Axis', function() {
     });
 
     describe('_makeTopPosition()', function() {
-        it('rotateTitle옵션이 false인 경우에는 전달하는 size에서 제목 높이값을 뺀 값의 반을 반환합니다.', function() {
+        it('make top position, when rotateTitle option is false', function() {
             var actual;
 
             axis.options.rotateTitle = false;
@@ -498,7 +498,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(40);
         });
 
-        it('rotateTitle옵션 없이 오른쪽 y축(isPositionRight=true)인 경우에는 0을 반환합니다.', function() {
+        it('make top position, when rotateTitle option is not false and right y axis', function() {
             var actual;
 
             axis.data.isPositionRight = true;
@@ -507,7 +507,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(0);
         });
 
-        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)도 아닌 경우에는 전달한 size 그대로 반환합니다.', function() {
+        it('make top position, when rotateTitle option is not false and not right y axis and not old browser', function() {
             var actual;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
@@ -517,7 +517,7 @@ describe('Test for Axis', function() {
             expect(actual).toBe(100);
         });
 
-        it('rotateTitle옵션도 없고 오른쪽 y축도 아니며 구형브라우저(IE8이하)인 경우에는 null을 반환합니다.', function() {
+        it('returns null, when rotateTitle option is not false and not right y axis and old browser', function() {
             var actual;
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
@@ -529,7 +529,7 @@ describe('Test for Axis', function() {
     });
 
     describe('_makePositionMapForNotCenterAlign()', function() {
-        it('y축이 중앙 정렬이 아닌 경우의 position(top, left) map을 구합니다.', function() {
+        it('make positionMap for not center align', function() {
             var actual;
 
             spyOn(axis, '_makeTopPosition').and.returnValue(50);
@@ -540,7 +540,7 @@ describe('Test for Axis', function() {
             expect(actual.top).toBe(50);
         });
 
-        it('오른쪽 y축인 경우에는 left가 아닌 right값을 반환합니다.', function() {
+        it('make positionMap for not center align, when right y axis', function() {
             var actual;
 
             spyOn(axis, '_makeTopPosition').and.returnValue(50);
@@ -554,7 +554,7 @@ describe('Test for Axis', function() {
             expect(actual.top).toBe(50);
         });
 
-        it('top position값이 null인 경우에는 top을 반환하지 않습니다. ', function() {
+        it('if top position is null, top not be returned', function() {
             var actual;
 
             spyOn(axis, '_makeTopPosition').and.returnValue(null);
