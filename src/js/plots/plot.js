@@ -82,7 +82,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
      * Render plot area.
      * @param {HTMLElement} plotContainer plot area element
-     * @param {object} data rendering data
      * @private
      */
     _renderPlotArea: function(plotContainer) {
@@ -102,7 +101,6 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Render plot component.
-     * @param {object} data rendering data
      * @returns {HTMLElement} plot element
      */
     render: function() {
@@ -200,7 +198,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {{dataMin: number, distance: number}} xAxisData - x axis data
      * @param {number} width - width
      * @param {number} value - value
-     * @returns {number}
+     * @returns {number|null}
      * @private
      */
     _createOptionalLinePosition: function(xAxisData, width, value) {
@@ -222,7 +220,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * Create position for optional line, when label axis.
      * @param {number} width - width
      * @param {number} value - value
-     * @returns {number}
+     * @returns {number|null}
      * @private
      */
     _createOptionalLinePositionWhenLabelAxis: function(width, value) {
@@ -284,6 +282,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      */
     _makeOptionalLineHtml: function(xAxisData, width, templateParams, optionalLineData) {
         var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+        var plotLineWidth = '1px';
         var html = '';
         var percentageWidth;
 
@@ -292,7 +291,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
                 percentageWidth = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
                 templateParams.width = percentageWidth + '%';
             } else {
-                templateParams.width = '1px';
+                templateParams.width = plotLineWidth;
             }
 
             templateParams.color = optionalLineData.color || 'transparent';
@@ -512,6 +511,10 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.rerender();
     },
 
+    /**
+     * Animate for adding data.
+     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+     */
     animateForAddingData: function(data) {
         var self = this;
         var beforeLeft = 0;
