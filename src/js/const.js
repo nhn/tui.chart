@@ -136,6 +136,7 @@ var chartConst = {
     /** radian */
     RAD: Math.PI / 180,
     RERENDER_TIME: 700,
+    ADDING_DATA_ANIMATION_DURATION: 300,
     /** series label align outer
      * @type {string}
      */

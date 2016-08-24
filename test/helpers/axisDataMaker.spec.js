@@ -96,6 +96,8 @@ describe('Test for axisDataMaker', function() {
                     min: 10,
                     max: 30
                 },
+                dataMin: 8,
+                distance: 25,
                 positionRatio: 0.08,
                 sizeRatio: 0.8
             };
@@ -121,6 +123,8 @@ describe('Test for axisDataMaker', function() {
                     min: 0,
                     max: 20
                 },
+                dataMin: -2,
+                distance: 25,
                 positionRatio: 0.08,
                 sizeRatio: 0.8
             };
@@ -159,6 +163,8 @@ describe('Test for axisDataMaker', function() {
                     min: 0,
                     max: 100
                 },
+                dataMin: 0,
+                distance: 100,
                 step: 25,
                 options: 'options',
                 isVertical: true,
@@ -201,6 +207,8 @@ describe('Test for axisDataMaker', function() {
                     min: 10,
                     max: 30
                 },
+                dataMin: 8,
+                distance: 25,
                 step: 5,
                 options: 'options',
                 isVertical: false,

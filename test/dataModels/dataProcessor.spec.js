@@ -285,6 +285,32 @@ describe('Test for DataProcessor', function() {
         });
     });
 
+    describe('findCategoryIndex()', function() {
+        it('find category index by category value', function() {
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                x: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.findCategoryIndex('cate2');
+
+            expect(actual).toBe(1);
+        });
+
+        it('if not found category index, returns null', function() {
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                x: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.findCategoryIndex('cate4');
+
+            expect(actual).toBeNull();
+        });
+    });
+
     describe('getTooltipCategory()', function() {
         it('가로형 차트의 경우 세로형 카테고리를 기본 값으로 합니다.', function() {
             var actual;

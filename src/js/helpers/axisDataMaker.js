@@ -128,6 +128,8 @@ var axisDataMaker = {
             tickCount: tickCount,
             validTickCount: tickCount,
             limit: limit,
+            dataMin: min,
+            distance: distance,
             positionRatio: positionRatio,
             sizeRatio: sizeRatio
         };
@@ -161,6 +163,8 @@ var axisDataMaker = {
             tickCount: tickCount,
             validTickCount: tickCount,
             limit: limit,
+            dataMin: limit.min,
+            distance: limit.max - limit.min,
             step: step,
             options: params.options,
             isVertical: !!params.isVertical,

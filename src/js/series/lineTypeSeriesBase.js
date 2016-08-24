@@ -306,7 +306,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             return;
         }
 
-        this.movingAnimation = renderUtil.startAnimation(300, callback, function() {
+        this.movingAnimation = renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, callback, function() {
             self.movingAnimation = null;
         });
     },

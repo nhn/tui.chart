@@ -75,7 +75,7 @@ tui.util.defineNamespace('tui.chart');
 _createChart = function(container, rawData, options) {
     var themeName, theme, chart;
 
-    rawData = JSON.parse(JSON.stringify(rawData));
+    rawData = tui.util.deepCopy(rawData);
     options = options ? tui.util.deepCopy(options) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);

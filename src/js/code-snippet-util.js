@@ -273,7 +273,7 @@ var deepCopy = function(origin) {
         tui.util.forEachArray(origin, function (value, index) {
             clone[index] = deepCopy(value);
         });
-    } else if (tui.util.isFunction(origin)) {
+    } else if (tui.util.isFunction(origin) || tui.util.isDate(origin)) {
         clone = origin;
     } else if (tui.util.isObject(origin)) {
         clone = {};

@@ -12,6 +12,7 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
+var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var raphael = window.Raphael;
 
@@ -190,7 +191,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         if (shiftingOption) {
             this.leftBar.animate({
                 width: tickSize + LEFT_BAR_WIDTH
-            }, 300);
+            }, ADDING_DATA_ANIMATION_DURATION);
             additionalIndex = 1;
         }
 
