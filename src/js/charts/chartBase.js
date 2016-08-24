@@ -446,6 +446,10 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         var chartOptions = this.options.chart || {};
         var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
 
+        if (chartOptions.titlePosition) {
+            renderUtil.renderPosition(titleElement, chartOptions.titlePosition);
+        }
+
         dom.append(container, titleElement);
     },
 

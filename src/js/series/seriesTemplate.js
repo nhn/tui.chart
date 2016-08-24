@@ -12,9 +12,9 @@ var htmls = {
     HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
         '{{ label }}</div>',
     TEXT_CSS_TEXT: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};' +
-        'font-size:{{ fontSize }}px{{opacity}}',
+        'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
     TEXT_CSS_TEXT_FOR_LINE_TYPE: 'left:{{ left }}%;top:{{ top }}%;font-family:{{ fontFamily }};' +
-    'font-size:{{ fontSize }}px{{opacity}}',
+    'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
     HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn" href="#" data-magn="2">' +
             '<div class="horizontal-line"></div><div class="vertical-line"></div></a>' +
         '<a class="tui-chart-zoom-btn" href="#" data-magn="0.5"><div class="horizontal-line"></div></a>',

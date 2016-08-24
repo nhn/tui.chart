@@ -57,6 +57,10 @@ var renderUtil = {
             cssTexts.push(this.concatStr('color:', theme.color));
         }
 
+        if (theme.fontWeight) {
+            cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
+        }
+
         return cssTexts.join(';');
     },
 
@@ -116,6 +120,10 @@ var renderUtil = {
 
         if (theme.fontFamily) {
             div.style.fontFamily = theme.fontFamily;
+        }
+
+        if (theme.fontWeight) {
+            div.style.fontWeight = theme.fontWeight;
         }
 
         if (theme.cssText) {
@@ -266,17 +274,13 @@ var renderUtil = {
             return;
         }
 
-        if (!tui.util.isUndefined(position.top)) {
-            el.style.top = position.top + 'px';
-        }
+        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
+            var value = position[key];
 
-        if (!tui.util.isUndefined(position.left)) {
-            el.style.left = position.left + 'px';
-        }
-
-        if (!tui.util.isUndefined(position.right)) {
-            el.style.right = position.right + 'px';
-        }
+            if (value) {
+                el.style[key] = position[key] + 'px';
+            }
+        });
     },
 
     /**

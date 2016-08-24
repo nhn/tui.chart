@@ -6,10 +6,10 @@
 
 'use strict';
 
-var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
-    renderUtil = require('../../src/js/helpers/renderUtil.js');
+var ColumnChartSeries = require('../../src/js/series/columnChartSeries.js');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var seriesGroup = require('../../src/js/dataModels/seriesGroup');
+var renderUtil = require('../../src/js/helpers/renderUtil.js');
 
 describe('ColumnChartSeries', function() {
     var series, dataProcessor, boundsMaker;
@@ -33,7 +33,8 @@ describe('ColumnChartSeries', function() {
             theme: {
                 label: {
                     fontFamily: 'Verdana',
-                    fontSize: 11
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 }
             },
             options: {},
@@ -196,7 +197,8 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:5px;font-family:Verdana;font-size:11px">60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:11px;top:5px;font-family:Verdana;font-size:11px;font-weight:normal">60</div>';
             expect(actual).toBe(expected);
         });
     });
@@ -212,7 +214,8 @@ describe('ColumnChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:11px;top:55px;font-family:Verdana;font-size:11px">-60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:11px;top:55px;font-family:Verdana;font-size:11px;font-weight:normal">-60</div>';
 
             expect(actual).toBe(expected);
         });

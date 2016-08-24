@@ -433,6 +433,33 @@ describe('Test for Axis', function() {
         });
     });
 
+    describe('_pickTitlePositionOptionValue', function() {
+        it('pick left position value', function() {
+            var positionOption = {
+                left: 10
+            };
+            var actual = axis._pickTitlePositionOptionValue(positionOption, 'left');
+
+            expect(actual).toBe(10);
+        });
+
+        it('pick left position value, when not existed left property and existed right property', function() {
+            var positionOption = {
+                right: 10
+            };
+            var actual = axis._pickTitlePositionOptionValue(positionOption, 'left', 'right');
+
+            expect(actual).toBe(-10);
+        });
+
+        it('pick left position value, when not existed both left and right property', function() {
+            var positionOption = {};
+            var actual = axis._pickTitlePositionOptionValue(positionOption, 'left', 'right');
+
+            expect(actual).toBe(0);
+        });
+    });
+
     describe('_makePositionMapForCenterAlign()', function() {
         it('make position map for center align option of y axis', function() {
             var actual;
@@ -452,6 +479,30 @@ describe('Test for Axis', function() {
 
             expect(actual.left).toBe(25);
             expect(actual.bottom).toBe(-50);
+        });
+
+        it('make position map for center align option of y axis, when has title position option', function() {
+            var actual;
+
+            boundsMaker.getDimension.and.callFake(function(componentType) {
+                return {
+                    xAxis: {
+                        height: 50
+                    },
+                    yAxis: {
+                        width: 100
+                    }
+                }[componentType];
+            });
+            axis.options.titlePosition = {
+                left: 10,
+                top: 10
+            };
+
+            actual = axis._makePositionMapForCenterAlign();
+
+            expect(actual.left).toBe(35);
+            expect(actual.bottom).toBe(-60);
         });
     });
 
@@ -484,6 +535,19 @@ describe('Test for Axis', function() {
             actual = axis._makeRightPosition(100);
 
             expect(actual).toBe(-100);
+        });
+
+        it('make right position, when rotateTitle option is false and has titlePosition option', function() {
+            var actual;
+
+            axis.options.rotateTitle = false;
+            axis.options.titlePosition = {
+                right: 10
+            };
+
+            actual = axis._makeRightPosition();
+
+            expect(actual).toBe(-10);
         });
     });
 
@@ -526,6 +590,19 @@ describe('Test for Axis', function() {
 
             expect(actual).toBeNull();
         });
+
+        it('make top position, when rotateTitle option is false and has titlePosition option', function() {
+            var actual;
+
+            axis.options.rotateTitle = false;
+            axis.options.titlePosition = {
+                top: 10
+            };
+
+            actual = axis._makeTopPosition(100);
+
+            expect(actual).toBe(50);
+        });
     });
 
     describe('_makePositionMapForNotCenterAlign()', function() {
@@ -537,6 +614,20 @@ describe('Test for Axis', function() {
             actual = axis._makePositionMapForNotCenterAlign();
 
             expect(actual.left).toBe(0);
+            expect(actual.top).toBe(50);
+        });
+
+        it('make positionMap for not center align, when has titlePosition option', function() {
+            var actual;
+
+            spyOn(axis, '_makeTopPosition').and.returnValue(50);
+            axis.options.titlePosition = {
+                left: 10
+            };
+
+            actual = axis._makePositionMapForNotCenterAlign();
+
+            expect(actual.left).toBe(-10);
             expect(actual.top).toBe(50);
         });
 
@@ -566,13 +657,13 @@ describe('Test for Axis', function() {
         });
     });
 
-    describe('_renderTitleAreaStyle()', function() {
+    describe('_renderTitleAreaStyleForVertical()', function() {
         it('타이틀 너비가 50인 좌측 y axis 타이틀 영역의 css style을 렌더링 합니다.', function() {
             var elTitle = dom.create('DIV');
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(false);
 
-            axis._renderTitleAreaStyle(elTitle, 50);
+            axis._renderTitleAreaStyleForVertical(elTitle, 50);
 
             expect(elTitle.style.width).toBe('50px');
             expect(elTitle.style.left).toBe('0px');
@@ -584,7 +675,7 @@ describe('Test for Axis', function() {
 
             spyOn(renderUtil, 'isOldBrowser').and.returnValue(true);
 
-            axis._renderTitleAreaStyle(elTitle, 50);
+            axis._renderTitleAreaStyleForVertical(elTitle, 50);
 
             expect(elTitle.style.width).toBe('50px');
             expect(elTitle.style.left).toBe('0px');
@@ -596,7 +687,7 @@ describe('Test for Axis', function() {
 
             axis.options.rotateTitle = false;
 
-            axis._renderTitleAreaStyle(elTitle, 200);
+            axis._renderTitleAreaStyleForVertical(elTitle, 200);
 
             expect(elTitle.style.top).toBe('90px');
         });
@@ -606,7 +697,7 @@ describe('Test for Axis', function() {
 
             axis.data.isPositionRight = true;
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
-            axis._renderTitleAreaStyle(elTitle, 50);
+            axis._renderTitleAreaStyleForVertical(elTitle, 50);
 
             expect(elTitle.style.width).toBe('50px');
             expect(elTitle.style.right).toBe('-50px');
@@ -618,7 +709,7 @@ describe('Test for Axis', function() {
 
             axis.data.isPositionRight = true;
             spyOn(renderUtil, 'isIE7').and.returnValue(true);
-            axis._renderTitleAreaStyle(elTitle, 50);
+            axis._renderTitleAreaStyleForVertical(elTitle, 50);
 
             expect(elTitle.style.right).toBe('0px');
         });
@@ -629,7 +720,7 @@ describe('Test for Axis', function() {
             axis.data.isPositionRight = true;
             spyOn(renderUtil, 'isIE7').and.returnValue(false);
             axis.options.rotateTitle = false;
-            axis._renderTitleAreaStyle(elTitle, 50);
+            axis._renderTitleAreaStyleForVertical(elTitle, 50);
 
             expect(elTitle.style.right).toBe('0px');
         });
@@ -650,7 +741,7 @@ describe('Test for Axis', function() {
             });
             axis.options.title = 'Title';
             axis.options.isCenter = true;
-            axis._renderTitleAreaStyle(elTitle);
+            axis._renderTitleAreaStyleForVertical(elTitle);
 
             expect(elTitle.style.left).toBe('15px');
             expect(elTitle.style.bottom).toBe('-30px');

@@ -6,10 +6,10 @@
 
 'use strict';
 
-var BarChartSeries = require('../../src/js/series/barChartSeries'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var BarChartSeries = require('../../src/js/series/barChartSeries');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var seriesGroup = require('../../src/js/dataModels/seriesGroup');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BarChartSeries', function() {
     var series, dataProcessor, boundsMaker;
@@ -32,7 +32,8 @@ describe('BarChartSeries', function() {
             theme: {
                 label: {
                     fontFamily: 'Verdana',
-                    fontSize: 11
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 }
             },
             options: {},
@@ -234,7 +235,8 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px">60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:55px;top:11px;font-family:Verdana;font-size:11px;font-weight:normal">60</div>';
             expect(actual).toBe(expected);
         });
     });
@@ -250,7 +252,8 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:35px;top:11px;font-family:Verdana;font-size:11px">-60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:35px;top:11px;font-family:Verdana;font-size:11px;font-weight:normal">-60</div>';
             expect(actual).toBe(expected);
         });
     });
