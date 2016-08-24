@@ -211,6 +211,10 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             position -= 1;
         }
 
+        if (position < 0) {
+            position = null;
+        }
+
         return position;
     },
 
@@ -254,13 +258,13 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         if (xAxisData.isLabelAxis) {
             startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
             endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
-
-            if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
-                startPosition = 0;
-            }
         } else {
             startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
             endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
+        }
+
+        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+            startPosition = 0;
         }
 
         return {
