@@ -390,7 +390,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelContainer = this.labelContainer;
         var beforeWidth = parseInt(ticksElement.style.width, 10) || ticksElement.offsetWidth;
 
-        renderUtil.startAnimation(300, function(ratio) {
+        renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
             var width = beforeWidth - (tickSize * ratio);
 
             ticksElement.style.width = width + 'px';

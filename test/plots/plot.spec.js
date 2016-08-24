@@ -194,9 +194,7 @@ describe('Test for Plot', function() {
         });
 
         it('create position for optional line, when label axis', function() {
-            var actual;
-
-            actual = plot._createOptionalLinePositionWhenLabelAxis(300, 'cate2');
+            var actual = plot._createOptionalLinePositionWhenLabelAxis(300, 'cate2');
 
             expect(actual).toBe(100);
         });

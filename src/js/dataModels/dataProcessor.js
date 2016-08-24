@@ -63,7 +63,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = JSON.parse(JSON.stringify(rawData));
+        this.originalRawData = tui.util.deepCopy(rawData);
 
         /**
          * chart type
@@ -110,7 +110,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return JSON.parse(JSON.stringify(this.originalRawData));
+        return tui.util.deepCopy(this.originalRawData);
     },
 
     /**
@@ -120,7 +120,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
         if (zoomedRawData) {
-            zoomedRawData = JSON.parse(JSON.stringify(zoomedRawData));
+            zoomedRawData = tui.util.deepCopy(zoomedRawData);
         } else {
             zoomedRawData = this.getOriginalRawData();
         }

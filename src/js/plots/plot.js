@@ -6,6 +6,7 @@
 
 'use strict';
 
+var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
 var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
@@ -169,7 +170,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         var percentagePosition = calculator.makePercentageValue(position, standardWidth);
 
         templateParams.positionValue = percentagePosition + '%';
-
+        templateParams.opacity = templateParams.opacity || '';
         return plotTemplate.tplPlotLine(templateParams);
     },
 
@@ -295,6 +296,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
             }
 
             templateParams.color = optionalLineData.color || 'transparent';
+            templateParams.opacity = renderUtil.makeOpacityCssText(optionalLineData.opacity);
             html = this._makeLineHtml(positionMap.start, width, templateParams);
         }
 
@@ -309,10 +311,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @private
      */
     _makeOptionalLinesHtml: function(lines, dimension) {
-        var self = this;
         var width = dimension.width;
         var xAxisData = this.boundsMaker.getAxesData().xAxis;
-        var templateParams = self._makeVerticalLineTemplateParams({
+        var templateParams = this._makeVerticalLineTemplateParams({
             height: dimension.height + 'px'
         });
         var makeOptionalLineHtml = tui.util.bind(this._makeOptionalLineHtml, this, xAxisData, width, templateParams);
@@ -524,13 +525,13 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         if (this.dataProcessor.isCoordinateType()) {
             this.optionalContainer.innerHTML = '';
         } else if (data.shifting) {
-            renderUtil.startAnimation(300, function(ratio) {
+            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
                 var left = interval * ratio;
                 self.optionalContainer.style.left = (beforeLeft - left) + 'px';
             });
         } else {
             areaWidth = this.boundsMaker.getDimension('plot').width;
-            renderUtil.startAnimation(300, function(ratio) {
+            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
                 var left = interval * ratio;
                 self.optionalContainer.style.width = (areaWidth - left) + 'px';
             }, function() {
