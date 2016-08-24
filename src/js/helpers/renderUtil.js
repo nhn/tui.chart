@@ -632,7 +632,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';filter:' + makeCssFilterOpacityString(opacity);
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
+        }
+
+        return cssText;
     };
 
     /**
@@ -653,7 +659,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';opacity:' + opacity;
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';opacity:' + opacity;
+        }
+
+        return cssText;
     };
 
     /**
