@@ -175,7 +175,8 @@ describe('Test for ComboChart', function() {
                 legend: {
                     visible: true
                 },
-                tooltip: {}
+                tooltip: {},
+                xAxis: {}
             };
 
             axisTypeMixer._addComponentsForAxisType({
@@ -387,8 +388,6 @@ describe('Test for ComboChart', function() {
 
             actual = axisTypeMixer._makeRenderingData();
 
-            expect(actual.plot.vTickCount).toBe(3);
-            expect(actual.plot.hTickCount).toBe(0);
             expect(actual.customEvent.tickCount).toBe(3);
             expect(actual.columnSeries.limit).toBeDefined();
             expect(actual.columnSeries.aligned).toBe(true);

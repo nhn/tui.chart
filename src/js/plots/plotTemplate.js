@@ -9,7 +9,10 @@
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_PLOT_LINE: '<div class="tui-chart-plot-line {{ className }}" style="{{ cssText }}"></div>'
+    HTML_PLOT_LINE: '<div class="tui-chart-plot-line {{ className }}"' +
+        ' style="{{ positionType }}:{{ positionValue }};width:{{ width }};height:{{ height }};' +
+        'background-color:{{ color }}">' +
+    '</div>'
 };
 
 module.exports = {

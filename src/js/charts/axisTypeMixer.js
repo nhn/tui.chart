@@ -115,7 +115,12 @@ var axisTypeMixer = {
         var LegendClass;
 
         if (params.plot) {
-            this.componentManager.register('plot', Plot);
+            this.componentManager.register('plot', Plot, {
+                isVertical: this.isVertical,
+                chartType: this.chartType,
+                chartTypes: this.chartTypes,
+                xAxisType: options.xAxis.type
+            });
         }
 
         this._addAxisComponents(params.axis, aligned);
@@ -302,10 +307,6 @@ var axisTypeMixer = {
         var xAxis = axesData.xAxis;
 
         return tui.util.extend({
-            plot: {
-                vTickCount: yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
             customEvent: {
                 tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
             }

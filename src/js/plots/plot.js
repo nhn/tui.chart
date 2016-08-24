@@ -6,10 +6,11 @@
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
-    calculator = require('../helpers/calculator'),
-    renderUtil = require('../helpers/renderUtil'),
-    plotTemplate = require('./plotTemplate');
+var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
+var plotTemplate = require('./plotTemplate');
 
 var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
@@ -34,11 +35,25 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
          * Options
          * @type {object}
          */
         this.options = params.options || {};
         this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
+        this.options.lines = this.options.lines || [];
+        this.options.bands = this.options.bands || [];
+
+        /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
 
         /**
          * Theme
@@ -47,10 +62,21 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.theme = params.theme || {};
 
         /**
-         * Plot data.
-         * @type {object}
+         * chart type
+         * @type {string}
          */
-        this.data = {};
+        this.chartType = params.chartType;
+
+        /**
+         * sub charts type
+         * @type {Array.<string>}
+         */
+        this.chartTypes = params.chartTypes;
+
+        /**
+         * whether vertical or not
+         */
+        this.isVertical = params.isVertical;
     },
 
     /**
@@ -59,15 +85,18 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data rendering data
      * @private
      */
-    _renderPlotArea: function(plotContainer, data) {
+    _renderPlotArea: function(plotContainer) {
         var dimension = this.boundsMaker.getDimension('plot');
-        this.data = data;
 
         renderUtil.renderDimension(plotContainer, dimension);
         renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
 
+        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
+            this._renderOptionalLines(plotContainer, dimension);
+        }
+
         if (this.options.showLine) {
-            this._renderLines(plotContainer, dimension);
+            this._renderPlotLines(plotContainer, dimension);
         }
     },
 
@@ -76,9 +105,10 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * @param {object} data rendering data
      * @returns {HTMLElement} plot element
      */
-    render: function(data) {
+    render: function() {
         var container = dom.create('DIV', this.className);
-        this._renderPlotArea(container, data);
+
+        this._renderPlotArea(container);
         this.plotContainer = container;
 
         return container;
@@ -88,9 +118,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * Rerender.
      * @param {object} data rendering
      */
-    rerender: function(data) {
+    rerender: function() {
         this.plotContainer.innerHTML = '';
-        this._renderPlotArea(this.plotContainer, data);
+        this._renderPlotArea(this.plotContainer);
     },
 
     /**
@@ -102,79 +132,291 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Render plot lines.
-     * @param {HTMLElement} el element
-     * @param {{width: number, height: number}} dimension plot area dimension
+     * Make template params for vertical line.
+     * @param {object} additionalParams - additional params
+     * @returns {object}
      * @private
      */
-    _renderLines: function(el, dimension) {
-        var hPositions = this._makeHorizontalPixelPositions(dimension.width),
-            vPositions = this._makeVerticalPixelPositions(dimension.height),
-            theme = this.theme,
-            lineHtml = '';
-
-        lineHtml += this._makeLineHtml({
-            positions: hPositions,
-            size: dimension.height,
+    _makeVerticalLineTemplateParams: function(additionalParams) {
+        return tui.util.extend({
             className: 'vertical',
             positionType: 'left',
-            sizeType: 'height',
-            lineColor: theme.lineColor
-        });
-        lineHtml += this._makeLineHtml({
-            positions: vPositions,
-            size: dimension.width,
-            className: 'horizontal',
-            positionType: 'bottom',
-            sizeType: 'width',
-            lineColor: theme.lineColor
-        });
-
-        el.innerHTML = lineHtml;
-
-        renderUtil.renderBackground(el, theme.background);
+            width: '1px'
+        }, additionalParams);
     },
 
     /**
-     * Make html of plot line.
-     * @param {object} params parameters
-     *      @param {Array.<object>} params.positions positions
-     *      @param {number} params.size width or height
-     *      @param {string} params.className line className
-     *      @param {string} params.positionType position type (left or bottom)
-     *      @param {string} params.sizeType size type (size or height)
-     *      @param {string} params.lineColor line color
+     * Make template params for horizontal line.
+     * @param {object} additionalParams - additional params
+     * @returns {object}
+     * @private
+     */
+    _makeHorizontalLineTemplateParams: function(additionalParams) {
+        return tui.util.extend({
+            className: 'horizontal',
+            positionType: 'bottom',
+            height: '1px'
+        }, additionalParams);
+    },
+
+    /**
+     * Make line html.
+     * @param {number} position - position value
+     * @param {number} standardWidth - standard width
+     * @param {object} templateParams - template parameters
+     * @returns {string}
+     * @private
+     */
+    _makeLineHtml: function(position, standardWidth, templateParams) {
+        var percentagePosition = calculator.makePercentageValue(position, standardWidth);
+
+        templateParams.positionValue = percentagePosition + '%';
+
+        return plotTemplate.tplPlotLine(templateParams);
+    },
+
+    /**
+     * Create value range for optional line.
+     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+     * @returns {Array.<number>}
+     * @private
+     */
+    _createOptionalLineValueRange: function(optionalLineData) {
+        var range = optionalLineData.range || [optionalLineData.value];
+
+        if (predicate.isDatetimeType(this.xAxisType)) {
+            range = tui.util.map(range, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        }
+
+        return range;
+    },
+
+    /**
+     * Create position for optional line, when value axis.
+     * @param {{dataMin: number, distance: number}} xAxisData - x axis data
+     * @param {number} width - width
+     * @param {number} value - value
+     * @returns {number}
+     * @private
+     */
+    _createOptionalLinePosition: function(xAxisData, width, value) {
+        var ratio = (value - xAxisData.dataMin) / xAxisData.distance;
+        var position = ratio * width;
+
+        if (ratio === 1) {
+            position -= 1;
+        }
+
+        return position;
+    },
+
+    /**
+     * Create position for optional line, when label axis.
+     * @param {number} width - width
+     * @param {number} value - value
+     * @returns {number}
+     * @private
+     */
+    _createOptionalLinePositionWhenLabelAxis: function(width, value) {
+        var dataProcessor = this.dataProcessor;
+        var index = dataProcessor.findCategoryIndex(value);
+        var position = null;
+        var ratio;
+
+        if (!tui.util.isNull(index)) {
+            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
+            position = ratio * width;
+        }
+
+        if (ratio === 1) {
+            position -= 1;
+        }
+
+        return position;
+    },
+
+    /**
+     * Create position map for optional line.
+     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+     * @param {{isLabelAxis: boolean, dataMin: number, distance: number}} xAxisData - x axis data
+     * @param {number} width - width
+     * @returns {{start: number, end: number}}
+     * @private
+     */
+    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
+        var range = this._createOptionalLineValueRange(optionalLineData);
+        var startPosition, endPosition;
+
+        if (xAxisData.isLabelAxis) {
+            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
+            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+
+            if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+                startPosition = 0;
+            }
+        } else {
+            startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
+            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
+        }
+
+        return {
+            start: startPosition,
+            end: endPosition
+        };
+    },
+
+    /**
+     * Make optional line html.
+     * @param {Array.<number>} xAxisData - positions
+     * @param {number} width - standard width
+     * @param {object} templateParams - template parameters
+     * @param {object} optionalLineData - optional line information
+     * @returns {string}
+     * @private
+     */
+    _makeOptionalLineHtml: function(xAxisData, width, templateParams, optionalLineData) {
+        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+        var html = '';
+        var percentageWidth;
+
+        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+            if (tui.util.isExisty(positionMap.end)) {
+                percentageWidth = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
+                templateParams.width = percentageWidth + '%';
+            } else {
+                templateParams.width = '1px';
+            }
+
+            templateParams.color = optionalLineData.color || 'transparent';
+            html = this._makeLineHtml(positionMap.start, width, templateParams);
+        }
+
+        return html;
+    },
+
+    /**
+     * Make optional lines html.
+     * @param {Array.<object>} lines - optional lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @returns {string}
+     * @private
+     */
+    _makeOptionalLinesHtml: function(lines, dimension) {
+        var self = this;
+        var width = dimension.width;
+        var xAxisData = this.boundsMaker.getAxesData().xAxis;
+        var templateParams = self._makeVerticalLineTemplateParams({
+            height: dimension.height + 'px'
+        });
+        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalLineHtml, this, xAxisData, width, templateParams);
+
+        return tui.util.map(lines, makeOptionalLineHtml).join('');
+    },
+
+    /**
+     * Render optional lines and bands.
+     * @param {HTMLElement} container - container
+     * @param {{width: number, height: number}} dimension - dimension
+     * @private
+     */
+    _renderOptionalLines: function(container, dimension) {
+        var optionalContainer = dom.create('DIV', 'tui-chart-plot-optional-lines-area');
+        var bandsHtml = this._makeOptionalLinesHtml(this.options.bands, dimension);
+        var linesHtml = this._makeOptionalLinesHtml(this.options.lines, dimension);
+
+        this.optionalContainer = optionalContainer;
+
+        dom.append(container, optionalContainer);
+
+        optionalContainer.innerHTML = bandsHtml + linesHtml;
+    },
+
+    /**
+     * Make html of plot lines.
+     * @param {Array.<number>} positions - position values
+     * @param {number} standardWidth - standard width
+     * @param {object} templateParams parameters
      * @returns {string} html
      * @private
      */
-    _makeLineHtml: function(params) {
-        var template = plotTemplate.tplPlotLine;
-        var lineHtml = tui.util.map(params.positions, function(position) {
-            var cssTexts = [
-                    renderUtil.concatStr(params.positionType, ':', position, 'px'),
-                    renderUtil.concatStr(params.sizeType, ':', params.size, 'px')
-                ], data;
-
-            if (params.lineColor) {
-                cssTexts.push(renderUtil.concatStr('background-color:', params.lineColor));
-            }
-
-            data = {className: params.className, cssText: cssTexts.join(';')};
-
-            return template(data);
+    _makeLinesHtml: function(positions, standardWidth, templateParams) {
+        var self = this;
+        var lineHtml = tui.util.map(positions, function(position) {
+            return self._makeLineHtml(position, standardWidth, templateParams);
         }).join('');
 
         return lineHtml;
     },
 
     /**
-     * Make pixel value of vertical positions
+     * Maker html for vertical lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {string} lineColor - line color
+     * @returns {string}
+     * @private
+     */
+    _makeVerticalLinesHtml: function(dimension, lineColor) {
+        var positions = this._makeHorizontalPositions(dimension.width);
+        var templateParams = this._makeVerticalLineTemplateParams({
+            height: dimension.height + 'px',
+            color: lineColor
+        });
+
+        return this._makeLinesHtml(positions, dimension.width, templateParams);
+    },
+    /**
+     * Maker html for horizontal lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {string} lineColor - line color
+     * @returns {string}
+     * @private
+     */
+    _makeHorizontalLinesHtml: function(dimension, lineColor) {
+        var positions = this._makeVerticalPositions(dimension.height);
+        var templateParams = this._makeHorizontalLineTemplateParams({
+            width: dimension.width + 'px',
+            color: lineColor
+        });
+
+        return this._makeLinesHtml(positions, dimension.height, templateParams);
+    },
+
+    /**
+     * Render plot lines.
+     * @param {HTMLElement} container - container element
+     * @param {{width: number, height: number}} dimension plot area dimension
+     * @private
+     */
+    _renderPlotLines: function(container, dimension) {
+        var lineContainer = dom.create('DIV', 'tui-chart-plot-lines-area');
+        var theme = this.theme;
+        var lineHtml = '';
+
+        if (!predicate.isLineTypeChart(this.chartType)) {
+            lineHtml += this._makeVerticalLinesHtml(dimension, theme.lineColor);
+        }
+
+        lineHtml += this._makeHorizontalLinesHtml(dimension, theme.lineColor);
+
+        dom.append(container, lineContainer);
+        lineContainer.innerHTML += lineHtml;
+        renderUtil.renderBackground(container, theme.background);
+    },
+
+    /**
+     * Make positions for vertical line.
      * @param {number} height plot height
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeVerticalPixelPositions: function(height) {
-        var positions = calculator.makeTickPixelPositions(height, this.data.vTickCount);
+    _makeVerticalPositions: function(height) {
+        var axesData = this.boundsMaker.getAxesData();
+        var yAxis = axesData.yAxis || axesData.rightYAxis;
+        var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
 
         positions.shift();
 
@@ -183,15 +425,16 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Make divided positions of plot.
-     * @param {number} width plot width
+     * @param {number} width - plot width
+     * @param {number} tickCount - tick count
      * @returns {Array.<number>}
      * @private
      */
-    _makeDividedPlotPositions: function(width) {
-        var tickCount = parseInt(this.data.hTickCount / 2, 10) + 1,
-            yAxisWidth = this.boundsMaker.getDimension('yAxis').width,
-            leftWidth, rightWidth, leftPositions, rightPositions;
+    _makeDividedPlotPositions: function(width, tickCount) {
+        var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
+        var leftWidth, rightWidth, leftPositions, rightPositions;
 
+        tickCount = parseInt(tickCount / 2, 10) + 1;
         width -= yAxisWidth;
         leftWidth = Math.round((width) / 2);
         rightWidth = width - leftWidth;
@@ -206,22 +449,86 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Make pixel value of horizontal positions.
+     * Make positions for horizontal line.
      * @param {number} width plot width
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeHorizontalPixelPositions: function(width) {
+    _makeHorizontalPositions: function(width) {
+        var tickCount = this.boundsMaker.getAxesData().xAxis.validTickCount;
         var positions;
 
         if (this.options.divided) {
-            positions = this._makeDividedPlotPositions(width);
+            positions = this._makeDividedPlotPositions(width, tickCount);
         } else {
-            positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
+            positions = calculator.makeTickPixelPositions(width, tickCount);
             positions.shift();
         }
 
         return positions;
+    },
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     */
+    addPlotLine: function(data) {
+        this.options.lines.push(data);
+        this.rerender();
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: [number, number], color: string, id: string}} data - data
+     */
+    addPlotBand: function(data) {
+        this.options.bands.push(data);
+        this.rerender();
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     */
+    removePlotLine: function(id) {
+        this.options.lines = tui.util.filter(this.options.lines, function(line) {
+            return line.id !== id;
+        });
+        this.rerender();
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     */
+    removePlotBand: function(id) {
+        this.options.bands = tui.util.filter(this.options.bands, function(line) {
+            return line.id !== id;
+        });
+        this.rerender();
+    },
+
+    animateForAddingData: function(data) {
+        var self = this;
+        var beforeLeft = 0;
+        var interval = data.tickSize;
+        var areaWidth;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            this.optionalContainer.innerHTML = '';
+        } else if (data.shifting) {
+            renderUtil.startAnimation(300, function(ratio) {
+                var left = interval * ratio;
+                self.optionalContainer.style.left = (beforeLeft - left) + 'px';
+            });
+        } else {
+            areaWidth = this.boundsMaker.getDimension('plot').width;
+            renderUtil.startAnimation(300, function(ratio) {
+                var left = interval * ratio;
+                self.optionalContainer.style.width = (areaWidth - left) + 'px';
+            }, function() {
+            });
+        }
     }
 });
 

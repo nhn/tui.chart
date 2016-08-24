@@ -392,6 +392,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Find category index by value
+     * @param {string} value - category value
+     * @returns {null|number}
+     */
+    findCategoryIndex: function(value) {
+        var categories = this.getCategories();
+        var foundIndex = null;
+
+        tui.util.forEachArray(categories, function(category, index) {
+            if (category === value) {
+                foundIndex = index;
+            }
+
+            return tui.util.isNull(foundIndex);
+        });
+
+        return foundIndex;
+    },
+
+    /**
      * Get category for tooltip.
      * @param {number} firstIndex - index
      * @param {number} oppositeIndex - opposite index
