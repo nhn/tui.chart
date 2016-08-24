@@ -547,7 +547,7 @@ describe('Test for Axis', function() {
 
             actual = axis._makeRightPosition();
 
-            expect(actual).toBe(-10);
+            expect(actual).toBe(10);
         });
     });
 
@@ -627,7 +627,7 @@ describe('Test for Axis', function() {
 
             actual = axis._makePositionMapForNotCenterAlign();
 
-            expect(actual.left).toBe(-10);
+            expect(actual.left).toBe(10);
             expect(actual.top).toBe(50);
         });
 

@@ -495,7 +495,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         }
 
         if (positionOption) {
-            rightPosition -= this._pickTitlePositionOptionValue(positionOption, 'right', 'left');
+            rightPosition += this._pickTitlePositionOptionValue(positionOption, 'right', 'left');
         }
 
         return rightPosition;
@@ -545,7 +545,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         } else {
             positionMap.left = 0;
             if (positionOption) {
-                positionMap.left -= this._pickTitlePositionOptionValue(positionOption, 'left', 'right');
+                positionMap.left += this._pickTitlePositionOptionValue(positionOption, 'left', 'right');
             }
         }
 
