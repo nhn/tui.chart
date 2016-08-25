@@ -53,7 +53,6 @@ var addingDynamicDataMixer = {
         var dataProcessor = this.dataProcessor;
         var shiftingOption = !!this.options.series.shifting;
         var beforeAxesData = boundsMaker.getAxesData();
-        var hasLabelYAxis = true;
 
         this.addedDataCount += 1;
         this.axisScaleMakerMap = null;
@@ -66,7 +65,7 @@ var addingDynamicDataMixer = {
             if (dataProcessor.isCoordinateType()) {
                 tickCount = dataProcessor.getValues(self.chartType, 'x').length - 1;
             } else {
-                tickCount = dataProcessor.getCategoryCount(hasLabelYAxis) - 1;
+                tickCount = dataProcessor.getCategoryCount(false) - 1;
             }
 
             if (shiftingOption) {
