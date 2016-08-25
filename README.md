@@ -1,4 +1,4 @@
-<img alt="toast ui chart" src="http://static.toastoven.net/prod_toastuichart/toast_ui_chart_title.png" style="border: 0">
+<img alt="Toast UI Chart" src="https://cloud.githubusercontent.com/assets/2888775/12061211/9fe03df6-afc3-11e5-9077-81342dcb8f49.png">
 ===============
 Toast UI Chart supports a easy way to draw various and essential charts on your web service.<br>
 
