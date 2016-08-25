@@ -112,6 +112,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
         }
 
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
             chartConst.AXIS_LABEL_PADDING;
 
@@ -429,48 +433,19 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Pick title position option value.
-     * @param {{left: number, top: number, right: number, bottom: number}} positionOption - title position option
-     * @param {string} target - target position
-     * @param {string} opposite - opposite target
-     * @returns {number}
-     * @private
-     */
-    _pickTitlePositionOptionValue: function(positionOption, target, opposite) {
-        if (!tui.util.isExisty(positionOption[target]) && tui.util.isExisty(positionOption[opposite])) {
-            positionOption[target] = -positionOption[opposite];
-        }
-
-        return positionOption[target] || 0;
-    },
-
-    /**
      * Make position map for center align option of y axis.
      * @returns {{left: number, bottom: number}}
      * @private
      */
     _makePositionMapForCenterAlign: function() {
-        var titleWidth = renderUtil.getRenderedLabelWidth(this.options.title, this.theme.title);
+        var offset = this.options.title.offset || {};
+        var titleWidth = renderUtil.getRenderedLabelWidth(offset.text, this.theme.title);
         var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
         var left = (yAxisWidth - titleWidth) / 2;
         var bottom = -this.boundsMaker.getDimension('xAxis').height;
-        var positionOption = this.options.titlePosition;
 
-        if (positionOption) {
-            positionOption.bottom = this._pickTitlePositionOptionValue(positionOption, 'bottom', 'top');
-            positionOption.left = this._pickTitlePositionOptionValue(positionOption, 'left', 'right');
-
-            delete positionOption.top;
-            delete positionOption.right;
-
-            if (positionOption.bottom) {
-                bottom += positionOption.bottom;
-            }
-
-            if (positionOption.left) {
-                left += positionOption.left;
-            }
-        }
+        bottom -= offset.y || 0;
+        left += offset.x || 0;
 
         return {
             left: left,
@@ -485,7 +460,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRightPosition: function(size) {
-        var positionOption = this.options.titlePosition;
+        var offset = this.options.title.offset || {};
         var rightPosition;
 
         if (renderUtil.isIE7() || this.options.rotateTitle === false) {
@@ -494,9 +469,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             rightPosition = -size;
         }
 
-        if (positionOption) {
-            rightPosition += this._pickTitlePositionOptionValue(positionOption, 'right', 'left');
-        }
+        rightPosition -= offset.x || 0;
 
         return rightPosition;
     },
@@ -508,7 +481,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTopPosition: function(size) {
-        var positionOption = this.options.titlePosition;
+        var offset = this.options.title.offset;
         var topPosition = null;
         var titleHeight;
 
@@ -521,9 +494,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             topPosition = size;
         }
 
-        if (positionOption) {
+        if (offset) {
             topPosition = topPosition || 0;
-            topPosition += this._pickTitlePositionOptionValue(positionOption, 'top', 'bottom');
+            topPosition += offset.y || 0;
         }
 
         return topPosition;
@@ -537,16 +510,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makePositionMapForNotCenterAlign: function(size) {
         var positionMap = {};
-        var positionOption = this.options.titlePosition;
+        var offset = this.options.title.offset || {};
         var topPosition;
 
         if (this.data.isPositionRight) {
             positionMap.right = this._makeRightPosition(size);
         } else {
-            positionMap.left = 0;
-            if (positionOption) {
-                positionMap.left += this._pickTitlePositionOptionValue(positionOption, 'left', 'right');
-            }
+            positionMap.left = offset.x || 0;
         }
 
         topPosition = this._makeTopPosition(size);
@@ -585,14 +555,14 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     /**
      * Render title position for horizontal type.
      * @param {HTMLElement} titleContainer title element
-     * @param {{left: number, top: number, right: number, bottom: number}} positionOption - title position option
+     * @param {{left: number, top: number, right: number, bottom: number}} offset - title position option
      * @private
      */
-    _renderTitlePositionForHorizontal: function(titleContainer, positionOption) {
-        positionOption.bottom = this._pickTitlePositionOptionValue(positionOption, 'bottom', 'top');
-        delete positionOption.top;
-
-        renderUtil.renderPosition(titleContainer, positionOption);
+    _renderTitlePositionForHorizontal: function(titleContainer, offset) {
+        renderUtil.renderPosition(titleContainer, {
+            left: offset.x,
+            bottom: -offset.y
+        });
     },
 
     /**
@@ -602,11 +572,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderTitleAreaStyle: function(titleContainer, size) {
-        var positionOption = this.options.titlePosition;
+        var offset = this.options.title.offset;
+
         if (this.isVertical) {
             this._renderTitleAreaStyleForVertical(titleContainer, size);
-        } else if (positionOption) {
-            this._renderTitlePositionForHorizontal(titleContainer, positionOption);
+        } else if (offset) {
+            this._renderTitlePositionForHorizontal(titleContainer, offset);
         }
     },
 
@@ -617,7 +588,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _renderTitleArea: function(size) {
-        var titleContainer = renderUtil.renderTitle(this.options.title, this.theme.title, 'tui-chart-title-area');
+        var title = this.options.title || {};
+        var titleContainer = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title-area');
 
         if (titleContainer) {
             this._renderTitleAreaStyle(titleContainer, size);

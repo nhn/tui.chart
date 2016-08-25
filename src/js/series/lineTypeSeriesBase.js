@@ -296,17 +296,18 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animate: function(callback) {
         var self = this;
+        var duration = chartConst.ADDING_DATA_ANIMATION_DURATION;
         var changedLimit = this._isChangedAxisLimit();
 
-        if (changedLimit && self.seriesLabelContainer) {
-            self.seriesLabelContainer.innerHTML = '';
+        if (changedLimit && this.seriesLabelContainer) {
+            this.seriesLabelContainer.innerHTML = '';
         }
 
         if (!callback) {
             return;
         }
 
-        this.movingAnimation = renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, callback, function() {
+        this.movingAnimation = renderUtil.startAnimation(duration, callback, function() {
             self.movingAnimation = null;
         });
     },

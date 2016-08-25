@@ -34,12 +34,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.theme = params.theme;
 
-        /**
-         * options
-         * @type {object}
-         */
-        this.options = null;
-        this._setDefaultOptions(params.options);
+        this._initializeOptions(params.options);
 
         /**
          * chart type
@@ -99,22 +94,112 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Set default options.
+     * Set offset property
+     * @param {{offset: object}} ptions -options
+     * @param {string} fromProperty - from property name
+     * @param {string} toProperty - to property name
+     * @private
+     */
+    _setOffsetProperty: function(ptions, fromProperty, toProperty) {
+        if (!tui.util.isExisty(ptions[fromProperty])) {
+            return;
+        }
+
+        ptions.offset = ptions.offset || {};
+        ptions.offset[toProperty] = ptions[fromProperty];
+        delete ptions[fromProperty];
+    },
+
+    /**
+     * Initialize offset.
+     * @param {{offsetX: ?number, offsetY: ?number}} options - offset options
+     * @private
+     */
+    _initializeOffset: function(options) {
+        if (!options) {
+            return;
+        }
+
+        this._setOffsetProperty(options, 'offsetX', 'x');
+        this._setOffsetProperty(options, 'offsetY', 'y');
+    },
+
+    /**
+     * Initialize title options.
+     * @param {
+     *      Array.<{title: (string | {text: string, offsetX: number, offsetY: number})}> |
+     *      {title: (string | {text: string, offsetX: number, offsetY: number})}
+     * } targetOptions - target options
+     * @private
+     */
+    _initializeTitleOptions: function(targetOptions) {
+        var self = this;
+        var optionsSet;
+
+        if (!targetOptions) {
+            return;
+        }
+
+        optionsSet = tui.util.isArray(targetOptions) ? targetOptions : [targetOptions];
+        tui.util.forEachArray(optionsSet, function(options) {
+            var title = options.title;
+
+            if (tui.util.isString(title)) {
+                options.title = {
+                    text: title
+                };
+            }
+
+            self._initializeOffset(options.title);
+        });
+    },
+
+    /**
+     * Initialize tooltip options.
+     * @param {{grouped: ?boolean, offsetX: ?number, offsetY: ?number}} options - tooltip options
+     * @private
+     */
+    _initializeTooltipOptions: function(options) {
+        var position = options.position;
+
+        options.grouped = !!options.grouped;
+        this._initializeOffset(options);
+
+        if (!options.offset && position) {
+            options.offset = {
+                x: position.left,
+                y: position.top
+            };
+        }
+
+        delete options.position;
+    },
+
+    /**
+     * Initialize options.
      * @param {object} options - options for chart
      * @private
      */
-    _setDefaultOptions: function(options) {
+    _initializeOptions: function(options) {
         options.xAxis = options.xAxis || {};
         options.series = options.series || {};
         options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
 
+        this._initializeTitleOptions(options.chart);
+        this._initializeTitleOptions(options.xAxis);
+        this._initializeTitleOptions(options.yAxis);
+
         if (tui.util.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
         }
 
-        options.tooltip.grouped = !!options.tooltip.grouped;
+        this._initializeTooltipOptions(options.tooltip);
 
+        /**
+         * options
+         * @type {object}
+         */
         this.options = options;
     },
 
@@ -444,10 +529,14 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderTitle: function(container) {
         var chartOptions = this.options.chart || {};
-        var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
+        var title = chartOptions.title || {};
+        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
 
-        if (chartOptions.titlePosition) {
-            renderUtil.renderPosition(titleElement, chartOptions.titlePosition);
+        if (title.offset) {
+            renderUtil.renderPosition(titleElement, {
+                left: title.offset.x,
+                top: title.offset.y
+            });
         }
 
         dom.append(container, titleElement);
@@ -609,11 +698,23 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Set tooltip offset option.
+     * @param {object} offset - tooltip offset
+     *      @param {number} offset.x - offset x
+     *      @param {number} offset.y - offset y
+     * @api
+     */
+    setTooltipOffset: function(offset) {
+        this.componentManager.get('tooltip').setOffset(offset);
+    },
+
+    /**
      * Set position option.
      * @param {object} position moving position
      *      @param {number} position.left left
      *      @param {number} position.top top
      * @api
+     * @deprecated
      */
     setTooltipPosition: function(position) {
         this.componentManager.get('tooltip').setPosition(position);
@@ -631,8 +732,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Reset tooltip position.
      * @api
      */
+    resetTooltipOffset: function() {
+        this.componentManager.get('tooltip').resetOffset();
+    },
+
+    /**
+     * Reset tooltip position.
+     * @api
+     * @deprecated
+     */
     resetTooltipPosition: function() {
-        this.componentManager.get('tooltip').resetPosition();
+        this.resetTooltipOffset();
     },
 
     /**

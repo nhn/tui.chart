@@ -83,11 +83,11 @@ describe('GroupTooltipPositionModel', function() {
             expect(positionModel.positionOption.top).toBe(0);
         });
 
-        it('options.position 정보가 있는 경우에는 positionOption을 갱신합니다. ', function() {
+        it('options.offset 정보가 있는 경우에는 positionOption을 갱신합니다. ', function() {
             positionModel._setData({}, {}, false, {
-                position: {
-                    left: 10,
-                    top: 20
+                offset: {
+                    x: 10,
+                    y: 20
                 }
             });
             expect(positionModel.positionOption.left).toBe(10);
