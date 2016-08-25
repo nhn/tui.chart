@@ -6,10 +6,10 @@
 
 'use strict';
 
-var BarChartSeries = require('../../src/js/series/barChartSeries'),
-    SeriesDataModel = require('../../src/js/dataModels/seriesDataModel'),
-    seriesGroup = require('../../src/js/dataModels/seriesGroup'),
-    renderUtil = require('../../src/js/helpers/renderUtil');
+var BarChartSeries = require('../../src/js/series/barChartSeries');
+var SeriesDataModel = require('../../src/js/dataModels/seriesDataModel');
+var seriesGroup = require('../../src/js/dataModels/seriesGroup');
+var renderUtil = require('../../src/js/helpers/renderUtil');
 
 describe('BarChartSeries', function() {
     var series, dataProcessor, boundsMaker;
@@ -32,7 +32,8 @@ describe('BarChartSeries', function() {
             theme: {
                 label: {
                     fontFamily: 'Verdana',
-                    fontSize: 11
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 }
             },
             options: {},
@@ -213,7 +214,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_calculateTopPositionOfSumLabel()', function() {
-        it('합계 레이블의 top position값을 계산합니다.', function() {
+        it('alculate top position of sum label', function() {
             var actual = series._calculateTopPositionOfSumLabel({
                     top: 10,
                     height: 30
@@ -224,7 +225,7 @@ describe('BarChartSeries', function() {
     });
 
     describe('_makePlusSumLabelHtml()', function() {
-        it('양수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for plus sum', function() {
             var values = [10, 20, 30],
                 bound = {
                     left: 10,
@@ -234,13 +235,14 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makePlusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:55px;top:11px;font-family:Verdana;font-size:11px">60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:55px;top:11px;font-family:Verdana;font-size:11px;font-weight:normal">60</div>';
             expect(actual).toBe(expected);
         });
     });
 
     describe('_makeMinusSumLabelHtml()', function() {
-        it('음수합계 레이블 html을 생성합니다.', function() {
+        it('make label html for minus sum', function() {
             var values = [-10, -20, -30],
                 bound = {
                     left: 80,
@@ -250,7 +252,8 @@ describe('BarChartSeries', function() {
                 },
                 labelHeight = 20,
                 actual = series._makeMinusSumLabelHtml(values, bound, labelHeight),
-                expected = '<div class="tui-chart-series-label" style="left:35px;top:11px;font-family:Verdana;font-size:11px">-60</div>';
+                expected = '<div class="tui-chart-series-label"' +
+                    ' style="left:35px;top:11px;font-family:Verdana;font-size:11px;font-weight:normal">-60</div>';
             expect(actual).toBe(expected);
         });
     });

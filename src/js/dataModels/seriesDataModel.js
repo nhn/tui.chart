@@ -47,12 +47,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      *      and create from rawSeriesData by user.
      * SeriesDataModel.groups has SeriesGroups.
      * @constructs SeriesDataModel
-     * @param {rawSeriesData} rawSeriesData raw series data
-     * @param {string} chartType chart type
-     * @param {object} options options
-     * @param {Array.<function>} formatFunctions format functions
+     * @param {rawSeriesData} rawSeriesData - raw series data
+     * @param {string} chartType - chart type
+     * @param {object} options - options
+     * @param {Array.<function>} formatFunctions - format functions
+     * @param {boolean} isCoordinateType - whether coordinate type or not
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
+    init: function(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
         /**
          * chart type
          * @type {string}
@@ -76,6 +77,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          * @type {rawSeriesData}
          */
         this.rawSeriesData = rawSeriesData || [];
+
+        /**
+         * whether coordinate type or not
+         * @type {boolean}
+         */
+        this.isCoordinateType = isCoordinateType;
 
         /**
          * baseGroups is base data for making SeriesGroups.
@@ -105,9 +112,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _removeRangeValue: function() {
         var seriesOption = tui.util.pick(this.options, 'series') || {};
+        var allowRange = predicate.isAllowRangeData(this.chartType) &&
+                !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 
-        if (predicate.isAllowRangeData(this.chartType) &&
-            !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline) {
+        if (allowRange || this.isCoordinateType) {
             return;
         }
 
@@ -116,7 +124,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 return;
             }
             tui.util.forEachArray(rawItem.data, function(value, index) {
-                rawItem.data[index] = concat.apply(value)[0];
+                if (tui.util.isExisty(value)) {
+                    rawItem.data[index] = concat.apply(value)[0];
+                }
             });
         });
     },
@@ -128,27 +138,43 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createBaseGroups: function() {
-        var self = this;
-        var SeriesItemClass;
+        var chartType = this.chartType;
+        var formatFunctions = this.formatFunctions;
+        var xAxisOption = this.options.xAxis;
+        var sortValues, SeriesItemClass;
 
-        if (predicate.isCoordinateTypeChart(this.chartType)) {
+        if (this.isCoordinateType) {
             SeriesItemClass = SeriesItemForCoordinateType;
+            sortValues = function(items) {
+                items.sort(function(a, b) {
+                    return a.x - b.x;
+                });
+            };
         } else {
             SeriesItemClass = SeriesItem;
+            sortValues = function() {};
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var values;
+            var stack = rawDatum.stack;
+            var data = tui.util.isArray(rawDatum) ? rawDatum : concat.apply(rawDatum.data);
+            var items;
 
-            if (tui.util.isArray(rawDatum)) {
-                values = rawDatum;
-            } else {
-                values = concat.apply(rawDatum.data);
-            }
-
-            return tui.util.map(values, function(value) {
-                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions, self.chartType);
+            data = tui.util.filter(data, tui.util.isExisty);
+            items = tui.util.map(data, function(datum, index) {
+                return new SeriesItemClass({
+                    datum: datum,
+                    chartType: chartType,
+                    formatFunctions: formatFunctions,
+                    index: index,
+                    stack: stack,
+                    xAxisType: xAxisOption.type,
+                    dateFormat: xAxisOption.dateFormat
+                });
             });
+            sortValues(items);
+
+            return items;
         });
     },
 
@@ -536,9 +562,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 if (!item) {
                     return;
                 }
+
                 item.addRatio('x', xDistance, xSubValue);
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);
+
+                if (tui.util.isExisty(item.start)) {
+                    item.addRatio('start', yDistance, ySubValue);
+                }
             });
         });
     },

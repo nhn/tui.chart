@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui.chart
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 2.2.1
+ * @version 2.3.0
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
  */
@@ -118,6 +118,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             titleAreaWidth = renderUtil.getRenderedLabelWidth(title, theme.title) + chartConst.TITLE_PADDING;
         } else {
             titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
+        }
+
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
         }
 
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
@@ -398,7 +402,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelContainer = this.labelContainer;
         var beforeWidth = parseInt(ticksElement.style.width, 10) || ticksElement.offsetWidth;
 
-        renderUtil.startAnimation(300, function(ratio) {
+        renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
             var width = beforeWidth - (tickSize * ratio);
 
             ticksElement.style.width = width + 'px';
@@ -411,7 +415,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {{tickSize: number}} data - data for animate
      */
     animateForAddingData: function(data) {
-        if (this.isVertical) {
+        if (this.isVertical || this.dataProcessor.isCoordinateType()) {
             return;
         }
 
@@ -442,13 +446,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makePositionMapForCenterAlign: function() {
-        var titleWidth = renderUtil.getRenderedLabelWidth(this.options.title, this.theme.title);
+        var offset = this.options.title.offset || {};
+        var titleWidth = renderUtil.getRenderedLabelWidth(offset.text, this.theme.title);
         var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
-        var xAxisHeight = this.boundsMaker.getDimension('xAxis').height;
+        var left = (yAxisWidth - titleWidth) / 2;
+        var bottom = -this.boundsMaker.getDimension('xAxis').height;
+
+        bottom -= offset.y || 0;
+        left += offset.x || 0;
 
         return {
-            left: (yAxisWidth - titleWidth) / 2,
-            bottom: -xAxisHeight
+            left: left,
+            bottom: bottom
         };
     },
 
@@ -459,6 +468,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRightPosition: function(size) {
+        var offset = this.options.title.offset || {};
         var rightPosition;
 
         if (renderUtil.isIE7() || this.options.rotateTitle === false) {
@@ -466,6 +476,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         } else {
             rightPosition = -size;
         }
+
+        rightPosition -= offset.x || 0;
 
         return rightPosition;
     },
@@ -477,6 +489,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTopPosition: function(size) {
+        var offset = this.options.title.offset;
         var topPosition = null;
         var titleHeight;
 
@@ -487,6 +500,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             topPosition = 0;
         } else if (!renderUtil.isOldBrowser()) {
             topPosition = size;
+        }
+
+        if (offset) {
+            topPosition = topPosition || 0;
+            topPosition += offset.y || 0;
         }
 
         return topPosition;
@@ -500,12 +518,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makePositionMapForNotCenterAlign: function(size) {
         var positionMap = {};
+        var offset = this.options.title.offset || {};
         var topPosition;
 
         if (this.data.isPositionRight) {
             positionMap.right = this._makeRightPosition(size);
         } else {
-            positionMap.left = 0;
+            positionMap.left = offset.x || 0;
         }
 
         topPosition = this._makeTopPosition(size);
@@ -518,12 +537,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render css style of title area
+     * Render css style of title area for vertical type.
      * @param {HTMLElement} titleContainer title element
      * @param {number} size width or height
      * @private
      */
-    _renderTitleAreaStyle: function(titleContainer, size) {
+    _renderTitleAreaStyleForVertical: function(titleContainer, size) {
         var cssPositionMap;
         var cssText;
 
@@ -542,15 +561,45 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Render title position for horizontal type.
+     * @param {HTMLElement} titleContainer title element
+     * @param {{left: number, top: number, right: number, bottom: number}} offset - title position option
+     * @private
+     */
+    _renderTitlePositionForHorizontal: function(titleContainer, offset) {
+        renderUtil.renderPosition(titleContainer, {
+            left: offset.x,
+            bottom: -offset.y
+        });
+    },
+
+    /**
+     * Render css style of title area
+     * @param {HTMLElement} titleContainer title element
+     * @param {number} size width or height
+     * @private
+     */
+    _renderTitleAreaStyle: function(titleContainer, size) {
+        var offset = this.options.title.offset;
+
+        if (this.isVertical) {
+            this._renderTitleAreaStyleForVertical(titleContainer, size);
+        } else if (offset) {
+            this._renderTitlePositionForHorizontal(titleContainer, offset);
+        }
+    },
+
+    /**
      * Title area renderer
      * @param {?number} size (width or height)
      * @returns {HTMLElement} title element
      * @private
      */
     _renderTitleArea: function(size) {
-        var titleContainer = renderUtil.renderTitle(this.options.title, this.theme.title, 'tui-chart-title-area');
+        var title = this.options.title || {};
+        var titleContainer = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title-area');
 
-        if (titleContainer && this.isVertical) {
+        if (titleContainer) {
             this._renderTitleAreaStyle(titleContainer, size);
         }
 
@@ -586,7 +635,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
-        var aligned = this.data.aligned;
         var tickColor = this.theme.tickColor;
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
@@ -595,7 +643,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template, html;
 
         positions.length = this.data.labels.length;
-
         additionalSize = calculator.makePercentageValue(additionalSize, containerWidth);
         positions = this._makePercentagePositions(positions, size);
 
@@ -605,10 +652,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
             position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
             position += additionalSize;
-
-            if (aligned) {
-                position = Math.round(position);
-            }
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
@@ -649,7 +692,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             lineSize = this.data.lineWidth;
         } else {
             lineSize = areaSize + tickLineExtend;
-            positionValue += additionalSize;
+            if (!this.data.sizeRatio) {
+                positionValue += additionalSize;
+            }
         }
 
         cssMap[posType] = positionValue;
@@ -1122,7 +1167,7 @@ tui.util.defineNamespace('tui.chart');
 _createChart = function(container, rawData, options) {
     var themeName, theme, chart;
 
-    rawData = JSON.parse(JSON.stringify(rawData));
+    rawData = tui.util.deepCopy(rawData);
     options = options ? tui.util.deepCopy(options) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
@@ -1145,14 +1190,25 @@ _createChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {string} options.yAxis.align - align option for center y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *          @param {string} options.yAxis.type - type of axis
+ *          @param {string} options.yAxis.dateFormat - date format
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.min - minimum value for x axis
  *          @param {number} options.xAxis.max - maximum value for x axis
  *      @param {object} options.series - options for series component
@@ -1165,7 +1221,9 @@ _createChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -1218,6 +1276,7 @@ _createChart = function(container, rawData, options) {
 tui.chart.barChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1232,17 +1291,28 @@ tui.chart.barChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {string} options.xAxis.type - type of axis
+ *          @param {string} options.xAxis.dateFormat - date format
  *      @param {object} options.series - options for series component
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -1253,7 +1323,9 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -1306,60 +1378,85 @@ tui.chart.barChart = function(container, rawData, options) {
 tui.chart.columnChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COLUMN;
+
     return _createChart(container, rawData, options);
 };
 
-/**
- * Line chart creator.
- * @memberOf tui.chart
- * @param {HTMLElement} container - chart container
- * @param {rawData} rawData - raw data
- *      @param {Array.<string>} rawData.categories - categories
- *      @param {Array.<Array>} rawData.series - series data
- * @param {object} options - chart options
- *      @param {object} options.chart - base options for chart
- *          @param {number} options.chart.width - chart width
- *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
- *          @param {string | function} options.chart.format - formatter for value
- *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
- *          @param {number} options.yAxis.min - minimum value for y axis
- *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
- *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
- *          @param {number} options.xAxis.labelInterval - label interval for x axis
- *          @param {string} options.xAxis.tickInterval - tick interval for x axis
- *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
- *      @param {object} options.series - options for series component
- *          @param {boolean} options.series.showDot - whether show dot or not
- *          @param {boolean} options.series.showLabel - whether show label or not
- *          @param {boolean} options.series.allowSelect - whether allow select or not
- *          @param {boolean} options.series.spline - whether spline or not
- *          @param {boolean} options.series.zoomable - whether zoomable or not
- *          @param {boolean} options.series.shifting - whether shifting or not
- *      @param {object} options.tooltip - options for tooltip component
- *          @param {string} options.tooltip.suffix - suffix for tooltip
- *          @param {function} [options.tooltip.template] - template for tooltip
- *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
- *      @param {object} options.legend - options for legend component
- *          @param {string} options.legend.align - align option for legend (top|bottom|left)
- *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.visible - whether visible or not (default: true)
- *      @param {object} options.plot - options for plot component
- *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
- *      @param {string} options.theme - theme name
- *      @param {string} options.libType - type of graph library
- * @returns {object} bar chart
- * @api
- * @example
- * var container = document.getElementById('container-id'),
- *     rawData = {
+tui.chart.lineChart = function(container, rawData, options) {
+    /**
+     * Line chart creator.
+     * @memberOf tui.chart
+     * @param {HTMLElement} container - chart container
+     * @param {rawData} rawData - raw data
+     *      @param {?Array.<string>} rawData.categories - categories
+     *      @param {Array.<Array>} rawData.series - series data
+     * @param {object} options - chart options
+     *      @param {object} options.chart - base options for chart
+     *          @param {number} options.chart.width - chart width
+     *          @param {number} options.chart.height - chart height
+     *          @param {string | object} options.chart.title - title text or title object
+     *              @param {string} options.chart.title.text - title text
+     *              @param {number} options.chart.title.offsetX - title offset x
+     *              @param {number} options.chart.title.offsetY - title offset y
+     *          @param {string | function} options.chart.format - formatter for value
+     *      @param {object} options.yAxis - options for y axis component
+     *          @param {string | object} options.yAxis.title - title text or title object
+     *              @param {string} options.yAxis.title.text - title text
+     *              @param {number} options.yAxis.title.offsetX - title offset x
+     *              @param {number} options.yAxis.title.offsetY - title offset y
+     *          @param {number} options.yAxis.min - minimum value for y axis
+     *          @param {number} options.yAxis.max - maximum value for y axis
+     *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+     *      @param {object} options.xAxis - options for x axis component
+     *          @param {string | object} options.xAxis.title - title text or title object
+     *              @param {string} options.xAxis.title.text - title text
+     *              @param {number} options.xAxis.title.offsetX - title offset x
+     *              @param {number} options.xAxis.title.offsetY - title offset y
+     *          @param {number} options.xAxis.labelInterval - label interval for x axis
+     *          @param {string} options.xAxis.tickInterval - tick interval for x axis
+     *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+     *          @param {string} options.xAxis.type - type of axis
+     *          @param {string} options.xAxis.dateFormat - date format
+     *      @param {object} options.series - options for series component
+     *          @param {boolean} options.series.showDot - whether show dot or not
+     *          @param {boolean} options.series.showLabel - whether show label or not
+     *          @param {boolean} options.series.allowSelect - whether allow select or not
+     *          @param {boolean} options.series.spline - whether spline or not
+     *          @param {boolean} options.series.zoomable - whether zoomable or not
+     *          @param {boolean} options.series.shifting - whether shifting or not
+     *      @param {object} options.tooltip - options for tooltip component
+     *          @param {string} options.tooltip.suffix - suffix for tooltip
+     *          @param {function} [options.tooltip.template] - template for tooltip
+     *          @param {string} options.tooltip.align - align option for tooltip
+     *          @param {object} options.tooltip.offsetX - tooltip offset x
+     *          @param {object} options.tooltip.offsetY - tooltip offset y
+     *          @param {object} options.tooltip.position - (deprecated) relative position
+     *              @param {number} options.tooltip.position.left - position left
+     *              @param {number} options.tooltip.position.top - position top
+     *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+     *      @param {object} options.legend - options for legend component
+     *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+     *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+     *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+     *      @param {object} options.plot - options for plot component
+     *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+     *          @param {Array} options.plot.bands - plot bands
+     *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+     *              @param {string} options.plot.bands.color - band color
+     *              @param {number} options.plot.bands.opacity - band opacity
+     *          @param {Array} options.plot.lines - plot lines
+     *              @param {(string|number|date)} options.plot.lines.value - value for matching
+     *              @param {string} options.plot.lines.color - band color
+     *              @param {number} options.plot.lines.opacity - band opacity
+     *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
+     *                  - plot lines
+     *      @param {string} options.theme - theme name
+     *      @param {string} options.libType - type of graph library
+     * @returns {object} bar chart
+     * @api
+     * @example
+     * var container = document.getElementById('container-id'),
+     *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -1380,7 +1477,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         }
  *       ]
  *     },
- *     options = {
+     *     options = {
  *       chart: {
  *         title: 'Line Chart'
  *       },
@@ -1394,11 +1491,11 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         showDot: true
  *       }
  *     };
- * tui.chart.lineChart(container, rawData, options);
- */
-tui.chart.lineChart = function(container, rawData, options) {
+     * tui.chart.lineChart(container, rawData, options);
+     */
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1407,24 +1504,35 @@ tui.chart.lineChart = function(container, rawData, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
- *      @param {Array.<string>} rawData.categories - categories
+ *      @param {?Array.<string>} rawData.categories - categories
  *      @param {Array.<Array>} rawData.series - series data
  * @param {object} options - chart options
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
+ *          @param {string} options.xAxis.type - type of axis
+ *          @param {string} options.xAxis.dateFormat - date format
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -1436,7 +1544,9 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -1446,6 +1556,14 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *          @param {Array} options.plot.bands - plot bands
+ *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+ *              @param {string} options.plot.bands.color - band color
+ *              @param {number} options.plot.bands.opacity - band opacity
+ *          @param {Array} options.plot.lines - plot lines
+ *              @param {(string|number|date)} options.plot.lines.value - value for matching
+ *              @param {string} options.plot.lines.color - band color
+ *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
@@ -1489,6 +1607,7 @@ tui.chart.lineChart = function(container, rawData, options) {
 tui.chart.areaChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_AREA;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1503,15 +1622,24 @@ tui.chart.areaChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {number} options.xAxis.min - minimum value for y axis
@@ -1523,7 +1651,9 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -1588,6 +1718,7 @@ tui.chart.areaChart = function(container, rawData, options) {
 tui.chart.bubbleChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BUBBLE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1602,15 +1733,24 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.min - minimum value for y axis
  *          @param {number} options.xAxis.max - maximum value for y axis
  *      @param {object} options.series - options for series component
@@ -1620,7 +1760,9 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -1675,6 +1817,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
 tui.chart.scatterChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_SCATTER;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1689,20 +1832,31 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -1744,6 +1898,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
 tui.chart.heatmapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_HEATMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1757,7 +1912,10 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -1767,7 +1925,9 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -1820,6 +1980,7 @@ tui.chart.heatmapChart = function(container, rawData, options) {
 tui.chart.treemapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_TREEMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1834,15 +1995,24 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object|Array} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series - options for series component
@@ -1850,21 +2020,17 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {string} options.series.column.stackType - type of stack
  *              @param {boolean} options.series.column.showLabel - whether show label or not
  *              @param {number} options.series.column.barWidth - bar width
- *              @param {boolean} options.series.column.allowSelect - whether allow select or not
  *          @param {?object} options.series.line - options for line series component
  *              @param {boolean} options.series.line.showDot - whether show dot or not
  *              @param {boolean} options.series.line.showLabel - whether show label or not
- *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline - whether spline or not
  *          @param {?object} options.series.area - options for line series component
  *              @param {boolean} options.series.area.showDot - whether show dot or not
  *              @param {boolean} options.series.area.showLabel - whether show label or not
- *              @param {boolean} options.series.area.allowSelect - whether allow select or not
  *              @param {boolean} options.series.area.spline - whether spline or not
  *          @param {?object} options.series.pie - options for pie series component
  *              @param {boolean} options.series.pie.showLabel - whether show label or not
  *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
- *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
  *              @param {boolean} options.series.pie.startAngle - start angle
  *              @param {boolean} options.series.pie.endAngle - end angle
  *          @param {boolean} options.series.showDot - whether show dot or not
@@ -1878,9 +2044,11 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {string} options.tooltip.column.suffix - suffix for tooltip
  *              @param {function} [options.tooltip.column.template] template of tooltip
  *              @param {string} options.tooltip.column.align - align option for tooltip
- *              @param {object} options.tooltip.column.position - relative position
- *                  @param {number} options.tooltip.column.position.left - position left
- *                  @param {number} options.tooltip.column.position.top - position top
+ *              @param {number} options.tooltip.column.offsetX - tooltip offset x
+ *              @param {number} options.tooltip.column.offsetY - tooltip offset y
+ *              @param {object} options.tooltip.column.position - (deprecated) relative position
+ *                  @param {number} options.tooltip.position.left - position left
+ *                  @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -1888,6 +2056,14 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *          @param {Array} options.plot.bands - plot bands for line & area combo chart
+ *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+ *              @param {string} options.plot.bands.color - band color
+ *              @param {number} options.plot.bands.opacity - band opacity
+ *          @param {Array} options.plot.lines - plot lines
+ *              @param {(string|number|date)} options.plot.lines.value - value for matching
+ *              @param {string} options.plot.lines.color - band color
+ *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
@@ -1948,6 +2124,7 @@ tui.chart.treemapChart = function(container, rawData, options) {
 tui.chart.comboChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COMBO;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1961,7 +2138,10 @@ tui.chart.comboChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -1973,7 +2153,10 @@ tui.chart.comboChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offset - tooltip offset
+ *              @param {number} options.tooltip.offset.x - offset x
+ *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -2016,6 +2199,7 @@ tui.chart.comboChart = function(container, rawData, options) {
 tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -2029,7 +2213,10 @@ tui.chart.pieChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -2037,7 +2224,10 @@ tui.chart.pieChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offset - tooltip offset
+ *              @param {number} options.tooltip.offset.x - offset x
+ *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -2083,51 +2273,57 @@ tui.chart.mapChart = function(container, rawData, options) {
 /**
  * Register theme.
  * @memberOf tui.chart
- * @param {string} themeName theme name
- * @param {object} theme application chart theme
- *      @param {object} theme.chart chart theme
- *          @param {string} theme.chart.fontFamily font family of chart
- *          @param {string} theme.chart.background background of chart
- *      @param {object} theme.title chart theme
- *          @param {number} theme.title.fontSize font size of chart title
- *          @param {string} theme.title.fontFamily font family of chart title
- *          @param {string} theme.title.color font color of chart title
- *          @param {string} theme.title.background background of chart title
- *      @param {object} theme.yAxis theme of vertical axis
- *          @param {object} theme.yAxis.title theme of vertical axis title
- *              @param {number} theme.yAxis.title.fontSize font size of vertical axis title
- *              @param {string} theme.yAxis.title.fontFamily font family of vertical axis title
- *              @param {string} theme.yAxis.title.color font color of vertical axis title
- *          @param {object} theme.yAxis.label theme of vertical axis label
- *              @param {number} theme.yAxis.label.fontSize font size of vertical axis label
- *              @param {string} theme.yAxis.label.fontFamily font family of vertical axis label
- *              @param {string} theme.yAxis.label.color font color of vertical axis label
- *          @param {string} theme.yAxis.tickColor color of vertical axis tick
- *      @param {object} theme.xAxis theme of horizontal axis
- *          @param {object} theme.xAxis.title theme of horizontal axis title
- *              @param {number} theme.xAxis.title.fontSize font size of horizontal axis title
- *              @param {string} theme.xAxis.title.fontFamily font family of horizontal axis title
- *              @param {string} theme.xAxis.title.color font color of horizontal axis title
- *          @param {object} theme.xAxis.label theme of horizontal axis label
- *              @param {number} theme.xAxis.label.fontSize font size of horizontal axis label
- *              @param {string} theme.xAxis.label.fontFamily font family of horizontal axis label
- *              @param {string} theme.xAxis.label.color font color of horizontal axis label
- *          @param {string} theme.xAxis.tickColor color of horizontal axis tick
- *      @param {object} theme.plot plot theme
- *          @param {string} theme.plot.lineColor plot line color
- *          @param {string} theme.plot.background plot background
- *      @param {object} theme.series series theme
- *          @param {Array.<string>} theme.series.colors series colors
- *          @param {string} theme.series.borderColor series border color
- *          @param {string} theme.series.selectionColor series selection color
- *          @param {string} theme.series.startColor start color for map chart
- *          @param {string} theme.series.endColor end color for map chart
- *          @param {string} theme.series.overColor end color for map chart
- *      @param {object} theme.legend legend theme
- *          @param {object} theme.legend.label theme of legend label
- *              @param {number} theme.legend.label.fontSize font size of legend label
- *              @param {string} theme.legend.label.fontFamily font family of legend label
- *              @param {string} theme.legend.label.color font color of legend label
+ * @param {string} themeName - theme name
+ * @param {object} theme - application chart theme
+ *      @param {object} theme.chart - chart theme
+ *          @param {string} theme.chart.fontFamily - font family for chart
+ *          @param {string} theme.chart.background - background for chart
+ *      @param {object} theme.title - chart title theme
+ *          @param {number} theme.title.fontSize - font size
+ *          @param {string} theme.title.fontFamily - font family
+ *          @param {string} theme.title.fontWeight - font weight
+ *          @param {string} theme.title.color - font color
+ *          @param {string} theme.title.background - background
+ *      @param {object} theme.yAxis - y axis theme
+ *          @param {object} theme.yAxis.title - theme for y axis title
+ *              @param {number} theme.yAxis.title.fontSize - font size
+ *              @param {string} theme.yAxis.title.fontFamily - font family
+ *              @param {string} theme.yAxis.title.fontWeight - font weight
+ *              @param {string} theme.yAxis.title.color - font color
+ *          @param {object} theme.yAxis.label - theme for y axis label
+ *              @param {number} theme.yAxis.label.fontSize - font size
+ *              @param {string} theme.yAxis.label.fontFamily - font family
+ *              @param {string} theme.yAxis.label.fontWeight - font weight
+ *              @param {string} theme.yAxis.label.color - font color
+ *          @param {string} theme.yAxis.tickColor - color for y axis tick
+ *      @param {object} theme.xAxis - theme for x axis
+ *          @param {object} theme.xAxis.title - theme for x axis title
+ *              @param {number} theme.xAxis.title.fontSize - font size
+ *              @param {string} theme.xAxis.title.fontFamily - font family
+ *              @param {string} theme.xAxis.title.fontWeight - font weight
+ *              @param {string} theme.xAxis.title.color - font color
+ *          @param {object} theme.xAxis.label - theme for x axis label
+ *              @param {number} theme.xAxis.label.fontSize - font size
+ *              @param {string} theme.xAxis.label.fontFamily - font family
+ *              @param {string} theme.xAxis.label.fontWeight - font weight
+ *              @param {string} theme.xAxis.label.color - font color
+ *          @param {string} theme.xAxis.tickColor - color for x axis tick
+ *      @param {object} theme.plot - theme for plot
+ *          @param {string} theme.plot.lineColor - line color
+ *          @param {string} theme.plot.background - background
+ *      @param {object} theme.series theme for series
+ *          @param {Array.<string>} theme.series.colors - colors
+ *          @param {string} theme.series.borderColor - border color
+ *          @param {string} theme.series.selectionColor - selection color
+ *          @param {string} theme.series.startColor - start color
+ *          @param {string} theme.series.endColor - end color
+ *          @param {string} theme.series.overColor - over color
+ *      @param {object} theme.legend - theme for legend
+ *          @param {object} theme.legend.label - theme for legend label
+ *              @param {number} theme.legend.label.fontSize - font size
+ *              @param {string} theme.legend.label.fontFamily - font family
+ *              @param {string} theme.legend.label.fontWeight - font family
+ *              @param {string} theme.legend.label.color - font color
  * @api
  * @example
  * var theme = {
@@ -2265,20 +2461,32 @@ var addingDynamicDataMixer = {
     _animateForAddingData: function() {
         var self = this;
         var boundsMaker = this.boundsMaker;
-        var shiftingOption = !!tui.util.pick(this.options.series, 'shifting');
+        var dataProcessor = this.dataProcessor;
+        var shiftingOption = !!this.options.series.shifting;
         var beforeAxesData = boundsMaker.getAxesData();
-        var beforeSizeRatio = beforeAxesData.xAxis.sizeRatio || 1;
 
         this.addedDataCount += 1;
         this.axisScaleMakerMap = null;
         boundsMaker.initBoundsData();
 
         this._render(function() {
-            var xAxisWidth = boundsMaker.getDimension('xAxis').width * beforeSizeRatio;
-            var tickSize = (xAxisWidth / (self.dataProcessor.getCategoryCount(false) - 1));
+            var xAxisWidth = boundsMaker.getDimension('xAxis').width;
+            var tickCount, tickSize;
+
+            if (dataProcessor.isCoordinateType()) {
+                tickCount = dataProcessor.getValues(self.chartType, 'x').length - 1;
+            } else {
+                tickCount = dataProcessor.getCategoryCount(false) - 1;
+            }
+
+            if (shiftingOption) {
+                tickCount -= 1;
+            }
+
+            tickSize = (xAxisWidth / tickCount);
 
             self._renderComponents({
-                tickSize: tickSize + chartConst.OVERLAPPING_WIDTH,
+                tickSize: tickSize,
                 shifting: shiftingOption
             }, 'animateForAddingData');
         }, beforeAxesData);
@@ -2295,7 +2503,7 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        if (tui.util.pick(this.options.series, 'shifting')) {
+        if (this.options.series.shifting || this.dataProcessor.isCoordinateType()) {
             this.boundsMaker.initBoundsData();
         }
 
@@ -2325,9 +2533,11 @@ var addingDynamicDataMixer = {
             return;
         }
 
+        this.boundsMaker.onAddingDataMode();
         this._animateForAddingData();
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
+            self.boundsMaker.offAddingDataMode();
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
@@ -2345,7 +2555,7 @@ var addingDynamicDataMixer = {
             clearTimeout(this.rerenderingDelayTimerId);
             this.rerenderingDelayTimerId = null;
 
-            if (tui.util.pick(this.options.series, 'shifting')) {
+            if (this.options.series.shifting) {
                 this.dataProcessor.shiftData();
             }
         }
@@ -2381,6 +2591,11 @@ var addingDynamicDataMixer = {
      * @param {Array} values - values
      */
     addData: function(category, values) {
+        if (!values) {
+            values = category;
+            category = null;
+        }
+
         this.dataProcessor.addDynamicData(category, values);
         this._startLookup();
     },
@@ -2472,6 +2687,18 @@ var AreaChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
+    },
+
+    /**
+     * Resize.
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     * @override
+     */
+    resize: function(dimension) {
+        this._initForAutoTickInterval();
+        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
@@ -2629,7 +2856,7 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function() {
-        var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
+        var TooltipClass = this.options.tooltip.grouped ? GroupTooltip : Tooltip;
         this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
     },
 
@@ -2662,7 +2889,12 @@ var axisTypeMixer = {
         var LegendClass;
 
         if (params.plot) {
-            this.componentManager.register('plot', Plot);
+            this.componentManager.register('plot', Plot, {
+                isVertical: this.isVertical,
+                chartType: this.chartType,
+                chartTypes: this.chartTypes,
+                xAxisType: options.xAxis.type
+            });
         }
 
         this._addAxisComponents(params.axis, aligned);
@@ -2726,10 +2958,12 @@ var axisTypeMixer = {
         if (axisScaleMaker) {
             axisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                dataProcessor: this.dataProcessor,
+                chartType: this.chartType,
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned
+                aligned: aligned
             });
         } else {
             axisData = axisDataMaker.makeLabelAxisData({
@@ -2737,7 +2971,7 @@ var axisTypeMixer = {
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned,
+                aligned: aligned,
                 addedDataCount: tui.util.pick(this.options.series, 'shifting') ? this.addedDataCount : 0
             });
         }
@@ -2792,20 +3026,45 @@ var axisTypeMixer = {
     },
 
     /**
+     * Get limit map for coordinate type.
+     * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
+     * @private
+     */
+    _getLimitMapForCoordinateType: function() {
+        var scaleMakerMap = this._getAxisScaleMakerMap();
+        return {
+            x: scaleMakerMap.xAxis.getLimit(),
+            y: scaleMakerMap.yAxis.getLimit()
+        };
+    },
+
+    /**
      * Add data ratios.
      * @private
      * @override
      */
     _addDataRatios: function() {
         var self = this;
-        var axesData = this.boundsMaker.getAxesData();
         var chartTypes = this.chartTypes || [this.chartType];
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var stackType = tui.util.pick(this.options.series, 'stackType');
+        var seriesOption = this.options.series || {};
+        var limitMap, axesData, addDataRatio;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
-        });
+        if (this.dataProcessor.isCoordinateType()) {
+            limitMap = this._getLimitMapForCoordinateType();
+            addDataRatio = function(chartType) {
+                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+            };
+        } else {
+            axesData = this.boundsMaker.getAxesData();
+            limitMap = this._getLimitMap(axesData, chartTypes);
+
+            addDataRatio = function(chartType) {
+                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            };
+        }
+
+        tui.util.forEachArray(chartTypes, addDataRatio);
     },
 
     /**
@@ -2822,10 +3081,6 @@ var axisTypeMixer = {
         var xAxis = axesData.xAxis;
 
         return tui.util.extend({
-            plot: {
-                vTickCount: yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
             customEvent: {
                 tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
             }
@@ -2838,12 +3093,14 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
+        var seriesOptions = this.options.series;
+
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: tui.util.pick(this.options.series, 'zoomable'),
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            zoomable: seriesOptions.zoomable,
+            allowSelect: seriesOptions.allowSelect
         });
     },
 
@@ -2855,7 +3112,7 @@ var axisTypeMixer = {
         this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            allowSelect: this.options.series.allowSelect
         });
     },
 
@@ -2864,7 +3121,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponent: function() {
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._addCustomEventComponentForGroupTooltip();
         } else {
             this._addCustomEventComponentForNormalTooltip();
@@ -2943,7 +3200,7 @@ var axisTypeMixer = {
 
         ChartBase.prototype._attachCustomEvent.call(this, serieses);
 
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
         } else {
             this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);
@@ -3261,11 +3518,16 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      */
     init: function(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
+        options.circleLegend = options.circleLegend || {};
 
         this.axisScaleMakerMap = null;
 
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
+        }
+
+        if (tui.util.isUndefined(options.circleLegend.visible)) {
+            options.circleLegend.visible = true;
         }
 
         ChartBase.call(this, {
@@ -3514,12 +3776,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.theme = params.theme;
 
-        /**
-         * options
-         * @type {object}
-         */
-        this.options = null;
-        this._setDefaultOptions(params.options);
+        this._initializeOptions(params.options);
 
         /**
          * chart type
@@ -3538,12 +3795,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * @type {boolean}
          */
         this.isVertical = !!params.isVertical;
-
-        /**
-         * whether chart has group tooltip or not
-         * @type {boolean}
-         */
-        this.hasGroupTooltip = !!tui.util.pick(this.options, 'tooltip', 'grouped');
 
         /**
          * data processor
@@ -3585,17 +3836,112 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Set default options.
+     * Set offset property
+     * @param {{offset: object}} ptions -options
+     * @param {string} fromProperty - from property name
+     * @param {string} toProperty - to property name
+     * @private
+     */
+    _setOffsetProperty: function(ptions, fromProperty, toProperty) {
+        if (!tui.util.isExisty(ptions[fromProperty])) {
+            return;
+        }
+
+        ptions.offset = ptions.offset || {};
+        ptions.offset[toProperty] = ptions[fromProperty];
+        delete ptions[fromProperty];
+    },
+
+    /**
+     * Initialize offset.
+     * @param {{offsetX: ?number, offsetY: ?number}} options - offset options
+     * @private
+     */
+    _initializeOffset: function(options) {
+        if (!options) {
+            return;
+        }
+
+        this._setOffsetProperty(options, 'offsetX', 'x');
+        this._setOffsetProperty(options, 'offsetY', 'y');
+    },
+
+    /**
+     * Initialize title options.
+     * @param {
+     *      Array.<{title: (string | {text: string, offsetX: number, offsetY: number})}> |
+     *      {title: (string | {text: string, offsetX: number, offsetY: number})}
+     * } targetOptions - target options
+     * @private
+     */
+    _initializeTitleOptions: function(targetOptions) {
+        var self = this;
+        var optionsSet;
+
+        if (!targetOptions) {
+            return;
+        }
+
+        optionsSet = tui.util.isArray(targetOptions) ? targetOptions : [targetOptions];
+        tui.util.forEachArray(optionsSet, function(options) {
+            var title = options.title;
+
+            if (tui.util.isString(title)) {
+                options.title = {
+                    text: title
+                };
+            }
+
+            self._initializeOffset(options.title);
+        });
+    },
+
+    /**
+     * Initialize tooltip options.
+     * @param {{grouped: ?boolean, offsetX: ?number, offsetY: ?number}} options - tooltip options
+     * @private
+     */
+    _initializeTooltipOptions: function(options) {
+        var position = options.position;
+
+        options.grouped = !!options.grouped;
+        this._initializeOffset(options);
+
+        if (!options.offset && position) {
+            options.offset = {
+                x: position.left,
+                y: position.top
+            };
+        }
+
+        delete options.position;
+    },
+
+    /**
+     * Initialize options.
      * @param {object} options - options for chart
      * @private
      */
-    _setDefaultOptions: function(options) {
+    _initializeOptions: function(options) {
+        options.xAxis = options.xAxis || {};
+        options.series = options.series || {};
+        options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
+
+        this._initializeTitleOptions(options.chart);
+        this._initializeTitleOptions(options.xAxis);
+        this._initializeTitleOptions(options.yAxis);
 
         if (tui.util.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
         }
 
+        this._initializeTooltipOptions(options.tooltip);
+
+        /**
+         * options
+         * @type {object}
+         */
         this.options = options;
     },
 
@@ -3646,7 +3992,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
         var limit = this._pickLimitFromOptions(axisOptions);
-        var seriesOptions = this.options.series || {};
+        var seriesOptions = this.options.series;
 
         chartType = chartType || this.chartType;
         seriesOptions = seriesOptions[chartType] || seriesOptions;
@@ -3654,12 +4000,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return new AxisScaleMaker(tui.util.extend({
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
-            options: {
-                stackType: seriesOptions.stackType,
-                diverging: seriesOptions.diverging,
-                limit: limit
-            },
-            isVertical: this.isVertical,
+            stackType: seriesOptions.stackType,
+            diverging: seriesOptions.diverging,
+            limitOption: limit,
+            type: axisOptions.type,
+            dateFormat: axisOptions.dateFormat,
+            isVertical: areaType !== 'xAxis',
             areaType: areaType,
             valueType: valueType,
             chartType: chartType
@@ -3675,7 +4021,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return {
             isVertical: this.isVertical,
             userEvent: this.userEvent,
-            chartType: this.chartType
+            chartType: this.chartType,
+            xAxisType: this.options.xAxis.type,
+            dateFormat: this.options.xAxis.dateFormat
         };
     },
 
@@ -3753,6 +4101,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _registerAxesData: function() {
         var axesData = this._makeAxesData();
+
         this.boundsMaker.registerAxesData(axesData);
     },
 
@@ -3922,7 +4271,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderTitle: function(container) {
         var chartOptions = this.options.chart || {};
-        var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
+        var title = chartOptions.title || {};
+        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
+
+        if (title.offset) {
+            renderUtil.renderPosition(titleElement, {
+                left: title.offset.x,
+                top: title.offset.y
+            });
+        }
 
         dom.append(container, titleElement);
     },
@@ -3967,9 +4324,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function(chartType) {
-        var self = this,
-            customEvent = this.componentManager.get('customEvent'),
-            seriesInfos, chartTypes;
+        var self = this;
+        var customEvent = this.componentManager.get('customEvent');
+        var seriesInfos, chartTypes;
 
         if (!customEvent) {
             return;
@@ -4083,11 +4440,23 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Set tooltip offset option.
+     * @param {object} offset - tooltip offset
+     *      @param {number} offset.x - offset x
+     *      @param {number} offset.y - offset y
+     * @api
+     */
+    setTooltipOffset: function(offset) {
+        this.componentManager.get('tooltip').setOffset(offset);
+    },
+
+    /**
      * Set position option.
      * @param {object} position moving position
      *      @param {number} position.left left
      *      @param {number} position.top top
      * @api
+     * @deprecated
      */
     setTooltipPosition: function(position) {
         this.componentManager.get('tooltip').setPosition(position);
@@ -4105,8 +4474,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Reset tooltip position.
      * @api
      */
+    resetTooltipOffset: function() {
+        this.componentManager.get('tooltip').resetOffset();
+    },
+
+    /**
+     * Reset tooltip position.
+     * @api
+     * @deprecated
+     */
     resetTooltipPosition: function() {
-        this.componentManager.get('tooltip').resetPosition();
+        this.resetTooltipOffset();
     },
 
     /**
@@ -4137,7 +4515,55 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Add data.
      * @abstract
      */
-    addData: function() {}
+    addData: function() {},
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     */
+    addPlotLine: function(data) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.addPlotLine(data);
+        }
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     */
+    addPlotBand: function(data) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.addPlotBand(data);
+        }
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     */
+    removePlotLine: function(id) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.removePlotLine(id);
+        }
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     */
+    removePlotBand: function(id) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.removePlotBand(id);
+        }
+    }
 });
 
 module.exports = ChartBase;
@@ -4734,6 +5160,8 @@ HeatmapChart.prototype._makeRenderingData = function() {
     data.legend = {
         colorSpectrum: colorSpectrum,
         axesData: axisDataMaker.makeValueAxisData({
+            dataProcessor: this.dataProcessor,
+            chartType: this.chartType,
             axisScaleMaker: this._getAxisScaleMakerMap().legend,
             isVertical: true
         })
@@ -4812,6 +5240,18 @@ var LineAreaComboChart = tui.util.defineClass(ChartBase, /** @lends LineAreaComb
         tui.util.extend(this, chartTypesMap);
 
         this._changeCheckedLegends(checkedLegends, rawData, chartTypesMap);
+    },
+
+    /**
+     * Resize.
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     * @override
+     */
+    resize: function(dimension) {
+        this._initForAutoTickInterval();
+        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
@@ -4872,6 +5312,18 @@ var LineChart = tui.util.defineClass(ChartBase, /** @lends LineChart.prototype *
      */
     onChangeCheckedLegends: function(checkedLegends, rawData, boundsParams) {
         this._changeCheckedLegends(checkedLegends, rawData, boundsParams);
+    },
+
+    /**
+     * Resize.
+     * @param {object} dimension dimension
+     *      @param {number} dimension.width width
+     *      @param {number} dimension.height height
+     * @override
+     */
+    resize: function(dimension) {
+        this._initForAutoTickInterval();
+        ChartBase.prototype.resize.call(this, dimension);
     }
 });
 
@@ -4913,6 +5365,12 @@ var lineTypeMixer = {
             isVertical: true
         });
 
+        if (this.dataProcessor.isCoordinateType()) {
+            delete this.options.xAxis.tickInterval;
+            this.options.tooltip.grouped = false;
+            this.options.series.shifting = false;
+        }
+
         this._addComponents(options.chartType);
     },
 
@@ -4922,9 +5380,21 @@ var lineTypeMixer = {
      * @private
      */
     _makeAxisScaleMakerMap: function() {
-        return {
-            yAxis: this._createAxisScaleMaker(this.options.yAxis, 'yAxis')
-        };
+        var options = this.options;
+        var scaleMap;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            scaleMap = {
+                xAxis: this._createAxisScaleMaker(options.xAxis, 'xAxis', 'x'),
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis', 'y')
+            };
+        } else {
+            scaleMap = {
+                yAxis: this._createAxisScaleMaker(options.yAxis, 'yAxis')
+            };
+        }
+
+        return scaleMap;
     },
 
     /**
@@ -4932,10 +5402,13 @@ var lineTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
+        var seriesOptions = this.options.series;
+
         this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            zoomable: tui.util.pick(this.options.series, 'zoomable')
+            zoomable: seriesOptions.zoomable,
+            allowSelect: seriesOptions.allowSelect
         });
     },
 
@@ -5059,6 +5532,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         });
 
         return axisDataMaker.makeValueAxisData({
+            dataProcessor: this.dataProcessor,
+            chartType: this.chartType,
             axisScaleMaker: axisScaleMaker,
             isVertical: true
         });
@@ -6146,6 +6621,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         data.legend = {
             colorSpectrum: colorSpectrum,
             axesData: axisDataMaker.makeValueAxisData({
+                dataProcessor: this.dataProcessor,
+                chartType: this.chartType,
                 axisScaleMaker: this._getLegendScale(),
                 isVertical: true
             })
@@ -6212,6 +6689,7 @@ module.exports = TreemapChart;
 
 'use strict';
 
+var predicate = require('../helpers/predicate');
 var calculator = require('../helpers/calculator');
 var renderUtil = require('../helpers/renderUtil');
 var ChartBase = require('./chartBase');
@@ -6419,9 +6897,25 @@ var verticalTypeComboMixer = {
     _createYAxisScaleMaker: function(index, isSingleYAxis) {
         var chartType = this.chartTypes[index];
         var yAxisOption = this.yAxisOptionsMap[chartType];
+        var dataProcessor = this.dataProcessor;
         var additionalParams = {
             isSingleYAxis: !!isSingleYAxis
         };
+
+        if (isSingleYAxis && this.options.series) {
+            tui.util.forEach(this.options.series, function(seriesOption, seriesName) {
+                var _chartType = dataProcessor.findChartType(seriesName);
+
+                if (!predicate.isAllowedStackOption(_chartType)) {
+                    return;
+                }
+
+                additionalParams.chartType = _chartType;
+                if (seriesOption.stackType) {
+                    additionalParams.stackType = seriesOption.stackType;
+                }
+            });
+        }
 
         return this._createAxisScaleMaker(yAxisOption, 'yAxis', null, chartType, additionalParams);
     },
@@ -6517,7 +7011,7 @@ var verticalTypeComboMixer = {
 
 module.exports = verticalTypeComboMixer;
 
-},{"../helpers/calculator":57,"../helpers/renderUtil":63,"../series/areaChartSeries":89,"../series/columnChartSeries":93,"../series/lineChartSeries":96,"./chartBase":11}],29:[function(require,module,exports){
+},{"../helpers/calculator":57,"../helpers/predicate":61,"../helpers/renderUtil":63,"../series/areaChartSeries":89,"../series/columnChartSeries":93,"../series/lineChartSeries":96,"./chartBase":11}],29:[function(require,module,exports){
 /**
  * @fileoverview zoomMixer is mixer of line type chart(line, area).
  * @author NHN Ent.
@@ -6859,7 +7353,7 @@ var deepCopy = function(origin) {
         tui.util.forEachArray(origin, function (value, index) {
             clone[index] = deepCopy(value);
         });
-    } else if (tui.util.isFunction(origin)) {
+    } else if (tui.util.isFunction(origin) || tui.util.isDate(origin)) {
         clone = origin;
     } else if (tui.util.isObject(origin)) {
         clone = {};
@@ -6919,7 +7413,12 @@ var chartConst = {
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
-    /** chart types
+    /**
+     * chart types
+     * @type {Array.<string>}
+     */
+    COMBO_CHART_TYPES: ['column', 'line', 'area', 'pie'],
+    /** chart type
      * @type {string}
      */
     CHART_TYPE_BAR: 'bar',
@@ -7029,6 +7528,7 @@ var chartConst = {
     /** radian */
     RAD: Math.PI / 180,
     RERENDER_TIME: 700,
+    ADDING_DATA_ANIMATION_DURATION: 300,
     /** series label align outer
      * @type {string}
      */
@@ -7131,6 +7631,26 @@ var chartConst = {
         step: 25,
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
+    /**
+     * datetime axis type
+     * @type {string}
+     */
+    AXIS_TYPE_DATETIME: 'datetime',
+    /**
+     * default dateFormat
+     * @type {string}
+     */
+    DEFAULT_DATE_FORMAT: 'YYYY.MM.DD hh:mm:dd',
+    /**
+     * date type
+     * @type {string}
+     */
+    DATE_TYPE_YEAR: 'year',
+    DATE_TYPE_MONTH: 'month',
+    DATE_TYPE_DATE: 'date',
+    DATE_TYPE_HOUR: 'hour',
+    DATE_TYPE_MINUTE: 'minute',
+    DATE_TYPE_SECOND: 'second',
     /** title add padding */
     TITLE_PADDING: 10,
     /** legend area padding */
@@ -7250,7 +7770,16 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
          */
         this.prevFoundData = null;
 
-        this._initForZoom(params.zoomable);
+        /**
+         * whether zoomable or not
+         * @type {boolean}
+         */
+        this.zoomable = params.zoomable;
+
+        if (this.zoomable) {
+            tui.util.extend(this, zoomMixer);
+            this._initForZoom(params.zoomable);
+        }
     },
 
     /**
@@ -7264,7 +7793,9 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
         this.dataModel = new AreaTypeDataModel(seriesInfo);
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
 
-        this._showTooltipAfterZoom();
+        if (this.zoomable) {
+            this._showTooltipAfterZoom();
+        }
     },
 
     /**
@@ -7273,12 +7804,12 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @param {number} clientY - clientY
      * @returns {object}
      * @private
+     * @override
      */
     _findData: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY);
-        var groupIndex = this.tickBaseCoordinateModel.findIndex(layerPosition.x);
 
-        return this.dataModel.findData(groupIndex, layerPosition.y);
+        return this.dataModel.findData(layerPosition);
     },
 
     /**
@@ -7325,13 +7856,17 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMousemove: function(e) {
-        var foundData;
+        var dragMoseupResult, foundData;
 
         CustomEventBase.prototype._onMousemove.call(this, e);
 
         foundData = this._findData(e.clientX, e.clientY);
 
-        if (this._isAfterDragMouseup() || !this._isChangedSelectData(this.prevFoundData, foundData)) {
+        if (this.zoomable) {
+            dragMoseupResult = this._isAfterDragMouseup();
+        }
+
+        if (dragMoseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 
@@ -7358,8 +7893,6 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
     }
 });
 
-zoomMixer.mixin(AreaTypeCustomEvent);
-
 module.exports = AreaTypeCustomEvent;
 
 },{"./areaTypeDataModel":33,"./customEventBase":36,"./zoomMixer":41}],33:[function(require,module,exports){
@@ -7370,6 +7903,8 @@ module.exports = AreaTypeCustomEvent;
  */
 
 'use strict';
+
+var concat = Array.prototype.concat;
 
 var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
@@ -7382,47 +7917,91 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     },
 
     /**
-     * Make area type data for custom event.
+     * Make data for detecting mouse event.
      * @param {Array.<Array.<object>>} groupPositions - group positions
      * @param {string} chartType - chart type
      * @returns {Array}
      * @private
      */
     _makeData: function(groupPositions, chartType) {
-        groupPositions = tui.util.pivot(groupPositions);
+        var data;
 
-        return tui.util.map(groupPositions, function(positions, groupIndex) {
+        groupPositions = tui.util.pivot(groupPositions);
+        data = tui.util.map(groupPositions, function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
-                return {
-                    chartType: chartType,
-                    indexes: {
-                        groupIndex: groupIndex,
-                        index: index
-                    },
-                    bound: position
-                };
+                var datum = null;
+
+                if (position) {
+                    datum = {
+                        chartType: chartType,
+                        indexes: {
+                            groupIndex: groupIndex,
+                            index: index
+                        },
+                        bound: position
+                    };
+                }
+
+                return datum;
             });
+        });
+
+        return tui.util.filter(concat.apply([], data), function(datum) {
+            return !!datum;
         });
     },
 
     /**
      * Find Data.
-     * @param {number} groupIndex - group index
-     * @param {number} layerY - mouse position
+     * @param {{x: number, y: number}} layerPosition - layer position
      * @returns {object}
      */
-    findData: function(groupIndex, layerY) {
-        var result = null,
-            min = 10000;
-        tui.util.forEach(this.data[groupIndex], function(data) {
-            var diff = Math.abs(layerY - data.bound.top);
-            if (min > diff) {
-                min = diff;
-                result = data;
+    findData: function(layerPosition) {
+        var result = null;
+        var minX = 10000;
+        var minY = 10000;
+        var foundData = [];
+
+        tui.util.forEach(this.data, function(datum) {
+            var diff = Math.abs(layerPosition.x - datum.bound.left);
+            if (minX > diff) {
+                minX = diff;
+                foundData = [datum];
+            } else if (minX === diff) {
+                foundData.push(datum);
+            }
+        });
+
+        tui.util.forEach(foundData, function(datum) {
+            var diff = Math.abs(layerPosition.y - datum.bound.top);
+            if (minY > diff) {
+                minY = diff;
+                result = datum;
             }
         });
 
         return result;
+    },
+
+    /**
+     * Find data by indexes.
+     * @param {number} groupIndex - group index
+     * @param {number} index - index
+     * @returns {object}
+     * @private
+     */
+    _findDataByIndexes: function(groupIndex, index) {
+        var foundData = null;
+
+        tui.util.forEachArray(this.data, function(datum) {
+            if (datum.indexes.groupIndex === groupIndex && datum.indexes.index === index) {
+                foundData = datum;
+            }
+
+            return !foundData;
+        });
+
+        return foundData;
     },
 
     /**
@@ -7431,7 +8010,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object}
      */
     getFirstData: function(index) {
-        return this.data[0][index];
+        return this._findDataByIndexes(0, index);
     },
 
     /**
@@ -7442,7 +8021,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     getLastData: function(index) {
         var lastGroupIndex = this.data.length - 1;
 
-        return this.data[lastGroupIndex][index];
+        return this._findDataByIndexes(lastGroupIndex, index);
     }
 });
 
@@ -7559,6 +8138,9 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
 
         return tui.util.map(tui.util.pivot(groupPositions), function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
+                if (!position) {
+                    return null;
+                }
                 return {
                     sendData: {
                         chartType: chartType,
@@ -7589,10 +8171,17 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
         var results = [];
         tui.util.forEachArray(groupData, function(coordData) {
             tui.util.forEachArray(coordData, function(data, index) {
+                var addtionalIndex;
+
                 if (!results[index]) {
-                    results[index] = [];
+                    results[index] = data;
+                } else {
+                    addtionalIndex = results[index].length;
+                    tui.util.forEachArray(data, function(datum) {
+                        datum.sendData.indexes.legendIndex = datum.sendData.indexes.index + addtionalIndex;
+                    });
+                    results[index] = results[index].concat(data);
                 }
-                results[index] = results[index].concat(data);
             });
         });
 
@@ -7606,11 +8195,8 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
      * @private
      */
     _makeData: function(seriesInfos) {
-        var self = this,
-            coordinateData;
-
-        seriesInfos.reverse();
-        coordinateData = tui.util.map(seriesInfos, function(info) {
+        var self = this;
+        var coordinateData = tui.util.map(seriesInfos, function(info) {
             var result;
             if (predicate.isLineTypeChart(info.chartType)) {
                 result = self._makeDotTypeCoordinateData(info.data.groupPositions, info.chartType);
@@ -7667,6 +8253,7 @@ var BoundsBaseCoordinateModel = tui.util.defineClass(/** @lends BoundsBaseCoordi
             // 추출된 data 중 top이 layerY와 가장 가까운 data 찾아내기
             tui.util.forEachArray(candidates, function(data) {
                 var diff = Math.abs(layerY - data.sendData.bound.top);
+
                 if (min > diff) {
                     min = diff;
                     result = data.sendData;
@@ -7752,7 +8339,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMousemove: function(e) {
-        var foundData = this._findDataFromBoundsCoordinateModel(this.customEventContainer, e.clientX, e.clientY);
+        var layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        var foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
         var seriesItem;
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
@@ -7813,7 +8401,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onClick: function(e) {
         var target = e.target || e.srcElement;
-        var foundData, seriesItem;
+        var layerPosition, foundData, seriesItem;
 
         CustomEventBase.prototype._onClick.call(this, e);
 
@@ -7828,7 +8416,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             return;
         }
 
-        foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
+        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
 
         if (foundData) {
             seriesItem = this._getSeriesItemByIndexes(foundData.indexes);
@@ -8050,6 +8639,37 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
     },
 
     /**
+     * Calculate layer position by client position.
+     * @param {number} clientX - clientX
+     * @param {number} [clientY] - clientY
+     * @param {boolean} [checkLimit] - whether check limit or not
+     * @returns {{x: number, y: ?number}}
+     * @private
+     */
+    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
+        var bound = this._getContainerBound();
+        var layerPosition = {};
+        var expandSize = this.expandSize;
+        var maxLeft, minLeft;
+
+        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
+
+        if (checkLimit) {
+            maxLeft = bound.right - expandSize;
+            minLeft = bound.left + expandSize;
+            clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
+        }
+
+        layerPosition.x = clientX - bound.left;
+
+        if (!tui.util.isUndefined(clientY)) {
+            layerPosition.y = clientY - bound.top;
+        }
+
+        return layerPosition;
+    },
+
+    /**
      * Create BoundsBaseCoordinateModel from seriesBounds for custom event.
      * @param {Array.<object>} seriesBounds - series bounds
      */
@@ -8062,6 +8682,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data - data for rerendering
      */
     rerender: function(data) {
+        this.selectedData = null;
         this._renderCustomEventArea(this.customEventContainer, data);
     },
 
@@ -8088,24 +8709,21 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Find coordinate data from boundsCoordinateModel.
-     * @param {HTMLElement} target - target element
-     * @param {number} clientX mouse - position x
-     * @param {number} clientY mouse - position y
+     * @param {{x: number, y: number}} layerPosition - layer position
      * @returns {object}
      * @private
      */
-    _findDataFromBoundsCoordinateModel: function(target, clientX, clientY) {
-        var bound = target.getBoundingClientRect();
-        var layerX = clientX - bound.left;
-        var layerY = clientY - bound.top;
+    _findDataFromBoundsCoordinateModel: function(layerPosition) {
+        var layerX = layerPosition.x;
+        var layerY = layerPosition.y;
         var groupIndex;
 
         if (predicate.isTreemapChart(this.chartType)) {
             groupIndex = 0;
         } else {
-            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
             layerX += chartConst.SERIES_EXPAND_SIZE;
             layerY += chartConst.SERIES_EXPAND_SIZE;
+            groupIndex = this.tickBaseCoordinateModel.findIndex(this.isVertical ? layerX : layerY);
         }
 
         return this.boundsBaseCoordinateModel.findData(groupIndex, layerX, layerY);
@@ -8123,10 +8741,16 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Find data.
+     * @param {number} clientX - clientX
+     * @param {number} clientY - clientY
+     * @returns {object}
      * @private
-     * @abstract
      */
-    _findData: function() {},
+    _findData: function(clientX, clientY) {
+        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+
+        return this._findDataFromBoundsCoordinateModel(layerPosition);
+    },
 
     /**
      * Show tooltip
@@ -8178,9 +8802,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @private
      */
     _onClick: function(e) {
-        var target = e.target || e.srcElement;
-        var clientX = e.clientX - this.expandSize;
-        var foundData = this._findDataFromBoundsCoordinateModel(target, clientX, e.clientY);
+        var foundData = this._findData(e.clientX, e.clientY);
 
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
             this._unselectSelectedData();
@@ -8188,6 +8810,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
             if (this.selectedData) {
                 this._unselectSelectedData();
             }
+
             this.fire(renderUtil.makeCustomEventName('select', foundData.chartType, 'series'), foundData);
 
             if (this.allowSelect) {
@@ -8261,7 +8884,6 @@ module.exports = CustomEventBase;
 
 var CustomEventBase = require('./customEventBase');
 var zoomMixer = require('./zoomMixer');
-var chartConst = require('../const');
 
 var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends GroupTypeCustomEvent.prototype */ {
     /**
@@ -8280,12 +8902,21 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
         this.prevIndex = null;
 
         /**
+         * whether zoomable or not
+         * @type {boolean}
+         */
+        this.zoomable = params.zoomable;
+
+        /**
          * type of size
          * @type {string}
          */
         this.sizeType = this.isVertical ? 'height' : 'width';
 
-        this._initForZoom(params.zoomable);
+        if (this.zoomable) {
+            tui.util.extend(this, zoomMixer);
+            this._initForZoom(params.zoomable);
+        }
     },
 
     /**
@@ -8296,7 +8927,9 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     initCustomEventData: function(seriesInfos) {
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
 
-        this._showTooltipAfterZoom();
+        if (this.zoomable) {
+            this._showTooltipAfterZoom();
+        }
     },
 
     /**
@@ -8306,14 +8939,14 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
      * @returns {object}
      * @private
      */
-    _findData: function(clientX, clientY) {
+    _findGroupData: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY, true);
         var pointValue;
 
         if (this.isVertical) {
-            pointValue = layerPosition.x - this.expandSize;
+            pointValue = layerPosition.x;
         } else {
-            pointValue = layerPosition.y - chartConst.SERIES_EXPAND_SIZE;
+            pointValue = layerPosition.y;
         }
 
         return {
@@ -8401,11 +9034,12 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
 
         CustomEventBase.prototype._onMousemove.call(this, e);
 
-        if (this._isAfterDragMouseup()) {
+        if (this.zoomable && this._isAfterDragMouseup()) {
             return;
         }
 
-        foundData = this._findData(e.clientX, e.clientY);
+        foundData = this._findGroupData(e.clientX, e.clientY);
+
         index = foundData.indexes.groupIndex;
 
         if (index === -1) {
@@ -8432,11 +9066,9 @@ var GroupTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Grou
     }
 });
 
-zoomMixer.mixin(GroupTypeCustomEvent);
-
 module.exports = GroupTypeCustomEvent;
 
-},{"../const":31,"./customEventBase":36,"./zoomMixer":41}],38:[function(require,module,exports){
+},{"./customEventBase":36,"./zoomMixer":41}],38:[function(require,module,exports){
 /**
  * @fileoverview MapChartCustomEvent is event handle layer for map chart.
  * @author NHN Ent.
@@ -8852,6 +9484,7 @@ module.exports = TickBaseDataModel;
 var CustomEventBase = require('./customEventBase');
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var eventListener = require('../helpers/eventListener');
 
@@ -8931,6 +9564,19 @@ var zoomMixer = {
          * @type {null | HTMLElement}
          */
         this.resetZoomBtn = null;
+
+        /**
+         * Find data for zoomable
+         * @param {number} clientX - clientX
+         * @param {number} clientY - clientY
+         * @returns {object}
+         * @private
+         */
+        if (predicate.isComboChart(this.chartType)) {
+            this._findDataForZoomable = this._findGroupData;
+        } else {
+            this._findDataForZoomable = this._findData;
+        }
     },
 
     /**
@@ -8994,37 +9640,6 @@ var zoomMixer = {
         this.dragSelectionElement = selectionElement;
 
         return container;
-    },
-
-    /**
-     * Calculate layer position by client position.
-     * @param {number} clientX - clientX
-     * @param {number} [clientY] - clientY
-     * @param {boolean} [checkLimit] - whether check limit or not
-     * @returns {{x: number, y: ?number}}
-     * @private
-     */
-    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this._getContainerBound();
-        var layerPosition = {};
-        var expandSize = this.expandSize;
-        var maxLeft, minLeft;
-
-        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
-
-        if (checkLimit) {
-            maxLeft = bound.right - expandSize;
-            minLeft = bound.left + expandSize;
-            clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
-        }
-
-        layerPosition.x = clientX - bound.left;
-
-        if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top;
-        }
-
-        return layerPosition;
     },
 
     /**
@@ -9148,7 +9763,7 @@ var zoomMixer = {
         var clientPos = this.startClientPosition;
 
         if (tui.util.isNull(this.dragStartIndexes)) {
-            this.dragStartIndexes = this._findData(clientPos.x, clientPos.y).indexes;
+            this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
         } else {
             this._showDragSelection(e.clientX);
         }
@@ -9238,7 +9853,7 @@ var zoomMixer = {
                 CustomEventBase.prototype._onClick.call(this, e);
             }
         } else {
-            this.dragEndIndexes = this._findData(e.clientX, e.clientY).indexes;
+            this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
@@ -9278,21 +9893,12 @@ var zoomMixer = {
             this.customEventContainer.removeChild(this.resetZoomBtn);
             this.resetZoomBtn = null;
         }
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 
 module.exports = zoomMixer;
 
-},{"../const":31,"../helpers/domHandler":59,"../helpers/eventListener":60,"../helpers/renderUtil":63,"./customEventBase":36}],42:[function(require,module,exports){
+},{"../const":31,"../helpers/domHandler":59,"../helpers/eventListener":60,"../helpers/predicate":61,"../helpers/renderUtil":63,"./customEventBase":36}],42:[function(require,module,exports){
 /**
  * @fileoverview DataProcessor process rawData.
  * rawData.categories --> categories
@@ -9358,7 +9964,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = JSON.parse(JSON.stringify(rawData));
+        this.originalRawData = tui.util.deepCopy(rawData);
 
         /**
          * chart type
@@ -9405,7 +10011,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return JSON.parse(JSON.stringify(this.originalRawData));
+        return tui.util.deepCopy(this.originalRawData);
     },
 
     /**
@@ -9415,7 +10021,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
         if (zoomedRawData) {
-            zoomedRawData = JSON.parse(JSON.stringify(zoomedRawData));
+            zoomedRawData = tui.util.deepCopy(zoomedRawData);
         } else {
             zoomedRawData = this.getOriginalRawData();
         }
@@ -9548,6 +10154,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * @type {Array.<string>}
          */
         this.multilineCategories = null;
+
+        /**
+         * whether coordinate type data or not
+         * @type {null|boolean}
+         */
+        this.coordinateType = null;
     },
 
     /**
@@ -9580,6 +10192,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Map categories.
+     * @param {Array.<string | number>} categories - categories
+     * @returns {Array.<string | number>}
+     * @private
+     */
+    _mapCategories: function(categories) {
+        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+            categories = tui.util.map(categories, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        } else {
+            categories = this._escapeCategories(categories);
+        }
+
+        return categories;
+    },
+
+    /**
      * Process categories
      * @param {string} type - category type (x or y)
      * @returns {null | Array.<string>} processed categories
@@ -9590,10 +10222,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var categoriesMap = {};
 
         if (tui.util.isArray(rawCategories)) {
-            categoriesMap[type] = this._escapeCategories(rawCategories);
+            categoriesMap[type] = this._mapCategories(rawCategories);
         } else if (rawCategories) {
             if (rawCategories.x) {
-                categoriesMap.x = this._escapeCategories(rawCategories.x);
+                categoriesMap.x = this._mapCategories(rawCategories.x);
             }
 
             if (rawCategories.y) {
@@ -9661,6 +10293,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Find category index by value
+     * @param {string} value - category value
+     * @returns {null|number}
+     */
+    findCategoryIndex: function(value) {
+        var categories = this.getCategories();
+        var foundIndex = null;
+
+        tui.util.forEachArray(categories, function(category, index) {
+            if (category === value) {
+                foundIndex = index;
+            }
+
+            return tui.util.isNull(foundIndex);
+        });
+
+        return foundIndex;
+    },
+
+    /**
      * Get category for tooltip.
      * @param {number} firstIndex - index
      * @param {number} oppositeIndex - opposite index
@@ -9709,6 +10361,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether coordinate type or not.
+     * @returns {boolean}
+     */
+    isCoordinateType: function() {
+        var chartType = this.chartType;
+        var coordinateType = this.coordinateType;
+
+        if (!tui.util.isExisty(coordinateType)) {
+            coordinateType = predicate.isCoordinateTypeChart(chartType);
+            coordinateType = coordinateType ||
+                (predicate.isLineTypeChart(chartType) && !this.hasCategories());
+            this.coordinateType = coordinateType;
+        }
+
+        return coordinateType;
+    },
+
+    /**
      * Get SeriesDataModel.
      * @param {string} seriesName - series name
      * @returns {SeriesDataModel}
@@ -9727,7 +10397,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             }
 
             this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
-                this.options, this.getFormatFunctions());
+                this.options, this.getFormatFunctions(), this.isCoordinateType());
         }
 
         return this.seriesDataModelMap[seriesName];
@@ -9748,8 +10418,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pushCategory: function(category) {
-        this.rawData.categories.push(category);
-        this.originalRawData.categories.push(category);
+        if (this.rawData.categories) {
+            this.rawData.categories.push(category);
+            this.originalRawData.categories.push(category);
+        }
     },
 
     /**
@@ -9757,8 +10429,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _shiftCategory: function() {
-        this.rawData.categories.shift();
-        this.originalRawData.categories.shift();
+        if (this.rawData.categories) {
+            this.rawData.categories.shift();
+            this.originalRawData.categories.shift();
+        }
     },
 
     /**
@@ -9786,6 +10460,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Push value to data property of series.
+     * @param {{name: string, data: Array}} seriesDatum - series datum
+     * @param {Array.<number>|{x: number, y: number, r: number}|number} value - value
+     * @param {string} seriesName - sereis name
+     * @private
+     */
+    _pushValue: function(seriesDatum, value, seriesName) {
+        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+        seriesDatum.data.push(value);
+
+        if (rawSeriesDatum) {
+            rawSeriesDatum.data.push(value);
+        }
+    },
+
+    /**
      * Push values to series of originalRawData and series of rawData.
      * @param {Array.<{name: string, data: Array}>} seriesData - series data
      * @param {Array} values - values
@@ -9796,13 +10487,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var self = this;
 
         tui.util.forEachArray(seriesData, function(seriesDatum, index) {
-            var value = values[index];
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
-
-            seriesDatum.data.push(value);
-            if (rawSeriesDatum) {
-                rawSeriesDatum.data.push(value);
-            }
+            self._pushValue(seriesDatum, values[index], seriesName);
         });
     },
 
@@ -9871,22 +10556,45 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Add data from dynapmic data.
+     * Push dynamic data.
+     * @param {{category: string, values: Array.<number>}} data - adding data
+     * @private
+     */
+    _pushDynamicData: function(data) {
+        this._pushCategory(data.category);
+        this._pushSeriesData(data.values);
+    },
+
+    /**
+     * Push dynamic data for coordinate type.
+     * @param {object.<string, Array.<number>|object.<string, number>>} data - adding data
+     * @private
+     */
+    _pushDynamicDataForCoordinateType: function(data) {
+        var self = this;
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            self._pushValue(seriesDatum, data[seriesDatum.name]);
+        });
+    },
+
+    /**
+     * Add data from dynamic data.
      * @returns {boolean}
      */
     addDataFromDynamicData: function() {
         var datum = this.dynamicData.shift();
 
-        if (!datum) {
-            return false;
+        if (datum) {
+            if (this.isCoordinateType()) {
+                this._pushDynamicDataForCoordinateType(datum.values);
+            } else {
+                this._pushDynamicData(datum);
+            }
+
+            this.initData(this.rawData);
         }
 
-        this._pushCategory(datum.category);
-        this._pushSeriesData(datum.values);
-
-        this.initData(this.rawData);
-
-        return true;
+        return !!datum;
     },
 
     /**
@@ -10395,6 +11103,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {boolean} [hasRadius] - whether has radius or not
      */
     addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+        if (predicate.isLineTypeChart(chartType)) {
+            this._addStartValueToAllSeriesItem(limitMap.y, chartType);
+        }
         this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
     },
 
@@ -10613,12 +11324,13 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      *      and create from rawSeriesData by user.
      * SeriesDataModel.groups has SeriesGroups.
      * @constructs SeriesDataModel
-     * @param {rawSeriesData} rawSeriesData raw series data
-     * @param {string} chartType chart type
-     * @param {object} options options
-     * @param {Array.<function>} formatFunctions format functions
+     * @param {rawSeriesData} rawSeriesData - raw series data
+     * @param {string} chartType - chart type
+     * @param {object} options - options
+     * @param {Array.<function>} formatFunctions - format functions
+     * @param {boolean} isCoordinateType - whether coordinate type or not
      */
-    init: function(rawSeriesData, chartType, options, formatFunctions) {
+    init: function(rawSeriesData, chartType, options, formatFunctions, isCoordinateType) {
         /**
          * chart type
          * @type {string}
@@ -10642,6 +11354,12 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
          * @type {rawSeriesData}
          */
         this.rawSeriesData = rawSeriesData || [];
+
+        /**
+         * whether coordinate type or not
+         * @type {boolean}
+         */
+        this.isCoordinateType = isCoordinateType;
 
         /**
          * baseGroups is base data for making SeriesGroups.
@@ -10671,9 +11389,10 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      */
     _removeRangeValue: function() {
         var seriesOption = tui.util.pick(this.options, 'series') || {};
+        var allowRange = predicate.isAllowRangeData(this.chartType) &&
+                !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 
-        if (predicate.isAllowRangeData(this.chartType) &&
-            !predicate.isValidStackOption(seriesOption.stackType) && !seriesOption.spline) {
+        if (allowRange || this.isCoordinateType) {
             return;
         }
 
@@ -10682,7 +11401,9 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 return;
             }
             tui.util.forEachArray(rawItem.data, function(value, index) {
-                rawItem.data[index] = concat.apply(value)[0];
+                if (tui.util.isExisty(value)) {
+                    rawItem.data[index] = concat.apply(value)[0];
+                }
             });
         });
     },
@@ -10694,27 +11415,43 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
      * @private
      */
     _createBaseGroups: function() {
-        var self = this;
-        var SeriesItemClass;
+        var chartType = this.chartType;
+        var formatFunctions = this.formatFunctions;
+        var xAxisOption = this.options.xAxis;
+        var sortValues, SeriesItemClass;
 
-        if (predicate.isCoordinateTypeChart(this.chartType)) {
+        if (this.isCoordinateType) {
             SeriesItemClass = SeriesItemForCoordinateType;
+            sortValues = function(items) {
+                items.sort(function(a, b) {
+                    return a.x - b.x;
+                });
+            };
         } else {
             SeriesItemClass = SeriesItem;
+            sortValues = function() {};
         }
 
         return tui.util.map(this.rawSeriesData, function(rawDatum) {
-            var values;
+            var stack = rawDatum.stack;
+            var data = tui.util.isArray(rawDatum) ? rawDatum : concat.apply(rawDatum.data);
+            var items;
 
-            if (tui.util.isArray(rawDatum)) {
-                values = rawDatum;
-            } else {
-                values = concat.apply(rawDatum.data);
-            }
-
-            return tui.util.map(values, function(value) {
-                return new SeriesItemClass(value, rawDatum.stack, self.formatFunctions, self.chartType);
+            data = tui.util.filter(data, tui.util.isExisty);
+            items = tui.util.map(data, function(datum, index) {
+                return new SeriesItemClass({
+                    datum: datum,
+                    chartType: chartType,
+                    formatFunctions: formatFunctions,
+                    index: index,
+                    stack: stack,
+                    xAxisType: xAxisOption.type,
+                    dateFormat: xAxisOption.dateFormat
+                });
             });
+            sortValues(items);
+
+            return items;
         });
     },
 
@@ -11102,9 +11839,14 @@ var SeriesDataModel = tui.util.defineClass(/** @lends SeriesDataModel.prototype 
                 if (!item) {
                     return;
                 }
+
                 item.addRatio('x', xDistance, xSubValue);
                 item.addRatio('y', yDistance, ySubValue);
                 item.addRatio('r', maxRadius, 0);
+
+                if (tui.util.isExisty(item.start)) {
+                    item.addRatio('start', yDistance, ySubValue);
+                }
             });
         });
     },
@@ -11606,6 +12348,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addStart(start);
         });
     },
@@ -11644,6 +12389,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addRatios: function(divNumber, subValue) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addRatio(divNumber, subValue);
         });
     },
@@ -11656,7 +12404,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var hasRangeData = false;
 
         this.each(function(seriesItem) {
-            hasRangeData = seriesItem.isRange;
+            hasRangeData = seriesItem && seriesItem.isRange;
 
             return !hasRangeData;
         });
@@ -11740,29 +12488,31 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
-     * @param {number} value - value
-     * @param {?string} stack - stack
-     * @param {?Array.<function>} formatFunctions - format functions
-     * @param {string} chartType - type of chart
+     * @param {object} params - parameters
+     *      @param {number} params.datum - value
+     *      @param {string} params.chartType - type of chart
+     *      @param {?Array.<function>} params.formatFunctions - format functions
+     *      @param {number} params.index - raw data index
+     *      @param {?string} params.stack - stack
      */
-    init: function(value, stack, formatFunctions, chartType) {
+    init: function(params) {
         /**
          * type of chart
          * @type {string}
          */
-        this.chartType = chartType;
+        this.chartType = params.chartType;
 
         /**
          * for group stack option.
          * @type {string}
          */
-        this.stack = stack || chartConst.DEFAULT_STACK;
+        this.stack = params.stack || chartConst.DEFAULT_STACK;
 
         /**
          * format functions
          * @type {Array.<function>}
          */
-        this.formatFunctions = formatFunctions;
+        this.formatFunctions = params.formatFunctions;
 
         /**
          * whether range item or not
@@ -11830,20 +12580,22 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
-        this._initValues(value);
+        this._initValues(params.datum, params.index);
     },
 
     /**
      * Initialize values of item.
      * @param {number} value - value
+     * @param {number} index - raw data index
      * @private
      */
-    _initValues: function(value) {
+    _initValues: function(value, index) {
         var values = this._createValues(value);
         var areaType = 'makingSeriesLabel';
         var hasStart = values.length > 1;
 
         this.value = this.end = values[0];
+        this.index = index;
         this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
         this.endLabel = this.label;
 
@@ -11940,29 +12692,94 @@ module.exports = SeriesItem;
 
 'use strict';
 
+var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
+
 var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForCoordinateType.prototype */{
     /**
      * SeriesItemForCoordinateType is a element of SeriesGroup.items.
      * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
      * @constructs SeriesItemForCoordinateType
-     * @param {object} rawSeriesDatum - value
+     * @param {object} params - parameters
+     *      @param {Array.<number>|{x: number, y:number, r: ?number, label: ?string}} params.datum - raw series datum
+     *      @param {string} params.chartType - type of chart
+     *      @param {?Array.<function>} params.formatFunctions - format functions
+     *      @param {number} params.index - raw data index
      */
-    init: function(rawSeriesDatum) {
-        this._initData(rawSeriesDatum);
+    init: function(params) {
+        /**
+         * type of chart
+         * @type {string}
+         */
+        this.chartType = params.chartType;
+
+        /**
+         * format functions
+         * @type {Array.<function>}
+         */
+        this.formatFunctions = params.formatFunctions;
+
+        /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
+
+        /**
+         * date format
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
+         * ratio map
+         * @type {object}
+         */
+        this.ratioMap = {};
+
+        this._initData(params.datum, params.index);
     },
 
     /**
      * Initialize data of item.
-     * @param {{x: ?number, y: ?number, r: ?number, label: ?string}} rawSeriesDatum - rawSeriesDatum for bubble chart
+     @param {Array.<number>|{x: number, y:number, r: ?number, label: ?string}} rawSeriesDatum - raw series datum
+     * @param {number} index - raw data index
      * @private
      */
-    _initData: function(rawSeriesDatum) {
-        this.x = rawSeriesDatum.x;
-        this.y = rawSeriesDatum.y;
-        this.r = rawSeriesDatum.r;
-        this.label = rawSeriesDatum.label || '';
+    _initData: function(rawSeriesDatum, index) {
+        var date;
 
-        this.ratioMap = {};
+        if (tui.util.isArray(rawSeriesDatum)) {
+            this.x = rawSeriesDatum[0] || 0;
+            this.y = rawSeriesDatum[1] || 0;
+            this.r = rawSeriesDatum[2];
+        } else {
+            this.x = rawSeriesDatum.x;
+            this.y = rawSeriesDatum.y;
+            this.r = rawSeriesDatum.r;
+        }
+
+        if (predicate.isDatetimeType(this.xAxisType)) {
+            date = tui.util.isDate(this.x) ? this.x : (new Date(this.x));
+            this.x = date.getTime() || 0;
+        }
+
+        this.index = index;
+
+        if (predicate.isLineTypeChart(this.chartType)) {
+            this.label = renderUtil.formatValue(this.y, this.formatFunctions, this.chartType, 'series');
+        } else {
+            this.label = rawSeriesDatum.label || '';
+        }
+    },
+
+    /**
+     * Add start.
+     * @param {number} value - value
+     * @private
+     */
+    addStart: function(value) {
+        this.start = value;
     },
 
     /**
@@ -11982,17 +12799,29 @@ var SeriesItemForCoordinateType = tui.util.defineClass(/** @lends SeriesItemForC
      * @returns {{x: (number | null), y: (number | null), r: (number | null)}}
      */
     pickValueMap: function() {
-        return {
+        var formatFunctions = this.formatFunctions;
+        var chartType = this.chartType;
+        var valueMap = {
             x: this.ratioMap.x ? this.x : null,
             y: this.ratioMap.y ? this.y : null,
             r: this.ratioMap.r ? this.r : null
         };
+
+        if (predicate.isLineTypeChart(this.chartType)) {
+            if (predicate.isDatetimeType(this.xAxisType)) {
+                valueMap.category = renderUtil.formatDate(this.x, this.dateFormat);
+            } else {
+                valueMap.category = renderUtil.formatValue(this.x, formatFunctions, chartType, 'category');
+            }
+        }
+
+        return valueMap;
     }
 });
 
 module.exports = SeriesItemForCoordinateType;
 
-},{}],49:[function(require,module,exports){
+},{"../helpers/predicate":61,"../helpers/renderUtil":63}],49:[function(require,module,exports){
 /**
  * @fileoverview SeriesItem for treemap.
  * @author NHN Ent.
@@ -12538,6 +13367,7 @@ module.exports = {
 
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 /**
  * Axis data maker.
@@ -12566,9 +13396,9 @@ var axisDataMaker = {
     },
 
     /**
-     * Make data about label axis.
+     * Make axis data for label type.
      * @memberOf module:axisDataMaker
-     * @param {object} params parameters
+     * @param {object} params - parameters
      *      @param {Array.<string>} params.labels - chart labels
      *      @param {boolean} params.isVertical - whether vertical or not
      *      @param {boolean} params.aligned - whether align or not
@@ -12591,6 +13421,10 @@ var axisDataMaker = {
             labels = this._makeLabelsByIntervalOption(params.labels, options.labelInterval, params.addedDataCount);
         }
 
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
         if (!params.aligned) {
             tickCount += 1;
         }
@@ -12608,7 +13442,60 @@ var axisDataMaker = {
     },
 
     /**
-     * Make data about value axis.
+     * Make additional data for coordinate line type chart.
+     * @param {Array.<string>} labels - labels
+     * @param {Array.<number>} values - values
+     * @param {{min: number, max: number}} limit - limit
+     * @param {number} step - step
+     * @param {number} tickCount = tickCount
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      limit: {min: number, max: number},
+     *      positionRatio: number,
+     *      sizeRatio: number
+     * }}
+     * @private
+     */
+    _makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
+        var sizeRatio = 1;
+        var positionRatio = 0;
+        var min = tui.util.min(values);
+        var max = tui.util.max(values);
+        var distance;
+
+        distance = max - min;
+
+        if (limit.min < min) {
+            limit.min += step;
+            positionRatio = (limit.min - min) / distance;
+            sizeRatio -= positionRatio;
+            tickCount -= 1;
+            labels.shift();
+        }
+
+        if (limit.max > max) {
+            limit.max -= step;
+            sizeRatio -= (max - limit.max) / distance;
+            tickCount -= 1;
+            labels.pop();
+        }
+
+        return {
+            labels: labels,
+            tickCount: tickCount,
+            validTickCount: tickCount,
+            limit: limit,
+            dataMin: min,
+            distance: distance,
+            positionRatio: positionRatio,
+            sizeRatio: sizeRatio
+        };
+    },
+
+    /**
+     * Make data for value type axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {AxisScaleMaker} params.axisScaleMaker chart values
@@ -12623,21 +13510,38 @@ var axisDataMaker = {
      * }} axis data
      */
     makeValueAxisData: function(params) {
-        var axisScaleMaker = params.axisScaleMaker,
-            rangeValues = axisScaleMaker.getFormattedScaleValues(),
-            tickCount = rangeValues.length;
-
-        return {
-            labels: rangeValues,
+        var axisScaleMaker = params.axisScaleMaker;
+        var labels = axisScaleMaker.getFormattedScaleValues();
+        var tickCount = labels.length;
+        var limit = axisScaleMaker.getLimit();
+        var step = axisScaleMaker.getStep();
+        var dataProcessor = params.dataProcessor;
+        var chartType = params.chartType;
+        var axisData = {
+            labels: labels,
             tickCount: tickCount,
             validTickCount: tickCount,
-            limit: axisScaleMaker.getLimit(),
-            step: axisScaleMaker.getStep(),
+            limit: limit,
+            dataMin: limit.min,
+            distance: limit.max - limit.min,
+            step: step,
             options: params.options,
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
+        var isVertical = params.isVertical;
+        var hasCategories = dataProcessor.hasCategories();
+        var isCoordinateLineType = !isVertical && !hasCategories && predicate.isLineTypeChart(chartType);
+        var values, additionalData;
+
+        if (isCoordinateLineType) {
+            values = dataProcessor.getValues(chartType, 'x');
+            additionalData = this._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            tui.util.extend(axisData, additionalData);
+        }
+
+        return axisData;
     },
 
     /**
@@ -12768,7 +13672,7 @@ var axisDataMaker = {
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            lineWidth: seriesWidth + chartConst.OVERLAPPING_WIDTH,
+            lineWidth: seriesWidth,
             interval: interval
         });
     },
@@ -12810,7 +13714,7 @@ var axisDataMaker = {
 
 module.exports = axisDataMaker;
 
-},{"../const":31,"../helpers/predicate":61}],55:[function(require,module,exports){
+},{"../const":31,"../helpers/predicate":61,"../helpers/renderUtil":63}],55:[function(require,module,exports){
 /**
  * @fileoverview AxisScaleMaker calculates the limit and step into values of processed data and returns it.
  * @auth NHN Ent.
@@ -12846,10 +13750,34 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.boundsMaker = params.boundsMaker;
 
         /**
-         * Options
-         * @type {object}
+         * stackType option
+         * @type {?string}
          */
-        this.options = params.options || {};
+        this.stackType = params.stackType;
+
+        /**
+         * diverging option
+         * @type {?boolean}
+         */
+        this.diverging = params.diverging;
+
+        /**
+         * limit option
+         * @type {?{min: number, max: number}}
+         */
+        this.limitOption = params.limitOption;
+
+        /**
+         * axis type
+         * @type {?string}
+         */
+        this.type = params.type;
+
+        /**
+         * date format
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
 
         /**
          * Chart type
@@ -12935,7 +13863,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isPercentStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isPercentStack = predicate.isPercentStack(this.options.stackType);
+            isPercentStack = predicate.isPercentStack(this.stackType);
 
         return isAllowedStackOption && isPercentStack;
     },
@@ -12947,7 +13875,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isNormalStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isNormalStack = predicate.isNormalStack(this.options.stackType);
+            isNormalStack = predicate.isNormalStack(this.stackType);
 
         return isAllowedStackOption && isNormalStack;
     },
@@ -12958,7 +13886,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _isDivergingChart: function() {
-        return this.options.diverging && predicate.isBarTypeChart(this.chartType);
+        return this.diverging && predicate.isBarTypeChart(this.chartType);
     },
 
     /**
@@ -13004,8 +13932,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         if (!this.formattedValues) {
             values = this._getScaleValues();
-            formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+
+            if (predicate.isDatetimeType(this.type)) {
+                this.formattedValues = renderUtil.formatDates(values, this.dateFormat);
+            } else {
+                formatFunctions = this._getFormatFunctions();
+                this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+            }
         }
 
         return this.formattedValues;
@@ -13017,15 +13950,15 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            baseValues = [];
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var baseValues = [];
 
         seriesDataModel.each(function(seriesGroup) {
             var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
-                var plusSum = calculator.sumPlusValues(values),
-                    minusSum = calculator.sumMinusValues(values);
+                var plusSum = calculator.sumPlusValues(values);
+                var minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
         });
@@ -13041,9 +13974,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _makeBaseValues: function() {
         var baseValues;
 
-        if (predicate.isTreemapChart(this.chartType)) {
+        if (this.isSingleYAxis) {
+            baseValues = this.dataProcessor.getValues();
+            if (this._isNormalStackChart()) {
+                baseValues = baseValues.concat(this._makeBaseValuesForNormalStackedChart());
+            }
+        } else if (predicate.isTreemapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
-        } else if (predicate.isMapChart(this.chartType) || this.isSingleYAxis) {
+        } else if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
@@ -13116,7 +14054,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeIntegerTypeScale: function(limit) {
-        var options = this.options.limit || {},
+        var options = this.limitOption || {},
             min = limit.min,
             max = limit.max,
             multipleNum, changedOptions;
@@ -13125,7 +14063,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             return {
                 limit: limit,
                 options: options,
-                divideNum: 1
+                divisionNumber: 1
             };
         }
 
@@ -13146,7 +14084,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                 max: max * multipleNum
             },
             options: changedOptions,
-            divideNum: multipleNum
+            divisionNumber: multipleNum
         };
     },
 
@@ -13281,12 +14219,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _decreaseMinByStep: function(min, dataMin, step, optionMin) {
-        var isLineChart = predicate.isLineChart(this.chartType),
-            isMinusDataMin = dataMin < 0,
-            isUndefinedMinOption = tui.util.isUndefined(optionMin),
-            isSame = (min === dataMin);
+        var isLineChart = predicate.isLineChart(this.chartType);
+        var isAreaChartX = predicate.isAreaChart(this.chartType) && !this.isVertical;
+        var isMinusDataMin = dataMin < 0;
+        var isUndefinedMinOption = tui.util.isUndefined(optionMin);
+        var isSame = (min === dataMin);
 
-        if ((isLineChart || isMinusDataMin) && isUndefinedMinOption && isSame) {
+        if ((isLineChart || isAreaChartX || isMinusDataMin) && isUndefinedMinOption && isSame) {
             min -= step;
         }
 
@@ -13457,17 +14396,17 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @param {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
-     *      divideNum: number
+     *      divisionNumber: number
      * }} integerTypeScale - integer type axis scale
      * @param {Array.<number>} valueCounts - candidate counts of value
      * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
      * @private
      */
     _makeCandidateScales: function(integerTypeScale, valueCounts) {
-        var self = this,
-            dataLimit = integerTypeScale.limit,
-            options = integerTypeScale.options,
-            baseLimit = this._makeBaseLimit(dataLimit, options);
+        var self = this;
+        var dataLimit = integerTypeScale.limit;
+        var options = integerTypeScale.options;
+        var baseLimit = this._makeBaseLimit(dataLimit, options);
 
         return tui.util.map(valueCounts, function(valueCount) {
             return self._makeCandidateScale(baseLimit, dataLimit, valueCount, options);
@@ -13513,18 +14452,111 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * Restore number state of scale.
      * @memberOf module:axisDataMaker
      * @param {{limit: {min: number, max: number}, step: number}} scale scale
-     * @param {number} divideNum divide num
+     * @param {number} divisionNumber divide num
      * @returns {{limit: {min: number, max: number}, step: number}} restored scale
      * @private
      */
-    _restoreNumberState: function(scale, divideNum) {
-        if (divideNum === 1) {
+    _restoreNumberState: function(scale, divisionNumber) {
+        if (divisionNumber === 1) {
             return scale;
         }
 
-        scale.step = tui.util.division(scale.step, divideNum);
-        scale.limit.min = tui.util.division(scale.limit.min, divideNum);
-        scale.limit.max = tui.util.division(scale.limit.max, divideNum);
+        scale.step = tui.util.division(scale.step, divisionNumber);
+        scale.limit.min = tui.util.division(scale.limit.min, divisionNumber);
+        scale.limit.max = tui.util.division(scale.limit.max, divisionNumber);
+
+        return scale;
+    },
+
+    /**
+     * millisecond map
+     */
+    millisecondMap: {
+        year: 31536000000,
+        month: 2678400000,
+        date: 86400000,
+        hour: 3600000,
+        minute: 60000,
+        second: 1000
+    },
+
+    /**
+     * millisecond types
+     */
+    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+
+    /**
+     * Find date type.
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {string}
+     * @private
+     */
+    _findDateType: function(dataLimit, count) {
+        var diff = dataLimit.max - dataLimit.min;
+        var millisecondTypes = this.millisecondTypes;
+        var millisecondMap = this.millisecondMap;
+        var lastTypeIndex = millisecondTypes.length - 1;
+        var foundType;
+
+        if (diff) {
+            tui.util.forEachArray(millisecondTypes, function(type, index) {
+                var millisecond = millisecondMap[type];
+                var dividedCount = Math.floor(diff / millisecond);
+                var foundIndex;
+
+                if (dividedCount) {
+                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+                    foundType = millisecondTypes[foundIndex];
+                }
+
+                return !tui.util.isExisty(foundIndex);
+            });
+        } else {
+            foundType = chartConst.DATE_TYPE_SECOND;
+        }
+
+        return foundType;
+    },
+
+    /**
+     * Make datetime information
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {{divisionNumber: number, minDate: number, dataLimit: {min: number, max: number}}}
+     * @private
+     */
+    _makeDatetimeInfo: function(dataLimit, count) {
+        var dateType = this._findDateType(dataLimit, count);
+        var divisionNumber = this.millisecondMap[dateType];
+        var minDate = tui.util.division(dataLimit.min, divisionNumber);
+        var maxDate = tui.util.division(dataLimit.max, divisionNumber);
+        var max = maxDate - minDate;
+
+        return {
+            divisionNumber: divisionNumber,
+            minDate: minDate,
+            dataLimit: {
+                min: 0,
+                max: max
+            }
+        };
+    },
+
+    /**
+     * Restore scale to datetime type.
+     * @param {{scale: number, limit:{min: number, max: number}}} scale - scale
+     * @param {number} minDate - minimum date
+     * @param {number} divisionNumber - division number
+     * @returns {{step: number, limit: {min: number, max: number}}}
+     * @private
+     */
+    _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
+        var limit = scale.limit;
+
+        scale.step = tui.util.multiplication(scale.step, divisionNumber);
+        limit.min = tui.util.multiplication(tui.util.addition(limit.min, minDate), divisionNumber);
+        limit.max = tui.util.multiplication(tui.util.addition(limit.max, minDate), divisionNumber);
 
         return scale;
     },
@@ -13540,7 +14572,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             min: tui.util.min(baseValues),
             max: tui.util.max(baseValues)
         };
-        var integerTypeScale, valueCounts, candidates, scale;
+        var datetimeInfo, integerTypeScale, valueCounts, candidates, scale;
+
+        if (predicate.isDatetimeType(this.type)) {
+            datetimeInfo = this._makeDatetimeInfo(dataLimit, baseValues.length);
+            dataLimit = datetimeInfo.dataLimit;
+        }
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -13563,7 +14600,11 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
-        scale = this._restoreNumberState(scale, integerTypeScale.divideNum);
+        scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
+
+        if (predicate.isDatetimeType(this.type)) {
+            scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
+        }
 
         return scale;
     },
@@ -13721,7 +14762,27 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
          */
         this.dataProcessor = params.dataProcessor;
 
+        /**
+         * adding data mode
+         * @type {boolean}
+         */
+        this.addingDataMode = false;
+
         this.initBoundsData();
+    },
+
+    /**
+     * On adding data mode.
+     */
+    onAddingDataMode: function() {
+        this.addingDataMode = true;
+    },
+
+    /**
+     * Off adding data mode.
+     */
+    offAddingDataMode: function() {
+        this.addingDataMode = false;
     },
 
     /**
@@ -13802,7 +14863,7 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {{xAxis: object, yAxis: object, rightYAxis: object}}
      */
     getAxesData: function() {
-        return this.axesData;
+        return tui.util.extend(this.axesData);
     },
 
     /**
@@ -13927,13 +14988,6 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
     _calculateXAxisLabelLimitWidth: function(labelCount) {
         var seriesWidth = this.getDimension('series').width;
         var isAlign = predicate.isLineTypeChart(this.chartType);
-        var xAxisOptions = this.options.xAxis || {};
-
-        labelCount = labelCount || this.axesData.xAxis.labels.length;
-
-        if (predicate.isValidLabelInterval(xAxisOptions.labelInterval, xAxisOptions.tickInterval)) {
-            seriesWidth *= xAxisOptions.labelInterval;
-        }
 
         return seriesWidth / (isAlign ? labelCount - 1 : labelCount);
     },
@@ -13974,11 +15028,10 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      * @returns {?object} rotation info
      * @private
      */
-    _makeHorizontalLabelRotationInfo: function(limitWidth) {
-        var labels = this.axesData.xAxis.labels,
-            theme = this.theme.xAxis.label,
-            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme),
-            degree, labelHeight;
+    _makeHorizontalLabelRotationInfo: function(limitWidth, labels) {
+        var theme = this.theme.xAxis.label;
+        var maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme);
+        var degree, labelHeight;
 
         if (maxLabelWidth <= limitWidth) {
             return null;
@@ -14113,21 +15166,28 @@ var BoundsMaker = tui.util.defineClass(/** @lends BoundsMaker.prototype */{
      */
     _updateDimensionsAndDegree: function() {
         var xAxisOptions = this.options.xAxis || {};
-        var limitWidth = this._calculateXAxisLabelLimitWidth();
-        var labels = tui.util.filter(this.axesData.xAxis.labels, function(label) {
+        var labels = this.axesData.xAxis.labels;
+        var labelCount, limitWidth, rotationInfo, overflowLeft, diffHeight;
+
+        if (this.addingDataMode) {
+            labels = labels.slice(0, labels.length - 1);
+        }
+
+        labels = tui.util.filter(labels, function(label) {
             return !!label;
         });
-        var rotationInfo, overflowLeft, diffHeight;
+        labelCount = labels.length;
+        limitWidth = this._calculateXAxisLabelLimitWidth(labelCount);
 
         if (xAxisOptions.rotateLabel !== false) {
-            rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth);
+            rotationInfo = this._makeHorizontalLabelRotationInfo(limitWidth, labels);
         }
 
         if (rotationInfo) {
             overflowLeft = this._calculateOverflowLeft(rotationInfo, labels[0]);
             this.xAxisDegree = rotationInfo.degree;
             this._updateDimensionsWidth(overflowLeft);
-            this._updateDegree(rotationInfo, labels.length, overflowLeft);
+            this._updateDegree(rotationInfo, labelCount, overflowLeft);
             diffHeight = this._calculateDiffWithRotatedHeight(rotationInfo);
         } else {
             diffHeight = this._calculateDiffWithMultilineHeight(labels, limitWidth);
@@ -14505,7 +15565,7 @@ var calculator = {
         limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
-            limit.min = 0 + saveMin;
+            limit.min = saveMin;
         } else {
             limit.min = min - iodValue + saveMin;
         }
@@ -14567,18 +15627,17 @@ var calculator = {
      * @returns {Array.<number>} positions
      */
     makeTickPixelPositions: function(size, count, additionalPosition) {
-        var positions = [],
-            pxLimit, pxStep;
+        var positions = [];
 
         additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
-            pxLimit = {min: 0, max: size - 1};
-            pxStep = this.calculateStepFromLimit(pxLimit, count);
-            positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
-                return Math.round(position + additionalPosition);
+            positions = tui.util.map(tui.util.range(0, count), function(index) {
+                var ratio = index === 0 ? 0 : (index / (count - 1));
+
+                return ratio * size + additionalPosition;
             });
-            positions[positions.length - 1] = Math.round(size - 1 + additionalPosition);
+            positions[positions.length - 1] -= 1;
         }
 
         return positions;
@@ -14611,7 +15670,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return (limit.max - limit.min) / (count - 1);
+        return tui.util.division(tui.util.subtraction(limit.max, limit.min), (count - 1));
     },
 
     /**
@@ -15689,6 +16748,15 @@ var predicate = {
      */
     isValidLabelInterval: function(labelInterval, tickInterval) {
         return labelInterval && labelInterval > 1 && !tickInterval;
+    },
+
+    /**
+     * Whether datetime type or not.
+     * @param {string} type - type
+     * @returns {boolean}
+     */
+    isDatetimeType: function(type) {
+        return type === chartConst.AXIS_TYPE_DATETIME;
     }
 };
 
@@ -15866,6 +16934,10 @@ var renderUtil = {
             cssTexts.push(this.concatStr('color:', theme.color));
         }
 
+        if (theme.fontWeight) {
+            cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
+        }
+
         return cssTexts.join(';');
     },
 
@@ -15925,6 +16997,10 @@ var renderUtil = {
 
         if (theme.fontFamily) {
             div.style.fontFamily = theme.fontFamily;
+        }
+
+        if (theme.fontWeight) {
+            div.style.fontWeight = theme.fontWeight;
         }
 
         if (theme.cssText) {
@@ -16075,17 +17151,13 @@ var renderUtil = {
             return;
         }
 
-        if (!tui.util.isUndefined(position.top)) {
-            el.style.top = position.top + 'px';
-        }
+        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
+            var value = position[key];
 
-        if (!tui.util.isUndefined(position.left)) {
-            el.style.left = position.left + 'px';
-        }
-
-        if (!tui.util.isUndefined(position.right)) {
-            el.style.right = position.right + 'px';
-        }
+            if (value) {
+                el.style[key] = position[key] + 'px';
+            }
+        });
     },
 
     /**
@@ -16222,6 +17294,35 @@ var renderUtil = {
         });
 
         return formatedValues;
+    },
+
+    /**
+     * Format date.
+     * @param {string | number | date} value - value
+     * @param {string} format - date format
+     * @returns {string}
+     */
+    formatDate: function(value, format) {
+        var date = tui.util.isDate(value) ? value : (new Date(value));
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.formatDate(format, date) || value;
+    },
+
+    /**
+     * Format dates.
+     * @param {Array.<string | number | date>} values - values
+     * @param {string} format - date format
+     * @returns {Array}
+     */
+    formatDates: function(values, format) {
+        var formatDate = this.formatDate;
+
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.map(values, function(value) {
+            return formatDate(value, format);
+        });
     },
 
     /**
@@ -16412,7 +17513,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';filter:' + makeCssFilterOpacityString(opacity);
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
+        }
+
+        return cssText;
     };
 
     /**
@@ -16433,7 +17540,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';opacity:' + opacity;
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';opacity:' + opacity;
+        }
+
+        return cssText;
     };
 
     /**
@@ -18008,10 +19121,12 @@ module.exports = SpectrumLegend;
 
 'use strict';
 
-var dom = require('../helpers/domHandler'),
-    calculator = require('../helpers/calculator'),
-    renderUtil = require('../helpers/renderUtil'),
-    plotTemplate = require('./plotTemplate');
+var chartConst = require('../const');
+var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
+var calculator = require('../helpers/calculator');
+var renderUtil = require('../helpers/renderUtil');
+var plotTemplate = require('./plotTemplate');
 
 var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     /**
@@ -18036,11 +19151,25 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.boundsMaker = params.boundsMaker;
 
         /**
+         * Data processor
+         * @type {DataProcessor}
+         */
+        this.dataProcessor = params.dataProcessor;
+
+        /**
          * Options
          * @type {object}
          */
         this.options = params.options || {};
         this.options.showLine = tui.util.isUndefined(this.options.showLine) ? true : this.options.showLine;
+        this.options.lines = this.options.lines || [];
+        this.options.bands = this.options.bands || [];
+
+        /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
 
         /**
          * Theme
@@ -18049,38 +19178,51 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
         this.theme = params.theme || {};
 
         /**
-         * Plot data.
-         * @type {object}
+         * chart type
+         * @type {string}
          */
-        this.data = {};
+        this.chartType = params.chartType;
+
+        /**
+         * sub charts type
+         * @type {Array.<string>}
+         */
+        this.chartTypes = params.chartTypes;
+
+        /**
+         * whether vertical or not
+         */
+        this.isVertical = params.isVertical;
     },
 
     /**
      * Render plot area.
      * @param {HTMLElement} plotContainer plot area element
-     * @param {object} data rendering data
      * @private
      */
-    _renderPlotArea: function(plotContainer, data) {
+    _renderPlotArea: function(plotContainer) {
         var dimension = this.boundsMaker.getDimension('plot');
-        this.data = data;
 
         renderUtil.renderDimension(plotContainer, dimension);
         renderUtil.renderPosition(plotContainer, this.boundsMaker.getPosition('plot'));
 
+        if (predicate.isLineTypeChart(this.chartType, this.chartTypes)) {
+            this._renderOptionalLines(plotContainer, dimension);
+        }
+
         if (this.options.showLine) {
-            this._renderLines(plotContainer, dimension);
+            this._renderPlotLines(plotContainer, dimension);
         }
     },
 
     /**
      * Render plot component.
-     * @param {object} data rendering data
      * @returns {HTMLElement} plot element
      */
-    render: function(data) {
+    render: function() {
         var container = dom.create('DIV', this.className);
-        this._renderPlotArea(container, data);
+
+        this._renderPlotArea(container);
         this.plotContainer = container;
 
         return container;
@@ -18090,9 +19232,9 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
      * Rerender.
      * @param {object} data rendering
      */
-    rerender: function(data) {
+    rerender: function() {
         this.plotContainer.innerHTML = '';
-        this._renderPlotArea(this.plotContainer, data);
+        this._renderPlotArea(this.plotContainer);
     },
 
     /**
@@ -18104,79 +19246,296 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Render plot lines.
-     * @param {HTMLElement} el element
-     * @param {{width: number, height: number}} dimension plot area dimension
+     * Make template params for vertical line.
+     * @param {object} additionalParams - additional params
+     * @returns {object}
      * @private
      */
-    _renderLines: function(el, dimension) {
-        var hPositions = this._makeHorizontalPixelPositions(dimension.width),
-            vPositions = this._makeVerticalPixelPositions(dimension.height),
-            theme = this.theme,
-            lineHtml = '';
-
-        lineHtml += this._makeLineHtml({
-            positions: hPositions,
-            size: dimension.height,
+    _makeVerticalLineTemplateParams: function(additionalParams) {
+        return tui.util.extend({
             className: 'vertical',
             positionType: 'left',
-            sizeType: 'height',
-            lineColor: theme.lineColor
-        });
-        lineHtml += this._makeLineHtml({
-            positions: vPositions,
-            size: dimension.width,
-            className: 'horizontal',
-            positionType: 'bottom',
-            sizeType: 'width',
-            lineColor: theme.lineColor
-        });
-
-        el.innerHTML = lineHtml;
-
-        renderUtil.renderBackground(el, theme.background);
+            width: '1px'
+        }, additionalParams);
     },
 
     /**
-     * Make html of plot line.
-     * @param {object} params parameters
-     *      @param {Array.<object>} params.positions positions
-     *      @param {number} params.size width or height
-     *      @param {string} params.className line className
-     *      @param {string} params.positionType position type (left or bottom)
-     *      @param {string} params.sizeType size type (size or height)
-     *      @param {string} params.lineColor line color
+     * Make template params for horizontal line.
+     * @param {object} additionalParams - additional params
+     * @returns {object}
+     * @private
+     */
+    _makeHorizontalLineTemplateParams: function(additionalParams) {
+        return tui.util.extend({
+            className: 'horizontal',
+            positionType: 'bottom',
+            height: '1px'
+        }, additionalParams);
+    },
+
+    /**
+     * Make line html.
+     * @param {number} position - position value
+     * @param {number} standardWidth - standard width
+     * @param {object} templateParams - template parameters
+     * @returns {string}
+     * @private
+     */
+    _makeLineHtml: function(position, standardWidth, templateParams) {
+        var percentagePosition = calculator.makePercentageValue(position, standardWidth);
+
+        templateParams.positionValue = percentagePosition + '%';
+        templateParams.opacity = templateParams.opacity || '';
+        return plotTemplate.tplPlotLine(templateParams);
+    },
+
+    /**
+     * Create value range for optional line.
+     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+     * @returns {Array.<number>}
+     * @private
+     */
+    _createOptionalLineValueRange: function(optionalLineData) {
+        var range = optionalLineData.range || [optionalLineData.value];
+
+        if (predicate.isDatetimeType(this.xAxisType)) {
+            range = tui.util.map(range, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        }
+
+        return range;
+    },
+
+    /**
+     * Create position for optional line, when value axis.
+     * @param {{dataMin: number, distance: number}} xAxisData - x axis data
+     * @param {number} width - width
+     * @param {number} value - value
+     * @returns {number|null}
+     * @private
+     */
+    _createOptionalLinePosition: function(xAxisData, width, value) {
+        var ratio = (value - xAxisData.dataMin) / xAxisData.distance;
+        var position = ratio * width;
+
+        if (ratio === 1) {
+            position -= 1;
+        }
+
+        if (position < 0) {
+            position = null;
+        }
+
+        return position;
+    },
+
+    /**
+     * Create position for optional line, when label axis.
+     * @param {number} width - width
+     * @param {number} value - value
+     * @returns {number|null}
+     * @private
+     */
+    _createOptionalLinePositionWhenLabelAxis: function(width, value) {
+        var dataProcessor = this.dataProcessor;
+        var index = dataProcessor.findCategoryIndex(value);
+        var position = null;
+        var ratio;
+
+        if (!tui.util.isNull(index)) {
+            ratio = (index === 0) ? 0 : (index / (dataProcessor.getCategoryCount() - 1));
+            position = ratio * width;
+        }
+
+        if (ratio === 1) {
+            position -= 1;
+        }
+
+        return position;
+    },
+
+    /**
+     * Create position map for optional line.
+     * @param {{range: ?Array.<number>, value: ?number}} optionalLineData - optional line data
+     * @param {{isLabelAxis: boolean, dataMin: number, distance: number}} xAxisData - x axis data
+     * @param {number} width - width
+     * @returns {{start: number, end: number}}
+     * @private
+     */
+    _createOptionalLinePositionMap: function(optionalLineData, xAxisData, width) {
+        var range = this._createOptionalLineValueRange(optionalLineData);
+        var startPosition, endPosition;
+
+        if (xAxisData.isLabelAxis) {
+            startPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[0]);
+            endPosition = this._createOptionalLinePositionWhenLabelAxis(width, range[1]);
+        } else {
+            startPosition = this._createOptionalLinePosition(xAxisData, width, range[0]);
+            endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
+        }
+
+        if (tui.util.isExisty(endPosition) && tui.util.isNull(startPosition)) {
+            startPosition = 0;
+        }
+
+        return {
+            start: startPosition,
+            end: endPosition
+        };
+    },
+
+    /**
+     * Make optional line html.
+     * @param {Array.<number>} xAxisData - positions
+     * @param {number} width - standard width
+     * @param {object} templateParams - template parameters
+     * @param {object} optionalLineData - optional line information
+     * @returns {string}
+     * @private
+     */
+    _makeOptionalLineHtml: function(xAxisData, width, templateParams, optionalLineData) {
+        var positionMap = this._createOptionalLinePositionMap(optionalLineData, xAxisData, width);
+        var plotLineWidth = '1px';
+        var html = '';
+        var percentageWidth;
+
+        if (tui.util.isExisty(positionMap.start) && (positionMap.start >= 0) && (positionMap.start <= width)) {
+            if (tui.util.isExisty(positionMap.end)) {
+                percentageWidth = calculator.makePercentageValue(positionMap.end - positionMap.start, width);
+                templateParams.width = percentageWidth + '%';
+            } else {
+                templateParams.width = plotLineWidth;
+            }
+
+            templateParams.color = optionalLineData.color || 'transparent';
+            templateParams.opacity = renderUtil.makeOpacityCssText(optionalLineData.opacity);
+            html = this._makeLineHtml(positionMap.start, width, templateParams);
+        }
+
+        return html;
+    },
+
+    /**
+     * Make optional lines html.
+     * @param {Array.<object>} lines - optional lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @returns {string}
+     * @private
+     */
+    _makeOptionalLinesHtml: function(lines, dimension) {
+        var width = dimension.width;
+        var xAxisData = this.boundsMaker.getAxesData().xAxis;
+        var templateParams = this._makeVerticalLineTemplateParams({
+            height: dimension.height + 'px'
+        });
+        var makeOptionalLineHtml = tui.util.bind(this._makeOptionalLineHtml, this, xAxisData, width, templateParams);
+
+        return tui.util.map(lines, makeOptionalLineHtml).join('');
+    },
+
+    /**
+     * Render optional lines and bands.
+     * @param {HTMLElement} container - container
+     * @param {{width: number, height: number}} dimension - dimension
+     * @private
+     */
+    _renderOptionalLines: function(container, dimension) {
+        var optionalContainer = dom.create('DIV', 'tui-chart-plot-optional-lines-area');
+        var bandsHtml = this._makeOptionalLinesHtml(this.options.bands, dimension);
+        var linesHtml = this._makeOptionalLinesHtml(this.options.lines, dimension);
+
+        this.optionalContainer = optionalContainer;
+
+        dom.append(container, optionalContainer);
+
+        optionalContainer.innerHTML = bandsHtml + linesHtml;
+    },
+
+    /**
+     * Make html of plot lines.
+     * @param {Array.<number>} positions - position values
+     * @param {number} standardWidth - standard width
+     * @param {object} templateParams parameters
      * @returns {string} html
      * @private
      */
-    _makeLineHtml: function(params) {
-        var template = plotTemplate.tplPlotLine;
-        var lineHtml = tui.util.map(params.positions, function(position) {
-            var cssTexts = [
-                    renderUtil.concatStr(params.positionType, ':', position, 'px'),
-                    renderUtil.concatStr(params.sizeType, ':', params.size, 'px')
-                ], data;
-
-            if (params.lineColor) {
-                cssTexts.push(renderUtil.concatStr('background-color:', params.lineColor));
-            }
-
-            data = {className: params.className, cssText: cssTexts.join(';')};
-
-            return template(data);
+    _makeLinesHtml: function(positions, standardWidth, templateParams) {
+        var self = this;
+        var lineHtml = tui.util.map(positions, function(position) {
+            return self._makeLineHtml(position, standardWidth, templateParams);
         }).join('');
 
         return lineHtml;
     },
 
     /**
-     * Make pixel value of vertical positions
+     * Maker html for vertical lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {string} lineColor - line color
+     * @returns {string}
+     * @private
+     */
+    _makeVerticalLinesHtml: function(dimension, lineColor) {
+        var positions = this._makeHorizontalPositions(dimension.width);
+        var templateParams = this._makeVerticalLineTemplateParams({
+            height: dimension.height + 'px',
+            color: lineColor
+        });
+
+        return this._makeLinesHtml(positions, dimension.width, templateParams);
+    },
+    /**
+     * Maker html for horizontal lines
+     * @param {{width: number, height: number}} dimension - dimension
+     * @param {string} lineColor - line color
+     * @returns {string}
+     * @private
+     */
+    _makeHorizontalLinesHtml: function(dimension, lineColor) {
+        var positions = this._makeVerticalPositions(dimension.height);
+        var templateParams = this._makeHorizontalLineTemplateParams({
+            width: dimension.width + 'px',
+            color: lineColor
+        });
+
+        return this._makeLinesHtml(positions, dimension.height, templateParams);
+    },
+
+    /**
+     * Render plot lines.
+     * @param {HTMLElement} container - container element
+     * @param {{width: number, height: number}} dimension plot area dimension
+     * @private
+     */
+    _renderPlotLines: function(container, dimension) {
+        var lineContainer = dom.create('DIV', 'tui-chart-plot-lines-area');
+        var theme = this.theme;
+        var lineHtml = '';
+
+        if (!predicate.isLineTypeChart(this.chartType)) {
+            lineHtml += this._makeVerticalLinesHtml(dimension, theme.lineColor);
+        }
+
+        lineHtml += this._makeHorizontalLinesHtml(dimension, theme.lineColor);
+
+        dom.append(container, lineContainer);
+        lineContainer.innerHTML += lineHtml;
+        renderUtil.renderBackground(container, theme.background);
+    },
+
+    /**
+     * Make positions for vertical line.
      * @param {number} height plot height
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeVerticalPixelPositions: function(height) {
-        var positions = calculator.makeTickPixelPositions(height, this.data.vTickCount);
+    _makeVerticalPositions: function(height) {
+        var axesData = this.boundsMaker.getAxesData();
+        var yAxis = axesData.yAxis || axesData.rightYAxis;
+        var positions = calculator.makeTickPixelPositions(height, yAxis.validTickCount);
 
         positions.shift();
 
@@ -18185,15 +19544,16 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Make divided positions of plot.
-     * @param {number} width plot width
+     * @param {number} width - plot width
+     * @param {number} tickCount - tick count
      * @returns {Array.<number>}
      * @private
      */
-    _makeDividedPlotPositions: function(width) {
-        var tickCount = parseInt(this.data.hTickCount / 2, 10) + 1,
-            yAxisWidth = this.boundsMaker.getDimension('yAxis').width,
-            leftWidth, rightWidth, leftPositions, rightPositions;
+    _makeDividedPlotPositions: function(width, tickCount) {
+        var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
+        var leftWidth, rightWidth, leftPositions, rightPositions;
 
+        tickCount = parseInt(tickCount / 2, 10) + 1;
         width -= yAxisWidth;
         leftWidth = Math.round((width) / 2);
         rightWidth = width - leftWidth;
@@ -18208,28 +19568,96 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
     },
 
     /**
-     * Make pixel value of horizontal positions.
+     * Make positions for horizontal line.
      * @param {number} width plot width
      * @returns {Array.<number>} positions
      * @private
      */
-    _makeHorizontalPixelPositions: function(width) {
+    _makeHorizontalPositions: function(width) {
+        var tickCount = this.boundsMaker.getAxesData().xAxis.validTickCount;
         var positions;
 
         if (this.options.divided) {
-            positions = this._makeDividedPlotPositions(width);
+            positions = this._makeDividedPlotPositions(width, tickCount);
         } else {
-            positions = calculator.makeTickPixelPositions(width, this.data.hTickCount);
+            positions = calculator.makeTickPixelPositions(width, tickCount);
             positions.shift();
         }
 
         return positions;
+    },
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     */
+    addPlotLine: function(data) {
+        this.options.lines.push(data);
+        this.rerender();
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     */
+    addPlotBand: function(data) {
+        this.options.bands.push(data);
+        this.rerender();
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     */
+    removePlotLine: function(id) {
+        this.options.lines = tui.util.filter(this.options.lines, function(line) {
+            return line.id !== id;
+        });
+        this.rerender();
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     */
+    removePlotBand: function(id) {
+        this.options.bands = tui.util.filter(this.options.bands, function(line) {
+            return line.id !== id;
+        });
+        this.rerender();
+    },
+
+    /**
+     * Animate for adding data.
+     * @param {{tickSize: number, shifting: boolean}} data - data for animation
+     */
+    animateForAddingData: function(data) {
+        var self = this;
+        var beforeLeft = 0;
+        var interval = data.tickSize;
+        var areaWidth;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            this.optionalContainer.innerHTML = '';
+        } else if (data.shifting) {
+            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
+                var left = interval * ratio;
+                self.optionalContainer.style.left = (beforeLeft - left) + 'px';
+            });
+        } else {
+            areaWidth = this.boundsMaker.getDimension('plot').width;
+            renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
+                var left = interval * ratio;
+                self.optionalContainer.style.width = (areaWidth - left) + 'px';
+            }, function() {
+            });
+        }
     }
 });
 
 module.exports = Plot;
 
-},{"../helpers/calculator":57,"../helpers/domHandler":59,"../helpers/renderUtil":63,"./plotTemplate":73}],73:[function(require,module,exports){
+},{"../const":31,"../helpers/calculator":57,"../helpers/domHandler":59,"../helpers/predicate":61,"../helpers/renderUtil":63,"./plotTemplate":73}],73:[function(require,module,exports){
 /**
  * @fileoverview This is templates of plot view .
  * @author NHN Ent.
@@ -18241,7 +19669,10 @@ module.exports = Plot;
 var templateMaker = require('../helpers/templateMaker');
 
 var tags = {
-    HTML_PLOT_LINE: '<div class="tui-chart-plot-line {{ className }}" style="{{ cssText }}"></div>'
+    HTML_PLOT_LINE: '<div class="tui-chart-plot-line {{ className }}"' +
+        ' style="{{ positionType }}:{{ positionValue }};width:{{ width }};height:{{ height }};' +
+        'background-color:{{ color }}{{ opacity }}">' +
+    '</div>'
 };
 
 module.exports = {
@@ -18300,6 +19731,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
+var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var raphael = window.Raphael;
 var concat = Array.prototype.concat;
@@ -18631,7 +20063,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         if (shiftingOption) {
             this.leftBar.animate({
                 width: tickSize + LEFT_BAR_WIDTH
-            }, 300);
+            }, ADDING_DATA_ANIMATION_DURATION);
             additionalIndex = 1;
         }
 
@@ -20124,6 +21556,7 @@ var RaphaelLineBase = require('./raphaelLineTypeBase'),
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
+var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var raphael = window.Raphael;
 
@@ -20302,7 +21735,7 @@ var RaphaelLineChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelL
         if (shiftingOption) {
             this.leftBar.animate({
                 width: tickSize + LEFT_BAR_WIDTH
-            }, 300);
+            }, ADDING_DATA_ANIMATION_DURATION);
             additionalIndex = 1;
         }
 
@@ -20716,11 +22149,12 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
      * }} bound bound
      */
     showGroupTooltipLine: function(bound) {
+        var left = Math.max(bound.position.left, 11);
         var linePath = raphaelRenderUtil.makeLinePath({
-            left: bound.position.left,
+            left: left,
             top: bound.position.top + bound.dimension.height
         }, {
-            left: bound.position.left,
+            left: left,
             top: bound.position.top
         });
 
@@ -20851,19 +22285,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         this._hideGroupDots(index);
     },
 
-    _moveDot: function(dot, position) {
-        var dotAttrs = {
-            cx: position.left,
-            cy: position.top
-        };
-
-        if (this.dotOpacity) {
-            dotAttrs = tui.util.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
-        }
-
-        dot.attr(dotAttrs);
-    },
-
     /**
      * Show graph for zoom.
      */
@@ -20926,7 +22347,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             cy: position.top,
             'fill-opacity': 0.5,
             'stroke-opacity': 1,
-            stroke: this.selectionColor || item.dot.color
+            stroke: this.selectionColor || item.endDot.color
         });
 
         if (this.selectionStartDot) {
@@ -21983,14 +23404,16 @@ var raphaelRenderUtil = {
      * @returns {string} path
      */
     makeLinePath: function(fromPos, toPos, width) {
-        var fromPoint = [fromPos.left, fromPos.top],
-            toPoint = [toPos.left, toPos.top];
+        var fromPoint = [fromPos.left, fromPos.top];
+        var toPoint = [toPos.left, toPos.top];
+        var additionalPoint;
 
         width = width || 1;
+        additionalPoint = (width % 2 / 2);
 
         tui.util.forEachArray(fromPoint, function(from, index) {
             if (from === toPoint[index]) {
-                fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
+                fromPoint[index] = toPoint[index] = Math.round(from) - additionalPoint;
             }
         });
 
@@ -22879,7 +24302,7 @@ var BarTypeSeriesBase = tui.util.defineClass(/** @lends BarTypeSeriesBase.protot
             return labelHtml;
         });
 
-        if (this.options.stackType === 'normal') {
+        if (predicate.isNormalStack(this.options.stackType)) {
             values = seriesGroup.pluck('value');
             htmls.push(this._makePlusSumLabelHtml(values, plusBound, labelHeight));
             htmls.push(this._makeMinusSumLabelHtml(values, minusBound, labelHeight));
@@ -23653,6 +25076,7 @@ var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
+var Series = require('./series');
 
 var concat = Array.prototype.concat;
 
@@ -23663,19 +25087,28 @@ var concat = Array.prototype.concat;
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
     /**
-     * Make basic positions for rendering line graph.
-     * @param {number} [seriesWidth] - width of series area
+     * Render series component.
+     * @override
+     */
+    render: function() {
+        this.beforeAxes = this.boundsMaker.getAxesData();
+
+        return Series.prototype.render.apply(this, arguments);
+    },
+    /**
+     * Make positions for default data type.
+     * @param {?number} seriesWidth - width of series area
      * @returns {Array.<Array.<object>>}
      * @private
      */
-    _makeBasicPositions: function(seriesWidth) {
-        var dimension = this.boundsMaker.getDimension('series'),
-            seriesDataModel = this._getSeriesDataModel(),
-            width = seriesWidth || dimension.width || 0,
-            height = dimension.height,
-            len = seriesDataModel.getGroupCount(),
-            start = chartConst.SERIES_EXPAND_SIZE,
-            step;
+    _makePositionsForDefaultType: function(seriesWidth) {
+        var dimension = this.boundsMaker.getDimension('series');
+        var seriesDataModel = this._getSeriesDataModel();
+        var width = seriesWidth || dimension.width || 0;
+        var height = dimension.height;
+        var len = seriesDataModel.getGroupCount();
+        var start = chartConst.SERIES_EXPAND_SIZE;
+        var step;
 
         if (this.data.aligned) {
             step = width / (len - 1);
@@ -23698,6 +25131,59 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
                 return position;
             });
         }, true);
+    },
+
+    /**
+     * Make positions for coordinate data type.
+     * @param {?number} seriesWidth - width of series area
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _makePositionForCoordinateType: function(seriesWidth) {
+        var dimension = this.boundsMaker.getDimension('series');
+        var seriesDataModel = this._getSeriesDataModel();
+        var width = seriesWidth || dimension.width || 0;
+        var height = dimension.height;
+        var xAxis = this.boundsMaker.getAxesData().xAxis;
+        var additionalLeft = 0;
+
+        if (xAxis.sizeRatio) {
+            additionalLeft = tui.util.multiplication(width, xAxis.positionRatio);
+            width = tui.util.multiplication(width, xAxis.sizeRatio);
+        }
+
+        return seriesDataModel.map(function(seriesGroup) {
+            return seriesGroup.map(function(seriesItem) {
+                var position = {
+                    left: (seriesItem.ratioMap.x * width) + additionalLeft + chartConst.SERIES_EXPAND_SIZE,
+                    top: height - (seriesItem.ratioMap.y * height) + chartConst.SERIES_EXPAND_SIZE
+                };
+
+                if (tui.util.isExisty(seriesItem.ratioMap.start)) {
+                    position.startTop = height - (seriesItem.ratioMap.start * height) + chartConst.SERIES_EXPAND_SIZE;
+                }
+
+                return position;
+            });
+        }, true);
+    },
+
+    /**
+     * Make basic positions for rendering line graph.
+     * @param {?number} seriesWidth - width of series area
+     * @returns {Array.<Array.<object>>}
+     * @private
+     */
+    _makeBasicPositions: function(seriesWidth) {
+        var positions;
+
+        if (this.dataProcessor.isCoordinateType()) {
+            positions = this._makePositionForCoordinateType(seriesWidth);
+        } else {
+            positions = this._makePositionsForDefaultType(seriesWidth);
+        }
+
+        return positions;
     },
 
     /**
@@ -23762,10 +25248,10 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
             label = seriesItem.startLabel;
             basePosition.top = basePosition.startTop;
         } else {
-            label = seriesItem.endLabel;
+            label = seriesItem.endLabel || seriesItem.label;
         }
 
-        position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value, isStart);
+        position = this._makeLabelPosition(basePosition, labelHeight, label, seriesItem.value || seriesItem.y, isStart);
 
         return this._makeSeriesLabelHtml(position, label, groupIndex, seriesTemplate.tplCssTextForLineType, isStart);
     },
@@ -23795,24 +25281,6 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
         }, true);
 
         elSeriesLabelArea.innerHTML = htmls.join('');
-    },
-
-    /**
-     * Whether changed or not.
-     * @param {number} groupIndex group index
-     * @param {number} index index
-     * @returns {boolean} whether changed or not
-     * @private
-     */
-    _isChanged: function(groupIndex, index) {
-        var prevIndexes = this.prevIndexes;
-
-        this.prevIndexes = {
-            groupIndex: groupIndex,
-            index: index
-        };
-
-        return !prevIndexes || (prevIndexes.groupIndex !== groupIndex) || (prevIndexes.index !== index);
     },
 
     /**
@@ -23864,15 +25332,37 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
     },
 
     /**
-     * Whether changed limit(min, max) or not.
+     * Whether changed or not.
+     * @param {{min: number, max: number}} before - before limit
+     * @param {{min: number, max: number}} after - after limit
      * @returns {boolean}
      * @private
      */
-    _isChangedLimit: function() {
-        var beforeLimit = this.data.limit;
-        var afterLimit = this.boundsMaker.getAxesData().yAxis.limit;
+    _isChangedLimit: function(before, after) {
+        return before.min !== after.min || before.max !== after.max;
+    },
 
-        return beforeLimit.min !== afterLimit.min || beforeLimit.max !== afterLimit.max;
+    /**
+     * Whether changed axis limit(min, max) or not.
+     * @returns {boolean}
+     * @private
+     */
+    _isChangedAxisLimit: function() {
+        var beforeAxes = this.beforeAxes;
+        var axesData = this.boundsMaker.getAxesData();
+        var changed = true;
+
+        this.beforeAxes = axesData;
+
+        if (beforeAxes) {
+            changed = this._isChangedLimit(beforeAxes.yAxis.limit, axesData.yAxis.limit);
+
+            if (axesData.xAxis.limit) {
+                changed = changed || this._isChangedLimit(beforeAxes.xAxis.limit, axesData.xAxis.limit);
+            }
+        }
+
+        return changed;
     },
 
     /**
@@ -23882,14 +25372,18 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animate: function(callback) {
         var self = this;
-        var changedLimit = this._isChangedLimit();
+        var duration = chartConst.ADDING_DATA_ANIMATION_DURATION;
+        var changedLimit = this._isChangedAxisLimit();
 
-        this.movingAnimation = renderUtil.startAnimation(300, function(ratio) {
-            if (changedLimit && self.seriesLabelContainer) {
-                self.seriesLabelContainer.innerHTML = '';
-            }
-            callback(ratio);
-        }, function() {
+        if (changedLimit && this.seriesLabelContainer) {
+            this.seriesLabelContainer.innerHTML = '';
+        }
+
+        if (!callback) {
+            return;
+        }
+
+        this.movingAnimation = renderUtil.startAnimation(duration, callback, function() {
             self.movingAnimation = null;
         });
     },
@@ -23981,7 +25475,7 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
      */
     _animateForResizing: function(interval) {
         var seriesLabelContainer = this.seriesLabelContainer;
-        var areaWidth;
+        var animateLabel, areaWidth;
 
         if (!seriesLabelContainer) {
             return;
@@ -23989,11 +25483,15 @@ var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prot
 
         areaWidth = this.boundsMaker.getDimension('extendedSeries').width;
 
-        this._animate(function(ratio) {
-            var left = interval * ratio;
+        if (!this.dataProcessor.isCoordinateType()) {
+            animateLabel = function(ratio) {
+                var left = interval * ratio;
 
-            seriesLabelContainer.style.width = (areaWidth - left) + 'px';
-        });
+                seriesLabelContainer.style.width = (areaWidth - left) + 'px';
+            };
+        }
+
+        this._animate(animateLabel);
     },
 
     /**
@@ -24056,7 +25554,7 @@ LineTypeSeriesBase.mixin = function(func) {
 
 module.exports = LineTypeSeriesBase;
 
-},{"../const":31,"../helpers/predicate":61,"../helpers/renderUtil":63,"./seriesTemplate":103}],98:[function(require,module,exports){
+},{"../const":31,"../helpers/predicate":61,"../helpers/renderUtil":63,"./series":102,"./seriesTemplate":103}],98:[function(require,module,exports){
 /**
  * @fileoverview Map chart series component.
  * @author NHN Ent.
@@ -26222,17 +27720,20 @@ var Series = tui.util.defineClass(/** @lends Series.prototype */ {
      * @private
      */
     _makeExportationSeriesData: function(seriesData) {
-        var legendIndex = seriesData.indexes.index;
-        var index = seriesData.indexes.groupIndex;
+        var indexes = seriesData.indexes;
+        var legendIndex = tui.util.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
         var legendData = this.dataProcessor.getLegendItem(legendIndex);
+        var index = indexes.groupIndex;
         var result = {
             chartType: legendData.chartType,
             legend: legendData.label,
             legendIndex: legendIndex
         };
+        var seriesItem;
 
         if (tui.util.isExisty(index)) {
-            result.index = index;
+            seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
+            result.index = seriesItem.index;
         }
 
         return result;
@@ -26344,9 +27845,9 @@ var htmls = {
     HTML_SERIES_LABEL: '<div class="tui-chart-series-label" style="{{ cssText }}"{{ rangeLabelAttribute }}>' +
         '{{ label }}</div>',
     TEXT_CSS_TEXT: 'left:{{ left }}px;top:{{ top }}px;font-family:{{ fontFamily }};' +
-        'font-size:{{ fontSize }}px{{opacity}}',
+        'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
     TEXT_CSS_TEXT_FOR_LINE_TYPE: 'left:{{ left }}%;top:{{ top }}%;font-family:{{ fontFamily }};' +
-    'font-size:{{ fontSize }}px{{opacity}}',
+    'font-size:{{ fontSize }}px;font-weight:{{ fontWeight }}{{opacity}}',
     HTML_ZOOM_BUTTONS: '<a class="tui-chart-zoom-btn" href="#" data-magn="2">' +
             '<div class="horizontal-line"></div><div class="vertical-line"></div></a>' +
         '<a class="tui-chart-zoom-btn" href="#" data-magn="0.5"><div class="horizontal-line"></div></a>',
@@ -27140,22 +28641,25 @@ module.exports = Zoom;
 },{"../const":31,"../helpers/domHandler":59,"../helpers/eventListener":60,"../helpers/renderUtil":63,"./seriesTemplate":103}],107:[function(require,module,exports){
 'use strict';
 
-var DEFAULT_COLOR = '#000000',
-    DEFAULT_BACKGROUND = '#ffffff',
-    EMPTY = '',
-    DEFAULT_AXIS = {
-        tickColor: DEFAULT_COLOR,
-        title: {
-            fontSize: 12,
-            fontFamily: EMPTY,
-            color: DEFAULT_COLOR
-        },
-        label: {
-            fontSize: 12,
-            fontFamily: EMPTY,
-            color: DEFAULT_COLOR
-        }
-    };
+var DEFAULT_COLOR = '#000000';
+var DEFAULT_BACKGROUND = '#ffffff';
+var DEFAULT_FONTWEIGHT = 'normal';
+var EMPTY = '';
+var DEFAULT_AXIS = {
+    tickColor: DEFAULT_COLOR,
+    title: {
+        fontSize: 12,
+        fontFamily: EMPTY,
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
+    },
+    label: {
+        fontSize: 12,
+        fontFamily: EMPTY,
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
+    }
+};
 
 var defaultTheme = {
     chart: {
@@ -27165,7 +28669,8 @@ var defaultTheme = {
     title: {
         fontSize: 18,
         fontFamily: EMPTY,
-        color: DEFAULT_COLOR
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
     },
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
@@ -27177,7 +28682,8 @@ var defaultTheme = {
         label: {
             fontSize: 11,
             fontFamily: EMPTY,
-            color: DEFAULT_COLOR
+            color: DEFAULT_COLOR,
+            fontWeight: DEFAULT_FONTWEIGHT
         },
         colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
         singleColors: [],
@@ -27191,7 +28697,8 @@ var defaultTheme = {
         label: {
             fontSize: 12,
             fontFamily: EMPTY,
-            color: DEFAULT_COLOR
+            color: DEFAULT_COLOR,
+            fontWeight: DEFAULT_FONTWEIGHT
         }
     },
     tooltip: {}
@@ -27792,8 +29299,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      * @private
      */
     _setData: function(chartDimension, areaBound, isVertical, options) {
-        var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align),
-            horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+        var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align);
+        var horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+        var offset = options.offset || {};
 
         if (isVertical) {
             this.mainData = verticalData;
@@ -27803,10 +29311,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             this.subData = verticalData;
         }
 
-        this.positionOption = tui.util.extend({
-            left: 0,
-            top: 0
-        }, options.position);
+        this.positionOption = {};
+        this.positionOption.left = offset.x || 0;
+        this.positionOption.top = offset.y || 0;
 
         this.positions = {};
     },
@@ -28596,9 +30103,11 @@ var singleTooltipMixer = {
      * @private
      */
     _showTooltip: function(elTooltip, params, prevPosition) {
-        var indexes = params.indexes,
-            prevIndexes = this._getIndexesCustomAttribute(elTooltip),
-            prevChartType, position;
+        var indexes = params.indexes;
+        var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
+        var offset = this.options.offset || {};
+        var positionOption = {};
+        var prevChartType, position;
 
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
@@ -28615,12 +30124,12 @@ var singleTooltipMixer = {
 
         dom.addClass(elTooltip, 'show');
 
+        positionOption.left = offset.x || 0;
+        positionOption.top = offset.y || 0;
+
         position = this._makeTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            positionOption: tui.util.extend({
-                left: 0,
-                top: 0
-            }, this.options.position),
+            positionOption: positionOption,
             alignOption: this.options.align || ''
         }, params));
 
@@ -28861,7 +30370,11 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
         var formattedMap = {};
 
         tui.util.forEach(valueMap, function(value, valueType) {
-            formattedMap[valueType] = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
+            if (tui.util.isNumber(value)) {
+                value = renderUtil.formatValue(value, formatFunctions, chartType, 'tooltip', valueType);
+            }
+
+            formattedMap[valueType] = value;
         });
 
         return formattedMap;
@@ -28879,10 +30392,13 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
      */
     _makeTooltipDatum: function(legendLabels, category, chartType, seriesItem, index) {
         var legend = legendLabels[chartType][index] || '';
-
         var labelPrefix = (legend && seriesItem.label) ? ':&nbsp;' : '';
         var label = seriesItem.tooltipLabel || (seriesItem.label ? labelPrefix + seriesItem.label : '');
         var valueMap = this._formatValueMap(seriesItem.pickValueMap());
+
+        if (category && predicate.isDatetimeType(this.xAxisType)) {
+            category = renderUtil.formatDate(category, this.dateFormat);
+        }
 
         return tui.util.extend({
             category: category || '',
@@ -29009,6 +30525,18 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.labelTheme = params.labelTheme;
 
         /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
+
+        /**
+         * dateFormat option for xAxis
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
          * className
          * @type {string}
          */
@@ -29069,7 +30597,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _saveOriginalPositionOptions: function() {
         this.orgPositionOptions = {
             align: this.options.align,
-            position: this.options.position
+            offset: this.options.offset
         };
     },
 
@@ -29215,7 +30743,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Set tooltip align option.
+     * Set align option.
      * @param {string} align align
      */
     setAlign: function(align) {
@@ -29226,38 +30754,74 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Set position option.
-     * @param {{left: number, top: number}} position moving position
+     * Update offset option.
+     * @param {{x: number, y: number}} offset - offset
+     * @private
      */
-    setPosition: function(position) {
-        this.options.position = tui.util.extend({}, this.options.position, position);
+    _updateOffsetOption: function(offset) {
+        this.options.offset = offset;
+
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
     },
 
     /**
-     * Reset tooltip align option.
+     * Set offset.
+     * @param {{x: number, y: number}} offset - offset
+     */
+    setOffset: function(offset) {
+        var offsetOption = tui.util.extend({}, this.options.offset);
+
+        if (tui.util.isExisty(offset.x)) {
+            offsetOption.x = offset.x;
+        }
+
+        if (tui.util.isExisty(offset.y)) {
+            offsetOption.y = offset.y;
+        }
+
+        this._updateOffsetOption(tui.util.extend({}, this.options.offset, offsetOption));
+    },
+
+    /**
+     * Set position option.
+     * @param {{left: number, top: number}} position moving position
+     * @deprecated
+     */
+    setPosition: function(position) {
+        var offsetOption = tui.util.extend({}, this.options.offset);
+
+        if (tui.util.isExisty(position.left)) {
+            offsetOption.x = position.left;
+        }
+
+        if (tui.util.isExisty(position.top)) {
+            offsetOption.y = position.y;
+        }
+
+        this._updateOffsetOption(offsetOption);
+    },
+
+    /**
+     * Reset align option.
      */
     resetAlign: function() {
         var align = this.orgPositionOptions.align;
 
         this.options.align = align;
+
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
     },
 
     /**
-     * Reset tooltip position.
+     * Reset offset option.
      */
-    resetPosition: function() {
-        var position = this.orgPositionOptions.position;
-
-        this.options.position = position;
-        if (this.positionModel) {
-            this.positionModel.updateOptions(this.options);
-        }
+    resetOffset: function() {
+        this.options.offset = this.orgPositionOptions.offset;
+        this._updateOffsetOption(this.options.offset);
     }
 });
 

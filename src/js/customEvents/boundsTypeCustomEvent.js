@@ -69,7 +69,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      * @override
      */
     _onMousemove: function(e) {
-        var foundData = this._findDataFromBoundsCoordinateModel(this.customEventContainer, e.clientX, e.clientY);
+        var layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        var foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
         var seriesItem;
 
         if (!this._isChangedSelectData(this.prevFoundData, foundData)) {
@@ -130,7 +131,7 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
      */
     _onClick: function(e) {
         var target = e.target || e.srcElement;
-        var foundData, seriesItem;
+        var layerPosition, foundData, seriesItem;
 
         CustomEventBase.prototype._onClick.call(this, e);
 
@@ -145,7 +146,8 @@ var BoundsTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends Bou
             return;
         }
 
-        foundData = this._findDataFromBoundsCoordinateModel(target, e.clientX, e.clientY);
+        layerPosition = this._calculateLayerPosition(e.clientX, e.clientY);
+        foundData = this._findDataFromBoundsCoordinateModel(layerPosition);
 
         if (foundData) {
             seriesItem = this._getSeriesItemByIndexes(foundData.indexes);

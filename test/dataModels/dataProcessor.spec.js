@@ -124,13 +124,50 @@ describe('Test for DataProcessor', function() {
         });
     });
 
+    describe('_mapCategories()', function() {
+        it('if x axis is datetime type, return mapped categories by Date object', function() {
+            var actual;
+
+            dataProcessor.options = {
+                xAxis: {
+                    type: chartConst.AXIS_TYPE_DATETIME
+                }
+            };
+
+            actual = dataProcessor._mapCategories([
+                '01/02/2016',
+                '01/04/2016',
+                '01/07/2016'
+            ]);
+
+            expect(actual).toEqual([
+                (new Date('01/02/2016')).getTime(),
+                (new Date('01/04/2016')).getTime(),
+                (new Date('01/07/2016')).getTime()
+            ]);
+        });
+
+        it('if x axis is not datetime type, return escaped categories', function() {
+            var actual;
+
+            dataProcessor.options = {
+                xAxis: {}
+            };
+
+            actual = dataProcessor._mapCategories(['<div>ABC</div>', 'EFG']);
+
+            expect(actual).toEqual(['&lt;div&gt;ABC&lt;/div&gt;', 'EFG']);
+        });
+    });
+
     describe('_processCategories()', function() {
         it('rawData.categories가 배열 형태이면 전달받은 type을 키로하는 map으로 생성하여 반환합니다.', function() {
-           var actual;
+            var actual;
 
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor._processCategories('y');
 
@@ -148,6 +185,7 @@ describe('Test for DataProcessor', function() {
                     y: [1, 2]
                 }
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor._processCategories();
 
@@ -186,6 +224,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             dataProcessor.getCategories(isVertical);
 
@@ -199,6 +238,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             dataProcessor.getCategories(isVertical);
 
@@ -245,6 +285,32 @@ describe('Test for DataProcessor', function() {
         });
     });
 
+    describe('findCategoryIndex()', function() {
+        it('find category index by category value', function() {
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                x: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.findCategoryIndex('cate2');
+
+            expect(actual).toBe(1);
+        });
+
+        it('if not found category index, returns null', function() {
+            var actual;
+
+            dataProcessor.categoriesMap = {
+                x: ['cate1', 'cate2', 'cate3']
+            };
+
+            actual = dataProcessor.findCategoryIndex('cate4');
+
+            expect(actual).toBeNull();
+        });
+    });
+
     describe('getTooltipCategory()', function() {
         it('가로형 차트의 경우 세로형 카테고리를 기본 값으로 합니다.', function() {
             var actual;
@@ -252,6 +318,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, null, false);
 
@@ -265,6 +332,7 @@ describe('Test for DataProcessor', function() {
             dataProcessor.rawData = {
                 categories: ['cate1', 'cate2', 'cate3']
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, null, true);
 
@@ -281,6 +349,7 @@ describe('Test for DataProcessor', function() {
                     y: [1, 2, 3]
                 }
             };
+            dataProcessor.options.xAxis = {};
 
             actual = dataProcessor.getTooltipCategory(0, 2, true);
 
@@ -383,6 +452,57 @@ describe('Test for DataProcessor', function() {
             actual = dataProcessor._findRawSeriesDatumByName('legend2', 'line');
 
             expect(actual).toBeNull();
+        });
+    });
+
+    describe('_pushValue()', function() {
+        it('push value to data property of series', function() {
+            var originalRawSeriesDatum = {
+                name: 'legend1',
+                data: [1, 2]
+            };
+            var value = 5;
+
+            dataProcessor.rawData.series = [
+                {
+                    name: 'legend1',
+                    data: [1, 2]
+                }
+            ];
+
+            dataProcessor._pushValue(originalRawSeriesDatum, value);
+
+            expect(originalRawSeriesDatum.data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series[0].data).toEqual([1, 2, 5]);
+        });
+
+        it('push value to data property of series, when combo chart', function() {
+            var originalRawSeriesDatum = {
+                name: 'legend1',
+                data: [1, 2]
+            };
+            var value = 5;
+
+            dataProcessor.rawData.series = {
+                line: [
+                    {
+                        name: 'legend1',
+                        data: [1, 2]
+                    }
+                ],
+                area: [
+                    {
+                        name: 'legend2',
+                        data: [3, 4]
+                    }
+                ]
+            };
+
+            dataProcessor._pushValue(originalRawSeriesDatum, value, 'line');
+
+            expect(originalRawSeriesDatum.data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.line[0].data).toEqual([1, 2, 5]);
+            expect(dataProcessor.rawData.series.area[0].data).toEqual([3, 4]);
         });
     });
 
@@ -623,7 +743,31 @@ describe('Test for DataProcessor', function() {
     });
 
     describe('addDataFromDynamicData()', function() {
-        it('dynamicData로부터 값을 추출하여 category와 seriesData 갱신과 초기화를 하고 true를 반환합니다.', function() {
+        it('Add data from dynamic data, when coordinate type', function() {
+            var actual;
+
+            dataProcessor.dynamicData = [
+                {
+                    values: {
+                        'legend1': [10, 20]
+                    }
+                }
+            ];
+
+            spyOn(dataProcessor, 'isCoordinateType').and.returnValue(true);
+            spyOn(dataProcessor, '_pushDynamicDataForCoordinateType');
+            spyOn(dataProcessor, 'initData');
+
+            actual = dataProcessor.addDataFromDynamicData();
+
+            expect(dataProcessor._pushDynamicDataForCoordinateType).toHaveBeenCalledWith({
+                'legend1': [10, 20]
+            });
+            expect(dataProcessor.initData).toHaveBeenCalled();
+            expect(actual).toBe(true);
+        });
+
+        it('Add data from dynamic data, when not coordinate type', function() {
             var actual;
 
             dataProcessor.dynamicData = [
@@ -632,30 +776,32 @@ describe('Test for DataProcessor', function() {
                     values: [1, 2]
                 }
             ];
-            spyOn(dataProcessor, '_pushCategory');
-            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, 'isCoordinateType').and.returnValue(false);
+            spyOn(dataProcessor, '_pushDynamicData');
             spyOn(dataProcessor, 'initData');
 
             actual = dataProcessor.addDataFromDynamicData();
 
-            expect(dataProcessor._pushCategory).toHaveBeenCalled();
-            expect(dataProcessor._pushSeriesData).toHaveBeenCalled();
+            expect(dataProcessor._pushDynamicData).toHaveBeenCalledWith({
+                category: 'cate',
+                values: [1, 2]
+            });
             expect(dataProcessor.initData).toHaveBeenCalled();
             expect(actual).toBe(true);
         });
 
-        it('dynamicData에 값이 없으면 아무 처리 없이 false를 반환합니다.', function() {
+        it('if dynamicData is empty, returns false', function() {
             var actual;
 
             dataProcessor.dynamicData = [];
-            spyOn(dataProcessor, '_pushCategory');
-            spyOn(dataProcessor, '_pushSeriesData');
+            spyOn(dataProcessor, '_pushDynamicDataForCoordinateType');
+            spyOn(dataProcessor, '_pushDynamicData');
             spyOn(dataProcessor, 'initData');
 
             actual = dataProcessor.addDataFromDynamicData();
 
-            expect(dataProcessor._pushCategory).not.toHaveBeenCalled();
-            expect(dataProcessor._pushSeriesData).not.toHaveBeenCalled();
+            expect(dataProcessor._pushDynamicDataForCoordinateType).not.toHaveBeenCalled();
+            expect(dataProcessor._pushDynamicData).not.toHaveBeenCalled();
             expect(dataProcessor.initData).not.toHaveBeenCalled();
             expect(actual).toBe(false);
         });

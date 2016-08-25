@@ -112,6 +112,10 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             titleAreaWidth = renderUtil.getRenderedLabelHeight(title, theme.title) + chartConst.TITLE_PADDING;
         }
 
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
         width += renderUtil.getRenderedLabelsMaxWidth(labels, theme.label) + titleAreaWidth +
             chartConst.AXIS_LABEL_PADDING;
 
@@ -390,7 +394,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var labelContainer = this.labelContainer;
         var beforeWidth = parseInt(ticksElement.style.width, 10) || ticksElement.offsetWidth;
 
-        renderUtil.startAnimation(300, function(ratio) {
+        renderUtil.startAnimation(chartConst.ADDING_DATA_ANIMATION_DURATION, function(ratio) {
             var width = beforeWidth - (tickSize * ratio);
 
             ticksElement.style.width = width + 'px';
@@ -403,7 +407,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @param {{tickSize: number}} data - data for animate
      */
     animateForAddingData: function(data) {
-        if (this.isVertical) {
+        if (this.isVertical || this.dataProcessor.isCoordinateType()) {
             return;
         }
 
@@ -434,13 +438,18 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makePositionMapForCenterAlign: function() {
-        var titleWidth = renderUtil.getRenderedLabelWidth(this.options.title, this.theme.title);
+        var offset = this.options.title.offset || {};
+        var titleWidth = renderUtil.getRenderedLabelWidth(offset.text, this.theme.title);
         var yAxisWidth = this.boundsMaker.getDimension('yAxis').width;
-        var xAxisHeight = this.boundsMaker.getDimension('xAxis').height;
+        var left = (yAxisWidth - titleWidth) / 2;
+        var bottom = -this.boundsMaker.getDimension('xAxis').height;
+
+        bottom -= offset.y || 0;
+        left += offset.x || 0;
 
         return {
-            left: (yAxisWidth - titleWidth) / 2,
-            bottom: -xAxisHeight
+            left: left,
+            bottom: bottom
         };
     },
 
@@ -451,6 +460,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeRightPosition: function(size) {
+        var offset = this.options.title.offset || {};
         var rightPosition;
 
         if (renderUtil.isIE7() || this.options.rotateTitle === false) {
@@ -458,6 +468,8 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         } else {
             rightPosition = -size;
         }
+
+        rightPosition -= offset.x || 0;
 
         return rightPosition;
     },
@@ -469,6 +481,7 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTopPosition: function(size) {
+        var offset = this.options.title.offset;
         var topPosition = null;
         var titleHeight;
 
@@ -479,6 +492,11 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             topPosition = 0;
         } else if (!renderUtil.isOldBrowser()) {
             topPosition = size;
+        }
+
+        if (offset) {
+            topPosition = topPosition || 0;
+            topPosition += offset.y || 0;
         }
 
         return topPosition;
@@ -492,12 +510,13 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      */
     _makePositionMapForNotCenterAlign: function(size) {
         var positionMap = {};
+        var offset = this.options.title.offset || {};
         var topPosition;
 
         if (this.data.isPositionRight) {
             positionMap.right = this._makeRightPosition(size);
         } else {
-            positionMap.left = 0;
+            positionMap.left = offset.x || 0;
         }
 
         topPosition = this._makeTopPosition(size);
@@ -510,12 +529,12 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
-     * Render css style of title area
+     * Render css style of title area for vertical type.
      * @param {HTMLElement} titleContainer title element
      * @param {number} size width or height
      * @private
      */
-    _renderTitleAreaStyle: function(titleContainer, size) {
+    _renderTitleAreaStyleForVertical: function(titleContainer, size) {
         var cssPositionMap;
         var cssText;
 
@@ -534,15 +553,45 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
     },
 
     /**
+     * Render title position for horizontal type.
+     * @param {HTMLElement} titleContainer title element
+     * @param {{left: number, top: number, right: number, bottom: number}} offset - title position option
+     * @private
+     */
+    _renderTitlePositionForHorizontal: function(titleContainer, offset) {
+        renderUtil.renderPosition(titleContainer, {
+            left: offset.x,
+            bottom: -offset.y
+        });
+    },
+
+    /**
+     * Render css style of title area
+     * @param {HTMLElement} titleContainer title element
+     * @param {number} size width or height
+     * @private
+     */
+    _renderTitleAreaStyle: function(titleContainer, size) {
+        var offset = this.options.title.offset;
+
+        if (this.isVertical) {
+            this._renderTitleAreaStyleForVertical(titleContainer, size);
+        } else if (offset) {
+            this._renderTitlePositionForHorizontal(titleContainer, offset);
+        }
+    },
+
+    /**
      * Title area renderer
      * @param {?number} size (width or height)
      * @returns {HTMLElement} title element
      * @private
      */
     _renderTitleArea: function(size) {
-        var titleContainer = renderUtil.renderTitle(this.options.title, this.theme.title, 'tui-chart-title-area');
+        var title = this.options.title || {};
+        var titleContainer = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title-area');
 
-        if (titleContainer && this.isVertical) {
+        if (titleContainer) {
             this._renderTitleAreaStyle(titleContainer, size);
         }
 
@@ -578,7 +627,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
      * @private
      */
     _makeTickHtml: function(size, tickCount, isNotDividedXAxis, additionalSize) {
-        var aligned = this.data.aligned;
         var tickColor = this.theme.tickColor;
         var sizeRatio = this.data.sizeRatio || 1;
         var posType = this.isVertical ? 'bottom' : 'left';
@@ -587,7 +635,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
         var template, html;
 
         positions.length = this.data.labels.length;
-
         additionalSize = calculator.makePercentageValue(additionalSize, containerWidth);
         positions = this._makePercentagePositions(positions, size);
 
@@ -597,10 +644,6 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
 
             position -= (index === 0 && isNotDividedXAxis) ? calculator.makePercentageValue(1, containerWidth) : 0;
             position += additionalSize;
-
-            if (aligned) {
-                position = Math.round(position);
-            }
 
             cssTexts = [
                 renderUtil.concatStr('background-color:', tickColor),
@@ -641,7 +684,9 @@ var Axis = tui.util.defineClass(/** @lends Axis.prototype */ {
             lineSize = this.data.lineWidth;
         } else {
             lineSize = areaSize + tickLineExtend;
-            positionValue += additionalSize;
+            if (!this.data.sizeRatio) {
+                positionValue += additionalSize;
+            }
         }
 
         cssMap[posType] = positionValue;

@@ -104,28 +104,30 @@ describe('Test for renderingLabelHelper', function() {
     });
 
     describe('_makeLabelCssText()', function() {
-        it('레이블 렌더링을 위한 cssText를 생성합니다.', function() {
+        it('make cssText for label', function() {
             var position = {
                 left: 10,
                 top: 10
             };
             var theme = {
                 fontFamily: 'Verdana',
-                fontSize: 12
+                fontSize: 12,
+                fontWeight: 'normal'
             };
             var actual = labelHelper._makeLabelCssText(position, theme);
 
-            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px');
+            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal');
         });
 
-        it('선택된 index(selectedIndex)가 있으면서 전달된 index와 같지 않으면 opacity 속성을 추가합니다.', function() {
+        it('make cssText for label, when selectedIndex exist and not equal as index', function() {
             var position = {
                 left: 10,
                 top: 10
             };
             var theme = {
                 fontFamily: 'Verdana',
-                fontSize: 12
+                fontSize: 12,
+                fontWeight: 'normal'
             };
             var index = 0;
             var selectedIndex = 1;
@@ -135,7 +137,7 @@ describe('Test for renderingLabelHelper', function() {
 
             actual = labelHelper._makeLabelCssText(position, theme, index, selectedIndex);
 
-            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;opacity:0.3');
+            expect(actual).toBe('left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal;opacity:0.3');
         });
 
         it('cssText template을 전달하면 해당 template으로 cssText를 생성합니다.', function() {
@@ -145,11 +147,12 @@ describe('Test for renderingLabelHelper', function() {
             };
             var theme = {
                 fontFamily: 'Verdana',
-                fontSize: 12
+                fontSize: 12,
+                fontWeight: 'normal'
             };
             var actual = labelHelper._makeLabelCssText(position, theme, null, null, seriesTemplate.tplCssTextForLineType);
 
-            expect(actual).toBe('left:10%;top:10%;font-family:Verdana;font-size:12px');
+            expect(actual).toBe('left:10%;top:10%;font-family:Verdana;font-size:12px;font-weight:normal');
         });
     });
 
@@ -161,7 +164,8 @@ describe('Test for renderingLabelHelper', function() {
             };
             var theme = {
                 fontFamily: 'Verdana',
-                fontSize: 12
+                fontSize: 12,
+                fontWeight: 'normal'
             };
             var label = 'label';
             var index = 0;
@@ -172,7 +176,8 @@ describe('Test for renderingLabelHelper', function() {
 
             actual = labelHelper.makeSeriesLabelHtml(position, label, theme, index, selectedIndex);
             expected = '<div class="tui-chart-series-label"' +
-                        ' style="left:10px;top:10px;font-family:Verdana;font-size:12px;opacity:0.3">label</div>';
+                    ' style="left:10px;top:10px;font-family:Verdana;font-size:12px;font-weight:normal;opacity:0.3">' +
+                'label</div>';
 
             expect(actual).toBe(expected);
         });
@@ -192,7 +197,8 @@ describe('Test for renderingLabelHelper', function() {
                 theme: {
                     label: {
                         fontSize: 12,
-                        fontFamily: 'Verdana'
+                        fontFamily: 'Verdana',
+                        fontWeight: 'normal'
                     }
                 }
             });
@@ -246,13 +252,13 @@ describe('Test for renderingLabelHelper', function() {
 
             actual = labelHelper.makeLabelsHtmlForTreemap(seriesItems, boundMap, series.theme.label, shouldDimmed);
             expected = '<div class="tui-chart-series-label"' +
-                ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px">label1-1</div>' +
+                ' style="left:87.5px;top:191px;font-family:Verdana;font-size:12px;font-weight:normal">label1-1</div>' +
             '<div class="tui-chart-series-label"' +
-                ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px">label3-2</div>' +
+                ' style="left:312.5px;top:291px;font-family:Verdana;font-size:12px;font-weight:normal">label3-2</div>' +
             '<div class="tui-chart-series-label"' +
-                ' style="left:275px;top:91px;font-family:Verdana;font-size:12px">label1-2-1-1</div>' +
+                ' style="left:275px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-1</div>' +
             '<div class="tui-chart-series-label"' +
-                ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px">label1-2-1-2</div>';
+                ' style="left:387.5px;top:91px;font-family:Verdana;font-size:12px;font-weight:normal">label1-2-1-2</div>';
 
             expect(actual).toBe(expected);
 

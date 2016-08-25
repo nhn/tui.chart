@@ -50,20 +50,32 @@ var addingDynamicDataMixer = {
     _animateForAddingData: function() {
         var self = this;
         var boundsMaker = this.boundsMaker;
-        var shiftingOption = !!tui.util.pick(this.options.series, 'shifting');
+        var dataProcessor = this.dataProcessor;
+        var shiftingOption = !!this.options.series.shifting;
         var beforeAxesData = boundsMaker.getAxesData();
-        var beforeSizeRatio = beforeAxesData.xAxis.sizeRatio || 1;
 
         this.addedDataCount += 1;
         this.axisScaleMakerMap = null;
         boundsMaker.initBoundsData();
 
         this._render(function() {
-            var xAxisWidth = boundsMaker.getDimension('xAxis').width * beforeSizeRatio;
-            var tickSize = (xAxisWidth / (self.dataProcessor.getCategoryCount(false) - 1));
+            var xAxisWidth = boundsMaker.getDimension('xAxis').width;
+            var tickCount, tickSize;
+
+            if (dataProcessor.isCoordinateType()) {
+                tickCount = dataProcessor.getValues(self.chartType, 'x').length - 1;
+            } else {
+                tickCount = dataProcessor.getCategoryCount(false) - 1;
+            }
+
+            if (shiftingOption) {
+                tickCount -= 1;
+            }
+
+            tickSize = (xAxisWidth / tickCount);
 
             self._renderComponents({
-                tickSize: tickSize + chartConst.OVERLAPPING_WIDTH,
+                tickSize: tickSize,
                 shifting: shiftingOption
             }, 'animateForAddingData');
         }, beforeAxesData);
@@ -80,7 +92,7 @@ var addingDynamicDataMixer = {
     _rerenderForAddingData: function() {
         var self = this;
 
-        if (tui.util.pick(this.options.series, 'shifting')) {
+        if (this.options.series.shifting || this.dataProcessor.isCoordinateType()) {
             this.boundsMaker.initBoundsData();
         }
 
@@ -110,9 +122,11 @@ var addingDynamicDataMixer = {
             return;
         }
 
+        this.boundsMaker.onAddingDataMode();
         this._animateForAddingData();
         this.rerenderingDelayTimerId = setTimeout(function() {
             self.rerenderingDelayTimerId = null;
+            self.boundsMaker.offAddingDataMode();
             self._rerenderForAddingData();
             self._checkForAddedData();
         }, 400);
@@ -130,7 +144,7 @@ var addingDynamicDataMixer = {
             clearTimeout(this.rerenderingDelayTimerId);
             this.rerenderingDelayTimerId = null;
 
-            if (tui.util.pick(this.options.series, 'shifting')) {
+            if (this.options.series.shifting) {
                 this.dataProcessor.shiftData();
             }
         }
@@ -166,6 +180,11 @@ var addingDynamicDataMixer = {
      * @param {Array} values - values
      */
     addData: function(category, values) {
+        if (!values) {
+            values = category;
+            category = null;
+        }
+
         this.dataProcessor.addDynamicData(category, values);
         this._startLookup();
     },

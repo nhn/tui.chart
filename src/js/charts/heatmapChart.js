@@ -125,6 +125,8 @@ HeatmapChart.prototype._makeRenderingData = function() {
     data.legend = {
         colorSpectrum: colorSpectrum,
         axesData: axisDataMaker.makeValueAxisData({
+            dataProcessor: this.dataProcessor,
+            chartType: this.chartType,
             axisScaleMaker: this._getAxisScaleMakerMap().legend,
             isVertical: true
         })

@@ -82,7 +82,7 @@ var axisTypeMixer = {
      * @private
      */
     _addTooltipComponent: function() {
-        var TooltipClass = this.hasGroupTooltip ? GroupTooltip : Tooltip;
+        var TooltipClass = this.options.tooltip.grouped ? GroupTooltip : Tooltip;
         this.componentManager.register('tooltip', TooltipClass, this._makeTooltipData());
     },
 
@@ -115,7 +115,12 @@ var axisTypeMixer = {
         var LegendClass;
 
         if (params.plot) {
-            this.componentManager.register('plot', Plot);
+            this.componentManager.register('plot', Plot, {
+                isVertical: this.isVertical,
+                chartType: this.chartType,
+                chartTypes: this.chartTypes,
+                xAxisType: options.xAxis.type
+            });
         }
 
         this._addAxisComponents(params.axis, aligned);
@@ -179,10 +184,12 @@ var axisTypeMixer = {
         if (axisScaleMaker) {
             axisData = axisDataMaker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                dataProcessor: this.dataProcessor,
+                chartType: this.chartType,
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned
+                aligned: aligned
             });
         } else {
             axisData = axisDataMaker.makeLabelAxisData({
@@ -190,7 +197,7 @@ var axisTypeMixer = {
                 options: options,
                 isVertical: !!isVertical,
                 isPositionRight: !!isPositionRight,
-                aligned: !!aligned,
+                aligned: aligned,
                 addedDataCount: tui.util.pick(this.options.series, 'shifting') ? this.addedDataCount : 0
             });
         }
@@ -245,20 +252,45 @@ var axisTypeMixer = {
     },
 
     /**
+     * Get limit map for coordinate type.
+     * @returns {{x: ({min: number, max: number}), y: ({min: number, max: number})}}
+     * @private
+     */
+    _getLimitMapForCoordinateType: function() {
+        var scaleMakerMap = this._getAxisScaleMakerMap();
+        return {
+            x: scaleMakerMap.xAxis.getLimit(),
+            y: scaleMakerMap.yAxis.getLimit()
+        };
+    },
+
+    /**
      * Add data ratios.
      * @private
      * @override
      */
     _addDataRatios: function() {
         var self = this;
-        var axesData = this.boundsMaker.getAxesData();
         var chartTypes = this.chartTypes || [this.chartType];
-        var limitMap = this._getLimitMap(axesData, chartTypes);
-        var stackType = tui.util.pick(this.options.series, 'stackType');
+        var seriesOption = this.options.series || {};
+        var limitMap, axesData, addDataRatio;
 
-        tui.util.forEachArray(chartTypes, function(chartType) {
-            self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
-        });
+        if (this.dataProcessor.isCoordinateType()) {
+            limitMap = this._getLimitMapForCoordinateType();
+            addDataRatio = function(chartType) {
+                self.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
+            };
+        } else {
+            axesData = this.boundsMaker.getAxesData();
+            limitMap = this._getLimitMap(axesData, chartTypes);
+
+            addDataRatio = function(chartType) {
+                var stackType = (seriesOption[chartType] || seriesOption).stackType;
+                self.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+            };
+        }
+
+        tui.util.forEachArray(chartTypes, addDataRatio);
     },
 
     /**
@@ -275,10 +307,6 @@ var axisTypeMixer = {
         var xAxis = axesData.xAxis;
 
         return tui.util.extend({
-            plot: {
-                vTickCount: yAxis.validTickCount,
-                hTickCount: axesData.xAxis.validTickCount
-            },
             customEvent: {
                 tickCount: this.isVertical ? (xAxis.eventTickCount || xAxis.tickCount) : yAxis.tickCount
             }
@@ -291,12 +319,14 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
+        var seriesOptions = this.options.series;
+
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: tui.util.pick(this.options.series, 'zoomable'),
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            zoomable: seriesOptions.zoomable,
+            allowSelect: seriesOptions.allowSelect
         });
     },
 
@@ -308,7 +338,7 @@ var axisTypeMixer = {
         this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            allowSelect: this.options.series.allowSelect
         });
     },
 
@@ -317,7 +347,7 @@ var axisTypeMixer = {
      * @private
      */
     _addCustomEventComponent: function() {
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._addCustomEventComponentForGroupTooltip();
         } else {
             this._addCustomEventComponentForNormalTooltip();
@@ -396,7 +426,7 @@ var axisTypeMixer = {
 
         ChartBase.prototype._attachCustomEvent.call(this, serieses);
 
-        if (this.hasGroupTooltip) {
+        if (this.options.tooltip.grouped) {
             this._attachCustomEventForGroupTooltip(customEvent, tooltip, serieses);
         } else {
             this._attachCustomEventForNormalTooltip(customEvent, tooltip, serieses);

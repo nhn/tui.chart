@@ -1,55 +1,63 @@
-<img alt="Toast UI Chart" src="https://cloud.githubusercontent.com/assets/2888775/12061211/9fe03df6-afc3-11e5-9077-81342dcb8f49.png">
+<img alt="toast ui chart" src="http://static.toastoven.net/prod_toastuichart/toast_ui_chart_title.png" style="border: 0">
 ===============
-This application supports drawing a chart on web browser.<br>
+Toast UI Chart supports a easy way to draw various and essential charts on your web service.<br>
 
 ## Feature
 
-* Bar Chart<br>
-  * A bar chart displays a series of data in the form of a horizontal bar.
-* Column Chart<br>
-  * A column chart is a type of bar chart. Unlike a bar chart, a column chart, position the vertical bar.
-* Line Chart<br>
-  * A line chart is a type of chart which displays information as a series of data by line segments.
-* Area Chart<br>
-  * An area chart displays graphically quantitative data. It is based on the line chart.
-* Bubble Chart<br>
-  * A bubble chart is a type of chart that displays three dimensions of data.
-* Scatter Chart<br>
-  * A scatter chart is a type of chart that displays values for typically two variables for a set of data.
-* Pie Chart<br>
-  * A type of graph in which a circle is divided into sectors that each represent a proportion of the whole.
-* Combo Chart (Combination Chart)<br>
-  * A combo chart is a visualization that combines the features of two kinds of charts.
-* Map Chart<br>
-  * A map chart allows us to visualize spatial relationships in data by indicating data on a geographical map.
-* Heatmap Chart <br>
-  * A heatmap chart is a graphical representation of data where the individual values contained in a matrix are represented as colors.
-* Treemap Chart <br>
-  * A treemap chart is graphical representation of hierarchical data by using rectangles.
+#### Bar Chart
+* Represents a series of data in the form of a horizontal bar.
 
-## Sample Images
+![bar chart](https://cloud.githubusercontent.com/assets/2888775/17967950/33635188-6b05-11e6-87ab-cf67929ddb9f.png)
 
-![bar chart](https://cloud.githubusercontent.com/assets/2888775/14166360/c7fed622-f74d-11e5-88e4-1eeb0ec3cc73.png)
+#### Column Chart
+* Represents a series of data in the form of a vertical bar.
 
-![column chart](https://cloud.githubusercontent.com/assets/2888775/14168827/6d4a3250-f75f-11e5-9bf5-978ad18932d9.png)
+![column chart](https://cloud.githubusercontent.com/assets/2888775/17967954/336be0c8-6b05-11e6-91ef-55b6b003d256.png)
 
-![line chart](https://cloud.githubusercontent.com/assets/2888775/13280685/c7f3eeca-db22-11e5-9d2b-9dd1eb81d247.png)
+#### Line Chart
+* Represents a series of data by line segments.
 
-![area chart](https://cloud.githubusercontent.com/assets/2888775/14877608/45a037d0-0d59-11e6-9488-7b3812e17beb.png)
+![line chart](https://cloud.githubusercontent.com/assets/2888775/17968200/70490420-6b06-11e6-8a8e-659f5476cda5.png)
 
-![bubble chart](https://cloud.githubusercontent.com/assets/2888775/15598957/5eed6618-241a-11e6-9983-ed2a23519a1f.png)
+#### Area Chart
+* Represents graphically quantitative data. It is based on the line chart.
 
-![scatter chart](https://cloud.githubusercontent.com/assets/2888775/15598912/e648cd2e-2419-11e6-848c-9efe9e2e3700.png)
+![area chart](https://cloud.githubusercontent.com/assets/2888775/17967949/33611576-6b05-11e6-83b4-830ac2102347.png)
 
-![pie chart](https://cloud.githubusercontent.com/assets/2888775/15598910/e6268796-2419-11e6-9c6d-1b95719e59f7.png)
+#### Bubble Chart
+* Represents three dimensions of data like x, y position and circle's radius.
 
-![combo chart](https://cloud.githubusercontent.com/assets/2888775/17202538/d4344e4c-54d4-11e6-9889-350d30599866.png)
+![bubble chart](https://cloud.githubusercontent.com/assets/2888775/17967952/336925d6-6b05-11e6-89e5-94698a955352.png)
 
-![map chart](https://cloud.githubusercontent.com/assets/2888775/14169302/e228221a-f761-11e5-88ed-20e9a2aba45c.png)
+#### Scatter Chart
+* Represents tendency or distribution, using two dimensional data like x, y position.
 
-![heatmap chart](https://cloud.githubusercontent.com/assets/2888775/16477485/fa47bbc8-3ecc-11e6-937b-8f7ff3f8e3e3.png)
+![scatter chart](https://cloud.githubusercontent.com/assets/2888775/17967960/33970370-6b05-11e6-8af1-d590d547ff4c.png)
 
-![treemap chart](https://cloud.githubusercontent.com/assets/2888775/17202722/e6a2b66c-54d5-11e6-98af-be113c589a3f.png)
+#### Pie Chart
+* Represents a circular graph, which has divided sectors have to do with numeric proportion of data size to whole data quantity.
+
+![pie chart](https://cloud.githubusercontent.com/assets/2888775/17967958/3390131c-6b05-11e6-83e1-8cadb7bd58fc.png)
+
+#### Combo Chart (Combination Chart)
+* Represents combined features of two kinds of charts.
+
+![combo chart](https://cloud.githubusercontent.com/assets/2888775/17967953/3369fcae-6b05-11e6-9e31-abffd5a97b26.png)
+
+#### Map Chart
+* Represents relationships in data by indicating data by color range on a geographical map.
+
+![map chart](https://cloud.githubusercontent.com/assets/2888775/17967956/3389ef0a-6b05-11e6-8bb4-d4a0db8fecf8.png)
+
+#### Heatmap Chart
+* Represents relationships in data by color range.
+
+![heatmap chart](https://cloud.githubusercontent.com/assets/2888775/17967951/3369065a-6b05-11e6-946a-b25faf213c5d.png)
+
+#### Treemap Chart
+* Represents hierarchical data by using rectangles and color range.
+
+![treemap chart](https://cloud.githubusercontent.com/assets/2888775/17967959/3392b338-6b05-11e6-88af-b870c9c4c13a.png)
 
 ## Documentation
 * **Getting started** : https://github.com/nhnent/tui.chart/wiki/getting-started/
@@ -75,7 +83,7 @@ This application supports drawing a chart on web browser.<br>
 * Bower:
    * latest : `bower install tui-chart`
    * each version : `bower install "tui-chart[#tag]"`
-* Download: https://github.com/nhnent/tui.chart
+* Download: https://github.com/nhnent/tui.chart/tree/master/dist
 
 ## Release History
 * https://github.com/nhnent/tui.chart/releases

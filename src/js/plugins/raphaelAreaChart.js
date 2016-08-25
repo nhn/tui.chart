@@ -12,6 +12,7 @@ var raphaelRenderUtil = require('./raphaelRenderUtil');
 var EMPHASIS_OPACITY = 1;
 var DE_EMPHASIS_OPACITY = 0.3;
 var LEFT_BAR_WIDTH = 10;
+var ADDING_DATA_ANIMATION_DURATION = 300;
 
 var raphael = window.Raphael;
 var concat = Array.prototype.concat;
@@ -343,7 +344,7 @@ var RaphaelAreaChart = tui.util.defineClass(RaphaelLineBase, /** @lends RaphaelA
         if (shiftingOption) {
             this.leftBar.animate({
                 width: tickSize + LEFT_BAR_WIDTH
-            }, 300);
+            }, ADDING_DATA_ANIMATION_DURATION);
             additionalIndex = 1;
         }
 

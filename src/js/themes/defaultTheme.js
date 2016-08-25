@@ -1,21 +1,24 @@
 'use strict';
 
-var DEFAULT_COLOR = '#000000',
-    DEFAULT_BACKGROUND = '#ffffff',
-    EMPTY = '',
-    DEFAULT_AXIS = {
-        tickColor: DEFAULT_COLOR,
-        title: {
-            fontSize: 12,
-            fontFamily: EMPTY,
-            color: DEFAULT_COLOR
-        },
-        label: {
-            fontSize: 12,
-            fontFamily: EMPTY,
-            color: DEFAULT_COLOR
-        }
-    };
+var DEFAULT_COLOR = '#000000';
+var DEFAULT_BACKGROUND = '#ffffff';
+var DEFAULT_FONTWEIGHT = 'normal';
+var EMPTY = '';
+var DEFAULT_AXIS = {
+    tickColor: DEFAULT_COLOR,
+    title: {
+        fontSize: 12,
+        fontFamily: EMPTY,
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
+    },
+    label: {
+        fontSize: 12,
+        fontFamily: EMPTY,
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
+    }
+};
 
 var defaultTheme = {
     chart: {
@@ -25,7 +28,8 @@ var defaultTheme = {
     title: {
         fontSize: 18,
         fontFamily: EMPTY,
-        color: DEFAULT_COLOR
+        color: DEFAULT_COLOR,
+        fontWeight: DEFAULT_FONTWEIGHT
     },
     yAxis: DEFAULT_AXIS,
     xAxis: DEFAULT_AXIS,
@@ -37,7 +41,8 @@ var defaultTheme = {
         label: {
             fontSize: 11,
             fontFamily: EMPTY,
-            color: DEFAULT_COLOR
+            color: DEFAULT_COLOR,
+            fontWeight: DEFAULT_FONTWEIGHT
         },
         colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5', '#aa759f', '#8f5536'],
         singleColors: [],
@@ -51,7 +56,8 @@ var defaultTheme = {
         label: {
             fontSize: 12,
             fontFamily: EMPTY,
-            color: DEFAULT_COLOR
+            color: DEFAULT_COLOR,
+            fontWeight: DEFAULT_FONTWEIGHT
         }
     },
     tooltip: {}

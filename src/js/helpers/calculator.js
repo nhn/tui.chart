@@ -39,7 +39,7 @@ var calculator = {
         limit.max = max + iodValue + saveMin;
 
         if (max / 6 > min) {
-            limit.min = 0 + saveMin;
+            limit.min = saveMin;
         } else {
             limit.min = min - iodValue + saveMin;
         }
@@ -101,18 +101,17 @@ var calculator = {
      * @returns {Array.<number>} positions
      */
     makeTickPixelPositions: function(size, count, additionalPosition) {
-        var positions = [],
-            pxLimit, pxStep;
+        var positions = [];
 
         additionalPosition = additionalPosition || 0;
 
         if (count > 0) {
-            pxLimit = {min: 0, max: size - 1};
-            pxStep = this.calculateStepFromLimit(pxLimit, count);
-            positions = tui.util.map(tui.util.range(0, size, pxStep), function(position) {
-                return Math.round(position + additionalPosition);
+            positions = tui.util.map(tui.util.range(0, count), function(index) {
+                var ratio = index === 0 ? 0 : (index / (count - 1));
+
+                return ratio * size + additionalPosition;
             });
-            positions[positions.length - 1] = Math.round(size - 1 + additionalPosition);
+            positions[positions.length - 1] -= 1;
         }
 
         return positions;
@@ -145,7 +144,7 @@ var calculator = {
      * @returns {number} step
      */
     calculateStepFromLimit: function(limit, count) {
-        return (limit.max - limit.min) / (count - 1);
+        return tui.util.division(tui.util.subtraction(limit.max, limit.min), (count - 1));
     },
 
     /**

@@ -9,6 +9,7 @@
 var CustomEventBase = require('./customEventBase');
 var chartConst = require('../const');
 var dom = require('../helpers/domHandler');
+var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
 var eventListener = require('../helpers/eventListener');
 
@@ -88,6 +89,19 @@ var zoomMixer = {
          * @type {null | HTMLElement}
          */
         this.resetZoomBtn = null;
+
+        /**
+         * Find data for zoomable
+         * @param {number} clientX - clientX
+         * @param {number} clientY - clientY
+         * @returns {object}
+         * @private
+         */
+        if (predicate.isComboChart(this.chartType)) {
+            this._findDataForZoomable = this._findGroupData;
+        } else {
+            this._findDataForZoomable = this._findData;
+        }
     },
 
     /**
@@ -151,37 +165,6 @@ var zoomMixer = {
         this.dragSelectionElement = selectionElement;
 
         return container;
-    },
-
-    /**
-     * Calculate layer position by client position.
-     * @param {number} clientX - clientX
-     * @param {number} [clientY] - clientY
-     * @param {boolean} [checkLimit] - whether check limit or not
-     * @returns {{x: number, y: ?number}}
-     * @private
-     */
-    _calculateLayerPosition: function(clientX, clientY, checkLimit) {
-        var bound = this._getContainerBound();
-        var layerPosition = {};
-        var expandSize = this.expandSize;
-        var maxLeft, minLeft;
-
-        checkLimit = tui.util.isUndefined(checkLimit) ? true : checkLimit;
-
-        if (checkLimit) {
-            maxLeft = bound.right - expandSize;
-            minLeft = bound.left + expandSize;
-            clientX = Math.min(Math.max(clientX, minLeft), maxLeft);
-        }
-
-        layerPosition.x = clientX - bound.left;
-
-        if (!tui.util.isUndefined(clientY)) {
-            layerPosition.y = clientY - bound.top;
-        }
-
-        return layerPosition;
     },
 
     /**
@@ -305,7 +288,7 @@ var zoomMixer = {
         var clientPos = this.startClientPosition;
 
         if (tui.util.isNull(this.dragStartIndexes)) {
-            this.dragStartIndexes = this._findData(clientPos.x, clientPos.y).indexes;
+            this.dragStartIndexes = this._findDataForZoomable(clientPos.x, clientPos.y).indexes;
         } else {
             this._showDragSelection(e.clientX);
         }
@@ -395,7 +378,7 @@ var zoomMixer = {
                 CustomEventBase.prototype._onClick.call(this, e);
             }
         } else {
-            this.dragEndIndexes = this._findData(e.clientX, e.clientY).indexes;
+            this.dragEndIndexes = this._findDataForZoomable(e.clientX, e.clientY).indexes;
             this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
             this._hideDragSelection();
             this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
@@ -435,15 +418,6 @@ var zoomMixer = {
             this.customEventContainer.removeChild(this.resetZoomBtn);
             this.resetZoomBtn = null;
         }
-    },
-
-    /**
-     * Mix in.
-     * @param {function} func target function
-     * @ignore
-     */
-    mixin: function(func) {
-        tui.util.extend(func.prototype, this);
     }
 };
 

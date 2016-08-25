@@ -6,6 +6,8 @@
 
 'use strict';
 
+var concat = Array.prototype.concat;
+
 var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.prototype */ {
     /**
      * AreaTypeDataModel is data mode for custom event of area type.
@@ -17,47 +19,91 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     },
 
     /**
-     * Make area type data for custom event.
+     * Make data for detecting mouse event.
      * @param {Array.<Array.<object>>} groupPositions - group positions
      * @param {string} chartType - chart type
      * @returns {Array}
      * @private
      */
     _makeData: function(groupPositions, chartType) {
-        groupPositions = tui.util.pivot(groupPositions);
+        var data;
 
-        return tui.util.map(groupPositions, function(positions, groupIndex) {
+        groupPositions = tui.util.pivot(groupPositions);
+        data = tui.util.map(groupPositions, function(positions, groupIndex) {
             return tui.util.map(positions, function(position, index) {
-                return {
-                    chartType: chartType,
-                    indexes: {
-                        groupIndex: groupIndex,
-                        index: index
-                    },
-                    bound: position
-                };
+                var datum = null;
+
+                if (position) {
+                    datum = {
+                        chartType: chartType,
+                        indexes: {
+                            groupIndex: groupIndex,
+                            index: index
+                        },
+                        bound: position
+                    };
+                }
+
+                return datum;
             });
+        });
+
+        return tui.util.filter(concat.apply([], data), function(datum) {
+            return !!datum;
         });
     },
 
     /**
      * Find Data.
-     * @param {number} groupIndex - group index
-     * @param {number} layerY - mouse position
+     * @param {{x: number, y: number}} layerPosition - layer position
      * @returns {object}
      */
-    findData: function(groupIndex, layerY) {
-        var result = null,
-            min = 10000;
-        tui.util.forEach(this.data[groupIndex], function(data) {
-            var diff = Math.abs(layerY - data.bound.top);
-            if (min > diff) {
-                min = diff;
-                result = data;
+    findData: function(layerPosition) {
+        var result = null;
+        var minX = 10000;
+        var minY = 10000;
+        var foundData = [];
+
+        tui.util.forEach(this.data, function(datum) {
+            var diff = Math.abs(layerPosition.x - datum.bound.left);
+            if (minX > diff) {
+                minX = diff;
+                foundData = [datum];
+            } else if (minX === diff) {
+                foundData.push(datum);
+            }
+        });
+
+        tui.util.forEach(foundData, function(datum) {
+            var diff = Math.abs(layerPosition.y - datum.bound.top);
+            if (minY > diff) {
+                minY = diff;
+                result = datum;
             }
         });
 
         return result;
+    },
+
+    /**
+     * Find data by indexes.
+     * @param {number} groupIndex - group index
+     * @param {number} index - index
+     * @returns {object}
+     * @private
+     */
+    _findDataByIndexes: function(groupIndex, index) {
+        var foundData = null;
+
+        tui.util.forEachArray(this.data, function(datum) {
+            if (datum.indexes.groupIndex === groupIndex && datum.indexes.index === index) {
+                foundData = datum;
+            }
+
+            return !foundData;
+        });
+
+        return foundData;
     },
 
     /**
@@ -66,7 +112,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
      * @returns {object}
      */
     getFirstData: function(index) {
-        return this.data[0][index];
+        return this._findDataByIndexes(0, index);
     },
 
     /**
@@ -77,7 +123,7 @@ var AreaTypeDataModel = tui.util.defineClass(/** @lends AreaTypeDataModel.protot
     getLastData: function(index) {
         var lastGroupIndex = this.data.length - 1;
 
-        return this.data[lastGroupIndex][index];
+        return this._findDataByIndexes(lastGroupIndex, index);
     }
 });
 

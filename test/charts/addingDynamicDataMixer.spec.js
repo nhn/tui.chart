@@ -12,14 +12,18 @@ describe('Test for addingDynamicDataMixer', function() {
     var dataProcessor, boundsMaker;
 
     beforeEach(function() {
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategoryCount', 'shiftData', 'addDataFromDynamicData']);
-        boundsMaker = jasmine.createSpyObj('boundsMaker', ['initBoundsData', 'getAxesData', 'getDimension']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+                    ['getCategoryCount', 'shiftData', 'addDataFromDynamicData', 'getValues', 'isCoordinateType']);
+        boundsMaker = jasmine.createSpyObj('boundsMaker',
+                                ['initBoundsData', 'getAxesData', 'getDimension', 'onAddingDataMode', 'offAddingDataMode']);
 
         mixer.dataProcessor = dataProcessor;
         mixer.boundsMaker = boundsMaker;
 
         mixer._initForAddingData();
-        mixer.options = {};
+        mixer.options = {
+            series: {}
+        };
 
         mixer._render = jasmine.createSpy('_render').and.callFake(function(callback) {
             callback({});
@@ -30,6 +34,7 @@ describe('Test for addingDynamicDataMixer', function() {
     describe('_animateForAddingData()', function() {
         beforeEach(function() {
             dataProcessor.getCategoryCount.and.returnValue(5);
+            dataProcessor.isCoordinateType.and.returnValue(false);
             boundsMaker.getAxesData.and.returnValue({
                 xAxis: {}
             });
@@ -64,12 +69,30 @@ describe('Test for addingDynamicDataMixer', function() {
             expect(mixer._render).toHaveBeenCalled();
         });
 
+        it('if coordinateType data, get tickCount from dataProcessor.getValue function', function() {
+            dataProcessor.isCoordinateType.and.returnValue(true);
+            dataProcessor.getValues.and.returnValue(10);
+            mixer.chartType = 'line';
+
+            mixer._animateForAddingData();
+
+            expect(dataProcessor.getValues).toHaveBeenCalledWith('line', 'x');
+        });
+
+        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', function() {
+            dataProcessor.isCoordinateType.and.returnValue(false);
+
+            mixer._animateForAddingData();
+
+            expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
+        });
+
         it('_animateForAddingData 함수를 호출하면 _render함수에 전달하는 콜백함수를 통해 _renderComponents를 실행 해' +
             '각 컴포넌트 animateForAddingData함수를 tickSize와 shifting 옵션 값을 전달하며 실행합니다.', function() {
             mixer._animateForAddingData();
 
             expect(mixer._renderComponents).toHaveBeenCalledWith({
-                tickSize: 51,
+                tickSize: 50,
                 shifting: false
             }, 'animateForAddingData');
         });
@@ -100,10 +123,21 @@ describe('Test for addingDynamicDataMixer', function() {
             }, 'rerender');
         });
 
-        it('shifting옵션이 ture인 경우에는 boundsMaker.initBoundsData를 실행합니다.', function() {
+        it('if shifting option is ture, execute boundsMaker.initBoundsData', function() {
             mixer.options.series = {
                 shifting: true
             };
+
+            mixer._rerenderForAddingData();
+
+            expect(boundsMaker.initBoundsData).toHaveBeenCalled();
+        });
+
+        it('if coordinateType data, execute boundsMaker.initBoundsData', function() {
+            mixer.options.series = {
+                shifting: false
+            };
+            dataProcessor.isCoordinateType.and.returnValue(true);
 
             mixer._rerenderForAddingData();
 

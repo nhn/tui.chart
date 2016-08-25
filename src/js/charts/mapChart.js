@@ -86,6 +86,8 @@ var MapChart = tui.util.defineClass(ChartBase, /** @lends MapChart.prototype */ 
         });
 
         return axisDataMaker.makeValueAxisData({
+            dataProcessor: this.dataProcessor,
+            chartType: this.chartType,
             axisScaleMaker: axisScaleMaker,
             isVertical: true
         });

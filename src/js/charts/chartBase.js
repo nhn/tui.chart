@@ -34,12 +34,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          */
         this.theme = params.theme;
 
-        /**
-         * options
-         * @type {object}
-         */
-        this.options = null;
-        this._setDefaultOptions(params.options);
+        this._initializeOptions(params.options);
 
         /**
          * chart type
@@ -58,12 +53,6 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
          * @type {boolean}
          */
         this.isVertical = !!params.isVertical;
-
-        /**
-         * whether chart has group tooltip or not
-         * @type {boolean}
-         */
-        this.hasGroupTooltip = !!tui.util.pick(this.options, 'tooltip', 'grouped');
 
         /**
          * data processor
@@ -105,17 +94,112 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
-     * Set default options.
+     * Set offset property
+     * @param {{offset: object}} ptions -options
+     * @param {string} fromProperty - from property name
+     * @param {string} toProperty - to property name
+     * @private
+     */
+    _setOffsetProperty: function(ptions, fromProperty, toProperty) {
+        if (!tui.util.isExisty(ptions[fromProperty])) {
+            return;
+        }
+
+        ptions.offset = ptions.offset || {};
+        ptions.offset[toProperty] = ptions[fromProperty];
+        delete ptions[fromProperty];
+    },
+
+    /**
+     * Initialize offset.
+     * @param {{offsetX: ?number, offsetY: ?number}} options - offset options
+     * @private
+     */
+    _initializeOffset: function(options) {
+        if (!options) {
+            return;
+        }
+
+        this._setOffsetProperty(options, 'offsetX', 'x');
+        this._setOffsetProperty(options, 'offsetY', 'y');
+    },
+
+    /**
+     * Initialize title options.
+     * @param {
+     *      Array.<{title: (string | {text: string, offsetX: number, offsetY: number})}> |
+     *      {title: (string | {text: string, offsetX: number, offsetY: number})}
+     * } targetOptions - target options
+     * @private
+     */
+    _initializeTitleOptions: function(targetOptions) {
+        var self = this;
+        var optionsSet;
+
+        if (!targetOptions) {
+            return;
+        }
+
+        optionsSet = tui.util.isArray(targetOptions) ? targetOptions : [targetOptions];
+        tui.util.forEachArray(optionsSet, function(options) {
+            var title = options.title;
+
+            if (tui.util.isString(title)) {
+                options.title = {
+                    text: title
+                };
+            }
+
+            self._initializeOffset(options.title);
+        });
+    },
+
+    /**
+     * Initialize tooltip options.
+     * @param {{grouped: ?boolean, offsetX: ?number, offsetY: ?number}} options - tooltip options
+     * @private
+     */
+    _initializeTooltipOptions: function(options) {
+        var position = options.position;
+
+        options.grouped = !!options.grouped;
+        this._initializeOffset(options);
+
+        if (!options.offset && position) {
+            options.offset = {
+                x: position.left,
+                y: position.top
+            };
+        }
+
+        delete options.position;
+    },
+
+    /**
+     * Initialize options.
      * @param {object} options - options for chart
      * @private
      */
-    _setDefaultOptions: function(options) {
+    _initializeOptions: function(options) {
+        options.xAxis = options.xAxis || {};
+        options.series = options.series || {};
+        options.tooltip = options.tooltip || {};
         options.legend = options.legend || {};
+
+        this._initializeTitleOptions(options.chart);
+        this._initializeTitleOptions(options.xAxis);
+        this._initializeTitleOptions(options.yAxis);
 
         if (tui.util.isUndefined(options.legend.visible)) {
             options.legend.visible = true;
         }
 
+        this._initializeTooltipOptions(options.tooltip);
+
+        /**
+         * options
+         * @type {object}
+         */
         this.options = options;
     },
 
@@ -166,7 +250,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _createAxisScaleMaker: function(axisOptions, areaType, valueType, chartType, additionalParams) {
         var limit = this._pickLimitFromOptions(axisOptions);
-        var seriesOptions = this.options.series || {};
+        var seriesOptions = this.options.series;
 
         chartType = chartType || this.chartType;
         seriesOptions = seriesOptions[chartType] || seriesOptions;
@@ -174,12 +258,12 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return new AxisScaleMaker(tui.util.extend({
             dataProcessor: this.dataProcessor,
             boundsMaker: this.boundsMaker,
-            options: {
-                stackType: seriesOptions.stackType,
-                diverging: seriesOptions.diverging,
-                limit: limit
-            },
-            isVertical: this.isVertical,
+            stackType: seriesOptions.stackType,
+            diverging: seriesOptions.diverging,
+            limitOption: limit,
+            type: axisOptions.type,
+            dateFormat: axisOptions.dateFormat,
+            isVertical: areaType !== 'xAxis',
             areaType: areaType,
             valueType: valueType,
             chartType: chartType
@@ -195,7 +279,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
         return {
             isVertical: this.isVertical,
             userEvent: this.userEvent,
-            chartType: this.chartType
+            chartType: this.chartType,
+            xAxisType: this.options.xAxis.type,
+            dateFormat: this.options.xAxis.dateFormat
         };
     },
 
@@ -273,6 +359,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _registerAxesData: function() {
         var axesData = this._makeAxesData();
+
         this.boundsMaker.registerAxesData(axesData);
     },
 
@@ -442,7 +529,15 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      */
     _renderTitle: function(container) {
         var chartOptions = this.options.chart || {};
-        var titleElement = renderUtil.renderTitle(chartOptions.title, this.theme.title, 'tui-chart-title');
+        var title = chartOptions.title || {};
+        var titleElement = renderUtil.renderTitle(title.text, this.theme.title, 'tui-chart-title');
+
+        if (title.offset) {
+            renderUtil.renderPosition(titleElement, {
+                left: title.offset.x,
+                top: title.offset.y
+            });
+        }
 
         dom.append(container, titleElement);
     },
@@ -487,9 +582,9 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * @private
      */
     _sendSeriesData: function(chartType) {
-        var self = this,
-            customEvent = this.componentManager.get('customEvent'),
-            seriesInfos, chartTypes;
+        var self = this;
+        var customEvent = this.componentManager.get('customEvent');
+        var seriesInfos, chartTypes;
 
         if (!customEvent) {
             return;
@@ -603,11 +698,23 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
     },
 
     /**
+     * Set tooltip offset option.
+     * @param {object} offset - tooltip offset
+     *      @param {number} offset.x - offset x
+     *      @param {number} offset.y - offset y
+     * @api
+     */
+    setTooltipOffset: function(offset) {
+        this.componentManager.get('tooltip').setOffset(offset);
+    },
+
+    /**
      * Set position option.
      * @param {object} position moving position
      *      @param {number} position.left left
      *      @param {number} position.top top
      * @api
+     * @deprecated
      */
     setTooltipPosition: function(position) {
         this.componentManager.get('tooltip').setPosition(position);
@@ -625,8 +732,17 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Reset tooltip position.
      * @api
      */
+    resetTooltipOffset: function() {
+        this.componentManager.get('tooltip').resetOffset();
+    },
+
+    /**
+     * Reset tooltip position.
+     * @api
+     * @deprecated
+     */
     resetTooltipPosition: function() {
-        this.componentManager.get('tooltip').resetPosition();
+        this.resetTooltipOffset();
     },
 
     /**
@@ -657,7 +773,55 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
      * Add data.
      * @abstract
      */
-    addData: function() {}
+    addData: function() {},
+
+    /**
+     * Add plot line.
+     * @param {{index: number, color: string, id: string}} data - data
+     */
+    addPlotLine: function(data) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.addPlotLine(data);
+        }
+    },
+
+    /**
+     * Add plot band.
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
+     */
+    addPlotBand: function(data) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.addPlotBand(data);
+        }
+    },
+
+    /**
+     * Remove plot line.
+     * @param {string} id - line id
+     */
+    removePlotLine: function(id) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.removePlotLine(id);
+        }
+    },
+
+    /**
+     * Remove plot band.
+     * @param {string} id - band id
+     */
+    removePlotBand: function(id) {
+        var plot = this.componentManager.get('plot');
+
+        if (plot) {
+            plot.removePlotBand(id);
+        }
+    }
 });
 
 module.exports = ChartBase;

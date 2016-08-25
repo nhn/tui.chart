@@ -20,14 +20,16 @@ var raphaelRenderUtil = {
      * @returns {string} path
      */
     makeLinePath: function(fromPos, toPos, width) {
-        var fromPoint = [fromPos.left, fromPos.top],
-            toPoint = [toPos.left, toPos.top];
+        var fromPoint = [fromPos.left, fromPos.top];
+        var toPoint = [toPos.left, toPos.top];
+        var additionalPoint;
 
         width = width || 1;
+        additionalPoint = (width % 2 / 2);
 
         tui.util.forEachArray(fromPoint, function(from, index) {
             if (from === toPoint[index]) {
-                fromPoint[index] = toPoint[index] = Math.round(from) - (width % 2 / 2);
+                fromPoint[index] = toPoint[index] = Math.round(from) - additionalPoint;
             }
         });
 

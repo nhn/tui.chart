@@ -16,29 +16,31 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
      * SeriesItem is a element of SeriesGroup.items.
      * SeriesItem has processed terminal data like value, ratio, etc.
      * @constructs SeriesItem
-     * @param {number} value - value
-     * @param {?string} stack - stack
-     * @param {?Array.<function>} formatFunctions - format functions
-     * @param {string} chartType - type of chart
+     * @param {object} params - parameters
+     *      @param {number} params.datum - value
+     *      @param {string} params.chartType - type of chart
+     *      @param {?Array.<function>} params.formatFunctions - format functions
+     *      @param {number} params.index - raw data index
+     *      @param {?string} params.stack - stack
      */
-    init: function(value, stack, formatFunctions, chartType) {
+    init: function(params) {
         /**
          * type of chart
          * @type {string}
          */
-        this.chartType = chartType;
+        this.chartType = params.chartType;
 
         /**
          * for group stack option.
          * @type {string}
          */
-        this.stack = stack || chartConst.DEFAULT_STACK;
+        this.stack = params.stack || chartConst.DEFAULT_STACK;
 
         /**
          * format functions
          * @type {Array.<function>}
          */
-        this.formatFunctions = formatFunctions;
+        this.formatFunctions = params.formatFunctions;
 
         /**
          * whether range item or not
@@ -106,20 +108,22 @@ var SeriesItem = tui.util.defineClass(/** @lends SeriesItem.prototype */{
          */
         this.ratioDistance = null;
 
-        this._initValues(value);
+        this._initValues(params.datum, params.index);
     },
 
     /**
      * Initialize values of item.
      * @param {number} value - value
+     * @param {number} index - raw data index
      * @private
      */
-    _initValues: function(value) {
+    _initValues: function(value, index) {
         var values = this._createValues(value);
         var areaType = 'makingSeriesLabel';
         var hasStart = values.length > 1;
 
         this.value = this.end = values[0];
+        this.index = index;
         this.label = renderUtil.formatValue(this.value, this.formatFunctions, this.chartType, areaType);
         this.endLabel = this.label;
 

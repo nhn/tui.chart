@@ -6,8 +6,8 @@
 
 'use strict';
 
-var maker = require('../../src/js/helpers/axisDataMaker'),
-    chartConst = require('../../src/js/const');
+var maker = require('../../src/js/helpers/axisDataMaker');
+var chartConst = require('../../src/js/const');
 
 describe('Test for axisDataMaker', function() {
     describe('_makeLabelsByIntervalOption()', function() {
@@ -27,11 +27,11 @@ describe('Test for axisDataMaker', function() {
     });
 
     describe('makeLabelAxisData()', function() {
-        it('레이블 타입의 axis data를 생성합니다.', function() {
-            var result = maker.makeLabelAxisData({
+        it('make axis data for label type', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3']
             });
-            expect(result).toEqual({
+            expect(actual).toEqual({
                 labels: ['label1', 'label2', 'label3'],
                 tickCount: 4,
                 validTickCount: 0,
@@ -43,41 +43,102 @@ describe('Test for axisDataMaker', function() {
             });
         });
 
-        it('labelInterval옵션이 있으면 label을 labelInterval옵션으로 필터링 하여 반환합니다.', function() {
-            var result = maker.makeLabelAxisData({
+        it('if has labelInterval option, returns filtered label by labelInterval option', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
                 options: {
                     labelInterval: 2
                 }
             });
 
-            expect(result).toEqual({
-                labels: ['label1', '', 'label3', '', 'label5'],
-                tickCount: 6,
-                validTickCount: 0,
-                options: {
-                    labelInterval: 2
-                },
-                isLabelAxis: true,
-                isVertical: false,
-                isPositionRight: false,
-                aligned: false
-            });
+            expect(actual.labels).toEqual(['label1', '', 'label3', '', 'label5']);
         });
 
-        it('aligned옵션이 true이면 tick label과 tick의 수가 동일하기 때문에 tickCount는 레이블 수 만큼만 설정된다. ', function() {
-            var result = maker.makeLabelAxisData({
+        it('if has aligned option, tickCount is label length', function() {
+            var actual = maker.makeLabelAxisData({
                 labels: ['label1', 'label2', 'label3'],
                 aligned: true
             });
-            expect(result.tickCount).toBe(3);
+            expect(actual.tickCount).toBe(3);
+        });
+
+        it('if axis type is datetime, returns formatted label by dateFormat', function() {
+            var actual;
+
+            actual = maker.makeLabelAxisData({
+                labels: ['01/01/2016', '02/01/2016', '03/01/2016'],
+                options: {
+                    type: chartConst.AXIS_TYPE_DATETIME,
+                    dateFormat: 'YYYY.MM'
+                }
+            });
+
+            expect(actual.labels).toEqual(['2016.01', '2016.02', '2016.03']);
+        });
+    });
+
+    describe('_makeAdditionalDataForCoordinateLineType()', function() {
+        it('make additional axis data for coordinate line type chart', function() {
+            var labels = [5, 10, 15, 20, 25, 30, 35];
+            var values = [8, 20, 33, 23, 15];
+            var limit = {
+                min: 5,
+                max: 35
+            };
+            var step = 5;
+            var tickCount = 7;
+            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var expected = {
+                labels: [10, 15, 20, 25, 30],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 10,
+                    max: 30
+                },
+                dataMin: 8,
+                distance: 25,
+                positionRatio: 0.08,
+                sizeRatio: 0.8
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('make additional axis data, when included minus value', function() {
+            var labels = [-5, 0, 5, 10, 15, 20, 25];
+            var values = [-2, 20, 5, 23, 15];
+            var limit = {
+                min: -5,
+                max: 25
+            };
+            var step = 5;
+            var tickCount = 7;
+            var actual = maker._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            var expected = {
+                labels: [0, 5, 10, 15, 20],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 0,
+                    max: 20
+                },
+                dataMin: -2,
+                distance: 25,
+                positionRatio: 0.08,
+                sizeRatio: 0.8
+            };
+
+            expect(actual).toEqual(expected);
         });
     });
 
     describe('makeValueAxisData()', function() {
-        it('axisScaleMaker를 전달하여 value 타입 axis data를 생성합니다..', function() {
-            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker', ['getFormattedScaleValues', 'getLimit', 'getStep']),
-                actual, expected;
+        it('make data for value type axis.', function() {
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
+                            ['getFormattedScaleValues', 'getLimit', 'getStep']);
+            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories']);
+            var actual, expected;
 
             axisScaleMaker.getFormattedScaleValues.and.returnValue([0, 25, 50, 75, 100]);
             axisScaleMaker.getLimit.and.returnValue({
@@ -88,6 +149,7 @@ describe('Test for axisDataMaker', function() {
 
             actual = maker.makeValueAxisData({
                 axisScaleMaker: axisScaleMaker,
+                dataProcessor: dataProcessor,
                 options: 'options',
                 isVertical: true,
                 isPositionRight: true,
@@ -101,11 +163,59 @@ describe('Test for axisDataMaker', function() {
                     min: 0,
                     max: 100
                 },
+                dataMin: 0,
+                distance: 100,
                 step: 25,
                 options: 'options',
                 isVertical: true,
                 isPositionRight: true,
                 aligned: true
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('make data for value type axis, when coordinate data and line type chart', function() {
+            var axisScaleMaker = jasmine.createSpyObj('axisScaleMaker',
+                ['getFormattedScaleValues', 'getLimit', 'getStep']);
+            var dataProcessor = jasmine.createSpyObj('dataProcessor', ['hasCategories', 'getValues']);
+            var actual, expected;
+
+            axisScaleMaker.getFormattedScaleValues.and.returnValue([5, 10, 15, 20, 25, 30, 35]);
+            axisScaleMaker.getLimit.and.returnValue({
+                min: 5,
+                max: 35
+            });
+            axisScaleMaker.getStep.and.returnValue(5);
+            dataProcessor.hasCategories.and.returnValue(false);
+            dataProcessor.getValues.and.returnValue([8, 20, 33, 23, 15]);
+
+            actual = maker.makeValueAxisData({
+                axisScaleMaker: axisScaleMaker,
+                dataProcessor: dataProcessor,
+                chartType: 'line',
+                options: 'options',
+                isVertical: false,
+                isPositionRight: true,
+                aligned: true
+            });
+            expected = {
+                labels: [10, 15, 20, 25, 30],
+                tickCount: 5,
+                validTickCount: 5,
+                limit: {
+                    min: 10,
+                    max: 30
+                },
+                dataMin: 8,
+                distance: 25,
+                step: 5,
+                options: 'options',
+                isVertical: false,
+                isPositionRight: true,
+                aligned: true,
+                positionRatio: 0.08,
+                sizeRatio: 0.8
             };
 
             expect(actual).toEqual(expected);
@@ -206,7 +316,7 @@ describe('Test for axisDataMaker', function() {
             expect(axisData.startIndex).toBe(1);
             expect(axisData.positionRatio).toBe(0.05263157894736842);
             expect(axisData.sizeRatio).toBe(0.9473684210526316);
-            expect(axisData.lineWidth).toBe(401);
+            expect(axisData.lineWidth).toBe(400);
             expect(axisData.interval).toBe(6);
         });
     });

@@ -77,27 +77,113 @@ describe('Test for BoundsBaseCoordinateModel', function() {
     });
 
     describe('_joinData()', function() {
-        it('3차원 배열에서 마지막 배열끼리 join 시킨다.', function() {
+        it('join last depth array', function() {
             var actual = coordinateModel._joinData([
-                    [
-                        [1, 2, 3, 4, 5],
-                        [11, 12, 13, 14, 15]
-                    ],
-                    [
-                        [6, 7, 8],
-                        [16, 17, 18]
-                    ]
-                ]),
-                expected = [
-                    [1, 2, 3, 4, 5, 6, 7, 8],
-                    [11, 12, 13, 14, 15, 16, 17, 18]
-                ];
+                [
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 1
+                        }
+                    }, {
+                        sendData: {
+                            indexes: {
+                                index: 1
+                            },
+                            value: 2
+                        }
+                    }],
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 3
+                        }
+                    }, {
+                        sendData: {
+                            indexes: {
+                                index: 1
+                            },
+                            value: 4
+                        }
+                    }]
+                ], [
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 5
+                        }
+                    }],
+                    [{
+                        sendData: {
+                            indexes: {
+                                index: 0
+                            },
+                            value: 6
+                        }
+                    }]
+                ]
+            ]);
+            var expected = [
+                [{
+                    sendData: {
+                        indexes: {
+                            index: 0
+                        },
+                        value: 1
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 1
+                        },
+                        value: 2
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 0,
+                            legendIndex: 2
+                        },
+                        value: 5
+                    }
+                }],
+                [{
+                    sendData: {
+                        indexes: {
+                            index: 0
+                        },
+                        value: 3
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 1
+                        },
+                        value: 4
+                    }
+                }, {
+                    sendData: {
+                        indexes: {
+                            index: 0,
+                            legendIndex: 2
+                        },
+                        value: 6
+                    }
+                }]
+            ];
+
             expect(actual).toEqual(expected);
         });
     });
 
     describe('_makeData()', function() {
-        it('seriesInfos에 colum 차트와 line차트 series 정보를 전달하여 생성하면 series의 순서가 뒤집히면서 두개의 타입이 통합되어 하나의 data로 생성된다.', function() {
+        it('make data for detecting mouse event', function() {
             var actual = coordinateModel._makeData([
                 {
                     chartType: 'column',
@@ -127,34 +213,34 @@ describe('Test for BoundsBaseCoordinateModel', function() {
                 }
             ]);
 
-            expect(actual[0][0].sendData.chartType).toBe('line');
+            expect(actual[0][0].sendData.chartType).toBe('column');
             expect(actual[0][0].sendData.indexes.groupIndex).toBe(0);
             expect(actual[0][0].sendData.indexes.index).toBe(0);
             expect(actual[0][0].sendData.bound).toEqual({
-                left: 10,
-                top: 10
-            });
-            expect(actual[0][0].bound).toEqual({
-                left: 6,
-                top: 6,
-                right: 14,
-                bottom: 14
-            });
-
-            expect(actual[0][1].sendData.chartType).toBe('column');
-            expect(actual[0][1].sendData.indexes.groupIndex).toBe(0);
-            expect(actual[0][1].sendData.indexes.index).toBe(0);
-            expect(actual[0][1].sendData.bound).toEqual({
                 left: 10,
                 top: 10,
                 width: 20,
                 height: 50
             });
-            expect(actual[0][1].bound).toEqual({
+            expect(actual[0][0].bound).toEqual({
                 left: 10,
                 top: 10,
                 right: 30,
                 bottom: 60
+            });
+
+            expect(actual[0][1].sendData.chartType).toBe('line');
+            expect(actual[0][1].sendData.indexes.groupIndex).toBe(0);
+            expect(actual[0][1].sendData.indexes.index).toBe(0);
+            expect(actual[0][1].sendData.bound).toEqual({
+                left: 10,
+                top: 10
+            });
+            expect(actual[0][1].bound).toEqual({
+                left: 6,
+                top: 6,
+                right: 14,
+                bottom: 14
             });
         });
     });

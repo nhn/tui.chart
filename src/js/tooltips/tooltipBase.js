@@ -72,6 +72,18 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
         this.labelTheme = params.labelTheme;
 
         /**
+         * x axis type
+         * @type {?string}
+         */
+        this.xAxisType = params.xAxisType;
+
+        /**
+         * dateFormat option for xAxis
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
+
+        /**
          * className
          * @type {string}
          */
@@ -132,7 +144,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     _saveOriginalPositionOptions: function() {
         this.orgPositionOptions = {
             align: this.options.align,
-            position: this.options.position
+            offset: this.options.offset
         };
     },
 
@@ -278,7 +290,7 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Set tooltip align option.
+     * Set align option.
      * @param {string} align align
      */
     setAlign: function(align) {
@@ -289,38 +301,74 @@ var TooltipBase = tui.util.defineClass(/** @lends TooltipBase.prototype */ {
     },
 
     /**
-     * Set position option.
-     * @param {{left: number, top: number}} position moving position
+     * Update offset option.
+     * @param {{x: number, y: number}} offset - offset
+     * @private
      */
-    setPosition: function(position) {
-        this.options.position = tui.util.extend({}, this.options.position, position);
+    _updateOffsetOption: function(offset) {
+        this.options.offset = offset;
+
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
     },
 
     /**
-     * Reset tooltip align option.
+     * Set offset.
+     * @param {{x: number, y: number}} offset - offset
+     */
+    setOffset: function(offset) {
+        var offsetOption = tui.util.extend({}, this.options.offset);
+
+        if (tui.util.isExisty(offset.x)) {
+            offsetOption.x = offset.x;
+        }
+
+        if (tui.util.isExisty(offset.y)) {
+            offsetOption.y = offset.y;
+        }
+
+        this._updateOffsetOption(tui.util.extend({}, this.options.offset, offsetOption));
+    },
+
+    /**
+     * Set position option.
+     * @param {{left: number, top: number}} position moving position
+     * @deprecated
+     */
+    setPosition: function(position) {
+        var offsetOption = tui.util.extend({}, this.options.offset);
+
+        if (tui.util.isExisty(position.left)) {
+            offsetOption.x = position.left;
+        }
+
+        if (tui.util.isExisty(position.top)) {
+            offsetOption.y = position.y;
+        }
+
+        this._updateOffsetOption(offsetOption);
+    },
+
+    /**
+     * Reset align option.
      */
     resetAlign: function() {
         var align = this.orgPositionOptions.align;
 
         this.options.align = align;
+
         if (this.positionModel) {
             this.positionModel.updateOptions(this.options);
         }
     },
 
     /**
-     * Reset tooltip position.
+     * Reset offset option.
      */
-    resetPosition: function() {
-        var position = this.orgPositionOptions.position;
-
-        this.options.position = position;
-        if (this.positionModel) {
-            this.positionModel.updateOptions(this.options);
-        }
+    resetOffset: function() {
+        this.options.offset = this.orgPositionOptions.offset;
+        this._updateOffsetOption(this.options.offset);
     }
 });
 

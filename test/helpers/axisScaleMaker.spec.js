@@ -75,11 +75,70 @@ describe('Test for AxisScaleMaker', function() {
                 step: 25
             });
             axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
-            axisScaleMaker.options.diverging = true;
+            axisScaleMaker.diverging = true;
             actual = axisScaleMaker._getScaleValues();
             expected = [50, 25, 0, 25, 50];
 
             expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getFormattedScaleValues()', function() {
+        it('get formatted scale values, when axis type is datetime', function() {
+            var actual;
+
+            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([
+                (new Date('01/01/2016')),
+                (new Date('04/01/2016')),
+                (new Date('08/01/2016'))
+            ]);
+            axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
+            axisScaleMaker.dateFormat = 'YYYY.MM';
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                '2016.01',
+                '2016.04',
+                '2016.08'
+            ]);
+        });
+
+        it('get formatted scale values, when axis type is not datetime', function() {
+            var actual;
+
+            spyOn(axisScaleMaker, '_getScaleValues').and.returnValue([10, 20, 30]);
+            spyOn(axisScaleMaker, '_getFormatFunctions').and.returnValue([
+                function(value) {
+                    return 'formatted:' + value;
+                }
+            ]);
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                'formatted:10',
+                'formatted:20',
+                'formatted:30'
+            ]);
+        });
+
+        it('get cached formatted scale values, when has cached formatted values', function() {
+            var actual;
+
+            axisScaleMaker.formattedValues = [
+                'cached:10',
+                'cached:20',
+                'cached:30'
+            ];
+
+            actual = axisScaleMaker.getFormattedScaleValues();
+
+            expect(actual).toEqual([
+                'cached:10',
+                'cached:20',
+                'cached:30'
+            ]);
         });
     });
 
@@ -142,10 +201,43 @@ describe('Test for AxisScaleMaker', function() {
             };
 
             axisScaleMaker.isSingleYAxis = true;
-            axisScaleMaker.chartType = chartConst.CHART_TYPE_BAR;
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
 
             actual = axisScaleMaker._makeBaseValues();
             expected = [70, 10, 20, 20, 80, 30, 1, 2, 3];
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Make base values, when single yAxis and has stackType option in comboChart.', function() {
+            var seriesGroup, actual, expected;
+
+            axisScaleMaker.dataProcessor.seriesDataModelMap = {
+                column: new SeriesDataModel(),
+                line: new SeriesDataModel()
+            };
+
+            axisScaleMaker.dataProcessor.seriesNames = ['column', 'line'];
+            seriesGroup = jasmine.createSpyObj('seriesGroup', ['_makeValuesMapPerStack']);
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.groups = [
+                seriesGroup
+            ];
+            seriesGroup._makeValuesMapPerStack.and.returnValue({
+                st1: [70, 10, 20, 20, 80, 30],
+            });
+            axisScaleMaker.dataProcessor.seriesDataModelMap.column.valuesMap = {
+                value: [70, 10, 20, 20, 80, 30]
+            };
+            axisScaleMaker.dataProcessor.seriesDataModelMap.line.valuesMap = {
+                value: [1, 2, 3]
+            };
+
+            axisScaleMaker.isSingleYAxis = true;
+            axisScaleMaker.stackType = chartConst.NORMAL_STACK_TYPE;
+            axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
+
+            actual = axisScaleMaker._makeBaseValues();
+            expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
             expect(actual).toEqual(expected);
         });
@@ -158,7 +250,7 @@ describe('Test for AxisScaleMaker', function() {
             ]);
 
             axisScaleMaker.chartType = chartConst.CHART_TYPE_COLUMN;
-            axisScaleMaker.options.stackType = 'normal';
+            axisScaleMaker.stackType = 'normal';
             actual = axisScaleMaker._makeBaseValues();
             expected = [80, -10, 20, -30, 80, -40];
 
@@ -261,7 +353,7 @@ describe('Test for AxisScaleMaker', function() {
                         max: 100
                     },
                     options: {},
-                    divideNum: 1
+                    divisionNumber: 1
                 };
 
             expect(actual).toEqual(expected);
@@ -278,7 +370,7 @@ describe('Test for AxisScaleMaker', function() {
                         max: 9
                     },
                     options: {},
-                    divideNum: 10
+                    divisionNumber: 10
                 };
 
             expect(actual).toEqual(expected);
@@ -287,7 +379,7 @@ describe('Test for AxisScaleMaker', function() {
         it('min, max가 소수이고 옵션이 있을 경우에는 옵션값 까지 변환 작업된 결과값을 반환합니다.', function() {
             var actual, expected;
 
-            axisScaleMaker.options.limit = {
+            axisScaleMaker.limitOption = {
                 min: 0.2,
                 max: 0.8
             };
@@ -304,7 +396,7 @@ describe('Test for AxisScaleMaker', function() {
                     min: 2,
                     max: 8
                 },
-                divideNum: 10
+                divisionNumber: 10
             };
 
             expect(actual).toEqual(expected);
@@ -806,8 +898,158 @@ describe('Test for AxisScaleMaker', function() {
         });
     });
 
+    describe('_findDateType()', function() {
+        it('if difference between minimum and maximum value is over year value,' +
+                    ' returns chartConst.DATE_TYPE_YEAR', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2018, 1, 1).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_YEAR);
+        });
+
+        it('if difference between minimum and maximum value is over year value and' +
+                    ' it divided by millisecond of year value is less than data count,' +
+                    ' returns chartConst.DATE_TYPE_MONTH', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2011, 1, 1).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 24);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_MONTH);
+        });
+
+        it('if difference between minimum and maximum value is over month value,' +
+            ' returns chartConst.DATE_TYPE_MONTH', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 12, 1).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_MONTH);
+        });
+
+        it('if difference between minimum and maximum value is over month value and' +
+            ' it divided by millisecond of month value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_DATE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 3, 1).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_DATE);
+        });
+
+        it('if difference between minimum and maximum value is over date value,' +
+            ' returns chartConst.DATE_TYPE_DATE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 1, 10).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_DATE);
+        });
+
+        it('if difference between minimum and maximum value is over date value and' +
+            ' it divided by millisecond of date value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_HOUR', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1).getTime(),
+                max: new Date(2010, 1, 3).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_HOUR);
+        });
+
+        it('if difference between minimum and maximum value is over hour value,' +
+            ' returns chartConst.DATE_TYPE_HOUR', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 13).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_HOUR);
+        });
+
+        it('if difference between minimum and maximum value is over hour value and' +
+            ' it divided by millisecond of hour value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_MINUTE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 3).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_MINUTE);
+        });
+
+        it('if difference between minimum and maximum value is over minute value,' +
+            ' returns chartConst.DATE_TYPE_MINUTE', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 12).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_MINUTE);
+        });
+
+        it('if difference between minimum and maximum value is over minute value and' +
+            ' it divided by millisecond of minute value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_SECOND', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 3).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
+        });
+
+        it('if difference between minimum and maximum value is over second value,' +
+            ' returns chartConst.DATE_TYPE_SECOND', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 1, 12).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
+        });
+
+        it('if difference between minimum and maximum value is over second value and' +
+            ' it divided by millisecond of second value is less than data count,' +
+            ' returns chartConst.DATE_TYPE_SECOND', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 1, 6).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 12);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
+        });
+
+        it('if minimum and maximum value are same, returns chartConst.DATE_TYPE_SECOND', function() {
+            var baseLimit = {
+                min: new Date(2010, 1, 1, 1, 1, 1).getTime(),
+                max: new Date(2010, 1, 1, 1, 1, 1).getTime()
+            };
+            var actual = axisScaleMaker._findDateType(baseLimit, 6);
+
+            expect(actual).toBe(chartConst.DATE_TYPE_SECOND);
+        });
+    });
+
     describe('_calculateScale()', function() {
-        it('입력 data에 가장 적절한 tick info를 계산하여 반환합니다.', function() {
+        it('calculate scale.', function() {
             var actual, expected;
 
             boundsMaker.makeSeriesWidth.and.returnValue(400);
@@ -817,6 +1059,31 @@ describe('Test for AxisScaleMaker', function() {
             expected = {
                 limit: {min: 0, max: 100},
                 step: 20,
+                valueCount: 5
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('calculate scale, when axis type is datetime', function() {
+            var actual, expected;
+
+            boundsMaker.makeSeriesWidth.and.returnValue(400);
+            spyOn(axisScaleMaker, '_makeBaseValues').and.returnValue([
+                (new Date('01/01/2016')).getTime(),
+                (new Date('01/03/2016')).getTime(),
+                (new Date('01/06/2016')).getTime(),
+                (new Date('01/10/2016')).getTime()
+            ]);
+            axisScaleMaker.type = chartConst.AXIS_TYPE_DATETIME;
+
+            actual = axisScaleMaker._calculateScale();
+            expected = {
+                limit: {
+                    min: (new Date('01/01/2016')).getTime(),
+                    max: (new Date('01/11/2016')).getTime()
+                },
+                step: axisScaleMaker.millisecondMap.date * 2,
                 valueCount: 5
             };
 
@@ -949,7 +1216,7 @@ describe('Test for AxisScaleMaker', function() {
             spyOn(axisScaleMaker, '_calculateMinusSum').and.returnValue(-100);
             spyOn(axisScaleMaker, '_calculatePlusSum').and.returnValue(100);
             axisScaleMaker.chartType = 'bar';
-            axisScaleMaker.options.diverging = true;
+            axisScaleMaker.diverging = true;
 
             actual = axisScaleMaker._getPercentStackedScale();
             expected = chartConst.DIVERGING_PERCENT_STACKED_AXIS_SCALE;

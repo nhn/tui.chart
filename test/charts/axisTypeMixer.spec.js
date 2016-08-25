@@ -30,11 +30,13 @@ describe('Test for ComboChart', function() {
             componentMap[name] = ComponentClass;
         });
 
-        dataProcessor = jasmine.createSpyObj('dataProcessor', ['getCategories']);
+        dataProcessor = jasmine.createSpyObj('dataProcessor',
+                                    ['getCategories', 'isCoordinateType', 'addDataRatios', 'addDataRatiosForCoordinateType']);
         boundsMaker = jasmine.createSpyObj('boundsMaker', ['getAxesData']);
 
         axisTypeMixer.dataProcessor = dataProcessor;
         axisTypeMixer.boundsMaker = boundsMaker;
+        axisTypeMixer.options = {};
     });
 
     describe('_makeAxisData()', function() {
@@ -44,12 +46,15 @@ describe('Test for ComboChart', function() {
 
             spyOn(axisDataMaker, 'makeValueAxisData').and.returnValue('value type');
             spyOn(axisDataMaker, 'makeLabelAxisData').and.returnValue('label type');
+            axisTypeMixer.chartType = 'bar';
 
             actual = axisTypeMixer._makeAxisData(axisScaleMaker, 'options', true);
             expected = 'value type';
 
             expect(axisDataMaker.makeValueAxisData).toHaveBeenCalledWith({
                 axisScaleMaker: axisScaleMaker,
+                chartType: 'bar',
+                dataProcessor: dataProcessor,
                 options: 'options',
                 isVertical: true,
                 isPositionRight: false,
@@ -144,14 +149,22 @@ describe('Test for ComboChart', function() {
     });
 
     describe('_addTooltipComponent', function() {
-        it('isGroupedTooltip값이 true이면 그룹 툴팁 컴포넌트를 추가합니다..', function() {
-            axisTypeMixer.hasGroupTooltip = true;
+        it('if grouped option is true, use GroupTooltip class', function() {
+            axisTypeMixer.options = {
+                tooltip: {
+                    grouped: true
+                }
+            };
             axisTypeMixer._addTooltipComponent({}, {});
             expect(componentMap.tooltip).toEqual(GroupTooltip);
         });
 
-        it('isGroupedTooltip값이 true가 아니면 툴팁 컴포넌트를 추가합니다..', function() {
-            axisTypeMixer.hasGroupTooltip = false;
+        it('if grouped option is false, use Tooltip class', function() {
+            axisTypeMixer.options = {
+                tooltip: {
+                    grouped: false
+                }
+            };
             axisTypeMixer._addTooltipComponent({}, {});
             expect(componentMap.tooltip).toEqual(Tooltip);
         });
@@ -162,7 +175,10 @@ describe('Test for ComboChart', function() {
             axisTypeMixer.options = {
                 legend: {
                     visible: true
-                }
+                },
+                tooltip: {},
+                xAxis: {},
+                series: {}
             };
 
             axisTypeMixer._addComponentsForAxisType({
@@ -308,6 +324,52 @@ describe('Test for ComboChart', function() {
         });
     });
 
+    describe('_addDataRatios()', function() {
+        it('add data ratios, when chart is coordinate type', function() {
+            dataProcessor.isCoordinateType.and.returnValue(true);
+            spyOn(axisTypeMixer, '_getLimitMapForCoordinateType').and.returnValue('limitMap');
+            axisTypeMixer.chartType = 'line';
+            axisTypeMixer.options = {};
+
+            axisTypeMixer._addDataRatios();
+
+            expect(dataProcessor.addDataRatiosForCoordinateType).toHaveBeenCalledWith('line', 'limitMap', false);
+        });
+
+        it('add data ratios, when chart is not coordinate type', function() {
+            var stackType;
+
+            dataProcessor.isCoordinateType.and.returnValue(false);
+            boundsMaker.getAxesData.and.returnValue({
+                yAxis: {
+                    limit: {
+                        min: 0,
+                        max: 100
+                    }
+                },
+                rightYAxis: {
+                    limit: {
+                        min: 200,
+                        max: 800
+                    }
+                }
+            });
+            axisTypeMixer.chartTypes = ['column', 'line'];
+            axisTypeMixer.isVertical = true;
+
+            axisTypeMixer._addDataRatios();
+
+            expect(dataProcessor.addDataRatios).toHaveBeenCalledWith({
+                min: 0,
+                max: 100
+            }, stackType, 'column');
+            expect(dataProcessor.addDataRatios).toHaveBeenCalledWith({
+                min: 200,
+                max: 800
+            }, stackType, 'line');
+        });
+    });
+
     describe('_makeRenderingData()', function() {
         it('axis type chart의 renderingData를 생성합니다.', function() {
             var actual;
@@ -328,8 +390,6 @@ describe('Test for ComboChart', function() {
 
             actual = axisTypeMixer._makeRenderingData();
 
-            expect(actual.plot.vTickCount).toBe(3);
-            expect(actual.plot.hTickCount).toBe(0);
             expect(actual.customEvent.tickCount).toBe(3);
             expect(actual.columnSeries.limit).toBeDefined();
             expect(actual.columnSeries.aligned).toBe(true);
@@ -338,14 +398,18 @@ describe('Test for ComboChart', function() {
 
     describe('_addCustomEventComponentForGroupTooltip()', function() {
         it('그룹 툴팁을 위한 custom event 컴포넌트는 GroupTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer.options.series = {};
             axisTypeMixer._addCustomEventComponentForGroupTooltip();
+
             expect(componentMap.customEvent).toBe(GroupTypeCustomEvent);
         });
     });
 
     describe('_addCustomEventComponentForNormalTooltip()', function() {
         it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer.options.series = {};
             axisTypeMixer._addCustomEventComponentForNormalTooltip();
+
             expect(componentMap.customEvent).toBe(BoundsTypeCustomEvent);
         });
     });

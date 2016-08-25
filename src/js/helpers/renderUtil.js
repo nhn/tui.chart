@@ -57,6 +57,10 @@ var renderUtil = {
             cssTexts.push(this.concatStr('color:', theme.color));
         }
 
+        if (theme.fontWeight) {
+            cssTexts.push(this.concatStr('font-weight:', theme.fontWeight));
+        }
+
         return cssTexts.join(';');
     },
 
@@ -116,6 +120,10 @@ var renderUtil = {
 
         if (theme.fontFamily) {
             div.style.fontFamily = theme.fontFamily;
+        }
+
+        if (theme.fontWeight) {
+            div.style.fontWeight = theme.fontWeight;
         }
 
         if (theme.cssText) {
@@ -266,17 +274,13 @@ var renderUtil = {
             return;
         }
 
-        if (!tui.util.isUndefined(position.top)) {
-            el.style.top = position.top + 'px';
-        }
+        tui.util.forEachArray(['top', 'bottom', 'left', 'right'], function(key) {
+            var value = position[key];
 
-        if (!tui.util.isUndefined(position.left)) {
-            el.style.left = position.left + 'px';
-        }
-
-        if (!tui.util.isUndefined(position.right)) {
-            el.style.right = position.right + 'px';
-        }
+            if (value) {
+                el.style[key] = position[key] + 'px';
+            }
+        });
     },
 
     /**
@@ -413,6 +417,35 @@ var renderUtil = {
         });
 
         return formatedValues;
+    },
+
+    /**
+     * Format date.
+     * @param {string | number | date} value - value
+     * @param {string} format - date format
+     * @returns {string}
+     */
+    formatDate: function(value, format) {
+        var date = tui.util.isDate(value) ? value : (new Date(value));
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.formatDate(format, date) || value;
+    },
+
+    /**
+     * Format dates.
+     * @param {Array.<string | number | date>} values - values
+     * @param {string} format - date format
+     * @returns {Array}
+     */
+    formatDates: function(values, format) {
+        var formatDate = this.formatDate;
+
+        format = format || chartConst.DEFAULT_DATE_FORMAT;
+
+        return tui.util.map(values, function(value) {
+            return formatDate(value, format);
+        });
     },
 
     /**
@@ -603,7 +636,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';filter:' + makeCssFilterOpacityString(opacity);
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';filter:' + makeCssFilterOpacityString(opacity);
+        }
+
+        return cssText;
     };
 
     /**
@@ -624,7 +663,13 @@ if (isOldBrowser) {
      * @returns {string}
      */
     renderUtil.makeOpacityCssText = function(opacity) {
-        return ';opacity:' + opacity;
+        var cssText = '';
+
+        if (tui.util.isExisty(opacity)) {
+            cssText = ';opacity:' + opacity;
+        }
+
+        return cssText;
     };
 
     /**

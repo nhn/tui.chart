@@ -154,6 +154,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addStartValueToAllSeriesItem: function(start) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addStart(start);
         });
     },
@@ -192,6 +195,9 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
      */
     addRatios: function(divNumber, subValue) {
         this.each(function(item) {
+            if (!item) {
+                return;
+            }
             item.addRatio(divNumber, subValue);
         });
     },
@@ -204,7 +210,7 @@ var SeriesGroup = tui.util.defineClass(/** @lends SeriesGroup.prototype */{
         var hasRangeData = false;
 
         this.each(function(seriesItem) {
-            hasRangeData = seriesItem.isRange;
+            hasRangeData = seriesItem && seriesItem.isRange;
 
             return !hasRangeData;
         });

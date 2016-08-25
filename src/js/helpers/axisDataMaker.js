@@ -8,6 +8,7 @@
 
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
+var renderUtil = require('../helpers/renderUtil');
 
 /**
  * Axis data maker.
@@ -36,9 +37,9 @@ var axisDataMaker = {
     },
 
     /**
-     * Make data about label axis.
+     * Make axis data for label type.
      * @memberOf module:axisDataMaker
-     * @param {object} params parameters
+     * @param {object} params - parameters
      *      @param {Array.<string>} params.labels - chart labels
      *      @param {boolean} params.isVertical - whether vertical or not
      *      @param {boolean} params.aligned - whether align or not
@@ -61,6 +62,10 @@ var axisDataMaker = {
             labels = this._makeLabelsByIntervalOption(params.labels, options.labelInterval, params.addedDataCount);
         }
 
+        if (predicate.isDatetimeType(options.type)) {
+            labels = renderUtil.formatDates(labels, options.dateFormat);
+        }
+
         if (!params.aligned) {
             tickCount += 1;
         }
@@ -78,7 +83,60 @@ var axisDataMaker = {
     },
 
     /**
-     * Make data about value axis.
+     * Make additional data for coordinate line type chart.
+     * @param {Array.<string>} labels - labels
+     * @param {Array.<number>} values - values
+     * @param {{min: number, max: number}} limit - limit
+     * @param {number} step - step
+     * @param {number} tickCount = tickCount
+     * @returns {{
+     *      labels: Array.<string>,
+     *      tickCount: number,
+     *      validTickCount: number,
+     *      limit: {min: number, max: number},
+     *      positionRatio: number,
+     *      sizeRatio: number
+     * }}
+     * @private
+     */
+    _makeAdditionalDataForCoordinateLineType: function(labels, values, limit, step, tickCount) {
+        var sizeRatio = 1;
+        var positionRatio = 0;
+        var min = tui.util.min(values);
+        var max = tui.util.max(values);
+        var distance;
+
+        distance = max - min;
+
+        if (limit.min < min) {
+            limit.min += step;
+            positionRatio = (limit.min - min) / distance;
+            sizeRatio -= positionRatio;
+            tickCount -= 1;
+            labels.shift();
+        }
+
+        if (limit.max > max) {
+            limit.max -= step;
+            sizeRatio -= (max - limit.max) / distance;
+            tickCount -= 1;
+            labels.pop();
+        }
+
+        return {
+            labels: labels,
+            tickCount: tickCount,
+            validTickCount: tickCount,
+            limit: limit,
+            dataMin: min,
+            distance: distance,
+            positionRatio: positionRatio,
+            sizeRatio: sizeRatio
+        };
+    },
+
+    /**
+     * Make data for value type axis.
      * @memberOf module:axisDataMaker
      * @param {object} params parameters
      *      @param {AxisScaleMaker} params.axisScaleMaker chart values
@@ -93,21 +151,38 @@ var axisDataMaker = {
      * }} axis data
      */
     makeValueAxisData: function(params) {
-        var axisScaleMaker = params.axisScaleMaker,
-            rangeValues = axisScaleMaker.getFormattedScaleValues(),
-            tickCount = rangeValues.length;
-
-        return {
-            labels: rangeValues,
+        var axisScaleMaker = params.axisScaleMaker;
+        var labels = axisScaleMaker.getFormattedScaleValues();
+        var tickCount = labels.length;
+        var limit = axisScaleMaker.getLimit();
+        var step = axisScaleMaker.getStep();
+        var dataProcessor = params.dataProcessor;
+        var chartType = params.chartType;
+        var axisData = {
+            labels: labels,
             tickCount: tickCount,
             validTickCount: tickCount,
-            limit: axisScaleMaker.getLimit(),
-            step: axisScaleMaker.getStep(),
+            limit: limit,
+            dataMin: limit.min,
+            distance: limit.max - limit.min,
+            step: step,
             options: params.options,
             isVertical: !!params.isVertical,
             isPositionRight: !!params.isPositionRight,
             aligned: !!params.aligned
         };
+        var isVertical = params.isVertical;
+        var hasCategories = dataProcessor.hasCategories();
+        var isCoordinateLineType = !isVertical && !hasCategories && predicate.isLineTypeChart(chartType);
+        var values, additionalData;
+
+        if (isCoordinateLineType) {
+            values = dataProcessor.getValues(chartType, 'x');
+            additionalData = this._makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
+            tui.util.extend(axisData, additionalData);
+        }
+
+        return axisData;
     },
 
     /**
@@ -238,7 +313,7 @@ var axisDataMaker = {
             tickCount: adjustingBlockCount + 1,
             positionRatio: (startIndex / beforeBlockCount),
             sizeRatio: 1 - (beforeRemainBlockCount / beforeBlockCount),
-            lineWidth: seriesWidth + chartConst.OVERLAPPING_WIDTH,
+            lineWidth: seriesWidth,
             interval: interval
         });
     },

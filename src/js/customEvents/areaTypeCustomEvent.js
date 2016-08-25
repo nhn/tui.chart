@@ -26,7 +26,16 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
          */
         this.prevFoundData = null;
 
-        this._initForZoom(params.zoomable);
+        /**
+         * whether zoomable or not
+         * @type {boolean}
+         */
+        this.zoomable = params.zoomable;
+
+        if (this.zoomable) {
+            tui.util.extend(this, zoomMixer);
+            this._initForZoom(params.zoomable);
+        }
     },
 
     /**
@@ -40,7 +49,9 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
         this.dataModel = new AreaTypeDataModel(seriesInfo);
         CustomEventBase.prototype.initCustomEventData.call(this, seriesInfos);
 
-        this._showTooltipAfterZoom();
+        if (this.zoomable) {
+            this._showTooltipAfterZoom();
+        }
     },
 
     /**
@@ -49,12 +60,12 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @param {number} clientY - clientY
      * @returns {object}
      * @private
+     * @override
      */
     _findData: function(clientX, clientY) {
         var layerPosition = this._calculateLayerPosition(clientX, clientY);
-        var groupIndex = this.tickBaseCoordinateModel.findIndex(layerPosition.x);
 
-        return this.dataModel.findData(groupIndex, layerPosition.y);
+        return this.dataModel.findData(layerPosition);
     },
 
     /**
@@ -101,13 +112,17 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
      * @override
      */
     _onMousemove: function(e) {
-        var foundData;
+        var dragMoseupResult, foundData;
 
         CustomEventBase.prototype._onMousemove.call(this, e);
 
         foundData = this._findData(e.clientX, e.clientY);
 
-        if (this._isAfterDragMouseup() || !this._isChangedSelectData(this.prevFoundData, foundData)) {
+        if (this.zoomable) {
+            dragMoseupResult = this._isAfterDragMouseup();
+        }
+
+        if (dragMoseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
             return;
         }
 
@@ -133,7 +148,5 @@ var AreaTypeCustomEvent = tui.util.defineClass(CustomEventBase, /** @lends AreaT
         CustomEventBase.prototype._onMouseout.call(this);
     }
 });
-
-zoomMixer.mixin(AreaTypeCustomEvent);
 
 module.exports = AreaTypeCustomEvent;

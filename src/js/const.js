@@ -26,7 +26,12 @@ var chartConst = {
     CLASS_NAME_SERIES_LEGEND: 'tui-chart-series-legend',
     /** @type {string} */
     CLASS_NAME_RESET_ZOOM_BTN: 'tui-chart-reset-zoom-btn',
-    /** chart types
+    /**
+     * chart types
+     * @type {Array.<string>}
+     */
+    COMBO_CHART_TYPES: ['column', 'line', 'area', 'pie'],
+    /** chart type
      * @type {string}
      */
     CHART_TYPE_BAR: 'bar',
@@ -136,6 +141,7 @@ var chartConst = {
     /** radian */
     RAD: Math.PI / 180,
     RERENDER_TIME: 700,
+    ADDING_DATA_ANIMATION_DURATION: 300,
     /** series label align outer
      * @type {string}
      */
@@ -238,6 +244,26 @@ var chartConst = {
         step: 25,
         labels: [100, 75, 50, 25, 0, 25, 50, 75, 100]
     },
+    /**
+     * datetime axis type
+     * @type {string}
+     */
+    AXIS_TYPE_DATETIME: 'datetime',
+    /**
+     * default dateFormat
+     * @type {string}
+     */
+    DEFAULT_DATE_FORMAT: 'YYYY.MM.DD hh:mm:dd',
+    /**
+     * date type
+     * @type {string}
+     */
+    DATE_TYPE_YEAR: 'year',
+    DATE_TYPE_MONTH: 'month',
+    DATE_TYPE_DATE: 'date',
+    DATE_TYPE_HOUR: 'hour',
+    DATE_TYPE_MINUTE: 'minute',
+    DATE_TYPE_SECOND: 'second',
     /** title add padding */
     TITLE_PADDING: 10,
     /** legend area padding */

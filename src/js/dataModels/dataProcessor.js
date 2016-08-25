@@ -63,7 +63,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * original raw data.
          * @type {{categories: ?Array.<string>, series: Array.<object>}}
          */
-        this.originalRawData = JSON.parse(JSON.stringify(rawData));
+        this.originalRawData = tui.util.deepCopy(rawData);
 
         /**
          * chart type
@@ -110,7 +110,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @returns {rawData} raw data
      */
     getOriginalRawData: function() {
-        return JSON.parse(JSON.stringify(this.originalRawData));
+        return tui.util.deepCopy(this.originalRawData);
     },
 
     /**
@@ -120,7 +120,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     getZoomedRawData: function() {
         var zoomedRawData = this.zoomedRawData;
         if (zoomedRawData) {
-            zoomedRawData = JSON.parse(JSON.stringify(zoomedRawData));
+            zoomedRawData = tui.util.deepCopy(zoomedRawData);
         } else {
             zoomedRawData = this.getOriginalRawData();
         }
@@ -253,6 +253,12 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
          * @type {Array.<string>}
          */
         this.multilineCategories = null;
+
+        /**
+         * whether coordinate type data or not
+         * @type {null|boolean}
+         */
+        this.coordinateType = null;
     },
 
     /**
@@ -285,6 +291,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Map categories.
+     * @param {Array.<string | number>} categories - categories
+     * @returns {Array.<string | number>}
+     * @private
+     */
+    _mapCategories: function(categories) {
+        if (predicate.isDatetimeType(this.options.xAxis.type)) {
+            categories = tui.util.map(categories, function(value) {
+                var date = new Date(value);
+
+                return date.getTime() || value;
+            });
+        } else {
+            categories = this._escapeCategories(categories);
+        }
+
+        return categories;
+    },
+
+    /**
      * Process categories
      * @param {string} type - category type (x or y)
      * @returns {null | Array.<string>} processed categories
@@ -295,10 +321,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var categoriesMap = {};
 
         if (tui.util.isArray(rawCategories)) {
-            categoriesMap[type] = this._escapeCategories(rawCategories);
+            categoriesMap[type] = this._mapCategories(rawCategories);
         } else if (rawCategories) {
             if (rawCategories.x) {
-                categoriesMap.x = this._escapeCategories(rawCategories.x);
+                categoriesMap.x = this._mapCategories(rawCategories.x);
             }
 
             if (rawCategories.y) {
@@ -366,6 +392,26 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Find category index by value
+     * @param {string} value - category value
+     * @returns {null|number}
+     */
+    findCategoryIndex: function(value) {
+        var categories = this.getCategories();
+        var foundIndex = null;
+
+        tui.util.forEachArray(categories, function(category, index) {
+            if (category === value) {
+                foundIndex = index;
+            }
+
+            return tui.util.isNull(foundIndex);
+        });
+
+        return foundIndex;
+    },
+
+    /**
      * Get category for tooltip.
      * @param {number} firstIndex - index
      * @param {number} oppositeIndex - opposite index
@@ -414,6 +460,24 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Whether coordinate type or not.
+     * @returns {boolean}
+     */
+    isCoordinateType: function() {
+        var chartType = this.chartType;
+        var coordinateType = this.coordinateType;
+
+        if (!tui.util.isExisty(coordinateType)) {
+            coordinateType = predicate.isCoordinateTypeChart(chartType);
+            coordinateType = coordinateType ||
+                (predicate.isLineTypeChart(chartType) && !this.hasCategories());
+            this.coordinateType = coordinateType;
+        }
+
+        return coordinateType;
+    },
+
+    /**
      * Get SeriesDataModel.
      * @param {string} seriesName - series name
      * @returns {SeriesDataModel}
@@ -432,7 +496,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
             }
 
             this.seriesDataModelMap[seriesName] = new SeriesDataModelClass(rawSeriesData, chartType,
-                this.options, this.getFormatFunctions());
+                this.options, this.getFormatFunctions(), this.isCoordinateType());
         }
 
         return this.seriesDataModelMap[seriesName];
@@ -453,8 +517,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _pushCategory: function(category) {
-        this.rawData.categories.push(category);
-        this.originalRawData.categories.push(category);
+        if (this.rawData.categories) {
+            this.rawData.categories.push(category);
+            this.originalRawData.categories.push(category);
+        }
     },
 
     /**
@@ -462,8 +528,10 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @private
      */
     _shiftCategory: function() {
-        this.rawData.categories.shift();
-        this.originalRawData.categories.shift();
+        if (this.rawData.categories) {
+            this.rawData.categories.shift();
+            this.originalRawData.categories.shift();
+        }
     },
 
     /**
@@ -491,6 +559,23 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
+     * Push value to data property of series.
+     * @param {{name: string, data: Array}} seriesDatum - series datum
+     * @param {Array.<number>|{x: number, y: number, r: number}|number} value - value
+     * @param {string} seriesName - sereis name
+     * @private
+     */
+    _pushValue: function(seriesDatum, value, seriesName) {
+        var rawSeriesDatum = this._findRawSeriesDatumByName(seriesDatum.name, seriesName);
+
+        seriesDatum.data.push(value);
+
+        if (rawSeriesDatum) {
+            rawSeriesDatum.data.push(value);
+        }
+    },
+
+    /**
      * Push values to series of originalRawData and series of rawData.
      * @param {Array.<{name: string, data: Array}>} seriesData - series data
      * @param {Array} values - values
@@ -501,13 +586,7 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
         var self = this;
 
         tui.util.forEachArray(seriesData, function(seriesDatum, index) {
-            var value = values[index];
-            var rawSeriesDatum = self._findRawSeriesDatumByName(seriesDatum.name, seriesName);
-
-            seriesDatum.data.push(value);
-            if (rawSeriesDatum) {
-                rawSeriesDatum.data.push(value);
-            }
+            self._pushValue(seriesDatum, values[index], seriesName);
         });
     },
 
@@ -576,22 +655,45 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
     },
 
     /**
-     * Add data from dynapmic data.
+     * Push dynamic data.
+     * @param {{category: string, values: Array.<number>}} data - adding data
+     * @private
+     */
+    _pushDynamicData: function(data) {
+        this._pushCategory(data.category);
+        this._pushSeriesData(data.values);
+    },
+
+    /**
+     * Push dynamic data for coordinate type.
+     * @param {object.<string, Array.<number>|object.<string, number>>} data - adding data
+     * @private
+     */
+    _pushDynamicDataForCoordinateType: function(data) {
+        var self = this;
+        tui.util.forEachArray(this.originalRawData.series, function(seriesDatum) {
+            self._pushValue(seriesDatum, data[seriesDatum.name]);
+        });
+    },
+
+    /**
+     * Add data from dynamic data.
      * @returns {boolean}
      */
     addDataFromDynamicData: function() {
         var datum = this.dynamicData.shift();
 
-        if (!datum) {
-            return false;
+        if (datum) {
+            if (this.isCoordinateType()) {
+                this._pushDynamicDataForCoordinateType(datum.values);
+            } else {
+                this._pushDynamicData(datum);
+            }
+
+            this.initData(this.rawData);
         }
 
-        this._pushCategory(datum.category);
-        this._pushSeriesData(datum.values);
-
-        this.initData(this.rawData);
-
-        return true;
+        return !!datum;
     },
 
     /**
@@ -1100,6 +1202,9 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
      * @param {boolean} [hasRadius] - whether has radius or not
      */
     addDataRatiosForCoordinateType: function(chartType, limitMap, hasRadius) {
+        if (predicate.isLineTypeChart(chartType)) {
+            this._addStartValueToAllSeriesItem(limitMap.y, chartType);
+        }
         this.getSeriesDataModel(chartType).addDataRatiosForCoordinateType(limitMap, hasRadius);
     },
 

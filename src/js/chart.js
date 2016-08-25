@@ -75,7 +75,7 @@ tui.util.defineNamespace('tui.chart');
 _createChart = function(container, rawData, options) {
     var themeName, theme, chart;
 
-    rawData = JSON.parse(JSON.stringify(rawData));
+    rawData = tui.util.deepCopy(rawData);
     options = options ? tui.util.deepCopy(options) : {};
     themeName = options.theme || chartConst.DEFAULT_THEME_NAME;
     theme = themeFactory.get(themeName);
@@ -98,14 +98,25 @@ _createChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {string} options.yAxis.align - align option for center y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+ *          @param {string} options.yAxis.type - type of axis
+ *          @param {string} options.yAxis.dateFormat - date format
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.min - minimum value for x axis
  *          @param {number} options.xAxis.max - maximum value for x axis
  *      @param {object} options.series - options for series component
@@ -118,7 +129,9 @@ _createChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -171,6 +184,7 @@ _createChart = function(container, rawData, options) {
 tui.chart.barChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
+
     return _createChart(container, rawData, options);
 };
 
@@ -185,17 +199,28 @@ tui.chart.barChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+ *          @param {string} options.xAxis.type - type of axis
+ *          @param {string} options.xAxis.dateFormat - date format
  *      @param {object} options.series - options for series component
  *          @param {string} options.series.stackType - type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -206,7 +231,9 @@ tui.chart.barChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -259,60 +286,85 @@ tui.chart.barChart = function(container, rawData, options) {
 tui.chart.columnChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COLUMN;
+
     return _createChart(container, rawData, options);
 };
 
-/**
- * Line chart creator.
- * @memberOf tui.chart
- * @param {HTMLElement} container - chart container
- * @param {rawData} rawData - raw data
- *      @param {Array.<string>} rawData.categories - categories
- *      @param {Array.<Array>} rawData.series - series data
- * @param {object} options - chart options
- *      @param {object} options.chart - base options for chart
- *          @param {number} options.chart.width - chart width
- *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
- *          @param {string | function} options.chart.format - formatter for value
- *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
- *          @param {number} options.yAxis.min - minimum value for y axis
- *          @param {number} options.yAxis.max - maximum value for y axis
- *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
- *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
- *          @param {number} options.xAxis.labelInterval - label interval for x axis
- *          @param {string} options.xAxis.tickInterval - tick interval for x axis
- *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
- *      @param {object} options.series - options for series component
- *          @param {boolean} options.series.showDot - whether show dot or not
- *          @param {boolean} options.series.showLabel - whether show label or not
- *          @param {boolean} options.series.allowSelect - whether allow select or not
- *          @param {boolean} options.series.spline - whether spline or not
- *          @param {boolean} options.series.zoomable - whether zoomable or not
- *          @param {boolean} options.series.shifting - whether shifting or not
- *      @param {object} options.tooltip - options for tooltip component
- *          @param {string} options.tooltip.suffix - suffix for tooltip
- *          @param {function} [options.tooltip.template] - template for tooltip
- *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
- *              @param {number} options.tooltip.position.left - position left
- *              @param {number} options.tooltip.position.top - position top
- *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
- *      @param {object} options.legend - options for legend component
- *          @param {string} options.legend.align - align option for legend (top|bottom|left)
- *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
- *          @param {boolean} options.legend.visible - whether visible or not (default: true)
- *      @param {object} options.plot - options for plot component
- *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
- *      @param {string} options.theme - theme name
- *      @param {string} options.libType - type of graph library
- * @returns {object} bar chart
- * @api
- * @example
- * var container = document.getElementById('container-id'),
- *     rawData = {
+tui.chart.lineChart = function(container, rawData, options) {
+    /**
+     * Line chart creator.
+     * @memberOf tui.chart
+     * @param {HTMLElement} container - chart container
+     * @param {rawData} rawData - raw data
+     *      @param {?Array.<string>} rawData.categories - categories
+     *      @param {Array.<Array>} rawData.series - series data
+     * @param {object} options - chart options
+     *      @param {object} options.chart - base options for chart
+     *          @param {number} options.chart.width - chart width
+     *          @param {number} options.chart.height - chart height
+     *          @param {string | object} options.chart.title - title text or title object
+     *              @param {string} options.chart.title.text - title text
+     *              @param {number} options.chart.title.offsetX - title offset x
+     *              @param {number} options.chart.title.offsetY - title offset y
+     *          @param {string | function} options.chart.format - formatter for value
+     *      @param {object} options.yAxis - options for y axis component
+     *          @param {string | object} options.yAxis.title - title text or title object
+     *              @param {string} options.yAxis.title.text - title text
+     *              @param {number} options.yAxis.title.offsetX - title offset x
+     *              @param {number} options.yAxis.title.offsetY - title offset y
+     *          @param {number} options.yAxis.min - minimum value for y axis
+     *          @param {number} options.yAxis.max - maximum value for y axis
+     *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
+     *      @param {object} options.xAxis - options for x axis component
+     *          @param {string | object} options.xAxis.title - title text or title object
+     *              @param {string} options.xAxis.title.text - title text
+     *              @param {number} options.xAxis.title.offsetX - title offset x
+     *              @param {number} options.xAxis.title.offsetY - title offset y
+     *          @param {number} options.xAxis.labelInterval - label interval for x axis
+     *          @param {string} options.xAxis.tickInterval - tick interval for x axis
+     *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
+     *          @param {string} options.xAxis.type - type of axis
+     *          @param {string} options.xAxis.dateFormat - date format
+     *      @param {object} options.series - options for series component
+     *          @param {boolean} options.series.showDot - whether show dot or not
+     *          @param {boolean} options.series.showLabel - whether show label or not
+     *          @param {boolean} options.series.allowSelect - whether allow select or not
+     *          @param {boolean} options.series.spline - whether spline or not
+     *          @param {boolean} options.series.zoomable - whether zoomable or not
+     *          @param {boolean} options.series.shifting - whether shifting or not
+     *      @param {object} options.tooltip - options for tooltip component
+     *          @param {string} options.tooltip.suffix - suffix for tooltip
+     *          @param {function} [options.tooltip.template] - template for tooltip
+     *          @param {string} options.tooltip.align - align option for tooltip
+     *          @param {object} options.tooltip.offsetX - tooltip offset x
+     *          @param {object} options.tooltip.offsetY - tooltip offset y
+     *          @param {object} options.tooltip.position - (deprecated) relative position
+     *              @param {number} options.tooltip.position.left - position left
+     *              @param {number} options.tooltip.position.top - position top
+     *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
+     *      @param {object} options.legend - options for legend component
+     *          @param {string} options.legend.align - align option for legend (top|bottom|left)
+     *          @param {boolean} options.legend.showCheckbox - whether show checkbox or not (default: true)
+     *          @param {boolean} options.legend.visible - whether visible or not (default: true)
+     *      @param {object} options.plot - options for plot component
+     *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+     *          @param {Array} options.plot.bands - plot bands
+     *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+     *              @param {string} options.plot.bands.color - band color
+     *              @param {number} options.plot.bands.opacity - band opacity
+     *          @param {Array} options.plot.lines - plot lines
+     *              @param {(string|number|date)} options.plot.lines.value - value for matching
+     *              @param {string} options.plot.lines.color - band color
+     *              @param {number} options.plot.lines.opacity - band opacity
+     *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
+     *                  - plot lines
+     *      @param {string} options.theme - theme name
+     *      @param {string} options.libType - type of graph library
+     * @returns {object} bar chart
+     * @api
+     * @example
+     * var container = document.getElementById('container-id'),
+     *     rawData = {
  *       categories: ['cate1', 'cate2', 'cate3'],
  *       series: [
  *         {
@@ -333,7 +385,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         }
  *       ]
  *     },
- *     options = {
+     *     options = {
  *       chart: {
  *         title: 'Line Chart'
  *       },
@@ -347,11 +399,11 @@ tui.chart.columnChart = function(container, rawData, options) {
  *         showDot: true
  *       }
  *     };
- * tui.chart.lineChart(container, rawData, options);
- */
-tui.chart.lineChart = function(container, rawData, options) {
+     * tui.chart.lineChart(container, rawData, options);
+     */
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -360,24 +412,35 @@ tui.chart.lineChart = function(container, rawData, options) {
  * @memberOf tui.chart
  * @param {HTMLElement} container - chart container
  * @param {rawData} rawData - raw data
- *      @param {Array.<string>} rawData.categories - categories
+ *      @param {?Array.<string>} rawData.categories - categories
  *      @param {Array.<Array>} rawData.series - series data
  * @param {object} options - chart options
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
+ *          @param {string} options.xAxis.type - type of axis
+ *          @param {string} options.xAxis.dateFormat - date format
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showDot - whether show dot or not
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -389,7 +452,9 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
@@ -399,6 +464,14 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *          @param {Array} options.plot.bands - plot bands
+ *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+ *              @param {string} options.plot.bands.color - band color
+ *              @param {number} options.plot.bands.opacity - band opacity
+ *          @param {Array} options.plot.lines - plot lines
+ *              @param {(string|number|date)} options.plot.lines.value - value for matching
+ *              @param {string} options.plot.lines.color - band color
+ *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
@@ -442,6 +515,7 @@ tui.chart.lineChart = function(container, rawData, options) {
 tui.chart.areaChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_AREA;
+
     return _createChart(container, rawData, options);
 };
 
@@ -456,15 +530,24 @@ tui.chart.areaChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *          @param {number} options.xAxis.min - minimum value for y axis
@@ -476,7 +559,9 @@ tui.chart.areaChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -541,6 +626,7 @@ tui.chart.areaChart = function(container, rawData, options) {
 tui.chart.bubbleChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BUBBLE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -555,15 +641,24 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.min - minimum value for y axis
  *          @param {number} options.xAxis.max - maximum value for y axis
  *      @param {object} options.series - options for series component
@@ -573,7 +668,9 @@ tui.chart.bubbleChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -628,6 +725,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
 tui.chart.scatterChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_SCATTER;
+
     return _createChart(container, rawData, options);
 };
 
@@ -642,20 +740,31 @@ tui.chart.scatterChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -697,6 +806,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
 tui.chart.heatmapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_HEATMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -710,7 +820,10 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -720,7 +833,9 @@ tui.chart.heatmapChart = function(container, rawData, options) {
  *      @param {object} options.tooltip - options for tooltip component
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offsetX - tooltip offset x
+ *          @param {object} options.tooltip.offsetY - tooltip offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -773,6 +888,7 @@ tui.chart.heatmapChart = function(container, rawData, options) {
 tui.chart.treemapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_TREEMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -787,15 +903,24 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object|Array} options.yAxis - options for y axis component
- *          @param {string} options.yAxis.title - title for y axis
+ *          @param {string | object} options.yAxis.title - title text or title object
+ *              @param {string} options.yAxis.title.text - title text
+ *              @param {number} options.yAxis.title.offsetX - title offset x
+ *              @param {number} options.yAxis.title.offsetY - title offset y
  *          @param {number} options.yAxis.min - minimum value for y axis
  *          @param {number} options.yAxis.max - maximum value for y axis
  *          @param {boolean} options.yAxis.rotateTitle - whether rotate title or not (default: true)
  *      @param {object} options.xAxis - options for x axis component
- *          @param {string} options.xAxis.title - title for x axis
+ *          @param {string | object} options.xAxis.title - title text or title object
+ *              @param {string} options.xAxis.title.text - title text
+ *              @param {number} options.xAxis.title.offsetX - title offset x
+ *              @param {number} options.xAxis.title.offsetY - title offset y
  *          @param {number} options.xAxis.labelInterval - label interval for x axis
  *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
  *      @param {object} options.series - options for series component
@@ -803,21 +928,17 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {string} options.series.column.stackType - type of stack
  *              @param {boolean} options.series.column.showLabel - whether show label or not
  *              @param {number} options.series.column.barWidth - bar width
- *              @param {boolean} options.series.column.allowSelect - whether allow select or not
  *          @param {?object} options.series.line - options for line series component
  *              @param {boolean} options.series.line.showDot - whether show dot or not
  *              @param {boolean} options.series.line.showLabel - whether show label or not
- *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline - whether spline or not
  *          @param {?object} options.series.area - options for line series component
  *              @param {boolean} options.series.area.showDot - whether show dot or not
  *              @param {boolean} options.series.area.showLabel - whether show label or not
- *              @param {boolean} options.series.area.allowSelect - whether allow select or not
  *              @param {boolean} options.series.area.spline - whether spline or not
  *          @param {?object} options.series.pie - options for pie series component
  *              @param {boolean} options.series.pie.showLabel - whether show label or not
  *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
- *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
  *              @param {boolean} options.series.pie.startAngle - start angle
  *              @param {boolean} options.series.pie.endAngle - end angle
  *          @param {boolean} options.series.showDot - whether show dot or not
@@ -831,9 +952,11 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {string} options.tooltip.column.suffix - suffix for tooltip
  *              @param {function} [options.tooltip.column.template] template of tooltip
  *              @param {string} options.tooltip.column.align - align option for tooltip
- *              @param {object} options.tooltip.column.position - relative position
- *                  @param {number} options.tooltip.column.position.left - position left
- *                  @param {number} options.tooltip.column.position.top - position top
+ *              @param {number} options.tooltip.column.offsetX - tooltip offset x
+ *              @param {number} options.tooltip.column.offsetY - tooltip offset y
+ *              @param {object} options.tooltip.column.position - (deprecated) relative position
+ *                  @param {number} options.tooltip.position.left - position left
+ *                  @param {number} options.tooltip.position.top - position top
  *          @param {boolean} options.tooltip.grouped - whether group tooltip or not
  *      @param {object} options.legend - options for legend component
  *          @param {string} options.legend.align - align option for legend (top|bottom|left)
@@ -841,6 +964,14 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *          @param {boolean} options.legend.visible - whether visible or not (default: true)
  *      @param {object} options.plot - options for plot component
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
+ *          @param {Array} options.plot.bands - plot bands for line & area combo chart
+ *              @param {Array.<string|number|date>} options.plot.bands.range - value range for matching
+ *              @param {string} options.plot.bands.color - band color
+ *              @param {number} options.plot.bands.opacity - band opacity
+ *          @param {Array} options.plot.lines - plot lines
+ *              @param {(string|number|date)} options.plot.lines.value - value for matching
+ *              @param {string} options.plot.lines.color - band color
+ *              @param {number} options.plot.lines.opacity - band opacity
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
  * @returns {object} bar chart
@@ -901,6 +1032,7 @@ tui.chart.treemapChart = function(container, rawData, options) {
 tui.chart.comboChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COMBO;
+
     return _createChart(container, rawData, options);
 };
 
@@ -914,7 +1046,10 @@ tui.chart.comboChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -926,7 +1061,10 @@ tui.chart.comboChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offset - tooltip offset
+ *              @param {number} options.tooltip.offset.x - offset x
+ *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -969,6 +1107,7 @@ tui.chart.comboChart = function(container, rawData, options) {
 tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -982,7 +1121,10 @@ tui.chart.pieChart = function(container, rawData, options) {
  *      @param {object} options.chart - base options for chart
  *          @param {number} options.chart.width - chart width
  *          @param {number} options.chart.height - chart height
- *          @param {string} options.chart.title - chart title
+ *          @param {string | object} options.chart.title - title text or title object
+ *              @param {string} options.chart.title.text - title text
+ *              @param {number} options.chart.title.offsetX - title offset x
+ *              @param {number} options.chart.title.offsetY - title offset y
  *          @param {string | function} options.chart.format - formatter for value
  *      @param {object} options.series - options for series component
  *          @param {boolean} options.series.showLabel - whether show label or not
@@ -990,7 +1132,10 @@ tui.chart.pieChart = function(container, rawData, options) {
  *          @param {string} options.tooltip.suffix - suffix for tooltip
  *          @param {function} [options.tooltip.template] - template for tooltip
  *          @param {string} options.tooltip.align - align option for tooltip
- *          @param {object} options.tooltip.position - relative position
+ *          @param {object} options.tooltip.offset - tooltip offset
+ *              @param {number} options.tooltip.offset.x - offset x
+ *              @param {number} options.tooltip.offset.y - offset y
+ *          @param {object} options.tooltip.position - (deprecated) relative position
  *              @param {number} options.tooltip.position.left - position left
  *              @param {number} options.tooltip.position.top - position top
  *      @param {object} options.legend - options for legend component
@@ -1036,51 +1181,57 @@ tui.chart.mapChart = function(container, rawData, options) {
 /**
  * Register theme.
  * @memberOf tui.chart
- * @param {string} themeName theme name
- * @param {object} theme application chart theme
- *      @param {object} theme.chart chart theme
- *          @param {string} theme.chart.fontFamily font family of chart
- *          @param {string} theme.chart.background background of chart
- *      @param {object} theme.title chart theme
- *          @param {number} theme.title.fontSize font size of chart title
- *          @param {string} theme.title.fontFamily font family of chart title
- *          @param {string} theme.title.color font color of chart title
- *          @param {string} theme.title.background background of chart title
- *      @param {object} theme.yAxis theme of vertical axis
- *          @param {object} theme.yAxis.title theme of vertical axis title
- *              @param {number} theme.yAxis.title.fontSize font size of vertical axis title
- *              @param {string} theme.yAxis.title.fontFamily font family of vertical axis title
- *              @param {string} theme.yAxis.title.color font color of vertical axis title
- *          @param {object} theme.yAxis.label theme of vertical axis label
- *              @param {number} theme.yAxis.label.fontSize font size of vertical axis label
- *              @param {string} theme.yAxis.label.fontFamily font family of vertical axis label
- *              @param {string} theme.yAxis.label.color font color of vertical axis label
- *          @param {string} theme.yAxis.tickColor color of vertical axis tick
- *      @param {object} theme.xAxis theme of horizontal axis
- *          @param {object} theme.xAxis.title theme of horizontal axis title
- *              @param {number} theme.xAxis.title.fontSize font size of horizontal axis title
- *              @param {string} theme.xAxis.title.fontFamily font family of horizontal axis title
- *              @param {string} theme.xAxis.title.color font color of horizontal axis title
- *          @param {object} theme.xAxis.label theme of horizontal axis label
- *              @param {number} theme.xAxis.label.fontSize font size of horizontal axis label
- *              @param {string} theme.xAxis.label.fontFamily font family of horizontal axis label
- *              @param {string} theme.xAxis.label.color font color of horizontal axis label
- *          @param {string} theme.xAxis.tickColor color of horizontal axis tick
- *      @param {object} theme.plot plot theme
- *          @param {string} theme.plot.lineColor plot line color
- *          @param {string} theme.plot.background plot background
- *      @param {object} theme.series series theme
- *          @param {Array.<string>} theme.series.colors series colors
- *          @param {string} theme.series.borderColor series border color
- *          @param {string} theme.series.selectionColor series selection color
- *          @param {string} theme.series.startColor start color for map chart
- *          @param {string} theme.series.endColor end color for map chart
- *          @param {string} theme.series.overColor end color for map chart
- *      @param {object} theme.legend legend theme
- *          @param {object} theme.legend.label theme of legend label
- *              @param {number} theme.legend.label.fontSize font size of legend label
- *              @param {string} theme.legend.label.fontFamily font family of legend label
- *              @param {string} theme.legend.label.color font color of legend label
+ * @param {string} themeName - theme name
+ * @param {object} theme - application chart theme
+ *      @param {object} theme.chart - chart theme
+ *          @param {string} theme.chart.fontFamily - font family for chart
+ *          @param {string} theme.chart.background - background for chart
+ *      @param {object} theme.title - chart title theme
+ *          @param {number} theme.title.fontSize - font size
+ *          @param {string} theme.title.fontFamily - font family
+ *          @param {string} theme.title.fontWeight - font weight
+ *          @param {string} theme.title.color - font color
+ *          @param {string} theme.title.background - background
+ *      @param {object} theme.yAxis - y axis theme
+ *          @param {object} theme.yAxis.title - theme for y axis title
+ *              @param {number} theme.yAxis.title.fontSize - font size
+ *              @param {string} theme.yAxis.title.fontFamily - font family
+ *              @param {string} theme.yAxis.title.fontWeight - font weight
+ *              @param {string} theme.yAxis.title.color - font color
+ *          @param {object} theme.yAxis.label - theme for y axis label
+ *              @param {number} theme.yAxis.label.fontSize - font size
+ *              @param {string} theme.yAxis.label.fontFamily - font family
+ *              @param {string} theme.yAxis.label.fontWeight - font weight
+ *              @param {string} theme.yAxis.label.color - font color
+ *          @param {string} theme.yAxis.tickColor - color for y axis tick
+ *      @param {object} theme.xAxis - theme for x axis
+ *          @param {object} theme.xAxis.title - theme for x axis title
+ *              @param {number} theme.xAxis.title.fontSize - font size
+ *              @param {string} theme.xAxis.title.fontFamily - font family
+ *              @param {string} theme.xAxis.title.fontWeight - font weight
+ *              @param {string} theme.xAxis.title.color - font color
+ *          @param {object} theme.xAxis.label - theme for x axis label
+ *              @param {number} theme.xAxis.label.fontSize - font size
+ *              @param {string} theme.xAxis.label.fontFamily - font family
+ *              @param {string} theme.xAxis.label.fontWeight - font weight
+ *              @param {string} theme.xAxis.label.color - font color
+ *          @param {string} theme.xAxis.tickColor - color for x axis tick
+ *      @param {object} theme.plot - theme for plot
+ *          @param {string} theme.plot.lineColor - line color
+ *          @param {string} theme.plot.background - background
+ *      @param {object} theme.series theme for series
+ *          @param {Array.<string>} theme.series.colors - colors
+ *          @param {string} theme.series.borderColor - border color
+ *          @param {string} theme.series.selectionColor - selection color
+ *          @param {string} theme.series.startColor - start color
+ *          @param {string} theme.series.endColor - end color
+ *          @param {string} theme.series.overColor - over color
+ *      @param {object} theme.legend - theme for legend
+ *          @param {object} theme.legend.label - theme for legend label
+ *              @param {number} theme.legend.label.fontSize - font size
+ *              @param {string} theme.legend.label.fontFamily - font family
+ *              @param {string} theme.legend.label.fontWeight - font family
+ *              @param {string} theme.legend.label.color - font color
  * @api
  * @example
  * var theme = {

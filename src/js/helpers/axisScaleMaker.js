@@ -33,10 +33,34 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         this.boundsMaker = params.boundsMaker;
 
         /**
-         * Options
-         * @type {object}
+         * stackType option
+         * @type {?string}
          */
-        this.options = params.options || {};
+        this.stackType = params.stackType;
+
+        /**
+         * diverging option
+         * @type {?boolean}
+         */
+        this.diverging = params.diverging;
+
+        /**
+         * limit option
+         * @type {?{min: number, max: number}}
+         */
+        this.limitOption = params.limitOption;
+
+        /**
+         * axis type
+         * @type {?string}
+         */
+        this.type = params.type;
+
+        /**
+         * date format
+         * @type {?string}
+         */
+        this.dateFormat = params.dateFormat;
 
         /**
          * Chart type
@@ -122,7 +146,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isPercentStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isPercentStack = predicate.isPercentStack(this.options.stackType);
+            isPercentStack = predicate.isPercentStack(this.stackType);
 
         return isAllowedStackOption && isPercentStack;
     },
@@ -134,7 +158,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      */
     _isNormalStackChart: function() {
         var isAllowedStackOption = predicate.isAllowedStackOption(this.chartType),
-            isNormalStack = predicate.isNormalStack(this.options.stackType);
+            isNormalStack = predicate.isNormalStack(this.stackType);
 
         return isAllowedStackOption && isNormalStack;
     },
@@ -145,7 +169,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _isDivergingChart: function() {
-        return this.options.diverging && predicate.isBarTypeChart(this.chartType);
+        return this.diverging && predicate.isBarTypeChart(this.chartType);
     },
 
     /**
@@ -191,8 +215,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
 
         if (!this.formattedValues) {
             values = this._getScaleValues();
-            formatFunctions = this._getFormatFunctions();
-            this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+
+            if (predicate.isDatetimeType(this.type)) {
+                this.formattedValues = renderUtil.formatDates(values, this.dateFormat);
+            } else {
+                formatFunctions = this._getFormatFunctions();
+                this.formattedValues = renderUtil.formatValues(values, formatFunctions, chartType, areaType, valueType);
+            }
         }
 
         return this.formattedValues;
@@ -204,15 +233,15 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeBaseValuesForNormalStackedChart: function() {
-        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType),
-            baseValues = [];
+        var seriesDataModel = this.dataProcessor.getSeriesDataModel(this.chartType);
+        var baseValues = [];
 
         seriesDataModel.each(function(seriesGroup) {
             var valuesMap = seriesGroup._makeValuesMapPerStack();
 
             tui.util.forEach(valuesMap, function(values) {
-                var plusSum = calculator.sumPlusValues(values),
-                    minusSum = calculator.sumMinusValues(values);
+                var plusSum = calculator.sumPlusValues(values);
+                var minusSum = calculator.sumMinusValues(values);
                 baseValues = baseValues.concat([plusSum, minusSum]);
             });
         });
@@ -228,9 +257,14 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
     _makeBaseValues: function() {
         var baseValues;
 
-        if (predicate.isTreemapChart(this.chartType)) {
+        if (this.isSingleYAxis) {
+            baseValues = this.dataProcessor.getValues();
+            if (this._isNormalStackChart()) {
+                baseValues = baseValues.concat(this._makeBaseValuesForNormalStackedChart());
+            }
+        } else if (predicate.isTreemapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues(this.chartType, 'colorValue');
-        } else if (predicate.isMapChart(this.chartType) || this.isSingleYAxis) {
+        } else if (predicate.isMapChart(this.chartType)) {
             baseValues = this.dataProcessor.getValues();
         } else if (this._isNormalStackChart()) {
             baseValues = this._makeBaseValuesForNormalStackedChart();
@@ -303,7 +337,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _makeIntegerTypeScale: function(limit) {
-        var options = this.options.limit || {},
+        var options = this.limitOption || {},
             min = limit.min,
             max = limit.max,
             multipleNum, changedOptions;
@@ -312,7 +346,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             return {
                 limit: limit,
                 options: options,
-                divideNum: 1
+                divisionNumber: 1
             };
         }
 
@@ -333,7 +367,7 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
                 max: max * multipleNum
             },
             options: changedOptions,
-            divideNum: multipleNum
+            divisionNumber: multipleNum
         };
     },
 
@@ -468,12 +502,13 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @private
      */
     _decreaseMinByStep: function(min, dataMin, step, optionMin) {
-        var isLineChart = predicate.isLineChart(this.chartType),
-            isMinusDataMin = dataMin < 0,
-            isUndefinedMinOption = tui.util.isUndefined(optionMin),
-            isSame = (min === dataMin);
+        var isLineChart = predicate.isLineChart(this.chartType);
+        var isAreaChartX = predicate.isAreaChart(this.chartType) && !this.isVertical;
+        var isMinusDataMin = dataMin < 0;
+        var isUndefinedMinOption = tui.util.isUndefined(optionMin);
+        var isSame = (min === dataMin);
 
-        if ((isLineChart || isMinusDataMin) && isUndefinedMinOption && isSame) {
+        if ((isLineChart || isAreaChartX || isMinusDataMin) && isUndefinedMinOption && isSame) {
             min -= step;
         }
 
@@ -644,17 +679,17 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * @param {{
      *      limit: {min: number, max: number},
      *      options: {min: number, max: number},
-     *      divideNum: number
+     *      divisionNumber: number
      * }} integerTypeScale - integer type axis scale
      * @param {Array.<number>} valueCounts - candidate counts of value
      * @returns {Array.<{limit:{min: number, max: number}, stpe: number}>} - candidates scale
      * @private
      */
     _makeCandidateScales: function(integerTypeScale, valueCounts) {
-        var self = this,
-            dataLimit = integerTypeScale.limit,
-            options = integerTypeScale.options,
-            baseLimit = this._makeBaseLimit(dataLimit, options);
+        var self = this;
+        var dataLimit = integerTypeScale.limit;
+        var options = integerTypeScale.options;
+        var baseLimit = this._makeBaseLimit(dataLimit, options);
 
         return tui.util.map(valueCounts, function(valueCount) {
             return self._makeCandidateScale(baseLimit, dataLimit, valueCount, options);
@@ -700,18 +735,111 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
      * Restore number state of scale.
      * @memberOf module:axisDataMaker
      * @param {{limit: {min: number, max: number}, step: number}} scale scale
-     * @param {number} divideNum divide num
+     * @param {number} divisionNumber divide num
      * @returns {{limit: {min: number, max: number}, step: number}} restored scale
      * @private
      */
-    _restoreNumberState: function(scale, divideNum) {
-        if (divideNum === 1) {
+    _restoreNumberState: function(scale, divisionNumber) {
+        if (divisionNumber === 1) {
             return scale;
         }
 
-        scale.step = tui.util.division(scale.step, divideNum);
-        scale.limit.min = tui.util.division(scale.limit.min, divideNum);
-        scale.limit.max = tui.util.division(scale.limit.max, divideNum);
+        scale.step = tui.util.division(scale.step, divisionNumber);
+        scale.limit.min = tui.util.division(scale.limit.min, divisionNumber);
+        scale.limit.max = tui.util.division(scale.limit.max, divisionNumber);
+
+        return scale;
+    },
+
+    /**
+     * millisecond map
+     */
+    millisecondMap: {
+        year: 31536000000,
+        month: 2678400000,
+        date: 86400000,
+        hour: 3600000,
+        minute: 60000,
+        second: 1000
+    },
+
+    /**
+     * millisecond types
+     */
+    millisecondTypes: ['year', 'month', 'date', 'hour', 'minute', 'second'],
+
+    /**
+     * Find date type.
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {string}
+     * @private
+     */
+    _findDateType: function(dataLimit, count) {
+        var diff = dataLimit.max - dataLimit.min;
+        var millisecondTypes = this.millisecondTypes;
+        var millisecondMap = this.millisecondMap;
+        var lastTypeIndex = millisecondTypes.length - 1;
+        var foundType;
+
+        if (diff) {
+            tui.util.forEachArray(millisecondTypes, function(type, index) {
+                var millisecond = millisecondMap[type];
+                var dividedCount = Math.floor(diff / millisecond);
+                var foundIndex;
+
+                if (dividedCount) {
+                    foundIndex = index < lastTypeIndex && (dividedCount < count) ? index + 1 : index;
+                    foundType = millisecondTypes[foundIndex];
+                }
+
+                return !tui.util.isExisty(foundIndex);
+            });
+        } else {
+            foundType = chartConst.DATE_TYPE_SECOND;
+        }
+
+        return foundType;
+    },
+
+    /**
+     * Make datetime information
+     * @param {{min: number, max: number}} dataLimit - data limit
+     * @param {number} count - data count
+     * @returns {{divisionNumber: number, minDate: number, dataLimit: {min: number, max: number}}}
+     * @private
+     */
+    _makeDatetimeInfo: function(dataLimit, count) {
+        var dateType = this._findDateType(dataLimit, count);
+        var divisionNumber = this.millisecondMap[dateType];
+        var minDate = tui.util.division(dataLimit.min, divisionNumber);
+        var maxDate = tui.util.division(dataLimit.max, divisionNumber);
+        var max = maxDate - minDate;
+
+        return {
+            divisionNumber: divisionNumber,
+            minDate: minDate,
+            dataLimit: {
+                min: 0,
+                max: max
+            }
+        };
+    },
+
+    /**
+     * Restore scale to datetime type.
+     * @param {{scale: number, limit:{min: number, max: number}}} scale - scale
+     * @param {number} minDate - minimum date
+     * @param {number} divisionNumber - division number
+     * @returns {{step: number, limit: {min: number, max: number}}}
+     * @private
+     */
+    _restoreScaleToDatetimeType: function(scale, minDate, divisionNumber) {
+        var limit = scale.limit;
+
+        scale.step = tui.util.multiplication(scale.step, divisionNumber);
+        limit.min = tui.util.multiplication(tui.util.addition(limit.min, minDate), divisionNumber);
+        limit.max = tui.util.multiplication(tui.util.addition(limit.max, minDate), divisionNumber);
 
         return scale;
     },
@@ -727,7 +855,12 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
             min: tui.util.min(baseValues),
             max: tui.util.max(baseValues)
         };
-        var integerTypeScale, valueCounts, candidates, scale;
+        var datetimeInfo, integerTypeScale, valueCounts, candidates, scale;
+
+        if (predicate.isDatetimeType(this.type)) {
+            datetimeInfo = this._makeDatetimeInfo(dataLimit, baseValues.length);
+            dataLimit = datetimeInfo.dataLimit;
+        }
 
         if (dataLimit.min === 0 && dataLimit.max === 0) {
             dataLimit.max = 5;
@@ -750,7 +883,11 @@ var AxisScaleMaker = tui.util.defineClass(/** @lends AxisScaleMaker.prototype */
         scale = this._selectAxisScale(integerTypeScale.limit, candidates, valueCounts);
 
         // 05. 정수형으로 변경했던 scale를 원래 형태로 변경
-        scale = this._restoreNumberState(scale, integerTypeScale.divideNum);
+        scale = this._restoreNumberState(scale, integerTypeScale.divisionNumber);
+
+        if (predicate.isDatetimeType(this.type)) {
+            scale = this._restoreScaleToDatetimeType(scale, datetimeInfo.minDate, datetimeInfo.divisionNumber);
+        }
 
         return scale;
     },

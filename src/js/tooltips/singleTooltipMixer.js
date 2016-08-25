@@ -386,9 +386,11 @@ var singleTooltipMixer = {
      * @private
      */
     _showTooltip: function(elTooltip, params, prevPosition) {
-        var indexes = params.indexes,
-            prevIndexes = this._getIndexesCustomAttribute(elTooltip),
-            prevChartType, position;
+        var indexes = params.indexes;
+        var prevIndexes = this._getIndexesCustomAttribute(elTooltip);
+        var offset = this.options.offset || {};
+        var positionOption = {};
+        var prevChartType, position;
 
         if (this._isChangedIndexes(prevIndexes, indexes)) {
             prevChartType = elTooltip.getAttribute('data-chart-type');
@@ -405,12 +407,12 @@ var singleTooltipMixer = {
 
         dom.addClass(elTooltip, 'show');
 
+        positionOption.left = offset.x || 0;
+        positionOption.top = offset.y || 0;
+
         position = this._makeTooltipPosition(tui.util.extend({
             dimension: this.getTooltipDimension(elTooltip),
-            positionOption: tui.util.extend({
-                left: 0,
-                top: 0
-            }, this.options.position),
+            positionOption: positionOption,
             alignOption: this.options.align || ''
         }, params));
 
