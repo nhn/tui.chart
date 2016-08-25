@@ -38,6 +38,9 @@
   "sample03-02-spline-line-chart": {
     "title": "[Line Chart] spline"
   },
+  "sample03-03-coordinate-data-line-chart": {
+    "title": "[Line Chart] coordinate data"
+  },
   "sample04-01-area-chart": {
     "title": "[Area Chart] basic"
   },

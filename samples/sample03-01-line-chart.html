@@ -169,32 +169,6 @@
             },
             tooltip: {
                 suffix: '°C'
-            },
-            plot: {
-                bands: [
-                    {
-                        range: ['01/01/2016', '03/01/2016'],
-                        color: 'yellow'
-                    }
-                ],
-                lines: [
-                    {
-                        value: '02/01/2016',
-                        color: 'blue'
-                    },
-                    {
-                        value: '05/01/2016',
-                        color: 'green'
-                    },
-                    {
-                        value: '07/01/2016',
-                        color: 'red'
-                    },
-                    {
-                        value: '12/01/2016',
-                        color: 'blue'
-                    }
-                ]
             }
         };
     chart = tui.chart.lineChart(container, data, options);
