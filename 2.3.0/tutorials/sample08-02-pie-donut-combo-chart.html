@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head lang="kr">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <title>[Combo Chart] pie and donut</title>
+    <link rel="stylesheet" type="text/css" href="dist/chart.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+</head>
+<body>
+<div id="chart-area"></div>
+<div class="custom-area">
+    <div class="apply-btn-area">
+        <input type="checkbox" id="use-theme" checked disabled><label for="use-theme">&nbsp;Theme</label>
+        &nbsp; &nbsp;
+        <button id="btn" onclick="onBtnClick();">Apply Custom Data</button>
+        <input type="hidden" id="type" value="comboChart" />
+    </div>
+    <div>
+        <div>Chart Data</div>
+        <textarea id="data">
+{
+    "categories": ["Browser"],
+    "seriesAlias": {
+        "pie1": "pie",
+        "pie2": "pie"
+    },
+    "series": {
+        "pie1": [
+            {
+                "name": "Chrome",
+                "data": 46.02
+            },
+            {
+                "name": "IE",
+                "data": 20.47
+            },
+            {
+                "name": "Firefox",
+                "data": 17.71
+            },
+            {
+                "name": "Safari",
+                "data": 5.45
+            },
+            {
+                "name": "Opera",
+                "data": 3.10
+            },
+            {
+                "name": "Etc",
+                "data": 7.25
+            }
+        ],
+        "pie2": [
+            {
+                "name": "Chrome 1",
+                "data": 26.02
+            },
+            {
+                "name": "Chrome 2",
+                "data": 20
+            },
+            {
+                "name": "IE 1",
+                "data": 5.47
+            },
+            {
+                "name": "IE1 2",
+                "data": 7
+            },{
+                "name": "IE 3",
+                "data": 8
+            },
+            {
+                "name": "Firefox 1",
+                "data": 7.71
+            },
+            {
+                "name": "Firefox 2",
+                "data": 10
+            },
+            {
+                "name": "Safari 1",
+                "data": 5.45
+            },
+            {
+                "name": "Opera 1",
+                "data": 3.10
+            },
+            {
+                "name": "Etc 1",
+                "data": 7.25
+            }
+        ]
+    }
+}
+        </textarea>
+    </div>
+    <div>
+        <div>Chart Options</div>
+        <textarea id="options">
+{
+    "chart": {
+        "width": 500,
+        "height": 400,
+        "title": "Usage share of web browsers"
+    },
+    "series": {
+        "pie1": {
+            "radiusRange": ["65%"],
+            "labelAlign": "center",
+            "showLegend": true
+        },
+        "pie2": {
+            "radiusRange": ["70%", "100%"],
+            "labelAlign": "outer",
+            "showLegend": true
+        }
+    },
+    "legend": {
+        "visible": false
+    },
+    "tooltip": {
+        "suffix": "%"
+    },
+    "theme": "newTheme"
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.nhnent.com/fe/tui.chart/wiki/table-of-supported-options')">More Options</button>
+        </div>
+    </div>
+    <div id="theme-area" style="display:block">
+        <div>Chart Theme</div>
+        <textarea id="theme">
+{
+    "series": {
+        "pie1": {
+            "colors": ["#ac4142", "#d28445", "#f4bf75", "#90a959", "#75b5aa", "#6a9fb5"]
+        },
+        "pie2": {
+            "colors": ["#b85e5e", "#c57a7b", "#d99661", "#dfa97d", "#e6bb99", "#f5c88a", "#f7d29e", "#a1b672", "#8ac0b7", "#80adc0"]
+        }
+    }
+}
+        </textarea>
+        <div class="btn-area">
+            <button onclick="openWindow('https://github.com/nhnent/tui.chart/wiki/tutorial#full-theme')">More Theme</button>
+        </div>
+    </div>
+</div>
+<script src="lib/code-snippet.min.js"></script>
+<script src="lib/effects.min.js"></script>
+<script src="lib/raphael-min.js"></script>
+<script src="dist/chart.min.js"></script>
+<script src="js/sample.js"></script>
+<script>
+    var container = document.getElementById('chart-area'),
+        data = {
+            categories: ['Browser'],
+            seriesAlias: {
+                pie1: 'pie',
+                pie2: 'pie'
+            },
+            series: {
+                pie1: [
+                    {
+                        name: 'Chrome',
+                        data: 46.02
+                    },
+                    {
+                        name: 'IE',
+                        data: 20.47
+                    },
+                    {
+                        name: 'Firefox',
+                        data: 17.71
+                    },
+                    {
+                        name: 'Safari',
+                        data: 5.45
+                    },
+                    {
+                        name: 'Opera',
+                        data: 3.10
+                    },
+                    {
+                        name: 'Etc',
+                        data: 7.25
+                    }
+                ],
+                pie2: [
+                    {
+                        name: 'Chrome 1',
+                        data: 26.02
+                    },
+                    {
+                        name: 'Chrome 2',
+                        data: 20
+                    },
+                    {
+                        name: 'IE 1',
+                        data: 5.47
+                    },
+                    {
+                        name: 'IE1 2',
+                        data: 7
+                    },{
+                        name: 'IE 3',
+                        data: 8
+                    },
+                    {
+                        name: 'Firefox 1',
+                        data: 7.71
+                    },
+                    {
+                        name: 'Firefox 2',
+                        data: 10
+                    },
+                    {
+                        name: 'Safari 1',
+                        data: 5.45
+                    },
+                    {
+                        name: 'Opera 1',
+                        data: 3.10
+                    },
+                    {
+                        name: 'Etc 1',
+                        data: 7.25
+                    }
+                ]
+            }
+        },
+        options = {
+            chart: {
+                width: 500,
+                height: 400,
+                title: 'Usage share of web browsers'
+            },
+            series: {
+                pie1: {
+                    radiusRange: ['65%'],
+                    labelAlign: 'center',
+                    showLegend: true
+                },
+                pie2: {
+                    radiusRange: ['70%', '100%'],
+                    labelAlign: 'outer',
+                    showLegend: true
+                }
+            },
+            legend: {
+                visible: false
+            },
+            tooltip: {
+                suffix: '%'
+            },
+            theme: 'newTheme'
+        };
+
+    tui.chart.registerTheme('newTheme', {
+        series: {
+            pie1: {
+                colors: ['#ac4142', '#d28445', '#f4bf75', '#90a959', '#75b5aa', '#6a9fb5']
+            },
+            pie2: {
+                colors: ['#b85e5e', '#c57a7b', '#d99661', '#dfa97d', '#e6bb99', '#f5c88a', '#f7d29e', '#a1b672', '#8ac0b7', '#80adc0']
+            }
+        }
+    });
+    tui.chart.comboChart(container, data, options);
+</script>
+</body>
+</html>
