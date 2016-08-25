@@ -319,12 +319,14 @@ var axisTypeMixer = {
      * @override
      */
     _addCustomEventComponentForGroupTooltip: function() {
+        var seriesOptions = this.options.series;
+
         this.componentManager.register('customEvent', GroupTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
             chartTypes: this.chartTypes,
-            zoomable: tui.util.pick(this.options.series, 'zoomable'),
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            zoomable: seriesOptions.zoomable,
+            allowSelect: seriesOptions.allowSelect
         });
     },
 
@@ -336,7 +338,7 @@ var axisTypeMixer = {
         this.componentManager.register('customEvent', BoundsTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            allowSelect: tui.util.pick(this.options.series, 'allowSelect')
+            allowSelect: this.options.series.allowSelect
         });
     },
 

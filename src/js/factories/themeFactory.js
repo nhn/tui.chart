@@ -82,18 +82,17 @@ module.exports = {
     /**
      * Filter chart types.
      * @param {object} target target charts
-     * @param {Array.<string>} rejectionProps reject property
      * @returns {Object} filtered charts.
      * @private
      */
-    _filterChartTypes: function(target, rejectionProps) {
+    _filterChartTypes: function(target) {
         var result;
         if (!target) {
             return [];
         }
 
         result = tui.util.filter(target, function(item, name) {
-            return tui.util.inArray(name, rejectionProps) === -1;
+            return tui.util.inArray(name, chartConst.COMBO_CHART_TYPES) > -1;
         });
 
         return result;
@@ -129,7 +128,7 @@ module.exports = {
             return;
         }
 
-        chartTypes = this._filterChartTypes(theme.series, chartConst.SERIES_PROPS);
+        chartTypes = this._filterChartTypes(theme.series);
 
         if (!tui.util.keys(chartTypes).length) {
             this._concatColors(theme.series, seriesColors);

@@ -52,7 +52,7 @@ describe('Test for themeFactory', function() {
                 line: {},
                 colors: [],
                 fontSize: 12
-            }, ['colors', 'fontSize']);
+            });
 
             expect(result).toEqual({
                 column: {},

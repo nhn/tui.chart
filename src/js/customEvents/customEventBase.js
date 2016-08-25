@@ -208,6 +208,7 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
      * @param {{tickCount: number}} data - data for rerendering
      */
     rerender: function(data) {
+        this.selectedData = null;
         this._renderCustomEventArea(this.customEventContainer, data);
     },
 

@@ -851,21 +851,17 @@ tui.chart.treemapChart = function(container, rawData, options) {
  *              @param {string} options.series.column.stackType - type of stack
  *              @param {boolean} options.series.column.showLabel - whether show label or not
  *              @param {number} options.series.column.barWidth - bar width
- *              @param {boolean} options.series.column.allowSelect - whether allow select or not
  *          @param {?object} options.series.line - options for line series component
  *              @param {boolean} options.series.line.showDot - whether show dot or not
  *              @param {boolean} options.series.line.showLabel - whether show label or not
- *              @param {boolean} options.series.line.allowSelect - whether allow select or not
  *              @param {boolean} options.series.line.spline - whether spline or not
  *          @param {?object} options.series.area - options for line series component
  *              @param {boolean} options.series.area.showDot - whether show dot or not
  *              @param {boolean} options.series.area.showLabel - whether show label or not
- *              @param {boolean} options.series.area.allowSelect - whether allow select or not
  *              @param {boolean} options.series.area.spline - whether spline or not
  *          @param {?object} options.series.pie - options for pie series component
  *              @param {boolean} options.series.pie.showLabel - whether show label or not
  *              @param {number} options.series.pie.radiusRatio - ratio of radius for pie graph
- *              @param {boolean} options.series.pie.allowSelect - whether allow select or not
  *              @param {boolean} options.series.pie.startAngle - start angle
  *              @param {boolean} options.series.pie.endAngle - end angle
  *          @param {boolean} options.series.showDot - whether show dot or not

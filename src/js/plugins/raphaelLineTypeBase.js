@@ -523,19 +523,6 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
         this._hideGroupDots(index);
     },
 
-    _moveDot: function(dot, position) {
-        var dotAttrs = {
-            cx: position.left,
-            cy: position.top
-        };
-
-        if (this.dotOpacity) {
-            dotAttrs = tui.util.extend({'fill-opacity': this.dotOpacity}, dotAttrs, this.borderStyle);
-        }
-
-        dot.attr(dotAttrs);
-    },
-
     /**
      * Show graph for zoom.
      */
@@ -598,7 +585,7 @@ var RaphaelLineTypeBase = tui.util.defineClass(/** @lends RaphaelLineTypeBase.pr
             cy: position.top,
             'fill-opacity': 0.5,
             'stroke-opacity': 1,
-            stroke: this.selectionColor || item.dot.color
+            stroke: this.selectionColor || item.endDot.color
         });
 
         if (this.selectionStartDot) {

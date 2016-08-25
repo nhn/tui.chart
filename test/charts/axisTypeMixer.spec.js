@@ -36,6 +36,7 @@ describe('Test for ComboChart', function() {
 
         axisTypeMixer.dataProcessor = dataProcessor;
         axisTypeMixer.boundsMaker = boundsMaker;
+        axisTypeMixer.options = {};
     });
 
     describe('_makeAxisData()', function() {
@@ -176,7 +177,8 @@ describe('Test for ComboChart', function() {
                     visible: true
                 },
                 tooltip: {},
-                xAxis: {}
+                xAxis: {},
+                series: {}
             };
 
             axisTypeMixer._addComponentsForAxisType({
@@ -396,14 +398,18 @@ describe('Test for ComboChart', function() {
 
     describe('_addCustomEventComponentForGroupTooltip()', function() {
         it('그룹 툴팁을 위한 custom event 컴포넌트는 GroupTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer.options.series = {};
             axisTypeMixer._addCustomEventComponentForGroupTooltip();
+
             expect(componentMap.customEvent).toBe(GroupTypeCustomEvent);
         });
     });
 
     describe('_addCustomEventComponentForNormalTooltip()', function() {
         it('일반 툴팁을 위한 custom event 컴포넌트는 BoundsTypeCustomEvent 클래스로 생성합니다.', function() {
+            axisTypeMixer.options.series = {};
             axisTypeMixer._addCustomEventComponentForNormalTooltip();
+
             expect(componentMap.customEvent).toBe(BoundsTypeCustomEvent);
         });
     });

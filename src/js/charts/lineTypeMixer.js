@@ -67,10 +67,13 @@ var lineTypeMixer = {
      * @private
      */
     _addCustomEventComponentForNormalTooltip: function() {
+        var seriesOptions = this.options.series;
+
         this.componentManager.register('customEvent', AreaTypeCustomEvent, {
             chartType: this.chartType,
             isVertical: this.isVertical,
-            zoomable: tui.util.pick(this.options.series, 'zoomable')
+            zoomable: seriesOptions.zoomable,
+            allowSelect: seriesOptions.allowSelect
         });
     },
 
