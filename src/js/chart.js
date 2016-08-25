@@ -176,6 +176,7 @@ _createChart = function(container, rawData, options) {
 tui.chart.barChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BAR;
+
     return _createChart(container, rawData, options);
 };
 
@@ -269,6 +270,7 @@ tui.chart.barChart = function(container, rawData, options) {
 tui.chart.columnChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COLUMN;
+
     return _createChart(container, rawData, options);
 };
 
@@ -323,7 +325,7 @@ tui.chart.columnChart = function(container, rawData, options) {
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *          @param {Array.<{range: Array.<string|number|date>, color: ?string, opacity: ?string}>} options.plot.bands
  *                  - plot bands
- *          @param {Array.<{value: string|number|date, color: ?string, opacity: ?string}>} options.plot.lines
+ *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
  *                  - plot lines
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
@@ -371,6 +373,7 @@ tui.chart.columnChart = function(container, rawData, options) {
 tui.chart.lineChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_LINE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -425,7 +428,7 @@ tui.chart.lineChart = function(container, rawData, options) {
  *          @param {boolean} options.plot.showLine - whether show line or not (default: true)
  *          @param {Array.<{range: Array.<string|number|date>, color: ?string, opacity: ?string}>} options.plot.bands
  *                  - plot bands
- *          @param {Array.<{value: string|number|date, color: ?string, opacity: ?string}>} options.plot.lines
+ *          @param {Array.<{value: (string|number|date), color: ?string, opacity: ?string}>} options.plot.lines
  *                  - plot lines
  *      @param {string} options.theme - theme name
  *      @param {string} options.libType - type of graph library
@@ -470,6 +473,7 @@ tui.chart.lineChart = function(container, rawData, options) {
 tui.chart.areaChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_AREA;
+
     return _createChart(container, rawData, options);
 };
 
@@ -572,6 +576,7 @@ tui.chart.areaChart = function(container, rawData, options) {
 tui.chart.bubbleChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_BUBBLE;
+
     return _createChart(container, rawData, options);
 };
 
@@ -662,6 +667,7 @@ tui.chart.bubbleChart = function(container, rawData, options) {
 tui.chart.scatterChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_SCATTER;
+
     return _createChart(container, rawData, options);
 };
 
@@ -734,6 +740,7 @@ tui.chart.scatterChart = function(container, rawData, options) {
 tui.chart.heatmapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_HEATMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -813,6 +820,7 @@ tui.chart.heatmapChart = function(container, rawData, options) {
 tui.chart.treemapChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_TREEMAP;
+
     return _createChart(container, rawData, options);
 };
 
@@ -944,6 +952,7 @@ tui.chart.treemapChart = function(container, rawData, options) {
 tui.chart.comboChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_COMBO;
+
     return _createChart(container, rawData, options);
 };
 
@@ -1015,6 +1024,7 @@ tui.chart.comboChart = function(container, rawData, options) {
 tui.chart.pieChart = function(container, rawData, options) {
     options = options || {};
     options.chartType = chartConst.CHART_TYPE_PIE;
+
     return _createChart(container, rawData, options);
 };
 

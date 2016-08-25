@@ -266,11 +266,14 @@ var CustomEventBase = tui.util.defineClass(/** @lends CustomEventBase.prototype 
 
     /**
      * Find data.
-     * @param {{x: number, y: number}} layerPosition - layer position
+     * @param {number} clientX - clientX
+     * @param {number} clientY - clientY
      * @returns {object}
      * @private
      */
-    _findData: function(layerPosition) {
+    _findData: function(clientX, clientY) {
+        var layerPosition = this._calculateLayerPosition(clientX, clientY);
+
         return this._findDataFromBoundsCoordinateModel(layerPosition);
     },
 
