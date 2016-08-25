@@ -25,7 +25,8 @@ describe('Series', function() {
             theme: {
                 label: {
                     fontFamily: 'Verdana',
-                    fontSize: 11
+                    fontSize: 11,
+                    fontWeight: 'normal'
                 },
                 colors: ['blue']
             },
@@ -92,7 +93,8 @@ describe('Series', function() {
                 top: 10
             }, 'label1', 0);
 
-            expect(result).toBe('<div class="tui-chart-series-label" style="left:10px;top:10px;font-family:Verdana;font-size:11px">label1</div>');
+            expect(result).toBe('<div class="tui-chart-series-label"' +
+                ' style="left:10px;top:10px;font-family:Verdana;font-size:11px;font-weight:normal">label1</div>');
         });
     });
 

@@ -57,6 +57,209 @@ describe('Test for ChartBase', function() {
         chartBase.boundsMaker = boundsMaker;
     });
 
+    describe('_setOffsetProperty()', function() {
+        it('set offset property', function() {
+            var options = {
+                offsetX: 10
+            };
+
+            chartBase._setOffsetProperty(options, 'offsetX', 'x');
+
+            expect(options).toEqual({
+                offset: {
+                    x: 10
+                }
+            });
+        });
+
+        it('if not included fromProperty in option, this function is not working', function() {
+            var options = {
+                offsetY: 10
+            };
+
+            chartBase._setOffsetProperty(options, 'offsetX', 'x');
+
+            expect(options).toEqual({
+                offsetY: 10
+            });
+        });
+    });
+
+    describe('initializeOffset', function() {
+        it('initialize offset', function() {
+            var options = {
+                offsetX: 10,
+                offsetY: 20
+            };
+
+            chartBase._initializeOffset(options);
+
+            expect(options).toEqual({
+                offset: {
+                    x: 10,
+                    y: 20
+                }
+            });
+        });
+
+        it('initialize offset, when has only offsetX property', function() {
+            var options = {
+                offsetX: 10
+            };
+
+            chartBase._initializeOffset(options);
+
+            expect(options).toEqual({
+                offset: {
+                    x: 10
+                }
+            });
+        });
+    });
+
+    describe('_initializeTitleOptions()', function() {
+        it('initialize title options, when options.title is string type', function() {
+            var options = {
+                title: 'Title'
+            };
+
+            chartBase._initializeTitleOptions(options);
+
+            expect(options).toEqual({
+                title: {
+                    text: 'Title'
+                }
+            });
+        });
+
+        it('initialize title options, when has offsetX or offsetY property', function() {
+            var options = {
+                title: {
+                    text: 'Title',
+                    offsetX: 10,
+                    offsetY: 20
+                }
+            };
+
+            chartBase._initializeTitleOptions(options);
+
+            expect(options).toEqual({
+                title: {
+                    text: 'Title',
+                    offset: {
+                        x: 10,
+                        y: 20
+                    }
+                }
+            });
+        });
+
+        it('initialize title options, when has two options', function() {
+            var optionsSet = [{
+                title: {
+                    text: 'Title1',
+                    offsetX: 10,
+                    offsetY: 20
+                }
+            }, {
+                title: {
+                    text: 'Title2',
+                    offsetX: 30,
+                    offsetY: 40
+                }
+            }];
+
+            chartBase._initializeTitleOptions(optionsSet);
+
+            expect(optionsSet).toEqual([{
+                title: {
+                    text: 'Title1',
+                    offset: {
+                        x: 10,
+                        y: 20
+                    }
+                }
+            }, {
+                title: {
+                    text: 'Title2',
+                    offset: {
+                        x: 30,
+                        y: 40
+                    }
+                }
+            }]);
+        });
+    });
+
+    describe('_initializeTooltipOptions()', function() {
+        it('initialize tooltip options. when had grouped property', function() {
+            var options = {
+                grouped: true
+            };
+
+            chartBase._initializeTooltipOptions(options);
+
+            expect(options).toEqual({
+                grouped: true
+            });
+        });
+
+        it('initialize tooltip options, when has offsetX or offsetY property', function() {
+            var options = {
+                offsetX: 10,
+                offsetY: 20
+            };
+
+            chartBase._initializeTooltipOptions(options);
+
+            expect(options).toEqual({
+                grouped: false,
+                offset: {
+                    x: 10,
+                    y: 20
+                }
+            });
+        });
+
+        it('(deprecated) initialize tooltip options, when has position property', function() {
+            var options = {
+                position: {
+                    left: 20,
+                    top: 30
+                }
+            };
+
+            chartBase._initializeTooltipOptions(options);
+
+            expect(options).toEqual({
+                grouped: false,
+                offset: {
+                    x: 20,
+                    y: 30
+                }
+            });
+        });
+
+        it('(deprecated) initialize tooltip options, when has both (offsetX or offsetY) and position', function() {
+            var options = {
+                offsetX: 50,
+                position: {
+                    left: 20,
+                    top: 30
+                }
+            };
+
+            chartBase._initializeTooltipOptions(options);
+
+            expect(options).toEqual({
+                grouped: false,
+                offset: {
+                    x: 50
+                }
+            });
+        });
+    });
+
     describe('_makeProcessedData()', function() {
         it('전달된 사용자 데이터를 이용하여 차트에서 사용이 용이한 변환 데이터를 생성합니다.', function() {
             var actual;

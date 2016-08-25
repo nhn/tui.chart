@@ -29,7 +29,8 @@ describe('TreemapChartSeries', function() {
             theme: {
                 label: {
                     fontSize: 12,
-                    fontFamily: 'Verdana'
+                    fontFamily: 'Verdana',
+                    fontWeight: 'normal'
                 }
             }
         });
@@ -217,7 +218,7 @@ describe('TreemapChartSeries', function() {
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
-                ' style="left:275px;top:186px;font-family:Verdana;font-size:12px">label1</div>';
+                ' style="left:275px;top:186px;font-family:Verdana;font-size:12px;font-weight:normal">label1</div>';
 
             expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
         });
@@ -230,13 +231,13 @@ describe('TreemapChartSeries', function() {
             series._renderSeriesLabel(labelContainer);
 
             expectedElement.innerHTML = '<div class="tui-chart-series-label"' +
-                    ' style="left:125px;top:186px;font-family:Verdana;font-size:12px">label2</div>' +
+                    ' style="left:125px;top:186px;font-family:Verdana;font-size:12px;font-weight:normal">label2</div>' +
                 '<div class="tui-chart-series-label"' +
-                    ' style="left:425px;top:286px;font-family:Verdana;font-size:12px">label3-2</div>' +
+                    ' style="left:425px;top:286px;font-family:Verdana;font-size:12px;font-weight:normal">label3-2</div>' +
                 '<div class="tui-chart-series-label"' +
-                    ' style="left:375px;top:86px;font-family:Verdana;font-size:12px">label3-1-1</div>' +
+                    ' style="left:375px;top:86px;font-family:Verdana;font-size:12px;font-weight:normal">label3-1-1</div>' +
                 '<div class="tui-chart-series-label"' +
-                    ' style="left:525px;top:86px;font-family:Verdana;font-size:12px">label3-1-2</div>';
+                    ' style="left:525px;top:86px;font-family:Verdana;font-size:12px;font-weight:normal">label3-1-2</div>';
 
             expect(labelContainer.innerHTML).toBe(expectedElement.innerHTML);
         });

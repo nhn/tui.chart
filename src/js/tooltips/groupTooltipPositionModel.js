@@ -167,8 +167,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
      * @private
      */
     _setData: function(chartDimension, areaBound, isVertical, options) {
-        var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align),
-            horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+        var verticalData = this._makeVerticalData(chartDimension, areaBound, options.align);
+        var horizontalData = this._makeHorizontalData(chartDimension, areaBound, options.align);
+        var offset = options.offset || {};
 
         if (isVertical) {
             this.mainData = verticalData;
@@ -178,10 +179,9 @@ var GroupTooltipPositionModel = tui.util.defineClass(/** @lends GroupTooltipPosi
             this.subData = verticalData;
         }
 
-        this.positionOption = tui.util.extend({
-            left: 0,
-            top: 0
-        }, options.position);
+        this.positionOption = {};
+        this.positionOption.left = offset.x || 0;
+        this.positionOption.top = offset.y || 0;
 
         this.positions = {};
     },
