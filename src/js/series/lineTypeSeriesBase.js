@@ -10,6 +10,7 @@ var seriesTemplate = require('./seriesTemplate');
 var chartConst = require('../const');
 var predicate = require('../helpers/predicate');
 var renderUtil = require('../helpers/renderUtil');
+var Series = require('./series');
 
 var concat = Array.prototype.concat;
 
@@ -19,6 +20,15 @@ var concat = Array.prototype.concat;
  * @mixin
  */
 var LineTypeSeriesBase = tui.util.defineClass(/** @lends LineTypeSeriesBase.prototype */ {
+    /**
+     * Render series component.
+     * @override
+     */
+    render: function() {
+        this.beforeAxes = this.boundsMaker.getAxesData();
+
+        return Series.prototype.render.apply(this, arguments);
+    },
     /**
      * Make positions for default data type.
      * @param {?number} seriesWidth - width of series area

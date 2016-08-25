@@ -483,7 +483,7 @@ var Plot = tui.util.defineClass(/** @lends Plot.prototype */ {
 
     /**
      * Add plot band.
-     * @param {{range: [number, number], color: string, id: string}} data - data
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
      */
     addPlotBand: function(data) {
         this.options.bands.push(data);

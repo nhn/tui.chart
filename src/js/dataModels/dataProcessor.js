@@ -469,7 +469,8 @@ var DataProcessor = tui.util.defineClass(/** @lends DataProcessor.prototype */{
 
         if (!tui.util.isExisty(coordinateType)) {
             coordinateType = predicate.isCoordinateTypeChart(chartType);
-            coordinateType = coordinateType || (!this.hasCategories() && predicate.isLineTypeChart(chartType));
+            coordinateType = coordinateType ||
+                (predicate.isLineTypeChart(chartType) && !this.hasCategories());
             this.coordinateType = coordinateType;
         }
 

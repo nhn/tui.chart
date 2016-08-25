@@ -122,6 +122,8 @@ var TreemapChart = tui.util.defineClass(ChartBase, /** @lends TreemapChart.proto
         data.legend = {
             colorSpectrum: colorSpectrum,
             axesData: axisDataMaker.makeValueAxisData({
+                dataProcessor: this.dataProcessor,
+                chartType: this.chartType,
                 axisScaleMaker: this._getLegendScale(),
                 isVertical: true
             })

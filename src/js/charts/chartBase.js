@@ -789,7 +789,7 @@ var ChartBase = tui.util.defineClass(/** @lends ChartBase.prototype */ {
 
     /**
      * Add plot band.
-     * @param {{range: [number, number], color: string, id: string}} data - data
+     * @param {{range: Array.<number>, color: string, id: string}} data - data
      */
     addPlotBand: function(data) {
         var plot = this.componentManager.get('plot');

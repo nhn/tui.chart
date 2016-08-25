@@ -31,11 +31,16 @@ var BubbleChart = tui.util.defineClass(ChartBase, /** @lends BubbleChart.prototy
      */
     init: function(rawData, theme, options) {
         options.tooltip = options.tooltip || {};
+        options.circleLegend = options.circleLegend || {};
 
         this.axisScaleMakerMap = null;
 
         if (!options.tooltip.align) {
             options.tooltip.align = chartConst.TOOLTIP_DEFAULT_ALIGN_OPTION;
+        }
+
+        if (tui.util.isUndefined(options.circleLegend.visible)) {
+            options.circleLegend.visible = true;
         }
 
         ChartBase.call(this, {
