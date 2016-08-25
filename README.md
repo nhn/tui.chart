@@ -83,7 +83,7 @@ Toast UI Chart supports a easy way to draw various and essential charts on your 
 * Bower:
    * latest : `bower install tui-chart`
    * each version : `bower install "tui-chart[#tag]"`
-* Download: https://github.com/nhnent/tui.chart/tree/master/dist
+* Download: https://github.com/nhnent/tui.chart/tree/master/dist/
 
 ## Release History
 * https://github.com/nhnent/tui.chart/releases
