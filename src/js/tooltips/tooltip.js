@@ -196,7 +196,7 @@ var Tooltip = tui.util.defineClass(TooltipBase, /** @lends Tooltip.prototype */ 
             chartType = chartType || self.chartType;
 
             data = seriesGroup.map(function(seriesItem, index) {
-                var category = self.dataProcessor.getTooltipCategory(groupIndex, index, self.isVertical);
+                var category = self.dataProcessor.makeTooltipCategory(groupIndex, index, self.isVertical);
 
                 return seriesItem ? self._makeTooltipDatum(legendLabels, category, chartType, seriesItem, index) : null;
             });
