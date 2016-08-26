@@ -89,8 +89,8 @@
     var container = document.getElementById('chart-area');
     var data = {
         categories: {
-            x: ['08/01/2016', 'Feb', 'Mar','Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            y: ['08/01/2016', 'Seattle', 'Sydney', 'Moskva', 'Jungfrau']
+            x: ['Jan', 'Feb', 'Mar','Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            y: ['Seoul', 'Seattle', 'Sydney', 'Moskva', 'Jungfrau']
         },
         series: [
             [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
@@ -107,14 +107,10 @@
             title: '24-hr Average Temperature'
         },
         yAxis: {
-            title: 'City',
-            type: 'datetime',
-            dateFormat: 'MMM'
+            title: 'City'
         },
         xAxis: {
-            title: 'Month',
-            type: 'datetime',
-            dateFormat: 'MMM'
+            title: 'Month'
         },
         series: {
             showLabel: true
